@@ -561,7 +561,7 @@
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box">
                                         <div class="dashboard-widget-box">
-                                            <figure><i class="fa fa-file-text-o"></i></figure>
+                                            <figure><i class="fa fa-file-text-o <?=$all_documents_approval ? 'start_animation' : '';?>"></i></figure>
                                             <h2 class="post-title" style="margin: 2px 0;">
                                                 <a href="<?php echo base_url('hr_documents_management/approval_documents') ?>">Approval Documents</a>
                                             </h2>

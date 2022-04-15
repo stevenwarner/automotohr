@@ -6739,11 +6739,28 @@ class Hr_documents_management_model extends CI_Model {
         return $return_data;
     }
 
+    public function GetMyAcceptedAndRejected ($employee_sid) {
+        //
+        $this->db->select('sid, portal_document_assign_sid, assign_on, note as approval_note, approval_status, action_date');
+        $this->db->where('assigner_sid', $employee_sid);
+        $this->db->where('approval_status <> ', NULL);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
     public function getAssignApprovalDocumentInfo ($document_sid) {
         //
         $this->db->select('flow_json, document_type, document_sid, user_sid, user_type, assigner_note');
         $this->db->where('sid', $document_sid);
-        $this->db->where('assign_status', 1);
+        $this->db->where('assign_status <>', 0);
         $record_obj = $this->db->get('portal_document_assign_flow');
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
@@ -6814,6 +6831,23 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->select('*');
         $this->db->where('sid', $document_sid);
         $this->db->where('assign_status', 1);
+        $record_obj = $this->db->get('portal_document_assign_flow');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function getAllDocumentInfo ($document_sid) {
+        //
+        $this->db->select('*');
+        $this->db->where('sid', $document_sid);
+        $this->db->where('assign_status <>', 0);
         $record_obj = $this->db->get('portal_document_assign_flow');
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
@@ -6898,6 +6932,73 @@ class Hr_documents_management_model extends CI_Model {
         }
 
         return $return_data;
+    }
+
+    /**
+     * 
+     */
+    function DisableAssignedOfferLetter(
+        $userId,
+        $userType
+    ){
+        // Get the ids
+        $q =  $this->db
+        ->select('sid')
+        ->where([
+            'user_sid' => $userId,
+            'user_type' => $userType
+        ])->get('portal_document_assign_flow')->result_array();
+        //
+        if(empty($q)){
+            return true;
+        }
+        //
+        $ids = array_column($q, 'sid');
+        //
+        $this->db
+        ->where([
+            'user_sid' => $userId,
+            'user_type' => $userType
+        ])
+        ->update('portal_document_assign_flow', [
+            'status' => 0,
+            'assign_status' => 0
+        ]);
+        //
+        $this->db
+        ->where_in('portal_document_assign_sid', $ids)
+        ->update('portal_document_assign_flow_employees', [
+            'status' => 0,
+            'assigner_turn' => 0
+        ]);
+    }
+
+    /**
+     * Get the ids of all the documents
+     * 
+     * @param number $userId
+     * @param string $userType
+     * @return
+     */
+    function GetFlowDocumentIds(
+        $userId, 
+        $userType
+    ){
+        //
+        $q = $this->db
+        ->select('sid')
+        ->where([
+            'user_sid' => $userId,
+            'user_type' => $userType
+        ])
+        ->get('portal_document_assign_flow')
+        ->result_array();
+        //
+        if(empty($q)){
+            return [];
+        }
+        //
+        return array_column($q, 'sid');
     }
 
 }

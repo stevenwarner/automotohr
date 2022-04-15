@@ -25,49 +25,75 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th class="col-lg-2">Document Title</th>
-                                    <th class="col-lg-2 hidden-xs">Employee/Applicant</th>
-                                    <th class="col-lg-2 hidden-xs">Type</th>
-                                    <th class="col-lg-2 hidden-xs">Note</th>
-                                    <th class="col-lg-4 col-xs-12 text-center">Actions</th>
+                                    <th class="col-lg-2 text-right">Employee/Applicant</th>
+                                    <th class="col-lg-2">Document</th>
+                                    <th class="col-lg-2">Note</th>
+                                    <th class="col-lg-2">Assign/Action Dates</th>
+                                    <th class="col-lg-2">Status</th>
+                                    <th class="col-lg-4 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if(isset($assign_approvals) && !empty($assign_approvals)) { ?>
                                     <?php foreach ($assign_approvals as $key => $document) { ?>
+                                        <?php 
+                                            //
+                                            $status = 'Pending';
+                                            $statusClass = 'text-warning';
+                                            //
+                                            if(isset($document['approval_note'])){
+                                                if($document['approval_status'] == 'Approve'){
+                                                    $status = 'Approved';
+                                                    $statusClass = 'text-success';
+                                                }
+                                                else if($document['approval_status'] == 'Reject'){
+                                                    $status = 'Rejected';
+                                                    $statusClass = 'text-danger';
+                                                }
+                                            }
+                                        ?>
                                         <tr>
-                                            <td class="">
-                                                <?php
-                                                    echo $document['document_title'];
-                                                    echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
-                                                    if (isset($document['assign_on']) && $document['assign_on'] != '0000-00-00 00:00:00') {
-                                                        echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assign_on'], '_this' => $this));
-                                                    }
-                                                ?>
-                                            </td>
-                                            <td>
+                                            <td class="vam">
                                                 <?php 
                                                     if ($document['user_type'] == "employee") {
                                                         echo getUserNameBySID($document['user_sid']);
                                                     } else {
                                                         echo getApplicantNameBySID($document['user_sid']);
                                                     }
+                                                    echo ' ['.ucfirst($document['user_type']).']';
                                                 ?>
                                             </td>
-                                            <td>
-                                                <?php 
-                                                    echo ucfirst($document['user_type']);
+                                            <td class="vam">
+                                                <?php
+                                                    echo $document['document_title'];
+                                                    echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter / Pay Plan)</b>' : '';
+                                                    
                                                 ?>
                                             </td>
-                                            <td>
+                                            <td class="vam">
                                                 <?php 
                                                     echo implode(' ', array_slice(explode(' ', $document['note']), 0, 10));
                                                 ?>
                                             </td>
-                                            <td class="text-center hidden-xs">
+                                            <td class="vam">
+                                                <?php 
+                                                    if (isset($document['assign_on']) && $document['assign_on'] != '0000-00-00 00:00:00') {
+                                                        echo "<br><b>Assigned on: </b>" . reset_datetime(array('datetime' => $document['assign_on'], '_this' => $this));
+                                                    }
+                                                    if (isset($document['approval_note'])) {
+                                                        echo "<br><b>Action taken on: </b>" . reset_datetime(array('datetime' => $document['action_date'], '_this' => $this));
+                                                    }
+                                                ?>
+                                            </td>
+                                            <td class="vam <?=$statusClass;?>">
+                                                <strong><?=$status;?></strong>
+                                            </td>
+                                            <td class="text-center vam">
+                                                <?php if(!isset($document['approval_note'])): ?>
                                                 <a href="javascript:;" data-action="approve" data-sid="<?php echo $document['assigner_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
                                                 <a href="javascript:;" data-action="reject" data-sid="<?php echo $document['assigner_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
-                                                <a target="_blank" href="<?php echo $document_d_base . '/' . $document['portal_document_assign_sid']; ?>" class="btn btn-info csRadius5"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Document Details</a> 
+                                                <?php endif; ?>
+                                                <a target="_blank" href="<?php echo $document_d_base . '/' . $document['portal_document_assign_sid']; ?>" class="btn btn-info csRadius5"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Document</a> 
                                             </td>
                                         </tr>           
                                     <?php } ?>    

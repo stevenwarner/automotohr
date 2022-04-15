@@ -1,26 +1,35 @@
 <?php
     $jsonToArray = json_decode($document_info['flow_json'], true); 
-    //
 ?>
 <div class="main csPageWrap">
     <div class="container">
          <!-- row -->
          <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-6 col-xs-12">
                 <a href="<?=base_url('hr_documents_management/approval_documents');?>" class="btn btn-info csRadius5">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back To Approval Documents
                 </a>
+            </div>
+            <div class="col-sm-6 col-xs-12 text-right">
+                <?php if(empty($currentAssigner['approval_status'])): ?>
+                <a href="javascript:;" data-action="approve" data-sid="<?php echo $currentAssignerId; ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
+                <a href="javascript:;" data-action="reject" data-sid="<?php echo $currentAssignerId; ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
+                <?php endif; ?>
             </div>
         </div>
         <!--  -->
         <div class="row">
             <br>
-            <div class="col-sm-12 col-md-6">
-                <h2 class="csF20 csB7">Basic</h2>
+            <div class="col-sm-12">
+                <!--  -->
+                <?php $this->load->view('document_view'); ?>
             </div>
-            <div class="col-md-6 col-sm-12 text-right" style="margin-top: 30px;">
-                <a href="javascript:;" data-action="approve" data-sid="<?php echo $currentAssignerId; ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
-                <a href="javascript:;" data-action="reject" data-sid="<?php echo $currentAssignerId; ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
+        </div>
+        <!--  -->
+        <div class="row">
+            <br>
+            <div class="col-sm-12 col-md-12">
+                <h2 class="csF20 csB7">Basic</h2>
             </div>
         </div>
         <!--  -->
@@ -90,7 +99,6 @@
                         </table>
                     </div>
                 </div>
-
             </div>
         </div>
         <!--  -->
@@ -108,15 +116,31 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th class="col-lg-4">Employee Name</th>
-                                    <th class="col-lg-2">Assigned On</th>
+                                    <th class="col-lg-4">Employee</th>
+                                    <th class="col-lg-2">Assign/Action Dates</th>
                                     <th class="col-lg-2">Status</th>
-                                    <th class="col-lg-2">Action Date</th>
+                                    <th class="col-lg-2">Comment</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if(isset($assigners) && !empty($assigners)) { ?>
                                     <?php foreach ($assigners as $assigner) { ?>
+                                        <?php 
+                                            //
+                                            $status = 'Pending';
+                                            $statusClass = 'text-warning';
+                                            //
+                                            if(isset($assigner['note'])){
+                                                if($assigner['approval_status'] == 'Approve'){
+                                                    $status = 'Approved';
+                                                    $statusClass = 'text-success';
+                                                }
+                                                else if($assigner['approval_status'] == 'Reject'){
+                                                    $status = 'Rejected';
+                                                    $statusClass = 'text-danger';
+                                                }
+                                            }
+                                        ?>
                                         <tr>
                                             <td>
                                                 <?php 
@@ -126,23 +150,16 @@
                                             <td>
                                                 <?php 
                                                     if (isset($assigner['assign_on']) && $assigner['assign_on'] != '0000-00-00 00:00:00') {
-                                                        echo reset_datetime(array('datetime' => $assigner['assign_on'], '_this' => $this));
+                                                        echo '<strong>Assigned on: </strong>'.reset_datetime(array('datetime' => $assigner['assign_on'], '_this' => $this));
                                                     }
-                                                ?>
-                                            </td>
-                                            <td>
-                                                <?php 
-                                                    echo $assigner['approval_status'] ? $assigner['approval_status'] : 'Pending';
-                                                ?>
-                                            </td>
-                                            <td>
-                                                <?php 
                                                     if (isset($assigner['action_date']) && $assigner['action_date'] != '0000-00-00 00:00:00') {
-                                                        echo reset_datetime(array('datetime' => $assigner['action_date'], '_this' => $this));
-                                                    }else{
-                                                        echo '-';
+                                                        echo '<br /><strong>Action taken on: </strong>'.reset_datetime(array('datetime' => $assigner['action_date'], '_this' => $this));
                                                     }
                                                 ?>
+                                            </td>
+                                            <td class="<?=$statusClass;?>"><strong><?=$status;?></strong>
+                                            </td>
+                                            <td><?=isset($assigner['note']) ? $assigner['note'] : '-';?>
                                             </td>
                                         </tr>           
                                     <?php } ?>    
@@ -157,6 +174,7 @@
                 </div>
             </div>
         </div>
+        
     </div>
 </div>        
 

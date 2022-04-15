@@ -3731,6 +3731,11 @@ class Hr_documents_management extends Public_Controller {
             $data['EeocFormStatus'] = $data['session']['portal_detail']['eeo_form_profile_status'];
 			
             $data['pp_flag'] = $pp_flag;
+            // Get all the flow document ids
+            // $data['flowDocumentIds'] = $this->hr_documents_management_model->GetFlowDocumentIds(
+            //     $user_sid,
+            //     $user_type
+            // );
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
@@ -9375,8 +9380,7 @@ class Hr_documents_management extends Public_Controller {
             $ins['uploaded_document_original_name'] = $post['file']['name'];
         }
         //
-        // $insertId = $this->hr_documents_management_model->insertOfferLetterSpecific($ins);
-        $insertId = 11;
+        $insertId = $this->hr_documents_management_model->insertOfferLetterSpecific($ins);
         //
         $resp = array(
             'Status' => FALSE,
@@ -9404,6 +9408,11 @@ class Hr_documents_management extends Public_Controller {
                         }
                     }
                 }
+                // Disable previous offer letters
+                $this->hr_documents_management_model->DisableAssignedOfferLetter(
+                    $post['EmployeeSid'],
+                    $post['Type']
+                );
                 //
                 $a = [];
                 $a['company_sid'] = $post['CompanySid'];
@@ -9458,7 +9467,6 @@ class Hr_documents_management extends Public_Controller {
                         isset($post['assigner_note']) ? $post['assigner_note'] : '',
                         $approvalEmployees
                     );
-
                 } else {
                     //
                     $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
@@ -12240,6 +12248,9 @@ class Hr_documents_management extends Public_Controller {
         check_access_permissions($security_details, 'dashboard', 'private_messages');
         //
         $assign_approvals = $this->hr_documents_management_model->getMyAssignApprovalInfo($employer_sid);
+        $ar = $this->hr_documents_management_model->GetMyAcceptedAndRejected($employer_sid);
+        //
+        $assign_approvals = array_merge($assign_approvals, $ar);
         //
         if(!empty($assign_approvals)) {
             foreach ($assign_approvals as $a_key => $approval) {
@@ -12379,6 +12390,8 @@ class Hr_documents_management extends Public_Controller {
                 $this->hr_documents_management_model->disableApproverAssignDocs($assignedId, ['status' => 0, 'assigner_turn' => 0]);
                 //
                 $user_info = $this->hr_documents_management_model->get_employee_information($documentInfo['company_sid'], $documentInfo['assigned_by']);
+                // Get approvers saying
+                $getAllDocumentAssigners = $this->hr_documents_management_model->getAllDocumentAssigners($assignedId);
                 // Send Email
                 $this->SendEmailToDocumentApprover(
                     $assignerName,
@@ -12389,7 +12402,8 @@ class Hr_documents_management extends Public_Controller {
                     $documentInfo['assigner_note'],
                     getCompanyNameBySid($documentInfo['company_sid']),
                     $hf,
-                    HR_DOCUMENTS_APPROVAL_FLOW_APPROVED
+                    HR_DOCUMENTS_APPROVAL_FLOW_APPROVED,
+                    $getAllDocumentAssigners
                 );
                 //
                 $sendArray = $document_info;
@@ -12426,28 +12440,29 @@ class Hr_documents_management extends Public_Controller {
             $data['security_details'] = $security_details;
             check_access_permissions($security_details, 'dashboard', 'private_messages');
             //
-            $document_info = $this->hr_documents_management_model->getApprovedDocumentInfo($document_sid);
+            $document_info = $this->hr_documents_management_model->getAllDocumentInfo($document_sid);
+            //
+            if(empty($document_info)){
+                return redirect('hr_documents_management/approval_documents');
+            }
             $document_assigners = $this->hr_documents_management_model->getAllDocumentAssigners($document_sid);
             //
             $jsonToArray = json_decode($document_info['flow_json'], true);
             //
             $currentAssignerId = 0;
-            $currentAssignerStatus = 0;
+            $currentAssigner = [];
             //
             foreach($document_assigners as $assi){
                 //
                 if($assi['assigner_sid'] == $employer_detail['sid']){
                     $currentAssignerId = $assi['sid'];
-                    $currentAssignerStatus = $assi['approval_status'];
+                    $currentAssigner = $assi;
                 }
-            }
-            //
-            if(!empty($currentAssignerStatus)){
-                return redirect('hr_documents_management/approval_documents');
             }
             //
             $data["page"] = "view";
             $data["document_info"] = $document_info;
+            $data["currentAssigner"] = $currentAssigner;
             $data["currentAssignerId"] = $currentAssignerId;
             $data["document_title"] = $jsonToArray["document_title"];
             $data["document_type"] = $document_info["document_type"];
