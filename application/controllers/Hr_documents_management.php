@@ -3645,6 +3645,24 @@ class Hr_documents_management extends Public_Controller {
                 $data['session']['employer_detail'],
                 $employeeDepartments
             );
+            $data['no_action_required_documents'] =
+            cleanAssignedDocumentsByPermission(
+                $data['no_action_required_documents'],
+                $data['session']['employer_detail'],
+                $employeeDepartments
+            );
+            $data['no_action_required_payroll_documents'] =
+            cleanAssignedDocumentsByPermission(
+                $data['no_action_required_payroll_documents'],
+                $data['session']['employer_detail'],
+                $employeeDepartments
+            );
+             
+            // _e($data['assigned_documents'], true);
+            // _e($data['completed_offer_letter'], true);
+            // _e($data['uncompleted_payrolls'], true);
+            // _e($data['completed_payroll_documents'], true);
+            // _e($data['categories_documents_completed'], true);
 
             // Set completed/not completes/ no action required 
             // documents
@@ -3667,10 +3685,6 @@ class Hr_documents_management extends Public_Controller {
             // Fetch All Company Managers
             $managers_list = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, $employer_sid);
             $data['managers_list'] = $managers_list;
-            
-            // _e($assigned_offer_letters, true);
-            // _e($data['completed_payrolls'], true);
-            // _e($data['uncompleted_payrolls'], true);
             
             $data['offer_letters'] = $this->hr_documents_management_model->get_all_offer_letters($company_sid, 0);
             $data['current_user_signature'] = $this->hr_documents_management_model->get_current_user_signature($company_sid, 'employee', $employer_sid);
