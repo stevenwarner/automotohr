@@ -1249,7 +1249,15 @@ class Calendar extends Public_Controller {
         // Check for event sid
         if($event_token){
             // Load encrypt class
-            $this->load->library('encrypt');
+           
+            if(version_compare(PHP_VERSION, '7.0', '>=')){
+                $encrypt = "encryption";
+             }else{
+                $encrypt = "encrypt";
+              }
+              
+             $this->load->library('encryption', 'encrypt');
+
             // Decode event_token
             $event_token = $this->encrypt->decode(str_replace( '$eb$eb$', '/', $event_token));
             // Explode event token
@@ -2076,7 +2084,15 @@ class Calendar extends Public_Controller {
         // Load encryption class
         // to encrypt employee/applicant id
         // and email
-        $this->load->library('encrypt');
+
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $encrypt = "encryption";
+         }else{
+            $encrypt = "encrypt";
+          }
+
+          $this->load->library('encryption', 'encrypt');
+
         $base_url = base_url().'event/';
         // Set event code string
         $string_conf = 'id='.$user_sid.':eid='.$event_sid.':etype='.$event_type.':type=confirmed:name='.$user_name.':email='.$user_email;

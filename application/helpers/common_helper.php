@@ -6401,7 +6401,17 @@ if (!function_exists('generate_event_status_rows')) {
         // Load encryption class
         // to encrypt employee/applicant id
         // and email
-        $_this->load->library('encrypt');
+
+
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $encrypt = "encryption";
+         }else{
+            $encrypt = "encrypt";
+          }
+          
+         $_this = get_instance();
+         $_this->load->library($encrypt);
+
         $base_url = base_url() . 'event/';
         // Set event code string
         $string_conf = 'id=' . $user_sid . ':eid=' . $event_sid . ':etype=' . $event_type . ':type=confirmed:name=' . $user_name . ':email=' . $user_email;
@@ -6411,12 +6421,32 @@ if (!function_exists('generate_event_status_rows')) {
             $string_attended = 'id=' . $user_sid . ':eid=' . $event_sid . ':etype=' . $event_type . ':type=attended:name=' . $user_name . ':email=' . $user_email;
         // Set encoded string
         $short_url = array();
-        $short_url['conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_conf));
-        $short_url['not-conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
-        $short_url['res'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_reschedule));
+       
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $short_url['conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_conf));
+            $short_url['not-conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_notconf));
+            $short_url['res'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_reschedule));
+           
+        }else{
+          
+            $short_url['conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_conf));
+            $short_url['not-conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
+            $short_url['res'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_reschedule));
+        }
+
+       
+       
         $enc_string_conf = $short_url['conf'];
         if ($event_category == 'training-session') {
-            $short_url['att'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_attended));
+            if(version_compare(PHP_VERSION, '7.0', '>=')){
+                $short_url['att'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_attended));
+            }else{
+                $short_url['att'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_attended));
+            }
+           
+
+           
+           
             $enc_string_attended = $short_url['att'];
         }
         $enc_string_notconf  = $short_url['not-conf'];
@@ -6923,12 +6953,26 @@ if (!function_exists('send_calendar_email')) {
         $event_address_row .= '</tr>';
 
         // Set calendar download links
-        $_this->load->library('encrypt');
-
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $encrypt = "encryption";
+         }else{
+            $encrypt = "encrypt";
+          }
+          $_this = get_instance();
+          $_this->load->library($encrypt);
+          
+        
         // Create event link btn
         // Encode event_token
-        $event_token = str_replace('/', '$eb$eb$', $_this->encrypt->encode($event_details['sid'] . ':' . $event_details['company_id']));
-        // Set event link
+      
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+              $event_token = str_replace('/', '$eb$eb$', $_this->encryption->encrypt($event_details['sid'] . ':' . $event_details['company_id']));    
+            }else{
+            $event_token = str_replace('/', '$eb$eb$', $_this->encrypt->encode($event_details['sid'] . ':' . $event_details['company_id']));
+              
+        }
+      // Set event link
+       
         $event_link = base_url('calendar/my_events/' . ($event_token) . '');
         // Create event link button
         $event_link_btn = '<a href="' . ($event_link) . '"
@@ -7082,7 +7126,6 @@ if (!function_exists('send_calendar_email')) {
         $email_message .= '{{CALENDAR_ROWS}}';
         $email_message .= $table_end;
         $email_message .= $message_hf['footer'];
-
         // _e($with_info_box, true);
         // _e($email_message, true, true);
 
@@ -7191,9 +7234,17 @@ if (!function_exists('send_calendar_email')) {
                 $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $user_email_status_button_rows, $user_message);
 
                 // Set calendar
-                $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
-                $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
-                $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
+                if(version_compare(PHP_VERSION, '7.0', '>=')){
+                    $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
+                    $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
+                    $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
+                }else{
+                  
+                    $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
+                    $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
+                    $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($v0['value']) . '&uemail=' . ($v0['email_address']) . '&utype=' . ($v0['type']) . '&uid=' . ($v0['id']) . '&eid=' . $event_details['sid'])));
+                }
+                     
                 $calendar_rows  = '<tr>';
                 $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
@@ -7390,9 +7441,18 @@ if (!function_exists('send_calendar_email')) {
             $user_message = str_replace('{{PERSON_NAME}}', ucwords($p_name), $user_message);
             // Set calendar
             if ($action != 'confirm') {
-                $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
-                $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
-                $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+               
+
+                if(version_compare(PHP_VERSION, '7.0', '>=')){
+                    $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                    $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                    $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                 }else{
+                    $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                    $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                    $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                 }
+                 
                 $calendar_rows  = '<tr>';
                 $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
@@ -7515,9 +7575,20 @@ if (!function_exists('send_calendar_email')) {
             $user_message = str_replace('{{user_name}}', $uname, $user_message);
 
             // Set calendar
-            $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
-            $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
-            $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+            
+            if(version_compare(PHP_VERSION, '7.0', '>=')){
+                $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+            }else{
+              
+                $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($uname) . '&uemail=' . ($uemail) . '&utype=' . ($utype) . '&uid=' . ($uid) . '&eid=' . $event_details['sid'])));
+                  }
+           
+           
+           
             $calendar_rows  = '<tr>';
             $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
             $calendar_rows .= '</tr>';
@@ -7648,9 +7719,16 @@ if (!function_exists('send_calendar_email')) {
                 // $_this->_e($user_message, true);
 
                 // Set calendar
-                $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
-                $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
-                $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
+                if(version_compare(PHP_VERSION, '7.0', '>=')){
+                    $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
+                    $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
+                    $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
+                }else{
+                    $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
+                    $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
+                     $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&uname=' . ($employer_name) . '&uemail=' . ($employer['email']) . '&utype=interviewer&uid=' . ($employer['sid']) . '&eid=' . $event_details['sid'])));
+                  
+                }
                 $calendar_rows  = '<tr>';
                 $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
                 $calendar_rows .= '</tr>';
@@ -7782,9 +7860,20 @@ if (!function_exists('send_calendar_email')) {
                     $user_message = str_replace('{{EMAIL_STATUS_BUTTONS}}', $extrainterviewer_email_status_button_rows, $user_message);
 
                     // Set calendar
-                    $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
-                    $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
-                    $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
+                     
+                    if(version_compare(PHP_VERSION, '7.0', '>=')){
+                        $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
+                        $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
+                        $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
+                    
+                    }else{
+                        $download_url_vcs = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
+                        $download_url_ics = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
+                        $download_url_gc  = base_url('download-event') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&utype=extrainterviewer&uname=' . ($event_external_participant['name']) . '&uemail=' . ($event_external_participant['email']) . '&uid=0&eid=' . $event_details['sid'])));
+                    }
+                    
+                    
+                    
                     $calendar_rows  = '<tr>';
                     $calendar_rows .= '     <td><br /><strong>Calendar event</strong><br /><br /></td>';
                     $calendar_rows .= '</tr>';
@@ -7916,7 +8005,15 @@ if (!function_exists('generate_vcs_file_for_event')) {
     {
         $_this = get_instance();
         // Load encryption library
-        $_this->load->library('encrypt');
+   
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $encrypt = "encryption";
+         }else{
+            $encrypt = "encrypt";
+          }
+         
+          $_this->load->library($encrypt);
+
         // Loads calendar modal
         $_this->load->model('calendar_model', 'cm');
         $event_details = $_this->cm->get_event_detail_for_frontend($event_sid);
@@ -8014,13 +8111,31 @@ if (!function_exists('generate_vcs_file_for_event')) {
         if (strtolower($event_details['category_uc']) == 'training-session')
             $string_attended = 'id=' . $user_id . ':eid=' . $event_sid . ':etype=' . $event_type . ':type=attended:name=' . $user_name . ':email=' . $user_email;
         // Set encoded string
-        $enc_string_conf = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_conf));
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $enc_string_conf = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_conf));
+      
+        }else{
+            $enc_string_conf = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_conf));
+          }
         //
         if (strtolower($event_details['category_uc']) == 'training-session')
+      
+
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+               
+            $enc_string_attended = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_attended));
+            $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_notconf));
+            $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->enencryptcode($string_reschedule));
+    
+        }else{
             $enc_string_attended = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_attended));
-        //
-        $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
-        $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_reschedule));
+            $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
+            $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_reschedule));
+      
+        }
+
+
+
 
         $details .= "Event Links:{$ss}";
 
@@ -8649,7 +8764,14 @@ if (!function_exists('send_admin_calendar_email_template')) {
 
         // Generate calendar download links
         // Set calendar download links
-        $_this->load->library('encrypt');
+      
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $encrypt = "encryption";
+         }else{
+            $encrypt = "encrypt";
+          }
+          $_this = get_instance();
+          $_this->load->library($encrypt);
         // Set template
         $body = '';
 
@@ -8787,9 +8909,20 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 $uname = $v0['value'];
                 $utype = $e_type;
                 // Create calendar links
-                $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+               
+                if(version_compare(PHP_VERSION, '7.0', '>=')){
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                 }else{
+                  
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                }
+        
+
+                
                 $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
@@ -8887,9 +9020,18 @@ if (!function_exists('send_admin_calendar_email_template')) {
             $user_message = str_replace('{{TO_USER_NAME}}', ucwords($cmpl), $user_message);
             $user_message = str_replace('{{WITH_NAME}}', ucwords($user_name), $user_message);
             // Create calendar links
-            $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
-            $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
-            $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
+           
+            if(version_compare(PHP_VERSION, '7.0', '>=')){
+                $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
+              }else{
+                $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $email_address . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                   }
+    
+           
             $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
@@ -8930,9 +9072,17 @@ if (!function_exists('send_admin_calendar_email_template')) {
             $user_message = str_replace('{{WITH_NAME}}', ucwords($creator_first_name . ' ' . $creator_last_name), $user_message);
 
             // Create calendar links
-            $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
-            $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
-            $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+           
+            if(version_compare(PHP_VERSION, '7.0', '>=')){
+                $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+               }else{
+                $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $cmpl . '&uemail' . $user_email . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                }
+            
             $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
             $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
@@ -8995,9 +9145,20 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 $uname = strtolower($v0['first_name'] . ' ' . $v0['last_name']);
                 $uemail = $v0['email_address'];
                 // Create calendar links
-                $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                
+                if(version_compare(PHP_VERSION, '7.0', '>=')){
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                  }else{
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                        }
+        
+                
+                
+                
                 $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
@@ -9063,9 +9224,19 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 $uname = strtolower($v0['external_participant_name']);
                 $uemail = $v0['external_participant_email'];
                 // Create calendar links
-                $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+               
+                
+                if(version_compare(PHP_VERSION, '7.0', '>=')){
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                }else{
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                      }
+        
+                
                 $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
@@ -9120,9 +9291,18 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 $uname = strtolower($v0['first_name'] . ' ' . $v0['last_name']);
                 $uemail = $v0['email_address'];
                 // Create calendar links
-                $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+              
+                if(version_compare(PHP_VERSION, '7.0', '>=')){
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                }else{
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                      }
+        
+                              
                 $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
@@ -9178,9 +9358,18 @@ if (!function_exists('send_admin_calendar_email_template')) {
                 $uname = strtolower($v0['name']);
                 $uemail = $v0['email_address'];
                 // Create calendar links
-                $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
-                $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+               
+                if(version_compare(PHP_VERSION, '7.0', '>=')){
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                   
+                }else{
+                    $download_url_vcs = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=vcs&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_ics = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=ics&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                    $download_url_gc  = base_url('download-event-file') . '/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode('type=gc&eid=' . $event_sid . '&uname=' . $uname . '&uemail' . $uemail . '=&utype=' . $utype . '&uid=' . $uid . '')));
+                     }
+                        
                 $calendar_rows  = '<tr><td><br /><strong>Calendar event</strong><br /><br /></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/outlook.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_vcs) . '">Add to Outlook Calendar</a></td></tr>';
                 $calendar_rows .= '<tr><td><img src="' . (base_url('assets/calendar_icons/google.png')) . '" width="20"/>&nbsp;&nbsp;<a href="' . ($download_url_gc) . '">Add to Google Calendar</a></td></tr>';
@@ -9222,7 +9411,14 @@ if (!function_exists('generate_admin_status_rows')) {
         // Load encryption class
         // to encrypt employee/applicant id
         // and email
-        $_this->load->library('encrypt');
+        
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $encrypt = "encryption";
+         }else{
+            $encrypt = "encrypt";
+          }
+          $_this = get_instance();
+          $_this->load->library($encrypt);
         $base_url = base_url('event-detail') . '/';
         // Set event code string
         $string_conf = 'id=' . $user['user_id'] . ':eid=' . $event['event_sid'] . ':etype=' . (strtolower($event['event_type'])) . ':status=confirmed:type=' . ($user['type']) . ':name=' . $user['name'] . ':email=' . $user['email_address'];
@@ -9230,9 +9426,15 @@ if (!function_exists('generate_admin_status_rows')) {
         $string_reschedule = 'id=' . $user['user_id'] . ':eid=' . $event['event_sid'] . ':etype=' . (strtolower($event['event_type'])) . ':status=reschedule:type=' . ($user['type']) . ':name=' . $user['name'] . ':email=' . $user['email_address'];
 
         // Set encoded string
-        $enc_string_conf = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_conf));
-        $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
-        $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_reschedule));
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $enc_string_conf = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_conf));
+            $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_notconf));
+            $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_reschedule));
+          }else{
+            $enc_string_conf = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_conf));
+            $enc_string_notconf  = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
+            $enc_string_reschedule = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_reschedule));
+          }
 
         // Set button rows
         $button_rows = '';
@@ -9285,7 +9487,13 @@ if (!function_exists('generate_admin_vcs_file_for_event')) {
     {
         $_this = get_instance();
         // Load encryption library
-        $_this->load->library('encrypt');
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $encrypt = "encryption";
+         }else{
+            $encrypt = "encrypt";
+          }
+     
+          $_this->load->library($encrypt);
         // Loads calendar modal
         $_this->load->model('manage_admin/dashboard_model', 'cm');
         $event = $_this->cm->event_detail($event_sid);
@@ -10221,10 +10429,22 @@ if (!function_exists('sendEmailToUpdatePhoneNumber')) {
         // Get template header and footer
         $hf = message_header_footer($dataArray['companyId'], ucwords($dataArray["companyName"]));
         //
-        $_this->load->library('encrypt');
+       
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $encrypt = "encryption";
+         }else{
+            $encrypt = "encrypt";
+          }
+          $_this = get_instance();
+          $_this->load->library($encrypt);
         //
         $uri_public_string = 'id=' . $dataArray['sid'] . ':type=' . ($dataArray['type']) . ':cid=' . ($dataArray['companyId']) . ':cname=' . (strtolower($dataArray['companyName'])) . '';
-        $uri_public_string_enc = base_url('modify/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode($uri_public_string))) . '');
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+           $uri_public_string_enc = base_url('modify/' . (str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($uri_public_string))) . '');
+         }else{
+           $uri_public_string_enc = base_url('modify/' . (str_replace('/', '$eb$eb$1', $_this->encrypt->encode($uri_public_string))) . '');
+         } 
+       
         //
         $body = '';
         $body .= '<div style="float: left; width: 100%; padding: 10px;">';

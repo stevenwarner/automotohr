@@ -144,7 +144,13 @@ class Common_ajax extends Public_Controller{
         //
         $time = strtotime('+10 days');
         //
-        $encryptedKey = $this->encrypt->encode($insertId.'/'.$user_id.'/'.$user_type.'/'.$time.'/'.$type);
+       if(version_compare(PHP_VERSION, '7.0', '>=')){
+           $encryptedKey = $this->encryption->encrypt($insertId.'/'.$user_id.'/'.$user_type.'/'.$time.'/'.$type);
+        }else{
+            $encryptedKey = $this->encrypt->encode($insertId.'/'.$user_id.'/'.$user_type.'/'.$time.'/'.$type);
+        }
+
+
         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
         //
         replace([
