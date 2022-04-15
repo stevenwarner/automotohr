@@ -11632,7 +11632,7 @@ if(!function_exists('cleanDocumentsByPermission')){
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
-        if($role == 'admin') return;
+        // if($role == 'admin') return;
         //
         if($withCategories){
             //
@@ -11996,7 +11996,7 @@ if(!function_exists('cleanAssignedDocumentsByPermission')){
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
-        if($role == 'admin') return $documents;
+        // if($role == 'admin') return $documents;
         //
         foreach($documents as $k0 => $document){
             //
