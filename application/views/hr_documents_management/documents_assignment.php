@@ -466,10 +466,12 @@
                                     <div class="hr-box">
                                         <div class="hr-box-header">
                                             All Document
-                                            <?php if ($action_btn_flag == true) { ?>
+                                            <?php if ($action_btn_flag == true || $canAccessDocument) { ?>
                                                 <button type="button" onclick="open_uploaded_model();" class="btn btn-success pull-right">Manual Document Upload</button>
-                                                <button type="button" class="btn btn-success pull-right js-offer-letter-btn" style="margin-right: 10px;">Add Offer Letter / Pay Plan</button>
-                                                <a href="<?=base_url('hr_documents_management/add_document/'.( $user_type ).'/'.( $EmployeeSid ).'');?>" class="btn btn-success pull-right" style="margin-right: 10px;">Add Document</a>
+                                                <?php if ($action_btn_flag == true) { ?>
+                                                    <button type="button" class="btn btn-success pull-right js-offer-letter-btn" style="margin-right: 10px;">Add Offer Letter / Pay Plan</button>
+                                                    <a href="<?=base_url('hr_documents_management/add_document/'.( $user_type ).'/'.( $EmployeeSid ).'');?>" class="btn btn-success pull-right" style="margin-right: 10px;">Add Document</a>
+                                                <?php } ?>    
                                                 <a href="<?=base_url('hr_documents_management/add_history_documents/'.( $user_type ).'/'.( $EmployeeSid ).'');?>" class="btn btn-success pull-right"  style="margin-right: 10px;">Assign Bulk Documents</a>
                                             <?php } ?>    
                                         </div>
