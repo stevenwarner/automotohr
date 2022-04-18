@@ -449,10 +449,41 @@ class Dashboard extends Public_Controller {
             $eventCountToday            = $this->dashboard_model->company_employee_events_count($company_id, $employer_id, $today_start, $today_end);
             $incident_count             = $this->dashboard_model->assigned_incidents_count($employer_id, $company_id);
             $unreadMessageCount         = $this->dashboard_model->get_all_unread_messages_count($employer_id); //Messages
+            //
             $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
             $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
             $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
-
+            //
+            // Authorized Check
+            $data['AuthorizedDocuments'] = [];
+            $data['AuthorizedDocuments']['Today'] = $total_assigned_today_doc;
+            $data['AuthorizedDocuments']['Pending'] = $total_pending_auth_doc;
+            $data['AuthorizedDocuments']['Total'] = $total_assigned_auth_doc;
+             //    
+            $data['total_assigned_today_doc']   = $total_assigned_today_doc;
+            $data['total_pending_auth_doc']     = $total_pending_auth_doc;
+            $data['total_assigned_auth_doc']    = $total_assigned_auth_doc;
+            //
+            // For verification documents
+            //
+            if($employer_detail['access_level_plus'] || $employer_detail['pay_plan_plus']){
+                // Pending Employer Sections
+                $data['PendingEmployerSection'] = [];
+                $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
+                $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
+                $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail'], $companyEmployeesForVerification);
+                //
+                $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
+                $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
+                $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail'], $companyApplicantsForVerification);
+                //
+                $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
+            } else {
+                $data['PendingEmployerSection']['Total'] = 0;
+                $data['PendingEmployerSection']['Employee'] = 0;
+                $data['PendingEmployerSection']['Applicant'] = 0;
+            }
+            //
             $data['messages']                   = $messages;
             $data['eventCount']                 = $eventCount;
             $data['has_announcements']          = $announcements;
@@ -461,12 +492,9 @@ class Dashboard extends Public_Controller {
             $data['eventCountToday']            = $eventCountToday; //count($all_company_events_today);
             $data['unreadMessageCount']         = $unreadMessageCount;
             $data['training_session_count']     = $training_session_count + $online_video_count ;
-            $data['total_assigned_today_doc']   = $total_assigned_today_doc;
-            $data['total_pending_auth_doc']     = $total_pending_auth_doc;
-            $data['total_assigned_auth_doc']    = $total_assigned_auth_doc;
-
+            //
             $this->load->model('timeoff_model');
-
+            //
             $data['timeOffDays'] = $this->timeoff_model->getTimeOffDays($data['session']['company_detail']['sid']);
             //
             $data['theme'] = 2;
@@ -474,33 +502,6 @@ class Dashboard extends Public_Controller {
             $this->load->model('performance_management_model', 'pmm');
             $data['review'] = $this->pmm->getMyReviewCounts($data['session']['company_detail']['sid'], $employer_id);
             $data['total_goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
-
-        
-
-            // Authorized Check
-            $data['AuthorizedDocuments'] = [];
-            $data['AuthorizedDocuments']['Today'] = $total_assigned_today_doc;
-            $data['AuthorizedDocuments']['Pending'] = $total_pending_auth_doc;
-            $data['AuthorizedDocuments']['Total'] = $total_assigned_auth_doc;
-            // $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
-            // $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
-            // $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
-
-            
-            
-            // Pending Employer Sections
-            $data['PendingEmployerSection'] = [];
-            $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
-            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
-            $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'employee', TRUE, $data['session']['employer_detail'], $companyEmployeesForVerification);
-            //
-            $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
-            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($data['session']['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
-            $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail'], $companyApplicantsForVerification);
-            //
-            $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
-
-
             //
             $data['employee_handbook_enable'] = $this->dashboard_model->get_employee_handbook_status($company_id);
             //
@@ -826,19 +827,23 @@ class Dashboard extends Public_Controller {
             $this->load->model('performance_management_model', 'pmm');
             $data['review'] = $this->pmm->getMyReviewCounts($data['session']['company_detail']['sid'], $employer_id);
             $data['total_goals'] = count($this->pmm->getMyGoals($data['employee']['sid']));
+            //
+            //
             $this->load->model('varification_document_model');
+            //
+            $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($company_id);
+            $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($company_id);
+            //
 
             // Authorized Check
             $data['AuthorizedDocuments'] = [];
-            $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
-            $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
-            $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
+            $data['AuthorizedDocuments']['Today'] = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $data['AuthorizedDocuments']['Pending'] = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $data['AuthorizedDocuments']['Total'] = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
 
             // Pending Employer Sections
             $data['PendingEmployerSection'] = [];
             // For verification documents
-            $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($company_id);
-            $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($company_id);
             //
             $data['PendingEmployerSection']['Employee'] = 0;
             if($data['session']['employer_detail']['access_level_plus']){

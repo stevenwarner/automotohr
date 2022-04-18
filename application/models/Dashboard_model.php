@@ -1285,12 +1285,14 @@ class Dashboard_model extends CI_Model
         return $this->db->count_all_results(); 
     }
 
-    function get_all_auth_documents_assigned_count($company_id, $employer_id , $companyEmployeesForVerification = [], $companyApplicantsForVerification = [])
+
+    function get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
     {
-        if(empty($companyEmployeesForVerification)){
+        if(!$companyEmployeesForVerification) {
             $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
         }
-        if(empty($companyApplicantsForVerification)){
+        //
+        if(!$companyApplicantsForVerification) {
             $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
         }
         //
@@ -1328,12 +1330,14 @@ class Dashboard_model extends CI_Model
         return count($data_obj);
     }
 
-    function get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification = [], $companyApplicantsForVerification = [])
+
+    function get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
     {
-        if(empty($companyEmployeesForVerification)){
+        if(!$companyEmployeesForVerification) {
             $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
         }
-        if(empty($companyApplicantsForVerification)){
+        //
+        if(!$companyApplicantsForVerification) {
             $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
         }
         //
@@ -1391,12 +1395,13 @@ class Dashboard_model extends CI_Model
         return count($data_obj);
     }
 
-    function get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification = [], $companyApplicantsForVerification = [])
+    function get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
     {
-        if(empty($companyEmployeesForVerification)){
+        if(!$companyEmployeesForVerification) {
             $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
         }
-        if(empty($companyApplicantsForVerification)){
+        //
+        if(!$companyApplicantsForVerification) {
             $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
         }
         //
