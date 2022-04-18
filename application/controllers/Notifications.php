@@ -23,10 +23,18 @@ class Notifications extends Public_Controller {
         //
         $ses = $this->session->userdata('logged_in');
         //
+        $this->load->model('varification_document_model');
+        // For verification documents
+        $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($ses['company_detail']['sid']);
+        $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($ses['company_detail']['sid']);
+        //
         $data = $this->notification_model->getNotifications(
             $ses,
-            strtolower($ses['employer_detail']['access_level']) != 'employee' ? false : true
+            strtolower($ses['employer_detail']['access_level']) != 'employee' ? false : true,
+            $companyEmployeesForVerification,
+            $companyApplicantsForVerification
         );
+        //
         if (checkIfAppIsEnabled('performance_management')) {
             //
             $this->load->model('Performance_management_model', 'pmm');
@@ -41,7 +49,7 @@ class Notifications extends Public_Controller {
                     'title' => 'Goals'
                 ];
             }
-            
+            https://www.youtube.com/watch?v=9yzYI8Mf77s
             //
             if($review['Total']){
                 $data[] = [
@@ -61,13 +69,8 @@ class Notifications extends Public_Controller {
             }
         }
         //
-        if($ses['employer_detail']['access_level'] == 'Admin' || $ses['employer_detail']['access_level_plus'] || $ses['employer_detail']['pay_plan_plus']){
+        if($ses['employer_detail']['access_level_plus'] || $ses['employer_detail']['pay_plan_plus']){
             //
-            $this->load->model('varification_document_model');
-            // For verification documents
-            $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($ses['company_detail']['sid']);
-            $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($ses['company_detail']['sid']);
-            
             $total = 0;
             $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
             $total += $this->varification_document_model->get_all_users_pending_i9($ses['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);

@@ -1285,10 +1285,15 @@ class Dashboard_model extends CI_Model
         return $this->db->count_all_results(); 
     }
 
-    function get_all_auth_documents_assigned_count($company_id, $employer_id)
+    function get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
     {
-        $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
-        $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        if(!$companyEmployeesForVerification) {
+            $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
+        }
+        //
+        if(!$companyApplicantsForVerification) {
+            $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        }
         //
         $data = $this->db
         ->select("user_type, user_sid")
@@ -1324,10 +1329,15 @@ class Dashboard_model extends CI_Model
         return count($data_obj);
     }
 
-    function get_all_auth_documents_assigned_today_count($company_id, $employer_id)
+    function get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
     {
-        $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
-        $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        if(!$companyEmployeesForVerification) {
+            $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
+        }
+        //
+        if(!$companyApplicantsForVerification) {
+            $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        }
         //
         $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')
@@ -1383,10 +1393,15 @@ class Dashboard_model extends CI_Model
         return count($data_obj);
     }
 
-    function get_all_pending_auth_documents_count($company_id, $employer_id)
+    function get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE)
     {
-        $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
-        $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        if(!$companyEmployeesForVerification) {
+            $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($company_id);
+        }
+        //
+        if(!$companyApplicantsForVerification) {
+            $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($company_id);
+        }
         //
         $this->db
         ->join('documents_assigned', 'authorized_document_assigned_manager.document_assigned_sid = documents_assigned.sid', 'inner')

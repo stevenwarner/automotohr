@@ -8,12 +8,12 @@ class Notification_model extends CI_Model {
 
 
     //
-    function getNotifications($ses, $isEMS = FALSE){
+    function getNotifications($ses, $isEMS = FALSE, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE){
         $r = array();
 
         if(!$isEMS){
             // Fetch assigned documents
-            $this->getAssignedDocuments($ses, $r);
+            $this->getAssignedDocuments($ses, $r, $companyEmployeesForVerification, $companyApplicantsForVerification);
         }
         // Fetch pending documents
         $this->getEmployeePendingDocuments($ses, $r);
@@ -29,9 +29,15 @@ class Notification_model extends CI_Model {
     }
 
     //
-    private function getAssignedDocuments($ses, &$r){
-        $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($ses['company_detail']['sid']);
-        $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($ses['company_detail']['sid']);
+    private function getAssignedDocuments($ses, &$r, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE){
+        //
+        if(!$companyEmployeesForVerification) {
+            $companyEmployeesForVerification = $this->getAllCompanyInactiveEmployee($ses['company_detail']['sid']);
+        }
+        //
+        if(!$companyApplicantsForVerification) {
+            $companyApplicantsForVerification = $this->getAllCompanyInactiveApplicant($ses['company_detail']['sid']);
+        }
         //
         $data = $this->db
         ->select("user_type, user_sid")
