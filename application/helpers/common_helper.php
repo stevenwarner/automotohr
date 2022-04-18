@@ -2364,7 +2364,8 @@ if (!function_exists('check_access_permissions')) {
             //
             $canAccessDocument = hasDocumentsAssigned($loggedin_info['employer_detail']);
             //
-            if ($function_name == "employee_management" && $canAccessDocument) {
+            $document_permissions = ["employee_management", "add_history_documents", "index"];
+            if (in_array($function_name, $document_permissions) && $canAccessDocument) {
 
             } else {
                 $CI = &get_instance();

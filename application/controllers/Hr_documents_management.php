@@ -3753,7 +3753,6 @@ class Hr_documents_management extends Public_Controller {
             //
             $data['employeesList'] = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, '');
             //
-
             // Get all the flow document ids
             // $data['flowDocumentIds'] = $this->hr_documents_management_model->GetFlowDocumentIds(
             //     $user_sid,
@@ -11904,7 +11903,9 @@ class Hr_documents_management extends Public_Controller {
         $data['session'] = $this->session->userdata('logged_in');
         $security_sid = $data['session']['employer_detail']['sid'];
         $data['security_details'] = $security_details = db_get_access_level_details($security_sid);
-        check_access_permissions($security_details, 'my_settings', 'bulk_resume'); // Param2: Redirect URL, Param3: Function Name
+        //
+        check_access_permissions($security_details, 'hr_documents_management', 'add_history_documents'); // Param2: Redirect URL, Param3: Function Name
+        //
         $company_sid  = $data['session']['company_detail']['sid'];
         $data['company_sid']  = $company_sid;
         
