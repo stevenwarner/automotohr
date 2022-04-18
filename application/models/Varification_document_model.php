@@ -147,6 +147,7 @@ class Varification_document_model extends CI_Model {
         ->where('company_sid', $company_sid)
         ->where('user_type', $user_type)
         ->where('archive', 0)
+        ->where('status', 1)
         ->where('authorized_signature IS NULL', null)
         ->like('document_description', '{{authorized_signature}}');
         //

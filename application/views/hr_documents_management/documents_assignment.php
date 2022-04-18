@@ -1964,7 +1964,7 @@
                                                                     <td class="col-lg-1 text-center">
                                                                         <?php if ($document['offer_letter_type'] == 'hybrid_document') { ?>
                                                                             <button
-                                                                                class="btn btn-success btn-sm btn-block js-hybrid-preview"
+                                                                                class="btn btn-primary btn-sm btn-block js-hybrid-preview"
                                                                                 data-id="<?=$document['sid'];?>"
                                                                                 data-document="assigned_history"
                                                                                 data-type="offer_letter"
@@ -1982,7 +1982,7 @@
                                                                                 </button>
                                                                             <?php } ?>
                                                                         <?php } else if ($document['offer_letter_type'] == 'uploaded') { ?>
-                                                                            <button class="btn btn-success btn-sm btn-block"
+                                                                            <button class="btn btn-primary btn-sm btn-block"
                                                                                 onclick="preview_latest_generic_function(this);"
                                                                                 date-letter-type="uploaded"
                                                                                 data-on-action="assigned"
@@ -2002,7 +2002,7 @@
                                                                                 </button>
                                                                             <?php } ?>    
                                                                         <?php } else { ?>
-                                                                            <button class="btn btn-success btn-sm btn-block"
+                                                                            <button class="btn btn-primary btn-sm btn-block"
                                                                                 onclick="preview_latest_generic_function(this);"
                                                                                 date-letter-type="generated"
                                                                                 data-doc-sid="<?php echo $document['sid']; ?>"
@@ -6172,7 +6172,7 @@
                 <td class="col-lg-1 text-center">';
                     if ($document['document_type'] == 'hybrid_document') {
                         $row .= '<button
-                            class="btn btn-success btn-sm btn-block js-hybrid-preview"
+                            class="btn btn-primary btn-sm btn-block js-hybrid-preview"
                             data-id="'.($document['sid']).'"
                             data-document="assigned_history"
                             data-type="document"
@@ -6191,7 +6191,7 @@
                         }
                     } else if ($document['document_type'] == 'uploaded') {
                         $row .= '<button
-                            class="btn btn-success btn-sm btn-block"
+                            class="btn btn-primary btn-sm btn-block"
                             onclick="fLaunchModal(this);"
                             data-preview-url="'.(AWS_S3_BUCKET_URL . $document['document_s3_name']).'"
                             data-download-url="'.(AWS_S3_BUCKET_URL . $document['document_s3_name']).'"
@@ -6213,7 +6213,7 @@
                     } else {
                         $row .= '<button
                             onclick="func_get_generated_document_history_preview('.($document['document_sid']).', \'generated\', \'history\', '.($document['sid']).');"
-                            class="btn btn-success btn-sm btn-block">
+                            class="btn btn-primary btn-sm btn-block">
                             Preview Assigned
                         </button>';
                         if ($document_all_permission) {

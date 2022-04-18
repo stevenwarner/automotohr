@@ -12035,8 +12035,8 @@ class Hr_documents_management extends Public_Controller {
 
         //
         if($session['employer_detail']['access_level_plus'] || $session['employer_detail'] == 'Admin'){
-            $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, $session['employer_detail'], $companyEmployeesForVerification));
-            $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9, $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant', false, $session['employer_detail'], $companyApplicantsForVerification));
+            $employee_pending = array_merge($employee_pending_w4, $employee_pending_i9);
+            $applicant_pending = array_merge($applicant_pending_w4, $applicant_pending_i9);
         } else{
             $employee_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'employee', false, $session['employer_detail'], $companyEmployeesForVerification);
             $applicant_pending = $this->varification_document_model->getPendingAuthDocs($company_sid, 'applicant', false, $session['employer_detail'], $companyApplicantsForVerification);
