@@ -1,5 +1,11 @@
 <?php 
     $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
+    $user_role = $session['employer_detail']['access_level'];
+    $bulk_btn_access = false;
+    if ($session['employer_detail']['access_level_plus'] == 1 || $user_role == "Hiring Manager" || $user_role == "Admin") {
+        $bulk_btn_access = true;
+    }
+    // We need to give the hiring manager and Admin non plus the ability to have a Manually upload documents button so that they can still upload documents to Candidates and employees when needed
 ?>
 <link rel="stylesheet" href="<?= base_url(); ?>/assets/mFileUploader/index.css" />
 <style>
@@ -466,9 +472,9 @@
                                     <div class="hr-box">
                                         <div class="hr-box-header">
                                             All Document
-                                            <?php if ($action_btn_flag == true || $canAccessDocument) { ?>
-                                                <button type="button" onclick="open_uploaded_model();" class="btn btn-success pull-right">Manual Document Upload</button>
+                                            <?php if ($action_btn_flag == true || $bulk_btn_access) { ?>
                                                 <?php if ($action_btn_flag == true) { ?>
+                                                    <button type="button" onclick="open_uploaded_model();" class="btn btn-success pull-right">Manual Document Upload</button>
                                                     <button type="button" class="btn btn-success pull-right js-offer-letter-btn" style="margin-right: 10px;">Add Offer Letter / Pay Plan</button>
                                                     <a href="<?=base_url('hr_documents_management/add_document/'.( $user_type ).'/'.( $EmployeeSid ).'');?>" class="btn btn-success pull-right" style="margin-right: 10px;">Add Document</a>
                                                 <?php } ?>    

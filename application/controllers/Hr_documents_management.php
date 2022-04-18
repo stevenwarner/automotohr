@@ -3724,8 +3724,6 @@ class Hr_documents_management extends Public_Controller {
             $data['EeocFormStatus'] = $data['session']['portal_detail']['eeo_form_profile_status'];
 			
             $data['pp_flag'] = $pp_flag;
-<<<<<<< Updated upstream
-=======
             //
             $data['employeesList'] = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, '');
             //
@@ -3734,7 +3732,7 @@ class Hr_documents_management extends Public_Controller {
             //     $user_sid,
             //     $user_type
             // );
->>>>>>> Stashed changes
+
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
