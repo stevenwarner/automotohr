@@ -20,14 +20,14 @@ class Varification_document_model extends CI_Model {
         if ($user_type == 'employee' && !empty($inactive_employee_sid)) {
             $this->db->group_start();
             $this->db->where_not_in('employer_sid', $inactive_employee_sid);
-            $this->db->where_not_in('user_type', 'employee');
+            $this->db->where('user_type', 'employee');
             $this->db->group_end();
         } else {
             if(!empty($inactive_applicant_sid)){
 
                 $this->db->group_start();
                 $this->db->where_not_in('employer_sid', $inactive_applicant_sid);
-                $this->db->where_not_in('user_type', 'applicant');
+                $this->db->where('user_type', 'applicant');
                 $this->db->group_end();
             }
         }
@@ -38,6 +38,7 @@ class Varification_document_model extends CI_Model {
         $this->db->where('first_date_of_employment', NULL);
         $this->db->where('first_date_of_employment', NULL);
         $this->db->where('user_consent', 1);
+        $this->db->where('status', 1);
         $this->db->where('uploaded_file', NULL);
         //
         if($count){
@@ -88,6 +89,7 @@ class Varification_document_model extends CI_Model {
         $this->db->where('section2_sig_emp_auth_rep', NULL);
         $this->db->where('section3_emp_sign', NULL);
         $this->db->where('user_consent', 1);
+        $this->db->where('status', 1);
         $this->db->where('s3_filename', NULL);
         //
         if($count){

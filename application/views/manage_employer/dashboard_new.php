@@ -652,7 +652,7 @@
                                         <div class="dashboard-widget-box">
                                             <figure><i class="fa fa-clipboard <?php echo !empty($total_pending_auth_doc) && $total_pending_auth_doc > 0 ? 'start_animation' : ''; ?>"></i></figure>
                                             <h2 class="post-title" style="margin: 2px 0;">
-                                                <a href="<?php echo base_url('authorized_document'); ?>">Assigned Documents</a>
+                                                <a href="<?php echo base_url('authorized_document'); ?>">Pending Authorized Documents</a>
                                             </h2>
                                             <div class="count-box" style="font-size: 12px">
                                                 <span class="green"><?php echo $total_assigned_today_doc; ?> Assigned Document(s) Today</span><br>
@@ -660,7 +660,7 @@
                                                 <small style="font-size: 12px"><?php echo $total_assigned_auth_doc; ?> Total Document(s)</small>
                                             </div>
                                             <div class="button-panel">
-                                                <a href="<?php echo base_url('authorized_document'); ?>" class="site-btn">View Assigned Documents</a>
+                                                <a href="<?php echo base_url('authorized_document'); ?>" class="site-btn">Show Documents</a>
                                             </div>
                                         </div>
                                     </div>
