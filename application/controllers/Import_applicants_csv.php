@@ -223,6 +223,7 @@ class Import_applicants_csv extends Public_Controller {
         if(!$this->input->is_ajax_request()) exit(0);
         //
         $formpost = $this->input->post(NULL, TRUE);
+        // _e($formpost, true, true);
         //
         switch ($formpost['action']) {
             case 'add_applicants':
@@ -296,6 +297,13 @@ class Import_applicants_csv extends Public_Controller {
                     $applicant_jobs_list_data['status_sid'] = $status_sid;
                     $applicant_jobs_list_data['applicant_source'] = 'csv imported data';
                     $applicant_jobs_list_data['applicant_type'] = 'Manual Candidate';
+                    $applicant_jobs_list_data['job_sid'] = '0';
+                    //
+                    if (isset($v0['desired_job_title'])) {
+                        $job_title = trim($v0['desired_job_title']);
+                        if($job_title != NULL || $job_title != '')
+                            $applicant_jobs_list_data['desired_job_title'] = $job_title;
+                    }
                     $this->import_csv_model->insert_new_applicant_job_record($companyId, $applicantId, $applicant_jobs_list_data);//Insert applicant record in Jobs list
                     $insertCount++;
                 }

@@ -134,24 +134,24 @@ class Import_csv_model extends CI_Model {
     }
 
     function insert_new_applicant_job_record($company_sid, $portal_job_applications_sid, $data) {
-        $this->db->select('sid');
-        $this->db->where('user_sid', $company_sid);
-        if(isset($desired_job_title)){
-            $this->db->where('LOWER(Title)', strtolower($data['desired_job_title']));
-        }
-        $this->db->order_by('sid', 'DESC');
-        $this->db->limit(1);
-        $job_details = $this->db->get('portal_job_listings')->result_array();
-        $job_sid = 0;
+        // $this->db->select('sid');
+        // $this->db->where('user_sid', $company_sid);
+        // if(isset($desired_job_title)){
+        //     $this->db->where('LOWER(Title)', strtolower($data['desired_job_title']));
+        // }
+        // $this->db->order_by('sid', 'DESC');
+        // $this->db->limit(1);
+        // $job_details = $this->db->get('portal_job_listings')->result_array();
+        // $job_sid = 0;
         
-        if(!empty($job_details)){
-            $job_sid = $job_details[0]['sid'];
-        }
+        // if(!empty($job_details)){
+        //     $job_sid = $job_details[0]['sid'];
+        // }
         
-        if($job_sid > 0){
-            $data_to_add = array('job_sid' => $job_sid);
-            $data = array_merge($data, $data_to_add);
-        }
+        // if($job_sid > 0){
+        //     $data_to_add = array('job_sid' => $job_sid);
+        //     $data = array_merge($data, $data_to_add);
+        // }
 
         $this->db->where('company_sid', $company_sid);
         $this->db->where('portal_job_applications_sid', $portal_job_applications_sid);
