@@ -8020,8 +8020,10 @@ class Hr_documents_management extends Public_Controller {
     function get_document_content ($document_sid, $request_type, $request_from) {
         $form_input_data = "";
         $is_iframe_preview = 1;
-        $document = $this->hr_documents_management_model->get_requested_authorized_content($document_sid, $request_from);
-        $requested_content = $this->hr_documents_management_model->get_requested_content($document_sid, $request_type, $request_from, 'preview');
+        // $document = $this->hr_documents_management_model->get_requested_authorized_content($document_sid, $request_from);
+        // $requested_content = $this->hr_documents_management_model->get_requested_content($document_sid, $request_type, $request_from, 'preview');
+        $document = $this->hr_documents_management_model->get_requested_generated_document_content($document_sid, $request_from);
+        $requested_content = $this->hr_documents_management_model->get_requested_generated_document_content_body($document_sid, $request_type, $request_from, 'preview');
         $view = '<div class="panel panel-success"><div class="panel-heading"><strong>'.$document['document_title'].'</strong></div><div class="panel-body" id="document_preview_div">'.html_entity_decode($requested_content).'</div></div>';
 
         if (!empty($document['form_input_data'])) {
@@ -8050,8 +8052,10 @@ class Hr_documents_management extends Public_Controller {
         $form_input_data = "NULL";
         $is_iframe_preview = 1;
 
-        $document = $this->hr_documents_management_model->get_requested_authorized_content($document_sid, $request_from);
-        $requested_content = $this->hr_documents_management_model->get_requested_content($document_sid, $request_type, $request_from, 'P&D');
+        // $document = $this->hr_documents_management_model->get_requested_authorized_content($document_sid, $request_from);
+        // $requested_content = $this->hr_documents_management_model->get_requested_content($document_sid, $request_type, $request_from, 'P&D');
+        $document = $this->hr_documents_management_model->get_requested_generated_document_content($document_sid, $request_from);
+        $requested_content = $this->hr_documents_management_model->get_requested_generated_document_content_body($document_sid, $request_type, $request_from, 'P&D');
         $file_name = $this->hr_documents_management_model->get_document_title($document_sid, $request_type, $request_from);
 
         if ($letter_request == 1) {

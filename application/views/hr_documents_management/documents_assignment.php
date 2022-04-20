@@ -6225,15 +6225,14 @@
                             Preview Assigned
                         </button>';
                         if ($document_all_permission) {
-                            $row .= '<button
-                                class="btn btn-success btn-sm btn-block"
-                                onclick="fLaunchModal(this);"
-                                data-preview-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
-                                data-download-url="'.(AWS_S3_BUCKET_URL . $document['uploaded_file']).'"
-                                data-file-name="'.$document['uploaded_file'].'"
-                                data-document-title="'.$document['uploaded_file'].'" '.(!$document['uploaded'] ? 'disabled' : '').'>
-                                Preview Submitted
-                            </button>';
+                            $row .= '<button class="btn btn-success btn-sm btn-block"
+                                        onclick="preview_latest_generic_function(this);"
+                                        date-letter-type="generated"
+                                        data-doc-sid="'.($document['sid']).'"
+                                        data-on-action="submitted"
+                                        data-from="assigned_document_history" '.( $document['user_consent'] == 0 ? 'disabled' : '').'>
+                                        Preview Submitted
+                                    </button>';
                         }    
                     }
                     $row .= '</td>
