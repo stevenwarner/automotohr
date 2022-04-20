@@ -212,6 +212,11 @@ if (!function_exists('replace_tags_for_document')) {
             $CI->db->select('portal_job_applications.first_name');
             $CI->db->select('portal_job_applications.last_name');
             $CI->db->select('portal_job_applications.email');
+            $CI->db->select('portal_job_applications.flat_rate_technician');
+            $CI->db->select('portal_job_applications.hourly_technician');
+            $CI->db->select('portal_job_applications.semi_monthly_salary');
+            $CI->db->select('portal_job_applications.semi_monthly_draw');
+            $CI->db->select('portal_job_applications.hourly_rate');
 
             $CI->db->select('portal_applicant_jobs_list.job_sid');
             $CI->db->select('portal_applicant_jobs_list.date_applied as application_date');
