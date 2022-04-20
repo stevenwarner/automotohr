@@ -117,15 +117,23 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>     
-                                    <div class = "row">   
-                                        <div class="col-md-6 col-xs-12">
+                                    </div>   
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-12">
                                             <label class="csF16">First Name</label>
-                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["first_name"] ?></p>
+                                            <p class="dummy-invoice-fields"><?=GetVal($applicant_info["first_name"]); ?></p>
                                         </div>
-                                        <div class="col-md-6 col-xs-12">
+                                        <div class="col-md-3 col-xs-12">
+                                            <label class="csF16">Nick Name</label>
+                                            <p class="dummy-invoice-fields"><?=GetVal($applicant_info["nick_name"]); ?></p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
+                                            <label class="csF16">Middle Name / Initial</label>
+                                            <p class="dummy-invoice-fields"><?=GetVal($applicant_info["middle_name"]); ?></p>
+                                        </div>
+                                        <div class="col-md-3 col-xs-12">
                                             <label class="csF16">Last Name</label>
-                                            <p class="dummy-invoice-fields"><?php echo $applicant_info["last_name"] ?></p>
+                                            <p class="dummy-invoice-fields"><?=GetVal($applicant_info["last_name"]); ?></p>
                                         </div>
                                     </div>
                                     <br>
@@ -307,6 +315,38 @@
                                                 <?php echo $applicant_info["desired_job_title"]; ?>
                                             </p>
                                         </div>
+
+                                        <div class="col-md-6 col-xs-12"> 
+                                            <label class="csF16">Hourly Rate</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?=GetVal($applicant_info['hourly_rate']); ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12"> 
+                                            <label class="csF16">Hourly Technician</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?=GetVal($applicant_info['hourly_technician']); ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12"> 
+                                            <label class="csF16">Flat Rate Technician</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?=GetVal($applicant_info['flat_rate_technician']); ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12"> 
+                                            <label class="csF16">Semi Monthly Salary</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?=GetVal($applicant_info['semi_monthly_salary']); ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12"> 
+                                            <label class="csF16">Semi Monthly Draw</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?=GetVal($applicant_info['semi_monthly_draw']); ?>
+                                            </p>
+                                        </div> 
+                                        <br>
                                     </div><br>
                                     <?php if (isset($applicant_info["YouTube_Video"]) && $applicant_info["YouTube_Video"] != "") {
                                         if($applicant_info['video_type'] == 'uploaded'){
@@ -351,19 +391,38 @@
                                                     <input type="submit" value="cancel" class="view_button">
                                                 </div>
                                             </div>
-                                            <li class="form-col-50-left">
-                                                <label>first name:<samp class="red"> * </samp></label>
-                                                <input class="invoice-fields  <?php if (form_error('first_name') !== "") { ?> error <?php } ?>"
-                                                    value="<?php echo set_value('first_name', $applicant_info["first_name"]); ?>" type="text" name="first_name">
+                                            <div class="row">
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
+                                                    <label>First Name:<span class="staric">*</span></label>
+                                                    <input type="text" class="invoice-fields" name="first_name"
+                                                        id="first_name"
+                                                        value="<?php if(isset($applicant_info['first_name'])) { echo $applicant_info['first_name']; } ?>">
                                                     <?php echo form_error('first_name'); ?>
-                                            </li>
-                                            <li class="form-col-50-right">
-                                                <label>last name:<samp class="red"> * </samp></label>
-                                                <input class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>"
-                                                    value="<?php echo set_value('last_name', $applicant_info["last_name"]); ?>" type="text" name="last_name">
+                                                </div>
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
+                                                    <label>Nick Name:</label>
+                                                    <input type="text" class="invoice-fields" name="nick_name"
+                                                        id="nick_name"
+                                                        value="<?php if(isset($applicant_info['nick_name'])) { echo $applicant_info['nick_name']; } ?>">
+                                                    <?php echo form_error('nick_name'); ?>
+                                                </div>
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
+                                                    <label>Middle name / initial:</label>
+                                                    <input
+                                                        class="invoice-fields  <?php if (form_error('middle_name') !== "") { ?> error <?php } ?>"
+                                                        value="<?php echo set_value('middle_name', $applicant_info["middle_name"]); ?>"
+                                                        type="text" name="middle_name">
+                                                    <?php echo form_error('middle_name'); ?>
+                                                </div>
+                                                <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
+                                                    <label>last name:<samp class="red"> * </samp></label>
+                                                    <input
+                                                        class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>"
+                                                        value="<?php echo set_value('last_name', $applicant_info["last_name"]); ?>"
+                                                        type="text" name="last_name">
                                                     <?php echo form_error('last_name'); ?>
-
-                                            </li>
+                                                </div>
+                                            </div>
                                             <li class="form-col-50-left">
                                                 <label>email:<samp class="red"> * </samp></label>
                                                 <input class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>"
@@ -560,6 +619,50 @@
                                                 <input class="invoice-fields" type="text" name="desired_job_title" value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>">
                                                 <?php echo form_error('desired_job_title'); ?>
                                             </li>
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Hourly Rate:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('hourly_rate', isset($applicant_info["hourly_rate"]) ? $applicant_info["hourly_rate"] : ''); ?>"
+                                                        type="number" name="hourly_rate">
+                                                </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Hourly Technician:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo isset($applicant_info["hourly_technician"]) ? $applicant_info["hourly_technician"] : ''; ?>"
+                                                        type="number" name="hourly_technician">
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Flat Rate Technician:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('flat_rate_technician', isset($applicant_info["flat_rate_technician"]) ? $applicant_info["flat_rate_technician"] : ''); ?>"
+                                                        type="number" name="flat_rate_technician">
+                                                </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Semi Monthly Salary:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo isset($applicant_info["semi_monthly_salary"]) ? $applicant_info["semi_monthly_salary"] : ''; ?>"
+                                                        type="number" name="semi_monthly_salary">
+                                                </div>
+                                                <!--  -->
+                                            </div>
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Semi Monthly Draw:</label>
+                                                    <input class="invoice-fields"
+                                                        value="<?php echo set_value('semi_monthly_draw', isset($applicant_info["semi_monthly_draw"]) ? $applicant_info["semi_monthly_draw"] : ''); ?>"
+                                                        type="number" name="semi_monthly_draw">
+                                                </div>
+                                                <!--  -->
+                                            </div>
                                             <li class="form-col-100">
                                                 <div class="row">
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
