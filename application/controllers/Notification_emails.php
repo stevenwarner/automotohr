@@ -1099,6 +1099,21 @@ class Notification_emails extends Public_Controller {
             return true;
         }
     }
+    
+    public function check_employee_profile_employee($employee_sid) {
+        $data['session'] = $this->session->userdata('logged_in');
+        $company_sid = $data["session"]["company_detail"]["sid"];
+        $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'employee_Profile');
+
+        if($result == true){
+            $this->session->set_flashdata('message', 'Error: Employee already exists');
+            //$this->form_validation->set_message('check_applicant_employee', 'Please enter a unique Employee email');
+            redirect('notification_emails/employee_profile', "refresh");
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     public function check_document_assignment($employee_sid) {
         $data['session'] = $this->session->userdata('logged_in');
@@ -1746,7 +1761,7 @@ class Notification_emails extends Public_Controller {
                     $this->form_validation->set_rules('notifications_type', 'notifications type', 'trim|xss_clean');
                     break;
                 case 'add_notification_employee':
-                    $this->form_validation->set_rules('employee', 'Employee Email', 'trim|xss_clean|required|callback_check_document_general');
+                    $this->form_validation->set_rules('employee', 'Employee Email', 'trim|xss_clean|required|callback_check_employee_profile_employee');
                 default:
                     break;
             }
