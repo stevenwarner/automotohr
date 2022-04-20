@@ -227,8 +227,12 @@ class Appearance extends Public_Controller {
                 $theme_name = $postData["theme_name"];
                 $page_name = $postData["page_name"];
                 $enableHeaderBG = $postData['enable_header_bg'];
+                $enableHeaderOverlay = $postData['enable_header_overlay'];
                 
-                $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'site_settings', ['enable_header_bg' => $enableHeaderBG ? 1: 0]);
+                $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'site_settings', [
+                    'enable_header_bg' => $enableHeaderBG ? 1: 0,
+                    'enable_header_overlay' => $enableHeaderOverlay ? 1: 0,
+                ]);
                 $this->session->set_flashdata('message', '<b>Success:</b> You have successfully updated the site settings!');
                 redirect('customize_appearance/' . $theme_id, 'refresh');
             }

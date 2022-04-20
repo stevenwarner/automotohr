@@ -23,6 +23,13 @@
                                         </label>
                                     </li>
 
+                                    <li class="form-col-100 autoheight">
+                                        <label class="control control--checkbox">
+                                            <input type="checkbox" name="enable_header_overlay" <?=!isset($site_settings['enable_header_overlay']) || $site_settings['enable_header_overlay'] == 1 ? 'checked' : '';?> /> Use header banner overlay
+                                            <div class="control__indicator"></div>
+                                        </label>
+                                    </li>
+
                                     <div class="btn-panel">
                                         <ul>
                                             <li><button type="submit" class="delete-all-btn active-btn"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save Configuration</button></li>
