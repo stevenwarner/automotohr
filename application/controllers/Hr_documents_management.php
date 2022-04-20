@@ -8090,7 +8090,9 @@ class Hr_documents_management extends Public_Controller {
                 $is_iframe_preview = 0;
             }
 
-            $form_input_data = json_encode(json_decode('assigned'));  
+            $form_input_data = json_encode(json_decode('assigned'));
+            $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
+            $requested_content = $document_content;  
         }
 
         $data = array();
