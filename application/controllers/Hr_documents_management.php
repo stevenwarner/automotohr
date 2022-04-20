@@ -8091,6 +8091,19 @@ class Hr_documents_management extends Public_Controller {
             }
 
             $form_input_data = json_encode(json_decode('assigned'));
+            //
+            $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
+            $authorized_signature_image = '------------------------------(Authorized Signature Required)';
+            $signature_bas64_image = '------------------------------(Signature Required)';
+            $init_signature_bas64_image = '------------------------------(Signature Initial Required)';
+            $sign_date = '------------------------------(Sign Date Required)';
+            //
+            $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{sign_date}}', $sign_date , $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image , $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $document['document_description']);
+            //
             $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
             $requested_content = $document_content;  
         }
