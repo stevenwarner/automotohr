@@ -311,7 +311,13 @@ if (!function_exists('db_get_cleanstring')) {
 if (!function_exists('encode_string')) {
     function encode_string($password) {
         $key = '#&$sdfdadasdsaderfvrfgbty78hnmuik263uifs5634d';
-        $encoded = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $password, MCRYPT_MODE_CBC, md5(md5($key))));
+      
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $encoded = base64_encode(openssl_encrypt($password, 'aes-128-ecb', $key, OPENSSL_RAW_DATA));
+       }else{
+            $encoded = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $password, MCRYPT_MODE_CBC, md5(md5($key))));
+            }
+        
         return $encoded;
     }
 }
@@ -319,7 +325,11 @@ if (!function_exists('encode_string')) {
 if (!function_exists('decode_string')) {
     function decode_string($encoded) {
         $key = '#&$sdfdadasdsaderfvrfgbty78hnmuik263uifs5634d';
-        $decoded = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encoded), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+        if(version_compare(PHP_VERSION, '7.0', '>=')){
+            $decoded = openssl_decrypt(base64_decode($encoded), 'aes-128-ecb', $key, OPENSSL_RAW_DATA);
+          }else{
+            $decoded = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encoded), MCRYPT_MODE_CBC, md5(md5($key))), "\0");
+          }
         return $decoded;
     }
 }
