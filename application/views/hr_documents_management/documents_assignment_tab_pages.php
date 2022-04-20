@@ -88,7 +88,7 @@
                                                                     <button
                                                                         data-id="<?=$document['sid'];?>"
                                                                         data-document="assigned"
-                                                                        class="btn btn-primary btn-sm btn-block js-hybrid-preview">Preview Assigned</button>
+                                                                        class="btn btn-success btn-sm btn-block js-hybrid-preview">Preview Assigned</button>
                                                                     <?php if ($document_all_permission) { ?>    
                                                                         <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'notCompletedDocuments'], $modifyBTN);?>
                                                                     <?php } ?>    
@@ -139,7 +139,7 @@
                                                                         <a href="<?= base_url('hr_documents_management/download_upload_document/' . $document['document_s3_name']);?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
                                                                     </td>
                                                                     <td class="col-lgfa-stack-1x">
-                                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                                        <button class="btn btn-success btn-sm btn-block"
                                                                             onclick="preview_latest_generic_function(this);"
                                                                             date-letter-type="uploaded"
                                                                             data-on-action="assigned"
@@ -178,7 +178,7 @@
                                                                 </td>
 
                                                                 <td class="col-lg-2">
-                                                                    <button class="btn btn-primary btn-sm btn-block"
+                                                                    <button class="btn btn-success btn-sm btn-block"
                                                                         onclick="preview_latest_generic_function(this);"
                                                                         date-letter-type="generated"
                                                                         data-doc-sid="<?php echo $document['sid']; ?>"
@@ -318,7 +318,7 @@
                                                                             data-id="<?=$document['sid']?>"
                                                                             data-type="offer_letter"
                                                                             data-document="assigned"
-                                                                            class="btn btn-primary btn-sm btn-block js-hybrid-preview"
+                                                                            class="btn btn-success btn-sm btn-block js-hybrid-preview"
                                                                         >
                                                                         Preview Assigned    
                                                                         </button>
@@ -330,7 +330,7 @@
                                                                     <td></td>
                                                                     <td class="col-lg-2">
                                                                     <?php if($document['document_s3_name'] != ''){ ?>
-                                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                                        <button class="btn btn-success btn-sm btn-block"
                                                                             onclick="preview_latest_generic_function(this);"
                                                                             date-letter-type="uploaded"
                                                                             data-on-action="assigned"
@@ -342,7 +342,7 @@
                                                                             <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'notCompletedOfferLetters'], $modifyBTN);?>
                                                                         <?php } ?>    
                                                                     <?php } else { ?>
-                                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                                        <button class="btn btn-success btn-sm btn-block"
                                                                             onclick="preview_latest_generic_function(this);"
                                                                             date-letter-type="generated"
                                                                             data-doc-sid="<?php echo $document['sid']; ?>"
@@ -484,7 +484,7 @@
                                                                 </td>
                                                                 <td class="col-lg-2">
                                                                     <?php if($document['document_s3_name'] != ''){ ?>
-                                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                                        <button class="btn btn-success btn-sm btn-block"
                                                                             onclick="preview_latest_generic_function(this);"
                                                                             date-letter-type="uploaded"
                                                                             data-on-action="assigned"
@@ -496,7 +496,7 @@
                                                                             <?=str_replace(['{{sid}}','{{type}}'], [$document['document_sid'], 'notCompletedDocuments'], $modifyBTN);?>
                                                                         <?php } ?>    
                                                                     <?php } else { ?>
-                                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                                        <button class="btn btn-success btn-sm btn-block"
                                                                             onclick="preview_latest_generic_function(this);"
                                                                             date-letter-type="generated"
                                                                             data-doc-sid="<?php echo $document['sid']; ?>"
@@ -609,7 +609,7 @@
                                             <?php if ($document['document_type'] == 'offer_letter') { ?>
                                                 <td class="col-lg-2">
                                                     <?php if($document['document_s3_name'] != ''){ ?>
-                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                        <button class="btn btn-success btn-sm btn-block"
                                                             onclick="preview_document_model(this);"
                                                             data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
                                                             data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
@@ -620,7 +620,7 @@
                                                             data-document-title="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>Preview Assigned</button>
 
                                                     <?php } else { ?>
-                                                        <button onclick="func_get_generated_document_preview(<?php echo $document['document_sid']; ?>, 'generated', 'modified', 0);" class="btn btn-primary btn-sm btn-block">Preview Assigned</button>
+                                                        <button onclick="func_get_generated_document_preview(<?php echo $document['document_sid']; ?>, 'generated', 'modified', 0);" class="btn btn-success btn-sm btn-block">Preview Assigned</button>
                                                         <!-- <button onclick="func_get_generated_document_preview(<?php //echo $document['document_sid']; ?>//, 'generated', 'modified', <?php //echo $document['sid']; ?>//);" class="btn btn-success btn-sm btn-block">Preview Assigned</button>-->
                                                     <?php } ?>
                                                 </td>
@@ -778,7 +778,7 @@
                                                                                         data-id="<?=$document['sid'];?>"
                                                                                         data-type="document"
                                                                                         data-document="assigned"
-                                                                                        class="btn btn-primary btn-sm btn-block js-hybrid-preview"
+                                                                                        class="btn btn-success btn-sm btn-block js-hybrid-preview"
                                                                                     >
                                                                                         Preview Assigned
                                                                                     </button>
@@ -841,7 +841,7 @@
                                                                             <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                                 <?php if ($document['document_sid'] != 0) { ?>
                                                                                     <td class="col-lg-2">
-                                                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                                                        <button class="btn btn-success btn-sm btn-block"
                                                                                             onclick="preview_latest_generic_function(this);"
                                                                                             date-letter-type="uploaded"
                                                                                             data-on-action="assigned"
@@ -885,7 +885,7 @@
                                                                                 </td>
                                                                             <?php } else { ?>
                                                                                 <td class="col-lg-2">
-                                                                                    <button class="btn btn-primary btn-sm btn-block"
+                                                                                    <button class="btn btn-success btn-sm btn-block"
                                                                                         onclick="preview_latest_generic_function(this);"
                                                                                         date-letter-type="generated"
                                                                                         data-doc-sid="<?php echo $document['sid']; ?>"
@@ -1069,7 +1069,7 @@
                                                                             data-id="<?=$document['sid'];?>"
                                                                             data-type="offer_letter"
                                                                             data-document="assigned"
-                                                                            class="btn btn-primary btn-sm btn-block js-hybrid-preview"
+                                                                            class="btn btn-success btn-sm btn-block js-hybrid-preview"
                                                                         >
                                                                             Preview Assigned
                                                                         </button>
@@ -1116,7 +1116,7 @@
                                                                 <?php } else if ($document['document_type'] == 'offer_letter') { ?>
                                                                     <td class="col-lg-2">
                                                                     <?php if($document['document_s3_name'] != ''){ ?>
-                                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                                        <button class="btn btn-success btn-sm btn-block"
                                                                             onclick="preview_latest_generic_function(this);"
                                                                             date-letter-type="uploaded"
                                                                             data-on-action="assigned"
@@ -1128,7 +1128,7 @@
                                                                             <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedOfferLetters'], $modifyBTN);?>
                                                                         <?php } ?>    
                                                                     <?php } else { ?>
-                                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                                        <button class="btn btn-success btn-sm btn-block"
                                                                             onclick="preview_latest_generic_function(this);"
                                                                             date-letter-type="generated"
                                                                             data-doc-sid="<?php echo $document['sid']; ?>"
@@ -1355,7 +1355,7 @@
                                                                             <a href="<?= base_url('hr_documents_management/download_upload_document/' . $document['document_s3_name']);?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
                                                                         </td>
                                                                         <td class="col-lg-2">
-                                                                            <button class="btn btn-primary btn-sm btn-block"
+                                                                            <button class="btn btn-success btn-sm btn-block"
                                                                                 onclick="preview_latest_generic_function(this);"
                                                                                 date-letter-type="uploaded"
                                                                                 data-on-action="assigned"
@@ -1421,7 +1421,7 @@
                                                                     </td>
                                                                     <?php if ($document['document_type'] == 'uploaded') { ?>
                                                                         <td class="col-lg-2">
-                                                                            <button class="btn btn-primary btn-sm btn-block"
+                                                                            <button class="btn btn-success btn-sm btn-block"
                                                                                 onclick="preview_latest_generic_function(this);"
                                                                                 date-letter-type="uploaded"
                                                                                 data-on-action="assigned"
@@ -1462,7 +1462,7 @@
                                                                         <?php } ?>    
                                                                     <?php } else { ?>
                                                                         <td class="col-lg-2">
-                                                                            <button class="btn btn-primary btn-sm btn-block"
+                                                                            <button class="btn btn-success btn-sm btn-block"
                                                                                 onclick="preview_latest_generic_function(this);"
                                                                                 date-letter-type="generated"
                                                                                 data-doc-sid="<?php echo $document['sid']; ?>"
@@ -1703,7 +1703,7 @@
                                                                                         <a href="<?= base_url('hr_documents_management/print_generated_doc/original/' . $document['sid'] . '/' . $user_sid . '/' . $user_type . '/download');?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
                                                                                     </td>
                                                                                     <td class="col-lg-2">
-                                                                                        <button class="btn btn-primary btn-sm btn-block"
+                                                                                        <button class="btn btn-success btn-sm btn-block"
                                                                                             onclick="preview_latest_generic_function(this);"
                                                                                             date-letter-type="generated"
                                                                                             data-doc-sid="<?php echo $document['sid']; ?>"
