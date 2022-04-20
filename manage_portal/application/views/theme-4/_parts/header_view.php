@@ -187,3 +187,9 @@
     
     <body <?php echo $custom_body_style; ?>>
     <?php $this->load->view('common/header_menu'); ?>
+    
+    <?php if(isset($site_settings['enable_header_overlay']) && $site_settings['enable_header_overlay'] == 0 ) :?>
+    <style>
+        .main-slider:after{ background: none; }
+    </style>
+    <?php endif; ?>
