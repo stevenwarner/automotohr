@@ -3364,6 +3364,15 @@ class Application_tracking_system_model extends CI_Model {
     function mantain_incorrect_email_log($email_data) {
         $this->db->insert('fix_email_address_log', $email_data);
     }
+
+    function update_applicant_job_title($sid, $job_title) {
+        $data = array(
+            'desired_job_title' => $job_title
+        );
+
+        $this->db->where('sid', $sid);
+        $this->db->update('portal_applicant_jobs_list', $data);
+    }
 }
 
 //

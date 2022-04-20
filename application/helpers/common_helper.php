@@ -1652,17 +1652,20 @@ if (!function_exists('applicant_right_nav')) {
     function applicant_right_nav($app_id, $job_list_sid = null, $ats_params = null)
     {
         $CI = &get_instance();
+        $desired_job_title = "";
+        
+        $CI->db->select('sid, desired_job_title');
+        $CI->db->where('portal_job_applications_sid', $app_id);
+        $CI->db->order_by('sid', 'DESC');
+        $CI->db->limit(1);
+        $job_list_data = $CI->db->get('portal_applicant_jobs_list')->result_array();
 
-        if ($job_list_sid == null || $job_list_sid == 0 || $job_list_sid == '') {
-            $CI->db->select('sid');
-            $CI->db->where('portal_job_applications_sid', $app_id);
-            $CI->db->order_by('sid', 'DESC');
-            $CI->db->limit(1);
-            $job_list_data = $CI->db->get('portal_applicant_jobs_list')->result_array();
-
-            if (!empty($job_list_data)) {
+        if (!empty($job_list_data)) {
+            if ($job_list_sid == null || $job_list_sid == 0 || $job_list_sid == '') {
                 $job_list_sid = $job_list_data[0]['sid'];
             }
+            //
+            $desired_job_title = $job_list_data[0]['desired_job_title'];
         }
 
         if ($ats_params == null || empty($ats_params) || $ats_params == '' || $ats_params == 0) {
@@ -1687,7 +1690,9 @@ if (!function_exists('applicant_right_nav')) {
         //Outsourced HR Compliance and Onboarding check
         $data['kpa_onboarding_check'] = checkCompanyKpaOnboardingCheck($company_id);
         $data['job_list_sid'] = $job_list_sid;
-
+        //
+        $data['applicant_info']['desired_job_title'] = $desired_job_title;
+        //
         if ($data['kpa_onboarding_check'] == 1) {
             $kpa_email_sent = $CI->application_tracking_system_model->get_kpa_email_sent_count($company_id, $app_id);
 

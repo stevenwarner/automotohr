@@ -620,7 +620,7 @@ class Application_tracking_system extends Public_Controller {
                 $this->session->set_flashdata('message', '<b>Error:</b> No Applicant Found!');
                 redirect('application_tracking_system/active/all/all/all/all');
             }
-
+ 
             $interview_questionnaires                                           = $this->application_tracking_system_model->get_interview_questionnaires($company_sid);
             $data['interview_questionnaires']                                   = $interview_questionnaires;
             $data['applicant_sid']                                              = $app_id;
@@ -798,7 +798,7 @@ class Application_tracking_system extends Public_Controller {
                 $data['is_new_calendar']                                        = (int)$this->call_old_event();
                 //
                 $data['_ssv'] = getSSV($data['session']['employer_detail']);
-
+                //
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/application_tracking_system/applicant_profile');
                 $this->load->view('main/footer');
@@ -945,7 +945,13 @@ class Application_tracking_system extends Public_Controller {
                 $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                 $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                 $user_data['full_employment_application'] = serialize($full_emp_app);
+                //
+                if(isset($formpost['desired_job_title']) && !empty($formpost['desired_job_title'])){
+                    $this->application_tracking_system_model->update_applicant_job_title($job_list_sid, $formpost['desired_job_title']);
+                }
+                //
                 $result = $this->application_tracking_system_model->update_applicant($app_id, $user_data);
+
                 $this->session->set_flashdata('message', '<b>Success:</b> Applicant updated successfully');
 
                 if ($job_list_sid != NULL) {

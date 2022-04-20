@@ -295,10 +295,16 @@
                                                 ?>
                                             </p>
                                         </div>
-                                        <div class="col-md-12 col-xs-12">
+                                        <div class="col-md-6 col-xs-12">
                                             <label class="csF16">Notified By</label>
                                             <p class="dummy-invoice-fields">
                                                 <?php echo $applicant_info["notified_by"]; ?>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6 col-xs-12">
+                                            <label class="csF16">Job Title</label>
+                                            <p class="dummy-invoice-fields">
+                                                <?php echo $applicant_info["desired_job_title"]; ?>
                                             </p>
                                         </div>
                                     </div><br>
@@ -539,7 +545,7 @@
                                                 </div>
                                             </li>
                                             <?php } ?>
-                                            <li class="form-col-100">
+                                            <li class="form-col-50-left">
                                                 <label>Profile picture:</label>
                                                 <div class="upload-file invoice-fields">
                                                     <span class="selected-file" id="name_pictures">No file selected</span>
@@ -548,6 +554,11 @@
                                                            accept=".jpg,.jpeg,.jpe,.png">
                                                     <a href="javascript:;" style="background: #549809;">Choose File</a>
                                                 </div>
+                                            </li>
+                                            <li class="form-col-50-right">
+                                                <label>Job Title:</label>
+                                                <input class="invoice-fields" type="text" name="desired_job_title" value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>">
+                                                <?php echo form_error('desired_job_title'); ?>
                                             </li>
                                             <li class="form-col-100">
                                                 <div class="row">
