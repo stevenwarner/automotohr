@@ -5071,9 +5071,13 @@ class Hr_documents_management extends Public_Controller {
                 $data['i9_form'] = $i9_form;
             }
 
-            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_sid,'employee');
-            if (!empty($eeoc_form)) {
-                $data['eeoc_form'] = $eeoc_form;
+            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employee_sid, $user_type);
+            //
+            if ($eeo_form_info['status'] == 1) {
+                $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_sid,'employee');
+                if (!empty($eeoc_form)) {
+                    $data['eeoc_form'] = $eeoc_form;
+                }
             }
 
             $data['assigned_documents']                     = $assigned_documents;
