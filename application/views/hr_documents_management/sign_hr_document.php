@@ -405,10 +405,8 @@
         <?php if (!empty($document['form_input_data'])) { ?>
             var form_input_data = <?php echo $form_input_data; ?>;
             form_input_data = Object.entries(form_input_data);
-
         
             $.each(form_input_data, function(key ,input_value) { 
-                console.log(key)
                 if (input_value[0] == 'signature_person_name') {
                     var input_field_id = input_value[0];  
                     var input_field_val = input_value[1];
@@ -420,18 +418,27 @@
 
                     if (input_type == 'text') {
                         $('#'+input_field_id).val(input_field_val);
+                        <?php if($document['user_consent'] == 1): ?>
                         $('#'+input_field_id).prop('disabled', true);
+                        <?php endif; ?>
                     } else if (input_type == 'checkbox') {
                         if (input_field_val == 'yes') {
                             $('#'+input_field_id).prop('checked', true);;
                         }
+                        <?php if($document['user_consent'] == 1): ?>
                         $('#'+input_field_id).prop('disabled', true);
+                        <?php endif; ?>
                         
                     } else if (input_type == 'textarea') {
-                        $('#'+input_field_id).hide();
-                        $('#'+input_field_id+'_sec').show();
-                        $('#'+input_field_id+'_sec').html(input_field_val);
-                        $('#'+input_field_id+'_sec').html(input_field_val);
+                        <?php if($document['user_consent'] == 1): ?>
+                            $('#'+input_field_id).hide();
+                            $('#'+input_field_id+'_sec').show();
+                            $('#'+input_field_id+'_sec').html(input_field_val);
+                            $('#'+input_field_id+'_sec').html(input_field_val);
+                        <?php else: ?>
+                            $('#'+input_field_id).show();
+                            $('#'+input_field_id+'').val(input_field_val);
+                        <?php endif; ?>
                     }  else if(input_value[0].match(/select/) !== -1){
                         if(input_value[1] != null){
                             let cc =get_select_box_value(input_value[0],input_value[1]);
