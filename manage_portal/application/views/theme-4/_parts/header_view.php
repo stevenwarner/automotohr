@@ -191,5 +191,6 @@
     <?php if(isset($site_settings['enable_header_overlay']) && $site_settings['enable_header_overlay'] == 0 ) :?>
     <style>
         .main-slider:after{ background: none; }
+        .comapny-video:after{ background: none; }
     </style>
     <?php endif; ?>

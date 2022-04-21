@@ -4161,61 +4161,52 @@ class Hr_documents_management extends Public_Controller {
             $assign_to = $form_post['assign_to'];
 
             $previous_assign = $this->hr_documents_management_model->get_authorized_document_assign_manager($company_sid, $document_sid);
-
-            $new_assign_manger = array();
-
-            if (!empty($previous_assign)) {
-                $previous_assign_sids = array_column($previous_assign, 'assigned_to_sid');
-                $new_assign_sids = explode(',', $assign_to);
-
-                foreach ($new_assign_sids as $new_assign_sid) {
-                    if (!in_array($new_assign_sid, $previous_assign_sids)) {
-                        array_push($new_assign_manger, $new_assign_sid);
-                    }
-                }
-            }
-
+            //
+            $new_assign_manger = explode(',', $assign_to);
+            //
             $this->hr_documents_management_model->addManagersToAssignedDocuments(
                 $assign_to,
                 $document_sid,
                 $company_sid,
                 $assigned_by_sid
             );
-
             //
             $data_to_update = array();
             $data_to_update['authorized_signature'] = NULL;
             $data_to_update['authorized_signature_by'] = 0;
             $data_to_update['authorized_signature_date'] = NULL;
-
+            //
             $this->hr_documents_management_model->update_documents($document_sid, $data_to_update, 'documents_assigned');
-            
+            //
             $hf = message_header_footer(
                 $company_sid,
                 ucwords($session['company_detail']['CompanyName'])
             );
             //
-            // foreach (explode(',', $assign_to) as $k => $v) {
-            foreach ($new_assign_manger as $k => $v) {
-                $assign_to_info  = db_get_employee_profile($v);
-                $assign_to_name  = $assign_to_info[0]['first_name'].' '.$assign_to_info[0]['last_name'];
-                $assign_to_email = $assign_to_info[0]['email'];
-
-                $assigned_by_info  = db_get_employee_profile($assigned_by_sid);
-                $assigned_by_name  = $assigned_by_info[0]['first_name'].' '.$assigned_by_info[0]['last_name'];
-
-                //Send Email
-                $replacement_array = array();
-                $replacement_array['baseurl']           = base_url();
-                $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
-                $replacement_array['company_name']  = ucwords($session['company_detail']['CompanyName']);
-                $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
+            if(!empty($new_assign_manger)){
                 //
-                $user_extra_info = array();
-                $user_extra_info['user_sid'] = $v;
-                $user_extra_info['user_type'] = "employee";
-                //
-                log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
+                foreach ($new_assign_manger as $k => $v) {
+                    $assign_to_info  = db_get_employee_profile($v);
+                    $assign_to_name  = $assign_to_info[0]['first_name'].' '.$assign_to_info[0]['last_name'];
+                    $assign_to_email = $assign_to_info[0]['email'];
+    
+                    $assigned_by_info  = db_get_employee_profile($assigned_by_sid);
+                    $assigned_by_name  = $assigned_by_info[0]['first_name'].' '.$assigned_by_info[0]['last_name'];
+    
+                    //Send Email
+                    $replacement_array = array();
+                    $replacement_array['baseurl']           = base_url();
+                    $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
+                    $replacement_array['company_name']  = ucwords($session['company_detail']['CompanyName']);
+                    $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
+                    $replacement_array['employee_name']  = ucwords($assigned_by_name);
+                    //
+                    $user_extra_info = array();
+                    $user_extra_info['user_sid'] = $v;
+                    $user_extra_info['user_type'] = "employee";
+                    //
+                    log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
+                }
             }
             //
             echo 'success';
