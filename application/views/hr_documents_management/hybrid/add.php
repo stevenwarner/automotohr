@@ -345,7 +345,32 @@
 
                                         <br />
                                         <?php $this->load->view('hr_documents_management/partials/send_dwmc'); ?>
-
+                                        <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="hr-box">
+                                                            <div class="hr-box-header">
+                                                                <strong>Is this document required?</strong>
+                                                                <p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>
+                                                            </div>
+                                                            <div class="hr-innerpadding">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isRequired" type="radio" value="0" checked="true" />
+                                                                            No &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isRequired" type="radio" value="1"  />
+                                                                            Yes &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <?php 

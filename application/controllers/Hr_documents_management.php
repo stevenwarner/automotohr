@@ -528,6 +528,8 @@ class Hr_documents_management extends Public_Controller {
                         $data_to_insert['employer_sid'] = $employer_sid;
                         $data_to_insert['document_title'] = $document_title;
                         $data_to_insert['document_description'] = $document_description;
+                        $isRequired = $this->input->post('isRequired');
+                        $data_to_insert['is_required'] = $isRequired;
                         $data_to_insert['document_type'] = 'uploaded';
                         $data_to_insert['unique_key'] = generateRandomString(32);
                         $data_to_insert['onboarding'] = $this->input->post('onboarding');
@@ -765,13 +767,16 @@ class Hr_documents_management extends Public_Controller {
                         $document_title = $this->input->post('document_title');
                         $document_description = $this->input->post('document_description');
                         $document_description = htmlentities($document_description);
+                        $isRequired = $this->input->post('isRequired');
                         $data_to_insert = array();
                         $new_history_data = array();
+                        $data_to_insert['is_required'] = $isRequired;
                         $data_to_insert['company_sid'] = $company_sid;
                         $data_to_insert['employer_sid'] = $employer_sid;
                         $data_to_insert['document_title'] = $document_title;
                         $data_to_insert['document_description'] = $document_description;
                         $data_to_insert['document_type'] = 'generated';
+
                         if(!empty($this->input->post('sort_order')))
                             $data_to_insert['sort_order'] = $this->input->post('sort_order');
                         else
@@ -1206,6 +1211,7 @@ class Hr_documents_management extends Public_Controller {
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
 
             if ($this->form_validation->run() == false) {
+              
                 $document_info = $this->hr_documents_management_model->get_hr_document_details($company_sid, $sid);
 
                 if (!empty($document_info)) {
@@ -1248,14 +1254,20 @@ class Hr_documents_management extends Public_Controller {
                 $type = $this->input->post('type');
 
                 switch ($perform_action) {
-                    case 'update_document':
+                       case 'update_document':
+                       
                         $document_name = $this->input->post('document_title');
                         $document_description = $this->input->post('document_description');
                         $video_required = $this->input->post('video_source');
+                        $isRequired = $this->input->post('isRequired');
+                        $data_to_update['is_required'] = $isRequired;
+
                         $document_description = htmlentities($document_description);
                         // $action_required = $this->input->post('action_required');
                         $data_to_update = array();
-
+                        
+                        $isRequired = $this->input->post('isRequired');
+                        $data_to_update['is_required'] = $isRequired;
                         if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
                             $s3_file_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
                             $original_name = $_FILES['document']['name'];
@@ -8287,6 +8299,8 @@ class Hr_documents_management extends Public_Controller {
             $data_to_insert['document_title'] = $document_title;
             $data_to_insert['document_description'] = $document_description;
             $data_to_insert['document_type'] = 'hybrid_document';
+            $isRequired = $this->input->post('isRequired');
+            $data_to_insert['is_required'] = $isRequired;
             if(!empty($this->input->post('sort_order')))
                 $data_to_insert['sort_order'] = $this->input->post('sort_order');
             else
@@ -8470,9 +8484,12 @@ class Hr_documents_management extends Public_Controller {
             $video_required = $this->input->post('video_source');
             $document_description = htmlentities($document_description);
             $sid = $id;
+                       
+           
             // $action_required = $this->input->post('action_required');
             $data_to_update = array();
-
+            $isRequired = $this->input->post('isRequired');
+            $data_to_update['is_required'] = $isRequired;
             if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
                 $s3_file_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
                 $original_name = $_FILES['document']['name'];

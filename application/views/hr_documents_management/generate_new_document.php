@@ -349,6 +349,37 @@
                                         <br />
                                         <?php $this->load->view('hr_documents_management/partials/send_dwmc'); ?>
 
+
+                                        <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="hr-box">
+                                                            <div class="hr-box-header">
+                                                                <strong>Is this document required? </strong>
+                                                                <p class="help-text">If marked yes, then the applicant needs to add e-sign this document to complete the onboarding process.</p>
+                                                            </div>
+                                                            <div class="hr-innerpadding">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isRequired" type="radio" value="0" <? if($document_info['is_required']!=1){?>
+checked="true" <?php }?> />
+                                                                            No &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio font-normal">
+                                                                    <input class="disable_doc_checkbox" name="isRequired" type="radio" value="1" <? if($document_info['is_required']==1){?>
+checked="true" <?php }?> />
+                                                                            Yes &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <?php 
@@ -497,6 +528,9 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
     $(document).ready(function () {
+
+        <?php echo $document_info['is_required'];?>
+        $('input[name="assign-in-days"]').val(0);
         var pre_selected = '<?php echo !empty($document_info['video_url']) ? $document_info['video_source'] : ''; ?>';
 
         $('input[name="assign-in-days"]').val(0);
