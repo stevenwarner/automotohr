@@ -360,7 +360,7 @@
             });
         }
 
-        <?php if ($document['user_consent'] == 1 && !empty($document['form_input_data'])) { ?>
+        <?php if (!empty($document['form_input_data'])) { ?>
             var form_input_data = <?php echo $form_input_data; ?>;
             form_input_data = Object.entries(form_input_data);
         

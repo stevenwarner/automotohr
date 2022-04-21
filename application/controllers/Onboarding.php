@@ -459,6 +459,11 @@ class Onboarding extends CI_Controller {
                 $data['save_offer_letter_type'] = $save_offer_letter_type;
 
                 if (!empty($document)) {
+                    if (!empty($document['form_input_data'])) {
+                        $form_input_data = unserialize($document['form_input_data']);
+                        $data['form_input_data'] = json_encode(json_decode($form_input_data, true));
+                    }
+                    //
                     if ($document['user_consent'] == 1 && !empty($document['form_input_data'])) {
 
                         if (!empty($document['authorized_signature'])) {
@@ -480,9 +485,6 @@ class Onboarding extends CI_Controller {
                         $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
                         $document['document_description'] = str_replace('{{sign_date}}', $sign_date , $document['document_description']);
 
-
-                        $form_input_data = unserialize($document['form_input_data']);
-                        $data['form_input_data'] = json_encode(json_decode($form_input_data, true));
                     } else if (!empty($document['authorized_signature']) && $document['user_consent'] == 1) {
                         $authorized_signature_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['authorized_signature'].'" id="show_authorized_signature">';
                         $signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_base64'].'">';
@@ -4829,63 +4831,19 @@ class Onboarding extends CI_Controller {
                             $already_assigned_w4['form_w4_ref_sid'] = $already_assigned_w4['sid'];
                             unset($already_assigned_w4['sid']);
                             $this->hr_documents_management_model->w4_forms_history($already_assigned_w4);
-                            $w4_data_to_insert = array();
-                            $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-                            $w4_data_to_insert['status'] = 1;
-                            $w4_data_to_insert['first_name'] = '';
-                            $w4_data_to_insert['middle_name'] = '';
-                            $w4_data_to_insert['last_name'] = '';
-                            $w4_data_to_insert['ss_number'] = '';
-                            $w4_data_to_insert['home_address'] = '';
-                            $w4_data_to_insert['city'] = '';
-                            $w4_data_to_insert['state'] = '';
-                            $w4_data_to_insert['zip'] = '';
-                            $w4_data_to_insert['marriage_status'] = '';
-                            $w4_data_to_insert['different_last_name'] = '';
-                            $w4_data_to_insert['number_of_allowance'] = '';
-                            $w4_data_to_insert['additional_amount'] = '';
-                            $w4_data_to_insert['claim_exempt'] = '';
-                            $w4_data_to_insert['signature_timestamp'] = date('Y-m-d H:i:s');
-                            $w4_data_to_insert['signature_email_address'] = NULL;
-                            $w4_data_to_insert['signature_bas64_image'] = NULL;
-                            $w4_data_to_insert['init_signature_bas64_image'] = NULL;
-                            $w4_data_to_insert['ip_address'] = NULL;
-                            $w4_data_to_insert['user_agent'] = NULL;
-                            $w4_data_to_insert['emp_name'] = '';
-                            $w4_data_to_insert['emp_address'] = '';
-                            $w4_data_to_insert['first_date_of_employment'] = '';
-                            $w4_data_to_insert['emp_identification_number'] = '';
-                            $w4_data_to_insert['paw_yourself'] = NULL;
-                            $w4_data_to_insert['paw_married'] = NULL;
-                            $w4_data_to_insert['paw_head'] = NULL;
-                            $w4_data_to_insert['paw_single_wages'] = NULL;
-                            $w4_data_to_insert['paw_child_tax'] = NULL;
-                            $w4_data_to_insert['paw_dependents'] = NULL;
-                            $w4_data_to_insert['paw_other_credit'] = NULL;
-                            $w4_data_to_insert['paw_accuracy'] = NULL;
-                            $w4_data_to_insert['daaiw_estimate'] = NULL;
-                            $w4_data_to_insert['daaiw_enter_status'] = NULL;
-                            $w4_data_to_insert['daaiw_subtract_line_2'] = NULL;
-                            $w4_data_to_insert['daaiw_estimate_of_adjustment'] = '';
-                            $w4_data_to_insert['daaiw_add_line_3_4'] = '';
-                            $w4_data_to_insert['daaiw_estimate__of_nonwage'] = NULL;
-                            $w4_data_to_insert['daaiw_subtract_line_6'] = NULL;
-                            $w4_data_to_insert['daaiw_divide_line_7'] = NULL;
-                            $w4_data_to_insert['daaiw_enter_number_personal_allowance'] = '';
-                            $w4_data_to_insert['daaiw_add_line_8_9'] = NULL;
-                            $w4_data_to_insert['temjw_personal_allowance'] = NULL;
-                            $w4_data_to_insert['temjw_num_in_table_1'] = NULL;
-                            $w4_data_to_insert['temjw_more_line2'] = NULL;
-                            $w4_data_to_insert['temjw_num_from_line2'] = NULL;
-                            $w4_data_to_insert['temjw_num_from_line1'] = NULL;
-                            $w4_data_to_insert['temjw_subtract_5_from_4'] = NULL;
-                            $w4_data_to_insert['temjw_amount_in_table_2'] = NULL;
-                            $w4_data_to_insert['temjw_multiply_7_by_6'] = NULL;
-                            $w4_data_to_insert['temjw_divide_8_by_period'] = NULL;
-                            $w4_data_to_insert['user_consent'] = 0;
-                            $w4_data_to_insert['uploaded_file'] = NULL;
-                            $w4_data_to_insert['uploaded_by_sid'] = 0;
-                            $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_insert);
+                            //
+                            $w4_data_to_update                                          = array();
+                            $w4_data_to_update['sent_date']                             = date('Y-m-d H:i:s');
+                            $w4_data_to_update['status']                                = 1;
+                            $w4_data_to_update['signature_timestamp']                   = NULL;
+                            $w4_data_to_update['signature_email_address']               = NULL;
+                            $w4_data_to_update['signature_bas64_image']                 = NULL;
+                            $w4_data_to_update['init_signature_bas64_image']            = NULL;
+                            $w4_data_to_update['ip_address']                            = NULL;
+                            $w4_data_to_update['user_agent']                            = NULL;
+                            $w4_data_to_update['user_consent']                          = 0;
+                            //
+                            $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
                         }
                         //
                         $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
@@ -4919,17 +4877,22 @@ class Onboarding extends CI_Controller {
                             $already_assigned_i9['i9form_ref_sid'] = $already_assigned_i9['sid'];
                             unset($already_assigned_i9['sid']);
                             $this->hr_documents_management_model->i9_forms_history($already_assigned_i9);
-                            $this->hr_documents_management_model->delete_i9_form($already_assigned_i9['i9form_ref_sid']);
-                            $i9_data_to_insert = array();
-                            $i9_data_to_insert['sid'] = $already_assigned_i9['i9form_ref_sid'];
-                            $i9_data_to_insert['user_sid'] = $user_sid;
-                            $i9_data_to_insert['user_type'] = $user_type;
-                            $i9_data_to_insert['company_sid'] = $company_sid;
-                            $i9_data_to_insert['sent_status'] = 1;
-                            $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-                            $i9_data_to_insert['status'] = 1;
-                            $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
-                            // $this->hr_documents_management_model->activate_i9_forms($user_type, $user_sid);
+                            //
+                            $data_to_update = array();
+                            $data_to_update["status"] = 1;
+                            $data_to_update["sent_status"] = 1;
+                            $data_to_update["sent_date"] = date('Y-m-d H:i:s');
+                            $data_to_update["section1_emp_signature"] = NULL;
+                            $data_to_update["section1_emp_signature_init"] = NULL;
+                            $data_to_update["section1_emp_signature_ip_address"] = NULL;
+                            $data_to_update["section1_emp_signature_user_agent"] = NULL;
+                            $data_to_update["section1_preparer_signature"] = NULL;
+                            $data_to_update["section1_preparer_signature_init"] = NULL;
+                            $data_to_update["section1_preparer_signature_ip_address"] = NULL;
+                            $data_to_update["section1_preparer_signature_user_agent"] = NULL;
+                            $data_to_update["user_consent"] = NULL;
+                            //
+                            $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                         }
                         //
                         $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
@@ -4960,27 +4923,14 @@ class Onboarding extends CI_Controller {
                             $w9_data_to_insert['status'] = 1;
                             $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
                         } else {
+
                             $already_assigned_w9['w9form_ref_sid'] = $already_assigned_w9['sid'];
                             unset($already_assigned_w9['sid']);
                             $this->hr_documents_management_model->w9_forms_history($already_assigned_w9);
+                            //
                             $already_assigned_w9 = array();
-                            $already_assigned_w9['w9_name'] = '';
-                            $already_assigned_w9['w9_business_name'] = '';
-                            $already_assigned_w9['w9_federaltax_classification'] = '';
-                            $already_assigned_w9['w9_federaltax_description'] = NULL;
-                            $already_assigned_w9['w9_exemption_payee_code'] = NULL;
-                            $already_assigned_w9['w9_exemption_reporting_code'] = NULL;
-                            $already_assigned_w9['w9_address'] = '';
-                            $already_assigned_w9['w9_city_state_zip'] = '';
-                            $already_assigned_w9['w9_requester_name_address'] = NULL;
-                            $already_assigned_w9['w9_account_no'] = NULL;
-                            $already_assigned_w9['w9_social_security_number'] = NULL;
-                            $already_assigned_w9['w9_employer_identification_number'] = NULL;
                             $already_assigned_w9['ip_address'] = NULL;
                             $already_assigned_w9['user_agent'] = NULL;
-                            $already_assigned_w9['first_name'] = '';
-                            $already_assigned_w9['last_name'] = '';
-                            $already_assigned_w9['email_address'] = '';
                             $already_assigned_w9['active_signature'] = NULL;
                             $already_assigned_w9['signature'] = NULL;
                             $already_assigned_w9['user_consent'] = NULL;
@@ -4992,9 +4942,8 @@ class Onboarding extends CI_Controller {
                             $already_assigned_w9['signature_user_agent'] = NULL;
                             $already_assigned_w9['sent_date'] = date('Y-m-d H:i:s');
                             $already_assigned_w9['status'] = 1;
-                            $already_assigned_w9['user_consent'] = 0;
-                            $w4_data_to_insert['uploaded_file'] = NULL;
-                            $w4_data_to_insert['uploaded_by_sid'] = 0;
+                            $already_assigned_w9['user_consent'] = NULL;
+                            //
                             $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $already_assigned_w9);
                         }
                         //

@@ -402,13 +402,13 @@
             });
         }
 
-        <?php if ($document['user_consent'] == 1 && !empty($document['form_input_data'])) { ?>
+        <?php if (!empty($document['form_input_data'])) { ?>
             var form_input_data = <?php echo $form_input_data; ?>;
             form_input_data = Object.entries(form_input_data);
 
         
             $.each(form_input_data, function(key ,input_value) { 
-                
+                console.log(key)
                 if (input_value[0] == 'signature_person_name') {
                     var input_field_id = input_value[0];  
                     var input_field_val = input_value[1];

@@ -1592,6 +1592,12 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->update();
     }
 
+    function reassign_i9_forms ($user_type, $user_sid, $updateArray) {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->update('applicant_i9form', $updateArray);
+    }
+
     function delete_i9_form($sid) {
         $this->db->where('sid', $sid);
         $this->db->delete('applicant_i9form');
