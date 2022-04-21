@@ -1200,4 +1200,10 @@
         
      }
 </style>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.accordion-toggle').trigger('click');
+    })
+    
+</script>
 
