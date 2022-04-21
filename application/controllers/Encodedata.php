@@ -18,10 +18,10 @@ class Encodedata extends CI_Controller
 
 
     public function updateencodingdocument(){
-  
-       
+         
         $this->db->select('sid,cc_type,cc_holder_name,cc_number,cc_expiration_month,cc_expiration_year');
         $this->db->from('form_document_credit_card_authorization');
+        $this->db->where('isdecode',0);
         $query = $this->db->get();
     
         if ( $query->num_rows() > 0 )
@@ -42,13 +42,15 @@ class Encodedata extends CI_Controller
                      'cc_number'=>base64_encode(openssl_encrypt($cc_holcc_number, 'aes-128-ecb', $key, OPENSSL_RAW_DATA)),
                      'cc_expiration_month'=>base64_encode(openssl_encrypt($cc_expiration_month, 'aes-128-ecb', $key, OPENSSL_RAW_DATA)),
                      'cc_expiration_year'=>base64_encode(openssl_encrypt($cc_expiration_year, 'aes-128-ecb', $key, OPENSSL_RAW_DATA)),
+                     'isdecode'=>1,
                  ];
-               
-                 $this->db->where('sid', $sid);
-                 $this->db->update('form_document_credit_card_authorization', $data_to_update);
-                 echo  "<Done>"; 
+              
+                $this->db->where('sid', $sid);
+                $this->db->update('form_document_credit_card_authorization', $data_to_update);
+                
              
             }
+            echo  "<Done>"; 
 
         }
 
@@ -60,6 +62,7 @@ class Encodedata extends CI_Controller
     
         $this->db->select('sid , key');
         $this->db->from('users');
+        $this->db->where('isdecode',0);
         $query = $this->db->get();
     
         if ( $query->num_rows() > 0 )
@@ -72,12 +75,14 @@ class Encodedata extends CI_Controller
                  
                  $data_to_update=[
                      'key'=>base64_encode(openssl_encrypt($user_key, 'aes-128-ecb', $key, OPENSSL_RAW_DATA)),
+                     'isdecode'=>1,
                       ];
 
                  $this->db->where('sid', $sid);
                  $this->db->update('users', $data_to_update);
-                 echo  "<Done>"; 
+                 
             }
+            echo  "<Done>"; 
 
         }
 
