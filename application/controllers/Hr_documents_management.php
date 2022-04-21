@@ -4248,6 +4248,8 @@ class Hr_documents_management extends Public_Controller {
                         array_push($new_assign_manger, $new_assign_sid);
                     }
                 }
+            } else{
+                $new_assign_manger = explode(',', $assign_to);
             }
 
             $this->hr_documents_management_model->addManagersToAssignedDocuments(
@@ -4270,7 +4272,6 @@ class Hr_documents_management extends Public_Controller {
                 ucwords($session['company_detail']['CompanyName'])
             );
             //
-            // foreach (explode(',', $assign_to) as $k => $v) {
             foreach ($new_assign_manger as $k => $v) {
                 $assign_to_info  = db_get_employee_profile($v);
                 $assign_to_name  = $assign_to_info[0]['first_name'].' '.$assign_to_info[0]['last_name'];
@@ -4285,6 +4286,7 @@ class Hr_documents_management extends Public_Controller {
                 $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
                 $replacement_array['company_name']  = ucwords($session['company_detail']['CompanyName']);
                 $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
+                $replacement_array['employee_name']  = ucwords($assigned_by_name);
                 //
                 $user_extra_info = array();
                 $user_extra_info['user_sid'] = $v;

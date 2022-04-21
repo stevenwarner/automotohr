@@ -49,7 +49,6 @@ class Notifications extends Public_Controller {
                     'title' => 'Goals'
                 ];
             }
-            https://www.youtube.com/watch?v=9yzYI8Mf77s
             //
             if($review['Total']){
                 $data[] = [
@@ -74,10 +73,8 @@ class Notifications extends Public_Controller {
             $total = 0;
             $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
             $total += $this->varification_document_model->get_all_users_pending_i9($ses['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
-            // $total += $this->varification_document_model->getPendingAuthDocs($ses['company_detail']['sid'], 'employee', TRUE, [], $companyEmployeesForVerification);
             $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
             $total += $this->varification_document_model->get_all_users_pending_i9($ses['company_detail']['sid'], 'applicant', TRUE, $companyApplicantsForVerification);
-            // $total += $this->varification_document_model->getPendingAuthDocs($ses['company_detail']['sid'], 'applicant', TRUE, [], $companyApplicantsForVerification);
             //
             if($total != 0){
                 $data[] = [

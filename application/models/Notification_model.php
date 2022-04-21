@@ -79,7 +79,7 @@ class Notification_model extends CI_Model {
             $r[] = array(
                 'count' => $c,
                 'link' => base_url('authorized_document'),
-                'title' => 'Assigned Authorize Documents'
+                'title' => 'Pending Authorized Documents'
             );
         }
     }
