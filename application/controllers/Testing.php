@@ -11,6 +11,77 @@ class Testing extends CI_Controller
         $this->load->model("test_model", "tm");
 
     }
+
+    //
+    function sendTestEmail(){
+        //
+       
+        $templets = [48, 3,36,38,300,359,7,4,305,306,307,308,309,311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 324, 325, 326, 327, 328, 330, 332, 333, 334, 335, 344, 100, 5, 10, 336, 337, 338, 339, 340, 341, 342, 343, 345, 349, 351, 352, 353, 357, 354, 347, 346, 348, 356, 35, 361, 355, 377, 378, 379, 380, 416, 381, 383, 387, 41, 420, 421, 417, 18, 362, 371, 382, 385, 388, 389, 390, 391, 415, 400, 401, 402, 403, 394, 392, 393, 414, 412, 413];
+
+        $replacement_array = array();
+        $replacement_array['applicant_name'] = "Jone Doe Applicant";
+        $replacement_array['job_title'] = "Developer";
+        $replacement_array['approval_status'] = "Hired one";
+        $replacement_array['conditions'] = "new reason";
+
+        $replacement_array['employer_name'] = ucwords("Aleem Shaukat");
+        $user_email = "abc@def.com";
+        $replacement_array['approving_authority'] = "Butt Sahib";
+
+        $on_boarding_link = '<a target="_blank" style="'.VIDEO_INTERVIEW_EMAIL_BTN_STYLE.'" href="javascript:;">HR Compliance And Onboarding</a>';
+        $replacement_array['on_boarding_link'] = $on_boarding_link;
+        $replacement_array['company_name'] = ucwords("Pepsi co");
+        $replacement_array['event_title'] = "Aftar Party";
+        $replacement_array['duration'] = "1 hour";
+        $replacement_array['participant_name'] = "Bla bla bla";
+        $replacement_array['start_time'] = "6:36 PM";
+
+
+        $replacement_array['user-name'] = ucwords($replacement_array['applicant_name']);
+        $replacement_array['employee_name'] = "Butt Sahib";
+        $replacement_array['company-name'] = ucwords("Pepsi co");
+        $replacement_array['applicant-name'] = "Jone Doe Applicant";
+        $replacement_array['job-title'] = "Developer";
+        $replacement_array['subject'] = 'PTO Changed By Team Lead';
+        $replacement_array['pto_details'] = "body";
+        $replacement_array['name'] = "Usana Boalt";
+        $replacement_array['firstname'] = "Usana";
+        $replacement_array['lastname'] = "Boalt";
+        $replacement_array['first_name'] = "Usana";
+        $replacement_array['last_name'] = "Boalt";
+        $replacement_array['referred_to'] = "Referred to Me";
+        $replacement_array['username'] = "Username_usanbolt";
+        $replacement_array['contact-name'] = "Mubashir";
+        $replacement_array['company_admin'] = "Mustafa";
+        $replacement_array['employee-name'] = "Mujtaba";
+        $replacement_array['to-name'] = "Mahmood";
+        $replacement_array['billing_contact_name'] = "Mahmood Alam";
+        $replacement_array['client_name'] = "MM Alam";
+        $replacement_array['administrator'] = "MM Alam PAF";
+        $replacement_array['assigned_to_name'] = "Developer php";
+        $replacement_array['affiliate_name'] = "affiliate Name php";
+        $replacement_array['approver_first_name'] = "Usana";
+        $replacement_array['approver_last_name'] = "Boalt";
+        $replacement_array['requester_first_name'] = "Usana";
+        $replacement_array['requester_last_name'] = "Boalt";
+        $replacement_array['user_first_name'] = "Usana";
+        $replacement_array['user_last_name'] = "Boalt";
+        $replacement_array['creator-name'] = "Bajwa GNR";
+
+        $replacement_array['url'] = '<a href="' . base_url() . '" style="'.DEF_EMAIL_BTN_STYLE_PRIMARY.'" target="_blank">Screening Questionnaires</a>';
+
+                        
+
+        $message_hf = (message_header_footer(15708, $replacement_array['company_name'])); 
+
+        foreach ($templets as $key => $id) {
+            log_and_send_templated_email($id, $user_email, $replacement_array, $message_hf);
+        }
+
+        // 
+        //
+        die("email send");    
+    }
     
     //
     function sendEmailNotifications($id){
