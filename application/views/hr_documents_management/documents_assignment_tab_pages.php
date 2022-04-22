@@ -2046,3 +2046,11 @@
     $GLOBALS['completedDocumentsList'] = $completedDocumentsList;
     $GLOBALS['noActionRequiredDocumentsList'] = $noActionRequiredDocumentsList;
 ?>
+
+<script>
+    $(function(){
+        setTimeout(function () {
+            $('[data-toggle="collapse"]').click();
+        }, 2000);
+    })
+</script>
