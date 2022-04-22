@@ -3043,7 +3043,7 @@ if (!function_exists('get_user_with_admin_access')) {
 
 if (!function_exists('log_and_sendEmail')) {
 
-    function log_and_sendEmail($from, $to, $subject, $body, $senderName)
+    function log_and_sendEmail($from, $to, $subject, $body, $senderName, $temp_id = "nil")
     {
         $CI = &get_instance();
         if (empty($to) || $to == NULL) return 0;
@@ -3054,6 +3054,7 @@ if (!function_exists('log_and_sendEmail')) {
             'email' => $to,
             'message' => $body,
             'username' => $senderName,
+            "temp_id" => $temp_id
         );
         //
         save_email_log_common($emailData);
@@ -4404,7 +4405,7 @@ if (!function_exists('log_and_send_templated_email')) {
         }
 
         if ($log_email == 1) { 
-            log_and_sendEmail($from, $to, $subject, $body, $from_name);
+            log_and_sendEmail($from, $to, $subject, $body, $from_name, $template_id);
         } else {
             sendMail($from, $to, $subject, $body, $from_name);
         }
