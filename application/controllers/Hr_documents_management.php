@@ -1976,6 +1976,22 @@ class Hr_documents_management extends Public_Controller {
                         case 'remove_document':
                             $document_type = $this->input->post('document_type');
                             $document_sid = $this->input->post('document_sid');
+                            //
+                            $assigned = $this->hr_documents_management_model->getAssignedDocumentByIdAndEmployeeId(
+                                $document_sid,
+                                $user_sid
+                            );
+                            //
+                            $assignInsertId = $assigned['sid'];
+                            //
+                            unset($assigned['sid']);
+                            unset($assigned['is_pending']);
+                            //
+                            $h = $assigned;
+                            $h['doc_sid'] = $assignInsertId;
+                            //
+                            $this->hr_documents_management_model->insert_documents_assignment_record_history($h);
+                            //
                             $data = array();
                             $data['status'] = 0;
                             // $data['is_pending'] = 1;
@@ -1991,7 +2007,7 @@ class Hr_documents_management extends Public_Controller {
                             break;
                         case 'assign_w4': //W4 Form Active
                             $w4_form_history = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
-
+                            //
                             if (empty($w4_form_history)) {
                                 $w4_data_to_insert = array();
                                 $w4_data_to_insert['employer_sid'] = $user_sid;
@@ -2002,12 +2018,6 @@ class Hr_documents_management extends Public_Controller {
                                 $w4_data_to_insert['status'] = 1;
                                 $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
                             } else {
-                                if ($w4_form_history['user_consent'] == 1) {
-                                    $w4_form_history['form_w4_ref_sid'] = $w4_form_history['sid'];
-                                    unset($w4_form_history['sid']);
-                                    $this->hr_documents_management_model->w4_forms_history($w4_form_history);
-                                }
-
                                 $w4_data_to_insert                                          = array();
                                 $w4_data_to_insert['sent_date']                             = date('Y-m-d H:i:s');
                                 $w4_data_to_insert['status']                                = 1;
@@ -2021,7 +2031,7 @@ class Hr_documents_management extends Public_Controller {
 
                                 $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_insert);
                             }
-
+                            //
                             if($user_type == 'employee') {
                                 //Send Email and SMS
                                 $replacement_array = array();
@@ -2082,6 +2092,12 @@ class Hr_documents_management extends Public_Controller {
 
                             break;
                         case 'remove_w4': //W4 Form Deactive
+                            $w4_form_history = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
+                            //
+                            $w4_form_history['form_w4_ref_sid'] = $w4_form_history['sid'];
+                            unset($w4_form_history['sid']);
+                            $this->hr_documents_management_model->w4_forms_history($w4_form_history);https://www.youtube.com/watch?v=40sV0Mow7N0
+                            //
                             $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
                             //
                             $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
@@ -2132,9 +2148,6 @@ class Hr_documents_management extends Public_Controller {
                                 $w9_data_to_insert['status'] = 1;
                                 $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
                             } else {
-                                $already_assigned_w9['w9form_ref_sid'] = $already_assigned_w9['sid'];
-                                unset($already_assigned_w9['sid']);
-                                $this->hr_documents_management_model->w9_forms_history($already_assigned_w9);
                                 //
                                 $already_assigned_w9 = array();
                                 $already_assigned_w9['ip_address'] = NULL;
@@ -2215,6 +2228,12 @@ class Hr_documents_management extends Public_Controller {
 
                             break;
                         case 'remove_w9': //W9 Form Deactive
+                            $already_assigned_w9 = $this->hr_documents_management_model->check_w9_form_exist($user_type, $user_sid);
+                            //
+                            $already_assigned_w9['w9form_ref_sid'] = $already_assigned_w9['sid'];
+                            unset($already_assigned_w9['sid']);
+                            $this->hr_documents_management_model->w9_forms_history($already_assigned_w9);
+                            //
                             $this->hr_documents_management_model->deactivate_w9_forms($user_type, $user_sid);
                             //
                             $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
@@ -2243,9 +2262,6 @@ class Hr_documents_management extends Public_Controller {
                                 $i9_data_to_insert['status'] = 1;
                                 $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                             } else {
-                                $already_assigned_i9['i9form_ref_sid'] = $already_assigned_i9['sid'];
-                                unset($already_assigned_i9['sid']);
-                                $this->hr_documents_management_model->i9_forms_history($already_assigned_i9);
                                 //
                                 $data_to_update = array();
                                 $data_to_update["status"] = 1;
@@ -2277,6 +2293,12 @@ class Hr_documents_management extends Public_Controller {
 
                             break;
                         case 'remove_i9': //I9 Form Deactive
+                            $already_assigned_i9 = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
+                            //
+                            $already_assigned_i9['i9form_ref_sid'] = $already_assigned_i9['sid'];
+                            unset($already_assigned_i9['sid']);
+                            $this->hr_documents_management_model->i9_forms_history($already_assigned_i9);
+                            //
                             $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
                             //
                             $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
@@ -9112,8 +9134,8 @@ class Hr_documents_management extends Public_Controller {
                 $this->resp();
                 //
             break;
-             //
-             case "modify_offer_letter_data":
+            //
+            case "modify_offer_letter_data":
                 //
                 $data_to_update = array();
                 //
@@ -10126,7 +10148,7 @@ class Hr_documents_management extends Public_Controller {
             $h = $assigned;
             $h['doc_sid'] = $assignInsertId;
             //
-            $this->hr_documents_management_model->insert_documents_assignment_record_history($h);
+            // $this->hr_documents_management_model->insert_documents_assignment_record_history($h);
             //
             $a['status'] = 1;
             $a['acknowledged'] = NULL;
@@ -10778,6 +10800,20 @@ class Hr_documents_management extends Public_Controller {
 
     //
     function revoke_document(){
+        $assigned = $this->hr_documents_management_model->getAssignedDocumentByIdAndEmployeeId(
+            $this->input->post('sid', true),
+            $this->input->post('employeeSid', true)
+        );
+        //
+        $assignInsertId = $assigned['sid'];
+        //
+        unset($assigned['sid']);
+        unset($assigned['is_pending']);
+        //
+        $h = $assigned;
+        $h['doc_sid'] = $assignInsertId;
+        //
+        $this->hr_documents_management_model->insert_documents_assignment_record_history($h);
         //
         $this->hr_documents_management_model->revokeDocument(
             $this->input->post('sid', true),

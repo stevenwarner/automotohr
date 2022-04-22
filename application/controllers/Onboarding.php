@@ -4810,6 +4810,22 @@ class Onboarding extends CI_Controller {
                     case 'remove_document':
                         $document_type = $this->input->post('document_type');
                         $document_sid = $this->input->post('document_sid');
+                        //
+                        $assigned = $this->hr_documents_management_model->getAssignedDocumentByIdAndEmployeeId(
+                            $document_sid,
+                            $user_sid
+                        );
+                        //
+                        $assignInsertId = $assigned['sid'];
+                        //
+                        unset($assigned['sid']);
+                        unset($assigned['is_pending']);
+                        //
+                        $h = $assigned;
+                        $h['doc_sid'] = $assignInsertId;
+                        //
+                        $this->hr_documents_management_model->insert_documents_assignment_record_history($h);
+                        //
                         $data = array();
                         $data['status'] = 0;
                         $this->hr_documents_management_model->assign_revoke_assigned_documents($document_sid, $document_type, $user_sid, $user_type, $data);
@@ -4828,9 +4844,6 @@ class Onboarding extends CI_Controller {
                             $w4_data_to_insert['status'] = 1;
                             $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
                         } else {
-                            $already_assigned_w4['form_w4_ref_sid'] = $already_assigned_w4['sid'];
-                            unset($already_assigned_w4['sid']);
-                            $this->hr_documents_management_model->w4_forms_history($already_assigned_w4);
                             //
                             $w4_data_to_update                                          = array();
                             $w4_data_to_update['sent_date']                             = date('Y-m-d H:i:s');
@@ -4853,6 +4866,12 @@ class Onboarding extends CI_Controller {
                         die();
                         break;
                     case 'remove_w4': //W4 Form Deactive
+                        $already_assigned_w4 = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
+                        //
+                        $already_assigned_w4['form_w4_ref_sid'] = $already_assigned_w4['sid'];
+                        unset($already_assigned_w4['sid']);
+                        $this->hr_documents_management_model->w4_forms_history($already_assigned_w4);
+                        //
                         $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
                         //
                         $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
@@ -4874,9 +4893,6 @@ class Onboarding extends CI_Controller {
                             $i9_data_to_insert['status'] = 1;
                             $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
                         } else {
-                            $already_assigned_i9['i9form_ref_sid'] = $already_assigned_i9['sid'];
-                            unset($already_assigned_i9['sid']);
-                            $this->hr_documents_management_model->i9_forms_history($already_assigned_i9);
                             //
                             $data_to_update = array();
                             $data_to_update["status"] = 1;
@@ -4902,6 +4918,12 @@ class Onboarding extends CI_Controller {
                         die();
                         break;
                     case 'remove_i9': //I9 Form Deactive
+                        $already_assigned_i9 = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
+                        //
+                        $already_assigned_i9['i9form_ref_sid'] = $already_assigned_i9['sid'];
+                        unset($already_assigned_i9['sid']);
+                        $this->hr_documents_management_model->i9_forms_history($already_assigned_i9);
+                        //
                         $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
                         //
                         $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
@@ -4923,10 +4945,6 @@ class Onboarding extends CI_Controller {
                             $w9_data_to_insert['status'] = 1;
                             $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
                         } else {
-
-                            $already_assigned_w9['w9form_ref_sid'] = $already_assigned_w9['sid'];
-                            unset($already_assigned_w9['sid']);
-                            $this->hr_documents_management_model->w9_forms_history($already_assigned_w9);
                             //
                             $already_assigned_w9 = array();
                             $already_assigned_w9['ip_address'] = NULL;
@@ -4954,6 +4972,12 @@ class Onboarding extends CI_Controller {
                         die();
                         break;
                     case 'remove_w9': //W9 Form Deactive
+                        $already_assigned_w9 = $this->hr_documents_management_model->check_w9_form_exist($user_type, $user_sid);
+                        //
+                        $already_assigned_w9['w9form_ref_sid'] = $already_assigned_w9['sid'];
+                        unset($already_assigned_w9['sid']);
+                        $this->hr_documents_management_model->w9_forms_history($already_assigned_w9);
+                        //
                         $this->hr_documents_management_model->deactivate_w9_forms($user_type, $user_sid);
                         //
                         $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
