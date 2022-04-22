@@ -48,7 +48,8 @@
                                     <a href="<?php echo base_url('hr_documents_management/archived_documents'); ?>" class="btn btn-warning">Archived <i class="fa fa-files-o" aria-hidden="true"></i></a>
                                     <?php } ?>
                                     <a href="<?php echo base_url('scheduled_documents'); ?>" class="btn btn-success">Scheduled Document(s)</a>
-                                </div>
+                                    <a href="<?php echo base_url('hr_documents_management/manage_general_documents'); ?>" class="btn btn-success">Manage General Document(s)</a>
+                                </div>  
                             </div>
                             <hr />
                         </div>

@@ -12781,4 +12781,50 @@ class Hr_documents_management extends Public_Controller {
         log_and_send_templated_email($template, $userInfo['email'], $replacement_array, $hf, 1);
     }
 
+
+
+
+    public function manage_general_documents() {
+       
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+            $data['title'] = 'Manage General Documents';
+            $perform_action = $this->input->post('perform_action');
+            
+            if ($perform_action=="yes") {
+
+                $data_to_insert = array();
+                $data_to_insert['generaldocs'] = $this->input->post('generaldocs');
+                $data_to_insert['isRequiredDep'] = $this->input->post('isRequiredDep');
+                $data_to_insert['isRequiredDir'] = $this->input->post('isRequiredDir');
+                $data_to_insert['isRequiredDri'] = $this->input->post('isRequiredDri');
+                $data_to_insert['isRequiredEme'] = $this->input->post('isRequiredEme');
+                $data_to_insert['isRequiredOcc'] = $this->input->post('isRequiredOcc');
+                $data_to_insert['isRequiredOcc'] = $this->input->post('isRequiredOcc');
+                $data_to_insert['company_sid'] = $company_sid;
+                $data_to_insert['employer_sid'] = $employer_sid ;
+                $manage_general_documents = $this->hr_documents_management_model->insert_manage_general_docs($data_to_insert);
+                $this->session->set_flashdata('message', '<strong>Success:</strong> Manage General Documents Updated!');
+                redirect('hr_documents_management/manage_general_documents', 'refresh');
+            
+            } else {
+                           
+                $manage_general_documents = $this->hr_documents_management_model->get_manage_general_docs($company_sid, $employer_sid);
+                //
+                $data['manage_general_documents'] = $manage_general_documents;
+                $this->load->view('main/header', $data);
+                $this->load->view('hr_documents_management/manage_general_document');
+                $this->load->view('main/footer');
+
+            }
+        } else {
+            redirect('login', 'refresh');
+        }
+    }
+
+
+
+
 }

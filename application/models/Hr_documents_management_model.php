@@ -7124,4 +7124,59 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+
+
+
+ function get_manage_general_docs($company_sid, $employer_sid) {
+
+        $this->db->select('*');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('employer_sid', $employer_sid);
+        $query = $this->db->get('manage_general_documents');
+        $results = $query->result(); 
+        return $results;
+
+    }
+
+    
+    function insert_manage_general_docs($data_to_insert) 
+    {
+
+   foreach ($data_to_insert['generaldocs'] as $docname){
+        $sid = $this->manage_general_docs_exist($data_to_insert['company_sid'],$data_to_insert['employer_sid'],$docname);
+        $is_required = 0;
+        if($docname == 'Dependents'){ $is_required = $data_to_insert['isRequiredDep'];}
+        if($docname == 'Direct Deposit Information'){ $is_required = $data_to_insert['isRequiredDir'];}
+        if($docname == 'Drivers License Information'){$is_required = $data_to_insert['isRequiredDri']; }
+        if($docname == 'Emergency Contacts'){ $is_required = $data_to_insert['isRequiredEme']; }
+        if($docname == 'Occupational License Information'){$is_required = $data_to_insert['isRequiredOcc']; }
+
+        $data_insert = array(
+            'document_name'=> $docname,
+            'company_sid'=> $data_to_insert['company_sid'],
+            'employer_sid'=> $data_to_insert['employer_sid'],
+            'is_required'=> $is_required,
+            'updated_at'=> date('Y-m-d')
+        );
+     
+        if($sid!=''){
+            $this->db->where('sid', $sid)->update('manage_general_documents', ['is_required' => $is_required,'updated_at' => date('Y-m-d')]);
+        }else{
+            $this->db->insert('manage_general_documents', $data_insert);
+        }
+
+    }
+
+      
+    }
+
+    function manage_general_docs_exist($company_sid,$employer_sid,$doc_name){
+        $this->db->select('sid');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('employer_sid', $employer_sid);
+        $this->db->where('document_name', $doc_name);
+       $data = $this->db->get("manage_general_documents")->row();
+       return $data->sid;
+    }
+    
 }
