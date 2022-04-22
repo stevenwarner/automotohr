@@ -3043,7 +3043,11 @@ if (!function_exists('get_user_with_admin_access')) {
 
 if (!function_exists('log_and_sendEmail')) {
 
+<<<<<<< HEAD
     function log_and_sendEmail($from, $to, $subject, $body, $senderName, $temp_id = "nil")
+=======
+    function log_and_sendEmail($from, $to, $subject, $body, $senderName, $temp_id = 'nil')
+>>>>>>> cd1e0d13 (test email template)
     {
         $CI = &get_instance();
         if (empty($to) || $to == NULL) return 0;
@@ -3054,7 +3058,11 @@ if (!function_exists('log_and_sendEmail')) {
             'email' => $to,
             'message' => $body,
             'username' => $senderName,
+<<<<<<< HEAD
             "temp_id" => $temp_id
+=======
+            'temp_id' => $temp_id
+>>>>>>> cd1e0d13 (test email template)
         );
         //
         save_email_log_common($emailData);
