@@ -3042,7 +3042,8 @@ if (!function_exists('get_user_with_admin_access')) {
 
 
 if (!function_exists('log_and_sendEmail')) {
-function log_and_sendEmail($from, $to, $subject, $body, $senderName, $temp_id = 'nil')
+    
+    function log_and_sendEmail($from, $to, $subject, $body, $senderName, $temp_id = "nil")
     {
         $CI = &get_instance();
         if (empty($to) || $to == NULL) return 0;
