@@ -2392,11 +2392,11 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->select('*');
         $this->db->where('sid', $sid);
         $record_obj = $this->db->get('documents_group_management');
-        $record_arr = $record_obj->result_array();
+        $record_arr = $record_obj->row_array();
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            return $record_arr[0];
+            return $record_arr;
         } else {
             return array();
         }
@@ -2462,9 +2462,21 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->insert('documents_group_2_employee', $data_to_insert);
     }
 
+    function change_document_assign_group_status ($group_sid, $user_type, $user_sid, $data_to_update) {
+        if ($user_type == 'employee') {
+            $this->db->where('employer_sid ',$user_sid);
+        } else if ($user_type == 'applicant') {
+            $this->db->where('applicant_sid ',$user_sid);
+        }
+
+        $this->db->where('group_sid ',$group_sid);
+        $this->db->update('documents_group_2_employee', $data_to_update);
+    }
+
     function get_assign_group_documents($company_sid, $user_type, $user_sid) {
         $this->db->select('documents_2_group.document_sid, documents_group_2_employee.assigned_by_sid');
         $this->db->where('documents_group_2_employee.company_sid', $company_sid);
+        $this->db->where('documents_group_2_employee.assign_status', 1);
 
         if ($user_type == 'employee') {
             $this->db->where('documents_group_2_employee.employer_sid', $user_sid);
@@ -7128,6 +7140,14 @@ class Hr_documents_management_model extends CI_Model {
         } else {
             return array();
         }
+    }
+
+    function change_group_document_status ($document_sid, $user_type, $user_sid, $status) {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('document_sid', $document_sid);
+        $this->db->set('status', $status);
+        $this->db->update('documents_assigned');
     }
 
 }

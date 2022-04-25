@@ -504,10 +504,23 @@
 
                                                                             <?php if ($action_btn_flag == true) { ?>
                                                                                 <?php if (in_array($active_group['sid'], $assigned_groups)) { ?>
-                                                                                    <button
-                                                                                        class="btn btn-success btn-xs pull-right">
-                                                                                        Document Group Assigned
-                                                                                    </button>
+                                                                                    <?php $group_status = get_user_assign_group_status($active_group['sid'], $user_type, $user_sid); ?>
+
+                                                                                    <?php if ($group_status == 1) { ?>
+                                                                                        <button
+                                                                                            class="btn btn-danger btn-xs pull-right"
+                                                                                            id="btn_group_<?php echo $active_group['sid']; ?>"
+                                                                                            onclick="func_revoke_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
+                                                                                            Revoke Document Group
+                                                                                        </button>
+                                                                                    <?php } else { ?>   
+                                                                                        <button
+                                                                                            class="btn btn-warning btn-xs pull-right"
+                                                                                            id="btn_group_<?php echo $active_group['sid']; ?>"
+                                                                                            onclick="func_reassign_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
+                                                                                            Reassign Document Group 
+                                                                                        </button>
+                                                                                    <?php } ?>
                                                                                 <?php } else { ?>
                                                                                     <button
                                                                                         class="btn btn-primary btn-xs pull-right"
@@ -5583,6 +5596,60 @@
 
                         alertify.success('Group Assigned Successfully');
                         location.reload();
+                    },
+                    error: function (data) {
+
+                    }
+                });
+            },
+            function () {
+                alertify.alert("Warning", 'Cancelled!');
+            }).set('labels', {ok: 'Yes', cancel: 'No'});
+    }
+
+    function func_revoke_document_group (group_sid, user_type, user_sid, group_name) {
+        var user_name = "<?php echo $user_info['first_name']; ?> <?php echo $user_info['last_name']; ?>";
+        alertify.confirm(
+            'Confirm Document Group Revoke?',
+            'Are you sure you want to revoke <strong><i>'+group_name+'</i></strong> group ?',
+            function () {
+                var myurl = "<?php echo base_url('hr_documents_management/ajax_revoke_document_group'); ?>"+'/'+group_sid+"/"+user_type+"/"+user_sid;
+
+                $.ajax({
+                    type: "GET",
+                    url: myurl,
+                    async : false,
+                    success: function (data) {
+                        alertify.alert('SUCCESS!', "Group Revoked Successfully", function(){
+                            window.location.reload();
+                        });
+                    },
+                    error: function (data) {
+
+                    }
+                });
+            },
+            function () {
+                alertify.alert("Warning", 'Cancelled!');
+            }).set('labels', {ok: 'Yes', cancel: 'No'});
+    }
+
+    function func_reassign_document_group (group_sid, user_type, user_sid, group_name) {
+        var user_name = "<?php echo $user_info['first_name']; ?> <?php echo $user_info['last_name']; ?>";
+        alertify.confirm(
+            'Confirm Document Group Reassign?',
+            'Are you sure you want to reassign <strong><i>'+group_name+'</i></strong> group to <strong><i>'+user_name+'</i></strong> ?',
+            function () {
+                var myurl = "<?php echo base_url('hr_documents_management/ajax_reassign_document_group'); ?>"+'/'+group_sid+"/"+user_type+"/"+user_sid;
+
+                $.ajax({
+                    type: "GET",
+                    url: myurl,
+                    async : false,
+                    success: function (data) {
+                        alertify.alert('SUCCESS!', "Group Reassigned Successfully", function(){
+                            window.location.reload();
+                        });
                     },
                     error: function (data) {
 

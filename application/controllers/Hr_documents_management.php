@@ -7196,6 +7196,99 @@ class Hr_documents_management extends Public_Controller {
         }
     }
 
+    public function ajax_revoke_document_group($group_sid, $user_type, $user_sid) {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+            $data_to_update = array();
+            $data_to_update['assign_status'] = 0;
+            $data_to_update['revoke_by'] = $employer_sid;
+            $data_to_update['revoke_date'] = date('Y-m-d H:i:s');
+            //
+            $this->hr_documents_management_model->change_document_assign_group_status($group_sid, $user_type, $user_sid, $data_to_update);
+            //
+            $group_documents = $this->hr_documents_management_model->get_distinct_group_docs($group_sid);
+            //
+            if (!empty($group_documents)) {
+                //
+                foreach ($group_documents as $document) {
+                    $this->hr_documents_management_model->change_group_document_status($document['document_sid'], $user_type, $user_sid, 0);
+                }
+                //
+            }
+            //
+            $group_info = $this->hr_documents_management_model->get_document_group($group_sid);
+            //
+            if ($group_info['w4'] == 1) {
+                $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
+            }
+            //
+            if ($group_info['w9'] == 1) {
+                $this->hr_documents_management_model->deactivate_w9_forms($user_type, $user_sid);
+            }
+            //
+            if ($group_info['i9'] == 1) {
+                $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
+            }
+            //
+            echo 'success';
+        } else {
+            redirect('login', 'refresh');
+        }
+    }
+
+    public function ajax_reassign_document_group($group_sid, $user_type, $user_sid) {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']['sid'];
+            $employer_sid = $data['session']['employer_detail']['sid'];
+            $data_to_update = array();
+            $data_to_update['assign_status'] = 1;
+            $data_to_update['assigned_by_sid'] = $employer_sid;
+            $data_to_update['assigned_date'] = date('Y-m-d H:i:s');
+            //
+            $this->hr_documents_management_model->change_document_assign_group_status($group_sid, $user_type, $user_sid, $data_to_update);
+            //
+            $group_documents = $this->hr_documents_management_model->get_distinct_group_docs($group_sid);
+            //
+            if (!empty($group_documents)) {
+                //
+                foreach ($group_documents as $document) {
+                    $this->hr_documents_management_model->change_group_document_status($document['document_sid'], $user_type, $user_sid, 1);
+                }
+                //
+            }
+            //
+            $group_info = $this->hr_documents_management_model->get_document_group($group_sid);
+            //
+            if ($group_info['w4'] == 1) {
+                $w4_data_to_update = array();
+                $w4_data_to_update['status'] = 1;
+                //
+                $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
+            }
+            //
+            if ($group_info['w9'] == 1) {
+                $w9_data_to_update = array();
+                $w9_data_to_update['status'] = 1;
+                //
+                $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $w9_data_to_update);
+            }
+            //
+            if ($group_info['i9'] == 1) {
+                $i9_data_to_update = array();
+                $i9_data_to_update['status'] = 1;
+                //
+                $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $i9_data_to_update);
+            }
+            //
+            echo 'success';
+        } else {
+            redirect('login', 'refresh');
+        }
+    }
+
     public function print_eeoc_form($action, $sid, $type) {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');

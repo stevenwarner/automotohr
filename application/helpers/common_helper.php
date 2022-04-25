@@ -15246,3 +15246,36 @@ if(!function_exists('isImage')){
         );
     }
 }
+
+if(!function_exists('get_user_assign_group_status')){
+    /**
+     * Check the status og the assign group
+     * 
+     * @param number $group_sid
+     * @param string $user_type
+     * @param number $user_sid
+     * @return
+     * 
+     */
+    function get_user_assign_group_status($group_sid, $user_type, $user_sid){
+        $CI = &get_instance();
+        $CI->db->select('assign_status');
+        $CI->db->where('group_sid ', $group_sid);
+        //
+        if ($user_type == 'employee') {
+            $CI->db->where('employer_sid ',$user_sid);
+        } else if ($user_type == 'applicant') {
+            $CI->db->where('applicant_sid ',$user_sid);
+        }
+        //
+        $records_obj = $CI->db->get("documents_group_2_employee");
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr["assign_status"];
+        } else {
+            return 0;
+        }
+    }
+}
