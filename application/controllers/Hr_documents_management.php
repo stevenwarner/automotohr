@@ -9999,7 +9999,8 @@ class Hr_documents_management extends Public_Controller {
                                     $user_extra_info['user_type'] = $user_type;
                                     //
                                     log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
-                                }    
+                                } 
+                                //   
                             break;
 
                             case 'applicant':
@@ -10038,6 +10039,31 @@ class Hr_documents_management extends Public_Controller {
                                 );
                             break;
                         }
+                        //
+                        if($user_type == 'employee'){
+                            //
+                            $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
+                            //
+                            if($user_info['document_sent_on'] < date('Y-m-d 23:59:59', strtotime('now'))){
+                                //
+                                $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
+                                // Send document completion alert
+                                broadcastAlert(
+                                    DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE,
+                                    'documents_status',
+                                    'document_assigned',
+                                    $company_sid,
+                                    $company_name,
+                                    $data['session']['employer_detail']['first_name'],
+                                    $data['session']['employer_detail']['last_name'],
+                                    $employer_sid,
+                                    [
+                                        'document_title' => $b['document_title'],
+                                        'employee_name' => $user_info['first_name'].' '.$user_info['last_name']
+                                    ]
+                                );
+                            }
+                        }
                         
                     }
 
@@ -10051,32 +10077,6 @@ class Hr_documents_management extends Public_Controller {
                             $company_sid,
                             $employer_sid
                         );
-                    }
-
-                    //
-                    if($user_type == 'employee'){
-                        //
-                        $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
-                        //
-                        if($user_info['document_sent_on'] < date('Y-m-d 23:59:59', strtotime('now'))){
-                            //
-                            $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
-                            // Send document completion alert
-                            broadcastAlert(
-                                DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE,
-                                'documents_status',
-                                'document_assigned',
-                                $company_sid,
-                                $company_name,
-                                $data['session']['employer_detail']['first_name'],
-                                $data['session']['employer_detail']['last_name'],
-                                $employer_sid,
-                                [
-                                    'document_title' => $b['document_title'],
-                                    'employee_name' => $user_info['first_name'].' '.$user_info['last_name']
-                                ]
-                            );
-                        }
                     }
                 }
 
@@ -10405,6 +10405,26 @@ class Hr_documents_management extends Public_Controller {
                     break;
                 }
                 //
+                if($post['Type'] == 'employee'){
+                    //
+                    $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
+                    // Send document completion alert
+                    broadcastAlert(
+                        DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE,
+                        'documents_status',
+                        'document_assigned',
+                        $post['CompanySid'],
+                        $post['CompanyName'],
+                        $assigner_firstname = $assigner_info['first_name'],
+                        $assigner_lastname = $assigner_info['last_name'],
+                        $post['EmployeeSid'],
+                        [
+                            'document_title' => $post['documentTitle'],
+                            'employee_name' => $user_info['first_name'].' '.$user_info['last_name']
+                        ]
+                    );
+                }
+                //
             }
             //
             // Check if it's Authorize document
@@ -10451,27 +10471,6 @@ class Hr_documents_management extends Public_Controller {
                         log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
                     }
                 }
-            }
-
-            //
-            if($post['Type'] == 'employee'){
-                //
-                $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
-                // Send document completion alert
-                broadcastAlert(
-                    DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE,
-                    'documents_status',
-                    'document_assigned',
-                    $post['CompanySid'],
-                    $post['CompanyName'],
-                    $assigner_firstname = $assigner_info['first_name'],
-                    $assigner_lastname = $assigner_info['last_name'],
-                    $post['EmployeeSid'],
-                    [
-                        'document_title' => $post['documentTitle'],
-                        'employee_name' => $user_info['first_name'].' '.$user_info['last_name']
-                    ]
-                );
             }
         }    
 
