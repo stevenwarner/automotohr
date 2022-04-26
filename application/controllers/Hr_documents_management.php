@@ -3270,7 +3270,6 @@ class Hr_documents_management extends Public_Controller {
             $archived_assign_document = $this->hr_documents_management_model->get_archive_assigned_documents($company_sid, $user_type, $user_sid, $pp_flag);  
             $user_assigned_manual_documents = $this->hr_documents_management_model->get_all_user_assigned_manual_documents($company_sid, $user_type, $user_sid, $pp_flag);
 
-
             foreach ($assigned_documents as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
                 $is_document_completed = 0;

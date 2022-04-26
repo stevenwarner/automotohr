@@ -22,6 +22,13 @@
     } 
     //
     $GLOBALS['ad'] = $assigned_documents;
+    //
+    $modifyBTN = '<button
+        class="btn btn-success btn-sm btn-block js-modify-assigned-document-btn"
+        data-id="{{sid}}"
+        data-type="{{type}}"
+        title="Modify assigned document"
+    >Modify</button>' ;
 ?>
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -504,23 +511,27 @@
 
                                                                             <?php if ($action_btn_flag == true) { ?>
                                                                                 <?php if (in_array($active_group['sid'], $assigned_groups)) { ?>
-                                                                                    <?php $group_status = get_user_assign_group_status($active_group['sid'], $user_type, $user_sid); ?>
+                                                                                    <button
+                                                                                        class="btn btn-success btn-xs pull-right">
+                                                                                        Document Group Assigned
+                                                                                    </button>
+                                                                                    <?php //$group_status = get_user_assign_group_status($active_group['sid'], $user_type, $user_sid); ?>
 
-                                                                                    <?php if ($group_status == 1) { ?>
-                                                                                        <button
+                                                                                    <?php //if ($group_status == 1) { ?>
+                                                                                        <!-- <button
                                                                                             class="btn btn-danger btn-xs pull-right"
                                                                                             id="btn_group_<?php echo $active_group['sid']; ?>"
                                                                                             onclick="func_revoke_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
                                                                                             Revoke Document Group
-                                                                                        </button>
-                                                                                    <?php } else { ?>   
-                                                                                        <button
+                                                                                        </button> -->
+                                                                                    <?php//} else { ?>   
+                                                                                        <!-- <button
                                                                                             class="btn btn-warning btn-xs pull-right"
                                                                                             id="btn_group_<?php echo $active_group['sid']; ?>"
                                                                                             onclick="func_reassign_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
                                                                                             Reassign Document Group 
-                                                                                        </button>
-                                                                                    <?php } ?>
+                                                                                        </button> -->
+                                                                                    <?php //} ?>
                                                                                 <?php } else { ?>
                                                                                     <button
                                                                                         class="btn btn-primary btn-xs pull-right"
@@ -563,6 +574,7 @@
                                                                                                                             <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
                                                                                                                             <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
                                                                                                                         </form>
+                                                                                                                        <?=str_replace(['{{sid}}', '{{type}}'], [$document['sid'], 'notCompletedDocuments'], $modifyBTN);?>
                                                                                                                         <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
                                                                                                                     <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
                                                                                                                         <button
@@ -874,6 +886,8 @@
                                                                                                                 <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
                                                                                                                 <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
                                                                                                             </form>
+
+                                                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['sid'], 'notCompletedDocuments'], $modifyBTN);?>
                                                                                                             <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
                                                                                                         <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
                                                                                                             <button
@@ -1525,8 +1539,11 @@
                                                                                                                     <input type="hidden" name="job_list_sid" value="<?php echo $job_list_sid; ?>">
                                                                                                                 <?php } ?>
                                                                                                         </form>
+                                                                                                          
+                                                                                                        <?=str_replace(['{{sid}}', '{{type}}'], [$offer_letter['sid'], 'notCompletedOfferLetters'], $modifyBTN);?>
                                                                                                             
                                                                                                         <button onclick="func_assign_uploaded_offer_letter('offer_letter', <?php echo $offer_letter['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
+
                                                                                                     <?php } else if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 1) { ?>
 
                                                                                                         
@@ -1654,6 +1671,8 @@
                                                                                                                         <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
                                                                                                                         <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
                                                                                                                     </form>
+
+                                                                                                                    <?=str_replace(['{{sid}}', '{{type}}'], [$document['sid'], 'notCompletedDocuments'], $modifyBTN);?>
                                                                                                                     <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
                                                                                                                 <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
                                                                                                                     <button
@@ -5988,7 +6007,7 @@
                     // Uncompleted Document
                     if($('#in_complete_doc_details #collapse_ncompleted-1').length == 0) {
                         $('.panel-body').find('b.js-error').remove();
-                        $('#in_complete_doc_details .panel-body').append(`<br /><div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_ncompleted-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-ncdi">0</span> </b></div></a></h4></div><div id="collapse_ncompleted-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th scope="column" class="col-lg-8">Document Name</th><th scope="column" class="col-lg-2 text-right">Actions</th><th scope="column" class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
+                        $('#in_complete_doc_details .panel-body').append(`<br /><div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle open_not_completed_varification_doc" data-toggle="collapse" data-parent="#accordion" href="#collapse_ncompleted-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-ncdi">0</span> </b></div></a></h4></div><div id="collapse_ncompleted-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th scope="column" class="col-lg-8">Document Name</th><th scope="column" class="col-lg-2 text-right">Actions</th><th scope="column" class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
                     }
                     $('#in_complete_doc_details  #collapse_ncompleted-1 tbody').prepend(`<tr><td class="col-lg-8">${dn}<br /><strong>Assigned on: </strong>${aon}</td><td class="col-lg-2 clv-${i}"></td><td class="col-lg-2 blv-${i}"></td></tr>`);
                     $('.js-ncd').text(
@@ -5999,10 +6018,12 @@
                     );
                     $('#in_complete_doc_details').find('td[colspan="7"]').parent().remove();
                     if($('.js-uncompleted-docs tbody tr').length == 0) $('.js-uncompleted-docs').remove();
+
                 }
                 $('.clv-'+(i)+'').html(btn);
                 $('.clv-'+(i)+'').append(w4_btn);
                 $('.clv-'+(i)+'').append(i9_btn);
+                $('.open_not_completed_varification_doc').trigger('click');
             }
         });
     })
