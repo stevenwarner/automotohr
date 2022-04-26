@@ -223,11 +223,12 @@
                                                             <figure>
                                                                 <?php if(check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
                                                                             <a href="<?php echo ($session['employer_detail']['access_level_plus'] && $employer_id != $employee['sid']) || $session['employer_detail']['pay_plan_flag'] ? base_url('employee_profile') . '/' . $employee['sid'] : 'javascript:;'; ?>" title="<?php echo $employee['first_name'] . ' ' . $employee['last_name']; ?>">
-                                                                                <?php if (!empty($employee['profile_picture'])) { ?>
+                                                                                <?php if (!empty($employee['profile_picture']) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($employee['profile_picture']))) { ?>
                                                                                         <img src="<?php echo AWS_S3_BUCKET_URL . $employee['profile_picture']; ?>"> 
                                                                                 <?php } else { ?>
                                                                                         <img src="<?= base_url() ?>assets/images/img-applicant.jpg">
                                                                                 <?php } ?>
+                                                                                
                                                                             </a>
                                                                 <?php } else { ?>
                                                                     <?php if (!empty($employee['profile_picture'])) { ?>

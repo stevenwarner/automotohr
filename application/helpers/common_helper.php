@@ -12886,11 +12886,21 @@ if(!function_exists('getSelect')){
  */
 if(!function_exists('getImageURL')){
     function getImageURL($img) {
+        /*
         if ($img == '' || $img == null || !preg_match('/jpg|jpeg|png|gif/i', strtolower($img))) {
             return base_url('assets/images/img-applicant.jpg');
         } else return AWS_S3_BUCKET_URL.$img;
-    }
+    */
+
+         if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img)))   { 
+               return AWS_S3_BUCKET_URL.$img;
+            } else { 
+              return base_url('assets/images/img-applicant.jpg'); 
+            } 
+
+   }
 }
+
 
 /**
  * 
