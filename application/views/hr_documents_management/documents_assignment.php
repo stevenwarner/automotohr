@@ -6007,7 +6007,7 @@
                     // Uncompleted Document
                     if($('#in_complete_doc_details #collapse_ncompleted-1').length == 0) {
                         $('.panel-body').find('b.js-error').remove();
-                        $('#in_complete_doc_details .panel-body').append(`<br /><div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle open_not_completed_varification_doc" data-toggle="collapse" data-parent="#accordion" href="#collapse_ncompleted-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-ncdi">0</span> </b></div></a></h4></div><div id="collapse_ncompleted-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th scope="column" class="col-lg-8">Document Name</th><th scope="column" class="col-lg-2 text-right">Actions</th><th scope="column" class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
+                        $('#in_complete_doc_details .panel-body').append(`<br /><div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle open_not_completed_varification_doc" data-toggle="collapse" data-parent="#accordion" href="#collapse_ncompleted-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-ncdi">0</span> </b></div></a></h4></div><div id="collapse_ncompleted-1" class="panel-collapse collapse in"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th scope="column" class="col-lg-8">Document Name</th><th scope="column" class="col-lg-2 text-right">Actions</th><th scope="column" class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
                     }
                     $('#in_complete_doc_details  #collapse_ncompleted-1 tbody').prepend(`<tr><td class="col-lg-8">${dn}<br /><strong>Assigned on: </strong>${aon}</td><td class="col-lg-2 clv-${i}"></td><td class="col-lg-2 blv-${i}"></td></tr>`);
                     $('.js-ncd').text(
@@ -6023,7 +6023,7 @@
                 $('.clv-'+(i)+'').html(btn);
                 $('.clv-'+(i)+'').append(w4_btn);
                 $('.clv-'+(i)+'').append(i9_btn);
-                $('.open_not_completed_varification_doc').trigger('click');
+                // $('.open_not_completed_varification_doc').trigger('click');
             }
         });
     })
