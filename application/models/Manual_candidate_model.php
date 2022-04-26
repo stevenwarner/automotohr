@@ -127,7 +127,7 @@ class manual_candidate_model extends CI_Model {
             if (!empty($record_arr)) {
                 return $record_arr['resume'];
             } else {
-                return array();
+                return "";
             }
         }
     }
