@@ -265,7 +265,7 @@
                                 <div class="panel panel-default hr-documents-tab-content">
                                     <div class="panel-heading">
                                         <h4 class="panel-title">
-                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_uncompleted_offer_letter">
+                                            <a class="accordion-toggle open_not_completed_doc" data-toggle="collapse" data-parent="#accordion" href="#collapse_uncompleted_offer_letter">
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 <?php //echo $category_document['name']; ?>
                                                 <?php echo 'Offer Letter / Pay Plan'; ?>
@@ -433,7 +433,7 @@
                                 <div class="panel panel-default hr-documents-tab-content">
                                     <div class="panel-heading">
                                         <h4 class="panel-title">
-                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_uncompleted_payroll_documents">
+                                            <a class="accordion-toggle open_not_completed_doc" data-toggle="collapse" data-parent="#accordion" href="#collapse_uncompleted_payroll_documents">
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 <?php echo 'Payroll Documents'; ?>
                                                 <div class="pull-right total-records"><b>&nbsp;Total: <?php echo count($uncompleted_payroll_documents); ?></b></div>
@@ -2033,6 +2033,11 @@
             });
         });
     }
+
+    $(document).ready(function(){
+        $('.open_not_completed_doc').trigger('click');
+    })
+    
 </script>
 
 
