@@ -774,7 +774,7 @@
                     <div class="panel panel-default hr-documents-tab-content">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a class="accordion-toggle open_not_completed_general_doc" data-toggle="collapse" data-parent="#accordion" href="#collapse_general_documents_notcompleted">
+                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_general_documents_notcompleted">
                                     <span class="glyphicon glyphicon-plus"></span>
                                     General Document(s)
                                     <div class="pull-right total-records"><b>&nbsp;Total: ${cc}</b></div>
@@ -782,7 +782,7 @@
                             </h4>
                         </div>
 
-                        <div id="collapse_general_documents_notcompleted" class="panel-collapse collapse">
+                        <div id="collapse_general_documents_notcompleted" class="panel-collapse collapse in">
                             <div class="table-responsive full-width">
                                 <table class="table table-plane">
                                     <thead>
@@ -806,7 +806,7 @@
                 parseInt($('.js-ncd').text()) + cc
             );
             //
-            $('.open_not_completed_general_doc').trigger('click');
+            $('').trigger('click');
         }
     });
 </script>

@@ -275,7 +275,7 @@
                                         </h4>
                                     </div>
 
-                                    <div id="collapse_uncompleted_offer_letter" class="panel-collapse collapse">
+                                    <div id="collapse_uncompleted_offer_letter" class="panel-collapse collapse in">
                                         <div class="table-responsive full-width">
                                             <table class="table table-plane">
                                                 <thead>
@@ -442,7 +442,7 @@
                                         </h4>
                                     </div>
 
-                                    <div id="collapse_uncompleted_payroll_documents" class="panel-collapse collapse">
+                                    <div id="collapse_uncompleted_payroll_documents" class="panel-collapse collapse in">
                                         <div class="table-responsive full-width">
                                             <table class="table table-plane">
                                                 <thead>
@@ -2035,7 +2035,7 @@
     }
 
     $(document).ready(function(){
-        $('.open_not_completed_doc').trigger('click');
+        // $('.open_not_completed_doc').trigger('click');
     })
     
 </script>
@@ -2046,3 +2046,11 @@
     $GLOBALS['completedDocumentsList'] = $completedDocumentsList;
     $GLOBALS['noActionRequiredDocumentsList'] = $noActionRequiredDocumentsList;
 ?>
+
+<script>
+    // $(function(){
+    //     setTimeout(function () {
+    //         $('[data-toggle="collapse"]').click();
+    //     }, 2000);
+    // })
+</script>
