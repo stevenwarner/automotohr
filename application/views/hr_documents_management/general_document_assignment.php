@@ -18,6 +18,9 @@
         top: 50%;
         transform: translate(-50%, -50%);
     }
+    .docname{
+
+    }
 </style>
 
 <div class="row">
@@ -96,7 +99,7 @@
 
                 <div class="form-group">
                     <br />
-                    <label>The document is required?</label>
+                    <label>The document is required? </label>
                     <br />
                     <label class="control control--radio">
                         Yes&nbsp;&nbsp;&nbsp;
@@ -283,10 +286,20 @@
                     if(CKEDITOR.instances['jsGeneralAssignModelNote'] === undefined) CKEDITOR.replace('jsGeneralAssignModelNote');
                     else CKEDITOR.instances['jsGeneralAssignModelNote'].setData('');
                     //
+                    var docname = $(this).closest('tr').find('.docname').text();
+                    var urls = "<?= base_url('Hr_documents_management/get_general_documents_settings?docname=');?>"+docname;
+                    $.get(urls , function(data, status){
+                  
+                    if(data==1){
+                        $('.GeneralDocumentRequired[value="1"]').prop('checked', true);
+                      }else{
+                        $('.GeneralDocumentRequired[value="0"]').prop('checked', true);
+                      }
+
+                     });
+                  
                     $('#jsGeneralAssignModelSEN[value="1"]').prop('checked', true);
-                    //
-                    $('.GeneralDocumentRequired[value="0"]').prop('checked', true);
-                    //
+                      //
                     $('#jsGeneralAssignModel').find('.modal-title').html(`<strong>Assign ${$(this).closest('tr').data('id').replace(/_/, ' ').ucwords()}</strong>`);
                     $('#jsGeneralAssignModel').modal('show');
 
@@ -616,7 +629,7 @@
                 }
                 rows += `
                     <tr data-id="${v.document_type}" data-key="${v.sid}">
-                        <td>${slugToName[v.document_type]}</td>
+                        <td class="docname">${slugToName[v.document_type]}</td>
                         <td class="text-center jsAssignedOn">
                             ${ v.assigned_at === undefined || v.status == 0 ? '<i class="fa fa-times fa-2x text-danger"></i>' : `<i class="fa fa-check fa-2x text-success"></i> <br />${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')}` }
                         </td>

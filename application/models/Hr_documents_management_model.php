@@ -5341,6 +5341,20 @@ class Hr_documents_management_model extends CI_Model {
         if(
           !count($b)  
         ){
+
+        $dtype = "";
+        if($documentType=="direct_deposit"){$dtype = "Direct Deposit Information";}
+        if($documentType=="drivers_license"){$dtype = "Drivers License Information";}
+        if($documentType=="occupational_license"){$dtype = "Occupational License Information";}
+        if($documentType=="dependents"){$dtype = "Dependents";}
+        if($documentType=="emergency_contacts"){$dtype = "Emergency Contacts";}
+
+         $is_required = $this->get_general_docs_settings($companySid,$userSid,$dtype);
+         
+          if(empty($is_required)){
+            $is_required = 0;
+          }
+
             $ins = [
                 'company_sid' => $companySid,
                 'user_sid' => $userSid,
@@ -5348,10 +5362,10 @@ class Hr_documents_management_model extends CI_Model {
                 'document_type' => $documentType,
                 'assigned_at' => date('Y-m-d H:i:s'),
                 'status' => 1,
-                'is_completed' => (int) $isCompleted
+                'is_completed' => (int) $isCompleted,
+                'is_required' => $is_required
             ];
-
-            if($assignedAt){
+             if($assignedAt){
                 $ins['assigned_at'] = $assignedAt;
                 $ins['updated_at'] = $assignedAt;
                 $ins['created_at'] = $assignedAt;
@@ -7179,4 +7193,14 @@ class Hr_documents_management_model extends CI_Model {
        return $data->sid;
     }
     
+
+    function get_general_docs_settings($company_sid,$employer_sid,$doc_name){
+      
+        $this->db->select('is_required');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('document_name', $doc_name);
+        $data = $this->db->get("manage_general_documents")->row();
+        return $data->is_required;
+    }
+
 }

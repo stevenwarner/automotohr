@@ -3771,6 +3771,8 @@ class Hr_documents_management extends Public_Controller {
             //     $user_type
             // );
             //
+             
+          
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
@@ -12824,6 +12826,14 @@ class Hr_documents_management extends Public_Controller {
         }
     }
 
+    public function get_general_documents_settings(){
+        $doc_name=$this->input->get('docname');
+        $data['session'] = $this->session->userdata('logged_in');
+        $company_sid = $data['session']['company_detail']['sid'];
+        $employer_sid = $data['session']['employer_detail']['sid'];
+        $is_required = $this->hr_documents_management_model->get_general_docs_settings($company_sid,$employer_sid,$doc_name);
+        echo $is_required;
+    }
 
 
 
