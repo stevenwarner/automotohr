@@ -7180,6 +7180,8 @@ class Hr_documents_management_model extends CI_Model {
         $records_arr = $records_obj->row_array();
         $records_obj->free_result();
 
+        $return_data = "not_assign";
+
         if (!empty($records_arr)) {
             //
             $this->db->where('sid', $records_arr["sid"]);
@@ -7190,9 +7192,11 @@ class Hr_documents_management_model extends CI_Model {
             $this->db->set('action', "assign");
             $this->db->set('assigned_from', "group");
             $this->db->update('documents_assigned_general_assigners');
+            //
+            $return_data = "already_assign";
         }
 
-        return true;
+        return $return_data;
     }
 
 }
