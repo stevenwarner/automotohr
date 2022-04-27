@@ -7436,6 +7436,25 @@ class Hr_documents_management extends Public_Controller {
                 $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $i9_data_to_update);
             }
             //
+            if ($user_type == 'employee') {
+                //
+                $hf = message_header_footer(
+                        $company_sid,
+                        ucwords($data['session']['company_detail']['CompanyName'])
+                    );
+                //
+                $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
+                $replacement_array = array();
+                $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+                $replacement_array['baseurl'] = base_url();
+                //
+                $extra_user_info = array();
+                $extra_user_info["user_sid"] = $user_sid;
+                $extra_user_info["user_type"] = $user_type;
+                //
+                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $extra_user_info);
+            }
+            //
             echo 'success';
         } else {
             redirect('login', 'refresh');
