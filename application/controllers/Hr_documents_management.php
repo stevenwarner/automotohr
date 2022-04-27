@@ -7222,17 +7222,57 @@ class Hr_documents_management extends Public_Controller {
                 //
             }
             //
-            $group_info = $this->hr_documents_management_model->get_document_group($group_sid);
+            $system_document = $this->hr_documents_management_model->get_document_group($group_sid);
             //
-            if ($group_info['w4'] == 1) {
+            if ($system_document['direct_deposit'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'direct_deposit',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //    
+            if ($system_document['drivers_license'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'drivers_license',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //    
+            if ($system_document['occupational_license'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'occupational_license',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //    
+            if ($system_document['emergency_contacts'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'emergency_contacts',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //    
+            if ($system_document['dependents'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'dependents',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //
+            if ($system_document['w4'] == 1) {
                 $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
             }
             //
-            if ($group_info['w9'] == 1) {
+            if ($system_document['w9'] == 1) {
                 $this->hr_documents_management_model->deactivate_w9_forms($user_type, $user_sid);
             }
             //
-            if ($group_info['i9'] == 1) {
+            if ($system_document['i9'] == 1) {
                 $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
             }
             //
@@ -7334,7 +7374,7 @@ class Hr_documents_management extends Public_Controller {
                     $user_sid,
                     $user_type 
                 );
-
+                //
                 if ($is_assign == "not_assign") {
                     $this->hr_documents_management_model->assignGeneralDocument(
                         $user_sid,

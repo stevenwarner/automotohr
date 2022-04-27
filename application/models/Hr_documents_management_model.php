@@ -7186,6 +7186,7 @@ class Hr_documents_management_model extends CI_Model {
             //
             $this->db->where('sid', $records_arr["sid"]);
             $this->db->set('is_completed', 0);
+            $this->db->set('status', 1);
             $this->db->update('documents_assigned_general');
             //
             $this->db->where('documents_assigned_general_sid', $records_arr["sid"]);
@@ -7197,6 +7198,30 @@ class Hr_documents_management_model extends CI_Model {
         }
 
         return $return_data;
+    }
+    
+
+    function revoke_general_document ($document_name, $user_sid, $user_type) {
+        $this->db->select('sid');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('document_type', $document_name);
+        $records_obj = $this->db->get('documents_assigned_general');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            //
+            $this->db->where('sid', $records_arr["sid"]);
+            $this->db->set('status', 0);
+            $this->db->update('documents_assigned_general');
+            //
+            $this->db->where('documents_assigned_general_sid', $records_arr["sid"]);
+            $this->db->set('action', "revoke");
+            $this->db->set('assigned_from', "group");
+            $this->db->update('documents_assigned_general_assigners');
+            //
+        }
     }
 
 }
