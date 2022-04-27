@@ -147,6 +147,8 @@ if (!function_exists('get_form_view')) {
 if (!function_exists('replace_tags_for_document')) {
     function replace_tags_for_document($company_sid, $user_sid = null, $user_type = null, $document_body, $document_sid = 0, $authorized_signature = 0, $signature_base64 = false, $forDownload = false, $autofill = 0)
     {
+        
+
         $CI = &get_instance();
 
         //Get Company Info
@@ -456,7 +458,9 @@ if (!function_exists('replace_tags_for_document')) {
         // $my_return = str_replace('{{text_area}}', $value, $my_return);
 
         //E_signature process
-        $signature_person_name = !empty($form_input_data['signature_person_name']) && $autofill == 1  ? $form_input_data['signature_person_name'] : '';
+        $signature_data =  get_e_signature($company_sid, $user_sid,$user_type);
+       // $signature_person_name = !empty($form_input_data['signature_person_name']) && $autofill == 1  ? $form_input_data['signature_person_name'] : '';
+        $signature_person_name = $signature_data['first_name']." ".$signature_data['last_name'];
 
         $value = '<input type="text" id="signature_person_name" class="form-control input-grey" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="'.$signature_person_name.'">';
         $my_return = str_replace('{{signature_print_name}}', $value, $my_return);
