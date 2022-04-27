@@ -3485,6 +3485,20 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     //
+    function getAssignedGroupDocument($document_sid, $user_sid, $user_type){
+        $a = $this->db
+        ->where('document_sid', $document_sid)
+        ->where('user_sid', $user_sid)
+        ->where('user_type', $user_type)
+        ->get('documents_assigned');
+        //
+        $b = $a->row_array();
+        $a->free_result();
+        //
+        return $b;
+    }
+
+    //
     function getAssignedDocumentByIdAndEmployeeId(
         $Id,
         $employeeId
@@ -7148,6 +7162,37 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->where('document_sid', $document_sid);
         $this->db->set('status', $status);
         $this->db->update('documents_assigned');
+    }
+
+    function reassign_group_document ($document_sid, $user_type, $user_sid, $data_to_update) {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('document_sid', $document_sid);
+        $this->db->update('documents_assigned', $data_to_update);
+    }
+
+    function reassign_general_document ($document_name, $user_sid, $user_type) {
+        $this->db->select('sid');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('document_type', $document_name);
+        $records_obj = $this->db->get('documents_assigned_general');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            //
+            $this->db->where('sid', $records_arr["sid"]);
+            $this->db->set('is_completed', 0);
+            $this->db->update('documents_assigned_general');
+            //
+            $this->db->where('documents_assigned_general_sid', $records_arr["sid"]);
+            $this->db->set('action', "assign");
+            $this->db->set('assigned_from', "group");
+            $this->db->update('documents_assigned_general_assigners');
+        }
+
+        return true;
     }
 
 }

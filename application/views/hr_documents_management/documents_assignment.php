@@ -511,10 +511,10 @@
 
                                                                             <?php if ($action_btn_flag == true) { ?>
                                                                                 <?php if (in_array($active_group['sid'], $assigned_groups)) { ?>
-                                                                                    <button
+                                                                                    <!-- <button
                                                                                         class="btn btn-success btn-xs pull-right">
                                                                                         Document Group Assigned
-                                                                                    </button>
+                                                                                    </button> -->
                                                                                     <?php //$group_status = get_user_assign_group_status($active_group['sid'], $user_type, $user_sid); ?>
 
                                                                                     <?php //if ($group_status == 1) { ?>
@@ -525,12 +525,12 @@
                                                                                             Revoke Document Group
                                                                                         </button> -->
                                                                                     <?php//} else { ?>   
-                                                                                        <!-- <button
+                                                                                        <button
                                                                                             class="btn btn-warning btn-xs pull-right"
                                                                                             id="btn_group_<?php echo $active_group['sid']; ?>"
                                                                                             onclick="func_reassign_document_group('<?php echo $active_group['sid']; ?>','<?php echo $user_type; ?>','<?php echo $user_sid; ?>', '<?php echo $active_group['name'] ?>')">
                                                                                             Reassign Document Group 
-                                                                                        </button> -->
+                                                                                        </button>
                                                                                     <?php //} ?>
                                                                                 <?php } else { ?>
                                                                                     <button
