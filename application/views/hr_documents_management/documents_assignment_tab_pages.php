@@ -2048,9 +2048,9 @@
 ?>
 
 <script>
-    // $(function(){
-    //     setTimeout(function () {
-    //         $('[data-toggle="collapse"]').click();
-    //     }, 2000);
-    // })
+    $(function(){
+        setTimeout(function () {
+            // $('[data-toggle="collapse"]').click();
+        }, 2000);
+    })
 </script>

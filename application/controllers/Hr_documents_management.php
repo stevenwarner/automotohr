@@ -2096,7 +2096,7 @@ class Hr_documents_management extends Public_Controller {
                             //
                             $w4_form_history['form_w4_ref_sid'] = $w4_form_history['sid'];
                             unset($w4_form_history['sid']);
-                            $this->hr_documents_management_model->w4_forms_history($w4_form_history);https://www.youtube.com/watch?v=40sV0Mow7N0
+                            $this->hr_documents_management_model->w4_forms_history($w4_form_history);
                             //
                             $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
                             //
@@ -3259,7 +3259,11 @@ class Hr_documents_management extends Public_Controller {
             
             $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
             $data['eeo_form_info'] = $eeo_form_info;
-
+            //
+            if (empty($data['eeo_form_info'])) {
+                $data['eeo_form_info']['status'] = 0;
+            }
+            //
             $data['assigned_groups'] = $assigned_groups;
 
             $active_documents = $this->hr_documents_management_model->get_all_documents($company_sid, 0);
@@ -3704,6 +3708,7 @@ class Hr_documents_management extends Public_Controller {
             //     $user_sid,
             //     $user_type
             // );
+            // _e($eeo_form_info,true,true);
             //
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
@@ -7220,17 +7225,57 @@ class Hr_documents_management extends Public_Controller {
                 //
             }
             //
-            $group_info = $this->hr_documents_management_model->get_document_group($group_sid);
+            $system_document = $this->hr_documents_management_model->get_document_group($group_sid);
             //
-            if ($group_info['w4'] == 1) {
+            if ($system_document['direct_deposit'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'direct_deposit',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //    
+            if ($system_document['drivers_license'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'drivers_license',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //    
+            if ($system_document['occupational_license'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'occupational_license',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //    
+            if ($system_document['emergency_contacts'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'emergency_contacts',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //    
+            if ($system_document['dependents'] == 1) {
+                $this->hr_documents_management_model->revoke_general_document(
+                    'dependents',
+                    $user_sid,
+                    $user_type 
+                );
+            }
+            //
+            if ($system_document['w4'] == 1) {
                 $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
             }
             //
-            if ($group_info['w9'] == 1) {
+            if ($system_document['w9'] == 1) {
                 $this->hr_documents_management_model->deactivate_w9_forms($user_type, $user_sid);
             }
             //
-            if ($group_info['i9'] == 1) {
+            if ($system_document['i9'] == 1) {
                 $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
             }
             //
@@ -7254,35 +7299,309 @@ class Hr_documents_management extends Public_Controller {
             //
             $group_documents = $this->hr_documents_management_model->get_distinct_group_docs($group_sid);
             //
+            
             if (!empty($group_documents)) {
                 //
                 foreach ($group_documents as $document) {
-                    $this->hr_documents_management_model->change_group_document_status($document['document_sid'], $user_type, $user_sid, 1);
+                    $assigned_document = $this->hr_documents_management_model->getAssignedGroupDocument(
+                        $document['document_sid'],
+                        $user_sid,
+                        $user_type
+                    );
+                    //
+                    if (!empty($assigned_document)) {
+                        if ($assigned_document["user_consent"] == 1) {
+                            $assignInsertId = $assigned_document['sid'];
+                            //
+                            unset($assigned_document['sid']);
+                            unset($assigned_document['is_pending']);
+                            //
+                            $history_array = $assigned_document;
+                            $history_array['doc_sid'] = $assignInsertId;
+                            //
+                            $this->hr_documents_management_model->insert_documents_assignment_record_history($history_array);
+                        }
+                        //
+                        $document_to_update['status'] = 1;
+                        $document_to_update['acknowledged'] = NULL;
+                        $document_to_update['acknowledged_date'] = NULL;
+                        $document_to_update['downloaded'] = NULL;
+                        $document_to_update['downloaded_date'] = NULL;
+                        $document_to_update['uploaded'] = NULL;
+                        $document_to_update['uploaded_date'] = NULL;
+                        $document_to_update['signature_timestamp'] = NULL;
+                        $document_to_update['signature'] = NULL;
+                        $document_to_update['signature_email'] = NULL;
+                        $document_to_update['signature_ip'] = NULL;
+                        $document_to_update['user_consent'] = 0;
+                        $document_to_update['archive'] = 0;
+                        $document_to_update['signature_base64'] = NULL;
+                        $document_to_update['signature_initial'] = NULL;
+                        $document_to_update['authorized_signature'] = NULL;
+                        $document_to_update['authorized_signature_by'] = NULL;
+                        $document_to_update['authorized_signature_date'] = NULL;
+                        //
+                        $this->hr_documents_management_model->reassign_group_document($document['document_sid'], $user_type, $user_sid, $document_to_update);
+                    } else {
+                        $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document['document_sid']);
+                        //
+                        $document_to_insert = array();
+                        $document_to_insert['company_sid'] = $company_sid;
+                        $document_to_insert['assigned_date'] = date('Y-m-d H:i:s');
+                        $document_to_insert['assigned_by'] = $assign_group_document['assigned_by_sid'];
+                        $document_to_insert['user_type'] = $user_type;
+                        $document_to_insert['user_sid'] = $user_sid;
+                        $document_to_insert['document_type'] = $document['document_type'];
+                        $document_to_insert['document_sid'] = $assign_group_document['document_sid'];
+                        $document_to_insert['status'] = 1;
+                        $document_to_insert['document_original_name'] = $document['uploaded_document_original_name'];
+                        $document_to_insert['document_extension'] = $document['uploaded_document_extension'];
+                        $document_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
+                        $document_to_insert['document_title'] = $document['document_title'];
+                        $document_to_insert['document_description'] = $document['document_description'];
+                        $document_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                        $document_to_insert['signature_required'] = $document['signature_required'];
+                        $document_to_insert['download_required'] = $document['download_required'];
+                        //
+                        $this->hr_documents_management_model->insert_documents_assignment_record($document_to_insert);
+                    }    
                 }
                 //
             }
             //
-            $group_info = $this->hr_documents_management_model->get_document_group($group_sid);
+            $system_document = $this->hr_documents_management_model->get_document_group($group_sid);
             //
-            if ($group_info['w4'] == 1) {
-                $w4_data_to_update = array();
-                $w4_data_to_update['status'] = 1;
+            if ($system_document['direct_deposit'] == 1) {
+                $is_assign = $this->hr_documents_management_model->reassign_general_document(
+                    'direct_deposit',
+                    $user_sid,
+                    $user_type 
+                );
                 //
-                $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
+                if ($is_assign == "not_assign") {
+                    $this->hr_documents_management_model->assignGeneralDocument(
+                        $user_sid,
+                        $user_type,
+                        $company_sid,
+                        'direct_deposit',
+                        $employer_sid
+                    );    
+                }
+            }
+            //    
+            if ($system_document['drivers_license'] == 1) {
+                $is_assign = $this->hr_documents_management_model->reassign_general_document(
+                    'drivers_license',
+                    $user_sid,
+                    $user_type 
+                );
+                //
+                if ($is_assign == "not_assign") {
+                    $this->hr_documents_management_model->assignGeneralDocument(
+                        $user_sid,
+                        $user_type,
+                        $company_sid,
+                        'drivers_license',
+                        $employer_sid
+                    );    
+                }
+            }
+            //    
+            if ($system_document['occupational_license'] == 1) {
+                $is_assign = $this->hr_documents_management_model->reassign_general_document(
+                    'occupational_license',
+                    $user_sid,
+                    $user_type 
+                );
+                //
+                if ($is_assign == "not_assign") {
+                    $this->hr_documents_management_model->assignGeneralDocument(
+                        $user_sid,
+                        $user_type,
+                        $company_sid,
+                        'occupational_license',
+                        $employer_sid
+                    );    
+                }
+            }
+            //    
+            if ($system_document['emergency_contacts'] == 1) {
+                $is_assign = $this->hr_documents_management_model->reassign_general_document(
+                    'emergency_contacts',
+                    $user_sid,
+                    $user_type 
+                );
+                //
+                if ($is_assign == "not_assign") {
+                    $this->hr_documents_management_model->assignGeneralDocument(
+                        $user_sid,
+                        $user_type,
+                        $company_sid,
+                        'emergency_contacts',
+                        $employer_sid
+                    );    
+                }
+            }
+            //    
+            if ($system_document['dependents'] == 1) {
+                $is_assign = $this->hr_documents_management_model->reassign_general_document(
+                    'dependents',
+                    $user_sid,
+                    $user_type 
+                );
+                //
+                if ($is_assign == "not_assign") {
+                    $this->hr_documents_management_model->assignGeneralDocument(
+                        $user_sid,
+                        $user_type,
+                        $company_sid,
+                        'dependents',
+                        $employer_sid
+                    );    
+                }
+            }
+            //    
+            //
+            if ($system_document['w4'] == 1) {
+                //
+                $already_assigned_w4 = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
+                //
+                if (!empty($already_assigned_w4)) {
+                    if ($already_assigned_w4["user_consent"] == 1) {
+                        //
+                        $already_assigned_w4['form_w4_ref_sid'] = $already_assigned_w4['sid'];
+                        unset($already_assigned_w4['sid']);
+                        $this->hr_documents_management_model->w4_forms_history($already_assigned_w4);
+                    }
+                    //
+                    $w4_data_to_update                                          = array();
+                    $w4_data_to_update['sent_date']                             = date('Y-m-d H:i:s');
+                    $w4_data_to_update['status']                                = 1;
+                    $w4_data_to_update['signature_timestamp']                   = NULL;
+                    $w4_data_to_update['signature_email_address']               = NULL;
+                    $w4_data_to_update['signature_bas64_image']                 = NULL;
+                    $w4_data_to_update['init_signature_bas64_image']            = NULL;
+                    $w4_data_to_update['ip_address']                            = NULL;
+                    $w4_data_to_update['user_agent']                            = NULL;
+                    $w4_data_to_update['user_consent']                          = NULL;
+
+                    $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
+                } else {
+                    $w4_data_to_insert = array();
+                    $w4_data_to_insert['employer_sid'] = $user_sid;
+                    $w4_data_to_insert['company_sid'] = $company_sid;
+                    $w4_data_to_insert['user_type'] = $user_type;
+                    $w4_data_to_insert['sent_status'] = 1;
+                    $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                    $w4_data_to_insert['status'] = 1;
+                    //
+                    $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
+                }
+                
             }
             //
-            if ($group_info['w9'] == 1) {
-                $w9_data_to_update = array();
-                $w9_data_to_update['status'] = 1;
+            if ($system_document['w9'] == 1) {
                 //
-                $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $w9_data_to_update);
+                $already_assigned_w9 = $this->hr_documents_management_model->check_w9_form_exist($user_type, $user_sid);
+                //
+                if (!empty($already_assigned_w9)) {
+                    if ($already_assigned_w9["user_consent"] == 1) {
+                        //
+                        $already_assigned_w9['w9form_ref_sid'] = $already_assigned_w9['sid'];
+                        unset($already_assigned_w9['sid']);
+                        $this->hr_documents_management_model->w9_forms_history($already_assigned_w9);
+                    }
+                    //
+                    $w9_data_to_update = array();
+                    $w9_data_to_update['ip_address'] = NULL;
+                    $w9_data_to_update['user_agent'] = NULL;
+                    $w9_data_to_update['active_signature'] = NULL;
+                    $w9_data_to_update['signature'] = NULL;
+                    $w9_data_to_update['user_consent'] = NULL;
+                    $w9_data_to_update['signature_timestamp'] = NULL;
+                    $w9_data_to_update['signature_email_address'] = NULL;
+                    $w9_data_to_update['signature_bas64_image'] = NULL;
+                    $w9_data_to_update['init_signature_bas64_image'] = NULL;
+                    $w9_data_to_update['signature_ip_address'] = NULL;
+                    $w9_data_to_update['signature_user_agent'] = NULL;
+                    $w9_data_to_update['sent_date'] = date('Y-m-d H:i:s');
+                    $w9_data_to_update['status'] = 1;
+                    $w9_data_to_update['user_consent'] = NULL;
+                    //
+                    $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $w9_data_to_update);
+                } else {
+                    $w9_data_to_insert = array();
+                    $w9_data_to_insert['user_sid'] = $user_sid;
+                    $w9_data_to_insert['company_sid'] = $company_sid;
+                    $w9_data_to_insert['user_type'] = $user_type;
+                    $w9_data_to_insert['sent_status'] = 1;
+                    $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                    $w9_data_to_insert['status'] = 1;
+                    $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
+                }    
             }
             //
-            if ($group_info['i9'] == 1) {
-                $i9_data_to_update = array();
-                $i9_data_to_update['status'] = 1;
+            if ($system_document['i9'] == 1) {
                 //
-                $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $i9_data_to_update);
+                $already_assigned_i9 = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
+                //
+                if (!empty($already_assigned_i9)) {
+                    if ($already_assigned_w9["user_consent"] == 1) {
+                        //
+                        $already_assigned_i9['i9form_ref_sid'] = $already_assigned_i9['sid'];
+                        unset($already_assigned_i9['sid']);
+                        $this->hr_documents_management_model->i9_forms_history($already_assigned_i9);
+                    }
+                    //
+                    $i9_data_to_update = array();
+                    $i9_data_to_update['status'] = 1;
+                    $i9_data_to_update["sent_status"] = 1;
+                    $i9_data_to_update["sent_date"] = date('Y-m-d H:i:s');
+                    $i9_data_to_update["section1_emp_signature"] = NULL;
+                    $i9_data_to_update["section1_emp_signature_init"] = NULL;
+                    $i9_data_to_update["section1_emp_signature_ip_address"] = NULL;
+                    $i9_data_to_update["section1_emp_signature_user_agent"] = NULL;
+                    $i9_data_to_update["section1_preparer_signature"] = NULL;
+                    $i9_data_to_update["section1_preparer_signature_init"] = NULL;
+                    $i9_data_to_update["section1_preparer_signature_ip_address"] = NULL;
+                    $i9_data_to_update["section1_preparer_signature_user_agent"] = NULL;
+                    $i9_data_to_update["section1_preparer_signature_user_agent"] = NULL;
+                    $i9_data_to_update["section2_sig_emp_auth_rep"] = NULL;
+                    $i9_data_to_update["section3_emp_sign"] = NULL;
+                    $i9_data_to_update["employer_flag"] = 0;
+                    $i9_data_to_update["user_consent"] = NULL;
+                    //
+                    $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $i9_data_to_update);
+                } else {
+                    $i9_data_to_insert = array();
+                    $i9_data_to_insert['user_sid'] = $user_sid;
+                    $i9_data_to_insert['user_type'] = $user_type;
+                    $i9_data_to_insert['company_sid'] = $company_sid;
+                    $i9_data_to_insert['sent_status'] = 1;
+                    $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                    $i9_data_to_insert['status'] = 1;
+                    //
+                    $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);   
+                }    
+            }
+            //
+            if ($user_type == 'employee') {
+                //
+                $hf = message_header_footer(
+                        $company_sid,
+                        ucwords($data['session']['company_detail']['CompanyName'])
+                    );
+                //
+                $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
+                $replacement_array = array();
+                $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+                $replacement_array['baseurl'] = base_url();
+                //
+                $extra_user_info = array();
+                $extra_user_info["user_sid"] = $user_sid;
+                $extra_user_info["user_type"] = $user_type;
+                //
+                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $extra_user_info);
             }
             //
             echo 'success';
@@ -10243,7 +10562,7 @@ class Hr_documents_management extends Public_Controller {
             $h = $assigned;
             $h['doc_sid'] = $assignInsertId;
             //
-            // $this->hr_documents_management_model->insert_documents_assignment_record_history($h);
+            //$this->hr_documents_management_model->insert_documents_assignment_record_history($h);
             //
             $a['status'] = 1;
             $a['acknowledged'] = NULL;
@@ -10252,7 +10571,6 @@ class Hr_documents_management extends Public_Controller {
             $a['downloaded_date'] = NULL;
             $a['uploaded'] = NULL;
             $a['uploaded_date'] = NULL;
-            $a['uploaded_file'] = NULL;
             $a['signature_timestamp'] = NULL;
             $a['signature'] = NULL;
             $a['signature_email'] = NULL;
