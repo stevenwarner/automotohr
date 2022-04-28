@@ -7224,4 +7224,20 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    function get_document_authorized_managers ($company_sid, $document_sid) {
+        $this->db->select('assigned_to_sid');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('document_assigned_sid', $document_sid);
+        //
+        $record_obj = $this->db->get('authorized_document_assigned_manager');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
 }

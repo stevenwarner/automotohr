@@ -317,6 +317,11 @@
 						if(d.allowed_employees != '0' && d.allowed_employees != null) $('#jsEmployees').select2('val', d.allowed_employees.split(',') );
 						if(d.allowed_departments != '0' && d.allowed_departments != null) $('#jsDepartments').select2('val', d.allowed_departments.split(',') );
 						if(d.allowed_teams != '0' && d.allowed_teams != null) $('#jsTeams').select2('val', d.allowed_teams.split(',') );
+						if (d.is_document_authorized == 1 && d.assign_managers != undefined ) {
+							$('#js-modify-assigned-document-signers').select2('val', d.assign_managers.split(',') );
+						}
+						
+
 					}
 					$('.modify-assigned-document-modal-loader').fadeOut(300);
 					$('[data-toggle="propover"]').popover({

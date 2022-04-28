@@ -3304,6 +3304,9 @@ class Hr_documents_management extends Public_Controller {
                         } else {
                             $authorized_sign_status = 0;
                         }
+
+                        $assign_managers = $this->hr_documents_management_model->get_document_authorized_managers($company_sid, $assigned_document["sid"]);
+                        $assigned_documents[$key]["assign_managers"] = implode(",", array_column($assign_managers, "assigned_to_sid"));
                     }
                 }
 
@@ -13212,6 +13215,17 @@ class Hr_documents_management extends Public_Controller {
 
         // Send email to assigner as a notification with private link
         log_and_send_templated_email($template, $userInfo['email'], $replacement_array, $hf, 1);
+    }
+
+    function get_assigned_authorized_manager ($document_sid) {
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $company_sid = $data['session']['company_detail']["sid"];
+            
+            // 
+            $r['assign_managers'] = array_column($assign_managers, "assigned_to_sid");
+            $this->res($r);
+        }
     }
 
 }
