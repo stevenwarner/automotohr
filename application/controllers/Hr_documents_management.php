@@ -3128,6 +3128,7 @@ class Hr_documents_management extends Public_Controller {
                     }
                 }
             }
+
             $groups_assign = $this->hr_documents_management_model->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
             $assigned_groups = array();
             
@@ -3278,6 +3279,16 @@ class Hr_documents_management extends Public_Controller {
             $user_assigned_manual_documents = $this->hr_documents_management_model->get_all_user_assigned_manual_documents($company_sid, $user_type, $user_sid, $pp_flag);
 
             foreach ($assigned_documents as $key => $assigned_document) {
+                //
+                $is_approval_document = $this->hr_documents_management_model->check_if_approval_document($user_type, $user_sid,$assigned_document['document_sid']);
+                //
+                if (!empty($is_approval_document)) {
+                    $assigned_documents[$key]["approver_document"] = 1;
+                    $assigned_documents[$key]["approver_managers"] = implode(",", array_column($is_approval_document, "assigner_sid"));
+                } else {
+                    $assigned_documents[$key]["approver_document"] = 0;
+                }
+                //
                 $is_magic_tag_exist = 0;
                 $is_document_completed = 0;
                 $is_document_authorized = 0;
@@ -3307,6 +3318,9 @@ class Hr_documents_management extends Public_Controller {
                         } else {
                             $authorized_sign_status = 0;
                         }
+
+                        $assign_managers = $this->hr_documents_management_model->get_document_authorized_managers($company_sid, $assigned_document["sid"]);
+                        $assigned_documents[$key]["assign_managers"] = implode(",", array_column($assign_managers, "assigned_to_sid"));
                     }
                 }
 

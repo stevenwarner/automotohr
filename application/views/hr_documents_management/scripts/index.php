@@ -251,7 +251,13 @@
 			//
 			rows += getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
+			if (d.approver_document == 1)
+			{
+				rows += getApproversManager();
+				//
+				//rows += `<?php //echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
+			}
+			
 			//
 			rows += getEmailContent();
 			//
@@ -290,6 +296,10 @@
 				select2s.push('#js-modify-assigned-document-signers');
 			}
 			//
+			if(d.approver_document == 1){ 
+				select2s.push('#js-modify-assign-document-approvers');
+			}
+			//
 			Modal(
 				'Modify Assigned Document',
 				rows,
@@ -317,6 +327,16 @@
 						if(d.allowed_employees != '0' && d.allowed_employees != null) $('#jsEmployees').select2('val', d.allowed_employees.split(',') );
 						if(d.allowed_departments != '0' && d.allowed_departments != null) $('#jsDepartments').select2('val', d.allowed_departments.split(',') );
 						if(d.allowed_teams != '0' && d.allowed_teams != null) $('#jsTeams').select2('val', d.allowed_teams.split(',') );
+						//
+						if (d.is_document_authorized == 1 && d.assign_managers != undefined ) {
+							$('#js-modify-assigned-document-signers').select2('val', d.assign_managers.split(',') );
+						}
+						//
+						if (d.approver_document == 1)
+						{
+							$('#js-modify-assign-document-approvers').select2('val', d.approver_managers.split(',') );
+						}
+
 					}
 					$('.modify-assigned-document-modal-loader').fadeOut(300);
 					$('[data-toggle="propover"]').popover({
@@ -979,6 +999,29 @@
 		}
 
 		//
+		function getApproversManager(){
+			//
+			var rows = '';
+			//
+			rows += '<div class="form-group">';
+			rows += '	<label>Document Approver Manager</label>';
+			rows += '	<select id="js-modify-assign-document-approvers" multiple="true">';
+
+			var 
+				i = 0,
+				il = allEmployees.length;
+			//
+			for(i; i < il; i++){
+				rows += '<option value="'+( allEmployees[i]['sid'] )+'">'+( remakeEmployeeName( allEmployees[i] ) )+'</option>';
+			}
+
+			rows += '   </select>';
+			rows += '</div>';
+			//
+			return rows;
+		}
+
+		//
 		function getEmailContent(){
 			var rows = '';
 			//
@@ -1350,7 +1393,6 @@
 			e.preventDefault();
 			//
 			var d = getOfferLetter($(this).data('id'));
-			console.log(d);
 			var o = getOfferLetterBody('edit');
 			//
 			currentOfferLetter = d;
