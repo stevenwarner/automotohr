@@ -7268,4 +7268,143 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    function check_if_document_has_history($user_type, $user_sid, $document_sid) {
+        $this->db->select('sid');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('doc_sid', $document_sid);
+        $this->db->where('user_consent', 1);
+        //
+        $record_obj = $this->db->get('documents_assigned_history');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    function is_I9_history_exist($i9_form_sid, $user_type, $user_sid) {
+        $this->db->select('sid');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('i9form_ref_sid', $i9_form_sid);
+        $this->db->where('user_consent', 1);
+        //
+        $record_obj = $this->db->get('applicant_i9form_history');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    function is_W9_history_exist($w9_form_sid, $user_type, $user_sid) {
+        $this->db->select('sid');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('w9form_ref_sid', $w9_form_sid);
+        $this->db->where('user_consent', 1);
+        //
+        $record_obj = $this->db->get('applicant_w9form_history');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    function is_W4_history_exist($w4_form_sid, $user_type, $user_sid) {
+        $this->db->select('sid');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('employer_sid', $user_sid);
+        $this->db->where('form_w4_ref_sid', $w4_form_sid);
+        $this->db->where('user_consent', 1);
+        //
+        $record_obj = $this->db->get('form_w4_original_history');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public function fetch_document_from_history($form_name, $document_sid, $user_type, $user_sid) {
+        $this->db->select('*');
+
+        if ($form_name == 'w4') {
+            $this->db->where('user_type', $user_type);
+            $this->db->where('employer_sid', $user_sid);
+            $this->db->where('user_consent', 1);
+            $this->db->from('form_w4_original_history');
+            $this->db->order_by('sid', 'desc');
+
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+        } elseif ($form_name == 'w9') {
+            $this->db->where('user_type', $user_type);
+            $this->db->where('user_sid', $user_sid);
+            $this->db->where('user_consent', 1);
+            $this->db->from('applicant_w9form_history');
+            $this->db->order_by('sid', 'desc');
+
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+        } else {
+            $this->db->where('user_type', $user_type);
+            $this->db->where('user_sid', $user_sid);
+            $this->db->where('user_consent', 1);
+            $this->db->from('applicant_i9form_history');
+            $this->db->order_by('sid', 'desc');
+
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+        }
+
+        if ($form_name == 'eeoc') {
+            $this->db->where('users_type', $user_type);
+            $this->db->where('application_sid', $user_sid);
+            $this->db->where('user_consent', 1);
+            $this->db->from('portal_eeo_form_history');
+            $this->db->order_by('sid', 'desc');
+
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+        }
+
+        if ($form_name == 'user_document') {
+            $this->db->where('user_type', $user_type);
+            $this->db->where('user_sid', $user_sid);
+            $this->db->where('doc_sid', $document_sid);
+            $this->db->where('user_consent', 1);
+            $this->db->from('documents_assigned_history');
+            $this->db->order_by('sid', 'desc');
+
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
+        }
+
+        if (sizeof($records_arr) > 0) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
 }

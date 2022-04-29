@@ -228,6 +228,9 @@
                                                                         </a>
                                                                     <?php } ?>
                                                                 <?php } ?>
+                                                                <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
+                                                                    <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
+                                                                <?php } ?> 
                                                             </td>
                                                         </tr>
                                                     <?php } ?>
@@ -407,6 +410,10 @@
                                                                             <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                         <?php } ?>
                                                                         <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
+                                                                    <?php } ?> 
+
+                                                                     <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
+                                                                        <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
                                                                     <?php } ?>    
                                                                 </td>
                                                             </tr>
@@ -548,6 +555,9 @@
                                                                             <?php } ?>
                                                                         <?php } ?>
                                                                     <?php } ?>
+                                                                     <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
+                                                                        <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
+                                                                    <?php } ?> 
                                                                 </td>  
                                                             </tr>
                                                         <?php } ?>
@@ -974,8 +984,11 @@
                                                                                         title="Modify Category"
                                                                                         data-asid="<?=$document['sid'];?>"
                                                                                         data-sid="<?=$document['document_sid'];?>"
-                                                                                    >Manage Category</a>
+                                                                                    >Manage Category </a>
                                                                                 <?php } ?>    
+                                                                                <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
+                                                                                    <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
+                                                                                <?php } ?> 
                                                                             </td>
                                                                         </tr>
                                                                     <?php } ?>
@@ -1243,6 +1256,9 @@
                                                                         <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
                                                                     <?php } ?>    
                                                                 </td>
+                                                                <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
+                                                                    <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
+                                                                <?php } ?> 
                                                             </tr>
                                                             <?php //} ?>
                                                         <?php } ?>
@@ -1403,7 +1419,12 @@
                                                                         <td class="col-lg-1">
                                                                             <a href="<?= base_url('hr_documents_management/print_generated_doc/original/' . $document['sid'] . '/' . $user_sid . '/' . $user_type . '/download');?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
                                                                         </td>
-                                                                        <td class="col-lg-2"><button onclick="generated_document_original_preview(<?php echo $document['sid']; ?>);" class="btn btn-success btn-sm btn-block">Preview Document</button></td>
+                                                                        <td class="col-lg-2">
+                                                                            <button onclick="generated_document_original_preview(<?php echo $document['sid']; ?>);" class="btn btn-success btn-sm btn-block">Preview Document</button>
+                                                                            <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
+                                                                                <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
+                                                                            <?php } ?> 
+                                                                        </td>
                                                                     <?php } ?>
                                                                 </tr>
                                                             <?php } else { ?>
@@ -1527,6 +1548,9 @@
                                                                             <?php } ?>    
                                                                         </td>
                                                                     <?php } ?>
+                                                                    <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
+                                                                        <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
+                                                                    <?php } ?> 
                                                                 </tr>
                                                             <?php } ?>    
                                                         <?php } ?>
