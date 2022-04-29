@@ -6686,4 +6686,30 @@ class Hr_documents_management_model extends CI_Model {
 
         return $return_data;
     }
+
+
+    function get_all_paginate_library_documents ($company_sid, $employer_sid, $limit = null, $start = null) {
+        $this->db->select('*');
+        $this->db->where('documents_management.company_sid', $company_sid);
+        $this->db->where('documents_management.employer_sid', $employer_sid);
+        $this->db->where('documents_management.isdoctolibrary', 1);
+  
+        if($limit != null){
+            $this->db->limit($limit, $start);
+        }
+        // 
+        $this->db->order_by('documents_management.sid', 'DESC', false);
+       //
+        $record_obj = $this->db->get('documents_management');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+
+
 }

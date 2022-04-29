@@ -806,6 +806,25 @@
                                     </div>
                                 <?php } ?>
 
+
+
+                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                    <div class="dash-box">
+                                        <div class="dashboard-widget-box">
+                                            <figure><i class="fa fa-clipboard <?php echo !empty($total_pending_auth_doc) && $total_pending_auth_doc > 0 ? 'start_animation' : ''; ?>"></i></figure>
+                                            <h2 class="post-title" style="margin: 2px 0;">
+                                                <a href="<?php echo base_url('authorized_document'); ?>">Documents  Library</a>
+                                            </h2>
+                                            <div class="count-box" style="font-size: 12px">
+                                                <small style="font-size: 12px"><?php echo $total_library_doc; ?> Total Document(s)</small>
+                                            </div>
+                                            <div class="button-panel">
+                                                <a href="<?php echo base_url('library_document'); ?>" class="site-btn">View Documents</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Account Activity -->
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box activity-box-wrp">
@@ -847,7 +866,7 @@
                                     </div>
                                 </div>
 
-                                
+                               
                             </div>
                         </div>
                     </div>

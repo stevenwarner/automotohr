@@ -534,6 +534,9 @@ class Hr_documents_management extends Public_Controller {
                         $data_to_insert['acknowledgment_required'] = $this->input->post('acknowledgment_required');
                         $data_to_insert['download_required'] = $this->input->post('download_required');
                         $data_to_insert['signature_required'] = $this->input->post('signature_required');
+                        $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+
+                        
                         $data_to_insert['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
                         if($data_to_insert == 'days'){
                             $data_to_insert['automatic_assign_in'] = !empty($this->input->post('assign-in-days')) ? $this->input->post('assign-in-days') : 0;
@@ -761,6 +764,7 @@ class Hr_documents_management extends Public_Controller {
                         $data_to_insert['employer_sid'] = $employer_sid;
                         $data_to_insert['document_title'] = $document_title;
                         $data_to_insert['document_description'] = $document_description;
+                        $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary');
                         $data_to_insert['document_type'] = 'generated';
                         if(!empty($this->input->post('sort_order')))
                             $data_to_insert['sort_order'] = $this->input->post('sort_order');
@@ -1211,7 +1215,7 @@ class Hr_documents_management extends Public_Controller {
                     $this->load->view('main/header', $data);
 
                     if ($document_type == 'hybrid_document') {
-                     $this->load->view('hr_documents_management/hybrid/edit');
+                      $this->load->view('hr_documents_management/hybrid/edit');
                     }else if ($document_type == 'uploaded') {
                         $this->load->view('hr_documents_management/upload_new_document');
                     } else {
@@ -1235,7 +1239,8 @@ class Hr_documents_management extends Public_Controller {
                         $document_description = htmlentities($document_description);
                         // $action_required = $this->input->post('action_required');
                         $data_to_update = array();
-
+                        $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+                     
                         if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
                             $s3_file_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
                             $original_name = $_FILES['document']['name'];
@@ -1244,6 +1249,7 @@ class Hr_documents_management extends Public_Controller {
                                 $data_to_update['uploaded_document_original_name'] = $original_name;
                                 $data_to_update['uploaded_document_s3_name'] = $s3_file_name;
                             }
+                          
 
                             $file_info = pathinfo($original_name);
 
@@ -7983,11 +7989,13 @@ class Hr_documents_management extends Public_Controller {
     function perform_action_on_document_content ($document_sid, $request_type, $request_from, $perform_action, $letter_request = NULL) {
         $form_input_data = "NULL";
         $is_iframe_preview = 1;
-
+       
+       
         $document = $this->hr_documents_management_model->get_requested_authorized_content($document_sid, $request_from);
         $requested_content = $this->hr_documents_management_model->get_requested_content($document_sid, $request_type, $request_from, 'P&D');
         $file_name = $this->hr_documents_management_model->get_document_title($document_sid, $request_type, $request_from);
-
+print_r($requested_content);
+die();
         if ($letter_request == 1) {
             $requested_content = $document['submitted_description'];
         } else if (!empty($document['form_input_data']) && $request_type == 'submitted') {
@@ -8015,6 +8023,9 @@ class Hr_documents_management extends Public_Controller {
 
             $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
             $requested_content = $document_content;
+
+            print_r($requested_content);
+            die();
 
             $form_input_data = unserialize($document['form_input_data']);
             $form_input_data = json_encode(json_decode($form_input_data, true));
@@ -8190,6 +8201,8 @@ class Hr_documents_management extends Public_Controller {
 
             $file_info = pathinfo($uploaded_document_original_name);
             $data_to_insert = array();
+
+            $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary');
             
             if (isset($file_info['extension'])) {
                 $data_to_insert['uploaded_document_extension'] = $file_info['extension'];
@@ -8393,9 +8406,11 @@ class Hr_documents_management extends Public_Controller {
             $document_description = $this->input->post('document_description');
             $video_required = $this->input->post('video_source');
             $document_description = htmlentities($document_description);
+          
             $sid = $id;
             // $action_required = $this->input->post('action_required');
             $data_to_update = array();
+            $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary');
 
             if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
                 $s3_file_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
@@ -9785,6 +9800,8 @@ class Hr_documents_management extends Public_Controller {
                 $a['acknowledgment_required'] = $post['acknowledgment_required'];
                 $a['signature_required'] = $post['signature_required'];
                 $a['is_required'] = $post['isRequired'];
+                $a['isdoctolibrary'] = $post['isdoctolibrary'];
+              
                 $a['is_signature_required'] = $post['isSignatureRequired'];
                 $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
 
@@ -12033,5 +12050,86 @@ class Hr_documents_management extends Public_Controller {
         echo json_encode($response);
         exit(0);
     } 
+
+
+    public function library_document_listing() {
+       
+        if ($this->session->userdata('logged_in')) {
+
+            $data['session']                                                    = $this->session->userdata('logged_in');
+            $company_sid                                                        = $data['session']['company_detail']['sid'];
+            $company_email                                                      = $data['session']['company_detail']['email'];
+            $company_name                                                       = $data['session']['company_detail']['CompanyName'];
+            $employers_details                                                  = $data['session']['employer_detail'];
+            $employer_sid                                                       = $employers_details['sid'];
+            $access_level                                                       = $employers_details['access_level'];
+            $ats_active_job_flag                                                = null; // get both active and inactive jobs
+            $security_details                                                   = db_get_access_level_details($employer_sid);
+            $data['security_details']                                           = $security_details;
+            $total_documents                                                    = $this->hr_documents_management_model->get_all_assigned_auth_documents ($company_sid, $employer_sid);
+            $documents_count                                                    = count($total_documents);
+
+            $records_per_page                                                   = PAGINATION_RECORDS_PER_PAGE;
+            $page                                                               = ($this->uri->segment(2)) ? $this->uri->segment(2) : 0; 
+            $my_offset                                                          = 0;
+            $choice                                                             = $documents_count / $records_per_page;
+            
+            if($page > 1) {
+                $my_offset                                                      = ($page - 1) * $records_per_page;
+            } 
+
+            $baseUrl                                                            = base_url('authorized_document');
+            $uri_segment                                                        = 2; 
+            $config                                                             = array();
+            $config["base_url"]                                                 = $baseUrl;
+            $config["total_rows"]                                               = $documents_count;
+            $config["per_page"]                                                 = $records_per_page;
+            $config['uri_segment']                                              = $uri_segment;
+            $config['num_links']                                                = ceil($choice);
+            $config['use_page_numbers']                                         = true;
+            $config['full_tag_open']                                            = '<nav class="hr-pagination"><ul>';
+            $config['full_tag_close']                                           = '</ul></nav><!--pagination-->';
+            $config['first_link']                                               = '&laquo; First';
+            $config['first_tag_open']                                           = '<li class="prev page">';
+            $config['first_tag_close']                                          = '</li>';
+            $config['last_link']                                                = 'Last &raquo;';
+            $config['last_tag_open']                                            = '<li class="next page">';
+            $config['last_tag_close']                                           = '</li>';
+            $config['next_link']                                                = '<i class="fa fa-angle-right"></i>';
+            $config['next_tag_open']                                            = '<li class="next page">';
+            $config['next_tag_close']                                           = '</li>';
+            $config['prev_link']                                                = '<i class="fa fa-angle-left"></i>';
+            $config['prev_tag_open']                                            = '<li class="prev page">';
+            $config['prev_tag_close']                                           = '</li>';
+            $config['cur_tag_open']                                             = '<li class="active"><a href="">';
+            $config['cur_tag_close']                                            = '</a></li>';
+            $config['num_tag_open']                                             = '<li class="page">';
+            $config['num_tag_close']                                            = '</li>';
+
+            $this->pagination->initialize($config);
+            $links                                                              = $this->pagination->create_links();
+
+            $documents_list = $this->hr_documents_management_model->get_all_paginate_library_documents ($company_sid, $employer_sid, $records_per_page, $my_offset);
+            $data['title']          = 'Documents Library';
+			$data['employer_sid']   = $employer_sid;
+            $data['employer']       = $employer_sid;
+            $data['employer']       = $employers_details;
+            $data['documents_list'] = $documents_list;
+            $data['links']          = $links;
+            //
+            $data['employee'] = $data['session']['employer_detail'];
+            //
+            $data['load_view'] = 'old';
+            //
+            $this->load->view('main/header', $data);
+            $this->load->view('hr_documents_management/library_document_listing');
+            $this->load->view('main/footer');
+            
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
+
 
 }

@@ -1507,3 +1507,5 @@ $route['payroll/onboard_employee/(:any)/(:num)/(:num)/(:any)']['delete'] = "payr
 $route['payroll/onboard_status/(:num)/(:num)']['get'] = "payroll/Payroll_onboard/OnboardStatus/$1/$2";
 //
 $route["payroll/get/(:num)/(:any)"] = "payroll/Payroll_onboard/Get/$1/$2";
+
+$route['library_document'] = 'hr_documents_management/library_document_listing';

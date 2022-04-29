@@ -30,7 +30,7 @@ class Dashboard extends Public_Controller {
     }
 
     public function index() {
-        if ($this->session->userdata('logged_in')) {
+         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];
             $company_detail                                                     = $data['session']['company_detail'];
@@ -446,6 +446,8 @@ class Dashboard extends Public_Controller {
             $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
             $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
             $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
+            $total_library_doc    = $this->dashboard_model->get_all_library_doc_count($company_id, $employer_id);
+
 
             $data['messages']                   = $messages;
             $data['eventCount']                 = $eventCount;
@@ -458,6 +460,7 @@ class Dashboard extends Public_Controller {
             $data['total_assigned_today_doc']   = $total_assigned_today_doc;
             $data['total_pending_auth_doc']     = $total_pending_auth_doc;
             $data['total_assigned_auth_doc']    = $total_assigned_auth_doc;
+            $data['total_library_doc']    = $total_library_doc;
 
             $this->load->model('timeoff_model');
 
