@@ -7269,7 +7269,7 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function check_if_document_has_history($user_type, $user_sid, $document_sid) {
-        $this->db->select('sid');
+        $this->db->select('*');
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('doc_sid', $document_sid);
@@ -7280,63 +7280,66 @@ class Hr_documents_management_model extends CI_Model {
         $record_obj->free_result();
         //
         if (!empty($record_arr)) {
-            return 1;
+            return $record_arr;
         } else {
-            return 0;
+            return array();
         }
     }
 
     function is_I9_history_exist($i9_form_sid, $user_type, $user_sid) {
-        $this->db->select('sid');
+        $this->db->select('*');
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('i9form_ref_sid', $i9_form_sid);
         $this->db->where('user_consent', 1);
+        $this->db->order_by('sid', 'desc');
         //
         $record_obj = $this->db->get('applicant_i9form_history');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
         //
         if (!empty($record_arr)) {
-            return 1;
+            return $record_arr;
         } else {
-            return 0;
+            return array();
         }
     }
 
     function is_W9_history_exist($w9_form_sid, $user_type, $user_sid) {
-        $this->db->select('sid');
+        $this->db->select('*');
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('w9form_ref_sid', $w9_form_sid);
         $this->db->where('user_consent', 1);
+        $this->db->order_by('sid', 'desc');
         //
         $record_obj = $this->db->get('applicant_w9form_history');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
         //
         if (!empty($record_arr)) {
-            return 1;
+            return $record_arr;
         } else {
-            return 0;
+            return array();
         }
     }
 
     function is_W4_history_exist($w4_form_sid, $user_type, $user_sid) {
-        $this->db->select('sid');
+        $this->db->select('*');
         $this->db->where('user_type', $user_type);
         $this->db->where('employer_sid', $user_sid);
         $this->db->where('form_w4_ref_sid', $w4_form_sid);
         $this->db->where('user_consent', 1);
+        $this->db->order_by('sid', 'desc');
         //
         $record_obj = $this->db->get('form_w4_original_history');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
         //
         if (!empty($record_arr)) {
-            return 1;
+            return $record_arr;
         } else {
-            return 0;
+            return array();
         }
     }
 

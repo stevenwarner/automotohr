@@ -3291,9 +3291,9 @@ class Hr_documents_management extends Public_Controller {
                 }
                 //
                 //check Document Previous History
-                $assigned_documents[$key]["previous_history"] = $this->hr_documents_management_model->check_if_document_has_history($user_type, $user_sid,$assigned_document['sid']);
+                $previous_history = $this->hr_documents_management_model->check_if_document_has_history($user_type, $user_sid,$assigned_document['sid']);
                 //
-                if ($assigned_documents[$key]["previous_history"] == 1) {
+                if (!empty($previous_history)) {
                     array_push($history_doc_sids, $assigned_document['sid']);
                 }
                 //
@@ -3523,6 +3523,36 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
+
+            foreach ($signed_documents as $cd_key => $signed_document) {
+                $signed_documents[$cd_key]["is_history"] = 0;
+                $signed_documents[$cd_key]["history"] = $this->hr_documents_management_model->check_if_document_has_history($user_type, $user_sid, $signed_document['sid']);
+
+                if (($key = array_search($signed_document['sid'], $history_doc_sids)) !== false) {
+                    unset($history_doc_sids[$key]);
+                }
+            }
+
+            foreach ($completed_payroll_documents as $prd_key => $payroll_document) {
+                $completed_payroll_documents[$prd_key]["history"] = $this->hr_documents_management_model->check_if_document_has_history($user_type, $user_sid, $payroll_document['sid']);
+
+                if (($key = array_search($payroll_document['sid'], $history_doc_sids)) !== false) {
+                    unset($history_doc_sids[$key]);
+                }
+            }
+
+            if (!empty($history_doc_sids)) {
+                foreach ($history_doc_sids as $key => $doc_id) {
+                    $his_docs = $this->hr_documents_management_model->check_if_document_has_history($user_type, $user_sid, $doc_id);
+                    foreach ($his_docs as $key => $his_doc) {
+                        $his_doc["is_history"] = 1;
+                        $his_doc["history"] = array();
+                        array_push($signed_documents, $his_doc);
+                    }
+                    
+                }
+            }
+
             $categorized_docs = $this->hr_documents_management_model->categrize_documents($company_sid, $signed_documents, $no_action_required_documents, $data['session']['employer_detail']['access_level_plus']);
 
             // Get current employee departments and teams
@@ -3614,36 +3644,42 @@ class Hr_documents_management extends Public_Controller {
                 $employeeDepartments
             );
             // _e($data['assigned_documents'], true, true);
-            $data['completed_offer_letter'] =
-            cleanAssignedDocumentsByPermission(
-                $data['completed_offer_letter'],
-                $data['session']['employer_detail'],
-                $employeeDepartments
-            );
+            
             $data['uncompleted_payroll_documents'] =
             cleanAssignedDocumentsByPermission(
                 $data['uncompleted_payroll_documents'],
                 $data['session']['employer_detail'],
                 $employeeDepartments
             );
-            $data['completed_payroll_documents'] =
-            cleanAssignedDocumentsByPermission(
-                $data['completed_payroll_documents'],
-                $data['session']['employer_detail'],
-                $employeeDepartments
-            );
+           
             $data['payroll_documents_sids'] =
             cleanAssignedDocumentsByPermission(
                 $data['payroll_documents_sids'],
                 $data['session']['employer_detail'],
                 $employeeDepartments
             );
+            //
             $data['categories_documents_completed'] =
             cleanAssignedDocumentsByPermission(
                 $data['categories_documents_completed'],
                 $data['session']['employer_detail'],
                 $employeeDepartments
             );
+            //
+            $data['completed_offer_letter'] =
+            cleanAssignedDocumentsByPermission(
+                $data['completed_offer_letter'],
+                $data['session']['employer_detail'],
+                $employeeDepartments
+            );
+            //
+            $data['completed_payroll_documents'] =
+            cleanAssignedDocumentsByPermission(
+                $data['completed_payroll_documents'],
+                $data['session']['employer_detail'],
+                $employeeDepartments
+            );
+            //
             $data['no_action_required_documents'] =
             cleanAssignedDocumentsByPermission(
                 $data['no_action_required_documents'],
@@ -3714,27 +3750,76 @@ class Hr_documents_management extends Public_Controller {
             $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
             $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
             //
-            
+            $completed_i9 = array();
+            //
             if (empty($data['i9_form'])) {
                 $data['i9_SD'] =  0;
             } else {
                 $data['i9_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['i9_form']['sid'], $user_sid, "i9_assigned");
-                $data['i9_history'] = $this->hr_documents_management_model->is_I9_history_exist($data['i9_form']['sid'], $user_type, $user_sid);
+                //
+                if ($data['i9_form']['user_consent'] == 1) {
+                    $data['i9_form']["form_status"] = "Current";
+                    array_push($completed_i9, $data['i9_form']);
+                }
+                //
+                $i9_history = $this->hr_documents_management_model->is_I9_history_exist($data['i9_form']['sid'], $user_type, $user_sid);
+                //
+                if (!empty($i9_history)) {
+                    foreach ($i9_history as $history) {
+                        $history["form_status"] = "Previous";
+                        array_push($completed_i9, $history);
+                    }
+                }
             }
+            //
+            $completed_w9 = array();
             //
             if (empty($data['w9_form'])) {
                 $data['w9_SD'] =  0;
             } else {
                 $data['w9_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['w9_form']['sid'], $user_sid, "w9_assigned");
-                $data['W9_history'] = $this->hr_documents_management_model->is_W9_history_exist($data['w9_form']['sid'], $user_type, $user_sid);
+                //
+                if ($data['w9_form']['user_consent'] == 1) {
+                    $data['w9_form']["form_status"] = "Current";
+                    array_push($completed_w9, $data['w9_form']);
+                }    
+                //
+                $w9_history = $this->hr_documents_management_model->is_W9_history_exist($data['w9_form']['sid'], $user_type, $user_sid);
+                //
+                if (!empty($w9_history)) {
+                    foreach ($w9_history as $history) {
+                        $history["form_status"] = "Previous";
+                        array_push($completed_w9, $history);
+                    }
+                }
             }
+            //
+            $completed_w4 = array();
             //
             if (empty($data['w4_form'])) {
                 $data['w4_SD'] =  0;
             } else {
                 $data['w4_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['w4_form']['sid'], $user_sid, "w4_assigned");
-                $data['W4_history'] = $this->hr_documents_management_model->is_W4_history_exist($data['w4_form']['sid'], $user_type, $user_sid);
+                //
+                if ($data['w4_form']['user_consent'] == 1) {
+                     $data['w4_form']["form_status"] = "Current";
+                    array_push($completed_w4, $data['w4_form']);
+                }    
+                //
+                $w4_history = $this->hr_documents_management_model->is_W4_history_exist($data['w4_form']['sid'], $user_type, $user_sid);
+                //
+                if (!empty($w4_history)) {
+                    foreach ($w4_history as $history) {
+                        $history["form_status"] = "Previous";
+                        array_push($completed_w4, $history);
+                    }
+                }
             }
+            //
+            $data['completed_w4'] = $completed_w4;
+            $data['completed_w9'] = $completed_w9;
+            $data['completed_i9'] = $completed_i9;
+            //
 
             ini_set('memory_limit', -1);
             // Set eeoc form status
@@ -12759,6 +12844,82 @@ class Hr_documents_management extends Public_Controller {
             }  
             //  
             $name = 'Assigned Document History';
+        }
+        //
+        $response = array();
+        $response['status'] = TRUE;
+        $response['name'] = $name;
+        $response['html'] = $html;
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit(0);
+    } 
+
+    public function get_all_completed_document ($document_sid, $document_type) {
+        //
+        if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
+        //
+        $html = '';
+        $data = array();
+        $name = '';
+        //
+        if ($document_type == 'W4_Form') {
+            $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "form_w4_original");
+            $html = $this->load->view('form_w4/preview_w4_2020', $data, true);
+            $name = 'W4 Fillable';
+        }
+        //
+        if ($document_type == 'W9_Form') {
+            $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_w9form");
+            $html = $this->load->view('form_w9/index-pdf', $data, true);
+            $name = 'W9 Fillable';
+        }
+        //
+        if ($document_type == 'I9_Form') {
+            $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form");
+            $html = $this->load->view('form_i9/index-pdf', $data, true);
+            $name = 'I9 Fillable';
+        }
+        //
+        if ($document_type == 'EEOC_Form') {
+            $data["eeo_form_info"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "portal_eeo_form");
+            $data['user_sid'] = $data['eeo_form_info']['application_sid'];
+            $data['user_type'] = $data['eeo_form_info']['users_type'];
+            $html = $this->load->view('eeo/eeoc_view_history', $data, true);
+            $name = 'EEOC Fillable';
+        }
+        //
+        if ($document_type == 'user_document') {
+            $document = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "documents_assigned_history");
+            //
+            if ($document['document_type'] == 'uploaded' || $document['offer_letter_type'] == 'uploaded') { 
+                                            
+                $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
+                $document_file = pathinfo($document_filename);
+                $document_extension = strtolower($document['document_extension']);
+
+                //
+                $t = explode('.', $document_filename);
+                $de = $t[sizeof($t) - 1];
+                //
+                if($de != $document_extension) $document_extension = $de;    
+
+                if (in_array($document_extension, ['csv'])) {
+                    $html = '<iframe src="https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_filename . '&embedded=true" class="uploaded-file-preview"  style="width:100%; height:80em;" frameborder="0"></iframe>';
+
+                } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
+                    $html = '<img class="img-responsive" src="'. AWS_S3_BUCKET_URL . $document_filename.'"/>';
+                } else if (in_array($document_extension, ['doc', 'docx', 'xlsx', 'xlx', 'pptx', 'ppt'])) {
+                    $html = '<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_filename).'" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>';
+                } else { 
+                    $html = '<iframe src="https://docs.google.com/gview?url=' . (AWS_S3_BUCKET_URL . $document_filename).'&embedded=true" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>';
+                } 
+            } else { 
+                $html = '<iframe src="'.$document['submitted_description'].'" frameborder="0" style="width: 100%; height: 500px;"></iframe>';
+            }  
+            //  
+            $name = 'Assigned Document';
         }
         //
         $response = array();

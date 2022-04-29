@@ -4,6 +4,7 @@
     var t_user_type = "<?=$user_type;?>";
     //
     $(document).on('click', '.jsShowDocumentHistory', ShowDocumentHistory);
+    $(document).on('click', '.jsShowVarificationDocument', preview_user_document_history);
     //
     function ShowDocumentHistory () {
         var type = $(this).data("type");
@@ -97,14 +98,21 @@
     }
 
     function preview_user_document_history (source) {
-        var history_id = $(source).data('history_id');
-        var history_type = $(source).data('history_type');
+        var document_type = $(this).data("type");
+        var doc_sid = $(this).data("doc_sid");
+        var doc_status = $(this).data("status");
+        //
+        var url = '<?php echo base_url('hr_documents_management/get_verification_history_document'); ?>'+'/'+doc_sid+'/'+document_type;
+        //
+        if (doc_status == "Current") {
+            url = '<?php echo base_url('hr_documents_management/get_all_completed_document'); ?>'+'/'+doc_sid+'/'+document_type;
+        }
         //
         $('#document_loader').show();
-        $('#loader_text_div').text("Please wait while we are getting history ");
+        $('#loader_text_div').text("Please wait while we are getting document ");
         //
         $.ajax({
-            'url': '<?php echo base_url('hr_documents_management/get_verification_history_document'); ?>'+'/'+history_id+'/'+history_type,
+            'url': url,
             'type': 'GET',
             success: function (resp) {
 

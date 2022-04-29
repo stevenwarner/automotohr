@@ -228,9 +228,6 @@
                                                                         </a>
                                                                     <?php } ?>
                                                                 <?php } ?>
-                                                                <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
-                                                                    <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
-                                                                <?php } ?> 
                                                             </td>
                                                         </tr>
                                                     <?php } ?>
@@ -410,10 +407,6 @@
                                                                             <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                         <?php } ?>
                                                                         <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
-                                                                    <?php } ?> 
-
-                                                                     <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
-                                                                        <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
                                                                     <?php } ?>    
                                                                 </td>
                                                             </tr>
@@ -555,9 +548,6 @@
                                                                             <?php } ?>
                                                                         <?php } ?>
                                                                     <?php } ?>
-                                                                     <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
-                                                                        <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
-                                                                    <?php } ?> 
                                                                 </td>  
                                                             </tr>
                                                         <?php } ?>
@@ -767,6 +757,7 @@
                                                                             $GLOBALS['ad'][] = $document;
                                                                             $cd++; 
                                                                         ?>
+                                                                        <?php if ($document["is_history"] == 0) { ?>
                                                                         <tr>
                                                                             <td class="col-lg-8">
                                                                                 <?php
@@ -984,13 +975,19 @@
                                                                                         title="Modify Category"
                                                                                         data-asid="<?=$document['sid'];?>"
                                                                                         data-sid="<?=$document['document_sid'];?>"
-                                                                                    >Manage Category </a>
+                                                                                    >Manage Category</a>
                                                                                 <?php } ?>    
-                                                                                <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
-                                                                                    <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
-                                                                                <?php } ?> 
                                                                             </td>
                                                                         </tr>
+                                                                        <?php } else { ?>
+                                                                            <?php $this->load->view('hr_documents_management/document_assign_history_row', ['user_sid' => $user_sid, 'user_type' => $user_type, 'history_document' => $document, "document_all_permission" => $document_all_permission]); ?>
+                                                                        <?php } ?>
+                                                                        <?php if (!empty($document["history"])) { ?>
+                                                                            <?php foreach ($document["history"] as $history_document) { ?>
+                                                                                <?php $cd++; ?>
+                                                                                <?php $this->load->view('hr_documents_management/document_assign_history_row', ['user_sid' => $user_sid, 'user_type' => $user_type, 'history_document' => $history_document, "document_all_permission" => $document_all_permission]); ?>
+                                                                            <?php } ?>
+                                                                        <?php } ?>
                                                                     <?php } ?>
                                                                 <?php } else { ?>
                                                                     <tr>
@@ -1256,9 +1253,6 @@
                                                                         <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
                                                                     <?php } ?>    
                                                                 </td>
-                                                                <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
-                                                                    <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
-                                                                <?php } ?> 
                                                             </tr>
                                                             <?php //} ?>
                                                         <?php } ?>
@@ -1419,12 +1413,7 @@
                                                                         <td class="col-lg-1">
                                                                             <a href="<?= base_url('hr_documents_management/print_generated_doc/original/' . $document['sid'] . '/' . $user_sid . '/' . $user_type . '/download');?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
                                                                         </td>
-                                                                        <td class="col-lg-2">
-                                                                            <button onclick="generated_document_original_preview(<?php echo $document['sid']; ?>);" class="btn btn-success btn-sm btn-block">Preview Document</button>
-                                                                            <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
-                                                                                <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
-                                                                            <?php } ?> 
-                                                                        </td>
+                                                                        <td class="col-lg-2"><button onclick="generated_document_original_preview(<?php echo $document['sid']; ?>);" class="btn btn-success btn-sm btn-block">Preview Document</button></td>
                                                                     <?php } ?>
                                                                 </tr>
                                                             <?php } else { ?>
@@ -1548,9 +1537,6 @@
                                                                             <?php } ?>    
                                                                         </td>
                                                                     <?php } ?>
-                                                                    <?php if (in_array($document['sid'], $history_doc_sids)) { ?>
-                                                                        <a href="javascript:;" data-type="user_document" data-doc_sid="<?=$document['sid'];?>" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View Document History">Document History</a>
-                                                                    <?php } ?> 
                                                                 </tr>
                                                             <?php } ?>    
                                                         <?php } ?>
@@ -1568,6 +1554,129 @@
                         </div>
                     <?php } ?>
                     <!-- Category Completed Document End -->
+
+                    <?php if (!empty($completed_w4) || !empty($completed_w9) || !empty($completed_i9)) { ?>
+                        <?php $cvd = count($completed_w4) + count($completed_w9) + count($completed_i9); ?>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="panel panel-default hr-documents-tab-content">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed-1">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                Employment Eligibility Verification Document
+                                                <div class="pull-right total-records">
+                                                    <b>&nbsp;Total: <span class="js-cdi"><?php echo $cvd; ?></span> </b>
+                                                </div>
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapse_completed-1" class="panel-collapse collapse">
+                                        <div class="table-responsive full-width">
+                                            <table class="table table-plane">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="column" class="col-lg-8">
+                                                            Document Name
+                                                        </th>
+                                                        <th scope="column" class="col-lg-2">
+                                                            Status
+                                                        </th>
+                                                        <th scope="column" class="col-lg-2">
+                                                            Actions
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php if (!empty($completed_w4)) { ?>
+                                                        <?php foreach ($completed_w4 as $w4_form) { ?>
+                                                            <?php $cd++; ?>
+                                                        <tr>
+                                                            <td class="col-lg-8">
+                                                                W4 Fillable
+                                                                <br />
+                                                                <strong>Assigned on: </strong>
+                                                                <?php echo date('M d Y, D', strtotime($w4_form['sent_date']));?>
+                                                            </td>
+                                                            <td class="col-lg-2">
+                                                                <?php echo $w4_form['form_status']; ?>
+                                                            </td>
+                                                            <td class="col-lg-2">
+                                                                <a href="javascript:;" 
+                                                                data-type="W4_Form" 
+                                                                data-status="<?php echo $w4_form['form_status']; ?>" 
+                                                                data-doc_sid="<?php echo $w4_form['sid']; ?>" 
+                                                                class="btn btn-success btn-block jsShowVarificationDocument" 
+                                                                title="" 
+                                                                placement="top" 
+                                                                data-original-title="View W4 form">View W4</a>
+                                                            </td>
+                                                        </tr>
+                                                        <?php } ?>
+                                                    <?php } ?>
+
+                                                    <?php if (!empty($completed_w9)) { ?>
+                                                        <?php foreach ($completed_w9 as $w9_form) { ?>
+                                                            <?php $cd++; ?>
+                                                        <tr>
+                                                            <td class="col-lg-8">
+                                                                W9 Fillable
+                                                                <br />
+                                                                <strong>Assigned on: </strong>
+                                                                <?php echo date('M d Y, D', strtotime($w9_form['sent_date']));?>
+                                                            </td>
+                                                            <td class="col-lg-2">
+                                                                <?php echo $w9_form['form_status']; ?>
+                                                            </td>
+                                                            <td class="col-lg-2">
+                                                                <a href="javascript:;" 
+                                                                data-type="W9_Form" 
+                                                                data-status="<?php echo $w9_form['form_status']; ?>" 
+                                                                data-doc_sid="<?php echo $w9_form['sid']; ?>" 
+                                                                class="btn btn-success btn-block jsShowVarificationDocument" 
+                                                                title="" 
+                                                                placement="top" 
+                                                                data-original-title="View W9 form">View W9</a>
+                                                            </td>
+                                                        </tr>
+                                                        <?php } ?>
+                                                    <?php } ?>
+
+                                                    <?php if (!empty($completed_i9)) { ?>
+                                                        <?php foreach ($completed_i9 as $i9_form) { ?>
+                                                            <?php $cd++; ?>
+                                                        <tr>
+                                                            <td class="col-lg-8">
+                                                                I9 Fillable
+                                                                <br />
+                                                                <strong>Assigned on: </strong>
+                                                                <?php echo date('M d Y, D', strtotime($i9_form['sent_date']));?>
+                                                            </td>
+                                                            <td class="col-lg-2">
+                                                                <?php echo $i9_form['form_status']; ?>
+                                                            </td>
+                                                            <td class="col-lg-2">
+                                                                <a href="javascript:;" 
+                                                                data-type="I9_Form" 
+                                                                data-status="<?php echo $i9_form['form_status']; ?>" 
+                                                                data-doc_sid="<?php echo $i9_form['sid']; ?>" 
+                                                                class="btn btn-success btn-block jsShowVarificationDocument" 
+                                                                title="" 
+                                                                placement="top" 
+                                                                data-original-title="View I9 form">View I9</a>
+                                                            </td>
+                                                            
+                                                        </tr>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>     
+                                </div>
+                            </div>    
+                        </div> 
+                    <?php } ?>
                 </div>
             </div>
             <!-- Signed Document End -->
