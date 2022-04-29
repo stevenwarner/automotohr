@@ -3882,6 +3882,7 @@
 <?php $this->load->view('form_i9/pop_up_info'); ?>
 <?php $this->load->view('static-pages/e_signature_popup'); ?>
 <?php $this->load->view('hr_documents_management/authorized_signature_popup'); ?>
+<?php $this->load->view('hr_documents_management/show_document_history'); ?>
 
 <style>
     #document_preview_div ol, #document_preview_div ul { padding-left: 15px !important; }
@@ -5951,6 +5952,7 @@
         
 
         $('table.js-verification-table tbody tr').map(function(i){
+            
             if($(this).find('img').length != 0){
                 let
                 dn = $(this).find('td:nth-child(1)').text(),
@@ -5996,7 +5998,7 @@
                         $('.panel-body').find('b.js-error').remove();
                         $('#signed_doc_details .panel-body').append(`<div class="row"><div class="col-xs-12"><div class="panel panel-default hr-documents-tab-content"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_completed-1"><span class="glyphicon glyphicon-plus"></span>Employment Eligibility Verification Document<div class="pull-right total-records"><b>&nbsp;Total: <span class="js-cdi">0</span> </b></div></a></h4></div><div id="collapse_completed-1" class="panel-collapse collapse"><div class="table-responsive full-width"><table class="table table-plane"><thead><tr><th scope="column" class="col-lg-8">Document Name</th><th scope="column" class="col-lg-2 text-right">Actions</th><th scope="column" class="col-lg-2 text-center">&nbsp;</th></tr></thead><tbody></tbody></table>`);
                     }
-                    $('#signed_doc_details #collapse_completed-1 tbody').prepend(`<tr><td class="col-lg-8">${dn}<br /><strong>Assigned on: </strong>${aon}</td><td class="col-lg-2 clv-${i}"></td><td class="col-lg-2"></td></tr>`);
+                    $('#signed_doc_details #collapse_completed-1 tbody').prepend(`<tr><td class="col-lg-8">${dn}<br /><strong>Assigned on: </strong>${aon}</td><td class="col-lg-2 clv-${i}"></td><td class="col-lg-2 blv-${i}"></td></tr>`);
                     $('.js-cd').text(
                         parseInt($('.js-cd').text()) + 1
                     );
@@ -6021,10 +6023,32 @@
                     if($('.js-uncompleted-docs tbody tr').length == 0) $('.js-uncompleted-docs').remove();
 
                 }
+                //
+                console.log(btn);
+                console.log(w4_btn);
+                console.log(i9_btn);
+                //
                 $('.clv-'+(i)+'').html(btn);
                 $('.clv-'+(i)+'').append(w4_btn);
                 $('.clv-'+(i)+'').append(i9_btn);
-                // $('.open_not_completed_varification_doc').trigger('click');
+                //
+                <?php if (isset($W4_history) && $W4_history == 1) { ?>
+                    if (i == 0) {
+                        $('.blv-'+(i)+'').append('<a href="javascript:;" data-type="w4" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View history for W4 form">W4 History</a>');
+                    }
+                <?php } ?>
+
+                <?php if (isset($W9_history) && $W9_history == 1) { ?>
+                    if (i == 1) {
+                        $('.blv-'+(i)+'').append('<a href="javascript:;" data-type="w9" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View history for W9 form">W9 History</a>');
+                    }
+                <?php } ?>
+
+                <?php if (isset($i9_history) && $i9_history == 1) { ?>
+                    if (i == 2) {
+                        $('.blv-'+(i)+'').append('<a href="javascript:;" data-type="i9" class="btn btn-success jsShowDocumentHistory" title="" placement="top" data-original-title="View history for I9 form">I9 History</a>');
+                    }
+                <?php } ?>
             }
         });
     })

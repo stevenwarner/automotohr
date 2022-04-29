@@ -3274,9 +3274,13 @@ class Hr_documents_management extends Public_Controller {
             
             $archived_assign_document = $this->hr_documents_management_model->get_archive_assigned_documents($company_sid, $user_type, $user_sid, $pp_flag);  
             $user_assigned_manual_documents = $this->hr_documents_management_model->get_all_user_assigned_manual_documents($company_sid, $user_type, $user_sid, $pp_flag);
+            //
+            $history_doc_sids = array();
+            //
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 //
+                //check is this approver document
                 $is_approval_document = $this->hr_documents_management_model->check_if_approval_document($user_type, $user_sid,$assigned_document['document_sid']);
                 //
                 if (!empty($is_approval_document)) {
@@ -3284,6 +3288,13 @@ class Hr_documents_management extends Public_Controller {
                     $assigned_documents[$key]["approver_managers"] = implode(",", array_column($is_approval_document, "assigner_sid"));
                 } else {
                     $assigned_documents[$key]["approver_document"] = 0;
+                }
+                //
+                //check Document Previous History
+                $assigned_documents[$key]["previous_history"] = $this->hr_documents_management_model->check_if_document_has_history($user_type, $user_sid,$assigned_document['sid']);
+                //
+                if ($assigned_documents[$key]["previous_history"] == 1) {
+                    array_push($history_doc_sids, $assigned_document['sid']);
                 }
                 //
                 $is_magic_tag_exist = 0;
@@ -3465,7 +3476,9 @@ class Hr_documents_management extends Public_Controller {
                     }
                 }
             }
-
+            //
+            $data['history_doc_sids'] = $history_doc_sids;
+            //
             $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_sid, $user_type, $user_sid); 
 
             if (!empty($current_assigned_offer_letter)) {
@@ -3701,9 +3714,27 @@ class Hr_documents_management extends Public_Controller {
             $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
             $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
             //
-            $data['i9_SD'] = empty($data['i9_form']) ? 0: $this->hr_documents_management_model->isSupportingDocumentExist($data['i9_form']['sid'], $user_sid, "i9_assigned");
-            $data['w9_SD'] = empty($data['w9_form']) ? 0 : $this->hr_documents_management_model->isSupportingDocumentExist($data['w9_form']['sid'], $user_sid, "w9_assigned");
-            $data['w4_SD'] = empty($data['w4_form']) ? 0 : $this->hr_documents_management_model->isSupportingDocumentExist($data['w4_form']['sid'], $user_sid, "w4_assigned");
+            
+            if (empty($data['i9_form'])) {
+                $data['i9_SD'] =  0;
+            } else {
+                $data['i9_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['i9_form']['sid'], $user_sid, "i9_assigned");
+                $data['i9_history'] = $this->hr_documents_management_model->is_I9_history_exist($data['i9_form']['sid'], $user_type, $user_sid);
+            }
+            //
+            if (empty($data['w9_form'])) {
+                $data['w9_SD'] =  0;
+            } else {
+                $data['w9_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['w9_form']['sid'], $user_sid, "w9_assigned");
+                $data['W9_history'] = $this->hr_documents_management_model->is_W9_history_exist($data['w9_form']['sid'], $user_type, $user_sid);
+            }
+            //
+            if (empty($data['w4_form'])) {
+                $data['w4_SD'] =  0;
+            } else {
+                $data['w4_SD'] = $this->hr_documents_management_model->isSupportingDocumentExist($data['w4_form']['sid'], $user_sid, "w4_assigned");
+                $data['W4_history'] = $this->hr_documents_management_model->is_W4_history_exist($data['w4_form']['sid'], $user_type, $user_sid);
+            }
 
             ini_set('memory_limit', -1);
             // Set eeoc form status
@@ -3719,7 +3750,6 @@ class Hr_documents_management extends Public_Controller {
             //     $user_sid,
             //     $user_type
             // );
-            // _e($eeo_form_info,true,true);
             //
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
@@ -10573,7 +10603,7 @@ class Hr_documents_management extends Public_Controller {
             $h = $assigned;
             $h['doc_sid'] = $assignInsertId;
             //
-            //$this->hr_documents_management_model->insert_documents_assignment_record_history($h);
+            $this->hr_documents_management_model->insert_documents_assignment_record_history($h);
             //
             $a['status'] = 1;
             $a['acknowledged'] = NULL;
@@ -12699,6 +12729,38 @@ class Hr_documents_management extends Public_Controller {
             $name = 'EEOC Fillable History';
         }
         //
+        if ($document_type == 'user_document') {
+            $document = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "documents_assigned_history");
+            //
+            if ($document['document_type'] == 'uploaded' || $document['offer_letter_type'] == 'uploaded') { 
+                                            
+                $document_filename = !empty($document['document_s3_name']) ? $document['document_s3_name'] : '';
+                $document_file = pathinfo($document_filename);
+                $document_extension = strtolower($document['document_extension']);
+
+                //
+                $t = explode('.', $document_filename);
+                $de = $t[sizeof($t) - 1];
+                //
+                if($de != $document_extension) $document_extension = $de;    
+
+                if (in_array($document_extension, ['csv'])) {
+                    $html = '<iframe src="https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_filename . '&embedded=true" class="uploaded-file-preview"  style="width:100%; height:80em;" frameborder="0"></iframe>';
+
+                } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
+                    $html = '<img class="img-responsive" src="'. AWS_S3_BUCKET_URL . $document_filename.'"/>';
+                } else if (in_array($document_extension, ['doc', 'docx', 'xlsx', 'xlx', 'pptx', 'ppt'])) {
+                    $html = '<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_filename).'" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>';
+                } else { 
+                    $html = '<iframe src="https://docs.google.com/gview?url=' . (AWS_S3_BUCKET_URL . $document_filename).'&embedded=true" class="uploaded-file-preview" style="width:100%; height:80em;" frameborder="0"></iframe>';
+                } 
+            } else { 
+                $html = '<iframe src="'.$document['submitted_description'].'" frameborder="0" style="width: 100%; height: 500px;"></iframe>';
+            }  
+            //  
+            $name = 'Assigned Document History';
+        }
+        //
         $response = array();
         $response['status'] = TRUE;
         $response['name'] = $name;
@@ -13226,6 +13288,57 @@ class Hr_documents_management extends Public_Controller {
 
         // Send email to assigner as a notification with private link
         log_and_send_templated_email($template, $userInfo['email'], $replacement_array, $hf, 1);
+    }
+
+     function get_document_history($user_sid, $user_type, $document_type, $document_sid){
+        //
+        $document_history = $this->hr_documents_management_model->fetch_document_from_history($document_type, $document_sid, $user_type, $user_sid);
+        //
+        $history_array = array();
+        $h_key = 0;
+        //
+        if (!empty($document_history)) {
+            foreach ($document_history as $history) {
+                $history_array[$h_key]['sid'] = $history['sid'];
+
+                if ($document_type == "user_document") {
+                    $history_array[$h_key]['type'] = 'Assigned'.$document_type;
+                    $history_array[$h_key]['name'] = (strtoupper($history['document_title']));
+                    $history_array[$h_key]['assign_on'] = reset_datetime(array('datetime' => $history['assigned_date'], '_this' => $this));
+                    //
+                    if ($history['document_type'] == "uploaded") {
+                        $history_array[$h_key]['submitted_on'] = reset_datetime(array('datetime' => $history['uploaded_date'], '_this' => $this));
+                    } else {
+                        $history_array[$h_key]['submitted_on'] = reset_datetime(array('datetime' => $history['signature_timestamp'], '_this' => $this));
+                    }
+                    //
+                } else {
+                    $history_array[$h_key]['type'] = strtoupper($document_type).'_Form';
+                    $history_array[$h_key]['name'] = (strtoupper($document_type)).' Fillable Document';
+                    $history_array[$h_key]['assign_on'] = reset_datetime(array('datetime' => $history['sent_date'], '_this' => $this));
+                    //
+                    if ($document_type == 'w4' || $document_type == 'w9') {
+                        $history_array[$h_key]['submitted_on'] = reset_datetime(array('datetime' => $history['signature_timestamp'], '_this' => $this));
+                    } else if ($document_type == 'i9') {
+                       $history_array[$h_key]['submitted_on'] = reset_datetime(array('datetime' => $history['applicant_filled_date'], '_this' => $this));
+                    } else if ($document_type == 'eeoc') {
+                        $history_array[$h_key]['assign_on'] = reset_datetime(array('datetime' => $history['last_sent_at'], '_this' => $this));
+                        $history_array[$h_key]['submitted_on'] = reset_datetime(array('datetime' => $history['last_completed_on'], '_this' => $this));
+                    }
+                    //
+                }
+                
+                
+                $history_array[$h_key]['status'] = !empty($history['user_consent']) && $history['user_consent'] == 1 ? "Completed" : "Not Completed";
+                
+                //
+                $h_key++;
+            }
+        }
+        //
+        header('content-type: application/json');
+        echo json_encode($history_array);
+        exit(0);
     }
 
 }
