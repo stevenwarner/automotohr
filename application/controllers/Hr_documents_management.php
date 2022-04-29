@@ -2275,6 +2275,9 @@ class Hr_documents_management extends Public_Controller {
                                 $data_to_update["section1_preparer_signature_init"] = NULL;
                                 $data_to_update["section1_preparer_signature_ip_address"] = NULL;
                                 $data_to_update["section1_preparer_signature_user_agent"] = NULL;
+                                $data_to_update["section2_sig_emp_auth_rep"] = NULL;
+                                $data_to_update["section3_emp_sign"] = NULL;
+                                $data_to_update["employer_flag"] = NULL;
                                 $data_to_update["user_consent"] = NULL;
                                 //
                                 $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);

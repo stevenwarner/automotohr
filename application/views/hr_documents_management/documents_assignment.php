@@ -496,7 +496,10 @@
                                             <div class="hr-document-list">
                                                 <!-- Active Group Document Start -->
                                                 <?php if(!empty($active_groups)) { ?>
-                                                    <?php foreach ($active_groups as $active_group) { ?>
+                                                    <?php foreach ($active_groups as $active_group) {
+                                                        if($active_group['documents_count'] == 0){
+                                                            continue;
+                                                        } ?>
                                                         <div class="row">
                                                             <div class="col-xs-12">
                                                                 <div class="panel panel-default hr-documents-tab-content js-search-header">
@@ -684,7 +687,10 @@
 
                                                 <!-- In-Active Group Document Start -->
                                                 <?php if(!empty($in_active_groups)) { ?>
-                                                    <?php foreach ($in_active_groups as $active_group) { ?>
+                                                    <?php foreach ($in_active_groups as $active_group) { 
+                                                        if($active_group['documents_count'] == 0){
+                                                            continue;
+                                                        } ?>
                                                         <div class="row">
                                                             <div class="col-xs-12">
                                                                 <div class="panel panel-default hr-documents-tab-content js-search-header">
