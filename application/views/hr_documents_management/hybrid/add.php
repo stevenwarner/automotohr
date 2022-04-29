@@ -347,6 +347,38 @@
                                         <?php $this->load->view('hr_documents_management/partials/send_dwmc'); ?>
 
                                         <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="hr-box">
+                                                            <div class="hr-box-header">
+                                                                <strong>Add Document to Library?</strong>
+                                                            </div>
+                                                            <div class="hr-innerpadding">
+                                                                <?php 
+                                                             if($document_info['isdoctolibrary']==1){
+                                                                    $isdoctolibrary1 = 'checked="true"';
+                                                                }else{
+                                                                    $isdoctolibrary0 = 'checked="true"';
+                                                                }?>
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="0" <?php echo $isdoctolibrary0;?> />
+                                                                            No &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="1" <?php echo $isdoctolibrary1;?> />
+                                                                            Yes &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                        <div class="row">
                                             <div class="col-xs-12">
                                                 <?php 
                                                     $url_segment = $this->uri->segment(2);

@@ -481,6 +481,33 @@
                                                     </div>
                                                 </div>
 
+
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="hr-box">
+                                                            <div class="hr-box-header">
+                                                                <strong>Add Document to Library?</strong>
+                                                            </div>
+                                                            <div class="hr-innerpadding">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="0" checked="true" />
+                                                                            No &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="1"  />
+                                                                            Yes &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <!-- Send email -->
                                                 <div class="row hidden">
                                                     <div class="col-xs-12">
