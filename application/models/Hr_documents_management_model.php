@@ -3567,6 +3567,7 @@ class Hr_documents_management_model extends CI_Model {
     }
 
     function get_requested_content($document_sid, $request_type, $request_from, $request_for, $submitted = 0) {
+       
         $this->db->select('*');
          if ($request_from == 'assigned_document_history')
         $this->db->where('doc_sid', $document_sid);
@@ -3587,17 +3588,17 @@ class Hr_documents_management_model extends CI_Model {
         $record_obj->free_result();
        
         if (!empty($record_arr)) {
-            
             $company_sid = $record_arr[0]['company_sid'];
             $user_sid = isset($record_arr[0]['user_sid']) ? $record_arr[0]['user_sid'] : '';
             $user_type = isset($record_arr[0]['user_type']) ? $record_arr[0]['user_type'] : '';
             $document_body = $record_arr[0]['document_description'];
 
-            if ($request_type == 'assigned' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history')) {
+            if ($request_type == 'assigned' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history'|| $request_from == 'company_document')) {
 
                 if ($request_for == 'P&D') {
                     $contant_body = $this->replace_magic_tag_for_print_and_download($company_sid, $document_sid, $document_body);
                 } else {
+                    
                     $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted); 
                 }
                 

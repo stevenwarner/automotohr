@@ -7994,8 +7994,7 @@ class Hr_documents_management extends Public_Controller {
         $document = $this->hr_documents_management_model->get_requested_authorized_content($document_sid, $request_from);
         $requested_content = $this->hr_documents_management_model->get_requested_content($document_sid, $request_type, $request_from, 'P&D');
         $file_name = $this->hr_documents_management_model->get_document_title($document_sid, $request_type, $request_from);
-print_r($requested_content);
-die();
+
         if ($letter_request == 1) {
             $requested_content = $document['submitted_description'];
         } else if (!empty($document['form_input_data']) && $request_type == 'submitted') {
@@ -9565,6 +9564,10 @@ die();
             //
             $do_upload = $post['perform_action'] == 'uploaded' || $post['perform_action'] == 'hybrid_document' ? true : false;
             $do_descpt = $post['perform_action'] == 'generated' || $post['perform_action'] == 'hybrid_document' ? true : false;
+            
+
+            $data_to_insert['isdoctolibrary'] = $post['isdoctolibrary'];
+
             //
             // Fo uploaded file
             if($do_upload){

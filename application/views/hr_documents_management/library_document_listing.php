@@ -46,6 +46,7 @@
                                             <th class="col-lg-4">Document Name</th>
                                             <th class="col-lg-3">Employee / Applicant</th>
                                             <th class="col-lg-2 text-center">Created Date</th>
+                                            <th class="col-lg-2 text-center">Actions</th>
                                             </tr>
                                     </thead>
                                     <tbody>
@@ -76,7 +77,20 @@
                                                     <td class="col-lg-2  text-center">
                                                         <?php echo reset_datetime(array('datetime' => $document['date_created'], '_this' => $this)); ?>
                                                     </td>
-                                                  
+                                               
+                                                    <td class="col-lg-2">
+                                                          <a class="<?php echo $btn_show; ?>" href="<?php echo  base_url('view_assigned_authorized_document' . '/' .$doc_type. '/' . $document['sid']); ?>">
+                                                            <?php echo $btn_text; ?>
+                                                        </a>
+
+                                                        <?php if ($document['user_type'] == 'applicant') { ?>
+                                                            <a href="javascript:;" document_sid="<?php echo $document['sid']; ?>" class="btn btn-warning btn-sm btn-block archive_document">Archive</a>
+                                                        <?php } ?>
+
+                                                        <a href="<?= base_url('hr_documents_management/perform_action_on_document_content'. '/' . $document['sid'] . '/'.( $isCompleted == 1 ? 'submitted' : 'assigned' ).'/company_document/print');?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
+
+                                                        <a href="<?= base_url('hr_documents_management/perform_action_on_document_content'. '/' . $document['sid'] . '/'.( $isCompleted == 1 ? 'submitted' : 'assigned' ).'/company_document/download');?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>    
+                                                    </td>
                                                     </tr>   
                                           
                                         <?php } ?>
