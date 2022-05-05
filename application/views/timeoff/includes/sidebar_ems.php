@@ -7,7 +7,7 @@
                 
                 <?php 
                     $emp_info = get_employee_profile_info($employee['sid']); 
-                    $profile_pic = !empty($emp_info['profile_picture']) ? $emp_info['profile_picture'] : 'test_file_01.png';
+                    $profile_pic = !empty($emp_info['profile_picture']) ? $emp_info['profile_picture'] : 'img-applicant.jpg';
                 ?>
                 <img src="https://automotohrattachments.s3.amazonaws.com/<?php echo $profile_pic; ?>" class="csRadius50" />
                 <div class="csTextBox">
@@ -36,7 +36,7 @@
                 <li  <?php echo $this->agent->is_mobile() ? 'style="display: block;"' : '';?>>
                     <?php 
                         $approver_info = get_employee_profile_info($approver['userId']); 
-                        $profile_pic = !empty($approver_info['profile_picture']) ? $approver_info['profile_picture'] : 'test_file_01.png';
+                        $profile_pic = !empty($approver_info['profile_picture']) ? $approver_info['profile_picture'] : 'img-applicant.jpg';
                     ?>
                     <a
                         href="Javascript:void(0);"
