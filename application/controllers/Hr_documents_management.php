@@ -10732,6 +10732,9 @@ class Hr_documents_management extends Public_Controller {
         //
         $post = array();
         //
+        $assigner_firstname = '';
+        $assigner_lastname = '';
+        //
         if (!empty($document)) {
             $post['sendEmail'] = $document['sendEmail'];
             $post['Type'] = $document['user_type'];
@@ -10954,8 +10957,8 @@ class Hr_documents_management extends Public_Controller {
                         'document_assigned',
                         $post['CompanySid'],
                         $post['CompanyName'],
-                        $assigner_firstname = $assigner_info['first_name'],
-                        $assigner_lastname = $assigner_info['last_name'],
+                        $assigner_firstname,
+                        $assigner_lastname,
                         $post['EmployeeSid'],
                         [
                             'document_title' => $post['documentTitle'],
