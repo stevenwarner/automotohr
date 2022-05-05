@@ -240,7 +240,7 @@
                                 <div class="csApproverBox" title=""
                                     data-content="<?php echo $approver['first_name']. ' ' .$approver['last_name'] . '' . '('.$approver['job_title']. ') [' .$approver['access_level'] .']';?>"
                                     data-original-title="Approver">
-                                    <img src="https://automotohrattachments.s3.amazonaws.com/<?php echo !empty($approver['profile_picture']) ? $approver['profile_picture']: 'test_file_01.png'; ?>"
+                                    <img src="https://automotohrattachments.s3.amazonaws.com/<?php echo !empty($approver['profile_picture']) ? $approver['profile_picture']: 'img-applicant.jpg'; ?>"
                                         alt="" />
                                     <i class="fa fa-clock-o" aria-hidden="true"></i>
                                 </div>
