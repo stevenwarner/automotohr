@@ -203,7 +203,14 @@ class Onboarding extends CI_Controller {
                     $is_magic_tag_exist = 0;
                     $is_document_completed = 0;
                     // $is_document_authorized = 0;
-
+                    //
+                    //check Document Previous History
+                    $previous_history = $this->hr_documents_management_model->check_if_document_has_history('applicant', $applicant_sid, $assigned_document['sid']);
+                    //
+                    if (!empty($previous_history)) {
+                        array_push($history_doc_sids, $assigned_document['sid']);
+                    }
+                    //
                     if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                         $document_body = $assigned_document['document_description'];
                         $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
@@ -331,8 +338,39 @@ class Onboarding extends CI_Controller {
                         }
                     }
                 }
+                //
+                $data['history_doc_sids'] = $history_doc_sids;
+                //
+                //
+                foreach ($signed_documents as $cd_key => $signed_document) {
+                    $signed_documents[$cd_key]["is_history"] = 0;
+                    $signed_documents[$cd_key]["history"] = $this->hr_documents_management_model->check_if_document_has_history('applicant', $applicant_sid, $signed_document['sid']);
 
+                    if (($key = array_search($signed_document['sid'], $history_doc_sids)) !== false) {
+                        unset($history_doc_sids[$key]);
+                    }
+                }
 
+                foreach ($completed_payroll_documents as $prd_key => $payroll_document) {
+                    $completed_payroll_documents[$prd_key]["history"] = $this->hr_documents_management_model->check_if_document_has_history('applicant', $applicant_sid, $payroll_document['sid']);
+
+                    if (($key = array_search($payroll_document['sid'], $history_doc_sids)) !== false) {
+                        unset($history_doc_sids[$key]);
+                    }
+                }
+
+                if (!empty($history_doc_sids)) {
+                    foreach ($history_doc_sids as $key => $doc_id) {
+                        $his_docs = $this->hr_documents_management_model->check_if_document_has_history('applicant', $applicant_sid, $doc_id);
+                        foreach ($his_docs as $key => $his_doc) {
+                            $his_doc["is_history"] = 1;
+                            $his_doc["history"] = array();
+                            array_push($signed_documents, $his_doc);
+                        }
+                        
+                    }
+                }
+                //
                 $documents = $this->hr_documents_management_model->get_assigned_documents($company_info['sid'], 'applicant', $applicant_sid);
                 $data['documents'] = $documents;
                 
@@ -367,7 +405,55 @@ class Onboarding extends CI_Controller {
                 $data['w4_form'] = $this->onboarding_model->get_w4_form('applicant', $applicant_sid);
                 $data['i9_form'] = $this->onboarding_model->get_i9_form('applicant', $applicant_sid);
                 $data['w9_form'] = $this->onboarding_model->get_w9_form('applicant', $applicant_sid);
-
+                //
+                $completed_w4 = array();
+                //
+                if (!empty($data['w4_form']) && $data['w4_form']['user_consent'] == 1) {
+                    $data['w4_form']["form_status"] = "Current";
+                    array_push($completed_w4, $data['w4_form']);
+                }
+                //
+                $w4_history = $this->hr_documents_management_model->is_W4_history_exist($data['w4_form']['sid'], 'applicant', $applicant_sid);
+                //
+                if (!empty($w4_history)) {
+                    foreach ($w4_history as $history) {
+                        $history["form_status"] = "Previous";
+                        array_push($completed_w4, $history);
+                    }
+                }   
+                //
+                $completed_w9 = array();
+                //
+                if (!empty($data['w9_form']) && $data['w9_form']['user_consent'] == 1) {
+                    $data['w9_form']["form_status"] = "Current";
+                    array_push($completed_w9, $data['w9_form']);
+                }   
+                //
+                $w9_history = $this->hr_documents_management_model->is_W9_history_exist($data['w9_form']['sid'], 'applicant', $applicant_sid);
+                //
+                if (!empty($w9_history)) {
+                    foreach ($w9_history as $history) {
+                        $history["form_status"] = "Previous";
+                        array_push($completed_w9, $history);
+                    }
+                } 
+                //
+                $completed_i9 = array();
+                //
+                if (!empty($data['i9_form']) && $data['i9_form']['user_consent'] == 1) {
+                    $data['i9_form']["form_status"] = "Current";
+                    array_push($completed_i9, $data['i9_form']);
+                }
+                //
+                $i9_history = $this->hr_documents_management_model->is_I9_history_exist($data['i9_form']['sid'], 'applicant', $applicant_sid);
+                //
+                if (!empty($i9_history)) {
+                    foreach ($i9_history as $history) {
+                        $history["form_status"] = "Previous";
+                        array_push($completed_i9, $history);
+                    }
+                }
+                //
                 $videos = $this->learning_center_model->get_my_online_videos('applicant', $applicant_sid);
                 $learning_center_status = count($videos);
                 $data['enable_learbing_center'] = false;
@@ -383,6 +469,9 @@ class Onboarding extends CI_Controller {
                     }
                 }
 
+                $data['completed_i9']                           = $completed_i9;
+                $data['completed_w9']                           = $completed_w9;
+                $data['completed_w4']                           = $completed_w4;
                 $data['assigned_documents']                     = $assigned_documents;
                 $data['completed_offer_letter']                 = $completed_offer_letter;
                 $data['uncompleted_offer_letter']               = $uncompleted_offer_letter;

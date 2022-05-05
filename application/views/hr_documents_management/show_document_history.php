@@ -101,6 +101,7 @@
         var document_type = $(this).data("type");
         var doc_sid = $(this).data("doc_sid");
         var doc_status = $(this).data("status");
+        console.log(doc_status);
         //
         var url = '<?php echo base_url('hr_documents_management/get_verification_history_document'); ?>'+'/'+doc_sid+'/'+document_type;
         //

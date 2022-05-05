@@ -5048,11 +5048,20 @@ class Hr_documents_management extends Public_Controller {
             }
 
             $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employer_sid, 0);
-
+            //
+            $history_doc_sids = array();
+            //
             foreach ($assigned_documents as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
                 $is_document_completed = 0;
-
+                //
+                //check Document Previous History
+                $previous_history = $this->hr_documents_management_model->check_if_document_has_history('employee', $employer_sid, $assigned_document['sid']);
+                //
+                if (!empty($previous_history)) {
+                    array_push($history_doc_sids, $assigned_document['sid']);
+                }
+                //
                 if (!empty($assigned_document['document_description']) && ( $assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                     $document_body = $assigned_document['document_description'];
                     $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
@@ -5185,8 +5194,38 @@ class Hr_documents_management extends Public_Controller {
                     }
                 }
             }
+            //
+            $data['history_doc_sids'] = $history_doc_sids;
+            //
+            foreach ($signed_documents as $cd_key => $signed_document) {
+                $signed_documents[$cd_key]["is_history"] = 0;
+                $signed_documents[$cd_key]["history"] = $this->hr_documents_management_model->check_if_document_has_history('employee', $employer_sid, $signed_document['sid']);
 
+                if (($key = array_search($signed_document['sid'], $history_doc_sids)) !== false) {
+                    unset($history_doc_sids[$key]);
+                }
+            }
 
+            foreach ($completed_payroll_documents as $prd_key => $payroll_document) {
+                $completed_payroll_documents[$prd_key]["history"] = $this->hr_documents_management_model->check_if_document_has_history('employee', $employer_sid, $payroll_document['sid']);
+
+                if (($key = array_search($payroll_document['sid'], $history_doc_sids)) !== false) {
+                    unset($history_doc_sids[$key]);
+                }
+            }
+
+            if (!empty($history_doc_sids)) {
+                foreach ($history_doc_sids as $key => $doc_id) {
+                    $his_docs = $this->hr_documents_management_model->check_if_document_has_history('employee', $employer_sid, $doc_id);
+                    foreach ($his_docs as $key => $his_doc) {
+                        $his_doc["is_history"] = 1;
+                        $his_doc["history"] = array();
+                        array_push($signed_documents, $his_doc);
+                    }
+                    
+                }
+            }
+            //
             $categorized_docs = $this->hr_documents_management_model->categrize_documents($company_sid, $signed_documents, $no_action_required_documents,0);
             $data['categories_no_action_documents'] = $categorized_docs['categories_no_action_documents'];
             $data['categories_documents_completed'] =  $categorized_docs['categories_documents_completed'];
@@ -5207,20 +5246,52 @@ class Hr_documents_management extends Public_Controller {
 
             $eev_w4 = $this->hr_documents_management_model->is_exist_in_eev_document('w4', $company_sid, $employer_sid);
             if (!empty($eev_w4)) {
-                $data['w9_form'] = $data['eev_w4'] = $eev_w4;
+                $data['w4_form'] = $data['eev_w4'] = $eev_w4;
             } else {
                $w4_form = $this->hr_documents_management_model->fetch_form_for_front_end('w4', 'employee', $employer_sid);
                $data['w4_form'] = $w4_form;
             }
-
+            //
+            $completed_w4 = array();
+            //
+            if (!empty($data['w4_form']) && $data['w4_form']['user_consent'] == 1) {
+                $data['w4_form']["form_status"] = "Current";
+                array_push($completed_w4, $data['w4_form']);
+            }
+            //
+            $w4_history = $this->hr_documents_management_model->is_W4_history_exist($data['w4_form']['sid'], 'employee', $employer_sid);
+            //
+            if (!empty($w4_history)) {
+                foreach ($w4_history as $history) {
+                    $history["form_status"] = "Previous";
+                    array_push($completed_w4, $history);
+                }
+            }
+            //
             $eev_w9 = $this->hr_documents_management_model->is_exist_in_eev_document('w9', $company_sid, $employer_sid);
             if (!empty($eev_w9)) {
                 $data['w9_form'] = $data['eev_w9'] = $eev_w9;
             } else {
                $w9_form = $this->hr_documents_management_model->fetch_form_for_front_end('w9', 'employee', $employer_sid);
                $data['w9_form'] = $w9_form;
-            }
-
+            }    
+            //
+            $completed_w9 = array();
+            //
+            if (!empty($data['w9_form']) && $data['w9_form']['user_consent'] == 1) {
+                $data['w9_form']["form_status"] = "Current";
+                array_push($completed_w9, $data['w9_form']);
+            }   
+            //
+            $w9_history = $this->hr_documents_management_model->is_W9_history_exist($data['w9_form']['sid'], 'employee', $employer_sid);
+            //
+            if (!empty($w9_history)) {
+                foreach ($w9_history as $history) {
+                    $history["form_status"] = "Previous";
+                    array_push($completed_w9, $history);
+                }
+            } 
+            //
             $eev_i9 = $this->hr_documents_management_model->is_exist_in_eev_document('i9', $company_sid, $employer_sid);
             if (!empty($eev_i9)) {
                 $data['i9_form'] = $data['eev_i9'] = $eev_i9;
@@ -5228,16 +5299,35 @@ class Hr_documents_management extends Public_Controller {
                 $i9_form = $this->hr_documents_management_model->fetch_form_for_front_end('i9', 'employee', $employer_sid);
                 $data['i9_form'] = $i9_form;
             }
-
-            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employee_sid, $user_type);
             //
-            if ($eeo_form_info['status'] == 1) {
+            $completed_i9 = array();
+            //
+            if (!empty($data['i9_form']) && $data['i9_form']['user_consent'] == 1) {
+                $data['i9_form']["form_status"] = "Current";
+                array_push($completed_i9, $data['i9_form']);
+            }
+            //
+            $i9_history = $this->hr_documents_management_model->is_I9_history_exist($data['i9_form']['sid'], 'employee', $employer_sid);
+            //
+            if (!empty($i9_history)) {
+                foreach ($i9_history as $history) {
+                    $history["form_status"] = "Previous";
+                    array_push($completed_i9, $history);
+                }
+            }
+            //
+            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employer_sid, 'employee');
+            //
+            if (!empty($eeo_form_info) && $eeo_form_info['status'] == 1) {
                 $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_sid,'employee');
                 if (!empty($eeoc_form)) {
                     $data['eeoc_form'] = $eeoc_form;
                 }
             }
 
+            $data['completed_i9']                           = $completed_i9;
+            $data['completed_w9']                           = $completed_w9;
+            $data['completed_w4']                           = $completed_w4;
             $data['assigned_documents']                     = $assigned_documents;
             $data['completed_offer_letter']                 = $completed_offer_letter;
             $data['uncompleted_offer_letter']               = $uncompleted_offer_letter;
