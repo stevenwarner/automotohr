@@ -3307,7 +3307,8 @@ class Hr_documents_management extends Public_Controller {
 
                 if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                     $document_body = $assigned_document['document_description'];
-                    $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    //$magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    $magic_codes = array('{{signature}}', '{{inital}}');
 
                     if (str_replace($magic_codes, '', $document_body) != $document_body) {
                         $is_magic_tag_exist = 1;
@@ -3461,8 +3462,28 @@ class Hr_documents_management extends Public_Controller {
                             }
                
                         } else {
-
-                            if ($assigned_document['pay_roll_catgory'] == 0) { 
+                            if ($is_document_authorized == 1) { 
+                                //
+                                if ($authorized_sign_status == 1) {
+                                    if ($assigned_document['pay_roll_catgory'] == 0) {
+                                        $signed_document_sids[] = $assigned_document['document_sid'];
+                                        $signed_documents[] = $assigned_document;
+                                        unset($assigned_documents[$key]);
+                                    } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                        $signed_document_sids[] = $assigned_document['document_sid'];
+                                        $completed_payroll_documents[] = $assigned_document; 
+                                        unset($assigned_documents[$key]);
+                                    }
+                                } else {
+                                    if ($assigned_document['pay_roll_catgory'] == 1) {
+                                        $uncompleted_payroll_documents[] = $assigned_document; 
+                                        unset($assigned_documents[$key]);
+                                    }
+                                }
+                                //
+                                $assigned_sids[] = $assigned_document['document_sid'];  
+                                //
+                            } else if ($assigned_document['pay_roll_catgory'] == 0) { 
                                 $assigned_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_documents[] = $assigned_document;
@@ -5064,7 +5085,8 @@ class Hr_documents_management extends Public_Controller {
                 //
                 if (!empty($assigned_document['document_description']) && ( $assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                     $document_body = $assigned_document['document_description'];
-                    $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    $magic_codes = array('{{signature}}', '{{inital}}');
 
                     if (str_replace($magic_codes, '', $document_body) != $document_body) {
                         $is_magic_tag_exist = 1;
@@ -5177,7 +5199,27 @@ class Hr_documents_management extends Public_Controller {
                             }
                
                         } else {
-                            if ($assigned_document['pay_roll_catgory'] == 0) { 
+                            if (str_replace('{{authorized_signature}}', '', $document_body) != $document_body) {
+                                //
+                                if (!empty($assigned_document['authorized_signature'])) {
+                                    if ($assigned_document['pay_roll_catgory'] == 0) {
+                                        $signed_document_sids[] = $assigned_document['document_sid'];
+                                        $signed_documents[] = $assigned_document;
+                                        unset($assigned_documents[$key]);
+                                    } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                        $signed_document_sids[] = $assigned_document['document_sid'];
+                                        $completed_payroll_documents[] = $assigned_document; 
+                                        unset($assigned_documents[$key]);
+                                    }
+                                } else {
+                                    if ($assigned_document['pay_roll_catgory'] == 1) {
+                                        $uncompleted_payroll_documents[] = $assigned_document; 
+                                        unset($assigned_documents[$key]);
+                                    }
+                                }
+                                //
+                                $assigned_sids[] = $assigned_document['document_sid'];  
+                            } else if ($assigned_document['pay_roll_catgory'] == 0) { 
                                 $assigned_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_sids[] = $assigned_document['document_sid'];
                                 $no_action_required_documents[] = $assigned_document;
@@ -6178,7 +6220,8 @@ class Hr_documents_management extends Public_Controller {
 
                     if (!empty($assigned_document['document_description']) && ( $assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document' )) {
                         $document_body = $assigned_document['document_description'];
-                        $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                        // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                        $magic_codes = array('{{signature}}', '{{inital}}');
 
                         if (str_replace($magic_codes, '', $document_body) != $document_body) {
                             $is_magic_tag_exist = 1;
@@ -12090,7 +12133,8 @@ class Hr_documents_management extends Public_Controller {
 
                 if (!empty($assigned_document['document_description']) && ( $assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document' )) {
                     $document_body = $assigned_document['document_description'];
-                    $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                    $magic_codes = array('{{signature}}', '{{inital}}');
 
                     if (str_replace($magic_codes, '', $document_body) != $document_body) {
                         $is_magic_tag_exist = 1;
@@ -12182,10 +12226,31 @@ class Hr_documents_management extends Public_Controller {
                                 $assigned_sids[] = $assigned_document['document_sid'];
                             }
                         } else { // nothing is required so it is "No Action Required Document"
-                            $assigned_sids[] = $assigned_document['document_sid'];
-                            $no_action_required_sids[] = $assigned_document['document_sid'];
-                            $no_action_required_documents[] = $assigned_document;
-                            unset($assigned_documents[$key]);
+                            if ($is_document_authorized == 1) { 
+                                //
+                                if ($authorized_sign_status == 1) {
+                                    if ($assigned_document['pay_roll_catgory'] == 0) {
+                                        $signed_document_sids[] = $assigned_document['document_sid'];
+                                        $signed_documents[] = $assigned_document;
+                                        unset($assigned_documents[$key]);
+                                    } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                        $signed_document_sids[] = $assigned_document['document_sid'];
+                                        $completed_payroll_documents[] = $assigned_document; 
+                                        unset($assigned_documents[$key]);
+                                    }
+                                } else {
+                                    $uncompleted_payroll_documents[] = $assigned_document; 
+                                    unset($assigned_documents[$key]);
+                                }
+                                //
+                                $assigned_sids[] = $assigned_document['document_sid'];  
+                                //
+                            } else {
+                                $assigned_sids[] = $assigned_document['document_sid'];
+                                $no_action_required_sids[] = $assigned_document['document_sid'];
+                                $no_action_required_documents[] = $assigned_document;
+                                unset($assigned_documents[$key]);
+                            }
                         }
                     } else {
                         $revoked_sids[] = $assigned_document['document_sid'];

@@ -1294,7 +1294,8 @@ class employers extends Admin_Controller {
 
             if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                 $document_body = $assigned_document['document_description'];
-                $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
+                $magic_codes = array('{{signature}}', '{{inital}}');
 
                 if (str_replace($magic_codes, '', $document_body) != $document_body) {
                     $is_magic_tag_exist = 1;
@@ -1418,7 +1419,7 @@ class employers extends Admin_Controller {
                             }
                             
                         } else {
-                            if ($assigned_document['pay_roll_catgory'] == 1) {
+                             if ($assigned_document['pay_roll_catgory'] == 1) {
                                 $uncompleted_payroll_documents[] = $assigned_document; 
                                 unset($assigned_documents[$key]);
                             }
@@ -1427,8 +1428,28 @@ class employers extends Admin_Controller {
                         }
            
                     } else {
-
-                        if ($assigned_document['pay_roll_catgory'] == 0) { 
+                        if ($is_document_authorized == 1) { 
+                            //
+                            if ($authorized_sign_status == 1) {
+                                if ($assigned_document['pay_roll_catgory'] == 0) {
+                                    $signed_document_sids[] = $assigned_document['document_sid'];
+                                    $signed_documents[] = $assigned_document;
+                                    unset($assigned_documents[$key]);
+                                } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                    $signed_document_sids[] = $assigned_document['document_sid'];
+                                    $completed_payroll_documents[] = $assigned_document; 
+                                    unset($assigned_documents[$key]);
+                                }
+                            } else {
+                                if ($assigned_document['pay_roll_catgory'] == 1) {
+                                    $uncompleted_payroll_documents[] = $assigned_document; 
+                                    unset($assigned_documents[$key]);
+                                }
+                            }
+                            //
+                            $assigned_sids[] = $assigned_document['document_sid'];  
+                            //
+                        } else if ($assigned_document['pay_roll_catgory'] == 0) { 
                             $assigned_sids[] = $assigned_document['document_sid'];
                             $no_action_required_sids[] = $assigned_document['document_sid'];
                             $no_action_required_documents[] = $assigned_document;
