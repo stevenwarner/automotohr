@@ -172,6 +172,9 @@ class Onboarding extends CI_Controller {
                             $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
                             $data_to_insert['document_title'] = $document['document_title'];
                             $data_to_insert['document_description'] = $document['document_description'];
+                            $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                            $data_to_insert['signature_required'] = $document['signature_required'];
+                            $data_to_insert['download_required'] = $document['download_required'];
                             $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
                             $sendGroupEmail = 1;
@@ -4526,6 +4529,9 @@ class Onboarding extends CI_Controller {
                             $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
                             $data_to_insert['document_title'] = $document['document_title'];
                             $data_to_insert['document_description'] = $document['document_description'];
+                            $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                            $data_to_insert['signature_required'] = $document['signature_required'];
+                            $data_to_insert['download_required'] = $document['download_required'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             // Managers handling
