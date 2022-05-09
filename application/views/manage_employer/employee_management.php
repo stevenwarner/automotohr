@@ -48,7 +48,7 @@
                                 <div class="filter-form-wrp">
                                     <span>Active / Inactive:</span>
                                     <div class="tracking-filter">
-                                        <form action="" method="GET">
+                                        <form action="" class="jsSubmitEmployeeForm" method="GET">
                                             <div class="row">
                                                 <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
                                                     <div class="hr-select-dropdown">
@@ -82,7 +82,7 @@
                                     <div class="filter-form-wrp">
                                         <span>Search Department:</span>
                                         <div class="tracking-filter">
-                                            <form action="" method="GET">
+                                            <form action="" class="jsSubmitEmployeeForm" method="GET">
                                                 <div class="row">
                                                     <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
                                                         <div class="hr-select-dropdown">
@@ -108,7 +108,7 @@
                                 <div class="filter-form-wrp">
                                     <span>Search Employee(s):</span>
                                     <div class="tracking-filter">
-                                        <form action="" method="GET">
+                                        <form action="" class="jsSubmitEmployeeForm" method="GET">
                                             <div class="row">
                                                 <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
                                                     <input type="text" placeholder="Search Employee by Name or Email" name="keyword" class="invoice-fields search-job" value="<?php echo $keyword; ?>">
@@ -127,7 +127,7 @@
                                 <div class="filter-form-wrp">
                                     <span>Sort Order:</span>
                                     <div class="tracking-filter">
-                                        <form action="" method="GET">
+                                        <form action="" class="jsSubmitEmployeeForm" method="GET">
                                             <div class="row">
                                                 <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 custom-col">
@@ -749,4 +749,28 @@
                 alertify.error('Canceled');
             });
     });
+
+    /**
+     * Employee search form
+     */
+    $('.jsSubmitEmployeeForm').submit(function(event){
+        //
+        event.preventDefault();
+        var url = "<?=rtrim(base_url(), '/');?>/employee_management?";
+        //
+        var department = $('select[name="department"]').find(':selected').val();
+        var orderBy = $('select[name="order_by"]').find(':selected').val();
+        var order = $('select[name="order"]').find(':selected').val();
+        var employeeType = $('select[name="employee_type"]').find(':selected').val();
+        var keyword = $('.search-job').val().trim();
+
+        url += 'employee_type='+employeeType;
+        url += '&department='+department;
+        url += '&keyword='+keyword;
+        url += '&order_by='+orderBy;
+        url += '&order='+order;
+        //
+        window.location.href = url;
+    });
+
 </script>
