@@ -3100,6 +3100,7 @@ class Hr_documents_management_model extends CI_Model {
         ->select('sid, name')
         ->where('company_sid', $companySid)
         ->where('status', 1)
+        ->or_where('sid', PP_CATEGORY_SID)
         ->order_by('sort_order', 'ASC')
         ->get('documents_category_management');
         //
@@ -5802,7 +5803,6 @@ class Hr_documents_management_model extends CI_Model {
         ->where('document_sid', $id)
         ->where('document_type', $type)
         ->delete('documents_2_category');
-
         //
         if($cats !== null){
             //

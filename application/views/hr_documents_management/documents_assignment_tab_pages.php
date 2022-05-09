@@ -212,7 +212,7 @@
                                                                 <?php if ($document_all_permission) { ?> 
                                                                     <a 
                                                                         href="javascript:void(0);"
-                                                                        class="btn btn-success jsCategoryManagerBTN"
+                                                                        class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
                                                                         title="Modify Category"
                                                                         data-asid="<?=$document['sid'];?>"
                                                                         data-sid="<?=$document['document_sid'];?>"
@@ -532,22 +532,32 @@
                                                                                 Preview Submitted
                                                                             </button>
                                                                         <?php } ?>
-                                                                        <?php if ($action_btn_flag == true) { ?>       
-                                                                            <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
-                                                                                <?php if ($document['document_sid'] != 0) { ?>
-                                                                                    <?php if ($document['status'] == 1) { ?>
-                                                                                        <?php if ($user_type == 'applicant') { ?>
-                                                                                            <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                                        <?php } else { ?>
-                                                                                            <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                        <?php } ?>
+                                                                    <?php } ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?php if ($document_all_permission) { ?>
+                                                                        <a 
+                                                                            href="javascript:void(0);"
+                                                                            class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
+                                                                            title="Modify Category"
+                                                                            data-asid="<?=$document['sid'];?>"
+                                                                            data-sid="<?=$document['document_sid'];?>"
+                                                                        >Manage Category</a>
+
+                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                            <?php if ($document['document_sid'] != 0) { ?>
+                                                                                <?php if ($document['status'] == 1) { ?>
+                                                                                    <?php if ($user_type == 'applicant') { ?>
+                                                                                        <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
                                                                                     <?php } else { ?>
-                                                                                        <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
+                                                                                        <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                                     <?php } ?>
+                                                                                <?php } else { ?>
+                                                                                    <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                 <?php } ?>
                                                                             <?php } ?>
                                                                         <?php } ?>
-                                                                    <?php } ?>
+                                                                    <?php } ?>  
                                                                 </td>  
                                                             </tr>
                                                         <?php } ?>
@@ -971,7 +981,7 @@
                                                                                     <?php if ($document_all_permission) { ?>
                                                                                         <a 
                                                                                             href="javascript:void(0);"
-                                                                                            class="btn btn-success jsCategoryManagerBTN"
+                                                                                            class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
                                                                                             title="Modify Category"
                                                                                             data-asid="<?=$document['sid'];?>"
                                                                                             data-sid="<?=$document['document_sid'];?>"
@@ -1417,6 +1427,31 @@
                                                                             </td>
                                                                             <td class="col-lg-2"><button onclick="generated_document_original_preview(<?php echo $document['sid']; ?>);" class="btn btn-success btn-sm btn-block">Preview Document</button></td>
                                                                         <?php } ?>
+                                                                        <td>
+                                                                            <?php if ($document_all_permission) { ?>
+                                                                                <a 
+                                                                                    href="javascript:void(0);"
+                                                                                    class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
+                                                                                    title="Modify Category"
+                                                                                    data-asid="<?=$document['sid'];?>"
+                                                                                    data-sid="<?=$document['document_sid'];?>"
+                                                                                >Manage Category</a>
+
+                                                                                <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                    <?php if ($document['document_sid'] != 0) { ?>
+                                                                                        <?php if ($document['status'] == 1) { ?>
+                                                                                            <?php if ($user_type == 'applicant') { ?>
+                                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
+                                                                                            <?php } else { ?>
+                                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
+                                                                                            <?php } ?>
+                                                                                        <?php } else { ?>
+                                                                                            <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
+                                                                                        <?php } ?>
+                                                                                    <?php } ?>
+                                                                                <?php } ?>
+                                                                            <?php } ?>    
+                                                                        </td>
                                                                     </tr>
                                                                 <?php } else { ?>
                                                                     <tr>
@@ -1454,24 +1489,7 @@
                                                                                         Preview Submitted
                                                                                     </button>
                                                                                 <?php } ?>
-                                                                            </td>
-                                                                            <td class="col-lg-2">
-                                                                                <?php if ($action_btn_flag == true) { ?>       
-                                                                                    <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
-                                                                                        <?php if ($document['document_sid'] != 0) { ?>
-                                                                                            <?php if ($document['status'] == 1) { ?>
-                                                                                                <?php if ($user_type == 'applicant') { ?>
-                                                                                                    <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                                                <?php } else { ?>
-                                                                                                    <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                                <?php } ?>
-                                                                                            <?php } else { ?>
-                                                                                                <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
-                                                                                            <?php } ?>
-                                                                                        <?php } ?>
-                                                                                    </td>
-                                                                                <?php } ?>
-                                                                            <?php } ?>    
+                                                                            </td>  
                                                                         <?php } else { ?>
                                                                             <td class="col-lg-2">
                                                                                 <button class="btn btn-success btn-sm btn-block"
@@ -1523,22 +1541,32 @@
                                                                                     <?php } ?> 
                                                                                 <?php } ?> 
                                                                             </td>    
-                                                                            <td class="col-lg-2">
-                                                                                <?php if ($action_btn_flag == true) { ?> 
-                                                                                    <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                        <?php } ?>
+                                                                        <td>
+                                                                            <?php if ($document_all_permission) { ?>
+                                                                                <a 
+                                                                                    href="javascript:void(0);"
+                                                                                    class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
+                                                                                    title="Modify Category"
+                                                                                    data-asid="<?=$document['sid'];?>"
+                                                                                    data-sid="<?=$document['document_sid'];?>"
+                                                                                >Manage Category</a>
+
+                                                                                <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                    <?php if ($document['document_sid'] != 0) { ?>
                                                                                         <?php if ($document['status'] == 1) { ?>
                                                                                             <?php if ($user_type == 'applicant') { ?>
                                                                                                 <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
                                                                                             <?php } else { ?>
-                                                                                                 <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
+                                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                                             <?php } ?>
                                                                                         <?php } else { ?>
                                                                                             <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                         <?php } ?>
                                                                                     <?php } ?>
-                                                                                <?php } ?>    
-                                                                            </td>
-                                                                        <?php } ?>
+                                                                                <?php } ?>
+                                                                            <?php } ?>  
+                                                                        </td>
                                                                     </tr>
                                                                 <?php } ?>  
                                                             <?php } else { ?>
