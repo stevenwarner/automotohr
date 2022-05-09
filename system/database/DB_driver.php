@@ -1968,30 +1968,30 @@ abstract class CI_DB_driver {
 	 */
 	private function SaveLogQuery($sql){
 		//
-		$_this = get_instance();
-		//
-		$file_name = getCreds('AHR')->LOG_PATH.'db_log.txt';
-		// Check if file exists
-		if(!is_file($file_name)){
-            //
-            $handler = fopen($file_name, 'w');
-            fclose($handler);
-        }
-		//
-        $this->log_array['query_string'] = addslashes($sql);
-        $this->log_array['created_at'] = date('c', strtotime('now'));
-		//
-		$data = '';
-		//
-		$data .= "[{$this->log_array['created_at']}] ";
-		$data .= 'Id="'.($this->log_array['login_user_id']).'" ';
-		$data .= 'Benchmark="'.($this->log_array['benchmark']).'" ';
-		$data .= 'Query="'.(trim(preg_replace('~[\r\n]+~', ' ', $this->log_array['query_string']))).'" ';
-		$data .= 'IP="'.(getUserIp()).'" ';
-		$data .= 'URI="'.($_this->uri->uri_string()).'"';
-		// Save data to file		
-		$handler = fopen($file_name, "a"); 
-		fwrite($handler, "\n".$data);
-		fclose($handler);
+		// $_this = get_instance();
+		// //
+		// $file_name = getCreds('AHR')->LOG_PATH.'db_log.txt';
+		// // Check if file exists
+		// if(!is_file($file_name)){
+        //     //
+        //     $handler = fopen($file_name, 'w');
+        //     fclose($handler);
+        // }
+		// //
+        // $this->log_array['query_string'] = addslashes($sql);
+        // $this->log_array['created_at'] = date('c', strtotime('now'));
+		// //
+		// $data = '';
+		// //
+		// $data .= "[{$this->log_array['created_at']}] ";
+		// $data .= 'Id="'.($this->log_array['login_user_id']).'" ';
+		// $data .= 'Benchmark="'.($this->log_array['benchmark']).'" ';
+		// $data .= 'Query="'.(trim(preg_replace('~[\r\n]+~', ' ', $this->log_array['query_string']))).'" ';
+		// $data .= 'IP="'.(getUserIp()).'" ';
+		// $data .= 'URI="'.($_this->uri->uri_string()).'"';
+		// // Save data to file		
+		// $handler = fopen($file_name, "a"); 
+		// fwrite($handler, "\n".$data);
+		// fclose($handler);
 	}
 }
