@@ -24,8 +24,8 @@ class Aws_lib
             'region' => 'us-east-1',
             'version' => '2006-03-01',
             'credentials' => array(
-                'key' => 'AKIAI54Z3NPRNH3VVW4A',
-                'secret' => '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'
+                'key' => 'AKIAVVRKKAOC5IFJ5RZV',
+                'secret' => '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'
             )
         ));
     }

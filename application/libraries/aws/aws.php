@@ -9,8 +9,8 @@ class AwsSdk {
 
     function __construct() {
         $this->client = S3Client::factory(array(
-            'key' => 'AKIAI54Z3NPRNH3VVW4A',
-            'secret' => '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'
+            'key' => 'AKIAVVRKKAOC5IFJ5RZV',
+            'secret' => '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'
         ));  
     }
     
