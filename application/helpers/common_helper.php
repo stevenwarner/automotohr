@@ -13410,7 +13410,7 @@ if(!function_exists('getDocumentBody')){
             $signature = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="draw_upload_img" />';
             $signature_initial = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="target_signature_init" />';
             $signature_date = '<a class="btn btn-sm blue-button get_signature_date" href="javascript:;">Sign Date</a><p id="target_signature_timestamp"></p>';
-            $signature_by = '<input type="text" id="signature_person_name" class="form-control input-grey" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="">';
+            $signature_by = '<input type="text" id="signature_person_name" class="form-control input-grey js_signature_person_name" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="">';
         } else {
             $signature = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_base64'].'">';
             $signature_initial = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_initial'].'">';

@@ -463,7 +463,7 @@ if (!function_exists('replace_tags_for_document')) {
         //E_signature process
         $signature_person_name = !empty($form_input_data['signature_person_name']) && $autofill == 1  ? $form_input_data['signature_person_name'] : '';
 
-        $value = '<input type="text" id="signature_person_name" class="form-control input-grey" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="'.$signature_person_name.'">';
+        $value = '<input type="text" id="signature_person_name" class="form-control input-grey js_signature_person_name" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="'.$signature_person_name.'">';
         $my_return = str_replace('{{signature_print_name}}', $value, $my_return);
 
         if($forDownload){

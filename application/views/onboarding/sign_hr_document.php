@@ -369,6 +369,7 @@
                     var input_field_id = input_value[0];  
                     var input_field_val = input_value[1];
                     $('#'+input_field_id).val(input_field_val);
+                    $('.js_'+input_field_id).val(input_field_val);
                 } else {
                     var input_field_id = input_value[0]+'_id';  
                     var input_field_val = input_value[1]; 
