@@ -1,6 +1,6 @@
 <link href="<?= base_url() ?>assets/calendar/fullcalendar.css" rel="stylesheet"/>
 <link href="<?= base_url() ?>assets/calendar/fullcalendar.print.css" rel="stylesheet" media="print"/>
-<script src="<?= base_url() ?>assets/calendar/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
 <script src="<?= base_url() ?>assets/calendar/fullcalendar.min.js"></script>
 <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 
