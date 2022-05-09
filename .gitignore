@@ -116,7 +116,9 @@ sitemaps
 .well_known
 manage_portal/.well_known
 manage_ams/.well_known
+manage_ams/.well_known/*
 manage_affiliate/.well_known
+manage_affiliate/.well_known/*
 app_logs
 assets/tmp
 error_logs
