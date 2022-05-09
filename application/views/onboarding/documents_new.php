@@ -285,4 +285,8 @@ $tab_data['document_offer_letter_base'] = $document_offer_letter_base;
     };
 
     loadTT();
+
+    setTimeout(function(){
+        $('[href="#collapse_general_documents_notcompleted"]').trigger('click');
+    }, 2000);    
 </script>
