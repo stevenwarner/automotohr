@@ -224,6 +224,8 @@ class Employee_management extends Public_Controller {
                 $order = 'desc';
             }
 
+            $searchList = [];
+
             if (isset($_GET['department']) && $_GET['department'] > 0) {
                 $employees_list = array();
                 $department_sid = $_GET['department'];
@@ -253,17 +255,15 @@ class Employee_management extends Public_Controller {
                 }
 
                 $employees_list = array_unique($employees_list);
-
-                $data['employees'] = array();
-                if(sizeof($employees_list)) $data['employees'] = $this->employee_model->get_these_employees_detail($employees_list, $order_by, $order);
+                //
+                $searchList = $employees_list;
                 $data['department_sid'] = $department_sid;
-            } else {
-                $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order );
             }
+            $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order, $searchList );
 
-            $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order);
-            $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order);
-            $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order);
+            $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order, $searchList);
+            $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order, $searchList);
+            $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order, $searchList);
             //
             $data['executive_admins'] = $this->employee_model->get_all_executive_admins($company_id, $employer_id, $keyword,0 , $order_by, $order);
             $data['employees'] = array_merge($data['employees'], $data['executive_admins']);
