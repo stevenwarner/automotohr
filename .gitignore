@@ -92,7 +92,7 @@ creds.json
 google_hire_automotosocial.json
 google_hire.json
 
-affiliate_portal/application/logs/*
+affiliate_portal/applicatioerror_logs/n/logs/*
 application/logs/*
 executive_admin/application/logs/*
 manage_ams/application/logs/*
@@ -114,6 +114,10 @@ sitemaps
 
 #
 .well_known
-.manage_portal/well_known
-.manage_ams/well_known
-.manage_affiliate/well_known
+manage_portal/.well_known
+manage_ams/.well_known
+manage_affiliate/.well_known
+app_logs
+assets/tmp
+error_logs
+gusto
