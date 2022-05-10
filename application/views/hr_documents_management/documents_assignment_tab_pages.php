@@ -2098,6 +2098,17 @@
                                                                             <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'noActionDocuments'], $modifyBTN);?></td>
                                                                         <?php } ?>
                                                                 <?php } ?>
+                                                                <td>
+                                                                    <?php if ($document_all_permission) { ?>
+                                                                        <a 
+                                                                            href="javascript:void(0);"
+                                                                            class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
+                                                                            title="Modify Category"
+                                                                            data-asid="<?=$document['sid'];?>"
+                                                                            data-sid="<?=$document['document_sid'];?>"
+                                                                        >Manage Category</a>
+                                                                    <?php } ?> 
+                                                                </td>
                                                             </tr>   
                                                         <?php } ?>
                                                     <?php } else { ?>
