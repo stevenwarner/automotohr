@@ -1606,6 +1606,85 @@ if(!function_exists('GetUnProcessedPayrolls')){
     }
 }
 
+//
+//
+if(!function_exists('CreateAdmin')){
+    function CreateAdmin($request, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('CreateAdmin', $company['gusto_company_uid']),[
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return CreateAdmin($request, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+//
+if(!function_exists('AcceptServiceTerms')){
+    function AcceptServiceTerms($request, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('AcceptServiceTerms', $company['gusto_company_uid']),[
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return AcceptServiceTerms($request, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
 
 // Internal use functions
 
@@ -1664,6 +1743,8 @@ if(!function_exists('PayrollURL')){
 
 
         $urls['UpdatePayrollForDemo'] = 'v1/companies/'.($key).'/payrolls/'.$key1.'/'.$step;
+        $urls['CreateAdmin'] = 'v1/companies/'.($key).'/admins';
+        $urls['AcceptServiceTerms'] = 'v1/partner_managed_companies/'.($key).'/accept_terms_of_service';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }

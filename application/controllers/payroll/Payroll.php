@@ -131,6 +131,89 @@ class Payroll extends CI_Controller
         ->view('main/footer');
     }
 
+    /**
+     * 
+     */
+    function ManageAdmins(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Manage Admins';
+        $this->data['load_view'] = 0;
+        //
+        $this->data['PageScripts'] = [
+            'payroll/js/admin'
+        ];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['company_sid'] = $company_sid;
+        //
+        $this->data['CompanyAdmins'] = $this->pm->GetPayrollColumns(
+            'payroll_company_admin', [
+                'company_sid' => $company_sid
+            ],
+            'sid, first_name, last_name, email_address, phone_number, created_at, updated_at'
+        );
+        //
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/manage_admin')
+        ->view('main/footer');
+    }
+
+    /**
+     * 
+     */
+    function ServiceTerms(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Service Terms';
+        $this->data['load_view'] = 0;
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $termsAccepted = $this->pm->GetPayrollColumn(
+            'payroll_companies', [
+                "company_sid" => $company_sid
+            ],
+            'terms_accepted, ip_address, email_address, employee_sid, accepted_at',
+            false
+        );
+
+        $this->data['canSign'] = $this->pm->GetPayrollColumn(
+            'payroll_company_admin', [
+                "company_sid" => $company_sid,
+                "email_address" => $session['employer_detail']['email'],
+            ],
+            'sid',
+            true
+        );
+        //
+        $this->data['PageScripts'] = !$termsAccepted['terms_accepted'] ? ['payroll/js/service'] : [];
+        //
+        $this->data['acceptedData'] = $termsAccepted;
+        //
+        $this->data['company_sid'] = $company_sid;
+        //
+        $this->data['CompanyAdmins'] = $this->pm->GetPayrollColumns(
+            'payroll_company_admin', [
+                'company_sid' => $company_sid
+            ],
+            'sid, first_name, last_name, email_address, phone_number, created_at, updated_at'
+        );
+        //
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/service_terms')
+        ->view('main/footer');
+    }
+
      /**
      * 
      */

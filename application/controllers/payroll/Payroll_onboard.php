@@ -103,6 +103,68 @@ class Payroll_onboard extends CI_Controller
     }
 
     /**
+     * Add admin to payroll
+     * 
+     * @param number $companyId
+     * @return
+     */
+    public function AddAdmin($companyId)
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $eid = $this->CreateAdminOnGusto($companyId, $post);
+        //
+        return sendResponse(200, ['status' => true]);
+    }
+    
+    /**
+     * Accept terms
+     * 
+     * @param number $companyId
+     * @return
+     */
+    public function AcceptServiceTerms($companyId)
+    {
+        //
+        $termsAccepted = $this->pm->GetPayrollColumn(
+            'payroll_companies', [
+                "company_sid" => $companyId
+            ],
+            'terms_accepted',
+            true
+        );
+        //
+        if($termsAccepted){
+            return sendResponse(200, ['status' => false, 'response' => "Already accepted"]);
+        }
+        //
+        $ses = $this->session->userdata('logged_in')['employer_detail'];
+        //
+        if(
+            !$this->pm->GetPayrollColumn(
+                'payroll_company_admin', [
+                    "company_sid" => $companyId,
+                    "email_address" => $ses['email']
+                ],
+                'sid',
+                true
+            )
+        ) {
+            return sendResponse(200, ['status' => false, 'response' => 'You are not allowed to accept the terms. Only signatories and admins are allowed to perform this action.']);
+        }
+        //
+        $request = [];
+        $request['email'] = $ses['email'];
+        $request['ip_address'] = getUserIP();
+        $request['external_user_id'] = $ses['sid'];
+        //
+        $this->AcceptServiceTermsOnGusto($companyId, $request);
+        //
+        return sendResponse(200, ['status' => true]);
+    }
+
+    /**
      * Get the page data / data
      * 
      * @param string $type
@@ -157,6 +219,7 @@ class Payroll_onboard extends CI_Controller
                 'users.ssn',
                 'users.first_name',
                 'users.last_name',
+                'users.email',
                 'users.PhoneNumber',
                 'payroll_employees.payroll_employee_id'
             ]);
@@ -190,6 +253,10 @@ class Payroll_onboard extends CI_Controller
                     $tmp[] = [
                         'user_id' => $employee['userId'],
                         'full_name_with_role' => remakeEmployeeName($employee),
+                        'first_name' => $employee['first_name'],
+                        'last_name' => $employee['last_name'],
+                        'email' => $employee['email'],
+                        'phone_number' => $employee['phone_number'],
                         'missing_fields' => $missing_fields
                     ];
                 }
@@ -1654,5 +1721,85 @@ class Payroll_onboard extends CI_Controller
             //
             return $ia;
         }
+    }
+
+    /**
+     * Create admin on gusto
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function CreateAdminOnGusto($companyId, $post){
+        //
+        $request = $post;
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = CreateAdmin($request, $company_details);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0]['message'];
+            }
+            // Error took place
+            return false;
+        }
+        //
+        $datetime = date('Y-m-d H:i:s', strtotime('now'));
+        // Add entry to the payroll job
+        $ia = [];
+        $ia['uuid'] = $response['uuid'];
+        $ia['company_sid'] = $companyId;
+        $ia['first_name'] = $post['first_name'];
+        $ia['last_name'] = $post['last_name'];
+        $ia['email_address'] = $post['email'];
+        $ia['phone_number'] = NULL;
+        $ia['created_at'] = $ia['updated_at'] = $datetime;
+        //
+        $id = $this->pm->InsertPayroll('payroll_company_admin', $ia);
+        //
+        return $id;
+    }
+    
+    /**
+     * Create admin on gusto
+     * 
+     * @param number $companyId
+     * @param array  $request
+     * 
+     * @return
+     */
+    private function AcceptServiceTermsOnGusto($companyId, $request){
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = AcceptServiceTerms($request, $company_details);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0]['message'];
+            }
+            // Error took place
+            return false;
+        }
+        //
+        $ia = [];
+        $ia['terms_accepted'] = (int)$response['latest_terms_accepted'];
+        $ia['employee_sid'] = $request['external_user_id'];
+        $ia['email_address'] = $request['email'];
+        $ia['ip_address'] = $request['ip_address'];
+        $ia['accepted_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $this->pm->UpdatePayroll('payroll_companies', $ia, ['company_sid' => $companyId]);
+        //
+        return true;
     }
 }

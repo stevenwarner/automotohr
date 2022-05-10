@@ -26,6 +26,20 @@
             'icon' => 'bank',
             'segment' => 'run'
         ];
+        $navpills[] = [
+            'title' => 'Manage Admins',
+            'url' => '/manage-admin',
+            'slug' => '',
+            'icon' => 'cogs',
+            'segment' => 'manage'
+        ];
+        $navpills[] = [
+            'title' => 'Service Terms',
+            'url' => '/service-terms',
+            'slug' => '',
+            'icon' => 'file-pdf-o',
+            'segment' => 'service'
+        ];
     }
     $navpills[] = [
         'title' => 'My Pay Stubs',
