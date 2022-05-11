@@ -2203,22 +2203,68 @@ class Employee_management extends Public_Controller {
                 $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                 $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                 $data['full_employment_application'] = serialize($full_emp_app);
+                //
+                $newCompareData = $data;
+                //
+                unset(
+                    $newCompareData['full_employment_application'],
+                    $newCompareData['extra_info']
+                );
+                //
+                $post = $this->input->post(null, true);
+                //
+                $newCompareData['secondary_email'] = $post['secondary_email'];
+                $newCompareData['secondary_PhoneNumber'] = $post['secondary_PhoneNumber'];
+                $newCompareData['other_email'] = $post['other_email'];
+                $newCompareData['other_PhoneNumber'] = $post['other_PhoneNumber'];
+                $newCompareData['job_title'] = $post['job_title'];
+                $newCompareData['division'] = $post['division'];
+                $newCompareData['linkedin_profile_url'] = $post['linkedin_profile_url'];
+                $newCompareData['employee_number'] = $post['employee_number'];
+                $newCompareData['department'] = $post['department'];
+                $newCompareData['office_location'] = $post['office_location'];
+                $newCompareData['interests'] = $post['interests'];
+                $newCompareData['short_bio'] = $post['short_bio'];
+                $newCompareData['video_source'] = $post['video_source'];
+                //
+                $oldCompareData = array_merge($employee_detail, unserialize($employee_detail['extra_info']));
+                //
                 $this->dashboard_model->update_user($sid, $data);
                 //
-                $difference = $this->findDifference($employee_detail, $data);
+                $difference = $this->findDifference($oldCompareData, $newCompareData);
                 //
-                if ($difference == 1) {
+                if ($difference['profile_changed'] == 1) {
                     $notification_list = $this->employee_model->get_employee_profile_notification_list($company_id, 'employee_Profile', 'active');
                     //
                     $company_data = get_company_details($company_id);
                     $company_name = $company_data['CompanyName'];
                     $employee_name = getUserNameBySID($sid);
+                    //
+                    $changedData = '<table>';
+                    $changedData .= '    <thead>';
+                    $changedData .= '        <tr>';
+                    $changedData .= '            <th>Column</th>';
+                    $changedData .= '            <th>Old Data</th>';
+                    $changedData .= '            <th>New Data</th>';
+                    $changedData .= '        </tr>';
+                    $changedData .= '    </thead>';
+                    $changedData .= '    <tbody>';
+                    foreach($difference['data'] as $k => $v):
+                        $changedData .= '        <tr>';
+                        $changedData .= '            <th>'.(ucwords(str_replace('_', ' ', $k))).'</th>';
+                        $changedData .= '            <td style="color: red;">'.($v['old']).'</td>';
+                        $changedData .= '            <td style="color: green;">'.($v['new']).'</td>';
+                        $changedData .= '        </tr>';
+                    endforeach;
+                    $changedData .= '    </tbody>';
+                    $changedData .= '</table>';
 
                     foreach ($notification_list as $notify_user) {
                         $replacement_array = array();
                         $replacement_array['company_name'] = ucwords($company_name);
                         $replacement_array['user-name'] = ucwords($notify_user['contact_name']);
                         $replacement_array['employee_name'] = $employee_name;
+                        $replacement_array['changed_data'] = $changedData;
 
                         $message_hf = message_header_footer_domain($company_id, $company_name);
                         log_and_send_templated_email(EMPLOYEE_PROFILE_UPDATE, $notify_user['email'], $replacement_array, $message_hf);
@@ -3290,28 +3336,35 @@ class Employee_management extends Public_Controller {
         res($resp);
     }
 
+    /**
+     * 
+     */
     function findDifference ($previous_data, $form_data) {
         // 
         $profile_changed = 0;
         //
+        $dt = [];
+        //
         if (!empty($previous_data)) {
             foreach ($previous_data as $key => $data) {
-                //   
-                if (empty($data) && !isset($data) || $data == "") {
-                    if (!empty($form_data[$key])) {
-                        $profile_changed = 1;
-                    }       
+                //
+                if(!isset($form_data[$key])){
+                    continue;
                 }
-
-                if (!empty($data) && isset($data)) {
-                    if ($data != $form_data[$key]) {
-                        $profile_changed = 1;
-                    }
+                //   
+                if (isset($form_data[$key]) && $data != $form_data[$key]) {
+                    //
+                    $dt[$key] = [
+                        'old' => $data,
+                        'new' => $form_data[$key]
+                    ];
+                    //
+                    $profile_changed = 1;
                 }
             }
         } 
         //
-        return $profile_changed;
+        return ['profile_changed' => $profile_changed, 'data' => $dt];
     }
 
     function is_serialized( $data, $strict = true ) {
