@@ -547,6 +547,7 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['download_required'] = $this->input->post('download_required');
                         $data_to_insert['signature_required'] = $this->input->post('signature_required');
                         $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+                        $data_to_insert['visible_to_document_center'] = $this->input->post('visibletodocumentcenter');
 
 
                         $data_to_insert['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
@@ -778,6 +779,7 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['document_title'] = $document_title;
                         $data_to_insert['document_description'] = $document_description;
                         $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+                        $data_to_insert['visible_to_document_center'] = $this->input->post('visibletodocumentcenter');
                         $data_to_insert['document_type'] = 'generated';
                         if (!empty($this->input->post('sort_order')))
                             $data_to_insert['sort_order'] = $this->input->post('sort_order');
@@ -1256,7 +1258,8 @@ class Hr_documents_management extends Public_Controller
                         // $action_required = $this->input->post('action_required');
                         $data_to_update = array();
                         $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary');
-
+                        $data_to_update['visible_to_document_center'] = $this->input->post('visibletodocumentcenter');
+                        
                         if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
                             $s3_file_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
                             $original_name = $_FILES['document']['name'];
@@ -4949,7 +4952,8 @@ class Hr_documents_management extends Public_Controller
             }
 
             $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employer_sid, 0);
-
+            
+           
             foreach ($assigned_documents as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
                 $is_document_completed = 0;
@@ -5048,6 +5052,8 @@ class Hr_documents_management extends Public_Controller
                             }
 
                             if ($is_document_completed > 0) {
+
+                              if($assigned_document['visible_to_document_center']==1){
                                 if ($assigned_document['pay_roll_catgory'] == 0) {
 
                                     $signed_document_sids[] = $assigned_document['document_sid'];
@@ -5058,6 +5064,10 @@ class Hr_documents_management extends Public_Controller
                                     $completed_payroll_documents[] = $assigned_document;
                                     unset($assigned_documents[$key]);
                                 }
+                            }else{
+                                unset($assigned_documents[$key]);
+                            }
+
                             } else {
                                 if ($assigned_document['pay_roll_catgory'] == 1) {
                                     $uncompleted_payroll_documents[] = $assigned_document;
@@ -5067,16 +5077,21 @@ class Hr_documents_management extends Public_Controller
                                 $assigned_sids[] = $assigned_document['document_sid'];
                             }
                         } else {
-                            if ($assigned_document['pay_roll_catgory'] == 0) {
-                                $assigned_sids[] = $assigned_document['document_sid'];
-                                $no_action_required_sids[] = $assigned_document['document_sid'];
-                                $no_action_required_documents[] = $assigned_document;
-                                unset($assigned_documents[$key]);
-                            } else if ($assigned_document['pay_roll_catgory'] == 1) {
-                                if ($assigned_document['user_consent'] == 1 && $assigned_document['document_sid'] == 0) {
-                                    $no_action_required_payroll_documents[] = $assigned_document;
+                            if($assigned_document['visible_to_document_center']==1){
+                                if ($assigned_document['pay_roll_catgory'] == 0) {
+                                    $assigned_sids[] = $assigned_document['document_sid'];
+                                    $no_action_required_sids[] = $assigned_document['document_sid'];
+                                    $no_action_required_documents[] = $assigned_document;
                                     unset($assigned_documents[$key]);
+                                } else if ($assigned_document['pay_roll_catgory'] == 1) {
+                                    if ($assigned_document['user_consent'] == 1 && $assigned_document['document_sid'] == 0) {
+                                        $no_action_required_payroll_documents[] = $assigned_document;
+                                        unset($assigned_documents[$key]);
+                                    }
                                 }
+
+                            } else {
+                                unset($assigned_documents[$key]);
                             }
                         }
                     } else {
@@ -5085,12 +5100,9 @@ class Hr_documents_management extends Public_Controller
                 }
             }
 
-
             $categorized_docs = $this->hr_documents_management_model->categrize_documents($company_sid, $signed_documents, $no_action_required_documents, 0);
             $data['categories_no_action_documents'] = $categorized_docs['categories_no_action_documents'];
             $data['categories_documents_completed'] =  $categorized_docs['categories_documents_completed'];
-
-
             $documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employer_sid);
             $data['documents'] = $documents;
 
@@ -5133,7 +5145,8 @@ class Hr_documents_management extends Public_Controller
                 $data['eeoc_form'] = $eeoc_form;
             }
 
-            $data['assigned_documents']                     = $assigned_documents;
+
+             $data['assigned_documents']                     = $assigned_documents;
             $data['completed_offer_letter']                 = $completed_offer_letter;
             $data['uncompleted_offer_letter']               = $uncompleted_offer_letter;
             $data['uncompleted_payroll_documents']          = $uncompleted_payroll_documents;
@@ -5161,6 +5174,7 @@ class Hr_documents_management extends Public_Controller
                 $data['session']['company_detail']['sid'],
                 'completed'
             );
+                        
 
             $data['load_view'] = check_blue_panel_status(false, 'self');
             $data['employee'] = $data['session']['employer_detail'];
@@ -8280,6 +8294,7 @@ class Hr_documents_management extends Public_Controller
             $data_to_insert = array();
 
             $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+            $data_to_insert['visible_to_document_center'] = $this->input->post('visibletodocumentcenter');
 
             if (isset($file_info['extension'])) {
                 $data_to_insert['uploaded_document_extension'] = $file_info['extension'];
@@ -8488,6 +8503,7 @@ class Hr_documents_management extends Public_Controller
             // $action_required = $this->input->post('action_required');
             $data_to_update = array();
             $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+            $data_to_update['visible_to_document_center'] = $this->input->post('visibletodocumentcenter');
 
             if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
                 $s3_file_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
@@ -9643,10 +9659,9 @@ class Hr_documents_management extends Public_Controller
             $do_upload = $post['perform_action'] == 'uploaded' || $post['perform_action'] == 'hybrid_document' ? true : false;
             $do_descpt = $post['perform_action'] == 'generated' || $post['perform_action'] == 'hybrid_document' ? true : false;
 
-
             $data_to_insert['isdoctolibrary'] = $post['isdoctolibrary'];
-
-            //
+            $data_to_insert['visible_to_document_center'] = $this->input->post('visibletodocumentcenter');
+          
             // Fo uploaded file
             if ($do_upload) {
                 //
@@ -12235,6 +12250,7 @@ class Hr_documents_management extends Public_Controller
             $document_to_update['authorized_signature'] = NULL;
             $document_to_update['authorized_signature_by'] = NULL;
             $document_to_update['authorized_signature_date'] = NULL;
+            $document_to_update['visible_to_document_center'] = 0;
 
             $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $document_to_update); // If already exists then update
             $document_id = json_encode((int)$assignInsertId);
@@ -12264,7 +12280,10 @@ class Hr_documents_management extends Public_Controller
             $new_documents_assigned_data['allowed_employees'] = $documents_assigned_data['allowed_employees'];
             $new_documents_assigned_data['allowed_departments'] = $documents_assigned_data['allowed_departments'];
             $new_documents_assigned_data['allowed_teams'] = $documents_assigned_data['allowed_teams'];
-            $new_documents_assigned_data['isdoctolibrary '] = $documents_assigned_data['isdoctolibrary'];
+            $new_documents_assigned_data['isdoctolibrary'] = $documents_assigned_data['isdoctolibrary'];
+            $new_documents_assigned_data['visible_to_document_center'] = $documents_assigned_data['visible_to_document_center'];
+            
+
 
 
             // TODO
@@ -12277,4 +12296,15 @@ class Hr_documents_management extends Public_Controller
             echo $document_id;
         }
     }
+
+   // change document visibility on document center 
+    public function document_visible()
+    {
+        $document_sid = $_POST['document_sid'];
+        $status_to_update = array();
+        $status_to_update['visible_to_document_center'] = $_POST['visible_to_document_center'];
+        $this->hr_documents_management_model->change_document_visible($document_sid, $status_to_update);
+    }
+
+
 }

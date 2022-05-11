@@ -593,9 +593,14 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <?php if (count($category_document['documents']) > 0) { ?>
+                                                                <?php 
+                                                                 // print_r($category_document['documents']);
+                                                                  
+                                                                   if (count($category_document['documents']) > 0) { ?>
                                                                     <?php foreach ($category_document['documents'] as $document) { ?>
                                                                         <?php $pdBtn = getPDBTN($document, 'btn-info'); ?> 
+                                                                        
+                                                                    
                                                                         <tr>
                                                                             <td class="">
                                                                                 <?php
@@ -619,6 +624,7 @@
                                                                                 <a href="<?php echo $document_d_base . '/' . $document['sid']; ?>" class="btn btn-info">View Sign</a>
                                                                             </td>
                                                                         </tr>
+                                                                        
                                                                     <?php } ?>
                                                                 <?php } else { ?>
                                                                     <tr>

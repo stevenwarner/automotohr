@@ -14818,7 +14818,6 @@ if (!function_exists('get_documents_assigned_data')) {
     }
 }
 
-
 if (!function_exists('check_document_completed_date')) {
 
     function check_document_completed_date($assigned_document) {

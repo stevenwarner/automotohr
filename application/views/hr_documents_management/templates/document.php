@@ -481,14 +481,24 @@
                                                     </div>
                                                 </div>
 
-
-                                                <div class="row">
+                                              <div class="row">
                                                     <div class="col-xs-12">
                                                         <div class="hr-box">
                                                             <div class="hr-box-header">
-                                                                <strong>Add Document to Library?</strong>
+                                                                <strong>Document Library?</strong>
                                                             </div>
                                                             <div class="hr-innerpadding">
+                                                               
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                        <p class="text-danger"><strong><em>If "Yes", the document will appear on the employee's document library and they can initiate the document.</em></strong></p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                        <p>Is the document for library?</p>
+                                                                    </div>
+                                                                </div>
                                                                 <div class="row">
                                                                     <div class="col-xs-12">
                                                                         <label class="control control--radio font-normal">
@@ -503,7 +513,34 @@
                                                                         </label>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            <hr>
+                                                            <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                        <p class="text-danger"><strong><em>If "No", the document will not  visible to employee on document center.</em></strong></p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                        <p>Is the document visible to employee on document center?</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                              
+                                                                    <div class="col-xs-12">
+                                                                        <label class="control control--radio font-normal">
+                                                                        <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="0" checked="true" />
+                                                                            No &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="1" />
+                                                                            Yes &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -751,7 +788,6 @@
         resetView();
 
         // Helpers
-
         //
         function ShowUploadedFilePreview(e){
             e.preventDefault();
@@ -934,7 +970,6 @@
         }
 
         // 
-
         $('input[name="assign-in-days"]').val(0);
         $('input[name="assign-in-months"]').val(0);
         $('.js-type').hide();

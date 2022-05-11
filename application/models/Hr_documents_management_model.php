@@ -6760,4 +6760,11 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->insert('documents_assigned', $data_to_insert);
         return $this->db->insert_id();
     }
+
+    // Change Docuemnt  visibility on document center
+    function change_document_visible($sid, $data_to_update) {
+        $this->db->where('sid', $sid);
+        $this->db->update('documents_assigned', $data_to_update);
+    }
+
 }

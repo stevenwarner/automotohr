@@ -106,14 +106,23 @@
                                                                                     $no_action_print_url = $no_action_document_info['print_url'];
                                                                                     $no_action_download_url = $no_action_document_info['download_url'];
                                                                                     ?>
-
-                                                                                    <td class="col-lg-1">
-                                                                                        <?php
+                                                                                    <?php
                                                                                         if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) {
-                                                                                            echo ($document_status == 'Completed') ? $document_status : 'Started' . "<br>";
+                                                                                            if($document_status == 'Completed'){
+                                                                                                $font_color="color:#81b431;";
+                                                                                                 }else{
+                                                                                                 $font_color="color:#fd7a2a;";
+                                                                                                 } 
                                                                                         }
 
                                                                                         ?>
+                                                                                    <td class="col-lg-1" style="<?php echo $font_color;?>"><b>
+                                                                                        <?php
+                                                                                        if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) {
+                                                                                            echo ($document_status == 'Completed') ? strtoupper($document_status) : strtoupper('Started') . "<br>";
+                                                                                        }
+
+                                                                                        ?></b></td>
 
                                                                                     <td class="col-lg-2"><?php if (isset($assigned_document_data['assigned_date']) && $assigned_document_data['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                                                 echo  reset_datetime(array('datetime' => $assigned_document_data['assigned_date'], '_this' => $this));

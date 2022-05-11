@@ -30,7 +30,6 @@
                             <div class="row">
                                 <div class="col-xs-12 form-title-section">
                                     <h2><?php echo $document['document_title']; ?></h2>
-
                                 </div>
 
                                 <div class="col-xs-12">
@@ -78,6 +77,46 @@
                                         </div>
                                     </div>
 
+
+                                   <?php  if($document['isdoctolibrary']==1){ ?>
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">
+                                            <strong>Document Center</strong>
+                                        </div>
+                                        <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <p>Is the document visible to employee on document center?</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                                      <?php 
+                                                             if($document['visible_to_document_center']==1){
+                                                                    $visibletodocumentcenter1 = 'checked="true"';
+                                                                }else{
+                                                                    $visibletodocumentcenter0 = 'checked="true"';
+                                                          }?>
+                                                                    <div class="col-xs-12">
+                                                                        <label class="control control--radio font-normal">
+                                                                        <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="0" <?php echo $visibletodocumentcenter0;?> />
+                                                                            No &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                        <label class="control control--radio font-normal">
+                                                                            <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="1" <?php echo $visibletodocumentcenter1;?> />
+                                                                            Yes &nbsp;
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                           
+                                            <div class="document-action-required">
+                                                <button onclick="document_visible(<?php echo $document['sid']; ?>)" type="button" class="btn btn-primary pull-right">Update</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php }?>
                                     <?php if($document['acknowledgment_required'] == 1) { ?>
                                         <div class="panel panel-success">
                                             <div class="panel-heading">
@@ -351,6 +390,43 @@
     //print_r(explode(".", $document_filename, 2));
 ?> -->
 <script>
+
+
+
+<?php  if($document['isdoctolibrary']==1){ ?>
+function document_visible(document_sid) {
+   
+  var visible_to_document_center = document.querySelector('input[name = visibletodocumentcenter]:checked').value;
+          alertify.confirm(
+            'Are you sure?',
+            'Are you sure you want to change This Document visibility?',
+            function () {
+                var form_data = new FormData();
+                form_data.append('document_sid', document_sid);
+                form_data.append('visible_to_document_center', visible_to_document_center);
+                 $.ajax({
+                    url: '<?php echo base_url('hr_documents_management/document_visible'); ?>',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'post',
+                    data: form_data,
+                    success: function (data) {
+                        var reload_url = '<?php echo base_url('hr_documents_management/manage_document').'/'.$user_type .'/'?>';
+                        reload_url = reload_url+document_sid+'/<?php echo $users_sid;?>';
+                        window.location=reload_url;
+                    },
+                    error: function () {
+                    }
+                });
+            },
+            function () {
+                
+            });
+   
+    }
+<?php }?>
+
     function deactivate_document(document_sid) {
         alertify.confirm(
             'Are you sure?',
