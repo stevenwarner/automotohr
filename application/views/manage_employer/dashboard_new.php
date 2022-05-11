@@ -806,12 +806,11 @@
                                     </div>
                                 <?php } ?>
 
-
-
+                                <!-- Documents Library -->
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box">
                                         <div class="dashboard-widget-box">
-                                            <figure><i class="fa fa-clipboard <?php echo !empty($total_pending_auth_doc) && $total_pending_auth_doc > 0 ? 'start_animation' : ''; ?>"></i></figure>
+                                            <figure><i class="fa fa-clipboard" aria-hidden="true"></i></figure>
                                             <h2 class="post-title" style="margin: 2px 0;">
                                                 <a href="<?php echo base_url('authorized_document'); ?>">Documents  Library</a>
                                             </h2>

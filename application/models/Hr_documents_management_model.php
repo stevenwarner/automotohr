@@ -6688,63 +6688,76 @@ class Hr_documents_management_model extends CI_Model {
         return $return_data;
     }
 
-
+    /**
+     * Get all the active documents belongs
+     * to library
+     * 
+     * @author Nisar [05-11-2022]
+     * @param number $company_sid
+     * @return array
+     */
     function get_all_paginate_library_documents ($company_sid) {
         $this->db->select('document_title,document_type,sid,sid as document_sid');
         $this->db->where('documents_management.company_sid', $company_sid);
         $this->db->where('documents_management.isdoctolibrary', 1);
+        $this->db->where('documents_management.archive', 0);
         $this->db->order_by('documents_management.sid', 'DESC');
-       //
+        //
         $record_obj = $this->db->get('documents_management');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        if (!empty($record_arr)) {
-            return $record_arr;
-        } else {
-            return array();
-        }
+        //
+        return !$record_arr ? [] : $record_arr;
     }
-
-  
-
-    function is_library_document_exist($document_sid,$employee_id,$employee) {
-              
-         $this->db->where('document_sid', $document_sid);
-         $this->db->where('user_sid', $employee_id);
-         $this->db->where('user_type', $employee);
-         $record_obj = $this->db->get('documents_assigned');
-         $record_arr = $record_obj->result_array();
-         $record_obj->free_result();
- 
-         if (!empty($record_arr)) {
-             return $record_arr[0];
-         } else {
-             return array();
-         }
-
+    
+    /**
+     * Get the assigned document
+     * 
+     * @author Nisar [05-11-2022]
+     * @param number $document_sid
+     * @param number $userId
+     * @param string $userType [applicant|employee]
+     * @return array
+     */
+    function is_library_document_exist($document_sid, $userId, $userType = 'employee') {
+        $this->db->where('document_sid', $document_sid);
+        $this->db->where('user_sid', $userId);
+        $this->db->where('user_type', $userType);
+        //
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        return !$record_arr ? [] : $record_arr;
      }
 
-
-     function get_documents_assigned($sid) {
-        $this->db->select('*');
-        $this->db->where('sid', $sid);
-        $record_obj = $this->db->get('documents_management');
-        $record_arr = $record_obj->result_array();
+    /**
+     * Get the original document by id
+     * 
+     * @author Nisar [05-11-2022]
+     * @param number $sid
+     * @return array
+     */ 
+    function get_documents_assigned($sid) {
+        //
+        $record_obj = $this->db
+        ->where('sid', $sid)
+        ->get('documents_management');
+        $record_arr = $record_obj->row_array();
         $record_obj->free_result();
-
-        if (!empty($record_arr)) {
-            return $record_arr[0];
-        } else {
-            return array();
-        }
+        //
+        return !$record_arr ? [] : $record_arr;
     }
 
-     function insert_documents_assigned($data_to_insert) {
+    /**
+     * Assigns a document
+     * 
+     * @author Nisar [05-11-2022]
+     * @param array $data_to_insert
+     * @return number
+     */ 
+    function insert_documents_assigned($data_to_insert) {
         $this->db->insert('documents_assigned', $data_to_insert);
-        $insert_id = $this->db->insert_id();
-        return  $insert_id;
-        
+        return $this->db->insert_id();
     }
-
-
 }

@@ -3093,17 +3093,17 @@ class Dashboard_model extends CI_Model
     }
 
 
-
-    function get_all_library_doc_count($company_id, $employer_id)
-    {
-
+    /**
+     * Get the count of available documents
+     * 
+     * @param number @company_id
+     * @return number
+     */
+    function get_all_library_doc_count($company_id){
         return  $this->db
        ->where('documents_management.company_sid', $company_id)
-        ->where('documents_management.employer_sid', $employer_id)
         ->where('documents_management.isdoctolibrary', 1)
+        ->where('documents_management.archive', 0)
         ->count_all_results('documents_management');
-        
     }
-
-
 }

@@ -446,8 +446,7 @@ class Dashboard extends Public_Controller {
             $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
             $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
             $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
-            $total_library_doc    = $this->dashboard_model->get_all_library_doc_count($company_id, $employer_id);
-
+            $data['total_library_doc']  = $this->dashboard_model->get_all_library_doc_count($company_id);
 
             $data['messages']                   = $messages;
             $data['eventCount']                 = $eventCount;
@@ -460,7 +459,6 @@ class Dashboard extends Public_Controller {
             $data['total_assigned_today_doc']   = $total_assigned_today_doc;
             $data['total_pending_auth_doc']     = $total_pending_auth_doc;
             $data['total_assigned_auth_doc']    = $total_assigned_auth_doc;
-            $data['total_library_doc']    = $total_library_doc;
 
             $this->load->model('timeoff_model');
 
@@ -492,7 +490,9 @@ class Dashboard extends Public_Controller {
             $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->getPendingAuthDocs($data['session']['company_detail']['sid'], 'applicant', TRUE, $data['session']['employer_detail']);
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
-            
+            //
+            $data['total_library_doc']    = $this->dashboard_model->get_all_library_doc_count($company_id);
+            //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
             $this->load->view('main/footer');
@@ -828,7 +828,7 @@ class Dashboard extends Public_Controller {
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
 
-            $total_library_doc    = $this->dashboard_model->get_all_library_doc_count($company_id, $employer_id);
+            $total_library_doc    = $this->dashboard_model->get_all_library_doc_count($company_id);
             $data['total_library_doc']    = $total_library_doc;
 
 
