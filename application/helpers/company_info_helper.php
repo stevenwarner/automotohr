@@ -2208,59 +2208,59 @@ if(!function_exists('broadcastAlert')){
         //
         switch($notificationSlug){
             case 'driver_license': 
-                $dt = 'Driver\'s License.'; 
+                $dt = 'Driver\'s License'; 
                 $subject = 'Driver\'s license details have changed';
                 $link = 'drivers_license_info/employee/';
                 return '';
             break;
             case 'occupational_license':
-                $dt = 'Occupational License.'; 
+                $dt = 'Occupational License'; 
                 $subject = 'Occupational license details have changed';
                 $link = 'occupational_license_info/employee/';
                 return '';
             break;
             case 'dependent_details':
-                $dt = 'Dependent Details.'; 
+                $dt = 'Dependent Details'; 
                 $subject = 'Dependent details have changed';
                 $link = 'dependants/employee/';
                 return '';
             break;
             case 'emergency_contact':
-                $dt = 'Emergency Contact.'; 
+                $dt = 'Emergency Contact'; 
                 $subject = 'Emergency contact details have changed';
                 $link = 'emergency_contacts/employee/';
                 return '';
             break;
             case 'direct_deposit_information': 
-                $dt = 'Direct Deposit Information.'; 
+                $dt = 'Direct Deposit Information'; 
                 $subject = 'Direct Deposit Information has changed';
                 $link = 'direct_deposit/employee/';
             break;
             case 'equipment_info': 
-                $dt = 'Equipment Information.'; 
+                $dt = 'Equipment Information'; 
                 $subject = 'Equipment Information has changed';
                 $link = 'equipment_info/employee/';
                 return '';
             break;
             case 'equipment_info_acknowledged': 
-                $dt = 'Equipment Information.'; 
+                $dt = 'Equipment Information'; 
                 $subject = 'Equipment Information Acknowledged';
                 $action = 'Acknowledged';
                 $link = 'equipment_info/employee/';
                 return '';
             break;
             case 'i9_completed': 
-                $dt = 'I9 Form.'; 
+                $dt = 'I9 Form'; 
                 $subject = 'I9 Form Completed';
                 $action = 'Completed';
             break;
             case 'w9_completed': 
-                $dt = 'W9 Form.'; 
+                $dt = 'W9 Form'; 
                 $subject = 'W9 Form Completed';
                 $action = 'Completed';
             break;
             case 'w4_completed': 
-                $dt = 'W4 Form.'; 
+                $dt = 'W4 Form'; 
                 $subject = 'W4 Form Completed';
                 $action = 'Completed';
             break;

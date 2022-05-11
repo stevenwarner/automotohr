@@ -2098,6 +2098,29 @@
                                                                             <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'noActionDocuments'], $modifyBTN);?></td>
                                                                         <?php } ?>
                                                                 <?php } ?>
+                                                                <td>
+                                                                    <?php if ($document_all_permission) { ?>
+                                                                        <a 
+                                                                            href="javascript:void(0);"
+                                                                            class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
+                                                                            title="Modify Category"
+                                                                            data-asid="<?=$document['sid'];?>"
+                                                                            data-sid="<?=$document['document_sid'];?>"
+                                                                        >Manage Category</a>
+
+                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                            <?php if ($document['status'] == 1) { ?>
+                                                                                <?php if ($user_type == 'applicant') { ?>
+                                                                                    <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
+                                                                                <?php } else { ?>
+                                                                                    <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
+                                                                                <?php } ?>
+                                                                            <?php } else { ?>
+                                                                                <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
+                                                                            <?php } ?>
+                                                                        <?php } ?>
+                                                                    <?php } ?> 
+                                                                </td>
                                                             </tr>   
                                                         <?php } ?>
                                                     <?php } else { ?>
