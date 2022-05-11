@@ -213,6 +213,51 @@ class Payroll extends CI_Controller
         ->view('payroll/service_terms')
         ->view('main/footer');
     }
+    
+    /**
+     * 
+     */
+    function Settings(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Settings';
+        $this->data['load_view'] = 0;
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['PageScripts'] = [
+            'payroll/js/settings'
+        ];
+        //
+        $this->data['payroll_settings'] = $this->pm->GetPayrollColumn(
+            'payroll_settings', [
+                'company_sid' => $company_sid
+            ],
+            'sid, fast_payment_limit, payment_speed',
+            false
+        );
+        //
+        if(!$this->data['payroll_settings']){
+            //
+            $this->GetAndSetPaymentConfig($company_sid);
+            //
+            $this->data['payroll_settings'] = $this->pm->GetPayrollColumn(
+                'payroll_settings', [
+                    'company_sid' => $company_sid
+                ],
+                'sid, fast_payment_limit, payment_speed',
+                false
+            );
+        }
+        //
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/configs')
+        ->view('main/footer');
+    }
 
      /**
      * 
@@ -287,22 +332,6 @@ class Payroll extends CI_Controller
         $this->load
         ->view('main/header', $this->data)
         ->view('payroll/accounts')
-        ->view('main/footer');
-    }
-    
-    /**
-     * 
-     */
-    function Settings(){
-        //
-        $this->checkLogin($this->data);
-        //
-        $this->data['title'] = 'Payroll | Settings';
-        $this->data['load_view'] = 0;
-        //
-        $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/settings')
         ->view('main/footer');
     }
     
@@ -1841,5 +1870,37 @@ class Payroll extends CI_Controller
             //
             $this->db->insert('payrolls', $insertArray);
         }
+    }
+
+    
+    /**
+     * 
+     */
+    private function GetAndSetPaymentConfig($companyId){
+        // Get company
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = GetPaymentConfig($company);
+        //
+        if(isset($response['name'])){
+            return ;
+        }
+        //
+        $ai = [];
+        $ai['company_sid'] = $companyId;
+        $ai['last_updated_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        $ai['created_at'] = $ai['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        $ai['fast_payment_limit'] = $response['fast_payment_limit'];
+        $ai['payment_speed'] = $response['payment_speed'];
+        $ai['partner_uid'] = $response['partner_uuid'];
+        //
+        $this->pm->InsertPayroll(
+            'payroll_settings', 
+            $ai
+        );
     }
 }

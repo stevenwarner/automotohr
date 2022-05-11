@@ -163,6 +163,26 @@ class Payroll_onboard extends CI_Controller
         //
         return sendResponse(200, ['status' => true]);
     }
+    
+    /**
+     * Payment configs
+     * 
+     * @param number $companyId
+     * @return
+     */
+    public function Settings($companyId)
+    {
+        //
+        $post = $this->session->post(null, true);
+        //
+        $request = [];
+        $request['fast_payment_limit'] = $post['fast_payment_limit'];
+        $request['payment_speed'] = $post['payment_speed'];
+        //
+        $this->UpdatePaymentConfig($companyId, $request);
+        //
+        return sendResponse(200, ['status' => true]);
+    }
 
     /**
      * Get the page data / data
@@ -1799,6 +1819,42 @@ class Payroll_onboard extends CI_Controller
         $ia['accepted_at'] = date('Y-m-d H:i:s', strtotime('now'));
         //
         $this->pm->UpdatePayroll('payroll_companies', $ia, ['company_sid' => $companyId]);
+        //
+        return true;
+    }
+    
+    /**
+     * Create admin on gusto
+     * 
+     * @param number $companyId
+     * @param array  $request
+     * 
+     * @return
+     */
+    private function UpdatePaymentConfig($companyId, $request){
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $response = UpdatePaymentConfig($request, $company_details);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0]['message'];
+            }
+            // Error took place
+            return false;
+        }
+        //
+        $ia = [];
+        $ia['fast_payment_limit'] = $response['fast_payment_limit'];
+        $ia['payment_speed'] = $request['payment_speed'];
+        $ia['partner_uid'] = $request['partner_uuid'];
+        $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $this->pm->UpdatePayroll('payroll_settings', $ia, ['company_sid' => $companyId]);
         //
         return true;
     }
