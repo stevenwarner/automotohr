@@ -420,6 +420,33 @@
                                 </a>
                             </div>
                         </div>
+
+
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                            <div class="widget-box">
+                                <a href="<?php echo base_url('library_document'); ?>">
+                                    <div class="link-box bg-redish full-width">
+                                        <h2>Documents Library</h2>
+                                        <div><span>&nbsp;</span></div>
+                                        <div class="current-date">
+                                            <span><?php echo $total_library_doc; ?><sub>Total Document(s)</sub></span>
+                                        </div>
+                                        <!--                                            <ul class="cs-jam-ul">-->
+                                        <!--                                                <li>Documents: -->
+                                        <?//= $documents_count;?>
+                                        <!-- Pending</li>-->
+                                        <!--                                            </ul>-->
+                                        <div class="status-panel">
+                                            <h3>View Documents</h3>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+
+
+
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <div class="widget-box">
                                 <a href="<?php echo base_url('private_messages'); ?>">

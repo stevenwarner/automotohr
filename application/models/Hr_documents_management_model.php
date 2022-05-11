@@ -6689,17 +6689,11 @@ class Hr_documents_management_model extends CI_Model {
     }
 
 
-    function get_all_paginate_library_documents ($company_sid, $employer_sid, $limit = null, $start = null) {
-        $this->db->select('*');
+    function get_all_paginate_library_documents ($company_sid) {
+        $this->db->select('document_title,document_type,sid,sid as document_sid');
         $this->db->where('documents_management.company_sid', $company_sid);
-        $this->db->where('documents_management.employer_sid', $employer_sid);
         $this->db->where('documents_management.isdoctolibrary', 1);
-  
-        if($limit != null){
-            $this->db->limit($limit, $start);
-        }
-        // 
-        $this->db->order_by('documents_management.sid', 'DESC', false);
+        $this->db->order_by('documents_management.sid', 'DESC');
        //
         $record_obj = $this->db->get('documents_management');
         $record_arr = $record_obj->result_array();
@@ -6711,6 +6705,46 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+  
+
+    function is_library_document_exist($document_sid,$employee_id,$employee) {
+              
+         $this->db->where('document_sid', $document_sid);
+         $this->db->where('user_sid', $employee_id);
+         $this->db->where('user_type', $employee);
+         $record_obj = $this->db->get('documents_assigned');
+         $record_arr = $record_obj->result_array();
+         $record_obj->free_result();
+ 
+         if (!empty($record_arr)) {
+             return $record_arr[0];
+         } else {
+             return array();
+         }
+
+     }
+
+
+     function get_documents_assigned($sid) {
+        $this->db->select('*');
+        $this->db->where('sid', $sid);
+        $record_obj = $this->db->get('documents_management');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr[0];
+        } else {
+            return array();
+        }
+    }
+
+     function insert_documents_assigned($data_to_insert) {
+        $this->db->insert('documents_assigned', $data_to_insert);
+        $insert_id = $this->db->insert_id();
+        return  $insert_id;
+        
+    }
 
 
 }

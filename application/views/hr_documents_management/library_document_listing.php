@@ -10,7 +10,8 @@
     .alertify-button-cancel {
         color: #518401 !important;
     }
-
+    .completedocument{
+       }
     
 </style>
 <?php $archive_section = 'no'; ?>
@@ -23,8 +24,8 @@
                     <div class="row">
                         <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
                             <br />
-                            <a class="btn btn-info btn-block mb-2 csRadius5" href="<?php echo base_url('dashboard'); ?>">
-                                <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard</a>
+                            <a class="btn btn-info btn-block mb-2 csRadius5" href="<?php echo base_url('employee_management_system'); ?>">
+                              <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard</a>
                         </div>
                     </div>
 
@@ -33,170 +34,207 @@
                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                         <div class="page-header full-width">
                             <h1 class="section-ttile">Documents Library</h1>
-                            <strong> Information:</strong> If you are unable to view the documents library, kindly reload the page.
+                            <strong> Information:</strong> If you are unable to view the documents library, kindly reload the page.  <h3 style="float: right;margin-top: 0px;
+margin-bottom: 0px;" id="total_documents"><?php echo $total_documents;?> </h3>
                         </div>
                     </div>
 
-                    <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" style="min-height: 500px;"> 
-                        <?php if (!empty($documents_list)) { ?>
-                            <div class="table-responsive full-width table-outer">
-                                <table class="table table-striped table-condensed table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th class="col-lg-4">Document Name</th>
-                                            <th class="col-lg-3">Employee / Applicant</th>
-                                            <th class="col-lg-2 text-center">Created Date</th>
-                                            <th class="col-lg-2 text-center">Actions</th>
-                                            </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php $assigned_documents = array_reverse($documents_list);  ?>
-                                        <?php foreach ($documents_list as $document) { ?>
-                                               
-                                                <tr class="">
-                                                    <td class="col-lg-3">
-                                                        <?php
-                                                            echo $document['document_title'] . '&nbsp; <br />';
-                                                            echo "(".(!empty($document['offer_letter_type']) ? "Offer Letter - ".( ucwords($document['offer_letter_type']) )."" : "Document - ".( ucwords($document['document_type']) )."") . ')&nbsp;';
-                                                        ?>
-                                                    </td>
-                                                    <td class="col-lg-4">
-                                                        <?php 
-                                                            $user_type = '';
-                                                            $user_name = '';
-                                                            if ($document['user_type'] == 'applicant') {
-                                                                $user_type = 'Applicant';
-                                                                $user_name = get_applicant_name($document['user_sid']);
-                                                            } else {
-                                                                $user_type = 'Employee';        
-                                                                $user_name = getUserNameBySID($document['user_sid']);
-                                                            }
-                                                            echo $user_name ."<br /> <b>(".$user_type.")</b>";
-                                                        ?>
-                                                    </td>
-                                                    <td class="col-lg-2  text-center">
-                                                        <?php echo reset_datetime(array('datetime' => $document['date_created'], '_this' => $this)); ?>
-                                                    </td>
-                                               
-                                                    <td class="col-lg-2">
-                                                          <a class="<?php echo $btn_show; ?>" href="<?php echo  base_url('view_assigned_authorized_document' . '/' .$doc_type. '/' . $document['sid']); ?>">
-                                                            <?php echo $btn_text; ?>
+            <div id="no_action_required_doc_details" class="tab-pane fade in hr-innerpadding">
+                <div class="panel-body">
+                   <?php 
+                   $total_documents = 0;
+                   $employee_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
+                   if (!empty($categories_no_action_documents)) { ?>
+                      <?php foreach ($categories_no_action_documents as $category_document) { ?>
+                            <?php if ($category_document['category_sid'] != 27) { ?>
+                                <?php if (isset($category_document['documents'])) { ?>
+                                    
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="panel panel-default hr-documents-tab-content">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_no_action<?php echo $category_document['category_sid']; ?>">
+                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                            <?php echo $category_document['name']; ?>
+                                                            <?php
+                                                                $total_record = 0;
+                                                                if (count($category_document['documents']) > 0) {
+                                                                    foreach ($category_document['documents'] as $cou => $document) {
+                                                                        if ($document['archive'] != 1 && $document['manual_document_type'] != 'offer_letter') {
+                                                                            $total_record = $total_record + 1;
+                                                                            $total_documents =$total_documents + 1;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ?>
+                                                            <div class="pull-right total-records"><b><?php echo '&nbsp;Total: ' . $total_record; ?></b></div>
                                                         </a>
+                                                    </h4>
+                                                </div>
 
-                                                        <?php if ($document['user_type'] == 'applicant') { ?>
-                                                            <a href="javascript:;" document_sid="<?php echo $document['sid']; ?>" class="btn btn-warning btn-sm btn-block archive_document">Archive</a>
-                                                        <?php } ?>
+                                                <div id="collapse_no_action<?php echo $category_document['category_sid']; ?>" class="panel-collapse collapse">
+                                                    <div class="table-responsive full-width">
+                                                        <table class="table table-plane">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="col-lg-3">Document Name</th>
+                                                                    <th class="col-lg-1">Status</th>
+                                                                    <th class="col-lg-2">Started Date</th>
+                                                                    <th class="col-lg-2">Completed Date</th>
+                                                                    
+                                                                    <th class="col-lg-3 text-center" colspan="4">Actions</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php if (count($category_document['documents']) > 0) { ?>
+                                                                    <?php foreach ($category_document['documents'] as $document) { ?>
+                                                                        <?php $noActionRequiredDocumentsList[] = $document; ?>
+                                                                            <?php $nad++; ?>
+                                                                            <tr>
+                                                                                <td class="col-lg-3">
+                                                                                    <?php
+                                                                                        $assigned_document_data = get_documents_assigned_data($document['sid'],$employee_sid,'employee');
+                                                                                        $document_status = check_document_completed($assigned_document_data);
+                                                                                        $document_completed_date = check_document_completed_date($assigned_document_data);
+                                                                                        echo $document['document_title'] . '<br>';
+                                                                                        echo  "Type: ".$document['document_type'];
+                                                                                    ?>
+                                                                                </td>
 
-                                                        <a href="<?= base_url('hr_documents_management/perform_action_on_document_content'. '/' . $document['sid'] . '/'.( $isCompleted == 1 ? 'submitted' : 'assigned' ).'/company_document/print');?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
+                                                                                    <?php
+                                                                                        $no_action_document_url = $document['document_s3_name'];
+                                                                                        $no_action_document_info = get_required_url($no_action_document_url);
+                                                                                        $no_action_print_url = $no_action_document_info['print_url'];
+                                                                                        $no_action_download_url = $no_action_document_info['download_url'];
+                                                                                    ?>
 
-                                                        <a href="<?= base_url('hr_documents_management/perform_action_on_document_content'. '/' . $document['sid'] . '/'.( $isCompleted == 1 ? 'submitted' : 'assigned' ).'/company_document/download');?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>    
-                                                    </td>
-                                                    </tr>   
-                                          
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <?php echo $links; ?>
-                        <?php } else { ?>
-                            <h1 class="section-ttile text-center"> No Document Assigned! </h1>   
+                                                                                  <td class="col-lg-1">
+                                                                                      <?php 
+                                                                                    if(!empty($assigned_document_data) && $assigned_document_data['status']==1 ){
+                                                                                      echo ($document_status=='Completed') ? $document_status:'Started'."<br>";
+                                                                                      }
+                                                                                    
+                                                                                      ?>
+
+                                                                                    <td class="col-lg-2"><?php  if (isset($assigned_document_data['assigned_date']) && $assigned_document_data['assigned_date'] != '0000-00-00 00:00:00') {
+                                                                                        echo  reset_datetime(array('datetime' => $assigned_document_data['assigned_date'], '_this' => $this));
+                                                                                     }?></td>
+                                                                                     <td class="col-lg-2"><?php  
+                                                                                       // echo  date('M d Y, D', strtotime($document_completed_date['signature_timestamp']));
+                                                                                        echo   reset_datetime(array('datetime' => $document_completed_date, '_this' => $this));
+                                                                                     ?></td>
+
+                                                                                </td>
+                                                                                    <td class="col-lg-4">
+                                                                                    <div class="col-lg-3" ><a href="<?= base_url('hr_documents_management/perform_action_on_document_content'. '/' . $document['sid'] . '/'.( $isCompleted == 1 ? 'submitted' : 'assigned' ).'/company_document/print');?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
+                                                                                       </div>  
+                                                                                   <div class="col-lg-4" ><a href="<?= base_url('hr_documents_management/perform_action_on_document_content'. '/' . $document['sid'] . '/'.( $isCompleted == 1 ? 'submitted' : 'assigned' ).'/company_document/download');?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>   
+                                                                                   </div>
+                                                                                   <div class="col-lg-5" ><button  class="btn btn-success btn-sm btn-block completedocument" document_sid="<?=$document['sid'];?>" document_status="<?if(!empty($assigned_document_data) && $assigned_document_data['status']==1 ){echo $document_status;};?>" document_assigned_sid="<?=$assigned_document_data['sid']?>">Complete Document</button> 
+                                                                                   </div>
+                                                                                </td>
+                                                                                  
+                                                                            </tr>
+                                                                       
+                                                                    <?php } ?>
+                                                                <?php } else { ?>
+                                                                    <tr>
+                                                                        <td colspan="7" class="col-lg-12 text-center"><b class="js-error">No Document(s) Found!</b></td>
+                                                                    </tr>
+                                                                <?php } ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            <?php } ?>
                         <?php } ?>
-                    </div>
-                
+                    <?php }else{
+                        ?>
+                        <td colspan="7" class="col-lg-12 text-center"><b class="js-error">No Document(s) Found!</b></td>
+                        <?php
+                    } ?>
+
+                </div>
+            </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Loader Start -->
+<div id="document_loader" class="text-center my_loader" style="display: none; z-index: 1234;" >
+    <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
+    <div class="loader-icon-box">
+        <i aria-hidden="true" class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+        <div class="loader-text" id="loader_text_div" style="display:block; margin-top: 35px;"></div>
+    </div>
+</div>
+<!-- Loader End -->
+
 <script>
+$("#total_documents").text(' Total: <?php echo $total_documents;?>');
+
+$('.completedocument').on('click', function () {
+        var document_sid = $(this).attr('document_sid');
+        var document_status = $(this).attr('document_status');
+        var document_assigned_sid = $(this).attr('document_assigned_sid');
+        
+        if(document_status=='not_completed'){
+            var document_url_view = '<?= base_url('hr_documents_management/sign_hr_document/d')?>/'+document_assigned_sid;
+            window.location.href = document_url_view ;
+            exit();
+           
+           }
+        
+        var document_url = '<?= base_url('hr_documents_management/complete_library_document') ?>';
+
+        var form_data = new FormData();
+        form_data.append('document_sid', document_sid);
+                    
+            $.ajax({
+                url: document_url,
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'post',
+                data: form_data,
+                beforeSend: function() {
+                $('#loader_text_div').text('Processing');
+                $('#document_loader').show(); 
+                },
+                success: function (resp) {
+                    $('#loader_text_div').text('');
+                    $('#document_loader').hide(); 
+                   // alertify.alert('SUCCESS!', 'Saved Successfully', function(){
+                        var document_url_view = '<?= base_url('hr_documents_management/sign_hr_document/d')?>/'+resp;
+                        window.location.href = document_url_view ;
+                  //  });
+                                
+                    },
+                error: function () {
+                    }
+            });
+
+    });
+
+
     $(function(){
         if($('.js-uncompleted-docs tbody tr').length == 0){
             $('.js-uncompleted-docs').html('<h1 class="section-ttile text-center"> No Document Assigned! </h1>');
         }
     });
 
-    $('.archive_document').on('click', function () {
-        var document_sid = $(this).attr('document_sid');
-        alertify.confirm('Confirm', "Are you sure you want to archive this authorized  document?",
-            function () {
-                setTimeout(function() { 
-                    archive_type(document_sid);
-                }, 0);
-            },
-            function () {
-                alertify.alert('Note', 'Archive process terminated.'); 
-            }).set('labels', {ok: 'Yes', cancel: 'No'});
-        
-    });
-
-    function archive_type (document_sid) {
-        
-        alertify.confirm('Action', "Do you want to archive this authorized document for all managers?",
-            function () {
-                var user_sid = '<?php echo $employer_sid; ?>';
-                modify_assign_document(document_sid, 'archive', 'multiple');
-            },
-            function () {
-                modify_assign_document(document_sid, 'archive', 'single');
-            }).set('labels', {ok: 'Yes', cancel: 'No, just for me'});
-    }
-
-    $('.activate_document').on('click', function () {
-        var document_sid = $(this).attr('document_sid');
-        alertify.confirm('Confirm', "Are you sure you want to activate this authorized document?",
-            function () {
-                setTimeout(function() { 
-                    activate_type(document_sid);
-                }, 0);
-            },
-            function () {
-                alertify.alert('Note', 'Activate process terminated.'); 
-            }).set('labels', {ok: 'Yes', cancel: 'No'});
-        
-    });
-
-    function activate_type (document_sid) {
-        
-        alertify.confirm('Action', "Do you want to activate this authorized document for all managers?",
-            function () {
-                var user_sid = '<?php echo $employer_sid; ?>';
-                modify_assign_document(document_sid, 'active', 'multiple');
-            },
-            function () {
-                modify_assign_document(document_sid, 'active', 'single');
-            }).set('labels', {ok: 'Yes', cancel: 'No, just for me'});
-    }
-
-    function modify_assign_document (document_sid, action_name, action_type) {
-        var user_sid = '<?php echo $employer_sid; ?>';
-        var archive_url = '<?= base_url('hr_documents_management/handler') ?>';
-
-        var form_data = new FormData();
-        form_data.append('action', 'modify_authorized_document');
-        form_data.append('document_sid', document_sid);
-        form_data.append('user_sid', user_sid);
-        form_data.append('action_name', action_name);
-        form_data.append('action_type', action_type);
-
-        $.ajax({
-            url: archive_url,
-            cache: false,
-            contentType: false,
-            processData: false,
-            type: 'post',
-            data: form_data,
-            success: function (resp) {
-                alertify.alert('SUCCESS!', resp.Response, function(){
-                    window.location.reload();
-                });            },
-            error: function () {
-            }
-        });
-    }
+   
 </script>
-<!-- Archive For Me -->
+
 <style>
 .btn-success{
         background-color: #3554dc  !important;
     }
-    </style>
+</style>

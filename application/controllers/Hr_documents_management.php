@@ -11984,8 +11984,7 @@ class Hr_documents_management extends Public_Controller {
             }
             // Get employees list
             $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees( $company_sid, false );
-            
-            
+                        
             // Get managers with pending authorize documents
             $data['pendingAD'] = $this->hr_documents_management_model->GetCompanyPendingAuthorizedDocuments($data['company_sid'], $employees);
             // Get managers with pending employer sections
@@ -12071,48 +12070,12 @@ class Hr_documents_management extends Public_Controller {
             $data['security_details']                                           = $security_details;
             $total_documents                                                    = $this->hr_documents_management_model->get_all_assigned_auth_documents ($company_sid, $employer_sid);
             $documents_count                                                    = count($total_documents);
+                    
+            $documents_list = $this->hr_documents_management_model->get_all_paginate_library_documents ($company_sid);
+            $categorized_docs = $this->hr_documents_management_model->categrize_documents($company_sid, null, $documents_list, $data['session']['employer_detail']['access_level_plus']);
 
-            $records_per_page                                                   = PAGINATION_RECORDS_PER_PAGE;
-            $page                                                               = ($this->uri->segment(2)) ? $this->uri->segment(2) : 0; 
-            $my_offset                                                          = 0;
-            $choice                                                             = $documents_count / $records_per_page;
-            
-            if($page > 1) {
-                $my_offset                                                      = ($page - 1) * $records_per_page;
-            } 
-
-            $baseUrl                                                            = base_url('authorized_document');
-            $uri_segment                                                        = 2; 
-            $config                                                             = array();
-            $config["base_url"]                                                 = $baseUrl;
-            $config["total_rows"]                                               = $documents_count;
-            $config["per_page"]                                                 = $records_per_page;
-            $config['uri_segment']                                              = $uri_segment;
-            $config['num_links']                                                = ceil($choice);
-            $config['use_page_numbers']                                         = true;
-            $config['full_tag_open']                                            = '<nav class="hr-pagination"><ul>';
-            $config['full_tag_close']                                           = '</ul></nav><!--pagination-->';
-            $config['first_link']                                               = '&laquo; First';
-            $config['first_tag_open']                                           = '<li class="prev page">';
-            $config['first_tag_close']                                          = '</li>';
-            $config['last_link']                                                = 'Last &raquo;';
-            $config['last_tag_open']                                            = '<li class="next page">';
-            $config['last_tag_close']                                           = '</li>';
-            $config['next_link']                                                = '<i class="fa fa-angle-right"></i>';
-            $config['next_tag_open']                                            = '<li class="next page">';
-            $config['next_tag_close']                                           = '</li>';
-            $config['prev_link']                                                = '<i class="fa fa-angle-left"></i>';
-            $config['prev_tag_open']                                            = '<li class="prev page">';
-            $config['prev_tag_close']                                           = '</li>';
-            $config['cur_tag_open']                                             = '<li class="active"><a href="">';
-            $config['cur_tag_close']                                            = '</a></li>';
-            $config['num_tag_open']                                             = '<li class="page">';
-            $config['num_tag_close']                                            = '</li>';
-
-            $this->pagination->initialize($config);
-            $links                                                              = $this->pagination->create_links();
-
-            $documents_list = $this->hr_documents_management_model->get_all_paginate_library_documents ($company_sid, $employer_sid, $records_per_page, $my_offset);
+            $data['categories_no_action_documents'] = $categorized_docs['categories_no_action_documents'];
+       
             $data['title']          = 'Documents Library';
 			$data['employer_sid']   = $employer_sid;
             $data['employer']       = $employer_sid;
@@ -12135,4 +12098,91 @@ class Hr_documents_management extends Public_Controller {
 
 
 
+
+   //
+   function complete_library_document(){
+    //
+    $post = $this->input->post();
+    $document_sid = $post['document_sid'];
+    $employee_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
+   
+    $documents_list = $this->hr_documents_management_model->is_library_document_exist($document_sid,$employee_sid,'employee');
+ 
+   if(!empty($documents_list)){
+   
+    $assignInsertId = $documents_list['sid'];
+   
+    $is_completed = check_document_completed ($documents_list);
+    if($is_completed=="Completed"){
+    
+    unset($documents_list['sid']);
+    unset($documents_list['is_pending']);
+    //
+    $h = $documents_list;
+    $h['doc_sid'] = $assignInsertId;
+    //
+    $this->hr_documents_management_model->insert_documents_assignment_record_history($h);
+   }
+
+    //
+    $document_to_update = array();
+
+    $document_to_update['status'] = 1;
+    $document_to_update['acknowledged'] = NULL;
+    $document_to_update['acknowledged_date'] = NULL;
+    $document_to_update['downloaded'] = NULL;
+    $document_to_update['downloaded_date'] = NULL;
+    $document_to_update['uploaded'] = NULL;
+    $document_to_update['uploaded_date'] = NULL;
+    $document_to_update['uploaded_file'] = NULL;
+    $document_to_update['signature_timestamp'] = NULL;
+    $document_to_update['signature'] = NULL;
+    $document_to_update['signature_email'] = NULL;
+    $document_to_update['signature_ip'] = NULL;
+    $document_to_update['user_consent'] = 0;
+    $document_to_update['archive'] = 0;
+    $document_to_update['submitted_description'] = NULL;
+    $document_to_update['signature_base64'] = NULL;
+    $document_to_update['signature_initial'] = NULL;
+    $document_to_update['authorized_signature'] = NULL;
+    $document_to_update['authorized_signature_by'] = NULL;
+    $document_to_update['authorized_signature_date'] = NULL;
+
+    $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $document_to_update); // If already exists then update
+    $document_id = json_encode((int)$assignInsertId);
+    echo $document_id;
+
+    }else{
+
+    $documents_assigned_data = $this->hr_documents_management_model->get_documents_assigned($document_sid);
+    $new_documents_assigned_data['company_sid '] = $documents_assigned_data['company_sid'];
+    $new_documents_assigned_data['user_type'] = 'employee';
+    $new_documents_assigned_data['user_sid'] = $employee_sid;
+    $new_documents_assigned_data['assigned_date'] = date('Y-m-d H:i:s');
+    $new_documents_assigned_data['assigned_by'] = $employee_sid;
+    $new_documents_assigned_data['status'] = 1;
+    $new_documents_assigned_data['document_type'] = $documents_assigned_data['document_type'];
+    $new_documents_assigned_data['document_title '] = $documents_assigned_data['document_title'];
+    $new_documents_assigned_data['document_description'] = $documents_assigned_data['document_description'];
+    $new_documents_assigned_data['document_original_name'] = $documents_assigned_data['uploaded_document_original_name'];
+    $new_documents_assigned_data['document_extension'] = $documents_assigned_data['uploaded_document_extension'];
+    $new_documents_assigned_data['document_s3_name'] = $documents_assigned_data['uploaded_document_s3_name'];
+    $new_documents_assigned_data['document_sid'] = $documents_assigned_data['sid'];
+    $new_documents_assigned_data['acknowledgment_required'] = $documents_assigned_data['acknowledgment_required'];
+    $new_documents_assigned_data['download_required'] = $documents_assigned_data['download_required'];
+    $new_documents_assigned_data['signature_required'] = $documents_assigned_data['signature_required'];
+    $new_documents_assigned_data['is_required'] = $documents_assigned_data['is_required'];
+    $new_documents_assigned_data['is_signature_required'] = $documents_assigned_data['signature_required'];
+    $new_documents_assigned_data['allowed_employees'] = $documents_assigned_data['allowed_employees'];
+    $new_documents_assigned_data['allowed_departments'] = $documents_assigned_data['allowed_departments'];
+    $new_documents_assigned_data['allowed_teams'] = $documents_assigned_data['allowed_teams'];
+    $new_documents_assigned_data['isdoctolibrary '] = $documents_assigned_data['isdoctolibrary'];
+    
+    $sid = $this->hr_documents_management_model->insert_documents_assigned($new_documents_assigned_data);
+    $document_id = json_encode($sid);
+    echo $document_id;
+
+     }
+  
+   }
 }

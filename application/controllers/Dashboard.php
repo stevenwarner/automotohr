@@ -828,6 +828,10 @@ class Dashboard extends Public_Controller {
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
 
+            $total_library_doc    = $this->dashboard_model->get_all_library_doc_count($company_id, $employer_id);
+            $data['total_library_doc']    = $total_library_doc;
+
+
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
             $this->load->view('main/footer');
