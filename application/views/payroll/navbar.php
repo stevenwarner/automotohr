@@ -30,7 +30,7 @@
             'title' => 'Manage Admins',
             'url' => '/manage-admin',
             'slug' => '',
-            'icon' => 'cogs',
+            'icon' => 'users',
             'segment' => 'manage'
         ];
         $navpills[] = [
@@ -39,6 +39,13 @@
             'slug' => '',
             'icon' => 'file-pdf-o',
             'segment' => 'service'
+        ];
+        $navpills[] = [
+            'title' => 'Settings',
+            'url' => '/settings',
+            'slug' => '',
+            'icon' => 'cogs',
+            'segment' => 'settings'
         ];
     }
     $navpills[] = [
