@@ -7410,4 +7410,77 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
+    public function get_approval_document_information($document_sid, $user_type, $user_sid) {
+        //
+        $this->db->select('sid, user_type, user_sid, document_title, assigner_note, assigned_by, document_type, assigned_date');
+        $this->db->where('document_sid', $document_sid);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('user_type', $user_type);
+        $record_obj = $this->db->get('portal_document_assign_flow');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_document_approvers ($document_sid) {
+        //
+        $this->db->select('sid, assigner_sid, assigner_turn, assign_on, note as approval_note, approval_status, action_date');
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function check_document_approver_turn ($document_sid) {
+        //
+        $this->db->select('sid');
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('assigner_turn', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($records_arr)) {
+            $return_data = 1;
+        }
+
+        return $return_data;
+    }
+
+    public function get_approval_document_bySID ($sid) {
+        //
+        $this->db->select('user_type, user_sid, document_title, assigner_note, document_sid, assigned_by');
+        $this->db->where('sid', $sid);
+        $records_obj = $this->db->get('portal_document_assign_flow');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function delete_document_approver_from_list ($sid) {
+        //
+        $this->db->where('sid', $sid);
+        $this->db->delete('portal_document_assign_flow_employees');
+    }    
+
 }

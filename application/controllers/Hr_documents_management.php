@@ -13429,6 +13429,7 @@ class Hr_documents_management extends Public_Controller {
         $ins['company_sid'] = $companyId;
         $ins['document_sid'] = $document['document_sid'];
         $ins['document_type'] = $document['document_type'];
+        $ins['document_title'] = $document['document_title'];
         $ins['user_sid'] = $userId;
         $ins['user_type'] = $userType;
         $ins['assigned_by'] = $employerId;
@@ -13612,7 +13613,7 @@ class Hr_documents_management extends Public_Controller {
         log_and_send_templated_email($template, $userInfo['email'], $replacement_array, $hf, 1);
     }
 
-     function get_document_history($user_sid, $user_type, $document_type, $document_sid){
+    function get_document_history($user_sid, $user_type, $document_type, $document_sid){
         //
         $document_history = $this->hr_documents_management_model->fetch_document_from_history($document_type, $document_sid, $user_type, $user_sid);
         //
@@ -13661,6 +13662,175 @@ class Hr_documents_management extends Public_Controller {
         header('content-type: application/json');
         echo json_encode($history_array);
         exit(0);
+    }
+
+    function get_document_approvers ($document_sid, $user_type, $user_sid){
+        //
+        $resp = [
+            'Status' => false,
+            'Msg' => 'Invalid Request'
+        ];
+        //
+        if (!$this->session->userdata('logged_in')) {
+            //
+            $resp['Msg'] = 'Your session has expired';
+            res($resp);
+        }
+        //
+        if (!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {
+            //
+            $resp['Msg'] = 'You don\'t permission to the employee profile.';
+            res($resp);
+        }
+        //
+        $company_sid = $this->session->userdata('logged_in')['company_detail']['sid'];
+        $employer_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
+        //
+        $document = $this->hr_documents_management_model->get_approval_document_information($document_sid, $user_type, $user_sid);
+        $approvers = $this->hr_documents_management_model->get_document_approvers($document['sid']);
+        $employeesList = $this->hr_documents_management_model->fetch_all_company_managers( $company_sid, $employer_sid);
+        //
+        $approvers_sids = array_column($approvers, "assigner_sid");
+        //
+        foreach ($employeesList as $e_key => $employee) {
+            if (in_array($employee["sid"], $approvers_sids)){
+                unset($employeesList[$e_key]);
+            }
+
+            if ($employee["sid"] == $employer_sid){
+                unset($employeesList[$e_key]);
+            }
+        }
+        //
+        $data = array();
+        $data["approvers"] = $approvers;
+        $data["employeesList"] = $employeesList;
+        $data["document_sid"] = $document['sid'];
+        $data["approvers_note"] = $document['assigner_note'];
+        $data["document_title"] = $document['document_title'];
+        $data["document_type"] = $document['document_type'];
+        $data["assigned_by"] = $document['assigned_by'];
+        $data["assigned_date"] = $document['assigned_date'];
+        $data["document_user_type"] = $document['user_type'];
+        //
+        if ($document['user_type'] == "employee") {
+            $data["document_user_name"] = getUserNameBySID($document['user_sid']);
+        } else {
+            $data["document_user_name"] = getApplicantNameBySID($document['user_sid']);
+        }
+        //
+        if(empty($approvers)){
+            $resp['Msg'] = 'Approvers not found';
+        } else{
+            $resp['Status'] = true;
+            $resp['Msg'] = 'Proceed.';
+            $resp['Data'] = $this->load->view('hr_documents_management/partials/approvers', $data, true);
+        }
+        //
+        res($resp);
+    }
+
+    function approvers_handler () {
+        //
+        $resp = [
+            'Status' => false,
+            'Msg' => 'Invalid Request'
+        ];
+        //
+        if (!$this->session->userdata('logged_in')) {
+            //
+            $resp['Msg'] = 'Your session has expired';
+            res($resp);
+        }
+        //
+        if (!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {
+            //
+            $resp['Msg'] = 'You don\'t permission to the employee profile.';
+            res($resp);
+        }
+        //
+        $company_sid = $this->session->userdata('logged_in')['company_detail']['sid'];
+        $employer_info = $this->session->userdata('logged_in')['employer_detail'];
+        $company_name = $this->session->userdata('logged_in')['company_detail']['CompanyName'];
+        //
+        //
+        $post = $this->input->post();
+        //
+        $document_info = $this->hr_documents_management_model->get_approval_document_bySID($post["documentId"]);
+        //
+        switch ($post['action']) {
+            case 'add_approver':
+                //
+                $approver_info = $this->hr_documents_management_model->get_employee_information($company_sid, $post["employeeId"]);
+                //
+                $data_to_insert = array();
+                $data_to_insert['portal_document_assign_sid'] = $post["documentId"];
+                $data_to_insert['assigner_sid'] = $post["employeeId"];
+                //
+                $this->hr_documents_management_model->insert_assigner_employee($data_to_insert);
+                //
+                $resp['Status'] = true;
+                $resp['document_sid'] = $document_info['document_sid'];
+                $resp['user_type'] = $document_info['user_type'];
+                $resp['user_sid'] = $document_info['user_sid'];
+                $resp['Msg'] = getUserNameBySID($post["employeeId"]).' add an approver successfully.';
+            
+            break;
+
+            // 
+            case "delete_approver":
+                $this->hr_documents_management_model->delete_document_approver_from_list($post["rowId"]);
+                //
+                $resp['Status'] = true;
+                $resp['document_sid'] = $document_info['document_sid'];
+                $resp['user_type'] = $document_info['user_type'];
+                $resp['user_sid'] = $document_info['user_sid'];
+                $resp['Msg'] = getUserNameBySID($post["approverId"]).' is deleted from approver list successfully.';
+            break;
+
+            // 
+            case "remind_approver":
+                $hf = message_header_footer_domain($company_sid, $company_name);
+                //
+                // Get the user name
+                if($document_info['user_type'] == 'employee'){
+                    //
+                    $t = $this->hr_documents_management_model->get_employee_information($company_sid, $document_info['user_sid']);
+                    //
+                    $document_assign_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
+                } else {
+                    //
+                    $t = $this->hr_documents_management_model->get_applicant_information($company_sid, $document_info['user_sid']);
+                    //
+                    $document_assign_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
+                }
+                //
+                $approver_info = $this->hr_documents_management_model->get_employee_information($company_sid, $post["approverId"]);
+                //
+                $replacement_array['assigner'] = getUserNameBySID($document_info['assigned_by']);
+                $replacement_array['contact-name'] = $document_assign_user_name;
+                $replacement_array['company_name'] = ucwords($company_name);
+                $replacement_array['username'] = $replacement_array['contact-name'];
+                $replacement_array['firstname'] = $approver_info['first_name'];
+                $replacement_array['lastname'] = $approver_info['last_name'];
+                $replacement_array['first_name'] = $approver_info['first_name'];
+                $replacement_array['last_name'] = $approver_info['last_name'];
+                $replacement_array['document_title'] = $document_info['document_title'];
+                $replacement_array['user_type'] = 'employee';
+                $replacement_array['note'] = $document_info['assigner_note'];
+                $replacement_array['baseurl'] = base_url();
+    
+                // Send email to assigner as a notification with private link
+                log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
+                $resp['Status'] = true;
+                $resp['document_sid'] = $document_info['document_sid'];
+                $resp['user_type'] = $document_info['user_type'];
+                $resp['user_sid'] = $document_info['user_sid'];
+                $resp['Msg'] = "Send emai reminder to (".getUserNameBySID($post["approverId"]).") successfully.";
+            break;
+        }   
+
+        res($resp); 
     }
 
 }
