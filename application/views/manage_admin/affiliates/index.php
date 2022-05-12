@@ -1,3 +1,6 @@
+<style>
+    .deleteaffiliate{}
+</style>
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
@@ -34,7 +37,7 @@
                                                                         <br>Referred By
                                                                     <?php  } ?>    
                                                                 </th>
-                                                                <th class="last-col" width="1%" colspan="3">Actions</th>
+                                                                <th class="last-col" width="1%" colspan="4">Actions</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -123,6 +126,11 @@
                                                                                     <a href="javascipt:;" id="<?= $affiliation['sid']?>" class="btn btn-danger btn-sm reject" title="Reject">Reject</a>
                                                                                 </td>
                                                                         <?php } }?>
+
+                                                                              <td>
+                                                                                    <button type="button" class="btn btn-danger btn-sm deleteaffiliate" alliliateid="<?= $affiliation['sid']?>" >Delete</button>
+                                                                                </td>
+
                                                                         <?php if (($uri_segment == "affiliates" && check_access_permissions_for_view($security_details, 'affiliate_request_view')) || ($uri_segment == "referred_affiliates" && check_access_permissions_for_view($security_details, 'referred_affiliate_view'))) { ?>
                                                                             <td colspan="3" class="text-center">
                                                                                 <a href="<?php echo base_url('manage_admin/'.$uri_segment.'/view_details/'.$affiliation['sid'])?>"class="btn btn-info btn-sm" title="View Details">View Details</a>
@@ -160,6 +168,18 @@
     </div>
 </div>
 
+
+<!-- Loader Start -->
+<div id="document_loader" class="text-center my_loader" style="display: none; z-index: 1234;">
+    <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
+    <div class="loader-icon-box">
+        <i aria-hidden="true" class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
+        <div class="loader-text" id="loader_text_div" style="display:block; margin-top: 35px;"></div>
+    </div>
+</div>
+<!-- Loader End --> 
+
+
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css"  />
@@ -167,6 +187,38 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+        $('.deleteaffiliate').click(function(){
+            var id = $(this).attr('alliliateid');
+            alertify.confirm('Confirmation', "This acction is non-revertible. <br> Are you sure you want to delete this affiliate?",
+                function () {
+                    $.ajax({
+                        type: 'POST',
+                        data:{
+                               id: id
+                        },
+                        url: '<?= base_url('manage_admin/'.$uri_segment.'/delete_affiliate')?>',
+                        beforeSend: function() {
+                          $('#loader_text_div').text('Processing');
+                          $('#document_loader').show();
+                      },
+                        success: function(data){
+                           $('#loader_text_div').text('');
+                           $('#document_loader').hide();
+                           alertify.alert('Affiliate is successfully deleted',function(){  location.reload(); });
+                           
+                        },
+                        error: function(){
+                        }
+                    });
+                },
+                function () {
+                   
+                });
+        });
+
+
+
+
         $('.accept').click(function(){
             var id = $(this).attr('id');
             alertify.confirm('Confirmation', "Are you sure you want to Accept this Application?",
