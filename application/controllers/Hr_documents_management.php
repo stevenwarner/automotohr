@@ -5199,6 +5199,7 @@ class Hr_documents_management extends Public_Controller
     public function sign_hr_document($doc = NULL, $document_sid)
     {
         if ($this->session->userdata('logged_in')) {
+            
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -5211,13 +5212,19 @@ class Hr_documents_management extends Public_Controller
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $data['doc'] = $doc;
+
+            $document = $this->hr_documents_management_model->get_assigned_document('employee', $employer_sid, $document_sid, $doc);
+            $doc_status = check_document_completed($document);
+            if($doc_status=="Completed" && $document['visible_to_document_center']==0){
+             redirect('/library_document');
+              }
+
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required');
 
             $is_authorized_document = 'no';
 
             if ($this->form_validation->run() == false) {
-                $document = $this->hr_documents_management_model->get_assigned_document('employee', $employer_sid, $document_sid, $doc);
-
+               
                 if ($document['document_type'] == 'offer_letter') {
                     $data['attached_video'] = array();
                 } else {
@@ -12250,8 +12257,7 @@ class Hr_documents_management extends Public_Controller
             $document_to_update['authorized_signature'] = NULL;
             $document_to_update['authorized_signature_by'] = NULL;
             $document_to_update['authorized_signature_date'] = NULL;
-            $document_to_update['visible_to_document_center'] = 0;
-
+          
             $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $document_to_update); // If already exists then update
             $document_id = json_encode((int)$assignInsertId);
             echo $document_id;

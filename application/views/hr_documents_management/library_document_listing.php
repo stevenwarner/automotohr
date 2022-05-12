@@ -16,9 +16,11 @@
 <?php $archive_section = 'no'; ?>
 <div class="main-content">
     <div class="dashboard-wrp">
-        <div class="container-fluid">
+        <div class="container" style=" min-height: 62vh;">
             <div class="row">
-                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+           
+                <div class="col-lg-12"><div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="row">
                         <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
@@ -134,11 +136,11 @@
 
                                                                                     </td>
                                                                                     <td class="col-lg-4">
-                                                                                        <div class="col-lg-3"><a href="<?= base_url('hr_documents_management/perform_action_on_document_content' . '/' . $document['sid'] . '/' . ($isCompleted == 1 ? 'submitted' : 'assigned') . '/company_document/print'); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
+                                                                                        <div class="col-lg-3" style="padding-left: 0px;padding-right: 5px;"><a href="<?= base_url('hr_documents_management/perform_action_on_document_content' . '/' . $document['sid'] . '/' . ($isCompleted == 1 ? 'submitted' : 'assigned') . '/company_document/print'); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
                                                                                         </div>
-                                                                                        <div class="col-lg-4"><a href="<?= base_url('hr_documents_management/perform_action_on_document_content' . '/' . $document['sid'] . '/' . ($isCompleted == 1 ? 'submitted' : 'assigned') . '/company_document/download'); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
+                                                                                        <div class="col-lg-4" style="padding-left: 0px; padding-right: 5px;"><a href="<?= base_url('hr_documents_management/perform_action_on_document_content' . '/' . $document['sid'] . '/' . ($isCompleted == 1 ? 'submitted' : 'assigned') . '/company_document/download'); ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
                                                                                         </div>
-                                                                                        <div class="col-lg-5"><button class="btn btn-success btn-sm btn-block completedocument" document_sid="<?= $document['sid']; ?>" document_status="<? if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) {
+                                                                                        <div class="col-lg-5" style="padding-left: 0px; padding-right: 0px;"><button class="btn btn-success btn-sm btn-block completedocument" document_sid="<?= $document['sid']; ?>" document_status="<? if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) {
                                                                                                                                                                                                                                             echo $document_status;
                                                                                                                                                                                                                                         }; ?>" document_assigned_sid="<?= $assigned_document_data['sid'] ?>">Complete Document</button>
                                                                                         </div>
@@ -170,7 +172,12 @@
 
                         </div>
                     </div>
-                </div>
+                        </div>
+                
+                        
+
+
+                
             </div>
         </div>
     </div>

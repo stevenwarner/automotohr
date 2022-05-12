@@ -112,7 +112,7 @@
                                                                 </div>
                                            
                                             <div class="document-action-required">
-                                                <button onclick="document_visible(<?php echo $document['sid']; ?>)" type="button" class="btn btn-primary pull-right">Update</button>
+                                                <button onclick="document_visible(<?php echo $document['sid']; ?>)" type="button" class="btn  blue-button  pull-right">Update</button>
                                             </div>
                                         </div>
                                     </div>
