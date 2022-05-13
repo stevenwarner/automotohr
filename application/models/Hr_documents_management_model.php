@@ -7483,4 +7483,31 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->delete('portal_document_assign_flow_employees');
     }    
 
+    public function change_document_approval_status ($document_sid, $data_to_update) {
+        $this->db->where('sid', $document_sid);
+        $this->db->update('documents_assigned', $data_to_update);
+    }
+
+    public function get_assigned_document_info_by_sid ($sid) {
+        $this->db->select('user_type, user_sid, document_title');
+        $this->db->where('sid', $sid);
+        $records_obj = $this->db->get('documents_assigned');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function revoke_document_previous_flow ($document_sid) {
+        $this->db->where('document_sid', $document_sid);
+        $this->db->set('status', 0);
+        $this->db->update('portal_document_assign_flow');
+    }
+
+
 }

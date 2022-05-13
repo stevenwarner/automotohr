@@ -1539,7 +1539,7 @@
                                                                                                     data-user_type="<?=$user_type;?>"
                                                                                                     data-user_sid="<?=$user_sid;?>"
                                                                                                     class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                                    View Approver
+                                                                                                    View Approver(s)
                                                                                                 </button>
                                                                                             <?php } else { ?>    
                                                                                                 <?php if ($assigned_offer_letter_sid == $offer_letter['sid']) { ?>
@@ -1681,7 +1681,8 @@
                                                                                                                 data-document_sid="<?=$document['sid'];?>" 
                                                                                                                 data-user_type="<?=$user_type;?>"
                                                                                                                 data-user_sid="<?=$user_sid;?>"
-                                                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">View Approver
+                                                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                                View Approver(s)
                                                                                                             </button>
                                                                                                         <?php } else { ?>
                                                                                                             <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids) || in_array($document['sid'], $approval_documents)) { ?>

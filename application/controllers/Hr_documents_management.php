@@ -10112,34 +10112,27 @@ class Hr_documents_management extends Public_Controller {
                 $a['allowed_teams'] = $post['teams'];
                 $a['allowed_employees'] = $post['employees'];
                 //
-                
+                $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
+                //
+                $verification_key = random_key(80);
+                $this->hr_documents_management_model->set_offer_letter_verification_key($a['user_sid'], $verification_key, $post['Type']);
+                //
                 if (isset($post["assigner"])) {
                     //
-                    $a["sendEmail"] = $post['sendEmail'];
+                    $managersList = '';
+                    //
                     if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $ins['signers'] != null){
-                        $a["managersList"] = implode(',', $ins['signers']);
+                        $managersList = implode(',', $ins['signers']);
                     }
-                    //
-                    //
-                    $approvalEmployees = explode(",", $post["assigner"]);
                     // When approval employees are selected
                     $this->HandleApprovalFlow(
-                        $a,
-                        $a['company_sid'],
-                        getCompanyNameBySid($a['company_sid']),
-                        $a['assigned_by'],
-                        $a['user_sid'],
-                        $a['user_type'],
+                        $assignInsertId,
                         isset($post['assigner_note']) ? $post['assigner_note'] : '',
-                        $approvalEmployees
+                        $post["assigner"],
+                        $post['sendEmail'],
+                        $managersList
                     );
                 } else {
-                    //
-                    $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
-                    //
-                    $verification_key = random_key(80);
-                    $this->hr_documents_management_model->set_offer_letter_verification_key($a['user_sid'], $verification_key, $post['Type']);
-
                     // For email
                     if($post['sendEmail'] == 'yes'){
                         // 
@@ -10528,23 +10521,28 @@ class Hr_documents_management extends Public_Controller {
                 $a['is_required'] = $post['isRequired'];
                 $a['is_signature_required'] = $post['isSignatureRequired'];
                 $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                //
+                $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
 
                 // When approval employees are selected
                 if($approvalEmployees){
                     //
-                    $this->HandleApprovalFlow(
-                        $a,
-                        $company_sid,
-                        $company_name,
-                        $employer_sid,
-                        $user_sid,
-                        $user_type,
-                        isset($post['assigner_note']) ? $post['assigner_note'] : '',
-                        $approvalEmployees
-                    );
-                } else{
+                    $managersList = '';
                     //
-                    $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
+                    if ($do_descpt && isset($post['managersList']) && $post['managersList'] != null && str_replace('{{authorized_signature}}', '', $document_description) != $document_description){
+                        $managersList = implode(',', $post['managersList']);
+                    }
+                    //
+                    $this->HandleApprovalFlow(
+                        $assignInsertId,
+                        isset($post['assigner_note']) ? $post['assigner_note'] : '',
+                        $approvalEmployees,
+                        $post['sendEmail'],
+                        $managersList
+                    );
+                        
+                } else{
+                    
 
                     //
                     // For email
@@ -10898,36 +10896,31 @@ class Hr_documents_management extends Public_Controller {
                     $a['document_s3_name'] = $uploaded_document_s3_name;
                 }
             }
-        }  
+        } 
         //
-        if (isset($post["assigner"])) {
-            //
-            $a["sendEmail"] = $post['sendEmail'];
-            //
-            if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
-                $a["managersList"] = implode(',', $post['managerList']);
-            }
-            //
-            $approvalEmployees = explode(",", $post["assigner"]);
-            // When approval employees are selected
-            $this->HandleApprovalFlow(
-                $a,
-                $a['company_sid'],
-                getCompanyNameBySid($a['company_sid']),
-                $a['assigned_by'],
-                $a['user_sid'],
-                $a['user_type'],
-                isset($post['assigner_note']) ? $post['assigner_note'] : '',
-                $approvalEmployees
-            );
-        } else {
-            if($assignInsertId == null)
+        if($assignInsertId == null)
             $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
             else
             $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
-
-            $is_manual = get_document_type($assignInsertId);
-           
+        //
+        $is_manual = get_document_type($assignInsertId); 
+        //
+        if (isset($post["assigner"])) {
+            //
+            $managersList = '';
+            //
+            if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
+                $managersList = implode(',', $post['managerList']);
+            }
+            // When approval employees are selected
+            $this->HandleApprovalFlow(
+                $assignInsertId,
+                isset($post['assigner_note']) ? $post['assigner_note'] : '',
+                $post["assigner"],
+                $post['sendEmail'],
+                $managersList
+            );
+        } else {
             // For email
             if($post['sendEmail'] == 'yes' && $is_manual == 'no'){
                 // 
@@ -11209,79 +11202,76 @@ class Hr_documents_management extends Public_Controller {
             sendMail($from, $to, $subject, $body, $from_name);
         }
         //
+        if($assignInsertId == null)
+            $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
+        else
+            $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
+        //
         if (isset($post["assigner"])) {
             //
-            $a["sendEmail"] = $post['sendEmail'];
+            $managersList = '';
             //
             if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
-                $a["managersList"] = implode(',', $post['managerList']);
+                $managersList = implode(',', $post['managerList']);
             }
-            //
-            $approvalEmployees = explode(",", $post["assigner"]);
             // When approval employees are selected
             $this->HandleApprovalFlow(
-                $a,
-                $a['company_sid'],
-                getCompanyNameBySid($a['company_sid']),
-                $a['assigned_by'],
-                $a['user_sid'],
-                $a['user_type'],
+                $assignInsertId,
                 isset($post['assigner_note']) ? $post['assigner_note'] : '',
-                $approvalEmployees
+                $post["assigner"],
+                $post['sendEmail'],
+                $managersList
             );
 
         } else {
             //
-            if($assignInsertId == null)
-                $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
-            else
-                $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
-            //
-             // Check if it's Authorize document
-            if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
-                 // Managers handling
-                $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                    $post['managerList'],
-                    $assignInsertId,
-                    $post['CompanySid'],
-                    $post['EmployerSid']
-                );
-                //
-                $company_name = ucwords(getCompanyNameBySid($post['CompanySid']));
-                //
-                $hf = message_header_footer(
-                    $post['CompanySid'],
-                    $company_name
-                );
-                //
-                $new_assign_manger = explode(',', $post['managerList']);
-                //
-                if(!empty($new_assign_manger)){
+            // Check if it's Authorize document
+            if($post['sendEmail'] == 'yes'){
+                if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
+                    // Managers handling
+                    $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                        $post['managerList'],
+                        $assignInsertId,
+                        $post['CompanySid'],
+                        $post['EmployerSid']
+                    );
                     //
-                    foreach ($new_assign_manger as $k => $v) {
-                        $assign_to_info  = db_get_employee_profile($v);
-                        $assign_to_name  = $assign_to_info[0]['first_name'].' '.$assign_to_info[0]['last_name'];
-                        $assign_to_email = $assign_to_info[0]['email'];
-        
-                        $assigned_by_info  = db_get_employee_profile($post['EmployerSid']);
-                        $assigned_by_name  = $assigned_by_info[0]['first_name'].' '.$assigned_by_info[0]['last_name'];
-        
-                        //Send Email
-                        $replacement_array = array();
-                        $replacement_array['baseurl']           = base_url();
-                        $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
-                        $replacement_array['company_name']  = $company_name;
-                        $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-                        $replacement_array['employee_name']  = ucwords($assigned_by_name);
+                    $company_name = ucwords(getCompanyNameBySid($post['CompanySid']));
+                    //
+                    $hf = message_header_footer(
+                        $post['CompanySid'],
+                        $company_name
+                    );
+                    //
+                    $new_assign_manger = explode(',', $post['managerList']);
+                    //
+                    if(!empty($new_assign_manger)){
                         //
-                        $user_extra_info = array();
-                        $user_extra_info['user_sid'] = $v;
-                        $user_extra_info['user_type'] = "employee";
-                        //
-                        log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
+                        foreach ($new_assign_manger as $k => $v) {
+                            $assign_to_info  = db_get_employee_profile($v);
+                            $assign_to_name  = $assign_to_info[0]['first_name'].' '.$assign_to_info[0]['last_name'];
+                            $assign_to_email = $assign_to_info[0]['email'];
+            
+                            $assigned_by_info  = db_get_employee_profile($post['EmployerSid']);
+                            $assigned_by_name  = $assigned_by_info[0]['first_name'].' '.$assigned_by_info[0]['last_name'];
+            
+                            //Send Email
+                            $replacement_array = array();
+                            $replacement_array['baseurl']           = base_url();
+                            $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
+                            $replacement_array['company_name']  = $company_name;
+                            $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
+                            $replacement_array['employee_name']  = ucwords($assigned_by_name);
+                            //
+                            $user_extra_info = array();
+                            $user_extra_info['user_sid'] = $v;
+                            $user_extra_info['user_type'] = "employee";
+                            //
+                            log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
+                        }
                     }
                 }
-            }
+            }    
         }
         //
         echo 'success';        
@@ -11358,119 +11348,139 @@ class Hr_documents_management extends Public_Controller {
 
         //
         $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
-       
-        // For email
-        if($post['sendEmail'] == 'yes'){
-            // 
-            $hf = message_header_footer_domain( $post['CompanySid'], $post['CompanyName'] );
-            // Send Email and SMS
-            $replacement_array = array();
-            //
-            switch ($post['Type']) {
-                case 'employee':
-                    $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
-                    $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
-                    $replacement_array['company_name'] = ucwords($post['CompanyName']);
-                    $replacement_array['username'] = $replacement_array['contact-name'];
-                    $replacement_array['firstname'] = $user_info['first_name'];
-                    $replacement_array['lastname'] = $user_info['last_name'];
-                    $replacement_array['first_name'] = $user_info['first_name'];
-                    $replacement_array['last_name'] = $user_info['last_name'];
-                    $replacement_array['baseurl'] = base_url();
-                    $replacement_array['url'] = base_url('hr_documents_management/my_documents');
-                    //
-                    $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
-                    //
-                    $is_manual = get_document_type($assignInsertId);
-                    //
-                    if(sizeof($replacement_array) && $is_manual == 'no') {
-                        //
-                        $user_extra_info = array();
-                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
-                        $user_extra_info['user_type'] = $post['Type'];
-                        //
-                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
-                    }    
-                break;
 
-                case 'applicant':
-                    $user_info = $this->hr_documents_management_model->get_applicant_information($post['CompanySid'], $post['EmployeeSid']);
-                    // Set email content
-                    $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
-                    //
-                    $this->load->library('encryption', 'encrypt');
-                    //
-                    $time = strtotime('+10 days');
-                    //
-                    $encryptedKey = $this->encrypt->encode($assignInsertId.'/'.$user_info['sid'].'/applicant/'.$time);
-                    $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
-                    //
-                    $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $post['documentTitle'] ).'</a>';
-                    //
-                    $subject = convert_email_template($template['subject'], $user_info);
-                    $message = convert_email_template($template['text'], $user_info);
-                    //
-                    $body = $hf['header'];
-                    $body .= $message;
-                    $body .= $hf['footer'];
-                    //
-                    $this->hr_documents_management_model
-                    ->updateAssignedDocumentLinkTime(
-                        $time,
-                        $assignInsertId
-                    );
-                    //
-                    log_and_sendEmail(
-                        FROM_EMAIL_NOTIFICATIONS,
-                        $user_info['email'],
-                        $subject,
-                        $body,
-                        $post['CompanyName']
-                    );
-                break;
+        if (isset($post["assigner"])) {
+            //
+            $managersList = "";
+            //
+            if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
+                $managersList = implode(',', $post['managerList']);
             }
-        }
-
-        
-        //
-         // Check if it's Authorize document
-        if (isset($post['desc'], $post['managerList']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
-             // Managers handling
-            $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                $post['managerList'],
+            // When approval employees are selected
+            $this->HandleApprovalFlow(
                 $assignInsertId,
-                $post['CompanySid'],
-                $post['EmployerSid']
+                isset($post['assigner_note']) ? $post['assigner_note'] : '',
+                $post["assigner"],
+                $post['sendEmail'],
+                $managersList
             );
-        }
+            //
 
-        //
-        if(isset($post['reset']) && $post['reset'] == 'yes'){
-            $a = [];
-            $a['status'] = 1;
-            $a['acknowledged'] = NULL;
-            $a['acknowledged_date'] = NULL;
-            $a['downloaded'] = NULL;
-            $a['downloaded_date'] = NULL;
-            $a['uploaded'] = NULL;
-            $a['uploaded_date'] = NULL;
-            $a['uploaded_file'] = NULL;
-            $a['signature_timestamp'] = NULL;
-            $a['signature'] = NULL;
-            $a['signature_email'] = NULL;
-            $a['signature_ip'] = NULL;
-            $a['user_consent'] = 0;
-            $a['archive'] = 0;
-            $a['submitted_description'] = NULL;
-            $a['signature_base64'] = NULL;
-            $a['signature_initial'] = NULL;
-            $a['authorized_signature'] = NULL;
-            $a['authorized_signature_by'] = NULL;
-            $a['authorized_signature_date'] = NULL;
+        } else {
+       
+            // For email
+            if($post['sendEmail'] == 'yes'){
+                // 
+                $hf = message_header_footer_domain( $post['CompanySid'], $post['CompanyName'] );
+                // Send Email and SMS
+                $replacement_array = array();
+                //
+                switch ($post['Type']) {
+                    case 'employee':
+                        $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
+                        $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+                        $replacement_array['company_name'] = ucwords($post['CompanyName']);
+                        $replacement_array['username'] = $replacement_array['contact-name'];
+                        $replacement_array['firstname'] = $user_info['first_name'];
+                        $replacement_array['lastname'] = $user_info['last_name'];
+                        $replacement_array['first_name'] = $user_info['first_name'];
+                        $replacement_array['last_name'] = $user_info['last_name'];
+                        $replacement_array['baseurl'] = base_url();
+                        $replacement_array['url'] = base_url('hr_documents_management/my_documents');
+                        //
+                        $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
+                        //
+                        $is_manual = get_document_type($assignInsertId);
+                        //
+                        if(sizeof($replacement_array) && $is_manual == 'no') {
+                            //
+                            $user_extra_info = array();
+                            $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                            $user_extra_info['user_type'] = $post['Type'];
+                            //
+                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                        }    
+                    break;
+
+                    case 'applicant':
+                        $user_info = $this->hr_documents_management_model->get_applicant_information($post['CompanySid'], $post['EmployeeSid']);
+                        // Set email content
+                        $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
+                        //
+                        $this->load->library('encryption', 'encrypt');
+                        //
+                        $time = strtotime('+10 days');
+                        //
+                        $encryptedKey = $this->encrypt->encode($assignInsertId.'/'.$user_info['sid'].'/applicant/'.$time);
+                        $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
+                        //
+                        $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $post['documentTitle'] ).'</a>';
+                        //
+                        $subject = convert_email_template($template['subject'], $user_info);
+                        $message = convert_email_template($template['text'], $user_info);
+                        //
+                        $body = $hf['header'];
+                        $body .= $message;
+                        $body .= $hf['footer'];
+                        //
+                        $this->hr_documents_management_model
+                        ->updateAssignedDocumentLinkTime(
+                            $time,
+                            $assignInsertId
+                        );
+                        //
+                        log_and_sendEmail(
+                            FROM_EMAIL_NOTIFICATIONS,
+                            $user_info['email'],
+                            $subject,
+                            $body,
+                            $post['CompanyName']
+                        );
+                    break;
+                }
+            }
+
+            
+            //
+            // Check if it's Authorize document
+            if (isset($post['desc'], $post['managerList']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
+                // Managers handling
+                $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                    $post['managerList'],
+                    $assignInsertId,
+                    $post['CompanySid'],
+                    $post['EmployerSid']
+                );
+            }
 
             //
-            $this->hr_documents_management_model->updateAssignedDocument( $assignInsertId, $a );
-        }
+            if(isset($post['reset']) && $post['reset'] == 'yes'){
+                $a = [];
+                $a['status'] = 1;
+                $a['acknowledged'] = NULL;
+                $a['acknowledged_date'] = NULL;
+                $a['downloaded'] = NULL;
+                $a['downloaded_date'] = NULL;
+                $a['uploaded'] = NULL;
+                $a['uploaded_date'] = NULL;
+                $a['uploaded_file'] = NULL;
+                $a['signature_timestamp'] = NULL;
+                $a['signature'] = NULL;
+                $a['signature_email'] = NULL;
+                $a['signature_ip'] = NULL;
+                $a['user_consent'] = 0;
+                $a['archive'] = 0;
+                $a['submitted_description'] = NULL;
+                $a['signature_base64'] = NULL;
+                $a['signature_initial'] = NULL;
+                $a['authorized_signature'] = NULL;
+                $a['authorized_signature_by'] = NULL;
+                $a['authorized_signature_date'] = NULL;
+
+                //
+                $this->hr_documents_management_model->updateAssignedDocument( $assignInsertId, $a );
+            }
+        }    
 
         echo 'success';        
     }
@@ -13395,7 +13405,7 @@ class Hr_documents_management extends Public_Controller {
         exit(0);
         
     }
-
+  
 
     /**
      * Handle document approval flow
@@ -13415,43 +13425,46 @@ class Hr_documents_management extends Public_Controller {
      * @return
      */
     private function HandleApprovalFlow(
-        $document,
-        $companyId,
-        $companyName,
-        $employerId,
-        $userId, 
-        $userType,
-        $note,
-        $approvalEmployees
+        $document_sid,
+        $assigner_note,
+        $approvers_list,
+        $send_email,
+        $managers_list
     ){
+
+        $session = $this->session->userdata('logged_in');
+        $company_sid = $session['company_detail']['sid'];
+        $employer_sid = $session['employer_detail']['sid'];
+        //
         // Set insert data array
+        //
         $ins = [];
-        $ins['company_sid'] = $companyId;
-        $ins['document_sid'] = $document['document_sid'];
-        $ins['document_type'] = $document['document_type'];
-        $ins['document_title'] = $document['document_title'];
-        $ins['user_sid'] = $userId;
-        $ins['user_type'] = $userType;
-        $ins['assigned_by'] = $employerId;
+        $ins['company_sid'] = $company_sid;
+        $ins['document_sid'] = $document_sid;
+        $ins['assigned_by'] = $employer_sid;
         $ins['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
-        $ins['flow_json'] = json_encode($document);
-        $ins['assigner_note'] = $note;
+        $ins['assigner_note'] = $assigner_note;
         $ins['status'] = 1;
         $ins['is_pending'] = 0; // 0 = Pending, 1 = Accepted, 2 = Rejected
-        $ins['assign_status'] = 1; // To be checked seems likes an extra field
+        //
+        // Lets revoke all previous document flows if exist
+        $this->hr_documents_management_model->revoke_document_previous_flow($document_sid);
+
         // Lets insert the record
         $approvalInsertId = $this->hr_documents_management_model->insert_documents_assignment_flow($ins);
         //
+        // Update user assigned document
+        $data_to_update = array();
+        $data_to_update["approval_process"] = 1;
+        $data_to_update["approval_flow_sid"] = $approvalInsertId;
+        $data_to_update["sendEmail"] = $send_email;
+        $data_to_update["managersList"] = $managers_list;
+        $this->hr_documents_management_model->change_document_approval_status($document_sid, $data_to_update);
+        //
         $this->AddAndSendNotificationsToApprovalEmployees(
             $approvalInsertId,
-            $approvalEmployees, 
-            $employerId,
-            $userId,
-            $userType,
-            $document['document_title'],
-            $companyId,
-            $companyName,
-            $note
+            $approvers_list,
+            $assigner_note
         );
         //
         return true;
@@ -13476,38 +13489,40 @@ class Hr_documents_management extends Public_Controller {
      */
     function AddAndSendNotificationsToApprovalEmployees (
         $approvalFlowId,
-        $approvalEmployees,
-        $initiateId, 
-        $userId,
-        $userType,
-        $documentTitle,
-        $companyId,
-        $companyName,
-        $note
+        $approvers_list,
+        $assigner_note
     ) {
-        // Get company email header and footer
-        $hf = message_header_footer_domain($companyId, $companyName);
-        // Get the initiator name
-        $assignerInfo = $this->hr_documents_management_model->get_employee_information($companyId, $initiateId);
+        $approvalEmployees = explode(",", $approvers_list);
         //
-        $assignerName = ucwords($assignerInfo['first_name'] . ' ' . $assignerInfo['last_name']);
+        $session = $this->session->userdata('logged_in');
+        $company_sid = $session['company_detail']['sid'];
+        $company_name = $session['company_detail']['CompanyName'];
+        
+        //
+        $document = $this->hr_documents_management_model->get_assigned_document_info_by_sid($document_sid);
+        // Get company email header and footer
+        $hf = message_header_footer_domain($company_sid, $company_name);
+        // Get the initiator name
+        $assigner_first_name = $session['employer_detail']['first_name'];
+        $assigner_last_name = $session['employer_detail']['last_name'];
+        $assignerName = ucwords($assigner_first_name  . ' ' . $assigner_last_name);
         // Get the user name
-        if($userType == 'employee'){
+        if($document['user_type'] == 'employee'){
             //
-            $t = $this->hr_documents_management_model->get_employee_information($companyId, $userId);
+            $t = $this->hr_documents_management_model->get_employee_information($company_sid, $document['user_sid']);
             //
-            $userName = ucwords($t['first_name'] . ' ' . $t['last_name']);
+            $document_assigned_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
         } else{
             //
-            $t = $this->hr_documents_management_model->get_applicant_information($companyId, $userId);
+            $t = $this->hr_documents_management_model->get_applicant_information($company_sid, $document['user_sid']);
             //
-            $userName = ucwords($t['first_name'] . ' ' . $t['last_name']);
+            $document_assigned_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
         }
         //
-        foreach ($approvalEmployees as $key => $assigner_sid) {
+        foreach ($approvalEmployees as $key => $approver_sid) {
             $data_to_insert = array();
             $data_to_insert['portal_document_assign_sid'] = $approvalFlowId;
-            $data_to_insert['assigner_sid'] = $assigner_sid;
+            $data_to_insert['assigner_sid'] = $approver_sid;
             //
             if ($key == 0) {
                 $data_to_insert['assign_on'] = date('Y-m-d H:i:s', strtotime('now'));
@@ -13518,23 +13533,23 @@ class Hr_documents_management extends Public_Controller {
             //
             if($key == 0){
                 //
-                $user_info = $this->hr_documents_management_model->get_employee_information($companyId, $assigner_sid);
+                $approver_info = $this->hr_documents_management_model->get_employee_information($company_sid, $approver_sid);
                 //
                 $replacement_array['assigner'] = $assignerName;
-                $replacement_array['contact-name'] = $userName;
-                $replacement_array['company_name'] = ucwords($companyName);
+                $replacement_array['contact-name'] = $document_assigned_user_name;
+                $replacement_array['company_name'] = ucwords($company_name);
                 $replacement_array['username'] = $replacement_array['contact-name'];
-                $replacement_array['firstname'] = $user_info['first_name'];
-                $replacement_array['lastname'] = $user_info['last_name'];
-                $replacement_array['first_name'] = $user_info['first_name'];
-                $replacement_array['last_name'] = $user_info['last_name'];
-                $replacement_array['document_title'] = $documentTitle;
-                $replacement_array['user_type'] = 'employee';
-                $replacement_array['note'] = $note;
+                $replacement_array['firstname'] = $approver_info['first_name'];
+                $replacement_array['lastname'] = $approver_info['last_name'];
+                $replacement_array['first_name'] = $approver_info['first_name'];
+                $replacement_array['last_name'] = $approver_info['last_name'];
+                $replacement_array['document_title'] = $document['document_title'];
+                $replacement_array['user_type'] = $document['user_type'];
+                $replacement_array['note'] = $assigner_note;
                 $replacement_array['baseurl'] = base_url();
     
                 // Send email to assigner as a notification with private link
-                log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $user_info['email'], $replacement_array, $hf, 1);
+                log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
             }
         }
     }
