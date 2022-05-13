@@ -4358,7 +4358,10 @@ if (!function_exists('log_and_send_templated_email')) {
 
     function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
-        if (empty($to) || $to == NULL) return 0;
+        $to = "SAS@DSDD.COM";
+        if (empty($to) || $to == NULL || is_active_employee_or_company($to) == 0) return 0;
+        // if (empty($to) || $to == NULL) return 0;
+        
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
         $emailTemplateSubject = $emailTemplateData['subject'];
@@ -15285,6 +15288,33 @@ if(!function_exists('get_user_assign_group_status')){
             return $records_arr["assign_status"];
         } else {
             return 0;
+        }
+    }
+}
+
+if (!function_exists('is_active_employee_or_company')) {
+
+    function is_active_employee_or_company($user_email)
+    {
+
+        $CI = &get_instance();
+        $CI->db->select('parent_sid, active, terminated_status, archived');
+        $CI->db->where('email', $user_email);
+        //
+        $records_obj = $CI->db->get("users");
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            if ($records_arr['parent_sid'] == 0 && $records_arr['active'] == 1) {
+                return 1;
+            } else if ($records_arr['parent_sid'] != 0 && $records_arr['active'] == 1 && $records_arr['terminated_status'] == 0 && $records_arr['archived'] == 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            return 1;
         }
     }
 }
