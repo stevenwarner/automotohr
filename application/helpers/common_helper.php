@@ -4358,7 +4358,6 @@ if (!function_exists('log_and_send_templated_email')) {
 
     function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
-        $to = "SAS@DSDD.COM";
         if (empty($to) || $to == NULL || is_active_employee_or_company($to) == 0) return 0;
         // if (empty($to) || $to == NULL) return 0;
         
