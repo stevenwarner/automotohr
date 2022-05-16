@@ -162,6 +162,19 @@ class Affiliates extends CI_Controller {
             $this->load->view('main/footer');
         } else {
             $formpost = $this->input->post(NULL, TRUE);
+            //
+            if(!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])){
+                $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                return redirect('can-we-send-you-a-check-every-month', 'refresh');
+            }
+            //
+            $gr = verifyCaptcha($formpost['g-recaptcha-response']);
+            //
+            if(!$gr['success']){
+                $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                return redirect('can-we-send-you-a-check-every-month', 'refresh');
+            }
+            //
             $insert_data = array();
             $already_applied = $this->affiliation_model->check_register_affiliater($formpost['email']);
             

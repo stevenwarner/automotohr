@@ -1,3 +1,5 @@
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 <div class="main-content">
     <div class="container">
         <div class="row">
@@ -417,6 +419,14 @@
                                     <textarea name="info" cols="40" rows="10" class="form-control autoheight" id="location_address" style="border-radius: 15px;"></textarea>
                                 </div>
                             </div>
+                            
+                            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="form-group rounded-input autoheight">
+                                    <label class="affiliate-form-label">Security Check </label>
+                                    <div class="g-recaptcha" data-sitekey="<?=getCreds('AHR')->GOOGLE_CAPTCHA_API_KEY_V2;?>"></div>
+                                </div>
+                            </div>
+
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <div class="panel panel-default full-width affiliate-checkbox-area">
                                     <div class="panel-body">
