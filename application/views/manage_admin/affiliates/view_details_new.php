@@ -199,6 +199,7 @@
                                                 <?php } if (($uri_segment == "affiliates" && check_access_permissions_for_view($security_details, 'affiliate_request_send_reply')) || ($uri_segment == "referred_affiliates" && check_access_permissions_for_view($security_details, 'referred_affiliate_send_reply'))) { ?>
                                                     <a class="btn btn-success " href="<?php echo site_url('manage_admin/'.$uri_segment.'/send_reply/'.$affiliation['sid']);?>">Send Reply</a>
                                                 <?php } ?>
+                                                    <button class="btn btn-danger jsDeleteAffiliate" data-id="<?=$affiliation['sid'];?>">Delete</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -672,3 +673,49 @@
 </script>
 <script src="<?php echo base_url('assets/js/jquery.datetimepicker.js') ?>"></script>
 <link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/jquery.datetimepicker.css') ?>"/>
+
+<script>
+    $(function(){
+        // Deletes an affiliate request
+        $('.jsDeleteAffiliate').click(function() {
+            //
+            var affiliateDeleteId = $(this).data('id');
+            //
+            alertify.confirm('Confirmation', "This action is non-revertible. <br> Are you sure you want to delete this affiliate?",
+                function() {
+                    //
+                    DeleteAffiliateRequest(affiliateDeleteId);
+                }, function(){});
+        });
+
+        //
+        function MarkDone() {
+            //
+            $('#loader_text_div').text('');
+            //
+            $('#document_loader').hide();
+            //
+            return alertify.alert('Affiliate is successfully deleted', function() {
+                location.reload();
+            });
+        }
+
+        //
+        function DeleteAffiliateRequest(id) {
+            //
+            $('#loader_text_div').text('Please wait, while we process your request.');
+            $('#document_loader').show();
+            //
+            $.ajax({
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                url: '<?= base_url('manage_admin/' . $uri_segment . '/delete_affiliate') ?>',
+                success: function() {
+                    MarkDone();
+                }
+            });
+        }
+    });
+</script>

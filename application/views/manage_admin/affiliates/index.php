@@ -29,6 +29,7 @@
                                     </div>
                                     <div class="hr-box">
                                         <div class="hr-innerpadding">
+                                            <?php if($affiliations) :?>
                                             <!--  -->
                                             <div class="row">
                                                 <div class="col-sm-12 text-right">
@@ -37,6 +38,7 @@
                                                 <br>
                                                 <br>
                                             </div>
+                                            <?php endif; ?>
                                             <div class="table-responsive">
                                                 <form name="multiple_actions" id="incident_types" method="POST">
                                                     <table class="table table-bordered table-hover table-striped">
