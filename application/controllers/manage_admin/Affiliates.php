@@ -517,4 +517,11 @@ class Affiliates extends Admin_Controller {
 
         $this->render('manage_admin/affiliates/index');
     }
+   // Delet Affiliate
+    public function delete_affiliate(){ 
+        $id  = $this->input->post('id');
+       $this->affiliation_model->delete_affiliate($id);
+    }
+
+
 }
