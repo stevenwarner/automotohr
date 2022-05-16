@@ -92,17 +92,10 @@
             let dt = 10;
             let dc = 0;
             let gd = 0;
-            let gdh = 0;
             let token = "<?= $token; ?>";
+          
 
-            
-            let assigned_history = <?= json_encode($documents['Assigned_history']); ?>;
-            let assignedLength_history = assigned_history.length;
-            assignedLength = assignedLength+assignedLength_history;
-
-
-
-            // General Information Documents
+                      // General Information Documents
             if (has['direct_deposit'] != "null")  assignedLength++;
             if (has['dependents'] != "null")  assignedLength++;
             if (has['emergency_contacts'] != "null")  assignedLength++;
@@ -300,13 +293,6 @@
                 dc++;
                 //
                 let sc = assigned[gd];
-                let sc_h=assigned_history[gdh];
-            
-                if(sc_h!== undefined ){
-                    gdh++;
-                 m(`Adding <strong>"${sc_h.document_title+'_history'}"</strong> to export.`);
-                  return sc_h;
-               }
                  //
                 if (sc === undefined) return false;
                 //
@@ -320,7 +306,7 @@
 
             //
             function startMoveProcess(dct) {
-              
+               
                 if (dct === false) {
                     generateZip();
                     return false;
@@ -346,22 +332,20 @@
             }
 
             function getSubmittedDocument(dct){
-                alert(dct.historyflag);
-                if(dct.historyflag==1){
-                  var doc_url = `<?=base_url('hr_documents_management/getSubmittedDocument_history');?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`;
-
-
-                  }else{
-                    doc_url = `<?=base_url('hr_documents_management/getSubmittedDocument');?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`;
-                  }
-
-                //
-                $.get(doc_url, (resp) => {
-               
+              
+                    if(dct.historyflag==1){
+                    var doc_sid=dct.doc_sid;
+                    var doc_history_label="_history";
+                    }else{
+                        doc_sid=dct.sid;
+                        doc_history_label="";
+                    }
+                              //
+                $.get(`<?=base_url('hr_documents_management/getSubmittedDocument');?>/${doc_sid}/submitted/assigned_document/${dct.document_type}/${dct.historyflag}`, (resp) => {
                     var obj = jQuery.parseJSON(resp);
                     $('#js-export-area div').html(obj.html);
                     let o = {
-                        title: dct.document_title,
+                        title: dct.document_title+doc_history_label,
                         content: obj.html
                     };
                     //
@@ -433,7 +417,6 @@
             var XHR = null;
             //
             function uploadDocument(d) {
-              
                   //
                 if(XHR !== null) {
                     setTimeout(() => {
@@ -450,6 +433,7 @@
                     userFullNameSlug: "<?=$slug;?>"
                 }, () => {
                     XHR = null;
+                 
                     nextDocument(d.title);
 
                 }).fail(() => {

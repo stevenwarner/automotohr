@@ -3655,10 +3655,7 @@ class Hr_documents_management_model extends CI_Model {
 
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-
-        print_r($record_arr);
-        die();
-       
+      
         if (!empty($record_arr)) {
             
             $company_sid = $record_arr[0]['company_sid'];
@@ -4610,13 +4607,12 @@ class Hr_documents_management_model extends CI_Model {
             'emergency_contacts' => '',
             'drivers_license' => '',
             'occupational_license' => '',
-            'Assigned_history' => [],
         ];
         //
         $t = [];
         //
         $this->db
-        ->select('*')
+        ->select("* , '0' as historyflag")
         ->where('user_sid', $id)
         ->where('user_type', 'employee')
         ->where('company_sid', $cId)
@@ -4656,14 +4652,12 @@ class Hr_documents_management_model extends CI_Model {
 
         if(count($b)){ 
              isDocumentCompleted($b);
-            $r['Assigned'] = $b;
-             }
+              }
        if(count($b_h)){ 
             isDocumentCompleted($b_h);
-           $r['Assigned_history'] = $b_h;
        }
 
-
+       $r['Assigned'] = array_merge($b,$b_h);
 
         if(empty($dIds)){
             //
@@ -4673,6 +4667,7 @@ class Hr_documents_management_model extends CI_Model {
             $this->getEmployeeGeneralDocuments($cId, $id, $r, true);
         }
         //
+      
         return $r;
     }
 
@@ -4699,9 +4694,18 @@ class Hr_documents_management_model extends CI_Model {
         ->where('user_type', $type)
         ->where('company_sid', $cId)
         ->where('archive', 0)
+        ->group_start()
         ->where('acknowledgment_required', NULL)
+        ->or_where('acknowledgment_required', 0)
+        ->group_end()
+       ->group_start()
         ->where('download_required', NULL)
+        ->or_where('download_required', 0)
+        ->group_end()
+        ->group_start()
         ->where('signature_required', NULL)
+        ->or_where('signature_required', 0)
+       ->group_end()
         ->where('status', 1)
         ->order_by('sid', 'DESC');
         //
@@ -4718,6 +4722,7 @@ class Hr_documents_management_model extends CI_Model {
             $r['Assigned'] = $b;
         }
         //
+       
         return $r;
     }
 
@@ -7443,202 +7448,5 @@ class Hr_documents_management_model extends CI_Model {
         }
     }
 
-
-
- function get_requested_content($document_sid, $request_type, $request_from, $request_for, $submitted = 0) {
-    
-        $this->db->select('*');
-         if ($request_from == 'assigned_document_history')
-        $this->db->where('doc_sid', $document_sid);
-        else
-        $this->db->where('sid', $document_sid);
-
-        if ($request_from == 'assigned_document') {
-            $record_obj = $this->db->get('documents_assigned');
-        } else if ($request_from == 'company_document') {
-            $record_obj = $this->db->get('documents_management');
-        } else if ($request_from == 'company_offer_letter') {
-            $record_obj = $this->db->get('offer_letter');
-        } else if ($request_from == 'assigned_document_history') {
-            $record_obj = $this->db->get('documents_assigned_history');
-        } 
-
-        $record_arr = $record_obj->result_array();
-        $record_obj->free_result();
-
-        print_r($record_arr);
-        die();
-       
-        if (!empty($record_arr)) {
-            
-            $company_sid = $record_arr[0]['company_sid'];
-            $user_sid = isset($record_arr[0]['user_sid']) ? $record_arr[0]['user_sid'] : '';
-            $user_type = isset($record_arr[0]['user_type']) ? $record_arr[0]['user_type'] : '';
-            $document_body = $record_arr[0]['document_description'];
-
-            if ($request_type == 'assigned' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history')) {
-
-                if ($request_for == 'P&D') {
-                    $contant_body = $this->replace_magic_tag_for_print_and_download($company_sid, $document_sid, $document_body);
-                } else {
-                    $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted); 
-                }
-                
-                return $contant_body;
-            } else if ($request_type == 'submitted' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history')) {
-                if (!empty($record_arr[0]['authorized_signature'])) {
-                    $authorized_signature_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$record_arr[0]['authorized_signature'].'" id="show_authorized_signature">';
-                    
-                } else {
-                    $authorized_signature_image = '------------------------------';
-                }
-
-                if (!empty($record_arr[0]['authorized_signature_date'])) {
-                    $authorized_signature_date = '<p><strong>'.date_with_time($record_arr[0]['authorized_signature_date']).'</strong></p>';
-                    
-                } else {
-                    $authorized_signature_date = 'Authorize Sign Date :------/-------/----------------';
-                }
-
-                $signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$record_arr[0]['signature_base64'].'">';
-                $init_signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$record_arr[0]['signature_initial'].'">';
-                $sign_date = '<p><strong>'.date_with_time($record_arr[0]['signature_timestamp']).'</strong></p>';
-
-                $document_body = str_replace('{{signature}}', $signature_bas64_image, $document_body);
-                $document_body = str_replace('{{inital}}', $init_signature_bas64_image, $document_body);
-                $document_body = str_replace('{{sign_date}}', $sign_date , $document_body);
-                $document_body = str_replace('{{authorized_signature}}', $authorized_signature_image , $document_body);
-                $document_body = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $document_body);
-                
-                if ($request_for == 'P&D') {
-
-                    if (!empty($record_arr[0]['form_input_data'])) {
-                        $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted); 
-                        return $contant_body;
-                    } else if (!empty($record_arr[0]['submitted_description'])) {
-                        return $record_arr[0]['submitted_description'];
-                    } else {
-                        $contant_body = $this->replace_magic_tag_for_print_and_download($company_sid, $document_sid, $document_body);
-                        return $contant_body;
-                    }
-                } else {
-                    if (!empty($record_arr[0]['form_input_data'])) {
-                        $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted); 
-                        return $contant_body;
-                    } else if (!empty($record_arr[0]['submitted_description'])) {
-                        return $record_arr[0]['submitted_description'];
-                    } else {
-                        $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted);
-                        return $contant_body;
-                    }
-                }    
-                
-            } else if ($request_type == 'company' && ($request_from == 'company_offer_letter' || $request_from == 'company_document')) {
-                
-
-                if ($request_for == 'P&D') {
-                    $contant_body = $this->replace_magic_tag_for_print_and_download($company_sid, $document_sid, $document_body);
-                } else {
-                    $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted); 
-                }
-
-                return $contant_body;
-            }
-        } else {
-            return array();
-        }
-    }
-
-    function get_requested_content_history($document_sid, $request_type, $request_from, $request_for, $submitted = 0) {
-    
-        $this->db->select('*');
-        $this->db->where('sid', $document_sid);
-        $record_obj = $this->db->get('documents_assigned_history');
-        $record_arr = $record_obj->result_array();
-        $record_obj->free_result();
-
-        print_r($record_arr);
-        die();
-       
-        if (!empty($record_arr)) {
-            
-            $company_sid = $record_arr[0]['company_sid'];
-            $user_sid = isset($record_arr[0]['user_sid']) ? $record_arr[0]['user_sid'] : '';
-            $user_type = isset($record_arr[0]['user_type']) ? $record_arr[0]['user_type'] : '';
-            $document_body = $record_arr[0]['document_description'];
-
-            if ($request_type == 'assigned' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history')) {
-
-                if ($request_for == 'P&D') {
-                    $contant_body = $this->replace_magic_tag_for_print_and_download($company_sid, $document_sid, $document_body);
-                } else {
-                    $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted); 
-                }
-                
-                return $contant_body;
-            } else if ($request_type == 'submitted' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history')) {
-                if (!empty($record_arr[0]['authorized_signature'])) {
-                    $authorized_signature_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$record_arr[0]['authorized_signature'].'" id="show_authorized_signature">';
-                    
-                } else {
-                    $authorized_signature_image = '------------------------------';
-                }
-
-                if (!empty($record_arr[0]['authorized_signature_date'])) {
-                    $authorized_signature_date = '<p><strong>'.date_with_time($record_arr[0]['authorized_signature_date']).'</strong></p>';
-                    
-                } else {
-                    $authorized_signature_date = 'Authorize Sign Date :------/-------/----------------';
-                }
-
-                $signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$record_arr[0]['signature_base64'].'">';
-                $init_signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$record_arr[0]['signature_initial'].'">';
-                $sign_date = '<p><strong>'.date_with_time($record_arr[0]['signature_timestamp']).'</strong></p>';
-
-                $document_body = str_replace('{{signature}}', $signature_bas64_image, $document_body);
-                $document_body = str_replace('{{inital}}', $init_signature_bas64_image, $document_body);
-                $document_body = str_replace('{{sign_date}}', $sign_date , $document_body);
-                $document_body = str_replace('{{authorized_signature}}', $authorized_signature_image , $document_body);
-                $document_body = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $document_body);
-                
-                if ($request_for == 'P&D') {
-
-                    if (!empty($record_arr[0]['form_input_data'])) {
-                        $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted); 
-                        return $contant_body;
-                    } else if (!empty($record_arr[0]['submitted_description'])) {
-                        return $record_arr[0]['submitted_description'];
-                    } else {
-                        $contant_body = $this->replace_magic_tag_for_print_and_download($company_sid, $document_sid, $document_body);
-                        return $contant_body;
-                    }
-                } else {
-                    if (!empty($record_arr[0]['form_input_data'])) {
-                        $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted); 
-                        return $contant_body;
-                    } else if (!empty($record_arr[0]['submitted_description'])) {
-                        return $record_arr[0]['submitted_description'];
-                    } else {
-                        $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted);
-                        return $contant_body;
-                    }
-                }    
-                
-            } else if ($request_type == 'company' && ($request_from == 'company_offer_letter' || $request_from == 'company_document')) {
-                
-
-                if ($request_for == 'P&D') {
-                    $contant_body = $this->replace_magic_tag_for_print_and_download($company_sid, $document_sid, $document_body);
-                } else {
-                    $contant_body = replace_tags_for_document($company_sid, $user_sid, $user_type, $document_body, $document_sid, 0, false, false, $submitted); 
-                }
-
-                return $contant_body;
-            }
-        } else {
-            return array();
-        }
-    }
-
-
+ 
 }
