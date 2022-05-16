@@ -5068,7 +5068,7 @@ class Hr_documents_management extends Public_Controller {
                 log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $data['session']['employer_detail']['email'], $replacement_array, $hf, 1, $extra_user_info);
             }
 
-            $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employer_sid, 0);
+            $assigned_documents = $this->hr_documents_management_model->get_my_assigned_documents($company_sid, 'employee', $employer_sid, 0);
             //
             $history_doc_sids = array();
             //
@@ -13701,8 +13701,9 @@ class Hr_documents_management extends Public_Controller {
         $company_sid = $this->session->userdata('logged_in')['company_detail']['sid'];
         $employer_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
         //
-        $document = $this->hr_documents_management_model->get_approval_document_information($document_sid, $user_type, $user_sid);
-        $approvers = $this->hr_documents_management_model->get_document_approvers($document['sid']);
+        $document_info = $this->hr_documents_management_model->get_approval_document_information($document_sid, $user_type, $user_sid);
+        $approvers_flow_info = $this->hr_documents_management_model->get_approval_document_bySID($document_info['approval_flow_sid']);
+        $approvers = $this->hr_documents_management_model->get_document_approvers($document_info['approval_flow_sid']);
         $employeesList = $this->hr_documents_management_model->fetch_all_company_managers( $company_sid, $employer_sid);
         //
         $approvers_sids = array_column($approvers, "assigner_sid");
@@ -13720,18 +13721,20 @@ class Hr_documents_management extends Public_Controller {
         $data = array();
         $data["approvers"] = $approvers;
         $data["employeesList"] = $employeesList;
-        $data["document_sid"] = $document['sid'];
-        $data["approvers_note"] = $document['assigner_note'];
-        $data["document_title"] = $document['document_title'];
-        $data["document_type"] = $document['document_type'];
-        $data["assigned_by"] = $document['assigned_by'];
-        $data["assigned_date"] = $document['assigned_date'];
-        $data["document_user_type"] = $document['user_type'];
+        $data["document_sid"] = $document_sid;
+        $data["approval_document_sid"] = $approvers_flow_info['sid'];
+        $data["approvers_note"] = $approvers_flow_info['assigner_note'];
+        $data["document_title"] = $document_info['document_title'];
+        $data["document_type"] = $document_info['document_type'];
+        $data["assigned_by"] = $approvers_flow_info['assigned_by'];
+        $data["assigned_date"] = $approvers_flow_info['assigned_date'];
+        $data["document_user_type"] = $user_type;
+        $data["document_user_sid"] = $user_sid;
         //
-        if ($document['user_type'] == "employee") {
-            $data["document_user_name"] = getUserNameBySID($document['user_sid']);
+        if ($user_type == "employee") {
+            $data["document_user_name"] = getUserNameBySID($user_sid);
         } else {
-            $data["document_user_name"] = getApplicantNameBySID($document['user_sid']);
+            $data["document_user_name"] = getApplicantNameBySID($user_sid);
         }
         //
         if(empty($approvers)){
@@ -13771,24 +13774,19 @@ class Hr_documents_management extends Public_Controller {
         //
         $post = $this->input->post();
         //
-        $document_info = $this->hr_documents_management_model->get_approval_document_bySID($post["documentId"]);
+        $document_info = $this->hr_documents_management_model->get_approval_document_information($post["documentId"], $post["userType"], $post["userId"]);
         //
         switch ($post['action']) {
             case 'add_approver':
                 //
-                $approver_info = $this->hr_documents_management_model->get_employee_information($company_sid, $post["employeeId"]);
-                //
                 $data_to_insert = array();
-                $data_to_insert['portal_document_assign_sid'] = $post["documentId"];
-                $data_to_insert['assigner_sid'] = $post["employeeId"];
+                $data_to_insert['portal_document_assign_sid'] = $post["approvalDocumentId"];
+                $data_to_insert['assigner_sid'] = $post["approverId"];
                 //
                 $this->hr_documents_management_model->insert_assigner_employee($data_to_insert);
                 //
                 $resp['Status'] = true;
-                $resp['document_sid'] = $document_info['document_sid'];
-                $resp['user_type'] = $document_info['user_type'];
-                $resp['user_sid'] = $document_info['user_sid'];
-                $resp['Msg'] = getUserNameBySID($post["employeeId"]).' add an approver successfully.';
+                $resp['Msg'] = getUserNameBySID($post["approverId"]).' add an approver successfully.';
             
             break;
 
@@ -13797,9 +13795,6 @@ class Hr_documents_management extends Public_Controller {
                 $this->hr_documents_management_model->delete_document_approver_from_list($post["rowId"]);
                 //
                 $resp['Status'] = true;
-                $resp['document_sid'] = $document_info['document_sid'];
-                $resp['user_type'] = $document_info['user_type'];
-                $resp['user_sid'] = $document_info['user_sid'];
                 $resp['Msg'] = getUserNameBySID($post["approverId"]).' is deleted from approver list successfully.';
             break;
 
@@ -13838,13 +13833,14 @@ class Hr_documents_management extends Public_Controller {
                 // Send email to assigner as a notification with private link
                 log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
                 $resp['Status'] = true;
-                $resp['document_sid'] = $document_info['document_sid'];
-                $resp['user_type'] = $document_info['user_type'];
-                $resp['user_sid'] = $document_info['user_sid'];
                 $resp['Msg'] = "Send emai reminder to (".getUserNameBySID($post["approverId"]).") successfully.";
             break;
-        }   
-
+        } 
+        //
+        $resp['document_sid'] = $document_info['approval_flow_sid'];
+        $resp['user_type'] = $post["userType"];
+        $resp['user_sid'] = $post["userId"];
+        //  
         res($resp); 
     }
 

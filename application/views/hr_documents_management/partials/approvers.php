@@ -153,18 +153,24 @@
         //
         event.preventDefault();
         //
+        var approval_document_sid = "<?php echo $approval_document_sid; ?>";
         var document_sid = "<?php echo $document_sid; ?>";
-        var employee_sid = $("#jsSelectedApprover").val();
+        var user_sid = "<?php echo $document_user_sid; ?>";
+        var user_type = "<?php echo $document_user_type; ?>";
+        var approver_sid = $("#jsSelectedApprover").val();
         //
-        if (employee_sid == 0){
+        if (approver_sid == 0){
             alertify.alert("Notice","Please select an employee");
         } else {
             $('.jsIPLoader[data-page="jsDocumentsApproversModalLoader"]').show(0);
             // Send ajax request to convert
             console.log("here i am")
             $.post("<?=base_url('hr_documents_management/approvers_handler');?>", {
+                approvalDocumentId: approval_document_sid,
                 documentId: document_sid,
-                employeeId: employee_sid,
+                approverId: approver_sid,
+                userType: user_type,
+                userId: user_sid,
                 action: "add_approver"
             }, function(resp) {
                 //
@@ -187,6 +193,8 @@
         event.preventDefault();
         //
         var document_sid = "<?php echo $document_sid; ?>";
+        var user_sid = "<?php echo $document_user_sid; ?>";
+        var user_type = "<?php echo $document_user_type; ?>";
         var row_sid = $(this).data("approver_row_sid");
         var approver_sid = $(this).data("approver_sid");
         var approver_name = $(this).data("approver_name");
@@ -198,7 +206,10 @@
                     $.post("<?=base_url('hr_documents_management/approvers_handler');?>", {
                         documentId: document_sid,
                         rowId: row_sid,
+                        documentId: document_sid,
                         approverId: approver_sid,
+                        userType: user_type,
+                        userId: user_sid,
                         action: "delete_approver"
                     }, function(resp) {
                         //
@@ -224,6 +235,8 @@
         event.preventDefault();
         //
         var document_sid = "<?php echo $document_sid; ?>";
+        var user_sid = "<?php echo $document_user_sid; ?>";
+        var user_type = "<?php echo $document_user_type; ?>";
         var approver_sid = $(this).data("approver_sid");
         var approver_name = $(this).data("approver_name");
         //
@@ -234,6 +247,8 @@
                     $.post("<?=base_url('hr_documents_management/approvers_handler');?>", {
                         documentId: document_sid,
                         approverId: approver_sid,
+                        userType: user_type,
+                        userId: user_sid,
                         action: "remind_approver"
                     }, function(resp) {
                         //

@@ -200,7 +200,7 @@ class Onboarding extends CI_Controller {
                 //     log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $applicant_info['email'], $replacement_array, $hf, 1, $extra_user_info);
                 // }
 
-                $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_info['sid'], 'applicant', $applicant_sid, 0);
+                $assigned_documents = $this->hr_documents_management_model->get_my_assigned_documents($company_info['sid'], 'applicant', $applicant_sid, 0);
 
                 foreach ($assigned_documents as $key => $assigned_document) {
                     $is_magic_tag_exist = 0;
