@@ -11893,7 +11893,7 @@ class Hr_documents_management extends Public_Controller {
         $document = $this->hr_documents_management_model->get_requested_authorized_content($document_sid, $request_from);
         $requested_content = $this->hr_documents_management_model->get_requested_content($document_sid, $request_type, $request_from, 'P&D', 1);
         $file_name = $this->hr_documents_management_model->get_document_title($document_sid, $request_type, $request_from);
-
+       
         if ($letter_request == 1) {
             $requested_content = $document['submitted_description'];
         } else if (!empty($document['form_input_data']) && $request_type == 'submitted') {
@@ -13662,5 +13662,122 @@ class Hr_documents_management extends Public_Controller {
         echo json_encode($history_array);
         exit(0);
     }
+
+
+
+    function getSubmittedDocument_history($document_sid, $request_type, $request_from, $letter_request = NULL) {
+        $form_input_data = "NULL";
+        $is_iframe_preview = 1;
+
+        $document = $this->hr_documents_management_model->get_requested_authorized_content($document_sid, $request_from);
+        $requested_content = $this->hr_documents_management_model->get_requested_content_history($document_sid, $request_type, $request_from, 'P&D', 1);
+        $file_name = $this->hr_documents_management_model->get_document_title($document_sid, $request_type, $request_from);
+       
+        if ($letter_request == 1) {
+            $requested_content = $document['submitted_description'];
+        } else if (!empty($document['form_input_data']) && $request_type == 'submitted') {
+            $is_iframe_preview = 0;
+            if (!empty($document['authorized_signature'])) {
+                $authorized_signature_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['authorized_signature'].'" id="show_authorized_signature">';
+            } else {
+                $authorized_signature_image = '------------------------------(Authorized Signature Required)';
+            }
+
+            if (!empty($document['authorized_signature_date'])) {
+                $authorized_signature_date = '<p><strong>'.date_with_time($document['authorized_signature_date']).'</strong></p>';
+            } else {
+                $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
+            }
+            
+            $signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_base64'].'">';
+            $init_signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_initial'].'">';
+            $sign_date = '<p><strong>'.date_with_time($document['signature_timestamp']).'</strong></p>';
+
+            $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
+            $document['document_description'] = str_replace('{{sign_date}}', $sign_date , $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image , $document['document_description']);
+            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $document['document_description']);
+
+            // $document_content = replace_tags_for_document($document['company_sid'], $document['user_sid'], $document['user_type'], $document['document_description'], $document['document_sid'], 1);
+            // $requested_content = $document_content;
+
+            $form_input_data = unserialize($document['form_input_data']);
+            $form_input_data = json_encode(json_decode($form_input_data, true));
+        } else if($request_type == 'submitted'){
+            if(preg_match('/data:application\/pdf;base64,/', $document['submitted_description'])) {
+                echo $document['submitted_description'];
+                exit(0);
+            } 
+            if(empty($document['submitted_description'])) {
+                $requested_content =  $document['submitted_description'] = $document['document_description'];
+                $is_iframe_preview = 0;
+                // _e($requested_content, true, true);
+            }
+        } else {
+            if($request_type == 'assigned') {
+            // if (empty($document['submitted_description']) && empty($document['form_input_data'])) {    
+                $is_iframe_preview = 0;
+            }
+
+            $form_input_data = json_encode(json_decode('assigned'));  
+        }
+
+
+        $data = array();
+        $data['file_name'] = $file_name;
+        $data['document'] = $document;
+        $data['request_type'] = $request_type;
+        $data['document_contant'] = $requested_content;
+        $data['form_input_data'] = $form_input_data;
+        $data['is_iframe_preview'] = $is_iframe_preview;
+        //
+        //Create a new DOMDocument object.
+        // $htmlDom = new DOMDocument;
+
+        // //Load the HTML string into our DOMDocument object.
+        // @$htmlDom->loadHTML($data['document_contant']);
+
+        // //Extract all img elements / tags from the HTML.
+        // $imageTags = $htmlDom->getElementsByTagName('img');
+
+        // //Create an array to add extracted images to.
+        // $extractedImages = array();
+
+        // //Loop through the image tags that DOMDocument found.
+        // foreach($imageTags as $imageTag){
+        //     //Get the src attribute of the image.
+        //     $imgSrc = $imageTag->getAttribute('src');
+
+        //     //Get the alt text of the image.
+        //     $altText = $imageTag->getAttribute('alt');
+
+        //     //Get the title text of the image, if it exists.
+        //     $titleText = $imageTag->getAttribute('title');
+
+        //     //Add the image details to our $extractedImages array.
+        //     $extractedImages[] = array(
+        //         'src' => $imgSrc,
+        //         'alt' => $altText,
+        //         'title' => $titleText
+        //     );
+        // }
+
+        // _e($extractedImages, true, true);
+
+        //
+        $form_input_data = unserialize($document['form_input_data']);
+        $form_input_data = json_decode($form_input_data, true);
+        //
+        $html = $this->load->view('hr_documents_management/new_generated_document_action_page_template_new', $data, true);
+        //
+        $result['html'] = $html;
+        $result['input_data'] = $form_input_data;
+        //
+        echo json_encode($result);
+        //
+    }
+
+
 
 }

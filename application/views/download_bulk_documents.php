@@ -304,7 +304,7 @@
             
                 if(sc_h!== undefined ){
                     gdh++;
-                 m(`Adding <strong>"${sc_h.document_title}"</strong> to export.`);
+                 m(`Adding <strong>"${sc_h.document_title+'_history'}"</strong> to export.`);
                   return sc_h;
                }
                  //
@@ -320,6 +320,7 @@
 
             //
             function startMoveProcess(dct) {
+              
                 if (dct === false) {
                     generateZip();
                     return false;
@@ -345,8 +346,18 @@
             }
 
             function getSubmittedDocument(dct){
+                alert(dct.historyflag);
+                if(dct.historyflag==1){
+                  var doc_url = `<?=base_url('hr_documents_management/getSubmittedDocument_history');?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`;
+
+
+                  }else{
+                    doc_url = `<?=base_url('hr_documents_management/getSubmittedDocument');?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`;
+                  }
+
                 //
-                $.get(`<?=base_url('hr_documents_management/getSubmittedDocument');?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`, (resp) => {
+                $.get(doc_url, (resp) => {
+               
                     var obj = jQuery.parseJSON(resp);
                     $('#js-export-area div').html(obj.html);
                     let o = {
@@ -422,7 +433,8 @@
             var XHR = null;
             //
             function uploadDocument(d) {
-                //
+              
+                  //
                 if(XHR !== null) {
                     setTimeout(() => {
                         uploadDocument(d);
@@ -439,6 +451,7 @@
                 }, () => {
                     XHR = null;
                     nextDocument(d.title);
+
                 }).fail(() => {
                     setTimeout(() => {
                         uploadDocument(d);
