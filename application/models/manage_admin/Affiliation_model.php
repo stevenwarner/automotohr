@@ -250,9 +250,11 @@ class Affiliation_model extends CI_Model {
 
    // Move affiliate to history and delete affiliate 
     public function delete_affiliate($id) {
-
+        //
         $affiliate_details = $this->get_affiliate_details($id);
+        //
         $this->db->insert('affiliations_history', $affiliate_details[0]);
+        //
         $this->db->where('sid', $id);
         $this->db->delete('affiliations');
     }
