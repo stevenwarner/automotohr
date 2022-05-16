@@ -175,6 +175,11 @@ class Affiliates extends CI_Controller {
                 return redirect('can-we-send-you-a-check-every-month', 'refresh');
             }
             //
+            if(!filter_var($formpost['email'], FILTER_VALIDATE_EMAIL)){
+                $this->session->set_flashdata('message', '<strong>Error: </strong>Affiliate Request Have Already Been Sent!');
+                return redirect('can-we-send-you-a-check-every-month', 'refresh');
+            }
+            //
             $insert_data = array();
             $already_applied = $this->affiliation_model->check_register_affiliater($formpost['email']);
             
