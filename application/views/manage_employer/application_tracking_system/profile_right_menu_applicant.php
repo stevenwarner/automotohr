@@ -300,6 +300,24 @@ if ($this->session->userdata('logged_in')) {
                                 <!-- Light Bulb Code - End -->
                             </li>
                         <?php }?>
+                        <?php if(
+                                $applicant_info['is_onboarding'] == 1 &&
+                                (
+                                    $this->session->userdata('logged_in')['company_detail']['ems_status'] && 
+                                    (
+                                        $session['company_detail']['has_applicant_approval_rights'] == 0 || 
+                                        $session['employer_detail']['has_applicant_approval_rights'] == 1
+                                    ) ||
+                                    $session['employer_detail']['access_level_plus'])
+                            ){?>
+                            <li>
+                                <span class="left-addon">
+                                    <i aria-hidden="true" class="fa fa-history"></i>
+                                </span>
+                                <h4>Revert Onboarding</h4>
+                                <a href="#" data-id="<?=$applicant_info['sid'];?>" class="jsRevertOnboarding">Revert<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                            </li>
+                        <?php }?>
                         <input type="hidden" value="<?= $applicant_info['sid']?>" id="app-id">
                     </ul>
                 </div>
@@ -1359,3 +1377,43 @@ if ($this->session->userdata('logged_in')) {
 </script>
 
 <style>.select2-container--default .select2-selection--multiple .select2-selection__rendered{ height: auto !important; }</style>
+
+<script>
+    $(function RevertOnboarding(){
+        
+        $('.jsRevertOnboarding').click(function(event){
+            //
+            event.preventDefault();
+            //
+            var aid = $(this).data('id');
+            //
+            return alertify.confirm(
+                'This action will remove the applicant from onboarding. <br /> Do you wish to continue?',
+                function(){
+                    removeApplicantFromOnboarding(aid);
+                },
+                function(){}
+            ).setHeader('Confirm');
+        });
+
+        function removeApplicantFromOnboarding(aid){
+            //
+            $.ajax({
+                method: "DELETE",
+                url: "<?=base_url("revert_applicant/");?>/"+aid
+            })
+            .success(function(response){
+                return alertify.alert(
+                    'Success!',
+                    response.Response,
+                    function(){
+                        window.location.reload();
+                    }
+                );
+            })
+            .fail(function(){
+                return alertify.alert('Error!', 'Something went wrong while processing your request.', function(){});
+            });
+        }
+    });
+</script>

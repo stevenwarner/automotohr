@@ -1535,3 +1535,10 @@ $route['attendance/add_slot/(:num)']['get'] = "sheet/Attendance_ajax/GetAddSlot/
 $route['attendance/mark/attendance']['post'] = "sheet/Attendance_ajax/MarkAttendance";
 $route['attendance/manage']['post'] = "sheet/Attendance_ajax/ManageTimeSheet";
 $route['attendance/settings']['post'] = "sheet/Attendance_ajax/UpdateSettings";
+
+
+
+/**
+ * 
+ */
+$route['revert_applicant/(:num)']['delete'] = 'ajax/Applicants/revertApplicantFromOnboarding/$1';
