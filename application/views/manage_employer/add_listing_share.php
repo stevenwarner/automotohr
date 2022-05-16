@@ -26,7 +26,7 @@
                                         <div class = "social-media-section">
                                             <div class = "produt-block">                                                
                                                 <div class = "social-media-tagline">
-                                                    <h4> <p style = "color:#00a700;" >SHARE THIS JOB ON SOCIAL NETWORKS</p>Share this job publishing on LinkedIn, Twitter, Facebook & Google Plus</h4>
+                                                    <h4> <p style = "color:#00a700;" >SHARE THIS JOB ON SOCIAL NETWORKS</p>Share this job publishing on LinkedIn, Twitter, Facebook</h4>
                                                 </div>
                                                 <div class = "share-icons">
                                                     <div class="row">
