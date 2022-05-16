@@ -331,7 +331,7 @@ if(in_array($_SERVER['HTTP_HOST'], ['automotohr.local'])){
 } else{
 	error_reporting(E_ALL);
 	ini_set('display_errors', 0);
-	define('MINIFIED', '.min');
+	define('MINIFIED', '');
 }	
 //
 if(!function_exists('getCreds')){

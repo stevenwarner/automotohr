@@ -11513,7 +11513,7 @@ class Hr_documents_management extends Public_Controller {
      * token           String token
      */
     function download($type, $id, $documentType, $token = null, $company_sid = 0){
-        //
+          //
         if ($company_sid == 0) {
             // When their is no session
             if (!$this->session->userdata('logged_in')) exit(0);
@@ -11555,7 +11555,7 @@ class Hr_documents_management extends Public_Controller {
                     $company_sid,
                     $id
                 );
-            } else if ($documentType == 'noActionRequired') {
+            } else if ($documentType == 'noActionRequired') { 
                 $documents = $this->hr_documents_management_model->getUserNoActionDocuments(
                     $company_sid,
                     $id,
@@ -11572,7 +11572,7 @@ class Hr_documents_management extends Public_Controller {
         else exit(0);
         //
         $data['documents'] = $documents;
-        //
+           //
         $data['user_sid'] = $id;
         $data['user_type'] = $type;
         $data['company_sid'] = $company_sid;

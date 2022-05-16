@@ -4605,7 +4605,8 @@ class Hr_documents_management_model extends CI_Model {
             'dependents' => '',
             'emergency_contacts' => '',
             'drivers_license' => '',
-            'occupational_license' => ''
+            'occupational_license' => '',
+            'Assigned_history' => [],
         ];
         //
         $t = [];
@@ -4628,10 +4629,38 @@ class Hr_documents_management_model extends CI_Model {
         $b = $a->result_array();
         $a = $a->free_result();
         //
-        if(count($b)){ 
-            isDocumentCompleted($b);
-            $r['Assigned'] = $b;
+
+        $this->db
+        ->select('*')
+        ->where('user_sid', $id)
+        ->where('user_type', 'employee')
+        ->where('company_sid', $cId)
+        ->where('archive', 0)
+        ->where('status', 1)
+        ->order_by('sid', 'DESC');
+        //
+        if(!empty($dIds)){
+            $this->db->where_in('sid', explode(':', $dIds));
         }
+        //
+        $a_h = $this->db->get('documents_assigned_history');
+        //
+        $b_h = $a_h->result_array();
+        $a_h = $a_h->free_result();
+        //
+
+
+        if(count($b)){ 
+             isDocumentCompleted($b);
+            $r['Assigned'] = $b;
+             }
+       if(count($b_h)){ 
+            isDocumentCompleted($b_h);
+           $r['Assigned_history'] = $b_h;
+       }
+
+
+
         if(empty($dIds)){
             //
             $this->getEmployeeI9Form($cId, $id, $r);

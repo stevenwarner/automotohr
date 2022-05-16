@@ -92,8 +92,16 @@
             let dt = 10;
             let dc = 0;
             let gd = 0;
+            let gdh = 0;
             let token = "<?= $token; ?>";
+
             
+            let assigned_history = <?= json_encode($documents['Assigned_history']); ?>;
+            let assignedLength_history = assigned_history.length;
+            assignedLength = assignedLength+assignedLength_history;
+
+
+
             // General Information Documents
             if (has['direct_deposit'] != "null")  assignedLength++;
             if (has['dependents'] != "null")  assignedLength++;
@@ -106,7 +114,7 @@
             if (has['W4'] != "null")  assignedLength++;
             //
             $('#js-dt').text(assignedLength);
-
+           
             //
             if (has['I9'] != "null") {
                 // Check for if
@@ -292,7 +300,14 @@
                 dc++;
                 //
                 let sc = assigned[gd];
-                //
+                let sc_h=assigned_history[gdh];
+            
+                if(sc_h!== undefined ){
+                    gdh++;
+                 m(`Adding <strong>"${sc_h.document_title}"</strong> to export.`);
+                  return sc_h;
+               }
+                 //
                 if (sc === undefined) return false;
                 //
                 gd++;
@@ -300,6 +315,7 @@
                 m(`Adding <strong>"${sc.document_title}"</strong> to export.`);
                 //
                 return sc;
+
             }
 
             //
