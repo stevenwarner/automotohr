@@ -11326,6 +11326,11 @@ class Hr_documents_management extends Public_Controller {
         $a['allowed_departments'] = $post['selected_departments'];
         $a['allowed_teams'] = $post['selected_teams'];
         //
+        $session = $this->session->userdata('logged_in');
+        $employer_sid = $session["employer_detail"]["sid"];
+        //
+        $a['assigned_by'] = $employer_sid;
+        //
         if(isset($post['file'])){
             $a['document_s3_name'] = $post['file'];
             $a['document_original_name'] = $post['fileOrigName'];
