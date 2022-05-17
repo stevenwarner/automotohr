@@ -7176,7 +7176,7 @@ class Hr_documents_management extends Public_Controller {
     }
 
     public function documents_group_management() {
-        if ($this->session->userdata('logged_in')) {
+            if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -7200,7 +7200,7 @@ class Hr_documents_management extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $data['groups'] = $groups;
-
+          
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('hr_documents_management/documents_group_management');
@@ -7355,7 +7355,7 @@ class Hr_documents_management extends Public_Controller {
             $pre_assign_documents = $this->hr_documents_management_model->get_all_document_2_group($group_sid);
             $group = $this->hr_documents_management_model->get_document_group($group_sid);
             $assigned_documents = array();
-
+              
             if (!empty($pre_assign_documents)) {
                 foreach ($pre_assign_documents as $key => $pre_assign) {
                     array_push($assigned_documents, $pre_assign['document_sid']);
