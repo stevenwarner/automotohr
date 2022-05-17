@@ -505,6 +505,25 @@
                                 </a>
                             </div>
                         </div>
+
+                        <!-- Documents Library -->
+                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                            <div class="widget-box">
+                                <a href="<?php echo base_url('library_document'); ?>">
+                                    <div class="link-box bg-redish full-width">
+                                        <h2>Documents Library</h2>
+                                        <div class="current-date">
+                                            <span><?php echo $total_library_doc; ?><sub>Total Document(s)</sub></span>
+                                        </div>
+                                        <div class="status-panel">
+                                            <h3>View Documents</h3>
+                                            <span>Available to Complete</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <div class="widget-box">
                                 <a href="<?php echo base_url('hr_documents_management/approval_documents'); ?>">

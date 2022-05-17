@@ -3,8 +3,9 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 //
-if(!function_exists('getUserNameBySID')){
-    function getUserNameBySID($sid, $remake = true){
+if (!function_exists('getUserNameBySID')) {
+    function getUserNameBySID($sid, $remake = true)
+    {
         $user_info = db_get_employee_profile($sid);
 
         if (!empty($user_info)) {
@@ -21,17 +22,16 @@ if(!function_exists('getUserNameBySID')){
         } else {
             return '';
         }
-
-        
     }
 }
 
 
-if(!function_exists('getApplicantNameBySID')){
-    function getApplicantNameBySID($sid, $remake = true){
+if (!function_exists('getApplicantNameBySID')) {
+    function getApplicantNameBySID($sid, $remake = true)
+    {
         $applicant_info = db_get_applicant_profile($sid);
         //
-        return $applicant_info["first_name"]." ".$applicant_info["last_name"];
+        return $applicant_info["first_name"] . " " . $applicant_info["last_name"];
     }
 }
 
@@ -50,7 +50,7 @@ if (!function_exists('getCompanyNameBySid')) {
     {
         $company_name = '';
         if (!empty($company_sid)) {
-            
+
             $CI = &get_instance();
             $CI->db->select('CompanyName');
             $CI->db->where('sid', $company_sid);
@@ -59,9 +59,8 @@ if (!function_exists('getCompanyNameBySid')) {
 
             if (!empty($company_info)) {
                 $company_name = $company_info['CompanyName'];
-            }   
-
-        } 
+            }
+        }
 
         return $company_name;
     }
@@ -72,7 +71,7 @@ if (!function_exists('getCompanyLogoBySid')) {
     {
         $company_name = '';
         if (!empty($company_sid)) {
-            
+
             $CI = &get_instance();
             $CI->db->select('Logo');
             $CI->db->where('sid', $company_sid);
@@ -81,9 +80,8 @@ if (!function_exists('getCompanyLogoBySid')) {
 
             if (!empty($company_info)) {
                 $company_name = $company_info['Logo'];
-            }   
-
-        } 
+            }
+        }
 
         return $company_name;
     }
@@ -116,12 +114,12 @@ if (!function_exists('getEmployeeJobfairApplicant')) {
         //
         $assign_default_job_fair = $CI->db->get('job_fairs_recruitment')->result_array();
 
-        $assign_job_fair = array_merge($assign_default_job_fair,$assign_custom_job_fair);
+        $assign_job_fair = array_merge($assign_default_job_fair, $assign_custom_job_fair);
 
         if (!empty($assign_job_fair)) {
             $page_urls = array();
             foreach ($assign_job_fair as $key => $job_fair) {
-                array_push($page_urls , $job_fair['page_url']); 
+                array_push($page_urls, $job_fair['page_url']);
             }
 
             if ($count == "no") {
@@ -154,11 +152,9 @@ if (!function_exists('getEmployeeJobfairApplicant')) {
             } else {
                 return $CI->db->count_all_results();
             }
-
         } else {
             return $count != 'no' ? 0 : array();
         }
-        
     }
 }
 
@@ -168,11 +164,11 @@ if (!function_exists('getCompanyName')) {
         $company_name = '';
         $company_sid = '';
         if ($user_type == 'applicant') {
-        //
+            //
             $CI = &get_instance();
             $CI->db->select('employer_sid');
-            $CI->db->where('sid', $user_sid); 
-                       //
+            $CI->db->where('sid', $user_sid);
+            //
             $user_info = $CI->db->get('portal_job_applications')->row_array();
             $company_sid = $user_info['employer_sid'];
         } else {
@@ -185,7 +181,7 @@ if (!function_exists('getCompanyName')) {
         }
 
         if (!empty($company_sid)) {
-            
+
             $CI = &get_instance();
             $CI->db->select('CompanyName');
             $CI->db->where('sid', $company_sid);
@@ -194,9 +190,8 @@ if (!function_exists('getCompanyName')) {
 
             if (!empty($company_info)) {
                 $company_name = $company_info['CompanyName'];
-            }   
-
-        } 
+            }
+        }
 
         return $company_name;
     }
@@ -346,7 +341,7 @@ if (!function_exists('sendMail')) {
         }
 
         //
-        
+
         $mail->addAddress($to);
         $mail->CharSet = 'UTF-8';
         // mailAWSSES($mail, $to);
@@ -381,7 +376,7 @@ if (!function_exists('sendMailMultipleRecipients')) {
         }
 
         //
-        
+
         $mail->CharSet = 'UTF-8';
         //$mail->addBCC('prosaifhasi@gmail.com');
         $mail->isHTML(true);
@@ -409,7 +404,7 @@ if (!function_exists('sendMailWithCC')) {
         }
 
         //
-        
+
         $mail->addAddress($to);
         $mail->addCC($cc);
         $mail->CharSet = 'UTF-8';
@@ -437,7 +432,7 @@ if (!function_exists('sendMailWithAttachment')) {
             $mail->addReplyTo($replyTo);
         }
 
-        
+
         $mail->addAddress($to);
         $mail->CharSet = 'UTF-8';
         //
@@ -1424,20 +1419,20 @@ if (!function_exists('formatDateForDb')) {
         $yearIndex = 2;
 
         // Y-m-d
-        if(
+        if (
             preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $date) !== false ||
             preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/', $date) !== false
-        ){
+        ) {
             $yearIndex = 0;
             $monthIndex = 1;
             $dayIndex = 2;
         }
 
         // m-d-y
-        if(
+        if (
             preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $date) !== false ||
             preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/', $date) !== false
-        ){
+        ) {
             $monthIndex = 0;
             $dayIndex = 1;
             $yearIndex = 2;
@@ -1499,7 +1494,7 @@ if (!function_exists('convert_email_template')) {
         //
         $click_here = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="' . base_url() . 'account_activation/{{activation_key}}" target="_blank">Click Here</a>';
         //
-        $login_link = '<a href="'.( base_url('login')).'" style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;">Click to login</a>';
+        $login_link = '<a href="' . (base_url('login')) . '" style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;">Click to login</a>';
         //
         $emailTemplateBody = str_replace('{{company_name}}', $company_data['company_name'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{company_address}}', $company_data['company_address'], $emailTemplateBody);
@@ -1515,8 +1510,8 @@ if (!function_exists('convert_email_template')) {
         $emailTemplateBody = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{username}}', $replacement_array['username'], $emailTemplateBody);
-        $emailTemplateBody = str_replace('{{contact-name}}', ucfirst($replacement_array['first_name']).' '.ucfirst($replacement_array['last_name']), $emailTemplateBody);
-        $emailTemplateBody = str_replace('{{applicant_name}}', ucwords($replacement_array['first_name'].' '.$replacement_array['last_name']), $emailTemplateBody);
+        $emailTemplateBody = str_replace('{{contact-name}}', ucfirst($replacement_array['first_name']) . ' ' . ucfirst($replacement_array['last_name']), $emailTemplateBody);
+        $emailTemplateBody = str_replace('{{applicant_name}}', ucwords($replacement_array['first_name'] . ' ' . $replacement_array['last_name']), $emailTemplateBody);
         //
         if (isset($replacement_array['password_encrypt']) && $replacement_array['password_encrypt'] == "no") {
             $emailTemplateBody = str_replace('{{password}}', $replacement_array['password'], $emailTemplateBody);
@@ -1550,10 +1545,10 @@ if (!function_exists('get_company_data')) {
 
         if (!empty($result)) {
             $address = !empty($result["Location_Address"]) ? $result["Location_Address"] : "";
-            $city = !empty($result["Location_City"]) ? ", ".$result["Location_City"] : "";
-            $state = !empty($result["Location_State"]) ? ", ".db_get_state_name_only($result["Location_State"]) : "";
-            $country = !empty($result["Location_Country"]) ? ", ".db_get_country_name($result['Location_Country'], $CI, 'country_name') : "";
-            $company_address = $address.$city.$state.$country;
+            $city = !empty($result["Location_City"]) ? ", " . $result["Location_City"] : "";
+            $state = !empty($result["Location_State"]) ? ", " . db_get_state_name_only($result["Location_State"]) : "";
+            $country = !empty($result["Location_Country"]) ? ", " . db_get_country_name($result['Location_Country'], $CI, 'country_name') : "";
+            $company_address = $address . $city . $state . $country;
             $career_site_url = STORE_PROTOCOL_SSL . db_get_sub_domain($sid);
             //
             $result_array = array();
@@ -1653,7 +1648,7 @@ if (!function_exists('applicant_right_nav')) {
     {
         $CI = &get_instance();
         $desired_job_title = "";
-        
+
         $CI->db->select('sid, desired_job_title');
         $CI->db->where('portal_job_applications_sid', $app_id);
         $CI->db->order_by('sid', 'DESC');
@@ -1926,7 +1921,7 @@ if (!function_exists('merge_arrays_override_key_values')) {
 
         foreach ($arrayTwo as $key => $value) {
             if ($key === 'title' && !empty($value)) {
-                $result[$key] = $value; 
+                $result[$key] = $value;
             } else if ($value != '' || $value != 0 || $value != null) {
                 $result[$key] = $value;
             } else {
@@ -1965,7 +1960,7 @@ if (!function_exists('put_file_on_aws')) {
 
     function put_file_on_aws($file_input_id)
     {
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName( $file_input_id, true );
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
         //
         require_once(APPPATH . 'libraries/aws/aws.php');
         if (isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'] != '') {
@@ -1985,8 +1980,8 @@ if (!function_exists('upload_file_to_aws')) {
 
     function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME, $key = NULL)
     {
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName( $file_input_id, true );
-        
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($file_input_id, true);
+
         $CI = &get_instance();
 
         //require_once(APPPATH . 'libraries/aws/aws.php');
@@ -2042,7 +2037,7 @@ if (!function_exists('modify_document_name')) {
     function modify_document_name($document_title, $document_name, $company_sid, $suffix)
     {
         $file_name = preg_replace('/[^A-Za-z0-9_]/', '_', pathinfo($document_title, PATHINFO_FILENAME));
-        $file_name = strtolower(str_replace([$company_sid, $suffix, "pdf", "doc", "docx", "xls", "xlsx", "csv", "rtf" ],"",$file_name));
+        $file_name = strtolower(str_replace([$company_sid, $suffix, "pdf", "doc", "docx", "xls", "xlsx", "csv", "rtf"], "", $file_name));
         //
         $last_index_of_dot = strrpos($document_name, '.') + 1;
         $file_ext = substr($document_name, $last_index_of_dot, strlen($document_name) - $last_index_of_dot);
@@ -2068,10 +2063,10 @@ if (!function_exists('db_get_access_level_details')) {
             $access_level = $employer_detail['access_level'];
             $is_executive_admin = $employer_detail['is_executive_admin'];
             //
-            if(
+            if (
                 $employer_detail['access_level_plus'] == 1
                 // $employer_detail['pay_plan_flag'] == 1
-            ){
+            ) {
                 $permissions[] = 'full_access';
                 return $permissions;
             }
@@ -2371,13 +2366,11 @@ if (!function_exists('check_access_permissions')) {
             //
             $document_permissions = ["employee_management", "add_history_documents", "index"];
             if (in_array($function_name, $document_permissions) && $canAccessDocument) {
-
             } else {
                 $CI = &get_instance();
                 $CI->session->set_flashdata('message', SECURITY_PERMISSIONS_ERROR);
-                redirect($reload_location, "location"); 
+                redirect($reload_location, "location");
             }
-            
         }
     }
 }
@@ -2555,7 +2548,7 @@ if (!function_exists('check_user_status')) {
         $CI->db->select('sid, parent_sid');
         $CI->db->from('users');
         $CI->db->where('sid', $user_sid);
-        if(!$CI->session->userdata('user_id')){
+        if (!$CI->session->userdata('user_id')) {
             $CI->db->where('active', 1);
             $CI->db->where('terminated_status', 0);
         }
@@ -4360,7 +4353,7 @@ if (!function_exists('log_and_send_templated_email')) {
     {
         if (empty($to) || $to == NULL || is_active_employee_or_company($to) == 0) return 0;
         // if (empty($to) || $to == NULL) return 0;
-        
+
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
         $emailTemplateSubject = $emailTemplateData['subject'];
@@ -4368,7 +4361,7 @@ if (!function_exists('log_and_send_templated_email')) {
         //
         if (!empty($replacement_array)) {
             foreach ($replacement_array as $key => $value) {
-                $modify_value = $key == "username"? $value : ucwords($value);
+                $modify_value = $key == "username" ? $value : ucwords($value);
                 $emailTemplateBody = str_replace('{{' . $key . '}}', $modify_value, $emailTemplateBody);
                 $emailTemplateSubject = str_replace('{{' . $key . '}}', $value, $emailTemplateSubject);
                 $emailTemplateFromName = str_replace('{{' . $key . '}}', $value, $emailTemplateFromName);
@@ -4379,7 +4372,7 @@ if (!function_exists('log_and_send_templated_email')) {
             //
             $user_info = get_user_required_info($extra_user_info["user_sid"], $extra_user_info["user_type"]);
             //
-            if($user_info){
+            if ($user_info) {
                 //
                 $emailTemplateFromName = convert_email_template($emailTemplateFromName, $user_info);
                 $emailTemplateSubject = convert_email_template($emailTemplateSubject, $user_info);
@@ -4405,7 +4398,7 @@ if (!function_exists('log_and_send_templated_email')) {
                 . EMAIL_FOOTER;
         }
 
-        if ($log_email == 1) { 
+        if ($log_email == 1) {
             log_and_sendEmail($from, $to, $subject, $body, $from_name, $template_id);
         } else {
             sendMail($from, $to, $subject, $body, $from_name);
@@ -4414,11 +4407,12 @@ if (!function_exists('log_and_send_templated_email')) {
 }
 
 if (!function_exists('get_user_required_info')) {
-    function get_user_required_info ($user_sid, $user_type) {
+    function get_user_required_info($user_sid, $user_type)
+    {
         $columns = 'first_name, last_name, email, parent_sid, job_title';
         $table_name = 'users';
         //
-        if($user_type == 'applicant'){
+        if ($user_type == 'applicant') {
             $columns = 'first_name, last_name, email, employer_sid AS parent_sid, desired_job_title AS job_title';
             $table_name = 'portal_job_applications';
         }
@@ -4998,27 +4992,28 @@ if (!function_exists('count_learning_center')) {
 }
 
 if (!function_exists('onlineVideoCount')) {
-    function onlineVideoCount ($company_sid, $user_sid, $user_type, $fromProfile = false) {
+    function onlineVideoCount($company_sid, $user_sid, $user_type, $fromProfile = false)
+    {
         $CI = &get_instance();
         //
         $r = [];
         //
-        if($user_type == 'employee'){
+        if ($user_type == 'employee') {
             // Get all employees
             $CI->db->select('sid, created_date, video_title, video_description, video_source, video_id, video_start_date, screening_questionnaire_sid')
-            ->select('learning_center_online_videos.video_start_date')
-            ->select('learning_center_online_videos.expired_start_date')
-            ->where('company_sid', $company_sid)
-            ->where('employees_assigned_to', 'all')
-            ->order_by('created_date', 'DESC');
+                ->select('learning_center_online_videos.video_start_date')
+                ->select('learning_center_online_videos.expired_start_date')
+                ->where('company_sid', $company_sid)
+                ->where('employees_assigned_to', 'all')
+                ->order_by('created_date', 'DESC');
             //
-            if(!$fromProfile){
+            if (!$fromProfile) {
                 $CI->db
-                ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
-                ->group_start()
-                ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
-                ->or_where('expired_start_date IS NULL', NULL)
-                ->group_end();
+                    ->where('video_start_date <= ', date('Y-m-d', strtotime('now')))
+                    ->group_start()
+                    ->where('expired_start_date >= ', date('Y-m-d', strtotime('now')))
+                    ->or_where('expired_start_date IS NULL', NULL)
+                    ->group_end();
             }
             //
             $a = $CI->db->get('learning_center_online_videos');
@@ -5027,45 +5022,53 @@ if (!function_exists('onlineVideoCount')) {
             //
             $ids = array();
             //
-            if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+            if (sizeof($b)) {
+                foreach ($b as $k => $v) {
+                    $ids[$v['sid']] = $v['sid'];
+                }
+            }
             //
             $r = $b;
         }
         // Get specific employees
         $CI->db->select('learning_center_online_videos.sid')
-        ->select('learning_center_online_videos.created_date')
-        ->select('learning_center_online_videos.video_title')
-        ->select('learning_center_online_videos.video_description')
-        ->select('learning_center_online_videos.video_source')
-        ->select('learning_center_online_videos.video_id')
-        ->select('learning_center_online_videos.video_start_date')
-        ->select('learning_center_online_videos.expired_start_date')
-        ->select('learning_center_online_videos.screening_questionnaire_sid')
-        ->select('learning_center_online_videos_assignments.learning_center_online_videos_sid')
-        ->where('learning_center_online_videos_assignments.user_type', $user_type)
-        ->where('learning_center_online_videos_assignments.user_sid', $user_sid)
-        ->where('learning_center_online_videos_assignments.status', 1)
-        ->order_by('learning_center_online_videos_assignments.date_assigned', 'DESC')
-        ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid');
+            ->select('learning_center_online_videos.created_date')
+            ->select('learning_center_online_videos.video_title')
+            ->select('learning_center_online_videos.video_description')
+            ->select('learning_center_online_videos.video_source')
+            ->select('learning_center_online_videos.video_id')
+            ->select('learning_center_online_videos.video_start_date')
+            ->select('learning_center_online_videos.expired_start_date')
+            ->select('learning_center_online_videos.screening_questionnaire_sid')
+            ->select('learning_center_online_videos_assignments.learning_center_online_videos_sid')
+            ->where('learning_center_online_videos_assignments.user_type', $user_type)
+            ->where('learning_center_online_videos_assignments.user_sid', $user_sid)
+            ->where('learning_center_online_videos_assignments.status', 1)
+            ->order_by('learning_center_online_videos_assignments.date_assigned', 'DESC')
+            ->join('learning_center_online_videos', 'learning_center_online_videos.sid = learning_center_online_videos_assignments.learning_center_online_videos_sid');
         //
-        if(!$fromProfile){
+        if (!$fromProfile) {
             $CI->db
-            ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
-            ->group_start()
-            ->where('learning_center_online_videos.expired_start_date >= ', date('Y-m-d', strtotime('now')))
-            ->or_where('learning_center_online_videos.expired_start_date IS NULL', NULL)
-            ->group_end();
+                ->where('learning_center_online_videos.video_start_date <= ', date('Y-m-d', strtotime('now')))
+                ->group_start()
+                ->where('learning_center_online_videos.expired_start_date >= ', date('Y-m-d', strtotime('now')))
+                ->or_where('learning_center_online_videos.expired_start_date IS NULL', NULL)
+                ->group_end();
         }
         //
         $a = $CI->db->get('learning_center_online_videos_assignments');
         $b = $a->result_array();
         $a->free_result();
         //
-        if(sizeof($b)){ foreach ($b as $k => $v){ $ids[$v['sid']] = $v['sid'];}}
+        if (sizeof($b)) {
+            foreach ($b as $k => $v) {
+                $ids[$v['sid']] = $v['sid'];
+            }
+        }
         //
         $r = array_merge($r, $b);
         //
-         $current_date = date('Y-m-d');
+        $current_date = date('Y-m-d');
         $video_count = 0;
         $screening_questionnaire_check = 1;
         //
@@ -5073,7 +5076,7 @@ if (!function_exists('onlineVideoCount')) {
             $video_start_date = date('Y-m-d', strtotime($single_r['video_start_date']));
 
             if ($video_start_date < $current_date) {
-                
+
                 $CI->db->select('watched,sid');
                 $CI->db->where('learning_center_online_videos_sid', $single_r['sid']);
                 $CI->db->where('user_sid', $user_sid);
@@ -5091,7 +5094,7 @@ if (!function_exists('onlineVideoCount')) {
 
                         if (empty($user_video_questionnaire_result)) {
                             $video_count = $video_count + 1;
-                        } 
+                        }
                     }
                 }
             }
@@ -5099,10 +5102,11 @@ if (!function_exists('onlineVideoCount')) {
 
         return $video_count;
     }
-}    
+}
 
 if (!function_exists('trainingSessionCount')) {
-    function trainingSessionCount ($company_sid, $user_sid, $user_type) {
+    function trainingSessionCount($company_sid, $user_sid, $user_type)
+    {
         $CI = &get_instance();
         //
         $result = $CI->db
@@ -5125,7 +5129,8 @@ if (!function_exists('trainingSessionCount')) {
                 //
                 if ($v0['employees_assigned_to'] == 'specific') {
                     // Check if it is assigned to login employee
-                    if ($CI->db
+                    if (
+                        $CI->db
                         ->where('training_session_sid', $v0['id'])
                         ->where('user_sid', $user_sid)
                         ->where('user_type', $user_type)
@@ -5139,7 +5144,7 @@ if (!function_exists('trainingSessionCount')) {
         }
         return $trainingSessionCount;
     }
-}    
+}
 
 if (!function_exists('count_e_signature')) {
 
@@ -5231,7 +5236,7 @@ if (!function_exists('get_users_list')) {
         $CI = &get_instance();
 
         if ($type == 'employee') {
-            $CI->db->select('access_level, is_executive_admin, '.( getUserFields() ).'');
+            $CI->db->select('access_level, is_executive_admin, ' . (getUserFields()) . '');
             $where = array(
                 'parent_sid' => $company_sid,
                 'active' => 1,
@@ -5402,16 +5407,16 @@ if (!function_exists('get_notification_email_contacts')) {
         $all_none_employee_contacts = $CI->db->get('notifications_emails_management')->result_array();
 
         // Remove the in-active / terminated employers
-        if(count($contacts)){
+        if (count($contacts)) {
             foreach ($contacts as $key => $contact) {
-                if($contact['employer_sid'] != 0 && $contact['employer_sid'] != null){
-                    if($contact['userActive'] == 0 || $contact['terminated_status'] == 1) unset($contacts[$key]);
+                if ($contact['employer_sid'] != 0 && $contact['employer_sid'] != null) {
+                    if ($contact['userActive'] == 0 || $contact['terminated_status'] == 1) unset($contacts[$key]);
                 }
             }
             // Reset the array indexes
             $contacts = array_values($contacts);
         }
-        
+
         foreach ($all_none_employee_contacts as $key => $contact) {
             $all_none_employee_contacts[$key]['nem_employer_sid'] = 0;
         }
@@ -10191,7 +10196,7 @@ if (!function_exists('phonenumber_format')) {
         if ($phone_number == $country_code) return '';
         if ($phone_number == '') return '';
         //
-        if(substr($phone_number, 0, 1) == 1){
+        if (substr($phone_number, 0, 1) == 1) {
             $phone_number = substr($phone_number, 1, strlen($phone_number));
         }
         // Removes country code if exists
@@ -11168,7 +11173,7 @@ if (!function_exists('getFileData')) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER , FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
         $data = curl_exec($ch);
         curl_close($ch);
         //
@@ -11191,11 +11196,11 @@ if (!function_exists('remakeEmployeeName')) {
         //
         $r .= ' [' . remakeAccessLevel($o) . ']';
         //
-        if(isset($o['timezone'])){
+        if (isset($o['timezone'])) {
             //
-            $tz = !empty($o['timezone']) 
-            ? $o['timezone']
-            : STORE_DEFAULT_TIMEZONE_ABBR;
+            $tz = !empty($o['timezone'])
+                ? $o['timezone']
+                : STORE_DEFAULT_TIMEZONE_ABBR;
             //
             $r .= ' (' . ($tz) . ')';
         }
@@ -11205,7 +11210,7 @@ if (!function_exists('remakeEmployeeName')) {
 }
 
 if (!function_exists('getEmployerAssignJobs')) {
-    function getEmployerAssignJobs ($employer_sid, $user_sid)
+    function getEmployerAssignJobs($employer_sid, $user_sid)
     {
         $CI = &get_instance();
         $CI->db->select('job_sid');
@@ -11222,10 +11227,10 @@ if (!function_exists('getEmployerAssignJobs')) {
             $CI->db->where('portal_job_applications_sid', $user_sid);
             $CI->db->where_in('job_sid', array_column($record_arr, 'job_sid'));
             //
-            if($CI->db->count_all_results('portal_applicant_jobs_list')){
+            if ($CI->db->count_all_results('portal_applicant_jobs_list')) {
                 return true;
             }
-        } 
+        }
 
         // For candidate
         $CI->db->select('sid');
@@ -11233,7 +11238,7 @@ if (!function_exists('getEmployerAssignJobs')) {
         $CI->db->where('applicant_sid', $user_sid);
         $CI->db->where('status', 'assigned');
         //
-        if($CI->db->count_all_results('assignment_management')){
+        if ($CI->db->count_all_results('assignment_management')) {
             return true;
         }
 
@@ -11260,7 +11265,7 @@ if (!function_exists('putFileOnAWSBase64')) {
         $fileName
     ) {
         //
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName( $fileName, false );
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($fileName, false);
         //
         $CI = &get_instance();
         // Set local path
@@ -11343,22 +11348,23 @@ if (!function_exists('ssvReplace')) {
 
 
 //
-if(!function_exists('isDocumentCompleted')){
-    function isDocumentCompleted(&$documents){
-        foreach($documents as $k0 => $document){
+if (!function_exists('isDocumentCompleted')) {
+    function isDocumentCompleted(&$documents)
+    {
+        foreach ($documents as $k0 => $document) {
             //
-            if($document['status'] != 1) {
+            if ($document['status'] != 1) {
                 unset($documents[$k0]);
                 continue;
             }
             // Column to check
             $is_magic_tag_exist = preg_match('/{{(.*?)}}/', $document['document_description']) ? true : false;
             //
-            if(!$is_magic_tag_exist) $is_magic_tag_exist = preg_match('/<select(.*?)>/', $document['document_description']);
+            if (!$is_magic_tag_exist) $is_magic_tag_exist = preg_match('/<select(.*?)>/', $document['document_description']);
             $is_document_completed = 0;
             //
             if ($document['acknowledgment_required'] || $document['download_required'] || $document['signature_required'] || $is_magic_tag_exist) {
-                            
+
                 if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1 && $document['signature_required'] == 1) {
                     if ($document['uploaded'] == 1) {
                         $is_document_completed = 1;
@@ -11421,25 +11427,26 @@ if(!function_exists('isDocumentCompleted')){
                     }
                 }
 
-                if ($is_document_completed == 0) { 
+                if ($is_document_completed == 0) {
                     unset($documents[$k0]);
                     continue;
                 }
-            } 
+            }
         }
         //
         $documents = array_values($documents);
     }
 }
 
-if(!function_exists('loadTCPDF')){
-    function loadTCPDF(){
+if (!function_exists('loadTCPDF')) {
+    function loadTCPDF()
+    {
         // always load alternative config file for examples
-        require_once( ROOTPATH.'vendor/tcpdf/config/tcpdf_config.php');
+        require_once(ROOTPATH . 'vendor/tcpdf/config/tcpdf_config.php');
 
         // Include the main TCPDF library (search the library on the following directories).
         $tcpdf_include_dirs = array(
-            APPPATH.'../vendor/tcpdf/tcpdf.php'
+            APPPATH . '../vendor/tcpdf/tcpdf.php'
         );
         foreach ($tcpdf_include_dirs as $tcpdf_include_path) {
             if (@file_exists($tcpdf_include_path)) {
@@ -11451,40 +11458,42 @@ if(!function_exists('loadTCPDF')){
 }
 
 
-if(!function_exists('getFileName')){
+if (!function_exists('getFileName')) {
     function getFileName(
         $o,
         $u,
         $a = ''
-    ){
+    ) {
         //
         $t = explode('.', $u);
-        $ue = '.'.$t[count($t) - 1];
-        $ue = $a == '' ? $ue : $a.$ue;
+        $ue = '.' . $t[count($t) - 1];
+        $ue = $a == '' ? $ue : $a . $ue;
         //
-        if(strpos($o, '.') === false) return $o.$ue;
+        if (strpos($o, '.') === false) return $o . $ue;
         return $o;
     }
 }
 
 
 //
-if(!function_exists('getSendDocumentEmailButton')){
-    function getSendDocumentEmailButton($assignedDocument, $employee, $userType){
-        if($userType == 'employee') return '';
+if (!function_exists('getSendDocumentEmailButton')) {
+    function getSendDocumentEmailButton($assignedDocument, $employee, $userType)
+    {
+        if ($userType == 'employee') return '';
         //
-        $content = 'Send <strong>'.($assignedDocument['document_title']).'</strong> to <strong>'.($employee['first_name'].' '.$employee['last_name']).'</strong> by email';
+        $content = 'Send <strong>' . ($assignedDocument['document_title']) . '</strong> to <strong>' . ($employee['first_name'] . ' ' . $employee['last_name']) . '</strong> by email';
         $content = 'Send document by email to complete without going through OnBoarding process.';
         //
-        $sendBTN = '<button class="btn btn-success btn-sm btn-block js-send-document" data-id="'.($assignedDocument['sid']).'" data-placement="left"  title="Send Document By Email" data-content="'.($content).'">Send Document</button>';
+        $sendBTN = '<button class="btn btn-success btn-sm btn-block js-send-document" data-id="' . ($assignedDocument['sid']) . '" data-placement="left"  title="Send Document By Email" data-content="' . ($content) . '">Send Document</button>';
         return $sendBTN;
     }
 }
 
 
 //
-if(!function_exists('replace')){
-    function replace($a, &$t){
+if (!function_exists('replace')) {
+    function replace($a, &$t)
+    {
         $t = str_replace(
             array_keys($a),
             $a,
@@ -11495,8 +11504,9 @@ if(!function_exists('replace')){
 
 
 //
-if(!function_exists('replaceDocumentContentTags')){
-    function replaceDocumentContentTags(&$content, $companySid, $userSid, $userType, $documentSid, $forDownload = false){
+if (!function_exists('replaceDocumentContentTags')) {
+    function replaceDocumentContentTags(&$content, $companySid, $userSid, $userType, $documentSid, $forDownload = false)
+    {
         $document_content = replace_tags_for_document($companySid, $userSid, $userType, $content, $documentSid, 0, false, $forDownload);
 
         $value = '<div class="div-editable fillable_input_field input-grey" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
@@ -11506,10 +11516,10 @@ if(!function_exists('replaceDocumentContentTags')){
         $document_content = str_replace('[Target User Checkbox]', $value, $document_content);
 
         //E_signature process
-        $signature_bas64_image = '<a class="btn blue-button btn-sm get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="draw_upload_img" />';
-        $init_signature_bas64_image = '<a class="btn blue-button btn-sm get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="target_signature_init" />';
+        $signature_bas64_image = '<a class="btn blue-button btn-sm get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="draw_upload_img" />';
+        $init_signature_bas64_image = '<a class="btn blue-button btn-sm get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="target_signature_init" />';
         $signature_timestamp = '<a class="btn blue-button btn-sm get_signature_date" href="javascript:;">Sign Date</a><p id="target_signature_timestamp"></p>';
-        
+
         $value = ' ';
         $document_content = str_replace($signature_bas64_image, $value, $document_content);
         $document_content = str_replace($init_signature_bas64_image, $value, $document_content);
@@ -11521,14 +11531,15 @@ if(!function_exists('replaceDocumentContentTags')){
 
 
 //
-if(!function_exists('getFilePathForIframe')){
-    function getFilePathForIframe($document, $withIframe = true, $props = []){
+if (!function_exists('getFilePathForIframe')) {
+    function getFilePathForIframe($document, $withIframe = true, $props = [])
+    {
         //
         $dn = isset($document['document_s3_name']) ? $document['document_s3_name'] : $document;
         //
-        if(empty($dn)) return '';
+        if (empty($dn)) return '';
         //
-        if(!$withIframe) return AWS_S3_BUCKET_URL . $dn;
+        if (!$withIframe) return AWS_S3_BUCKET_URL . $dn;
         //
         $iframe = '<iframe src="{{iframe_url}}" class="js-document-loader-iframe frameborder="0" width="100%" height="600" ></iframe>';
         //
@@ -11536,9 +11547,9 @@ if(!function_exists('getFilePathForIframe')){
         //
         $ext = $t[count($t) - 1];
         //
-        if(in_array($ext, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'])) $nn = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $dn);
-        else if(in_array($ext, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) return '<img class="img-responsive" src="'.(AWS_S3_BUCKET_URL . $dn).'" '.(implode(',', $props)).'/>';
-        else $nn = 'https://docs.google.com/gview?url='.(AWS_S3_BUCKET_URL.$dn).'&embedded=true';
+        if (in_array($ext, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'])) $nn = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $dn);
+        else if (in_array($ext, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) return '<img class="img-responsive" src="' . (AWS_S3_BUCKET_URL . $dn) . '" ' . (implode(',', $props)) . '/>';
+        else $nn = 'https://docs.google.com/gview?url=' . (AWS_S3_BUCKET_URL . $dn) . '&embedded=true';
         //
         replace(['{{iframe_url}}' => $nn], $iframe);
         return $iframe;
@@ -11547,22 +11558,24 @@ if(!function_exists('getFilePathForIframe')){
 
 
 //
-if(!function_exists('getInstructions')){
-    function getInstructions($document){
-        if(strip_tags($document['document_description']) == '') return '';
+if (!function_exists('getInstructions')) {
+    function getInstructions($document)
+    {
+        if (strip_tags($document['document_description']) == '') return '';
         //
         return ' 
         <div class="panel panel-primary" style="margin-top: 10px;">
             <div class="panel-heading stev_blue">
                 <strong>Instructions</strong>
             </div>
-            <div class="panel-body">'.( html_entity_decode($document['document_description']) ).'</div>
+            <div class="panel-body">' . (html_entity_decode($document['document_description'])) . '</div>
         </div>';
     }
 }
 
-if(!function_exists('getReviewType')){
-    function getReviewType($code, $type = 'id'){
+if (!function_exists('getReviewType')) {
+    function getReviewType($code, $type = 'id')
+    {
         $a = [
             '1' => 'entire_company',
             '2' => 'sub_cordinates',
@@ -11570,19 +11583,20 @@ if(!function_exists('getReviewType')){
             '4' => 'custom'
         ];
         //
-        if($type == 'text') return $a[$code];
+        if ($type == 'text') return $a[$code];
         //
         $code = preg_replace('/[^a-zA-Z]/', '_', strtolower($code));
         //
-        if($code === 'specific_people') $code = 'specific_employees';
+        if ($code === 'specific_people') $code = 'specific_employees';
         //
-        foreach($a as $k => $v) if($v == $code) return $k;
+        foreach ($a as $k => $v) if ($v == $code) return $k;
         return 1;
     }
 }
 
-if(!function_exists('getQuestion')){
-    function getQuestion($question, &$a){
+if (!function_exists('getQuestion')) {
+    function getQuestion($question, &$a)
+    {
         //
         $row = '';
         $rating = [];
@@ -11590,7 +11604,7 @@ if(!function_exists('getQuestion')){
         $a[$question['sid']]['sid'] = 0;
         $a[$question['sid']]['edit'] = 0;
         //
-        if(count($question['ratingLabels'])){
+        if (count($question['ratingLabels'])) {
             $rating = array_column($question['ratingLabels'], 'text');
         }
         //
@@ -11598,27 +11612,27 @@ if(!function_exists('getQuestion')){
             $a[$question['sid']]['rating'] = '';
             for ($i = 1; $i <= $question['ratingScale']; $i++) {
                 $class = '';
-                if(($question['type'] == 'rating' || $question['type'] == 'text-rating') && !$question['useLabels']){
+                if (($question['type'] == 'rating' || $question['type'] == 'text-rating') && !$question['useLabels']) {
                     $class = 'cs-rating-box';
-                } else{
+                } else {
                     $class = 'cs-rating-text-box';
                 }
                 //
-                $row .= '<div data-pid="'.($question['sid']).'" class="col-sm-2 col-xs-2 cs-rating-btn '.( $class ).' '.hasAnswer($question, 'rating', $i, $a).'">';
-                $row .= '<p>'.($i).'</p>';
-                if($question['type'] == 'text-rating' && count($rating)){
-                    $row .= '<p>'.($rating[$i -1]).'</p>';
+                $row .= '<div data-pid="' . ($question['sid']) . '" class="col-sm-2 col-xs-2 cs-rating-btn ' . ($class) . ' ' . hasAnswer($question, 'rating', $i, $a) . '">';
+                $row .= '<p>' . ($i) . '</p>';
+                if ($question['type'] == 'text-rating' && count($rating)) {
+                    $row .= '<p>' . ($rating[$i - 1]) . '</p>';
                 }
                 $row .= '</div>';
-            } 
-        } 
+            }
+        }
         //
         if ($question['type'] == 'text' || $question['type'] == 'text-rating') {
             $a[$question['sid']]['text'] = '';
-            if($question['includeNA'] == 1){
+            if ($question['includeNA'] == 1) {
                 $a[$question['sid']]['text'] = '-1';
             }
-            $row .= '<textarea type="text" data-pid="'.($question['sid']).'" class="form-control cs-text-answer" rows="5" style="background-color: #eee;'.( $question['type'] == 'text-rating' ? "margin-top: 100px" : "").'" placeholder="Write the answer here...."  '.( $question['includeNA'] == 1 ? 'disabled="true"' : '' ).'>'.hasAnswer($question, 'text',0,$a).'</textarea>';
+            $row .= '<textarea type="text" data-pid="' . ($question['sid']) . '" class="form-control cs-text-answer" rows="5" style="background-color: #eee;' . ($question['type'] == 'text-rating' ? "margin-top: 100px" : "") . '" placeholder="Write the answer here...."  ' . ($question['includeNA'] == 1 ? 'disabled="true"' : '') . '>' . hasAnswer($question, 'text', 0, $a) . '</textarea>';
         }
         //
         return $row;
@@ -11626,304 +11640,304 @@ if(!function_exists('getQuestion')){
 }
 
 //
-if(!function_exists('cleanDocumentsByPermission')){
+if (!function_exists('cleanDocumentsByPermission')) {
     function cleanDocumentsByPermission(
-        &$data, 
-        $employerDetails, 
-        $withCategories = false, 
+        &$data,
+        $employerDetails,
+        $withCategories = false,
         $dt = []
-    ){
+    ) {
         //
-        if(!count($data)) return;
-        if($employerDetails['access_level_plus'] == 1) return;
-        if($employerDetails['pay_plan_flag'] == 1) return;
+        if (!count($data)) return;
+        if ($employerDetails['access_level_plus'] == 1) return;
+        if ($employerDetails['pay_plan_flag'] == 1) return;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
         // if($role == 'admin') return;
         //
-        if($withCategories){
+        if ($withCategories) {
             //
-            if(isset($data['categories_no_action_documents'])){
-                foreach($data['categories_no_action_documents'] as $k0 => $v1){
+            if (isset($data['categories_no_action_documents'])) {
+                foreach ($data['categories_no_action_documents'] as $k0 => $v1) {
                     //
-                    if(!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
+                    if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
-                    foreach($v1['documents'] as $k2 => $document){
+                    foreach ($v1['documents'] as $k2 => $document) {
                         //
-                        if( !empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))){
-                            continue;
-                        }
-            
-                        //
-                        if( !empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees'])) ){
+                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
                             continue;
                         }
 
                         //
-                        if( !empty($document['allowed_departments']) && count($dt['Departments']) ){
+                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
+                            continue;
+                        }
+
+                        //
+                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
                             //
                             $b = explode(',', $document['allowed_departments']);
                             //
-                            if(in_array('-1', $b)) continue;
+                            if (in_array('-1', $b)) continue;
                             //
                             $yes = false;
                             //
-                            foreach($b as $c) if(in_array($c, $dt['Departments'])) $yes = true;
-                            if($yes) continue;
+                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
+                            if ($yes) continue;
                         }
 
                         //
-                        if( !empty($document['allowed_teams']) && count($dt['Teams']) ){
+                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
                             //
                             $b = explode(',', $document['allowed_teams']);
                             //
-                            if(in_array('-1', $b)) continue;
+                            if (in_array('-1', $b)) continue;
                             //
                             $yes = false;
                             //
-                            foreach($b as $c) if(in_array($c, $dt['Teams'])) $yes = true;
-                            if($yes) continue;
+                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
+                            if ($yes) continue;
                         }
                         //
                         unset($data['categories_no_action_documents'][$k0]['documents'][$k2]);
                     }
                     //
-                    $data['categories_no_action_documents'][$k0]['documents'] = array_values( $data['categories_no_action_documents'][$k0]['documents'] );
+                    $data['categories_no_action_documents'][$k0]['documents'] = array_values($data['categories_no_action_documents'][$k0]['documents']);
                 }
             }
 
             //
-            else if(isset($data['categories_documents_completed'])){
-                foreach($data['categories_documents_completed'] as $k0 => $v1){
+            else if (isset($data['categories_documents_completed'])) {
+                foreach ($data['categories_documents_completed'] as $k0 => $v1) {
                     //
-                    if(!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
+                    if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
-                    foreach($v1['documents'] as $k2 => $document){
+                    foreach ($v1['documents'] as $k2 => $document) {
                         //
-                        if( !empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))){
+                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
                             continue;
-                        }
-            
-                        //
-                        if( !empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees'])) ){
-                            continue;
-                        }
-                        //
-                        if( !empty($document['allowed_departments']) && count($dt['Departments']) ){
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if(in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach($b as $c) if(in_array($c, $dt['Departments'])) $yes = true;
-                            if($yes) continue;
                         }
 
                         //
-                        if( !empty($document['allowed_teams']) && count($dt['Teams']) ){
+                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
+                            continue;
+                        }
+                        //
+                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
                             //
-                            $b = explode(',', $document['allowed_teams']);
+                            $b = explode(',', $document['allowed_departments']);
                             //
-                            if(in_array('-1', $b)) continue;
+                            if (in_array('-1', $b)) continue;
                             //
                             $yes = false;
                             //
-                            foreach($b as $c) if(in_array($c, $dt['Teams'])) $yes = true;
-                            if($yes) continue;
+                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
+                            if ($yes) continue;
+                        }
+
+                        //
+                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
+                            //
+                            $b = explode(',', $document['allowed_teams']);
+                            //
+                            if (in_array('-1', $b)) continue;
+                            //
+                            $yes = false;
+                            //
+                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
+                            if ($yes) continue;
                         }
                         //
                         unset($v1['documents'][$k2]);
                     }
                     //
-                    $data['categories_documents_completed'][$k0] = array_values( $v1['documents'] );
+                    $data['categories_documents_completed'][$k0] = array_values($v1['documents']);
                 }
             }
 
             //
-            else if(isset($data['no_action_document_categories'])){
-                foreach($data['no_action_document_categories'] as $k0 => $v1){
+            else if (isset($data['no_action_document_categories'])) {
+                foreach ($data['no_action_document_categories'] as $k0 => $v1) {
                     //
-                    if(!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
+                    if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
-                    foreach($v1['documents'] as $k2 => $document){
+                    foreach ($v1['documents'] as $k2 => $document) {
                         //
-                        if( !empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))){
-                            continue;
-                        }
-            
-                        //
-                        if( !empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees'])) ){
+                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
                             continue;
                         }
 
                         //
-                        if( !empty($document['allowed_departments']) && count($dt['Departments']) ){
+                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
+                            continue;
+                        }
+
+                        //
+                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
                             //
                             $b = explode(',', $document['allowed_departments']);
                             //
-                            if(in_array('-1', $b)) continue;
+                            if (in_array('-1', $b)) continue;
                             //
                             $yes = false;
                             //
-                            foreach($b as $c) if(in_array($c, $dt['Departments'])) $yes = true;
-                            if($yes) continue;
+                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
+                            if ($yes) continue;
                         }
 
                         //
-                        if( !empty($document['allowed_teams']) && count($dt['Teams']) ){
+                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
                             //
                             $b = explode(',', $document['allowed_teams']);
                             //
-                            if(in_array('-1', $b)) continue;
+                            if (in_array('-1', $b)) continue;
                             //
                             $yes = false;
                             //
-                            foreach($b as $c) if(in_array($c, $dt['Teams'])) $yes = true;
-                            if($yes) continue;
+                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
+                            if ($yes) continue;
                         }
                         //
                         unset($v1['documents'][$k2]);
                     }
                     //
-                    $data['no_action_document_categories'][$k0] = array_values( $v1['documents'] );
+                    $data['no_action_document_categories'][$k0] = array_values($v1['documents']);
                 }
             }
 
             //
-            else if(isset($data['completed_documents'])){
-                foreach($data['completed_documents'] as $k0 => $documents){
+            else if (isset($data['completed_documents'])) {
+                foreach ($data['completed_documents'] as $k0 => $documents) {
                     //
-                    foreach($documents as $k2 => $document){
+                    foreach ($documents as $k2 => $document) {
                         //
-                        if( !empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))){
+                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
                             continue;
-                        }
-            
-                        //
-                        if( !empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees'])) ){
-                            continue;
-                        }
-                       //
-                        if( !empty($document['allowed_departments']) && count($dt['Departments']) ){
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if(in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach($b as $c) if(in_array($c, $dt['Departments'])) $yes = true;
-                            if($yes) continue;
                         }
 
                         //
-                        if( !empty($document['allowed_teams']) && count($dt['Teams']) ){
+                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
+                            continue;
+                        }
+                        //
+                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
                             //
-                            $b = explode(',', $document['allowed_teams']);
+                            $b = explode(',', $document['allowed_departments']);
                             //
-                            if(in_array('-1', $b)) continue;
+                            if (in_array('-1', $b)) continue;
                             //
                             $yes = false;
                             //
-                            foreach($b as $c) if(in_array($c, $dt['Teams'])) $yes = true;
-                            if($yes) continue;
+                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
+                            if ($yes) continue;
+                        }
+
+                        //
+                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
+                            //
+                            $b = explode(',', $document['allowed_teams']);
+                            //
+                            if (in_array('-1', $b)) continue;
+                            //
+                            $yes = false;
+                            //
+                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
+                            if ($yes) continue;
                         }
                         //
                         unset($documents[$k2]);
                     }
                     //
-                    $data['completed_documents'] = array_values( $documents );
+                    $data['completed_documents'] = array_values($documents);
                 }
             }
 
             //
-            else if(isset($data['no_action_documents'])){
-                foreach($data['no_action_documents'] as $k0 => $documents){
+            else if (isset($data['no_action_documents'])) {
+                foreach ($data['no_action_documents'] as $k0 => $documents) {
                     //
-                    foreach($documents as $k2 => $document){
+                    foreach ($documents as $k2 => $document) {
                         //
-                        if( !empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))){
+                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
                             continue;
-                        }
-            
-                        //
-                        if( !empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees'])) ){
-                            continue;
-                        }
-                        //
-                        if( !empty($document['allowed_departments']) && count($dt['Departments']) ){
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if(in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach($b as $c) if(in_array($c, $dt['Departments'])) $yes = true;
-                            if($yes) continue;
                         }
 
                         //
-                        if( !empty($document['allowed_teams']) && count($dt['Teams']) ){
+                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
+                            continue;
+                        }
+                        //
+                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
                             //
-                            $b = explode(',', $document['allowed_teams']);
+                            $b = explode(',', $document['allowed_departments']);
                             //
-                            if(in_array('-1', $b)) continue;
+                            if (in_array('-1', $b)) continue;
                             //
                             $yes = false;
                             //
-                            foreach($b as $c) if(in_array($c, $dt['Teams'])) $yes = true;
-                            if($yes) continue;
+                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
+                            if ($yes) continue;
+                        }
+
+                        //
+                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
+                            //
+                            $b = explode(',', $document['allowed_teams']);
+                            //
+                            if (in_array('-1', $b)) continue;
+                            //
+                            $yes = false;
+                            //
+                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
+                            if ($yes) continue;
                         }
                         //
                         unset($documents[$k2]);
                     }
                     //
-                    $data['no_action_documents'] = array_values( $documents );
+                    $data['no_action_documents'] = array_values($documents);
                 }
             }
 
             //
-            else if(isset($data[0]['name'])){
-                foreach($data as $k0 => $documents){
+            else if (isset($data[0]['name'])) {
+                foreach ($data as $k0 => $documents) {
                     //
-                    foreach($documents['documents'] as $k2 => $document){
+                    foreach ($documents['documents'] as $k2 => $document) {
                         //
-                        if( !empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))){
+                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
                             continue;
-                        }
-            
-                        //
-                        if( !empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees'])) ){
-                            continue;
-                        }
-                        //
-                        if( !empty($document['allowed_departments']) && count($dt['Departments']) ){
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if(in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach($b as $c) if(in_array($c, $dt['Departments'])) $yes = true;
-                            if($yes) continue;
                         }
 
                         //
-                        if( !empty($document['allowed_teams']) && count($dt['Teams']) ){
+                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
+                            continue;
+                        }
+                        //
+                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
                             //
-                            $b = explode(',', $document['allowed_teams']);
+                            $b = explode(',', $document['allowed_departments']);
                             //
-                            if(in_array('-1', $b)) continue;
+                            if (in_array('-1', $b)) continue;
                             //
                             $yes = false;
                             //
-                            foreach($b as $c) if(in_array($c, $dt['Teams'])) $yes = true;
-                            if($yes) continue;
+                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
+                            if ($yes) continue;
+                        }
+
+                        //
+                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
+                            //
+                            $b = explode(',', $document['allowed_teams']);
+                            //
+                            if (in_array('-1', $b)) continue;
+                            //
+                            $yes = false;
+                            //
+                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
+                            if ($yes) continue;
                         }
                         //
                         $documents['documents_count']--;
@@ -11931,41 +11945,41 @@ if(!function_exists('cleanDocumentsByPermission')){
                     }
                     //
                     $data[$k0]['documents_count'] = $documents['documents_count'];
-                    $data[$k0]['documents'] = array_values( $documents['documents'] );
+                    $data[$k0]['documents'] = array_values($documents['documents']);
                 }
             }
-        } else{
+        } else {
             //
-            foreach($data as $k0 => $documents){
+            foreach ($data as $k0 => $documents) {
                 //
-                if(!is_array($documents) ||!isset($documents[0]) || !isset($documents[0]['document_title'])) continue;
+                if (!is_array($documents) || !isset($documents[0]) || !isset($documents[0]['document_title'])) continue;
                 //
-                foreach($documents as $k1 => $document) {
+                foreach ($documents as $k1 => $document) {
                     //
-                    if( !empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))){
-                        continue;
-                    }
-        
-                    //
-                    if( !empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees'])) ){
+                    if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
                         continue;
                     }
 
                     //
-                    if( !empty($document['allowed_departments']) && count($dt['Departments']) ){
+                    if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
+                        continue;
+                    }
+
+                    //
+                    if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
                         //
                         $b = explode(',', $document['allowed_departments']);
                         //
-                        if(in_array('-1', $b)) continue;
+                        if (in_array('-1', $b)) continue;
                         //
                         $yes = false;
                         //
-                        foreach($b as $c) if(in_array($c, $dt['Departments'])) $yes = true;
-                        if($yes) continue;
+                        foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
+                        if ($yes) continue;
                     }
 
                     //
-                    if( !empty($document['allowed_teams']) && count($dt['Teams']) ){
+                    if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
                         //
                         $b = explode(',', $document['allowed_teams']);
                         // _e('--------------------------');
@@ -11973,12 +11987,12 @@ if(!function_exists('cleanDocumentsByPermission')){
                         // _e($dt['Teams']);
                         // _e('--------------------------');
                         //
-                        if(in_array('-1', $b)) continue;
+                        if (in_array('-1', $b)) continue;
                         //
                         $yes = false;
                         //
-                        foreach($b as $c) if(in_array($c, $dt['Teams'])) $yes = true;
-                        if($yes) continue;
+                        foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
+                        if ($yes) continue;
                     }
                     //
                     unset($documents[$k1]);
@@ -11991,56 +12005,56 @@ if(!function_exists('cleanDocumentsByPermission')){
 }
 
 //
-if(!function_exists('cleanAssignedDocumentsByPermission')){
+if (!function_exists('cleanAssignedDocumentsByPermission')) {
     function cleanAssignedDocumentsByPermission(
-        $documents, 
-        $employerDetails, 
+        $documents,
+        $employerDetails,
         $dt = []
-    ){
+    ) {
         //
-        if(!count($documents)) return $documents;
-        if($employerDetails['access_level_plus'] == 1) return $documents;
-        if($employerDetails['pay_plan_flag'] == 1) return $documents;
+        if (!count($documents)) return $documents;
+        if ($employerDetails['access_level_plus'] == 1) return $documents;
+        if ($employerDetails['pay_plan_flag'] == 1) return $documents;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
         // if($role == 'admin') return $documents;
         //
-        foreach($documents as $k0 => $document){
+        foreach ($documents as $k0 => $document) {
             //
-            if( !empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))){
+            if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
                 continue;
             }
 
             //
-            if( !empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees'])) ){
+            if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
                 continue;
             }
 
             //
-            if( !empty($document['allowed_departments']) && count($dt['Departments']) ){
+            if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
                 //
                 $b = explode(',', $document['allowed_departments']);
                 //
-                if(in_array('-1', $b)) continue;
+                if (in_array('-1', $b)) continue;
                 //
                 $yes = false;
                 //
-                foreach($b as $c) if(in_array($c, $dt['Departments'])) $yes = true;
-                if($yes) continue;
+                foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
+                if ($yes) continue;
             }
 
             //
-            if( !empty($document['allowed_teams']) && count($dt['Teams']) ){
+            if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
                 //
                 $b = explode(',', $document['allowed_teams']);
                 //
-                if(in_array('-1', $b)) continue;
+                if (in_array('-1', $b)) continue;
                 //
                 $yes = false;
                 //
-                foreach($b as $c) if(in_array($c, $dt['Teams'])) $yes = true;
-                if($yes) continue;
+                foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
+                if ($yes) continue;
             }
             //
             unset($documents[$k0]);
@@ -12052,19 +12066,20 @@ if(!function_exists('cleanAssignedDocumentsByPermission')){
     }
 }
 
-if(!function_exists('hasAnswer')){
-    function hasAnswer($question, $type, $index = 0, &$a){
+if (!function_exists('hasAnswer')) {
+    function hasAnswer($question, $type, $index = 0, &$a)
+    {
         //
-        if(!isset($question['answer']) || !count($question['answer'])) return '';
+        if (!isset($question['answer']) || !count($question['answer'])) return '';
         //
-        if($type == 'rating' && $index == $question['answer']['rating_answer']){
+        if ($type == 'rating' && $index == $question['answer']['rating_answer']) {
             $a[$question['sid']]['rating'] = $question['answer']['rating_answer'];
             $a[$question['sid']]['edit'] = 1;
             $a[$question['sid']]['sid'] = $question['answer']['sid'];
             return "active";
         }
         //
-        if($type == 'text'){
+        if ($type == 'text') {
             $a[$question['sid']]['text'] = $question['answer']['text_answer'];
             $a[$question['sid']]['edit'] = 1;
             $a[$question['sid']]['sid'] = $question['answer']['sid'];
@@ -12075,15 +12090,16 @@ if(!function_exists('hasAnswer')){
 
 
 //
-if(!function_exists('getReviewName')){
-    function getReviewName($a, $id, $t = 'reviewer'){
-        foreach($a as $v) {
-            switch($t){
+if (!function_exists('getReviewName')) {
+    function getReviewName($a, $id, $t = 'reviewer')
+    {
+        foreach ($a as $v) {
+            switch ($t) {
                 case 'reviewer':
-                    if($v['conductor_sid'] == $id) return remakeEmployeeName($v);
-                break;
+                    if ($v['conductor_sid'] == $id) return remakeEmployeeName($v);
+                    break;
                 default:
-                    if($v['employee_sid'] == $id) return remakeEmployeeName([
+                    if ($v['employee_sid'] == $id) return remakeEmployeeName([
                         'first_name' => $v['efirst_name'],
                         'last_name' => $v['elast_name'],
                         'access_level' => $v['eaccess_level'],
@@ -12098,8 +12114,9 @@ if(!function_exists('getReviewName')){
 }
 
 //
-if(!function_exists('getUserFields')){
-    function getUserFields(){
+if (!function_exists('getUserFields')) {
+    function getUserFields()
+    {
         $fields  = 'users.sid as userId,';
         $fields .= 'users.first_name,';
         $fields .= 'users.last_name,';
@@ -12121,8 +12138,9 @@ if(!function_exists('getUserFields')){
 }
 
 //
-if(!function_exists('')){
-    function getPDBTN($document, $cls = '', $type = ''){
+if (!function_exists('')) {
+    function getPDBTN($document, $cls = '', $type = '')
+    {
         //
         $r = [
             'pw' => '',
@@ -12140,31 +12158,31 @@ if(!function_exists('')){
         $printURL = base_url('hr_documents_management/perform_action_on_document_content/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/print');
         $downloadURL = base_url('hr_documents_management/perform_action_on_document_content/{{DOCUMENTSID}}/{{DOCUMENTTYPE}}/{{DOCUMENTATYPE}}/download');
         // For Generated
-        if($document['offer_letter_type'] == 'generated' || $document['document_type'] == 'generated'){
+        if ($document['offer_letter_type'] == 'generated' || $document['document_type'] == 'generated') {
             //
-            if($type == ''){
-                if(!empty($document['user_consent'])){
+            if ($type == '') {
+                if (!empty($document['user_consent'])) {
                     $replace['{{DOCUMENTTYPE}}'] = 'submitted';
                 }
             }
             //
             $printURL = str_replace(array_keys($replace), $replace, $printURL);
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
-        } else if($document['offer_letter_type'] == 'uploaded'|| $document['document_type'] == 'uploaded'){
+        } else if ($document['offer_letter_type'] == 'uploaded' || $document['document_type'] == 'uploaded') {
             //
-            if($type == ''){
-                if(!empty($document['user_consent']) || !empty($document['uploaded'])){
+            if ($type == '') {
+                if (!empty($document['user_consent']) || !empty($document['uploaded'])) {
                     $replace['{{DOCUMENTTYPE}}'] = 'submitted';
                 }
             }
             //
             $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
-            $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);            $downloadURL = base_url("hr_documents_management/download_upload_document/".$document['document_s3_name']);
-
-    }else if($document['offer_letter_type'] == 'hybrid_document'|| $document['document_type'] == 'hybrid_document'){
+            $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
+            $downloadURL = base_url("hr_documents_management/download_upload_document/" . $document['document_s3_name']);
+        } else if ($document['offer_letter_type'] == 'hybrid_document' || $document['document_type'] == 'hybrid_document') {
             //
-            if($type == ''){
-                if(!empty($document['user_consent']) || !empty($document['uploaded'])){
+            if ($type == '') {
+                if (!empty($document['user_consent']) || !empty($document['uploaded'])) {
                     $replace['{{DOCUMENTTYPE}}'] = 'submitted';
                 }
             }
@@ -12172,14 +12190,14 @@ if(!function_exists('')){
             $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
         }
-//_e($document, true);
+        //_e($document, true);
         //
-        $r['pw'] = '<a href="'.($printURL).'" class="btn '.($cls).' btn-orange" style="margin-right: 5px" target="_blank">Print</a>';
-        $r['pm'] = '<a href="'.($printURL).'" class="btn '.($cls).' btn-orange"  style="margin-right: 5px" target="_blank">Print</a>';
+        $r['pw'] = '<a href="' . ($printURL) . '" class="btn ' . ($cls) . ' btn-orange" style="margin-right: 5px" target="_blank">Print</a>';
+        $r['pm'] = '<a href="' . ($printURL) . '" class="btn ' . ($cls) . ' btn-orange"  style="margin-right: 5px" target="_blank">Print</a>';
         //
-        $r['dw'] = '<a href="'.($downloadURL).'" class="btn '.($cls).' btn-black" target="_blank">Download</a>';
-        $r['dm'] = '<a href="'.($downloadURL).'" class="btn '.($cls).' btn-black"  target="_blank">Download</a>';
-//_e($r, true);
+        $r['dw'] = '<a href="' . ($downloadURL) . '" class="btn ' . ($cls) . ' btn-black" target="_blank">Download</a>';
+        $r['dm'] = '<a href="' . ($downloadURL) . '" class="btn ' . ($cls) . ' btn-black"  target="_blank">Download</a>';
+        //_e($r, true);
         //
         return $r;
     }
@@ -12207,10 +12225,10 @@ if(!function_exists('')){
  *                  AllCount                - Number of documents
  *             ]
  */
-if(!function_exists('separateDocuments')){
+if (!function_exists('separateDocuments')) {
     function separateDocuments(
         $documents
-    ){
+    ) {
         //
         $r  = [
             'Completed' => [],
@@ -12223,14 +12241,14 @@ if(!function_exists('separateDocuments')){
             'AllCount' => 0
         ];
         //
-        if(!$documents || !count($documents)) return $r;
+        if (!$documents || !count($documents)) return $r;
         //
-        foreach($documents as $document){
+        foreach ($documents as $document) {
             $d = isDocumentCompletedCheck($document);
             //
-            if($d['isNoAction']) $r['NoActionRequired'][] = $document;
-            else if($d['isCompleted']) $r['Completed'][] = $document;
-            else if(!$d['isCompleted']) $r['NotCompleted'][] = $document;
+            if ($d['isNoAction']) $r['NoActionRequired'][] = $document;
+            else if ($d['isCompleted']) $r['Completed'][] = $document;
+            else if (!$d['isCompleted']) $r['NotCompleted'][] = $document;
             $r['All'][] = $document;
         }
         //
@@ -12256,45 +12274,45 @@ if(!function_exists('separateDocuments')){
  *                        time  (timestamp)
  *                        flush (will delete the cached file)
  */
-if(!function_exists('loadCachedFile')){
+if (!function_exists('loadCachedFile')) {
     function loadCachedFile(
-        $file, 
-        $session, 
+        $file,
+        $session,
         $make = false,
         $options = []
-    ){
-        if($session['company_detail']['sid'] != 57) return;
+    ) {
+        if ($session['company_detail']['sid'] != 57) return;
         //
         $cacheTime = isset($options['time']) ? $options['time'] : strtotime('+1 day');
         //
-        $cacheDir = ROOTPATH.'cache/'.$session['company_detail']['sid'].'/'.$session['employer_detail']['sid'].'/'.$file.'/';
+        $cacheDir = ROOTPATH . 'cache/' . $session['company_detail']['sid'] . '/' . $session['employer_detail']['sid'] . '/' . $file . '/';
         //
-        if(!is_dir($cacheDir)) mkdir($cacheDir, DIR_WRITE_MODE, true);
+        if (!is_dir($cacheDir)) mkdir($cacheDir, DIR_WRITE_MODE, true);
         //
-        if($make){
+        if ($make) {
             //
-            $filename = $cacheDir.$cacheTime.'.mak';
+            $filename = $cacheDir . $cacheTime . '.mak';
             //
             $f = fopen($filename, 'w');
             fwrite($f, ob_get_contents());
             fclose($f);
-        } else{
+        } else {
             //
             $s = scandir($cacheDir);
             //
-            if(isset($s[2])){
+            if (isset($s[2])) {
                 //
-                $filename = $cacheDir.$s[2];
+                $filename = $cacheDir . $s[2];
                 //
-                if(isset($options['flush'])){
+                if (isset($options['flush'])) {
                     unlink($filename);
                     exit(0);
                 }
                 //
-                if(file_exists($filename) && $cacheTime > strtotime('now')){
+                if (file_exists($filename) && $cacheTime > strtotime('now')) {
                     include_once $filename;
                     exit(0);
-                } else if(file_exists($filename) && $cacheTime <= strtotime('now')){
+                } else if (file_exists($filename) && $cacheTime <= strtotime('now')) {
                     unlink($filename);
                     exit(0);
                 }
@@ -12304,8 +12322,9 @@ if(!function_exists('loadCachedFile')){
 }
 
 //
-if(!function_exists('getAuthorizedDocument')){
-    function getAuthorizedDocument($document){
+if (!function_exists('getAuthorizedDocument')) {
+    function getAuthorizedDocument($document)
+    {
         if (str_replace('{{authorized_signature}}', '', $document['document_description']) != $document['document_description']) {
             //
             $authorized_sign_status = 0;
@@ -12318,9 +12337,9 @@ if(!function_exists('getAuthorizedDocument')){
             $authorized_sign_status = !empty($document['authorized_signature']) ? 1 : 0;
             //
             if ($is_document_authorized == 1) {
-                return 
-                '<a class="'.( empty($document['authorized_signature']) ? "btn blue-button btn-sm btn-block" : "btn btn-success btn-sm btn-block" ).'  manage_authorized_signature" href="javascript:;" data-auth-signature="'.( $document['sid'] ).'">
-                    '.( $authorized_sign_status == 0 ? "Employer Section - Not Completed" : "Employer Section - Completed" ).'
+                return
+                    '<a class="' . (empty($document['authorized_signature']) ? "btn blue-button btn-sm btn-block" : "btn btn-success btn-sm btn-block") . '  manage_authorized_signature" href="javascript:;" data-auth-signature="' . ($document['sid']) . '">
+                    ' . ($authorized_sign_status == 0 ? "Employer Section - Not Completed" : "Employer Section - Completed") . '
                 </a>';
             }
         }
@@ -12331,12 +12350,12 @@ if(!function_exists('getAuthorizedDocument')){
 
 
 // 
-if(!function_exists('mailAWSSES')){
+if (!function_exists('mailAWSSES')) {
     function mailAWSSES(
         &$mail,
         $to,
         $d = false
-    ){
+    ) {
         //
         $creds = getCreds('AHR');
         // Set XMailer
@@ -12354,7 +12373,7 @@ if(!function_exists('mailAWSSES')){
         // $mail->Port       = $creds->SES->Port; 
         //
         // For local machines
-        if(in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])){
+        if (in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])) {
             // $mail->SMTPOptions = array(
             //     'ssl' => array(
             //         'verify_peer' => false,
@@ -12368,11 +12387,11 @@ if(!function_exists('mailAWSSES')){
     }
 }
 
-if(!function_exists('generateThumb')){
+if (!function_exists('generateThumb')) {
     function generateThumb(
         $file,
         $options = []
-    ){
+    ) {
         //
         $options['width'] = isset($options['width']) ? $options['width'] : 58;
         $options['height'] = isset($options['height']) ? $options['height'] : 58;
@@ -12381,20 +12400,20 @@ if(!function_exists('generateThumb')){
         $CI = &get_instance();
         //
         $filename = str_replace($options['url'], '', $file);
-        $thumb_filename = 'thumb__'.$filename;
+        $thumb_filename = 'thumb__' . $filename;
         //
         $t = explode('.', $file);
         //
-        if(strtolower(end($t)) == 'png') $prefix = "data:image/png;base64,";
+        if (strtolower(end($t)) == 'png') $prefix = "data:image/png;base64,";
         else $prefix = "data:image/jpeg;base64,";
         //
         // $img = trim(strtolower(end($t))) == 'png' ? imagecreatefrompng($file) : imagecreatefromjpeg($file);
         //
         $fileBase64 = getFileData($file);
         //
-        try{
+        try {
             $img = imagecreatefromstring($fileBase64);
-        } catch(Exception $E){
+        } catch (Exception $E) {
             echo $E->getMessage();
         }
         //
@@ -12405,18 +12424,18 @@ if(!function_exists('generateThumb')){
         //
         ob_start();
         //
-        if(strtolower(end($t)) == 'png') imagepng($thumb);
+        if (strtolower(end($t)) == 'png') imagepng($thumb);
         else imagejpeg($thumb);
         //
         $data = ob_get_contents();
         //
         ob_end_clean();
         //
-        $base64 = $prefix.base64_encode($data);
+        $base64 = $prefix . base64_encode($data);
         //
         //
         $CI->load->library('aws_lib');
-        
+
         $options = [
             'Bucket' => AWS_S3_BUCKET_NAME,
             'Key' => $thumb_filename,
@@ -12430,7 +12449,7 @@ if(!function_exists('generateThumb')){
         // echo '<a href="'.( AWS_S3_BUCKET_URL.$thumb_filename ).'" target="_blank" >HERE</a>';
         //
         return [
-            'link' => '<a href="'.( AWS_S3_BUCKET_URL.$thumb_filename ).'" target="_blank" >HERE</a>',
+            'link' => '<a href="' . (AWS_S3_BUCKET_URL . $thumb_filename) . '" target="_blank" >HERE</a>',
             'thumb' => $thumb_filename,
             'filename' => $filename,
             'base64' => $base64
@@ -12441,33 +12460,34 @@ if(!function_exists('generateThumb')){
 /**
  * 
  */
-if(!function_exists('getS3DummyFileName')){
-    function getS3DummyFileName( $filename, $isFile = false ){
+if (!function_exists('getS3DummyFileName')) {
+    function getS3DummyFileName($filename, $isFile = false)
+    {
         // PDFs
         $files['pdf'] = 'test_file_01.pdf';
         // Excel
         $files['csv'] =
-        $files['xls'] = 
-        $files['xlsx'] = 'test_file_01.xlsx';
+            $files['xls'] =
+            $files['xlsx'] = 'test_file_01.xlsx';
         // Word
         $files['doc'] =
-        $files['docx'] = 
-        $files['rtf'] = 'test_file_01.doc';
+            $files['docx'] =
+            $files['rtf'] = 'test_file_01.doc';
         // Images
         $files['jpg'] =
-        $files['jpeg'] =
-        $files['gif'] =
-        $files['svg'] =
-        $files['png'] = 'test_file_01.png';
+            $files['jpeg'] =
+            $files['gif'] =
+            $files['svg'] =
+            $files['png'] = 'test_file_01.png';
         //
-        if($isFile){
-            if(!isset($_FILES[$filename])) return $files['pdf'];
+        if ($isFile) {
+            if (!isset($_FILES[$filename])) return $files['pdf'];
             $filename = $_FILES[$filename]['name'];
         }
         //
-        if(empty($filename)) return $files['pdf'];
+        if (empty($filename)) return $files['pdf'];
         //
-        $ext = strtolower(trim(@end( explode('.', $filename) )));
+        $ext = strtolower(trim(@end(explode('.', $filename))));
         //
         return isset($files[$ext]) ? $files[$ext] : $files['pdf'];
     }
@@ -12485,17 +12505,17 @@ if(!function_exists('getS3DummyFileName')){
  * 
  * @return String
  */
-if(!function_exists('formatDate')){
+if (!function_exists('formatDate')) {
     function formatDate(
         $date,
         $fromFormat = 'Y-m-d',
         $toFormat = 'm/d/Y'
-    ){
-        if(empty($date) || preg_match('/0000/', $date)) return $date;
+    ) {
+        if (empty($date) || preg_match('/0000/', $date)) return $date;
         //
         $t = explode(' ', $date);
         //
-        if(count(explode(' ', $fromFormat)) == 1) $date = $t[0];
+        if (count(explode(' ', $fromFormat)) == 1) $date = $t[0];
         //
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
@@ -12514,13 +12534,13 @@ if(!function_exists('formatDate')){
  * 
  * @return String
  */
-if(!function_exists('formatDateToDB')){
+if (!function_exists('formatDateToDB')) {
     function formatDateToDB(
         $date,
         $fromFormat = 'm/d/Y',
         $toFormat = 'Y-m-d'
-    ){
-        if(empty($date)) return $date;
+    ) {
+        if (empty($date)) return $date;
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }
@@ -12537,12 +12557,12 @@ if(!function_exists('formatDateToDB')){
  * 
  * @return Integer
  */
-if(!function_exists('dateDifferenceInDays')){
+if (!function_exists('dateDifferenceInDays')) {
     function dateDifferenceInDays(
         $date1,
         $date2,
         $format = '%a'
-    ){
+    ) {
         //
         $date1 = DateTime::createFromFormat('Y-m-d', $date1);
         $date2 = DateTime::createFromFormat('Y-m-d', $date2);
@@ -12562,13 +12582,13 @@ if(!function_exists('dateDifferenceInDays')){
         //     return $diff->h + ($diff->days * 24);
         // }
         return $date2->diff($date1)->format($format);
-
     }
 }
 
 //
-if(!function_exists('getCompanyAdminSid')){
-    function getCompanyAdminSid($sid){
+if (!function_exists('getCompanyAdminSid')) {
+    function getCompanyAdminSid($sid)
+    {
         $return_sid = 0;
         //
         $CI = &get_instance();
@@ -12585,7 +12605,7 @@ if(!function_exists('getCompanyAdminSid')){
         $admin_plus = $CI->db->get('users')->row_array();
 
         if (empty($admin_plus)) {
-            
+
             $CI = &get_instance();
             $CI->db->select('sid');
             $CI->db->where('access_level', 'Admin');
@@ -12597,8 +12617,7 @@ if(!function_exists('getCompanyAdminSid')){
 
             if (!empty($admin_payplan)) {
                 $return_sid = $simple_admin['sid'];
-            }   
-
+            }
         } else {
             $return_sid = $admin_plus['sid'];
         }
@@ -12610,7 +12629,8 @@ if(!function_exists('getCompanyAdminSid')){
 
 
 // Accrual to text
-function getAccrualText($accrualOBJ, $isNewHire = false) {
+function getAccrualText($accrualOBJ, $isNewHire = false)
+{
     //
     $method = $accrualOBJ['method'] == null ? 'days_per_year' : $accrualOBJ['method'];
     $frequency = $accrualOBJ['frequency'] === null ? 'none' : $accrualOBJ['frequency'];
@@ -12651,11 +12671,11 @@ function getAccrualText($accrualOBJ, $isNewHire = false) {
         $accrue = ` "Unlimited" days per year`;
         return preg_replace('/{{accrue}}/', $accrue, preg_replace('/{{time}}/', $time, $text));
     }
-    
+
     // Case 1
     if ($method == 'hours_per_month' && $frequency == 'none') {
         //
-        $accrue = "$rate hour ".($rate > 1 ? 's' : '') ." per year";
+        $accrue = "$rate hour " . ($rate > 1 ? 's' : '') . " per year";
         $duration = $time;
         return preg_replace('/{{accrue}}/', $accrue, preg_replace('/{{time}}/', $time, $text));
     }
@@ -12666,9 +12686,9 @@ function getAccrualText($accrualOBJ, $isNewHire = false) {
         $newRate = number_format(($rateType == 'total_hours' ? $rate / 12 : $rate * 12), 2);
         //
         if ($rateType == 'total_hours') {
-            $accrue = "$rate hour".( $rate > 1 ? 's' : '' )." per year with an accrue rate of $newRate hour".( $newRate > 1 ? 's' : '' )." per month";
+            $accrue = "$rate hour" . ($rate > 1 ? 's' : '') . " per year with an accrue rate of $newRate hour" . ($newRate > 1 ? 's' : '') . " per month";
         } else {
-            $accrue = "$newRate hour".( $newRate > 1 ? 's' : '' )." per year with an accrue rate of $rate hour".( $rate > 1 ? 's' : '' )." per month";
+            $accrue = "$newRate hour" . ($newRate > 1 ? 's' : '') . " per year with an accrue rate of $rate hour" . ($rate > 1 ? 's' : '') . " per month";
         }
         $time = "$time of each month";
         return preg_replace('/{{accrue}}/', $accrue, preg_replace('/{{time}}/', $time, $text));
@@ -12679,7 +12699,7 @@ function getAccrualText($accrualOBJ, $isNewHire = false) {
         //
         $newRate = $rate;
         //
-        $accrue = " ${newRate} hour".( $newRate > 1 ? 's' : '' )." each month";
+        $accrue = " ${newRate} hour" . ($newRate > 1 ? 's' : '') . " each month";
         $duration = $time;
         return preg_replace('/{{accrue}}/', $accrue, preg_replace('/{{time}}/', $time, $text));
     }
@@ -12691,8 +12711,8 @@ function getAccrualText($accrualOBJ, $isNewHire = false) {
         $frequencyValC = ($rate / $slots);
         $frequencyValC = number_format($frequencyValC, 2);
         //
-        $accrue = " $frequencyValC hour".( $frequencyValC > 1 ? 's' : '' )." every $frequencyVal month".( $frequencyVal > 1 ? 's' : '' )." ";
-        $duration = $time.'.';
+        $accrue = " $frequencyValC hour" . ($frequencyValC > 1 ? 's' : '') . " every $frequencyVal month" . ($frequencyVal > 1 ? 's' : '') . " ";
+        $duration = $time . '.';
         return preg_replace('/{{accrue}}/', $accrue, preg_replace('/{{time}}/', $time, $text));
     }
     //
@@ -12700,7 +12720,8 @@ function getAccrualText($accrualOBJ, $isNewHire = false) {
 }
 
 //
-function getStatusColor($index){
+function getStatusColor($index)
+{
     //
     $colors = [
         'contacted' => 'rgb(0, 165, 133)',
@@ -12747,8 +12768,9 @@ function getStatusColor($index){
  * 
  * @return Void
  */
-if(!function_exists('sendResumeEmailToApplicant')){
-    function sendResumeEmailToApplicant($post, $ec = TRUE){
+if (!function_exists('sendResumeEmailToApplicant')) {
+    function sendResumeEmailToApplicant($post, $ec = TRUE)
+    {
         //
         $_this = &get_instance();
         $_this->load->model('resume_model');
@@ -12760,11 +12782,11 @@ if(!function_exists('sendResumeEmailToApplicant')){
         $default_template    = '';
         $user_sid            = $post['user_sid'];
         $user_type           = $post['user_type'];
-        $job_list_sid        = $post['job_list_sid']; 
-        $requested_job_sid   = $post['requested_job_sid']; 
-        $requested_job_type  = $post['requested_job_type']; 
-        $company_sid         = $post['company_sid']; 
-        $company_name        = $post['company_name']; 
+        $job_list_sid        = $post['job_list_sid'];
+        $requested_job_sid   = $post['requested_job_sid'];
+        $requested_job_type  = $post['requested_job_type'];
+        $company_sid         = $post['company_sid'];
+        $company_name        = $post['company_name'];
 
         $emailTemplate = $_this->resume_model->get_send_resume_template($company_sid);
 
@@ -12780,7 +12802,7 @@ if(!function_exists('sendResumeEmailToApplicant')){
         $user_info = $_this->resume_model->get_applicant_information($user_sid);
 
         if (empty($user_info)) {
-            if($ec){
+            if ($ec) {
                 $resp = array();
                 $resp['Status'] = FALSE;
                 $resp['Response'] = '<strong>Success: </strong> Applicant not found!';
@@ -12828,7 +12850,7 @@ if(!function_exists('sendResumeEmailToApplicant')){
         $requested_job_type = $_this->encryption->encrypt($requested_job_type);
         $requested_job_type = str_replace('/', '$type', $requested_job_type);
 
-        $url = 'https://www.automotohr.com/onboarding/send_requested_resume/' . $verification_key.'/'.$requested_job_sid.'/'.$requested_job_type;
+        $url = 'https://www.automotohr.com/onboarding/send_requested_resume/' . $verification_key . '/' . $requested_job_sid . '/' . $requested_job_type;
         $link_btn = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Send Resume</a>';
         //
         $message_body = str_replace('{{link}}', $link_btn, $message_body);
@@ -12838,12 +12860,12 @@ if(!function_exists('sendResumeEmailToApplicant')){
         $from_name = ucwords(STORE_DOMAIN);
         $email_hf = message_header_footer_domain($company_sid, $company_name);
         $body = $email_hf['header']
-                . $message_body
-                . $email_hf['footer'];
+            . $message_body
+            . $email_hf['footer'];
         //
         log_and_sendEmail($from, $to, $subject, $body, $from_name);
         //
-        if($ec){
+        if ($ec) {
             $resp = array();
             $resp['Status'] = TRUE;
             $resp['Response'] = '<strong>Success! </strong> You have successfully sent a resume request.';
@@ -12863,19 +12885,20 @@ if(!function_exists('sendResumeEmailToApplicant')){
  * 
  * @return Void
  */
-if(!function_exists('downloadAWSFileToBrowser')){
-    function downloadAWSFileToBrowser($awsFileName){
+if (!function_exists('downloadAWSFileToBrowser')) {
+    function downloadAWSFileToBrowser($awsFileName)
+    {
         // Get CI instance
         $_this = &get_instance();
         // Set bucketname
         $bucket = AWS_S3_BUCKET_NAME;
-        if(in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])){
+        if (in_array($_SERVER['HTTP_HOST'], ['localhost', 'automotohr.local'])) {
             $bucket = str_replace('https', 'http', $bucket);
         }
         // Temporary store path
         $tp = FCPATH . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'temp_files' . DIRECTORY_SEPARATOR;
         //
-        if(!is_dir($tp)) mkdir($tp, 0777, true);
+        if (!is_dir($tp)) mkdir($tp, 0777, true);
         // Create full path
         $tfp = $tp . $awsFileName;
         // Delete if file already exists
@@ -12913,18 +12936,19 @@ if(!function_exists('downloadAWSFileToBrowser')){
 /**
  * 
  */
-if(!function_exists('getSelect')){
-    function getSelect($options, $pre = []){
+if (!function_exists('getSelect')) {
+    function getSelect($options, $pre = [])
+    {
         //
         $o = '';
         //
-        if(!empty($pre)){
-            $o .= '<option value="'.(key($pre)).'">'.($pre[key($pre)]).'</option>';
+        if (!empty($pre)) {
+            $o .= '<option value="' . (key($pre)) . '">' . ($pre[key($pre)]) . '</option>';
         }
-        if(!empty($options)){
-            foreach($options as $option){
+        if (!empty($options)) {
+            foreach ($options as $option) {
                 $option = array_values($option);
-                $o .= '<option value="'.($option[0]).'">'.($option[1]).'</option>';
+                $o .= '<option value="' . ($option[0]) . '">' . ($option[1]) . '</option>';
             }
         }
         //
@@ -12935,36 +12959,37 @@ if(!function_exists('getSelect')){
 /**
  * 
  */
-if(!function_exists('getImageURL')){
-    function getImageURL($img) {
+if (!function_exists('getImageURL')) {
+    function getImageURL($img)
+    {
         /*
         if ($img == '' || $img == null || !preg_match('/jpg|jpeg|png|gif/i', strtolower($img))) {
            return base_url('assets/images/img-applicant.jpg');  
         } else return AWS_S3_BUCKET_URL.$img;
     */
 
-         if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img)))   { 
-               return AWS_S3_BUCKET_URL.$img;
-            } else { 
-              return base_url('assets/images/img-applicant.jpg'); 
-            } 
-
-   }
+        if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img))) {
+            return AWS_S3_BUCKET_URL . $img;
+        } else {
+            return base_url('assets/images/img-applicant.jpg');
+        }
+    }
 }
 
 
 /**
  * 
  */
-if(!function_exists('getVideoURL')){
-    function getVideoURL($id, $video_url, $module = 'performance_management') {
-        switch($module):
+if (!function_exists('getVideoURL')) {
+    function getVideoURL($id, $video_url, $module = 'performance_management')
+    {
+        switch ($module):
             case "performance_management":
-                if(file_exists(APPPATH."../assets/performance_management/videos/{$id}/{$video_url}"))
+                if (file_exists(APPPATH . "../assets/performance_management/videos/{$id}/{$video_url}"))
                     return base_url("assets/performance_management/videos/{$id}/{$video_url}");
                 else
                     return FALSE;
-            break;
+                break;
         endswitch;
     }
 }
@@ -12973,8 +12998,9 @@ if(!function_exists('getVideoURL')){
 /**
  * 
  */
-if(!function_exists('getDueText')){
-    function getDueText($endDate, $full = false) {
+if (!function_exists('getDueText')) {
+    function getDueText($endDate, $full = false)
+    {
         $endDate .= ' 23:59:59';
         $startDate = date('Y-m-d 23:59:59', strtotime('now'));
         $now = new DateTime($startDate);
@@ -13002,16 +13028,17 @@ if(!function_exists('getDueText')){
         }
 
         if (!$full) $string = array_slice($string, 0, 1);
-        return $string ? 'Due in '.implode(', ', $string) . '' : 'Expired';
+        return $string ? 'Due in ' . implode(', ', $string) . '' : 'Expired';
     }
 }
 
 if (!function_exists('concertBase64ToPDF')) {
     function concertBase64ToPDF(
-        $base64_string, $file_name
+        $base64_string,
+        $file_name
     ) {
         //
-        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName( $fileName, false );
+        if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == 'automotohr.local')  return getS3DummyFileName($fileName, false);
         //
         $CI = &get_instance();
         // Set local path
@@ -13021,7 +13048,7 @@ if (!function_exists('concertBase64ToPDF')) {
         //
         $image_base64 = base64_decode($file_parts[1]);
         //
-        $new_file_name = strtolower(str_replace(" ", "_", $file_name)).'.pdf';
+        $new_file_name = strtolower(str_replace(" ", "_", $file_name)) . '.pdf';
         //
         $target_file = $path . $new_file_name;
         //
@@ -13045,17 +13072,19 @@ if (!function_exists('concertBase64ToPDF')) {
     }
 }
 
-if(!function_exists('replace_select_html_tag')){
-    function replace_select_html_tag($body) {
+if (!function_exists('replace_select_html_tag')) {
+    function replace_select_html_tag($body)
+    {
         //
-        $new_body = preg_replace('/<select(.*?)>(.*?)<\/select>/i', '{{select}}', $body); 
+        $new_body = preg_replace('/<select(.*?)>(.*?)<\/select>/i', '{{select}}', $body);
         //
         return $new_body;
     }
 }
 
-if(!function_exists('document_description_tags')){
-    function document_description_tags($type) {
+if (!function_exists('document_description_tags')) {
+    function document_description_tags($type)
+    {
         //
         $all_magic_codes = array();
         $simple_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', '{{select}}');
@@ -13072,14 +13101,14 @@ if(!function_exists('document_description_tags')){
             return $simple_codes;
         }
     }
-}    
+}
 
-if(!function_exists('isDocumentCompletedCheck')){
+if (!function_exists('isDocumentCompletedCheck')) {
     function isDocumentCompletedCheck(
         &$document,
         $check = false,
         $doConvertImages = false
-    ){
+    ) {
         //
         $ra = [
             'isCompleted' => false,
@@ -13105,19 +13134,22 @@ if(!function_exists('isDocumentCompletedCheck')){
             // 'ff_format' => DateTime::createFromFormat('Y-m-d H:i:s', $document['assigned_date'])->format('M d Y, D H:i:s')
         ];
         // For manual & bulk upload ones
-        if($document['document_sid'] === 0){
+        if ($document['document_sid'] === 0) {
             $ra['isCompleted'] = $ra['isManualDocument'] = true;
-        } else{
+        } else {
             // Set document type
             $type = $document['document_type'];
             $isDocument = true;
             $body = $document['document_description'];
             //
-            if(!empty($document['manual_document_type'])) $type = $document['manual_document_type'];
-            if(!empty($document['offer_letter_type'])) { $isDocument = false; $type = $document['offer_letter_type']; }
-            
+            if (!empty($document['manual_document_type'])) $type = $document['manual_document_type'];
+            if (!empty($document['offer_letter_type'])) {
+                $isDocument = false;
+                $type = $document['offer_letter_type'];
+            }
+
             // Check document Type
-            if($type == 'generated'){
+            if ($type == 'generated') {
                 // 
                 $magic_keys = document_description_tags('all');
                 //
@@ -13125,8 +13157,8 @@ if(!function_exists('isDocumentCompletedCheck')){
                 $magicCodes = document_description_tags('simple');
                 $magicSignatureCodes = document_description_tags('signature');
                 //
-                $withoutSignMC = str_replace($magicSignatureCodes, '', $body); 
-                $withoutMC = str_replace($magicCodes, '', $body); 
+                $withoutSignMC = str_replace($magicSignatureCodes, '', $body);
+                $withoutMC = str_replace($magicCodes, '', $body);
                 //
                 if ($withoutSignMC != $body) $ra['buttonType'] = 'consent_only';
                 else if ($withoutMC != $body) $ra['buttonType'] = 'save_only';
@@ -13137,38 +13169,38 @@ if(!function_exists('isDocumentCompletedCheck')){
                 //
                 $hasSignMagicCode = preg_match('/{{signature}}|{{inital}}/i', $body);
                 // When nothing is set
-                if(
+                if (
                     $document['signature_required'] == 0 &&
                     $document['download_required'] == 0 &&
                     $document['acknowledgment_required'] == 0 &&
                     !$hasAnyMC
-                ){
+                ) {
                     $ra['isNoAction'] = $ra['isCompleted'] = true;
-                } else if(
+                } else if (
                     $document['signature_required'] == 1 ||
                     $hasAnyMC                                   // When signature is required or any magic code is found
-                ){
+                ) {
                     // Check if it's signed
-                    if($document['user_consent'] == 1) $ra['isCompleted'] = true;
-                } else if(
+                    if ($document['user_consent'] == 1) $ra['isCompleted'] = true;
+                } else if (
                     $document['download_required'] == 1 &&
                     $document['acknowledgment_required'] == 1    // When download & acknowledged is required
-                ){
+                ) {
                     // 
-                    if(
+                    if (
                         $document['acknowledged'] == 1 &&
                         $document['downloaded'] == 1
                     ) $ra['isCompleted'] = true;
-                } else if(
+                } else if (
                     $document['acknowledgment_required'] == 1    // When acknowledged is required
-                ){ 
+                ) {
                     // 
-                    if($document['acknowledged'] == 1) $ra['isCompleted'] = true;
-                } else if(
+                    if ($document['acknowledged'] == 1) $ra['isCompleted'] = true;
+                } else if (
                     $document['download_required'] == 1          // When download is required
-                ){
+                ) {
                     // 
-                    if($document['downloaded'] == 1) $ra['isCompleted'] = true;
+                    if ($document['downloaded'] == 1) $ra['isCompleted'] = true;
                 }
 
                 if ($ra['isCompleted'] == true) {
@@ -13198,39 +13230,38 @@ if(!function_exists('isDocumentCompletedCheck')){
                     $ra['assigned_download_url'] = $listaction['download_url'];
                     $ra['html_body'] = $listaction['html_body'];
                 }
-        
-            } else if($type == 'uploaded'){
+            } else if ($type == 'uploaded') {
                 // When nothing is set
-                if(
+                if (
                     $document['signature_required'] == 0 &&
                     $document['download_required'] == 0 &&
                     $document['acknowledgment_required'] == 0
-                ){
+                ) {
                     $ra['isNoAction'] = $ra['isCompleted'] = true;
-                } else if(
+                } else if (
                     $document['signature_required'] == 1         // When signature (Reupload) is required or any magic code is found
-                ){
+                ) {
                     // Check if it's signed
-                    if($document['user_consent'] == 1 || $document['uploaded'] == 1) $ra['isCompleted'] = true;
-                } else if(
+                    if ($document['user_consent'] == 1 || $document['uploaded'] == 1) $ra['isCompleted'] = true;
+                } else if (
                     $document['download_required'] == 1 &&
                     $document['acknowledgment_required'] == 1    // When download & acknowledged is required
-                ){
+                ) {
                     // 
-                    if(
+                    if (
                         $document['acknowledged'] == 1 &&
                         $document['downloaded'] == 1
                     ) $ra['isCompleted'] = true;
-                } else if(
+                } else if (
                     $document['acknowledgment_required'] == 1    // When acknowledged is required
-                ){ 
+                ) {
                     // 
-                    if($document['acknowledged'] == 1) $ra['isCompleted'] = true;
-                } else if(
+                    if ($document['acknowledged'] == 1) $ra['isCompleted'] = true;
+                } else if (
                     $document['download_required'] == 1          // When download is required
-                ){
+                ) {
                     // 
-                    if($document['downloaded'] == 1) $ra['isCompleted'] = true;
+                    if ($document['downloaded'] == 1) $ra['isCompleted'] = true;
                 }
 
                 if ($ra['isCompleted'] == true) {
@@ -13238,7 +13269,7 @@ if(!function_exists('isDocumentCompletedCheck')){
                     $listaction = getUploadedDocumentURL($document['document_s3_name']);
                     $ra['assigned_print_url'] = $listaction['print_url'];
                     $ra['assigned_download_url'] = $listaction['download_url'];
-                    
+
                     //
                     $listaction = getUploadedDocumentURL($document['uploaded_file']);
                     $ra['submitted_print_url'] = $listaction['print_url'];
@@ -13257,14 +13288,15 @@ if(!function_exists('isDocumentCompletedCheck')){
         //
         $document['ra'] = $ra;
         //
-        if($check) return $ra['isCompleted'];
+        if ($check) return $ra['isCompleted'];
         //
         return $ra;
     }
 }
 
-if(!function_exists('getUploadedDocumentURL')){
-    function getUploadedDocumentURL ($document_path) {
+if (!function_exists('getUploadedDocumentURL')) {
+    function getUploadedDocumentURL($document_path)
+    {
         $extension  = strtolower(pathinfo($document_path)['extension']);
 
         $ra = [
@@ -13274,25 +13306,26 @@ if(!function_exists('getUploadedDocumentURL')){
             'image_path' => ''
         ];
 
-        if (in_array($extension, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'])) { 
-            $ra['print_url'] = "https://view.officeapps.live.com/op/view.aspx?src=". AWS_S3_BUCKET_URL .$document_path;
+        if (in_array($extension, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'])) {
+            $ra['print_url'] = "https://view.officeapps.live.com/op/view.aspx?src=" . AWS_S3_BUCKET_URL . $document_path;
             $ra['ifram_url'] = "https://view.officeapps.live.com/op/embed.aspx?src=" . AWS_S3_BUCKET_URL . $document_path;
         } else if (in_array($extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
             $ra['image_path'] = AWS_S3_BUCKET_URL . $document_path;
-            $ra['print_url'] = base_url('hr_documents_management/print_s3_image/'.$document_path);
+            $ra['print_url'] = base_url('hr_documents_management/print_s3_image/' . $document_path);
         } else {
-            $ra['print_url'] = "https://docs.google.com/viewerng/viewer?url=". AWS_S3_BUCKET_URL .$document_path; 
-            $ra['ifram_url'] ='https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_path . '&embedded=true';
-        } 
+            $ra['print_url'] = "https://docs.google.com/viewerng/viewer?url=" . AWS_S3_BUCKET_URL . $document_path;
+            $ra['ifram_url'] = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_path . '&embedded=true';
+        }
 
-        $ra['download_url'] = base_url('hr_documents_management/download_upload_document/'.$document_path);
+        $ra['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
 
         return $ra;
     }
 }
 
-if(!function_exists('getGeneratedDocumentURL')){
-    function getGeneratedDocumentURL ($document, $type, $isAuthorized) {
+if (!function_exists('getGeneratedDocumentURL')) {
+    function getGeneratedDocumentURL($document, $type, $isAuthorized)
+    {
         $ra = [
             'print_url' => '',
             'download_url' => '',
@@ -13300,107 +13333,107 @@ if(!function_exists('getGeneratedDocumentURL')){
         ];
 
         if ($type == 'uncompleted') {
-            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/print';
-            $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/download';
+            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/print';
+            $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/download';
             $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
         } else {
-            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/print';
-            $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/download';
+            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/print';
+            $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/download';
             $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
-        }    
+        }
 
         return $ra;
-
     }
 }
 
-if(!function_exists('getDocumentBody')){
-    function getDocumentBody ($document, $document_type, $isAuthorized) {
-        $companyInfo = getCompanyInfo ($document['company_sid']);
-        $userInfo = getUserInfo ($document['user_type'], $document['user_sid']);
-    
+if (!function_exists('getDocumentBody')) {
+    function getDocumentBody($document, $document_type, $isAuthorized)
+    {
+        $companyInfo = getCompanyInfo($document['company_sid']);
+        $userInfo = getUserInfo($document['user_type'], $document['user_sid']);
+
         $my_return = $document['document_description'];
-    
+
         $value = date('M d Y');
         $my_return = str_replace('{{date}}', $value, $my_return);
-    
+
         $value = $userInfo['first_name'];
         $my_return = str_replace('{{first_name}}', $value, $my_return);
-    
+
         $value = $userInfo['last_name'];
         $my_return = str_replace('{{last_name}}', $value, $my_return);
-    
+
         $value = $userInfo['email'];
         $my_return = str_replace('{{email}}', $value, $my_return);
-    
+
         $value = $userInfo['job_title'];
         $my_return = str_replace('{{job_title}}', $value, $my_return);
-    
+
         $value = $companyInfo['company_name'];
         $my_return = str_replace('{{company_name}}', $value, $my_return);
-    
+
         $value = $companyInfo['company_address'];
         $my_return = str_replace('{{company_address}}', $value, $my_return);
-    
+
         $value = $companyInfo['company_phone'];
         $my_return = str_replace('{{company_phone}}', $value, $my_return);
-    
+
         $value = $companyInfo['career_site_url'];
         $my_return = str_replace('{{career_site_url}}', $value, $my_return);
-    
+
         $short_textboxes = substr_count($my_return, '{{short_text}}');
         $long_textboxes = substr_count($my_return, '{{text}}');
         $checkboxes = substr_count($my_return, '{{checkbox}}');
         $textareas = substr_count($my_return, '{{text_area}}');
-    
+
         //
         $CI = &get_instance();
         //
         $CI->db->select('form_input_data');
         $CI->db->where('sid', $document['sid']);
-    
+
         $record_obj = $CI->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-    
+
         $form_input_data = '';
-    
+
         if (!empty($record_arr)) {
             $form_input_data = unserialize($record_arr[0]['form_input_data']);
             $form_input_data = (array) json_decode($form_input_data);
         }
-    
+
         for ($stb = 0; $stb < $short_textboxes; $stb++) {
-            $short_textbox_name = 'short_textbox_'.$stb;
+            $short_textbox_name = 'short_textbox_' . $stb;
             $short_textbox_value = !empty($form_input_data[$short_textbox_name]) ? $form_input_data[$short_textbox_name] : '';
-            $short_textbox_id = 'short_textbox_'.$stb.'_id';
-            $short_textbox = '<input type="text" data-type="text" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="'.$short_textbox_name.'" id="'.$short_textbox_id.'" value="'.$short_textbox_value.'" />';
-            $my_return = preg_replace('/{{short_text}}/', $short_textbox , $my_return, 1 );
-        }      
-    
+            $short_textbox_id = 'short_textbox_' . $stb . '_id';
+            $short_textbox = '<input type="text" data-type="text" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="' . $short_textbox_name . '" id="' . $short_textbox_id . '" value="' . $short_textbox_value . '" />';
+            $my_return = preg_replace('/{{short_text}}/', $short_textbox, $my_return, 1);
+        }
+
         for ($ltb = 0; $ltb < $long_textboxes; $ltb++) {
-            $long_textbox_name = 'long_textbox_'.$ltb;
+            $long_textbox_name = 'long_textbox_' . $ltb;
             $long_textbox_value = !empty($form_input_data[$long_textbox_name]) ? $form_input_data[$long_textbox_name] : '';
-            $long_textbox_id = 'long_textbox_'.$ltb.'_id';
-            $long_textbox = '<input type="text" data-type="text" class="form-control input-grey long_textbox" name="'.$long_textbox_name.'" id="'.$long_textbox_id.'" value="'.$long_textbox_value.'"/>';
-            $my_return = preg_replace('/{{text}}/', $long_textbox , $my_return, 1 );
+            $long_textbox_id = 'long_textbox_' . $ltb . '_id';
+            $long_textbox = '<input type="text" data-type="text" class="form-control input-grey long_textbox" name="' . $long_textbox_name . '" id="' . $long_textbox_id . '" value="' . $long_textbox_value . '"/>';
+            $my_return = preg_replace('/{{text}}/', $long_textbox, $my_return, 1);
         }
-    
+
         for ($cb = 0; $cb < $checkboxes; $cb++) {
-            $checkbox_name = 'checkbox_'.$cb;
+            $checkbox_name = 'checkbox_' . $cb;
             $checkbox_value = !empty($form_input_data[$checkbox_name]) && $form_input_data[$checkbox_name] == 'yes' ? 'checked="checked"' : '';
-            $checkbox_id = 'checkbox_'.$cb.'_id';
-            $checkbox = '<br><input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="'.$checkbox_name.'" id="'.$checkbox_id.'" '.$checkbox_value.'/>';
-            $my_return = preg_replace('/{{checkbox}}/', $checkbox , $my_return, 1 );
+            $checkbox_id = 'checkbox_' . $cb . '_id';
+            $checkbox = '<br><input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="' . $checkbox_name . '" id="' . $checkbox_id . '" ' . $checkbox_value . '/>';
+            $my_return = preg_replace('/{{checkbox}}/', $checkbox, $my_return, 1);
         }
-    
+
         for ($ta = 0; $ta < $textareas; $ta++) {
-            $textarea_name = 'textarea_'.$ta;
+            $textarea_name = 'textarea_' . $ta;
             $textarea_value = !empty($form_input_data[$textarea_name]) ? $form_input_data[$textarea_name] : '';
-            $textarea_id = 'textarea_'.$ta.'_id';
-            $div_id = 'textarea_'.$ta.'_id_sec';
-            $textarea = '<textarea data-type="textarea" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="'.$textarea_name.'" id="'.$textarea_id.'">'.$textarea_value.'</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="'.$div_id.'"  contenteditable="false"></div>';
-            $my_return = preg_replace('/{{text_area}}/', $textarea , $my_return, 1 );
+            $textarea_id = 'textarea_' . $ta . '_id';
+            $div_id = 'textarea_' . $ta . '_id_sec';
+            $textarea = '<textarea data-type="textarea" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="' . $textarea_name . '" id="' . $textarea_id . '">' . $textarea_value . '</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="' . $div_id . '"  contenteditable="false"></div>';
+            $my_return = preg_replace('/{{text_area}}/', $textarea, $my_return, 1);
         }
         //
         $signature = '';
@@ -13409,21 +13442,21 @@ if(!function_exists('getDocumentBody')){
         $signature_by = '';
         //
         if ($document_type == 'uncompleted') {
-            $signature = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="draw_upload_img" />';
-            $signature_initial = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="target_signature_init" />';
+            $signature = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="draw_upload_img" />';
+            $signature_initial = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="target_signature_init" />';
             $signature_date = '<a class="btn btn-sm blue-button get_signature_date" href="javascript:;">Sign Date</a><p id="target_signature_timestamp"></p>';
             $signature_by = '<input type="text" id="signature_person_name" class="form-control input-grey js_signature_person_name" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="">';
         } else {
-            $signature = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_base64'].'">';
-            $signature_initial = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_initial'].'">';
-            $signature_date = '<p><strong>'.date_with_time($document['signature_timestamp']).'</strong></p>';
+            $signature = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
+            $signature_initial = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
+            $signature_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
             $signature_person_name = !empty($form_input_data['signature_person_name']) ? $form_input_data['signature_person_name'] : '';
-            $signature_by = '<p><strong>'.$signature_person_name.'</strong></p>';
+            $signature_by = '<p><strong>' . $signature_person_name . '</strong></p>';
         }
         //
         $my_return = str_replace('{{signature}}', $signature, $my_return);
         $my_return = str_replace('{{inital}}', $signature_initial, $my_return);
-        $my_return = str_replace('{{sign_date}}', $signature_date , $my_return);
+        $my_return = str_replace('{{sign_date}}', $signature_date, $my_return);
         $my_return = str_replace('{{signature_print_name}}', $signature_by, $my_return);
         //
         $authorized_signature = '';
@@ -13431,34 +13464,35 @@ if(!function_exists('getDocumentBody')){
         //
         if ($isAuthorized == 1) {
             if ($document['authorized_signature_by'] != 0) {
-                $authorized_signature_date = '<p><strong>'.date_with_time($document['authorized_signature_date']).'</strong></p>';
-    
+                $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
+
                 $CI->db->select('assigned_to_signature');
                 $CI->db->where('document_assigned_sid', $document['sid']);
                 $CI->db->where('assigned_to_signature <>', NULL);
-    
+
                 $record_obj = $CI->db->get('authorized_document_assigned_manager');
                 $record_arr = $record_obj->row_array();
                 $record_obj->free_result();
-    
+
                 if (!empty($record_arr)) {
-                    $authorized_signature = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$record_arr['assigned_to_signature'].'">';
+                    $authorized_signature = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $record_arr['assigned_to_signature'] . '">';
                 }
             } else {
                 $authorized_signature = '<p>Authorized Signature (<b>Not Signed</b>)</p>';
                 $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';
             }
-    
-            $my_return = str_replace('{{authorized_signature}}', $authorized_signature , $my_return);
-            $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $my_return);
+
+            $my_return = str_replace('{{authorized_signature}}', $authorized_signature, $my_return);
+            $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $my_return);
         }
-    
+
         return $my_return;
     }
 }
 
-if(!function_exists('getCompanyInfo')){
-    function getCompanyInfo ($company_sid) {
+if (!function_exists('getCompanyInfo')) {
+    function getCompanyInfo($company_sid)
+    {
         //
         $ra = [
             'company_name' => '[Company Name]',
@@ -13528,8 +13562,9 @@ if(!function_exists('getCompanyInfo')){
     }
 }
 
-if(!function_exists('getUserInfo')){
-    function getUserInfo ($user_type, $user_sid) {
+if (!function_exists('getUserInfo')) {
+    function getUserInfo($user_type, $user_sid)
+    {
         //
         $ra = [
             'first_name' => '[' . $user_type . ' First Name]',
@@ -13567,7 +13602,7 @@ if(!function_exists('getUserInfo')){
                 $ra['last_name']    = $user_info['last_name'];
                 $ra['email']        = $user_info['email'];
                 $ra['job_title']    = $user_info['job_title'];
-            } 
+            }
         } else if ($user_type == 'employee') {
             $CI->db->select('username');
             $CI->db->select('first_name');
@@ -13590,17 +13625,17 @@ if(!function_exists('getUserInfo')){
                 $ra['last_name']    = $user_info['last_name'];
                 $ra['email']        = $user_info['email'];
                 $ra['job_title']    = $user_info['job_title'];
-            } 
-        } 
+            }
+        }
         //
         return $ra;
     }
-
 }
 
-if(!function_exists('getUserHint')){
-    function getUserHint ($slug) {
-        $hints = array (
+if (!function_exists('getUserHint')) {
+    function getUserHint($slug)
+    {
+        $hints = array(
             'department_supervisor_hint' => 'Please select the "Department Heads". The selected employees will be marked as "Managers".',
             'department_approver_hint' => 'Please select the "Approvers". Any time off created by employees belonging to this department will go to the selected approvers.',
             'department_reporting_manager_hint' => 'Please select the "Reporting Managers". Any employee belonging to this department will report to the selected reporting managers and the performance reviews will be submitted to them.',
@@ -13619,11 +13654,12 @@ if(!function_exists('getUserHint')){
 
         return isset($hints[$slug]) ? $hints[$slug] : '';
     }
-}    
+}
 
 //
-if(!function_exists('fixEmailAddress')) {
-    function fixEmailAddress($email, $type) {
+if (!function_exists('fixEmailAddress')) {
+    function fixEmailAddress($email, $type)
+    {
         $regx = '/gm/';
         //
         $email_info = explode('@', $email);
@@ -13638,14 +13674,14 @@ if(!function_exists('fixEmailAddress')) {
             return trim($email);
         }
         //
-        $newEmailAddress = trim($email_info[0]).'@';
+        $newEmailAddress = trim($email_info[0]) . '@';
         //
         $second_part = $email_info[1];
         $email_extention = explode('.', $second_part);
         //
         if (empty($email_extention[0]) || $email_extention[0] != $type) {
             $newEmailAddress .= "{$type}";
-        } else{
+        } else {
             $newEmailAddress .= "{$type}";
         }
         //
@@ -13653,7 +13689,7 @@ if(!function_exists('fixEmailAddress')) {
             $newEmailAddress .= ".com";
         } else if ($email_extention[1] != 'com') {
             $newEmailAddress .= ".com";
-        } else{
+        } else {
             $newEmailAddress .= ".com";
         }
         //
@@ -13662,43 +13698,44 @@ if(!function_exists('fixEmailAddress')) {
 }
 
 
-if(!function_exists('getUploadFileLinks')){
-    function getUploadFileLinks($file_s3_name){
+if (!function_exists('getUploadFileLinks')) {
+    function getUploadFileLinks($file_s3_name)
+    {
         //
         $tmp = explode('.', $file_s3_name);
         //
-        $file_extension          = $tmp[count($tmp) -1];
+        $file_extension          = $tmp[count($tmp) - 1];
         //
-        unset($tmp[count($tmp) -1]);
+        unset($tmp[count($tmp) - 1]);
         $document_file_name      = implode('.', $tmp);
         $document_extension      = strtolower($file_extension);
 
-        
+
 
         switch (strtolower($file_extension)) {
             case 'pdf':
-                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'. $document_file_name .'.pdf';
+                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_file_name . '.pdf';
                 break;
             case 'csv':
-                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'. $document_file_name .'.csv';
+                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_file_name . '.csv';
                 break;
             case 'doc':
-                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'. $document_file_name .'%2Edoc&wdAccPdf=0';
+                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_file_name . '%2Edoc&wdAccPdf=0';
                 break;
             case 'docx':
-                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'. $document_file_name .'%2Edocx&wdAccPdf=0';
+                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_file_name . '%2Edocx&wdAccPdf=0';
                 break;
             case 'ppt':
-                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'. $document_file_name .'.ppt';
+                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_file_name . '.ppt';
                 break;
             case 'pptx':
-                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'. $document_file_name .'.pptx';
+                $document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_file_name . '.pptx';
                 break;
             case 'xls':
-                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'. $document_file_name .'%2Exls';
+                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_file_name . '%2Exls';
                 break;
             case 'xlsx':
-                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'. $document_file_name .'%2Exlsx';
+                $document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_file_name . '%2Exlsx';
                 break;
             case 'jpg':
             case 'jpe':
@@ -13710,11 +13747,11 @@ if(!function_exists('getUploadFileLinks')){
             case 'JPEG':
             case 'PNG':
             case 'GIF':
-                $document_print_url = base_url("hr_documents_management/print_s3_image").'/'.$file_s3_name;
-            break;
+                $document_print_url = base_url("hr_documents_management/print_s3_image") . '/' . $file_s3_name;
+                break;
         }
 
-        $document_download_url = base_url("hr_documents_management/download_upload_document").'/'.$file_s3_name;
+        $document_download_url = base_url("hr_documents_management/download_upload_document") . '/' . $file_s3_name;
 
         return ['download' => $document_download_url, 'print' => $document_print_url];
     }
@@ -13722,73 +13759,74 @@ if(!function_exists('getUploadFileLinks')){
 
 
 //
-if(!function_exists('has_approval')){
-    function has_approval($roles, $departments, $teams, $employees, $loggedin_user, $payroll = 0){
+if (!function_exists('has_approval')) {
+    function has_approval($roles, $departments, $teams, $employees, $loggedin_user, $payroll = 0)
+    {
         // Check for plus
-        if($loggedin_user['access_level_plus']){
+        if ($loggedin_user['access_level_plus']) {
             return true;
         }
 
         // Check for roles
-        if(!empty($roles)){
-            if(in_array( stringToSlug($loggedin_user['access_level']), explode(',', $roles) )){
+        if (!empty($roles)) {
+            if (in_array(stringToSlug($loggedin_user['access_level']), explode(',', $roles))) {
                 return true;
             }
         }
 
         // Check for employee
-        if(!empty($employees)){
-            if(in_array( stringToSlug($loggedin_user['user_id']), explode(',', $employees) )){
+        if (!empty($employees)) {
+            if (in_array(stringToSlug($loggedin_user['user_id']), explode(',', $employees))) {
                 return true;
             }
         }
-        
+
         // Check for payroll
-        if($payroll == $loggedin_user['pay_plan_flag']){
+        if ($payroll == $loggedin_user['pay_plan_flag']) {
             return true;
         }
 
         // 
         $CI = &get_instance();
         //
-        if(!empty($departments)){
-            if(
+        if (!empty($departments)) {
+            if (
                 $CI->db
                 ->from('departments_management')
-                ->where('FIND_IN_SET("'.($loggedin_user['user_id']).'", supervisor) > 0', NULL, NULL)
+                ->where('FIND_IN_SET("' . ($loggedin_user['user_id']) . '", supervisor) > 0', NULL, NULL)
                 ->where_in('sid', explode(',', $departments))
                 ->where('status', 1)
                 ->where('is_deleted', 0)
                 ->count_all_results()
-            ){
+            ) {
                 return true;
             }
         }
-        
+
         //
-        if(!empty($teams)){
-            if(
+        if (!empty($teams)) {
+            if (
                 $CI->db
                 ->from('departments_team_management')
-                ->where('FIND_IN_SET("'.($loggedin_user['user_id']).'", team_lead) > 0', NULL, NULL)
+                ->where('FIND_IN_SET("' . ($loggedin_user['user_id']) . '", team_lead) > 0', NULL, NULL)
                 ->where_in('sid', explode(',', $teams))
                 ->where('status', 1)
                 ->where('is_deleted', 0)
                 ->count_all_results()
-            ){
+            ) {
                 return true;
             }
         }
 
         //
         return false;
-
     }
 }
 
 //
-if(!function_exists('getRoles')){
-    function getRoles(){
+if (!function_exists('getRoles')) {
+    function getRoles()
+    {
         return [
             'admin' => 'Admin',
             'employee' => 'Employee',
@@ -13803,7 +13841,7 @@ if (!function_exists('getDepartmentNameBySID')) {
     {
         $departmentName = '';
         if (!empty($sid)) {
-            
+
             $CI = &get_instance();
             $CI->db->select('name');
             $CI->db->where('sid', $sid);
@@ -13812,9 +13850,8 @@ if (!function_exists('getDepartmentNameBySID')) {
 
             if (!empty($department_info)) {
                 $departmentName = $department_info['name'];
-            }   
-
-        } 
+            }
+        }
 
         return $departmentName;
     }
@@ -13825,7 +13862,7 @@ if (!function_exists('getTeamNameBySID')) {
     {
         $teamName = '';
         if (!empty($sid)) {
-            
+
             $CI = &get_instance();
             $CI->db->select('name');
             $CI->db->where('sid', $sid);
@@ -13834,22 +13871,21 @@ if (!function_exists('getTeamNameBySID')) {
 
             if (!empty($team_info)) {
                 $teamName = $team_info['name'];
-            }   
-
-        } 
+            }
+        }
 
         return $teamName;
     }
 }
 
 
-if(!function_exists('addTimeToDate')){
+if (!function_exists('addTimeToDate')) {
     function addTimeToDate(
         $date,
         $add,
         $format = 'Y-m-d',
         $type = 'P'
-    ){
+    ) {
         $date = new DateTime($date);
         $date->add(new DateInterval("P{$add}"));
         return $date->format($format);
@@ -13866,8 +13902,9 @@ if(!function_exists('addTimeToDate')){
  * 
  * @return String
  */
-if(!function_exists('getButtonForEmail')){
-    function getButtonForEmail($replaceArray){
+if (!function_exists('getButtonForEmail')) {
+    function getButtonForEmail($replaceArray)
+    {
         return
             str_replace(array_keys($replaceArray), $replaceArray, '<a href="{{url}}" target="_blank" style="padding: 8px 12px; border: 1px solid {{color}};background-color:{{color}};border-radius: 5px;font-size: 14px; color: #ffffff;text-decoration: none;font-weight:bold;display: inline-block; margin-right: 10px;">
         {{text}}             
@@ -13876,10 +13913,11 @@ if(!function_exists('getButtonForEmail')){
 }
 
 
-if(!function_exists('getCompletedPercentage')){
-    function getCompletedPercentage($records, $type, $returnAll = false){
+if (!function_exists('getCompletedPercentage')) {
+    function getCompletedPercentage($records, $type, $returnAll = false)
+    {
         //
-        if(empty($records)){
+        if (empty($records)) {
             return 0;
         }
         //
@@ -13887,39 +13925,40 @@ if(!function_exists('getCompletedPercentage')){
         $total = 0;
         $completed = 0;
         //
-        foreach($records as $reviewee){
-            foreach($reviewee['reviewers'] as $reviewer){
+        foreach ($records as $reviewee) {
+            foreach ($reviewee['reviewers'] as $reviewer) {
                 //
-                if($type == 'manager' && $reviewer['is_manager'] == 0){
+                if ($type == 'manager' && $reviewer['is_manager'] == 0) {
                     continue;
                 }
-                if($type == 'reviewer' && $reviewer['is_manager'] == 1){
+                if ($type == 'reviewer' && $reviewer['is_manager'] == 1) {
                     continue;
                 }
                 //
                 $total++;
                 //
-                if($reviewer['is_completed']){
+                if ($reviewer['is_completed']) {
                     $completed++;
                 }
             }
         }
         //
-        if($returnAll){
+        if ($returnAll) {
             return [
                 'total' => $total,
                 'completed' => $completed,
-                'percentage' => ceil($completed*$total/100)
+                'percentage' => ceil($completed * $total / 100)
             ];
         }
         //
-        return ceil($completed*$total/100);
+        return ceil($completed * $total / 100);
     }
 }
 
 
-if(!function_exists('res')){
-    function res($array){
+if (!function_exists('res')) {
+    function res($array)
+    {
         header("Content-Type: application/json");
         echo json_encode($array);
         exit(0);
@@ -13934,22 +13973,23 @@ if(!function_exists('res')){
  *  @author  Mubashir Ahmed (14/09/2021)
  *  @version 1.0
  */
-if(!function_exists('LoginToAPI')){
-    function LoginToAPI(){
+if (!function_exists('LoginToAPI')) {
+    function LoginToAPI()
+    {
         //
-        $CI =& get_instance();
+        $CI = &get_instance();
         //
-        if(isset($_SESSION['logged_in']) && isset($_SESSION['API_TOKENS'])){
+        if (isset($_SESSION['logged_in']) && isset($_SESSION['API_TOKENS'])) {
             //
-            if(
+            if (
                 !$CI->db
-                ->where([
-                    'status' => 1,
-                    'token' => $_SESSION['API_TOKEN_CODE'],
-                    'user_sid' => $_SESSION['logged_in']['employer_detail']['sid']
-                ])
-                ->count_all_results('api_tokens')
-            ){
+                    ->where([
+                        'status' => 1,
+                        'token' => $_SESSION['API_TOKEN_CODE'],
+                        'user_sid' => $_SESSION['logged_in']['employer_detail']['sid']
+                    ])
+                    ->count_all_results('api_tokens')
+            ) {
                 unset(
                     $_SESSION['API_TOKEN_CODE'],
                     $_SESSION['API_TOKENS']
@@ -13958,32 +13998,33 @@ if(!function_exists('LoginToAPI')){
         }
         //
         // if(isset($_SESSION['logged_in']) && !isset($_SESSION['API_TOKENS'])){
-        if(isset($_SESSION['logged_in']) && (!isset($_SESSION['API_TOKENS']) || empty($_SESSION['API_TOKENS']))){
+        if (isset($_SESSION['logged_in']) && (!isset($_SESSION['API_TOKENS']) || empty($_SESSION['API_TOKENS']))) {
             //
-            $API_TOKEN_CODE = $CI->encrypt->encode('apitoken'.$_SESSION['logged_in']['employer_detail']['sid']);
+            $API_TOKEN_CODE = $CI->encrypt->encode('apitoken' . $_SESSION['logged_in']['employer_detail']['sid']);
             //
             $_SESSION['API_TOKEN_CODE'] = $API_TOKEN_CODE;
             // Lets store it in database
             $CI->db
-            ->insert(
-                'api_tokens', [
-                    'user_sid' => $_SESSION['logged_in']['employer_detail']['sid'],
-                    'token' => $API_TOKEN_CODE,
-                    'status' => 1,
-                    'created_at' => date("Y-m-d H:i:s", strtotime("now")),
-                    'updated_at' => date("Y-m-d H:i:s", strtotime("now"))
-                ]
-            );
+                ->insert(
+                    'api_tokens',
+                    [
+                        'user_sid' => $_SESSION['logged_in']['employer_detail']['sid'],
+                        'token' => $API_TOKEN_CODE,
+                        'status' => 1,
+                        'created_at' => date("Y-m-d H:i:s", strtotime("now")),
+                        'updated_at' => date("Y-m-d H:i:s", strtotime("now"))
+                    ]
+                );
             //
             $curl = curl_init(getAPIUrl('login'));
             //
             curl_setopt_array($curl, [
                 CURLOPT_POST => TRUE,
                 CURLOPT_POSTFIELDS => json_encode([
-                    'Token' => $API_TOKEN_CODE, 
-                    'Code'=> $_SESSION['logged_in']['employer_detail']['sid'],
-                    'EmployeeCode'=> $_SESSION['logged_in']['employer_detail']['sid'],
-                    'CompanyCode'=> $_SESSION['logged_in']['company_detail']['sid']
+                    'Token' => $API_TOKEN_CODE,
+                    'Code' => $_SESSION['logged_in']['employer_detail']['sid'],
+                    'EmployeeCode' => $_SESSION['logged_in']['employer_detail']['sid'],
+                    'CompanyCode' => $_SESSION['logged_in']['company_detail']['sid']
                 ]),
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
                 CURLOPT_RETURNTRANSFER => 1
@@ -13993,64 +14034,71 @@ if(!function_exists('LoginToAPI')){
             //
             curl_close($curl);
             //
-            if($result['Status']){
+            if ($result['Status']) {
                 $_SESSION['API_TOKENS'] = $result['Response'];
             }
         }
     }
 }
 
-if(!function_exists('job_title_uri')){
-    function job_title_uri($job){
+if (!function_exists('job_title_uri')) {
+    function job_title_uri($job)
+    {
         //
         $companyName = strtolower(trim($job['CompanyName']));
         //
-        $title = ucwords(trim(preg_replace('/'.($companyName).'/', '', explode('-',preg_replace('/\s+/i', ' ', trim(strtolower(str_replace(',', '-',$job['Title'])))))[0]))).'';
+        $title = ucwords(trim(preg_replace('/' . ($companyName) . '/', '', explode('-', preg_replace('/\s+/i', ' ', trim(strtolower(str_replace(',', '-', $job['Title'])))))[0]))) . '';
         //
         return $title;
     }
 }
 
 
-if(!function_exists('GetVal')){
-    function GetVal($input){
+if (!function_exists('GetVal')) {
+    function GetVal($input)
+    {
         return !empty($input) ? $input : 'Not Specified';
     }
 }
 
-if(!function_exists('subTimeToDate')){
+if (!function_exists('subTimeToDate')) {
     function subTimeToDate(
         $date,
         $sub,
         $format = 'Y-m-d',
         $type = 'P'
-    ){
+    ) {
         $date = new DateTime($date);
         $date->sub(new DateInterval("P{$sub}"));
         return $date->format($format);
     }
-} 
+}
 
-if(!function_exists('GetErrorUrl')){
-    function GetErrorUrl(){
-        return getCreds('AHR')->API_SERVER_URL.'report_error';
+if (!function_exists('GetErrorUrl')) {
+    function GetErrorUrl()
+    {
+        return getCreds('AHR')->API_SERVER_URL . 'report_error';
     }
 }
 
-if(!function_exists('addDefaultCategoriesIntoCompany')){
+if (!function_exists('addDefaultCategoriesIntoCompany')) {
     function addDefaultCategoriesIntoCompany(
         $company_sid
-    ){
-        if (empty($company_sid)) { return; }
+    ) {
+        if (empty($company_sid)) {
+            return;
+        }
         //
         $CI = &get_instance();
         //
         $CI->db->select('*');
         $CI->db->where('company_sid', 0);
         //
-        $default_categories = $CI->db->get('documents_category_management')->result_array(); 
+        $default_categories = $CI->db->get('documents_category_management')->result_array();
         //
-        if (empty($default_categories)) {return;}
+        if (empty($default_categories)) {
+            return;
+        }
         //
         // Only execute below code if system have default categories
         //
@@ -14085,7 +14133,7 @@ if(!function_exists('addDefaultCategoriesIntoCompany')){
                 $already_exist = array_column($company_categories, "name");
                 //
                 if (!in_array($default_category['name'], $already_exist)) {
-                    
+
                     if ($default_category['status'] == 1) {
                         $data_to_insert = array();
                         $data_to_insert['company_sid']  = $company_sid;
@@ -14120,11 +14168,8 @@ if(!function_exists('addDefaultCategoriesIntoCompany')){
                 }
             }
         }
-            
-        
-
     }
-} 
+}
 
 
 if (!function_exists('get_employee_latest_joined_date')) {
@@ -14141,7 +14186,7 @@ if (!function_exists('get_employee_latest_joined_date')) {
             $return_date = $rehire_date;
         } else if (!empty($joining_date) && $joining_date != "0000-00-00") {
             $return_date = $joining_date;
-        } else if (!empty($registration_date) && $registration_date != "0000-00-00 00:00:00") { 
+        } else if (!empty($registration_date) && $registration_date != "0000-00-00 00:00:00") {
             $return_date = DateTime::createFromFormat('Y-m-d H:i:s', $registration_date)->format('Y-m-d');
         }
 
@@ -14149,11 +14194,12 @@ if (!function_exists('get_employee_latest_joined_date')) {
     }
 }
 
-if(!function_exists('StripFeedTags')){
+if (!function_exists('StripFeedTags')) {
     /**
      * Set feed content
      */
-    function StripFeedTags($string){
+    function StripFeedTags($string)
+    {
         //
         return strip_tags($string, FEED_STRIP_TAGS);
     }
@@ -14226,7 +14272,7 @@ if (!function_exists('send_full_employment_application')) {
             //
             $company_email_header_footer = message_header_footer($company_sid, ucwords($company_name));
             log_and_send_templated_email(FULL_EMPLOYMENT_APPLICATION_REQUEST, $user_email, $replacement_array, $company_email_header_footer);
-        }    
+        }
     }
 }
 
@@ -14253,12 +14299,12 @@ if (!function_exists('check_full_employment_application_module')) {
 
 if (!function_exists('modify_AWS_file_name')) {
 
-    function modify_AWS_file_name ($sid, $file_name, $column, $table_name = 'documents_assigned')
+    function modify_AWS_file_name($sid, $file_name, $column, $table_name = 'documents_assigned')
     {
         $CI = &get_instance();
         $CI->load->library('aws_lib');
         //
-        $file_info = get_file_info ($sid, $table_name);
+        $file_info = get_file_info($sid, $table_name);
         //
         $new_file_name = modify_document_name($file_name, $file_name, $file_info["company_sid"], $file_info["user_sid"]);
         //
@@ -14270,19 +14316,18 @@ if (!function_exists('modify_AWS_file_name')) {
         $CI->db->update($table_name, [$column => $new_file_name]);
         //
         return $new_file_name;
-
     }
 }
 
 if (!function_exists('get_file_info')) {
 
-    function get_file_info ($sid, $table_name)
+    function get_file_info($sid, $table_name)
     {
         $columns = 'user_sid';
         //
-        if($table_name == 'eev_documents' || $table_name == 'eev_required_documents'){
+        if ($table_name == 'eev_documents' || $table_name == 'eev_required_documents') {
             $columns = 'employee_sid AS user_sid';
-        } 
+        }
         //
         $CI = &get_instance();
         $CI->db->select($columns);
@@ -14307,7 +14352,7 @@ if (!function_exists('get_file_info')) {
 //
 if (!function_exists('check_user_eeoc_form')) {
 
-    function check_user_eeoc_form ($user_sid, $user_type)
+    function check_user_eeoc_form($user_sid, $user_type)
     {
         $CI = &get_instance();
         //
@@ -14325,7 +14370,6 @@ if (!function_exists('check_user_eeoc_form')) {
         } else {
             return 0;
         }
-
     }
 }
 
@@ -14334,14 +14378,14 @@ if (!function_exists('CheckUserEEOCStatus')) {
     {
         $CI = &get_instance();
         //
-        if(
+        if (
             $CI->db
             ->where('users_type', $type)
             ->where('application_sid ', $sid)
             ->where('status', 1)
             ->where('is_expired', 1)
             ->count_all_results('portal_eeo_form')
-        ){
+        ) {
             return true;
         }
         //
@@ -14350,8 +14394,9 @@ if (!function_exists('CheckUserEEOCStatus')) {
 }
 
 
-if(!function_exists('LoadModel')){
-    function LoadModel($index, $_this){
+if (!function_exists('LoadModel')) {
+    function LoadModel($index, $_this)
+    {
         //
         $models = [];
         $models['sem'] = 'single/Employee_model';
@@ -14364,8 +14409,9 @@ if(!function_exists('LoadModel')){
 /**
  * 
  */
-if(!function_exists('SnToString')){
-    function SnToString($notation){
+if (!function_exists('SnToString')) {
+    function SnToString($notation)
+    {
         return (string) number_format(
             $notation,
             0,
@@ -14378,18 +14424,19 @@ if(!function_exists('SnToString')){
 /**
  * 
  */
-if(!function_exists('ResetRate')){
-    function ResetRate($rate, $rateType = 'Hour'){
+if (!function_exists('ResetRate')) {
+    function ResetRate($rate, $rateType = 'Hour')
+    {
         //
         $newRate = $rate;
         //
         $rateType = strtolower($rateType);
         //
-        if($rateType == 'year'){
+        if ($rateType == 'year') {
             $newRate = $rate / 52 / WORK_WEEK_HOURS;
-        } else if($rateType == 'month'){
+        } else if ($rateType == 'month') {
             $newRate = ($rate * 12) / 52 / WORK_WEEK_HOURS;
-        } else if($rateType == 'week'){
+        } else if ($rateType == 'week') {
             $newRate = $rate / WORK_WEEK_HOURS;
         }
         //
@@ -14397,8 +14444,9 @@ if(!function_exists('ResetRate')){
     }
 }
 
-if(!function_exists('getAPIUrl')){
-    function getAPIUrl($index){
+if (!function_exists('getAPIUrl')) {
+    function getAPIUrl($index)
+    {
         //
         $urls = [];
         $urls['partner'] = 'partner_managed_company';
@@ -14420,39 +14468,41 @@ if(!function_exists('getAPIUrl')){
         $urls['job_compensation'] = 'job/compensation';
         //
         if ($index == "employees" || $index == "job_compensation") {
-            return  getCreds('AHR')->API_BROWSER_URL.(isset($urls[$index]) ? $urls[$index] : '');
+            return  getCreds('AHR')->API_BROWSER_URL . (isset($urls[$index]) ? $urls[$index] : '');
         } else {
-            return  getCreds('AHR')->API_SERVER_URL.(isset($urls[$index]) ? $urls[$index] : '');
-        } 
+            return  getCreds('AHR')->API_SERVER_URL . (isset($urls[$index]) ? $urls[$index] : '');
+        }
         // 
     }
 }
 
-if(!function_exists('getAPIKey')){
-    function getAPIKey(){
+if (!function_exists('getAPIKey')) {
+    function getAPIKey()
+    {
         return isset($_SESSION['API_TOKENS']) ? $_SESSION['API_TOKENS'] : 'testing123keyforAdmin';
     }
 }
 
-if(!function_exists('SendResponse')){
+if (!function_exists('SendResponse')) {
     /**
      * Send response to the client
      * @param integer $type
      * @param string|array $data
      */
-    function SendResponse($status, $data = '', $type = 'application/json'){
+    function SendResponse($status, $data = '', $type = 'application/json')
+    {
         //
-        if($status == 401){
+        if ($status == 401) {
             header("HTTP/1.0 401 Unauthorized");
             exit(0);
         }
         //
-        if($status == 400){
+        if ($status == 400) {
             header("HTTP/1.0 400 Bad Request");
             exit(0);
         }
         //
-        if($type == 'html'){
+        if ($type == 'html') {
             $type = 'text/html';
         }
         //
@@ -14464,7 +14514,7 @@ if(!function_exists('SendResponse')){
 }
 
 
-if(!function_exists('isPayrollOrPlus')){
+if (!function_exists('isPayrollOrPlus')) {
     /**
      * Check payroll module permission
      * Only payroll and plus is allowed to 
@@ -14473,18 +14523,19 @@ if(!function_exists('isPayrollOrPlus')){
      * 
      * @return
      */
-    function isPayrollOrPlus(){
+    function isPayrollOrPlus()
+    {
         // Get instance
         $CI = &get_instance();
         // Get the session
         $ses = $CI->session->userdata('logged_in');
         // Check if the logged in user
         // is a plus or payroll
-        if(
+        if (
             $ses['employer_detail']['access_level_plus'] == 1 ||
             $ses['employer_detail']['pay_plan_flag'] == 1 ||
             strtolower($ses['employer_detail']['access_level']) == 'payroll'
-        ){
+        ) {
             return true;
         }
         // Don't have permission
@@ -14492,24 +14543,26 @@ if(!function_exists('isPayrollOrPlus')){
     }
 }
 
-if(!function_exists('redirectHandler')){
-    function redirectHandler($uri, $type = 'auto'){
-        if(headers_sent()){
+if (!function_exists('redirectHandler')) {
+    function redirectHandler($uri, $type = 'auto')
+    {
+        if (headers_sent()) {
             echo '<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                        <meta http-equiv = "refresh" content = "2; url = '.(base_url($uri)).'" />
+                        <meta http-equiv = "refresh" content = "2; url = ' . (base_url($uri)) . '" />
             </head>
             </html>';
-        }else{
+        } else {
             redirect($uri, $type);
         }
     }
 }
 
 if (!function_exists('keepTrackVerificationDocument')) {
-    function keepTrackVerificationDocument ($user_sid, $user_type, $action, $document_sid, $document_type, $location) {
+    function keepTrackVerificationDocument($user_sid, $user_type, $action, $document_sid, $document_type, $location)
+    {
         //
         $data_to_insert = array();
         $data_to_insert['document_sid'] = $document_sid;
@@ -14522,28 +14575,30 @@ if (!function_exists('keepTrackVerificationDocument')) {
         $CI = &get_instance();
         $CI->db->insert('verification_documents_track', $data_to_insert);
     }
-}    
+}
 
 if (!function_exists('keepSecret')) {
-    function keepSecret ($string, $type = "end", $char_show = CHARACTER_SHOW) {
+    function keepSecret($string, $type = "end", $char_show = CHARACTER_SHOW)
+    {
         $returnSecret = "";
         $length = strlen($string);
         //
-        if ($type == "start"){
-            return substr($string, 0, $char_show).str_repeat('*', $length - $char_show);
+        if ($type == "start") {
+            return substr($string, 0, $char_show) . str_repeat('*', $length - $char_show);
         } else if ($type == "end") {
-            return str_repeat('*', $length - $char_show).substr($string, $length - $char_show, $char_show);
+            return str_repeat('*', $length - $char_show) . substr($string, $length - $char_show, $char_show);
         } else if ($type == "all") {
             return str_repeat('*', $length - $char_show);
         } else {
             return $string;
         }
     }
-} 
+}
 
 //
 if (!function_exists('getVerificationDocumentSid')) {
-    function getVerificationDocumentSid ($user_sid, $user_type, $doc_type) {
+    function getVerificationDocumentSid($user_sid, $user_type, $doc_type)
+    {
         $CI = &get_instance();
         //
         $CI->db->select('sid');
@@ -14564,7 +14619,7 @@ if (!function_exists('getVerificationDocumentSid')) {
             $CI->db->where('users_type', $user_type);
             $CI->db->where('application_sid', $user_sid);
             $CI->db->from('portal_eeo_form');
-        } 
+        }
         //
         $result = $CI->db->get()->row_array();
 
@@ -14574,8 +14629,8 @@ if (!function_exists('getVerificationDocumentSid')) {
             return 0;
         }
     }
-}   
-if(!function_exists('GetFileContent')){
+}
+if (!function_exists('GetFileContent')) {
     /**
      * Check and add file with data
      * 
@@ -14584,18 +14639,19 @@ if(!function_exists('GetFileContent')){
      * 
      * @return string content of the file 
      */
-    function GetFileContent($filename, $data = "{}"){
+    function GetFileContent($filename, $data = "{}")
+    {
         //
         $fileData = '';
         //
-        if(file_exists($filename)){
+        if (file_exists($filename)) {
             //
             $file = fopen($filename, 'r');
             $fileData = fread($file, filesize($filename));
             fclose($file);
         }
         //
-        if(empty($fileData)){
+        if (empty($fileData)) {
             $file = fopen($filename, 'w');
             fwrite($file, $data);
             fclose($file);
@@ -14607,7 +14663,7 @@ if(!function_exists('GetFileContent')){
     }
 }
 
-if(!function_exists('_m')){
+if (!function_exists('_m')) {
     /**
      * Add environment check to the assets
      * and add tags for version
@@ -14621,14 +14677,16 @@ if(!function_exists('_m')){
      * 1.0.0
      * @return
      */
-    function _m($string, $type = 'js', $version = '1.0.0'){
-        return $string.( MINIFIED ).'.'.$type.'?v='.(MINIFIED === '.min' ? $version : time());
+    function _m($string, $type = 'js', $version = '1.0.0')
+    {
+        return $string . (MINIFIED) . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
     }
 }
 
 
-if(!function_exists('GetEmployeeStatusText')){
-    function GetEmployeeStatusText($index){
+if (!function_exists('GetEmployeeStatusText')) {
+    function GetEmployeeStatusText($index)
+    {
         //
         $arr = [];
         $arr[1] = 'Terminated';
@@ -14644,7 +14702,7 @@ if(!function_exists('GetEmployeeStatusText')){
     }
 }
 
-if(!function_exists('GetEmployeeStatus')){
+if (!function_exists('GetEmployeeStatus')) {
     /**
      * Get employee last status
      * 
@@ -14652,9 +14710,10 @@ if(!function_exists('GetEmployeeStatus')){
      * @param number $active
      * @return
      */
-    function GetEmployeeStatus($lastStatusText, $active){
+    function GetEmployeeStatus($lastStatusText, $active)
+    {
         //
-        if(strtolower($lastStatusText) === 'rehired'){
+        if (strtolower($lastStatusText) === 'rehired') {
             return 'Active';
         }
         //
@@ -14662,8 +14721,9 @@ if(!function_exists('GetEmployeeStatus')){
     }
 }
 
-if(!function_exists('check_is_employee_exist_or_transfer')){
-    function check_is_employee_exist_or_transfer($company_sid, $applicant_sid, $email){
+if (!function_exists('check_is_employee_exist_or_transfer')) {
+    function check_is_employee_exist_or_transfer($company_sid, $applicant_sid, $email)
+    {
         $CI = &get_instance();
         //
         $CI->db->select('hired_sid, hired_status');
@@ -14703,15 +14763,14 @@ if(!function_exists('check_is_employee_exist_or_transfer')){
         $employee_info = $CI->db->get()->row_array();
         //
         if (!empty($employee_info) && $employee_info["parent_sid"] == $company_sid) {
-                return "record_found";
-        } 
+            return "record_found";
+        }
         //
         return "no_record_found";
-        
     }
 }
 
-if(!function_exists('GetHireDate')){
+if (!function_exists('GetHireDate')) {
     /**
      * Get the new joined date
      * 
@@ -14725,13 +14784,13 @@ if(!function_exists('GetHireDate')){
         $rd,
         $jd,
         $red
-    ){
+    ) {
         //
-        if($red){
+        if ($red) {
             return $red;
-        } else if($jd){
+        } else if ($jd) {
             return $jd;
-        } else if($rd){
+        } else if ($rd) {
             return DateTime::createfromformat('Y-m-d H:i:s', $rd)->format('Y-m-d');
         }
     }
@@ -14745,7 +14804,7 @@ if (!function_exists('check_company_status')) {
         $CI->db->where('sid', $company_sid);
         $result = $CI->db->get('users')->row_array();
         //
-        return $result["active"]; 
+        return $result["active"];
     }
 }
 
@@ -14809,7 +14868,6 @@ if (!function_exists('checkOnboardingNotification')) {
         } else {
             return true;
         }
-        
     }
 }
 
@@ -14828,15 +14886,16 @@ if (!function_exists('onboardingNotificationPendingText')) {
             $name = getUserNameBySID($record_arr["employer_sid"]);
             $date = date_with_time($record_arr["onboarding_start_date"]);
             //
-            return $name." has created setup onboarding on ".$date. " but did not send an Onboarding notification to the applicant.";
+            return $name . " has created setup onboarding on " . $date . " but did not send an Onboarding notification to the applicant.";
         } else {
             return "";
         }
     }
 }
 
-if(!function_exists('GetTimeDifferenceInSeconds')){
-    function GetTimeDifferenceInSeconds($d1, $d2){
+if (!function_exists('GetTimeDifferenceInSeconds')) {
+    function GetTimeDifferenceInSeconds($d1, $d2)
+    {
         //
         $d1 = new DateTime($d1);
         $d2 = new DateTime($d2);
@@ -14851,16 +14910,17 @@ if(!function_exists('GetTimeDifferenceInSeconds')){
     }
 }
 
-if(!function_exists('GetHMSFromSeconds')){
-    function GetHMSFromSeconds($totalSeconds){
+if (!function_exists('GetHMSFromSeconds')) {
+    function GetHMSFromSeconds($totalSeconds)
+    {
 
         $hours = floor($totalSeconds / 3600);
         $minutes = floor(($totalSeconds - $hours * 3600) / 60);
         $seconds = floor($totalSeconds - ($hours * 3600) - ($minutes * 60));
         // Pluralize
-        $hours = (strlen($hours) === 1 ? '0' : '').$hours;
-        $minutes = (strlen($minutes) === 1 ? '0' : '').$minutes;
-        $seconds = (strlen($seconds) === 1 ? '0' : '').$seconds;
+        $hours = (strlen($hours) === 1 ? '0' : '') . $hours;
+        $minutes = (strlen($minutes) === 1 ? '0' : '') . $minutes;
+        $seconds = (strlen($seconds) === 1 ? '0' : '') . $seconds;
         //
         return [
             'hours' => $hours,
@@ -14870,7 +14930,7 @@ if(!function_exists('GetHMSFromSeconds')){
     }
 }
 
-if(!function_exists('CalculateTime')){
+if (!function_exists('CalculateTime')) {
     /**
      * Calculate time for DB
      * 
@@ -14878,7 +14938,8 @@ if(!function_exists('CalculateTime')){
      * @param int $employee_sid
      * @return array
      */
-    function CalculateTime($lists, $employee_sid){
+    function CalculateTime($lists, $employee_sid)
+    {
         //
         $ra = [
             'total_minutes' => 0,
@@ -14893,7 +14954,7 @@ if(!function_exists('CalculateTime')){
         $lists = array_reverse($lists);
         $shiftTime_info = get_user_shiftTime($employee_sid);
         $shift_hours = $shiftTime_info["user_shift_hours"];
-        $shift_minute = $shiftTime_info["user_shift_minutes"]; 
+        $shift_minute = $shiftTime_info["user_shift_minutes"];
         $total_shift_minutes = ($shift_minute + ($shift_hours * 60)) * 60;
         //
         $tz = !$shiftTime_info['timezone'] ? STORE_DEFAULT_TIMEZONE_ABBR : $shiftTime_info['timezone'];
@@ -14914,27 +14975,27 @@ if(!function_exists('CalculateTime')){
             'from_format' => DB_DATE_WITH_TIME,
             'format' => DB_DATE_WITH_TIME,
             'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR,
-            'new_zone' => $tz 
+            'new_zone' => $tz
         ])['date_time_string'];
         //
         $cd = formatDateToDB($cdt, DB_DATE_WITH_TIME, DB_DATE);
         //
-        if($lastAction == 'clock_in' || $lastAction == 'break_in'){
+        if ($lastAction == 'clock_in' || $lastAction == 'break_in') {
             $ra[$lastAction == 'clock_in' ? 'total_minutes' : 'total_break_minutes'] += GetTimeDifferenceInSeconds(
                 strpos($lastActionDT, $cd) !== FALSE
-                ? $cdt
-                : formatDateToDB($lastActionDT, DB_DATE_WITH_TIME, DB_DATE).' 23:59:59',
+                    ? $cdt
+                    : formatDateToDB($lastActionDT, DB_DATE_WITH_TIME, DB_DATE) . ' 23:59:59',
                 $lastActionDT
             );
         }
         //
-        if($lastAction === 'break_in'){
+        if ($lastAction === 'break_in') {
             $ra['total_minutes'] += $ra['total_break_minutes'];
         }
         // Total worked hours
         $ra['total_worked_minutes'] = $ra['total_minutes'] - $ra['total_break_minutes'];
         //
-        if($ra['total_worked_minutes'] < 0){
+        if ($ra['total_worked_minutes'] < 0) {
             $ra['total_worked_minutes'] = 0;
         }
         //
@@ -14946,7 +15007,7 @@ if(!function_exists('CalculateTime')){
     }
 }
 
-if(!function_exists('GetTotalTime')){
+if (!function_exists('GetTotalTime')) {
     /**
      * Calculate time for DB
      * 
@@ -14955,7 +15016,8 @@ if(!function_exists('GetTotalTime')){
      * @param string $t2
      * @return array
      */
-    function GetTotalTime($lists, $t1, $t2){
+    function GetTotalTime($lists, $t1, $t2)
+    {
         //
         $total = 0;
         //
@@ -14963,19 +15025,19 @@ if(!function_exists('GetTotalTime')){
         //
         $lastDateTime = '';
         // For worked time
-        foreach($lists as $list){
+        foreach ($lists as $list) {
             // For clock ins
-            if(empty($lastAction) || $list['action'] == $t1){
+            if (empty($lastAction) || $list['action'] == $t1) {
                 $lastAction = $list['action'];
                 $lastDateTime = $list['action_date_time'];
             }
 
-            if($lastAction == $t2 && $list['action'] == $t1){
+            if ($lastAction == $t2 && $list['action'] == $t1) {
                 $lastAction = $list['action'];
                 $lastDateTime = $list['action_date_time'];
             }
             //
-            if($lastAction == $t1 && $list['action'] == $t2){
+            if ($lastAction == $t1 && $list['action'] == $t2) {
                 //
                 $total += GetTimeDifferenceInSeconds($lastDateTime, $list['action_date_time']);
                 //
@@ -14987,14 +15049,15 @@ if(!function_exists('GetTotalTime')){
     }
 }
 
-if(!function_exists('GetActionColor')){
+if (!function_exists('GetActionColor')) {
     /**
      * Calculate time for DB
      * 
      * @param array $list
      * @return array
      */
-    function GetActionColor($action){
+    function GetActionColor($action)
+    {
         //
         $list = [];
         $list['clock_in'] = 'success';
@@ -15006,7 +15069,7 @@ if(!function_exists('GetActionColor')){
     }
 }
 
-if(!function_exists('ModifyDate')){
+if (!function_exists('ModifyDate')) {
     /**
      * Modify date time
      * 
@@ -15016,15 +15079,17 @@ if(!function_exists('ModifyDate')){
      * 
      * @return string
      */
-    function ModifyDate($date, $modification, $format){
+    function ModifyDate($date, $modification, $format)
+    {
         $stop_date = new DateTime($date);
         $stop_date->modify($modification);
         return $stop_date->format($format);
     }
 }
 
-if(!function_exists('ShowInfo')){
-    function ShowInfo($msg, $options = []){
+if (!function_exists('ShowInfo')) {
+    function ShowInfo($msg, $options = [])
+    {
         //
         $props = [];
         $props['icon'] = 'fa-info-circle';
@@ -15033,11 +15098,11 @@ if(!function_exists('ShowInfo')){
         //
         $props = array_merge($props, $options);
         //
-        return '<strong class="'.($props['color']).' '.($props['fontSize']).'"><i class="fa '.($props['icon']).'" aria-hidden="true"></i>&nbsp;<em>'.($msg).'</em></strong>';
+        return '<strong class="' . ($props['color']) . ' ' . ($props['fontSize']) . '"><i class="fa ' . ($props['icon']) . '" aria-hidden="true"></i>&nbsp;<em>' . ($msg) . '</em></strong>';
     }
 }
 
-if(!function_exists('DistanceBTWLatLon')){
+if (!function_exists('DistanceBTWLatLon')) {
     /**
      * Get distance between two lat lons
      * 
@@ -15048,7 +15113,8 @@ if(!function_exists('DistanceBTWLatLon')){
      * 
      * @return array
      */
-    function DistanceBTWLatLon($lat1, $lon1, $lat2, $lon2){
+    function DistanceBTWLatLon($lat1, $lon1, $lat2, $lon2)
+    {
         //
         $ra = [
             'meters' => 0,
@@ -15056,47 +15122,48 @@ if(!function_exists('DistanceBTWLatLon')){
             'text' => '0 KM'
         ];
         //
-        if($lat1 == 0 || $lat2 == 0){
+        if ($lat1 == 0 || $lat2 == 0) {
             return $ra;
         }
         //
         $R = 6371e3; // metres
         $l1 = $lat1 * pi() / 180; // φ, λ in radians
         $l2 = $lat2 * pi() / 180;
-        $ll1 = ($lat2-$lat1) * pi() / 180;
-        $ll2 = ($lon2-$lon1) * pi() / 180;
+        $ll1 = ($lat2 - $lat1) * pi() / 180;
+        $ll2 = ($lon2 - $lon1) * pi() / 180;
         //
-        $a = sin($ll1/2) * sin($ll1/2) +
+        $a = sin($ll1 / 2) * sin($ll1 / 2) +
             cos($l1) * cos($l2) *
-            sin($ll2/2) * sin($ll2/2);
+            sin($ll2 / 2) * sin($ll2 / 2);
         //
-        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         $d = $R * $c; // in metres
         //
         $ra['meters'] = $d;
         $ra['km'] = ceil($d / 1000);
-        $ra['text'] = $ra['km'].' KM';
+        $ra['text'] = $ra['km'] . ' KM';
         //
         return $ra;
     }
 }
 
-if(!function_exists('GetCleanedAction')){
+if (!function_exists('GetCleanedAction')) {
     /**
      * Get action for front end
      * 
      * @param string $action
      * @return string
      */
-    function GetCleanedAction($action){
+    function GetCleanedAction($action)
+    {
         return ucwords(str_replace('_', ' ', $action));
     }
 }
 
 if (!function_exists('getTimeZone')) {
     function getTimeZone($company_sid, $employee_sid)
-    {   
+    {
         $CI = &get_instance();
         $CI->db->select('timezone');
         $CI->db->where('sid', $employee_sid);
@@ -15111,7 +15178,7 @@ if (!function_exists('getTimeZone')) {
             //
             $company_info = $CI->db->get('users')->row_array();
             //
-             if (!empty($company_info['timezone'])) {
+            if (!empty($company_info['timezone'])) {
                 return $company_info['timezone'];
             } else {
                 return STORE_DEFAULT_TIMEZONE_ABBR;
@@ -15122,20 +15189,20 @@ if (!function_exists('getTimeZone')) {
 
 if (!function_exists('ConvertDateTime')) {
     function ConvertDateTime($company_sid, $employee_sid, $date, $format = DB_DATE, $toggle = false)
-    {   
+    {
         $timezone = getTimeZone($company_sid, $employee_sid);
         //
         $Data = [
-                    'datetime' => $date,
-                    'format' => $format,
-                    'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
-                    'new_zone' => $timezone,
-                    '_this' => get_instance()
-                ];
+            'datetime' => $date,
+            'format' => $format,
+            'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+            'new_zone' => $timezone,
+            '_this' => get_instance()
+        ];
         //        
         if ($toggle) {
-            $Data['from_timezone']= $timezone;
-            $Data['new_zone']= STORE_DEFAULT_TIMEZONE_ABBR;
+            $Data['from_timezone'] = $timezone;
+            $Data['new_zone'] = STORE_DEFAULT_TIMEZONE_ABBR;
         }
         //
         return ["modified" => reset_datetime($Data), "original" => $date];
@@ -15161,8 +15228,9 @@ if (!function_exists('get_user_shiftTime')) {
     }
 }
 
-if(!function_exists('GetParams')){
-    function GetParams($param){
+if (!function_exists('GetParams')) {
+    function GetParams($param)
+    {
         //
         $CI = &get_instance();
         //
@@ -15170,36 +15238,37 @@ if(!function_exists('GetParams')){
         //
         $r = '?';
         //
-        if($get){
+        if ($get) {
             //
-            foreach($get as $k => $v){
+            foreach ($get as $k => $v) {
                 //
-                if(is_array($v)){
-                    $r .= $k.'='.implode(',',$v).'&';
-                } else{
-                    $r .= $k.'='.$v.'&';
+                if (is_array($v)) {
+                    $r .= $k . '=' . implode(',', $v) . '&';
+                } else {
+                    $r .= $k . '=' . $v . '&';
                 }
             }
         }
         //
-        if($param){
+        if ($param) {
             $r .= $param;
         }
         //
-        return rtrim($r,'&');
+        return rtrim($r, '&');
     }
 }
 
-if(!function_exists('GetAttendanceActionText')){
+if (!function_exists('GetAttendanceActionText')) {
     /**
      * Get the text for attendace
      * 
      * @param string $action
      * @return
      */
-    function GetAttendanceActionText($action){
+    function GetAttendanceActionText($action)
+    {
         //
-        switch($action):
+        switch ($action):
             case "clock_in":
                 $status = 'Clocked In';
                 break;
@@ -15220,7 +15289,7 @@ if(!function_exists('GetAttendanceActionText')){
     }
 }
 
-if(!function_exists('GetEmployeeShiftTime')){
+if (!function_exists('GetEmployeeShiftTime')) {
     /**
      * Get employee shift time in minutes/seconds
      * 
@@ -15230,10 +15299,11 @@ if(!function_exists('GetEmployeeShiftTime')){
      * 
      * @return
      */
-    function GetEmployeeShiftTime($h, $m, $r = 's'){
+    function GetEmployeeShiftTime($h, $m, $r = 's')
+    {
         //
-        if($r === 't'){
-            return $h.' H'.($m ? ' & '.$m.' M': '');
+        if ($r === 't') {
+            return $h . ' H' . ($m ? ' & ' . $m . ' M' : '');
         }
         //
         $nv = ($m + ($h * 60));
@@ -15242,23 +15312,25 @@ if(!function_exists('GetEmployeeShiftTime')){
     }
 }
 
-if(!function_exists('isImage')){
+if (!function_exists('isImage')) {
     /**
      * Check if the file is an image
      * 
      * @param string $str
      * @return
      */
-    function isImage($str){
+    function isImage($str)
+    {
         return in_array(
-            strtolower(pathinfo($str, PATHINFO_EXTENSION)), [
+            strtolower(pathinfo($str, PATHINFO_EXTENSION)),
+            [
                 'png', 'jpg', 'jpeg', 'gif'
             ]
         );
     }
 }
 
-if(!function_exists('get_user_assign_group_status')){
+if (!function_exists('get_user_assign_group_status')) {
     /**
      * Check the status og the assign group
      * 
@@ -15268,15 +15340,16 @@ if(!function_exists('get_user_assign_group_status')){
      * @return
      * 
      */
-    function get_user_assign_group_status($group_sid, $user_type, $user_sid){
+    function get_user_assign_group_status($group_sid, $user_type, $user_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('assign_status');
         $CI->db->where('group_sid ', $group_sid);
         //
         if ($user_type == 'employee') {
-            $CI->db->where('employer_sid ',$user_sid);
+            $CI->db->where('employer_sid ', $user_sid);
         } else if ($user_type == 'applicant') {
-            $CI->db->where('applicant_sid ',$user_sid);
+            $CI->db->where('applicant_sid ', $user_sid);
         }
         //
         $records_obj = $CI->db->get("documents_group_2_employee");
@@ -15318,14 +15391,15 @@ if (!function_exists('is_active_employee_or_company')) {
     }
 }
 
-if(!function_exists('verifyCaptcha')){
+if (!function_exists('verifyCaptcha')) {
     /**
      * 
      */
-    function verifyCaptcha($token){
+    function verifyCaptcha($token)
+    {
         //
         $curl = curl_init();
-        
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
             CURLOPT_RETURNTRANSFER => true,
@@ -15337,13 +15411,164 @@ if(!function_exists('verifyCaptcha')){
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => array('secret' => getCreds('AHR')->GOOGLE_CAPTCHA_API_SECRET_V2,'response' => $token)
+            CURLOPT_POSTFIELDS => array('secret' => getCreds('AHR')->GOOGLE_CAPTCHA_API_SECRET_V2, 'response' => $token)
         ));
-        
+
         $response = curl_exec($curl);
-        
+
         curl_close($curl);
-        
+
         return json_decode($response, true);
+    }
+}
+
+
+if (!function_exists('check_document_completed')) {
+
+    function check_document_completed($assigned_document)
+    {
+        $is_magic_tag_exist = 0;
+        $is_document_completed = 0;
+
+        if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
+            $document_body = $assigned_document['document_description'];
+            $magic_codes = array('{{signature}}', '{{inital}}');
+
+            if (str_replace($magic_codes, '', $document_body) != $document_body) {
+                $is_magic_tag_exist = 1;
+            }
+        }
+
+        if ($assigned_document['document_type'] != 'offer_letter') {
+            //
+            if ($assigned_document['status'] == 1) {
+                if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) {
+
+                    if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                        if ($assigned_document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
+                        if ($is_magic_tag_exist == 1) {
+                            if ($assigned_document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($assigned_document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                        if ($assigned_document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                        if ($assigned_document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($assigned_document['acknowledgment_required'] == 1) {
+                        if ($assigned_document['acknowledged'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($assigned_document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($assigned_document['download_required'] == 1) {
+                        if ($assigned_document['downloaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($assigned_document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($assigned_document['signature_required'] == 1) {
+                        if ($assigned_document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($is_magic_tag_exist == 1) {
+                        if ($assigned_document['user_consent'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    }
+
+                    if ($is_document_completed == 1) {
+                        return "Completed";
+                    } else {
+                        return "not_completed";
+                    }
+                } else {
+                    return "Completed";
+                }
+            } else {
+                return "not_completed";
+            }
+        }
+    }
+}
+
+
+
+if (!function_exists('get_documents_assigned_data')) {
+
+    function get_documents_assigned_data($document_sid, $employee_id, $employee)
+    {
+
+        $CI = &get_instance();
+        $CI->db->where('document_sid', $document_sid);
+        $CI->db->where('user_sid', $employee_id);
+        $CI->db->where('user_type', $employee);
+        $record_obj = $CI->db->get('documents_assigned');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr[0];
+        } else {
+            return array();
+        }
+    }
+}
+
+if (!function_exists('check_document_completed_date')) {
+
+    function check_document_completed_date($assigned_document)
+    {
+        //
+        $completed_date = '';
+        //
+        if ($assigned_document['status'] == 1) {
+            if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) {
+
+                if ($assigned_document['signature_required'] == 1) {
+                    if ($assigned_document['document_type'] == "uploaded") {
+                        $completed_date = $assigned_document['uploaded_date'];
+                    } else {
+                        $completed_date = $assigned_document['signature_timestamp'];
+                    }
+                } else if ($assigned_document['acknowledgment_required'] == 1) {
+                    $completed_date = $assigned_document['acknowledged_date'];
+                } else if ($assigned_document['download_required'] == 1) {
+                    $completed_date = $assigned_document['downloaded_date'];
+                }
+            } else {
+                $completed_date = $assigned_document['assigned_date'];
+            }
+        }
+        return  $completed_date;
     }
 }

@@ -30,7 +30,7 @@ class Dashboard extends Public_Controller {
     }
 
     public function index() {
-        if ($this->session->userdata('logged_in')) {
+         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];
             $company_detail                                                     = $data['session']['company_detail'];
@@ -507,6 +507,11 @@ class Dashboard extends Public_Controller {
                 $data['PendingEmployerSection']['Applicant'] = 0;
             }
             //
+            $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id);
+            $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id);
+            $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id);
+            $data['total_library_doc']  = $this->dashboard_model->get_all_library_doc_count($company_id);
+
             $data['messages']                   = $messages;
             $data['eventCount']                 = $eventCount;
             $data['has_announcements']          = $announcements;
@@ -541,6 +546,10 @@ class Dashboard extends Public_Controller {
             //
             $total_document_approval = count($this->varification_document_model->getMyApprovalDocuments($data['session']['employer_detail']['sid']));
             $data["all_documents_approval"] = $total_document_approval;
+            //
+            $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
+            //
+            $data['total_library_doc']    = $this->dashboard_model->get_all_library_doc_count($company_id);
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
@@ -936,6 +945,9 @@ class Dashboard extends Public_Controller {
             $total_document_approval = count($this->varification_document_model->getMyApprovalDocuments($data['session']['employer_detail']['sid']));
             $data["all_documents_approval"] = $total_document_approval;
             //
+            $total_library_doc    = $this->dashboard_model->get_all_library_doc_count($company_id);
+            $data['total_library_doc']    = $total_library_doc;
+
 
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
