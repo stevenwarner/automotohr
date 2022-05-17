@@ -13413,14 +13413,11 @@ class Hr_documents_management extends Public_Controller {
      * @version 1.0
      * @date    04/15/2022
      * 
-     * @param array  $document
-     * @param number $companyId
-     * @param string $companyName
-     * @param number $employerId
-     * @param number $userId
-     * @param string $userType
-     * @param string $note
-     * @param array  $approvalEmployees
+     * @param number $document_sid
+     * @param string $assigner_note
+     * @param array  $approvers_list
+     * @param string $send_email
+     * @param array  $managers_list
      * 
      * @return
      */
@@ -13463,6 +13460,7 @@ class Hr_documents_management extends Public_Controller {
         //
         $this->AddAndSendNotificationsToApprovalEmployees(
             $approvalInsertId,
+            $document_sid,
             $approvers_list,
             $assigner_note
         );
@@ -13477,18 +13475,14 @@ class Hr_documents_management extends Public_Controller {
      * @version 1.0
      * @date    04/15/2022
      * 
-     * @param number $approvalFlowId
-     * @param array  $approvalEmployees
-     * @param number $initiateId
-     * @param number $userId
-     * @param string $userType
-     * @param string $documentTitle
-     * @param number $companyId
-     * @param string $companyName
-     * @param string $note
+     * @param number $approval_flow_sidd
+     * @param number $document_sid
+     * @param array  $approvers_list
+     * @param string $assigner_note
      */
     function AddAndSendNotificationsToApprovalEmployees (
-        $approvalFlowId,
+        $approval_flow_sidd,
+        $document_sid,
         $approvers_list,
         $assigner_note
     ) {
@@ -13521,7 +13515,7 @@ class Hr_documents_management extends Public_Controller {
         //
         foreach ($approvalEmployees as $key => $approver_sid) {
             $data_to_insert = array();
-            $data_to_insert['portal_document_assign_sid'] = $approvalFlowId;
+            $data_to_insert['portal_document_assign_sid'] = $approval_flow_sidd;
             $data_to_insert['assigner_sid'] = $approver_sid;
             //
             if ($key == 0) {
@@ -13534,19 +13528,21 @@ class Hr_documents_management extends Public_Controller {
             if($key == 0){
                 //
                 $approver_info = $this->hr_documents_management_model->get_employee_information($company_sid, $approver_sid);
-                //
-                $replacement_array['assigner'] = $assignerName;
-                $replacement_array['contact-name'] = $document_assigned_user_name;
-                $replacement_array['company_name'] = ucwords($company_name);
-                $replacement_array['username'] = $replacement_array['contact-name'];
-                $replacement_array['firstname'] = $approver_info['first_name'];
-                $replacement_array['lastname'] = $approver_info['last_name'];
-                $replacement_array['first_name'] = $approver_info['first_name'];
-                $replacement_array['last_name'] = $approver_info['last_name'];
-                $replacement_array['document_title'] = $document['document_title'];
-                $replacement_array['user_type'] = $document['user_type'];
-                $replacement_array['note'] = $assigner_note;
-                $replacement_array['baseurl'] = base_url();
+                $approval_public_link = base_url("hr_documents_management/public_approval_document"). '/' . $document_sid . '/' . $approver_sid . '/';
+                // 
+                $replacement_array['assigner']              = $assignerName;
+                $replacement_array['contact-name']          = $document_assigned_user_name;
+                $replacement_array['company_name']          = ucwords($company_name);
+                $replacement_array['username']              = $replacement_array['contact-name'];
+                $replacement_array['firstname']             = $approver_info['first_name'];
+                $replacement_array['lastname']              = $approver_info['last_name'];
+                $replacement_array['first_name']            = $approver_info['first_name'];
+                $replacement_array['last_name']             = $approver_info['last_name'];
+                $replacement_array['document_title']        = $document['document_title'];
+                $replacement_array['user_type']             = $document['user_type'];
+                $replacement_array['note']                  = $assigner_note;
+                $replacement_array['baseurl']               = base_url();
+                $replacement_array['approval_public_link']  = $approval_public_link;
     
                 // Send email to assigner as a notification with private link
                 log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
@@ -13626,6 +13622,95 @@ class Hr_documents_management extends Public_Controller {
 
         // Send email to assigner as a notification with private link
         log_and_send_templated_email($template, $userInfo['email'], $replacement_array, $hf, 1);
+    }
+
+     /**
+     * public function for Accept and Reject Document
+     * 
+     * @version 1.0
+     * @date    05/16/2022
+     * 
+     * @param number $company_sid
+     * @param number $document_sid
+     * @param number $approver_sid
+     * @param string $type
+     */
+    function public_approval_document (
+        $document_sid,
+        $approver_sid,
+        $type
+    ) {
+        //
+//         $config = array(
+//         "digest_alg" => "sha512",
+//         "private_key_bits" => 4096,
+//         "private_key_type" => OPENSSL_KEYTYPE_RSA,
+//     );
+
+//     // Create the private and public key
+//     $res = openssl_pkey_new($config);
+
+//     // Extract the private key into $private_key
+//     openssl_pkey_export($res, $private_key);
+
+//     // Extract the public key into $public_key
+//     $public_key = openssl_pkey_get_details($res);
+//     $public_key = $public_key["key"];
+//         // Something to encrypt
+// $text = 'This is the text to encrypt';
+
+// echo "This is the original text: $text\n\n";
+
+// // Encrypt using the public key
+// openssl_public_encrypt($text, $encrypted, $public_key);
+
+// $encrypted_hex = bin2hex($encrypted);
+// echo "This is the encrypted text: $encrypted_hex\n\n";
+
+// // Decrypt the data using the private key
+// openssl_private_decrypt($encrypted, $decrypted, $private_key);
+
+// echo "This is the decrypted text: $decrypted\n\n";
+           // die('stop');
+   //
+        $document_detail = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
+        $current_approver_sid = $this->hr_documents_management_model->get_document_current_approver_sid($document_detail['approval_flow_sid']);
+
+        if (!empty($document_detail) && $current_approver_sid == $approver_sid) {
+            
+            $company_detail = $this->hr_documents_management_model->get_company_detail($document_detail['company_sid']);
+            $company_domain = $this->hr_documents_management_model->get_company_domain_by_sid($document_detail['company_sid']);
+            $approver_detail = $this->hr_documents_management_model->get_approver_detail($approver_sid);
+            $approvers_flow_info = $this->hr_documents_management_model->get_approval_document_bySID($document_detail['approval_flow_sid']);
+            //
+            $data = array();
+            $data['company_detail'] = $company_detail;
+            $data['employee'] = $approver_detail;
+            $data["approvers_note"] = $approvers_flow_info['assigner_note'];
+            $data["document_title"] = $document_detail['document_title'];
+            $data["document_type"] = $document_detail['document_type'];
+            $data["assigned_by"] = $approvers_flow_info['assigned_by'];
+            $data["assigned_date"] = $approvers_flow_info['assigned_date'];
+            $data["document_user_type"] = $document_detail["user_type"];
+            $data["document_user_sid"] = $document_detail["user_sid"];
+            $data["document_detail"] = $document_detail;
+            $data["action"] = $type;
+            $data["company_domain"] = $company_domain;
+            //
+            if ($document_detail["user_type"] == "employee") {
+                $data["document_user_name"] = getUserNameBySID($document_detail["user_sid"]);
+            } else {
+                $data["document_user_name"] = getApplicantNameBySID($document_detail["user_sid"]);
+            }
+            //
+            // $this->load->view('main/public_header', $data);
+            $this->load->view('hr_documents_management/public_approval_document', $data);
+            // $this->load->view('main/public_footer');
+            
+        } else {
+            $this->load->view('onboarding/thank_you');
+        }
+        
     }
 
     function get_document_history($user_sid, $user_type, $document_type, $document_sid){

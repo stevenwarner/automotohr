@@ -7573,5 +7573,72 @@ class Hr_documents_management_model extends CI_Model {
         $this->db->update('portal_document_assign_flow');
     }
 
+    public function get_approver_detail ($approver_sid) {
+        $this->db->select('*');
+        $this->db->where('sid', $approver_sid);
+        $this->db->where('active', 1);
+
+
+        $record_obj = $this->db->get('users');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    public function get_approval_document_detail($document_sid) {
+        //
+        $this->db->select('company_sid, user_sid, user_type, approval_flow_sid, document_title, document_type, acknowledgment_required, download_required, signature_required, is_required');
+        $this->db->where('sid', $document_sid);
+        $this->db->where('approval_process', 1);
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_document_current_approver_sid ($document_sid) {
+        //
+        $this->db->select('assigner_sid');
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('assigner_turn', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr['assigner_sid'];
+        }
+
+        return $return_data;
+    }
+
+    public function get_company_domain_by_sid ($compnay_id) {
+        //
+        $this->db->select('sub_domain');
+        $this->db->where('user_sid', $compnay_id);
+        $records_obj = $this->db->get('portal_employer');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = "";
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr['sub_domain'];
+        }
+
+        return $return_data;
+    }    
+
 
 }
