@@ -2984,6 +2984,8 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
+            
+
             $categories = $this->hr_documents_management_model->get_all_documents_category($company_sid);
             $active_categories = [];
 
@@ -3095,7 +3097,7 @@ class Hr_documents_management extends Public_Controller {
 
             $sendGroupEmail = 0;
             $assign_group_documents = $this->hr_documents_management_model->get_assign_group_documents($company_sid, $user_type, $user_sid);
-           
+            
             if (!empty($assign_group_documents)) {
                 foreach ($assign_group_documents as $key => $assign_group_document) {
                     $is_document_assign = $this->hr_documents_management_model->check_document_already_assigned($company_sid, $user_type, $user_sid, $assign_group_document['document_sid']);

@@ -3607,6 +3607,8 @@ if ($user_type == 'applicant') {
                 $("#btn_group_"+group_sid).text("Group Assigned");
 
                 alertify.success('Group Assigned Successfully');
+                location.reload();
+
             },
             error: function (data) {
 
