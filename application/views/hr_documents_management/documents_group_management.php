@@ -1,8 +1,3 @@
-<style>
-    .doccnt {
-        cursor: pointer;
-    }
-</style>
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -33,7 +28,7 @@
                                         <th class="col-lg-3">Group Name</th>
                                         <th class="col-lg-3">Group Description</th>
                                         <th class="col-lg-3">Status</th>
-                                        <th class="col-lg-3"># Documents</th>
+                                        <th class="col-lg-3">Documents</th>
                                         <th class="col-lg-3 text-center" colspan="3">Actions</th>
                                     </tr>
                                 </thead>
@@ -103,10 +98,10 @@
                                             <td><?php echo html_entity_decode($group['description']); ?></td>
                                             <td><?php echo $group['status'] == 1 ? '<b class="paid">Active</b>' : '<b class="unpaid">Inactive</b>'; ?></td>
                                             <td>
-                                                <?php if ($group_doc_count > 0) { ?>
-                                                    <a id='<?php echo $group['sid']; ?>' class="doccnt"><b>Total: (<?php echo $group_doc_count; ?>)</b></a>
-                                                    <span id='docdetails_<?php echo $group['sid']; ?>' style="display: none;"> <?php echo $group_doc_name; ?></span>
-                                                <?php } ?>
+                                             
+                                                    <a id='<?php echo $group['sid']; ?>' ><b>Total: (<?php echo $group_doc_count; ?>)</b></a>
+                                                    <span id='docdetails_<?php echo $group['sid']; ?>' > <?php echo $group_doc_name; ?></span>
+                                              
                                             </td>
                                             <td>
                                                 <?php if ($group['document_status'] == 1 || $group['w4'] == 1 || $group['w9'] == 1 || $group['i9'] == 1 || $group['eeoc'] == 1 || $group['direct_deposit'] == 1 || $group['drivers_license'] == 1 || $group['occupational_license'] == 1 || $group['emergency_contacts'] == 1 || $group['dependents'] == 1) { ?>
@@ -266,9 +261,4 @@
         $('#assign_group_sid').val(group_sid);
     }
 
-
-    $(".doccnt").click(function() {
-        var row_id = $(this).attr('id');
-        $("#docdetails_" + row_id).show();
-    });
 </script>
