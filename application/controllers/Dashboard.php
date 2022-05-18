@@ -307,9 +307,11 @@ class Dashboard extends Public_Controller {
                 $documents_count++;
             }
 
-            if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
-                $documents_count++;
-            }
+            if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+                if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
+                    $documents_count++;
+                }
+            }    
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
@@ -440,7 +442,6 @@ class Dashboard extends Public_Controller {
                 }
             }
 
-            $this->load->model('hr_documents_management_model');
             $documents_count = $documents_count + sizeof($assigned_documents) + + $this->hr_documents_management_model->getGeneralDocumentCount(
                 $data['session']['employer_detail']['sid'],
                 'employee',
@@ -689,6 +690,15 @@ class Dashboard extends Public_Controller {
             if (!empty($assigned_offer_letter)) {
                 $documents_count++;
             }
+
+            $this->load->model('hr_documents_management_model');
+            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_id, 'employee');
+
+            if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+                if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
+                    $documents_count++;
+                }
+            } 
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;

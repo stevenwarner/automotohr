@@ -5360,14 +5360,16 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
             //
-            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employer_sid, 'employee');
-            //
-            if (!empty($eeo_form_info) && $eeo_form_info['status'] == 1) {
-                $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_sid,'employee');
-                if (!empty($eeoc_form)) {
-                    $data['eeoc_form'] = $eeoc_form;
+            if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employer_sid, 'employee');
+                //
+                if (!empty($eeo_form_info) && $eeo_form_info['status'] == 1) {
+                    $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_sid,'employee');
+                    if (!empty($eeoc_form)) {
+                        $data['eeoc_form'] = $eeoc_form;
+                    }
                 }
-            }
+            }    
 
             $data['completed_i9']                           = $completed_i9;
             $data['completed_w9']                           = $completed_w9;

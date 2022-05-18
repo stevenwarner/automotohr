@@ -396,6 +396,7 @@
                                                                 </td>
                                                             <?php } ?>
                                                         </tr>
+                                                        <?php if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) { ?>
                                                             <tr>
                                                                 <td class="col-lg-2">
                                                                     EEOC FORM
@@ -462,6 +463,7 @@
                                                                     <?php } ?>
                                                                 </td>
                                                             </tr>
+                                                        <?php } ?>    
                                                     </tbody>
                                                 </table>
                                             </div>

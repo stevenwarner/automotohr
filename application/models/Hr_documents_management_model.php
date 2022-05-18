@@ -1461,21 +1461,25 @@ class Hr_documents_management_model extends CI_Model
 
     function is_eeoc_document_assign($user_type, $user_sid)
     {
-        $this->db->where('users_type', $user_type);
-        $this->db->where('application_sid', $user_sid);
-        $this->db->where('is_expired', 0);
-        $this->db->where('status', 1);
-        $this->db->from('portal_eeo_form');
-        //
-        $records_obj = $this->db->get();
-        $records_arr = $records_obj->result_array();
-        $records_obj->free_result();
+        if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+            $this->db->where('users_type', $user_type);
+            $this->db->where('application_sid', $user_sid);
+            $this->db->where('is_expired', 0);
+            $this->db->where('status', 1);
+            $this->db->from('portal_eeo_form');
+            //
+            $records_obj = $this->db->get();
+            $records_arr = $records_obj->result_array();
+            $records_obj->free_result();
 
-        if (!empty($records_arr)) {
-            return $records_arr[0];
+            if (!empty($records_arr)) {
+                return $records_arr[0];
+            } else {
+                return array();
+            }
         } else {
             return array();
-        }
+        }    
     }
 
     function check_w4_form_exist($user_type, $user_sid)
@@ -2215,12 +2219,16 @@ class Hr_documents_management_model extends CI_Model
 
     private function is_eeoc_form_assign($user_type, $user_sid)
     {
-        $this->db->where('users_type', $user_type);
-        $this->db->where('application_sid', $user_sid);
-        $this->db->where('is_expired', 0);
-        $this->db->where('status', 1);
-        $this->db->from('portal_eeo_form');
-        return $this->db->count_all_results();
+        if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+            $this->db->where('users_type', $user_type);
+            $this->db->where('application_sid', $user_sid);
+            $this->db->where('is_expired', 0);
+            $this->db->where('status', 1);
+            $this->db->from('portal_eeo_form');
+            return $this->db->count_all_results();
+        } else {
+            return 0;
+        }    
     }
 
     function getEmployeesDetails($employees)
