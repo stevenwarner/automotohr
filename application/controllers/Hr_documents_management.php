@@ -1711,7 +1711,7 @@ class Hr_documents_management extends Public_Controller {
             //check_access_permissions($security_details, 'appearance', 'customize_appearance'); 
             // no need to check in this Module as Dashboard will be available to all
             $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
+            $eeid = $employer_sid = $data['session']['employer_detail']['sid'];
             $pp_flag = $data['session']['employer_detail']['pay_plan_flag'];
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
@@ -2984,6 +2984,8 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
 
+            
+
             $categories = $this->hr_documents_management_model->get_all_documents_category($company_sid);
             $active_categories = [];
 
@@ -3095,7 +3097,7 @@ class Hr_documents_management extends Public_Controller {
 
             $sendGroupEmail = 0;
             $assign_group_documents = $this->hr_documents_management_model->get_assign_group_documents($company_sid, $user_type, $user_sid);
-           
+            
             if (!empty($assign_group_documents)) {
                 foreach ($assign_group_documents as $key => $assign_group_document) {
                     $is_document_assign = $this->hr_documents_management_model->check_document_already_assigned($company_sid, $user_type, $user_sid, $assign_group_document['document_sid']);
@@ -3154,7 +3156,7 @@ class Hr_documents_management extends Public_Controller {
                                 $user_type,
                                 $company_sid,
                                 $gk,
-                                $employer_sid
+                                $eeid
                             )){
                                 //
                                 $sendGroupEmail = 1;
@@ -7174,7 +7176,7 @@ class Hr_documents_management extends Public_Controller {
     }
 
     public function documents_group_management() {
-        if ($this->session->userdata('logged_in')) {
+            if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -7198,7 +7200,7 @@ class Hr_documents_management extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $data['groups'] = $groups;
-
+          
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('hr_documents_management/documents_group_management');
@@ -7353,7 +7355,7 @@ class Hr_documents_management extends Public_Controller {
             $pre_assign_documents = $this->hr_documents_management_model->get_all_document_2_group($group_sid);
             $group = $this->hr_documents_management_model->get_document_group($group_sid);
             $assigned_documents = array();
-
+              
             if (!empty($pre_assign_documents)) {
                 foreach ($pre_assign_documents as $key => $pre_assign) {
                     array_push($assigned_documents, $pre_assign['document_sid']);

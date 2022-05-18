@@ -1,10 +1,12 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Onboarding extends CI_Controller {
+class Onboarding extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('onboarding_model');
         $this->load->model('form_wi9_model');
@@ -18,12 +20,13 @@ class Onboarding extends CI_Controller {
         $this->_ssv = false;
         $ses = $this->session->userData('logged_in');
         //
-        if(sizeof($ses)){
+        if (sizeof($ses)) {
             $this->_ssv = getSSV($ses['employer_detail']);
         }
     }
 
-    public function hr_documents($unique_sid) {
+    public function hr_documents($unique_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data = array();
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -157,7 +160,7 @@ class Onboarding extends CI_Controller {
 
                         if ($is_document_assign == 0 && $assign_group_document['document_sid'] > 0) {
                             $document = $this->hr_documents_management_model->get_hr_document_details($company_info['sid'], $assign_group_document['document_sid']);
-                            if(!sizeof($document)) continue;
+                            if (!sizeof($document)) continue;
                             $data_to_insert = array();
                             $data_to_insert['company_sid'] = $company_info['sid'];
                             $data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
@@ -222,25 +225,24 @@ class Onboarding extends CI_Controller {
                         if (str_replace($magic_codes, '', $document_body) != $document_body) {
                             $is_magic_tag_exist = 1;
                         }
-
                     }
 
                     $payroll_sids = $this->hr_documents_management_model->get_payroll_documents_sids();
                     $documents_management_sids = $payroll_sids['documents_management_sids'];
                     $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
 
-                    if (in_array($assigned_document['document_sid'],$documents_management_sids)) {
-                        $assigned_document['pay_roll_catgory'] = 1; 
-                    } else if (in_array($assigned_document['sid'],$documents_assigned_sids)) {
-                        $assigned_document['pay_roll_catgory'] = 1; 
+                    if (in_array($assigned_document['document_sid'], $documents_management_sids)) {
+                        $assigned_document['pay_roll_catgory'] = 1;
+                    } else if (in_array($assigned_document['sid'], $documents_assigned_sids)) {
+                        $assigned_document['pay_roll_catgory'] = 1;
                     } else {
-                        $assigned_document['pay_roll_catgory'] = 0; 
+                        $assigned_document['pay_roll_catgory'] = 0;
                     }
 
                     if ($assigned_document['document_type'] != 'offer_letter') {
                         if ($assigned_document['status'] == 1) {
-                            if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) { 
-                                
+                            if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) {
+
                                 if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
                                     if ($assigned_document['uploaded'] == 1) {
                                         $is_document_completed = 1;
@@ -303,27 +305,25 @@ class Onboarding extends CI_Controller {
                                     }
                                 }
 
-                                if ($is_document_completed > 0) { 
+                                if ($is_document_completed > 0) {
                                     if ($assigned_document['pay_roll_catgory'] == 0) {
 
                                         $signed_document_sids[] = $assigned_document['document_sid'];
                                         $signed_documents[] = $assigned_document;
                                         unset($assigned_documents[$key]);
-                                    } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                    } else if ($assigned_document['pay_roll_catgory'] == 1) {
                                         $signed_document_sids[] = $assigned_document['document_sid'];
-                                        $completed_payroll_documents[] = $assigned_document; 
+                                        $completed_payroll_documents[] = $assigned_document;
                                         unset($assigned_documents[$key]);
                                     }
-                                    
                                 } else {
                                     if ($assigned_document['pay_roll_catgory'] == 1) {
-                                        $uncompleted_payroll_documents[] = $assigned_document; 
+                                        $uncompleted_payroll_documents[] = $assigned_document;
                                         unset($assigned_documents[$key]);
                                     }
 
-                                    $assigned_sids[] = $assigned_document['document_sid'];   
+                                    $assigned_sids[] = $assigned_document['document_sid'];
                                 }
-                   
                             } else {
                                 if (str_replace('{{authorized_signature}}', '', $document_body) != $document_body) {
                                     //
@@ -332,30 +332,30 @@ class Onboarding extends CI_Controller {
                                             $signed_document_sids[] = $assigned_document['document_sid'];
                                             $signed_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
-                                        } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                        } else if ($assigned_document['pay_roll_catgory'] == 1) {
                                             $signed_document_sids[] = $assigned_document['document_sid'];
-                                            $completed_payroll_documents[] = $assigned_document; 
+                                            $completed_payroll_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
                                         }
                                     } else {
                                         if ($assigned_document['pay_roll_catgory'] == 1) {
-                                            $uncompleted_payroll_documents[] = $assigned_document; 
+                                            $uncompleted_payroll_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
                                         }
                                     }
                                     //
                                     $assigned_sids[] = $assigned_document['document_sid'];
                                     //  
-                                } else if ($assigned_document['pay_roll_catgory'] == 0) { 
+                                } else if ($assigned_document['pay_roll_catgory'] == 0) {
                                     $assigned_sids[] = $assigned_document['document_sid'];
                                     $no_action_required_sids[] = $assigned_document['document_sid'];
                                     $no_action_required_documents[] = $assigned_document;
                                     unset($assigned_documents[$key]);
                                 } else if ($assigned_document['pay_roll_catgory'] == 1) {
                                     if ($assigned_document['user_consent'] == 1 && $assigned_document['document_sid'] == 0) {
-                                        $no_action_required_payroll_documents[] = $assigned_document; 
+                                        $no_action_required_payroll_documents[] = $assigned_document;
                                         unset($assigned_documents[$key]);
-                                    } 
+                                    }
                                 }
                             }
                         } else {
@@ -392,13 +392,12 @@ class Onboarding extends CI_Controller {
                             $his_doc["history"] = array();
                             array_push($signed_documents, $his_doc);
                         }
-                        
                     }
                 }
                 //
                 $documents = $this->hr_documents_management_model->get_assigned_documents($company_info['sid'], 'applicant', $applicant_sid);
                 $data['documents'] = $documents;
-                
+
                 $data['complete_steps'] = $this->onboarding_model->check_updated_sections($applicant_info['employer_sid'], 'applicant', $applicant_info['sid']);
                 $company_eeo_status = 1;
                 $extra_info = $company_info['extra_info'];
@@ -408,16 +407,16 @@ class Onboarding extends CI_Controller {
                     $company_eeo_status = $extra_info['EEO'];
                 }
 
-                $categorized_docs = $this->hr_documents_management_model->categrize_documents($company_info['sid'], $signed_documents, $no_action_required_documents,0);
+                $categorized_docs = $this->hr_documents_management_model->categrize_documents($company_info['sid'], $signed_documents, $no_action_required_documents, 0);
                 $data['categories_no_action_documents'] = $categorized_docs['categories_no_action_documents'];
                 $data['categories_documents_completed'] =  $categorized_docs['categories_documents_completed'];
 
-                
+
                 $data['company_eeoc_form_status'] = $company_eeo_status;
                 $data['completed_documents'] = $completed_documents;
                 $data['no_action_required_documents'] = $no_action_required_documents;
 
-                $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_info['sid']  ,'applicant', $applicant_sid);
+                $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_info['sid'], 'applicant', $applicant_sid);
 
                 if (!empty($current_assigned_offer_letter)) {
                     if ($current_assigned_offer_letter[0]['user_consent'] == 1) {
@@ -445,14 +444,14 @@ class Onboarding extends CI_Controller {
                         $history["form_status"] = "Previous";
                         array_push($completed_w4, $history);
                     }
-                }   
+                }
                 //
                 $completed_w9 = array();
                 //
                 if (!empty($data['w9_form']) && $data['w9_form']['user_consent'] == 1) {
                     $data['w9_form']["form_status"] = "Current";
                     array_push($completed_w9, $data['w9_form']);
-                }   
+                }
                 //
                 $w9_history = $this->hr_documents_management_model->is_W9_history_exist($data['w9_form']['sid'], 'applicant', $applicant_sid);
                 //
@@ -461,7 +460,7 @@ class Onboarding extends CI_Controller {
                         $history["form_status"] = "Previous";
                         array_push($completed_w9, $history);
                     }
-                } 
+                }
                 //
                 $completed_i9 = array();
                 //
@@ -511,7 +510,7 @@ class Onboarding extends CI_Controller {
                 $data['company_name'] = $onboarding_details['company_info']['CompanyName'];
                 $data['company_eeoc_form_status']               = $company_eeo_status;
                 $data['no_action_required_payroll_documents']   = $no_action_required_payroll_documents;
-                
+
                 $this->load->view('onboarding/applicant_boarding_header', $data);
                 $this->load->view('onboarding/documents_new');
                 $this->load->view('onboarding/on_boarding_footer');
@@ -522,7 +521,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function sign_hr_document($doc = NULL, $unique_sid = NULL, $document_sid) {
+    public function sign_hr_document($doc = NULL, $unique_sid = NULL, $document_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
@@ -581,46 +581,44 @@ class Onboarding extends CI_Controller {
                     if ($document['user_consent'] == 1 && !empty($document['form_input_data'])) {
 
                         if (!empty($document['authorized_signature'])) {
-                            $authorized_signature_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['authorized_signature'].'" id="show_authorized_signature">';
-                            $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image , $document['document_description']);
-                            
+                            $authorized_signature_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['authorized_signature'] . '" id="show_authorized_signature">';
+                            $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
                         }
 
                         if (!empty($document['authorized_signature_date'])) {
-                            $authorized_signature_date = '<p><strong>'.date_with_time($document['authorized_signature_date']).'</strong></p>';
-                            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $document['document_description']);
+                            $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
+                            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
-                        
-                        $signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_base64'].'">';
-                        $init_signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_initial'].'">';
-                        $sign_date = '<p><strong>'.date_with_time($document['signature_timestamp']).'</strong></p>';
+
+                        $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
+                        $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
+                        $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
 
                         $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
                         $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
-                        $document['document_description'] = str_replace('{{sign_date}}', $sign_date , $document['document_description']);
-
+                        $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
                     } else if (!empty($document['authorized_signature']) && $document['user_consent'] == 1) {
-                        $authorized_signature_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['authorized_signature'].'" id="show_authorized_signature">';
-                        $signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_base64'].'">';
-                        $init_signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['signature_initial'].'">';
-                        $sign_date = '<p><strong>'.date_with_time($document['signature_timestamp']).'</strong></p>';
+                        $authorized_signature_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['authorized_signature'] . '" id="show_authorized_signature">';
+                        $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_base64'] . '">';
+                        $init_signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['signature_initial'] . '">';
+                        $sign_date = '<p><strong>' . date_with_time($document['signature_timestamp']) . '</strong></p>';
 
-                        $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image , $document['document_description']);
+                        $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
                         $document['document_description'] = str_replace('{{signature}}', $signature_bas64_image, $document['document_description']);
                         $document['document_description'] = str_replace('{{inital}}', $init_signature_bas64_image, $document['document_description']);
-                        $document['document_description'] = str_replace('{{sign_date}}', $sign_date , $document['document_description']);
+                        $document['document_description'] = str_replace('{{sign_date}}', $sign_date, $document['document_description']);
 
                         if (!empty($document['authorized_signature_date'])) {
-                            $authorized_signature_date = '<p><strong>'.date_with_time($document['authorized_signature_date']).'</strong></p>';
-                            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $document['document_description']);
+                            $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
+                            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
                     } else if (!empty($document['authorized_signature']) && $document['user_consent'] == 0) {
-                        $authorized_signature_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['authorized_signature'].'" id="show_authorized_signature">';
-                        $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image , $document['document_description']);
+                        $authorized_signature_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['authorized_signature'] . '" id="show_authorized_signature">';
+                        $document['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $document['document_description']);
 
                         if (!empty($document['authorized_signature_date'])) {
-                            $authorized_signature_date = '<p><strong>'.date_with_time($document['authorized_signature_date']).'</strong></p>';
-                            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $document['document_description']);
+                            $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
+                            $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
                         }
                     }
                     //echo '<pre>';print_r($document); die();
@@ -751,7 +749,6 @@ class Onboarding extends CI_Controller {
                     } else {
                         $print_button_action = base_url('onboarding/print_applicant_upload_img/' . $document['document_s3_name']);
                     }
-
                 } else { // generated document
                     $download_button_action = base_url('onboarding/print_applicant_generated_doc/original/' . $unique_sid . '/' . $document['sid'] . '/' . 'download');
                     $download_action_title = 'Document Action: <b>Download / Print</b>';
@@ -782,40 +779,36 @@ class Onboarding extends CI_Controller {
                         } else {
                             $print_button_action = base_url('onboarding/print_applicant_upload_img/' . $document['uploaded_file']);
                         }
-
                     } else if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1) {
                         if ($document['acknowledged'] == 1 && $document['downloaded'] == 1) {
-                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/print';
-                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/download';
+                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/print';
+                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/download';
                         } else {
-                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/print';
-                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/download';
+                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/print';
+                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/download';
                         }
-
                     } else if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 0) {
                         if ($document['acknowledged'] == 1) {
-                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/print';
-                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/download';
+                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/print';
+                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/download';
                         } else {
-                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/print';
-                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/download';
+                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/print';
+                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/download';
                         }
-
-                    } else if ($document['acknowledgment_required'] == 0 && $document['download_required'] == 1) {   
+                    } else if ($document['acknowledgment_required'] == 0 && $document['download_required'] == 1) {
                         if ($document['downloaded'] == 1) {
-                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/print';
-                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/download';
+                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/print';
+                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/download';
                         } else {
-                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/print';
-                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/download';
+                            $print_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/print';
+                            $download_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/download';
                         }
-
                     } else if (empty($document['submitted_description'])) {
-                        $print_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/print';
-                        $download_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/assigned/assigned_document/download';
+                        $print_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/print';
+                        $download_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/download';
                     } else {
-                        $print_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/print';
-                        $download_button_action = base_url('hr_documents_management/perform_action_on_document_content').'/'.$document['sid'].'/submitted/assigned_document/download';
+                        $print_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/print';
+                        $download_button_action = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/submitted/assigned_document/download';
                     }
                 }
 
@@ -888,7 +881,7 @@ class Onboarding extends CI_Controller {
                         $document_info = $this->hr_documents_management_model->get_assigned_document($user_type, $user_sid, $document_sid, $doc);
 
                         if (!empty($document_info) && ($document_info['acknowledgment_required'] == 1 && $document_info['download_required'] == 1)) {
-                            if($document_info['downloaded'] == 1) {
+                            if ($document_info['downloaded'] == 1) {
                                 $data_to_update = array();
                                 $data_to_update['acknowledged'] = 1;
                                 $data_to_update['acknowledged_date'] = date('Y-m-d H:i:s');
@@ -904,9 +897,7 @@ class Onboarding extends CI_Controller {
                                 }
 
                                 $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
-
-
-                            } else{
+                            } else {
                                 $data_to_update = array();
                                 $data_to_update['acknowledged'] = 1;
                                 $data_to_update['acknowledged_date'] = date('Y-m-d H:i:s');
@@ -926,13 +917,13 @@ class Onboarding extends CI_Controller {
                                     $this->sendEmailToManager($document_sid, $applicant_sid, $company_info);
                                 }
                             }
-                            
+
                             $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
                         }
                     } else {
                         $this->hr_documents_management_model->update_acknowledge_status($user_type, $user_sid, $document_sid);
                     }
-                    
+
                     $this->session->set_flashdata('message', '<strong>Success</strong> Document Acknowledged!');
                     redirect('onboarding/sign_hr_document/' . $doc . '/' . $unique_sid . '/' . $document_sid, 'refresh');
                     break;
@@ -965,7 +956,7 @@ class Onboarding extends CI_Controller {
                         } else {
                             $this->hr_documents_management_model->update_upload_status($company_sid, $user_type, $user_sid, $document_type, $document_sid, $uploaded_file);
                         }
-                        
+
                         $this->session->set_flashdata('message', '<strong>Success</strong> Document Uploaded!');
                     } else {
                         $this->session->set_flashdata('message', '<strong>Error</strong> Document Uploaded was not successful!');
@@ -974,7 +965,7 @@ class Onboarding extends CI_Controller {
                     redirect('onboarding/sign_hr_document/' . $doc . '/' . $unique_sid . '/' . $document_sid, 'refresh');
                     break;
                 case 'sign_document':
-                    
+
                     $save_input_values = array();
                     $users_type = 'applicant';
                     $users_sid = $onboarding_details['applicant_sid'];
@@ -983,8 +974,8 @@ class Onboarding extends CI_Controller {
                     $save_date = $this->input->post('save_signature_date');
                     $user_consent = $this->input->post('user_consent');
                     $base64_pdf = $this->input->post('save_PDF');
-                    
-                    if(isset($_POST['save_input_values']) && !empty($_POST['save_input_values'])) {
+
+                    if (isset($_POST['save_input_values']) && !empty($_POST['save_input_values'])) {
                         $save_input_values = $_POST['save_input_values'];
                     }
                     $save_input_values = serialize($save_input_values);
@@ -1026,7 +1017,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    function sendEmailToManager($document_sid, $applicant_sid, $company_info){
+    function sendEmailToManager($document_sid, $applicant_sid, $company_info)
+    {
         $applicant_name = get_applicant_name($applicant_sid);
         $company_name = $company_info['CompanyName'];
         $company_sid = $company_info['sid'];
@@ -1056,7 +1048,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function calendar($unique_sid) {
+    public function calendar($unique_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data['title'] = 'HR Onboarding';
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -1093,7 +1086,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function getting_started($unique_sid) {
+    public function getting_started($unique_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Automoto HR Onboarding';
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -1195,7 +1189,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function my_profile($unique_sid) {
+    public function my_profile($unique_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
         $this->form_validation->set_rules('first_name', 'First Name', 'required|trim');
         $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim');
@@ -1204,7 +1199,7 @@ class Onboarding extends CI_Controller {
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
         $applicant_sid = $onboarding_details['applicant_sid'];
         $applicant_information = $this->onboarding_model->get_applicant_information($applicant_sid);
-        
+
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Automoto HR Onboarding';
 
@@ -1372,8 +1367,8 @@ class Onboarding extends CI_Controller {
             $primary_info['gender'] = $gender;
             $primary_info['marital_status'] = $marital_status;
             //
-            if(!preg_match(XSYM_PREG, $SSN)) $primary_info['ssn'] = $SSN;
-            if(!preg_match(XSYM_PREG, $date_of_birth)) $primary_info['dob'] = $DOB;
+            if (!preg_match(XSYM_PREG, $SSN)) $primary_info['ssn'] = $SSN;
+            if (!preg_match(XSYM_PREG, $date_of_birth)) $primary_info['dob'] = $DOB;
             $primary_info['video_type'] = $video_source;
             $primary_info['YouTube_Video'] = $video_id;
 
@@ -1415,7 +1410,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function colleague_profile($unique_sid, $employee_sid) {
+    public function colleague_profile($unique_sid, $employee_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data = array();
             $data['title'] = 'Colleague Profile';
@@ -1467,7 +1463,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function direct_deposit($unique_sid) {
+    public function direct_deposit($unique_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|xss_clean|trim');
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
         if ($this->form_validation->run() == false) {
@@ -1556,7 +1553,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function emergency_contacts($unique_sid) {
+    public function emergency_contacts($unique_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'preform_action', 'required|trim');
 
         if ($this->form_validation->run() == false) {
@@ -1674,7 +1672,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function edit_emergency_contacts($unique_sid, $contact_sid) {
+    public function edit_emergency_contacts($unique_sid, $contact_sid)
+    {
         $data['title'] = 'HR Onboarding';
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
@@ -1773,7 +1772,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function license_info($unique_sid) {
+    public function license_info($unique_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'preform_action', 'required|trim');
 
         if ($this->form_validation->run() == false) {
@@ -1934,7 +1934,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function general_information($unique_sid, $key = null) {
+    public function general_information($unique_sid, $key = null)
+    {
         $this->form_validation->set_rules('perform_action', 'preform_action', 'required|trim');
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
@@ -2041,7 +2042,7 @@ class Onboarding extends CI_Controller {
                 $data['company_id'] = $company_sid;
                 $data['company_name'] = $company_name;
                 $data['employee_number'] = $employee_number;
-                $users_sign_info = get_e_signature($company_sid, $applicant_sid, 'applicant'); 
+                $users_sign_info = get_e_signature($company_sid, $applicant_sid, 'applicant');
                 // echo '<pre>';
                 // echo $employee_number;
                 // print_r($users_sign_info);
@@ -2093,9 +2094,9 @@ class Onboarding extends CI_Controller {
 
                     if ($license_file != 'error' && !empty($license_file)) {
                         $data_to_save['license_file'] = $license_file;
-                    } 
+                    }
 
-                    $this->onboarding_model->save_license_information('applicant', $applicant_sid, 'occupational', $data_to_save,$dateOfBirth);
+                    $this->onboarding_model->save_license_information('applicant', $applicant_sid, 'occupational', $data_to_save, $dateOfBirth);
                     $this->onboarding_model->increment_section_save_count($applicant_sid, 'applicant', 'occupational_license');
                     $this->session->set_flashdata('message', '<strong>Success</strong> License Information Updated!');
                     //
@@ -2126,11 +2127,11 @@ class Onboarding extends CI_Controller {
                     $data_to_serialize['license_authority'] = $license_authority;
                     $data_to_serialize['license_class'] = $license_class;
                     //
-                    if(!preg_match(XSYM_PREG, $license_number)) $data_to_serialize['license_number'] = $license_number;
-                    else $data_to_serialize['license_number'] = isset($drivers_license['license_details']['license_number']) ? $drivers_license['license_details']['license_number'] : '';  
-                    if(!preg_match(XSYM_PREG, $license_issue_date)) $data_to_serialize['license_issue_date'] = $license_issue_date;
+                    if (!preg_match(XSYM_PREG, $license_number)) $data_to_serialize['license_number'] = $license_number;
+                    else $data_to_serialize['license_number'] = isset($drivers_license['license_details']['license_number']) ? $drivers_license['license_details']['license_number'] : '';
+                    if (!preg_match(XSYM_PREG, $license_issue_date)) $data_to_serialize['license_issue_date'] = $license_issue_date;
                     else $data_to_serialize['license_issue_date'] = isset($drivers_license['license_details']['license_issue_date']) ? $drivers_license['license_details']['license_issue_date'] : '';
-                    if(!preg_match(XSYM_PREG, $license_expiration_date)) $data_to_serialize['license_expiration_date'] = $license_expiration_date;
+                    if (!preg_match(XSYM_PREG, $license_expiration_date)) $data_to_serialize['license_expiration_date'] = $license_expiration_date;
                     else $data_to_serialize['license_expiration_date'] = isset($drivers_license['license_details']['license_expiration_date']) ? $drivers_license['license_details']['license_expiration_date'] : '';
                     //
                     $data_to_serialize['license_indefinite'] = $license_indefinite;
@@ -2141,19 +2142,19 @@ class Onboarding extends CI_Controller {
                     $data_to_save['license_type'] = 'drivers';
                     $data_to_save['license_details'] = serialize($data_to_serialize);
                     //
-                    if(!preg_match(XSYM_PREG, $this->input->post('dob')))
-                    $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;
+                    if (!preg_match(XSYM_PREG, $this->input->post('dob')))
+                        $dateOfBirth['dob'] = (!empty($this->input->post('dob'))) ? date("Y-m-d", strtotime($this->input->post('dob'))) : null;
                     else $dateOfBirth['dob'] = $onboarding_details['applicant_info']['dob'];
 
                     if ($license_file != 'error' && !empty($license_file)) {
                         $data_to_save['license_file'] = $license_file;
                     }
 
-                    $this->onboarding_model->save_license_information('applicant', $applicant_sid, 'drivers', $data_to_save,$dateOfBirth);
+                    $this->onboarding_model->save_license_information('applicant', $applicant_sid, 'drivers', $data_to_save, $dateOfBirth);
                     $this->onboarding_model->increment_section_save_count($applicant_sid, 'applicant', 'drivers_license');
                     $user_full_emp_app = $onboarding_details['applicant_info']['full_employment_application'];
                     $full_emp_form = array();
-                    if(sizeof($user_full_emp_app)){
+                    if (sizeof($user_full_emp_app)) {
                         $full_emp_form = !empty($user_full_emp_app) && $user_full_emp_app != NULL ? unserialize($user_full_emp_app) : array();
                     }
                     $full_emp_form['TextBoxDriversLicenseNumber'] = $license_number;
@@ -2161,10 +2162,10 @@ class Onboarding extends CI_Controller {
 
                     $serial_form = array();
                     $serial_form['full_employment_application'] = serialize($full_emp_form);
-                    $this->onboarding_model->update_applicant_information($onboarding_details['applicant_info']['employer_sid'],$applicant_sid, $serial_form);
+                    $this->onboarding_model->update_applicant_information($onboarding_details['applicant_info']['employer_sid'], $applicant_sid, $serial_form);
                     $this->session->set_flashdata('message', '<strong>Success</strong> License Information Updated!');
                     //
-                    
+
                     checkAndUpdateDD($applicant_sid, 'applicant', $onboarding_details['company_info']['sid'], 'drivers_license');
                     redirect('onboarding/general_information/' . $unique_sid, 'refresh');
                     break;
@@ -2296,7 +2297,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function dependents($unique_sid) {
+    public function dependents($unique_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'preform_action', 'required|trim');
 
         if ($this->form_validation->run() == false) {
@@ -2404,7 +2406,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function edit_dependant_information($unique_sid, $dependant_sid) {
+    public function edit_dependant_information($unique_sid, $dependant_sid)
+    {
         $data['title'] = 'HR Onboarding';
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
@@ -2500,7 +2503,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function full_employment_application($unique_sid) {
+    public function full_employment_application($unique_sid)
+    {
         $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
         $this->form_validation->set_rules('TextBoxNameMiddle', 'Middle Name', 'trim|xss_clean');
         $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
@@ -2800,7 +2804,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    function eeoc_form($unique_sid) {
+    function eeoc_form($unique_sid)
+    {
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
         if (!empty($onboarding_details)) {
@@ -2816,7 +2821,7 @@ class Onboarding extends CI_Controller {
             $data['applicant_sid'] = $applicant_sid;
             $eeoc = $this->onboarding_model->get_eeoc('applicant', $applicant_sid);
             //$eeoc_status = $this->eeo_model->get_eeo_form_status('applicant', $applicant_sid);
-            $eeoc_status ='Yes';
+            $eeoc_status = 'Yes';
             //
             if (!empty($eeoc)) {
                 $eeoc['eeoc_form_status'] = $eeoc_status;
@@ -2899,7 +2904,7 @@ class Onboarding extends CI_Controller {
                 $this->session->set_flashdata('message', '<strong>Success</strong> EEOC Updated!');
 
                 if ($enable_learbing_center) {
-                   redirect('onboarding/learning_center/' . $unique_sid, 'refresh');
+                    redirect('onboarding/learning_center/' . $unique_sid, 'refresh');
                 } else {
                     redirect('onboarding/my_credentials/' . $unique_sid, 'refresh');
                 }
@@ -2910,7 +2915,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function required_equipment($unique_sid) {
+    public function required_equipment($unique_sid)
+    {
         redirect('onboarding/getting_started/' . $unique_sid, 'refresh');
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
@@ -2949,7 +2955,6 @@ class Onboarding extends CI_Controller {
                 $this->session->set_flashdata('message', '<strong>Error</strong> The Onboarding Url has now Expired Please Login or Contact Your HR for Help!');
                 redirect('login', 'refresh');
             }
-
         } else {
             $applicant_sid = $this->input->post('applicant_sid');
             $backpack = $this->input->post('backpack');
@@ -2976,7 +2981,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function configuration() {
+    public function configuration()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -3492,7 +3498,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function edit_welcome_video($welcome_video_sid) {
+    public function edit_welcome_video($welcome_video_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -3580,7 +3587,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function getUsefulLink($useful_link_sid, $company_sid) {
+    public function getUsefulLink($useful_link_sid, $company_sid)
+    {
         $useful_link = $this->onboarding_model->get_edit_link($company_sid, $useful_link_sid);
         $return_data = array();
 
@@ -3595,7 +3603,8 @@ class Onboarding extends CI_Controller {
         echo json_encode($return_data);
     }
 
-    public function updateUsefulLink() {
+    public function updateUsefulLink()
+    {
         $sid = $this->input->post('sid');
         $title = $this->input->post('link_title');
         $description = $this->input->post('link_description');
@@ -3607,7 +3616,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->update_usefull_link($sid, $edit_data);
     }
 
-    public function getOfficeLocation($location_sid, $company_sid) {
+    public function getOfficeLocation($location_sid, $company_sid)
+    {
         $location = $this->onboarding_model->get_edit_location($company_sid, $location_sid);
         $return_data = array();
 
@@ -3623,7 +3633,8 @@ class Onboarding extends CI_Controller {
         echo json_encode($return_data);
     }
 
-    public function updateLocation() {
+    public function updateLocation()
+    {
         $sid = $this->input->post('sid');
         $title = $this->input->post('location_title');
         $address = $this->input->post('location_address');
@@ -3637,7 +3648,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->update_location($sid, $edit_data);
     }
 
-    public function getOfficeHours($hours_sid, $company_sid) {
+    public function getOfficeHours($hours_sid, $company_sid)
+    {
         $timming = $this->onboarding_model->getOfficeHours($company_sid, $hours_sid);
         $return_data = array();
 
@@ -3652,7 +3664,8 @@ class Onboarding extends CI_Controller {
         echo json_encode($return_data);
     }
 
-    public function updateOfficeHours() {
+    public function updateOfficeHours()
+    {
         $sid = $this->input->post('sid');
         $title = $this->input->post('hours_title');
         $start = $this->input->post('hours_start');
@@ -3666,7 +3679,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->updateOfficeHours($sid, $edit_data);
     }
 
-    public function customOfficeLocation() {
+    public function customOfficeLocation()
+    {
         $company_sid = $this->input->post('company_sid');
         $user_type = $this->input->post('user_type');
         $user_sid = $this->input->post('user_sid');
@@ -3695,7 +3709,8 @@ class Onboarding extends CI_Controller {
         echo json_encode($record_sid);
     }
 
-    public function customOfficeHours() {
+    public function customOfficeHours()
+    {
         $company_sid = $this->input->post('company_sid');
         $user_type = $this->input->post('user_type');
         $user_sid = $this->input->post('user_sid');
@@ -3725,7 +3740,8 @@ class Onboarding extends CI_Controller {
     }
 
 
-    public function customOfficeUsefullLink() {
+    public function customOfficeUsefullLink()
+    {
         $company_sid = $this->input->post('company_sid');
         $user_type = $this->input->post('user_type');
         $user_sid = $this->input->post('user_sid');
@@ -3753,7 +3769,8 @@ class Onboarding extends CI_Controller {
         echo json_encode($record_sid);
     }
 
-    public function customOfficeUsefullLink_update() {
+    public function customOfficeUsefullLink_update()
+    {
         $record_sid = $this->input->post('record_sid');
         $title = $this->input->post('link_title');
         $link_description = $this->input->post('link_description');
@@ -3769,7 +3786,8 @@ class Onboarding extends CI_Controller {
         echo json_encode($record_sid);
     }
 
-    public function customWhatToBring() {
+    public function customWhatToBring()
+    {
         $company_sid = $this->input->post('company_sid');
         $user_type = $this->input->post('user_type');
         $user_sid = $this->input->post('user_sid');
@@ -3794,7 +3812,8 @@ class Onboarding extends CI_Controller {
         echo json_encode($record_sid);
     }
 
-    public function change_custom_status() {
+    public function change_custom_status()
+    {
         $sid = $this->input->post('custom_record_sid');
         $status = $this->input->post('custom_record_status');
         $update_custom_status = array();
@@ -3802,7 +3821,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->custom_assignment_update_record($sid, $update_custom_status);
     }
 
-    public function getCustomRecord($sid = NULL) {
+    public function getCustomRecord($sid = NULL)
+    {
         $return_data = array();
 
         if ($sid != NULL) {
@@ -3824,7 +3844,8 @@ class Onboarding extends CI_Controller {
         echo json_encode($return_data);
     }
 
-    public function updateCustomOfficeLocation() {
+    public function updateCustomOfficeLocation()
+    {
         $sid = $this->input->post('sid');
         $location_title = $this->input->post('location_title');
         $location_address = $this->input->post('location_address');
@@ -3838,7 +3859,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->custom_assignment_update_record($sid, $update_custom_data);
     }
 
-    public function updateCustomOfficeHours() {
+    public function updateCustomOfficeHours()
+    {
         $sid = $this->input->post('sid');
         $hour_title = $this->input->post('hour_title');
         $hour_start_time = $this->input->post('hour_start_time');
@@ -3852,7 +3874,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->custom_assignment_update_record($sid, $update_custom_data);
     }
 
-    public function updateCustomOfficeItem() {
+    public function updateCustomOfficeItem()
+    {
         $sid = $this->input->post('sid');
         $item_title = $this->input->post('item_title');
         $item_description = $this->input->post('item_description');
@@ -3862,7 +3885,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->custom_assignment_update_record($sid, $update_custom_data);
     }
 
-    public function updateWelcomeVideoStatus() {
+    public function updateWelcomeVideoStatus()
+    {
         $sid = $this->input->post('sid');
         $status = $this->input->post('status');
         $edit_data = array();
@@ -3870,7 +3894,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->insert_update_welcome_video($edit_data, $sid);
     }
 
-    public function updateWelcomeVideoSource() {
+    public function updateWelcomeVideoSource()
+    {
         $sid = $this->input->post('welcome_sid');
         $source = $this->input->post('welcome_source');
 
@@ -3919,7 +3944,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->insert_update_welcome_video($edit_data, $sid);
     }
 
-    public function getPerson($person_sid, $company_sid) {
+    public function getPerson($person_sid, $company_sid)
+    {
         $person = $this->onboarding_model->getPersonToMeet($company_sid, $person_sid);
         $return_data = array();
 
@@ -3933,12 +3959,14 @@ class Onboarding extends CI_Controller {
         echo json_encode($return_data);
     }
 
-    public function checkPerson($company_sid, $employer_sid) {
+    public function checkPerson($company_sid, $employer_sid)
+    {
         $check = $this->onboarding_model->checkEmployeer($company_sid, $employer_sid);
         echo $check;
     }
 
-    public function checkPersonBeforeEdit($company_sid, $employer_sid, $record_sid) {
+    public function checkPersonBeforeEdit($company_sid, $employer_sid, $record_sid)
+    {
         $check = $this->onboarding_model->checkemployerBeforeEdit($company_sid, $employer_sid);
 
         if (!empty($check)) {
@@ -3952,7 +3980,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function updatePerson() {
+    public function updatePerson()
+    {
         $sid = $this->input->post('sid');
         $employer = $this->input->post('person_sid');
         $notes = $this->input->post('person_notes');
@@ -3962,7 +3991,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->updatePersonToMeet($sid, $edit_data);
     }
 
-    public function getBringItem($item_sid, $company_sid) {
+    public function getBringItem($item_sid, $company_sid)
+    {
         $item = $this->onboarding_model->getItemToBring($company_sid, $item_sid);
         $return_data = array();
 
@@ -3976,7 +4006,8 @@ class Onboarding extends CI_Controller {
         echo json_encode($return_data);
     }
 
-    public function updateBringItem() {
+    public function updateBringItem()
+    {
         $sid = $this->input->post('sid');
         $title = $this->input->post('item_title');
         $description = $this->input->post('item_description');
@@ -3986,7 +4017,8 @@ class Onboarding extends CI_Controller {
         $this->onboarding_model->updateItemToBring($sid, $edit_data);
     }
 
-    public function vimeo_get_id($str) {
+    public function vimeo_get_id($str)
+    {
         if ($str != "") {
             if ($_SERVER['HTTP_HOST'] == 'localhost') {
                 $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
@@ -4024,7 +4056,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
         if ($this->form_validation->run() == false) {
             //Handle Get
@@ -4057,7 +4090,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function print_applicant_upload_img($image_url) {
+    public function print_applicant_upload_img($image_url)
+    {
         $document_file = AWS_S3_BUCKET_URL . $image_url;
         $data['print'] = '';
         $data['download'] = NULL;
@@ -4066,7 +4100,8 @@ class Onboarding extends CI_Controller {
         $this->load->view('hr_documents_management/print_generated_document', $data);
     }
 
-    public function print_applicant_generated_doc($type, $unique_sid = NULL, $sid, $download = NULL) {
+    public function print_applicant_generated_doc($type, $unique_sid = NULL, $sid, $download = NULL)
+    {
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
         if (!empty($onboarding_details)) {
@@ -4113,17 +4148,17 @@ class Onboarding extends CI_Controller {
                 if (empty($document['authorized_signature'])) {
                     $authorized_signature = '------------------------------(Authorized Signature Requireq)';
                 } else {
-                    $authorized_signature = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$document['authorized_signature'].'">';
+                    $authorized_signature = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $document['authorized_signature'] . '">';
                 }
 
                 if (!empty($document['authorized_signature_date'])) {
-                    $authorized_signature_date = '<p><strong>'.date_with_time($document['authorized_signature_date']).'</strong></p>';       
+                    $authorized_signature_date = '<p><strong>' . date_with_time($document['authorized_signature_date']) . '</strong></p>';
                 } else {
                     $authorized_signature_date = '------------------------------(Authorized Sign Date Requireq)';
                 }
 
                 $document_content = str_replace('{{authorized_signature}}', $authorized_signature, $document_content);
-                $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $document['document_description']);
+                $document['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document['document_description']);
 
                 $value = '<br><input type="checkbox" class="user_checkbox"/>';
                 $document_content = str_replace('{{checkbox}}', $value, $document_content);
@@ -4149,7 +4184,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function download_assign_document($unique_sid, $document_sid, $print_type) {
+    public function download_assign_document($unique_sid, $document_sid, $print_type)
+    {
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
         if (!empty($onboarding_details)) {
@@ -4176,8 +4212,8 @@ class Onboarding extends CI_Controller {
                         $value = '<br><input type="checkbox" class="user_checkbox"/>';
                         $document_content = str_replace('[Target User Checkbox]', $value, $document_content);
                         //E_signature process
-                        $signature_bas64_image = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="draw_upload_img" />';
-                        $init_signature_bas64_image = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="target_signature_init" />';
+                        $signature_bas64_image = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="draw_upload_img" />';
+                        $init_signature_bas64_image = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="target_signature_init" />';
                         $signature_timestamp = '<a class="btn btn-sm blue-button get_signature_date" href="javascript:;">Sign Date</a><p id="target_signature_timestamp"></p>';
                         $value = ' ';
                         $document_content = str_replace($signature_bas64_image, $value, $document_content);
@@ -4269,13 +4305,14 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function downloaded_generated_doc($user_sid, $company_sid, $document_sid, $user_type) {
+    public function downloaded_generated_doc($user_sid, $company_sid, $document_sid, $user_type)
+    {
         $document = $this->onboarding_model->get_required_document_info($company_sid, $user_sid, $user_type, $document_sid);
 
         if ($document['document_type'] == 'offer_letter') {
             // $document_info = $this->onboarding_model->get_assign_offer_letter_info($document['document_sid']);
             if (!empty($document) && ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1)) {
-                if($document['acknowledged'] == 1) {
+                if ($document['acknowledged'] == 1) {
                     $data_to_update = array();
                     $data_to_update['downloaded'] = 1;
                     $data_to_update['downloaded_date'] = date('Y-m-d H:i:s');
@@ -4285,9 +4322,9 @@ class Onboarding extends CI_Controller {
                         $data_to_update['form_input_data'] = 's:2:"{}";';
                         $data_to_update['signature_timestamp'] = date('Y-m-d');
                     }
-                    
+
                     $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
-                } else{
+                } else {
                     $data_to_update = array();
                     $data_to_update['downloaded'] = 1;
                     $data_to_update['downloaded_date'] = date('Y-m-d H:i:s');
@@ -4311,7 +4348,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function download_hr_document($unique_sid = NULL, $document_sid) {
+    public function download_hr_document($unique_sid = NULL, $document_sid)
+    {
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
         if (!empty($onboarding_details)) {
@@ -4369,7 +4407,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function setup($user_type, $user_sid, $job_list_sid = null) {
+    public function setup($user_type, $user_sid, $job_list_sid = null)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -4548,105 +4587,21 @@ class Onboarding extends CI_Controller {
                 }
             }
             // Get employees list
-            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees( $company_sid, false );
+            $data['employeesList'] = $this->hr_documents_management_model->getAllActiveEmployees($company_sid, false);
 
-            $groups = $this->hr_documents_management_model->get_all_documents_group($company_sid,1);
-
-            if (!empty($groups)) {
-                foreach ($groups as $key => $group) {
-                    $document_status = $this->hr_documents_management_model->is_document_assign_2_group($group['sid']);
-                    $groups[$key]['document_status'] = $document_status;
-                }
-            }
-
+            ///get Group Documents 
+            //Params  company id , user type , user id , pp flag
+            $doc_group_data = $this->hr_documents_management_model->checkAndAssignGroups($company_sid, $user_type, $user_sid, $pp_flag);
+            extract($doc_group_data);
             $data['groups'] = $groups;
-            $groups_assign = $this->hr_documents_management_model->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
-            $assigned_groups = array();
 
-            if (!empty($groups_assign)) {
-                foreach ($groups_assign as $value) {
-                    array_push($assigned_groups, $value['group_sid']);
-                    $system_document = $this->hr_documents_management_model->get_document_group($value['group_sid']);
-
-                    if ($system_document['w4'] == 1) {
-                        $is_w4_assign = $this->hr_documents_management_model->check_w4_form_exist($user_type, $user_sid);
-                        if (empty($is_w4_assign)) {
-                            $w4_data_to_insert = array();
-                            $w4_data_to_insert['employer_sid'] = $user_sid;
-                            $w4_data_to_insert['company_sid'] = $company_sid;
-                            $w4_data_to_insert['user_type'] = $user_type;
-                            $w4_data_to_insert['sent_status'] = 1;
-                            $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-                            $w4_data_to_insert['status'] = 1;
-                            $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
-                            //
-                            $sendGroupEmail = 1;
-
-                        }
-                    }
-
-                    if ($system_document['w9'] == 1) {
-                        $is_w9_assign = $this->hr_documents_management_model->check_w9_form_exist($user_type, $user_sid);
-
-                        if (empty($is_w9_assign)) {
-                            $w9_data_to_insert = array();
-                            $w9_data_to_insert['user_sid'] = $user_sid;
-                            $w9_data_to_insert['company_sid'] = $company_sid;
-                            $w9_data_to_insert['user_type'] = $user_type;
-                            $w9_data_to_insert['sent_status'] = 1;
-                            $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-                            $w9_data_to_insert['status'] = 1;
-                            $this->hr_documents_management_model->insert_w9_form_record($w9_data_to_insert);
-                            //
-                            $sendGroupEmail = 1;
-                        }
-                    }
-
-                    if ($system_document['i9'] == 1) {
-                        $is_i9_assign = $this->hr_documents_management_model->check_i9_exist($user_type, $user_sid);
-
-                        if (empty($is_i9_assign)) {
-                            $i9_data_to_insert = array();
-                            $i9_data_to_insert['user_sid'] = $user_sid;
-                            $i9_data_to_insert['user_type'] = $user_type;
-                            $i9_data_to_insert['company_sid'] = $company_sid;
-                            $i9_data_to_insert['sent_status'] = 1;
-                            $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
-                            $i9_data_to_insert['status'] = 1;
-                            $this->hr_documents_management_model->insert_i9_form_record($i9_data_to_insert);
-                            //
-                            $sendGroupEmail = 1;
-                        }
-                    }
-
-                    if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
-                        $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
-
-                        if (empty($is_eeoc_assign)) {
-                            $eeoc_data_to_insert = array();
-                            $eeoc_data_to_insert['application_sid'] = $user_sid;
-                            $eeoc_data_to_insert['users_type'] = $user_type;
-                            $eeoc_data_to_insert['status'] = 1;
-                            $eeoc_data_to_insert['is_expired'] = 0;
-                            $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
-                            $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['last_assigned_by'] = 0;
-                            //
-                            $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
-                            //
-                            $sendGroupEmail = 1;
-                        }
-                    }
-                }
-            }
 
             if ($sendGroupEmail == 1 && $user_type == 'employee') {
                 //
                 $hf = message_header_footer(
-                        $company_sid,
-                        ucwords($company_name)
-                    );
+                    $company_sid,
+                    ucwords($company_name)
+                );
                 //
                 $replacement_array = array();
                 $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
@@ -4736,7 +4691,7 @@ class Onboarding extends CI_Controller {
                             $offer_letter_name        = $offer_letter_file_info[0];
                             $offer_letter_extension   = $offer_letter_file_info[1];
 
-                            if (in_array($offer_letter_extension, ['pdf', 'csv', 'ppt', 'pptx'])) { 
+                            if (in_array($offer_letter_extension, ['pdf', 'csv', 'ppt', 'pptx'])) {
                                 $offer_letter_iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $offer_letter_url . '&embedded=true';
                             } else if (in_array($offer_letter_extension, ['doc', 'docx', 'xls', 'xlsx'])) {
                                 $offer_letter_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $offer_letter_url);
@@ -4746,7 +4701,7 @@ class Onboarding extends CI_Controller {
                 }
 
                 //
-                if(sizeof($data['assignedOfferLetter'])) $this->hr_documents_management_model->getManagersListSingle($data['assignedOfferLetter']);
+                if (sizeof($data['assignedOfferLetter'])) $this->hr_documents_management_model->getManagersListSingle($data['assignedOfferLetter']);
 
                 //
                 $data['all_documents'] = $all_uploaded_generated_doc;
@@ -4776,7 +4731,7 @@ class Onboarding extends CI_Controller {
                 $configuration = $this->onboarding_model->get_onboarding_configuration($user_type, $user_sid);
                 $onboarding_applicant_info = $this->onboarding_model->get_onboarding_applicants($user_sid);
                 $unique_sid = isset($onboarding_applicant_info['unique_sid']) ? $onboarding_applicant_info['unique_sid'] : '';
-                $email_sent_date = isset($onboarding_applicant_info['email_sent_date']) && $onboarding_applicant_info['email_sent_date'] != NULL && !empty($onboarding_applicant_info['email_sent_date']) ? date('m-d-Y h:i:s A',strtotime($onboarding_applicant_info['email_sent_date'])) : '';
+                $email_sent_date = isset($onboarding_applicant_info['email_sent_date']) && $onboarding_applicant_info['email_sent_date'] != NULL && !empty($onboarding_applicant_info['email_sent_date']) ? date('m-d-Y h:i:s A', strtotime($onboarding_applicant_info['email_sent_date'])) : '';
                 $sections_data = $this->get_single_record_from_array($configuration, 'section', 'sections');
                 $locations_data = $this->get_single_record_from_array($configuration, 'section', 'locations');
                 $timings_data = $this->get_single_record_from_array($configuration, 'section', 'timings');
@@ -4825,7 +4780,7 @@ class Onboarding extends CI_Controller {
                 $data['company_name'] = $company_name;
                 $data['unique_sid'] = $unique_sid;
                 $data['email_sent_date'] = $email_sent_date;
-                
+
 
                 $data['managers_list'] = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, $employer_sid);
 
@@ -4976,7 +4931,7 @@ class Onboarding extends CI_Controller {
                             $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
                         }
                         //
-                        $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
+                        $w4_sid = getVerificationDocumentSid($user_sid, $user_type, 'w4');
                         keepTrackVerificationDocument($security_sid, "employee", 'assign', $w4_sid, 'w4', 'Setup Panel');
                         //
                         echo date_format(new DateTime(date('Y-m-d H:i:s')), 'M d Y h:i a');
@@ -4991,7 +4946,7 @@ class Onboarding extends CI_Controller {
                         //
                         $this->hr_documents_management_model->deactivate_w4_forms($user_type, $user_sid);
                         //
-                        $w4_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w4');
+                        $w4_sid = getVerificationDocumentSid($user_sid, $user_type, 'w4');
                         keepTrackVerificationDocument($security_sid, "employee", 'revoke', $w4_sid, 'w4', 'Setup Panel');
                         //
                         echo 'removed';
@@ -5028,7 +4983,7 @@ class Onboarding extends CI_Controller {
                             $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                         }
                         //
-                        $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
+                        $i9_sid = getVerificationDocumentSid($user_sid, $user_type, 'i9');
                         keepTrackVerificationDocument($security_sid, "employee", 'assign', $i9_sid, 'i9', 'Setup Panel');
                         //
                         echo date_format(new DateTime(date('Y-m-d H:i:s')), 'M d Y h:i a');
@@ -5043,7 +4998,7 @@ class Onboarding extends CI_Controller {
                         //
                         $this->hr_documents_management_model->deactivate_i9_forms($user_type, $user_sid);
                         //
-                        $i9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'i9');
+                        $i9_sid = getVerificationDocumentSid($user_sid, $user_type, 'i9');
                         keepTrackVerificationDocument($security_sid, "employee", 'revoke', $i9_sid, 'i9', 'Setup Panel');
                         //
                         echo 'removed';
@@ -5082,7 +5037,7 @@ class Onboarding extends CI_Controller {
                             $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $already_assigned_w9);
                         }
                         //
-                        $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
+                        $w9_sid = getVerificationDocumentSid($user_sid, $user_type, 'w9');
                         keepTrackVerificationDocument($security_sid, "employee", 'assign', $w9_sid, 'w9', 'Setup Panel');
                         //
                         echo date_format(new DateTime(date('Y-m-d H:i:s')), 'M d Y h:i a');
@@ -5097,7 +5052,7 @@ class Onboarding extends CI_Controller {
                         //
                         $this->hr_documents_management_model->deactivate_w9_forms($user_type, $user_sid);
                         //
-                        $w9_sid = getVerificationDocumentSid ($user_sid, $user_type, 'w9');
+                        $w9_sid = getVerificationDocumentSid($user_sid, $user_type, 'w9');
                         keepTrackVerificationDocument($security_sid, "employee", 'revoke', $w9_sid, 'w9', 'Setup Panel');
                         //
                         echo 'removed';
@@ -5164,10 +5119,10 @@ class Onboarding extends CI_Controller {
                                         $this->onboarding_model->insert_documents_assignment_record_history($previous_offer_letter);
                                     }
                                 }
-                            } 
+                            }
 
                             $this->onboarding_model->disable_all_previous_letter($company_sid, $user_type, $user_sid, 'offer_letter');
-                                
+
                             $data_to_insert['status'] = 1;
                             $verification_key = random_key(80);
                             $assignment_sid = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
@@ -5194,32 +5149,32 @@ class Onboarding extends CI_Controller {
                     case 'remove_EEOC': //EEOC Form Deactive
                         $this->hr_documents_management_model->deactivate_EEOC_forms($user_type, $user_sid);
                         //
-                        $eeoc_sid = getVerificationDocumentSid ($user_sid, $user_type, 'eeoc');
+                        $eeoc_sid = getVerificationDocumentSid($user_sid, $user_type, 'eeoc');
                         keepTrackVerificationDocument($security_sid, "employee", 'revoke', $eeoc_sid, 'eeoc', 'Setup Panel');
                         //
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Revoked!');
                         //
                         if ($user_type == 'employee') {
-                            redirectHandler('onboarding/setup/employee/'. $user_sid.'#documents', 'refresh');
+                            redirectHandler('onboarding/setup/employee/' . $user_sid . '#documents', 'refresh');
                         } else {
-                            redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents', 'refresh');
+                            redirectHandler('onboarding/setup/applicant/' . $user_sid . '#documents', 'refresh');
                         }
 
-                        break;  
+                        break;
                     case 'assign_EEOC': //EEOC Form Active
                         $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
                         //
-                        $eeoc_sid = getVerificationDocumentSid ($user_sid, $user_type, 'eeoc');
+                        $eeoc_sid = getVerificationDocumentSid($user_sid, $user_type, 'eeoc');
                         keepTrackVerificationDocument($security_sid, "employee", 'assign', $eeoc_sid, 'eeoc', 'Setup Panel');
                         //
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Document Successfully Assigned!');
                         //
                         if ($user_type == 'employee') {
-                            redirectHandler('onboarding/setup/employee/'. $user_sid.'#documents', 'refresh');
+                            redirectHandler('onboarding/setup/employee/' . $user_sid . '#documents', 'refresh');
                         } else {
-                            redirectHandler('onboarding/setup/applicant/'. $user_sid.'#documents' , 'refresh');
+                            redirectHandler('onboarding/setup/applicant/' . $user_sid . '#documents', 'refresh');
                         }
-                        break; 
+                        break;
                 }
 
                 $company_sid = $this->input->post('company_sid');
@@ -5309,7 +5264,7 @@ class Onboarding extends CI_Controller {
                     $onboarding_data['job_list_sid'] = $job_list_sid;
                     $onboarding_data['job_sid'] = $job_list_info['job_sid'];
                     $this->onboarding_model->mark_applicant_for_onboarding($user_sid);
-                    $this->onboarding_model->update_applicant_status_type($user_sid,array('employee_status'=>$employee_status,'employee_type'=>$employee_type));
+                    $this->onboarding_model->update_applicant_status_type($user_sid, array('employee_status' => $employee_status, 'employee_type' => $employee_type));
                     $this->onboarding_model->save_onboarding_applicant($company_sid, $user_sid, $onboarding_data);
                 }
                 $data_to_save = array();
@@ -5423,7 +5378,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function send_offer_letter($user_type, $user_sid, $job_list_sid = null) {
+    public function send_offer_letter($user_type, $user_sid, $job_list_sid = null)
+    {
         if ($this->session->userdata('logged_in')) {
             $data = array();
             $data['session'] = $this->session->userdata('logged_in');
@@ -5433,7 +5389,7 @@ class Onboarding extends CI_Controller {
             $company_sid = $data['session']['company_detail']['sid'];
             $company_name = $data['session']['company_detail']['CompanyName'];
             $employer_sid = $data['session']['employer_detail']['sid'];
-           
+
             $user_info = array();
             $offer_letter_body = '';
             $offer_letter_status = 0;
@@ -5445,7 +5401,7 @@ class Onboarding extends CI_Controller {
             $assign_offer_letter_name = '';
 
             $offer_letters = $this->onboarding_model->get_all_offer_letters($company_sid, $user_sid);
-            
+
             if ($user_type == 'applicant') {
                 $user_info = $this->onboarding_model->get_applicant_information($user_sid);
 
@@ -5473,7 +5429,7 @@ class Onboarding extends CI_Controller {
                         $offer_letter_name        = $offer_letter_file_info[0];
                         $offer_letter_extension   = $offer_letter_file_info[1];
 
-                        if (in_array($offer_letter_extension, ['pdf', 'csv', 'ppt', 'pptx'])) { 
+                        if (in_array($offer_letter_extension, ['pdf', 'csv', 'ppt', 'pptx'])) {
                             $offer_letter_iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $offer_letter_url . '&embedded=true';
                         } else if (in_array($offer_letter_extension, ['doc', 'docx', 'xls', 'xlsx'])) {
                             $offer_letter_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $offer_letter_url);
@@ -5485,7 +5441,6 @@ class Onboarding extends CI_Controller {
                 $data = applicant_right_nav($user_sid, $job_list_sid, $ats_params);
                 $data['job_list_sid'] = $job_list_sid;
                 $data['user_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($user_sid, $user_type);
-             
             } else if ($user_type == 'employee') {
                 $user_info = $this->onboarding_model->get_employee_info($company_sid, $user_sid);
 
@@ -5506,14 +5461,14 @@ class Onboarding extends CI_Controller {
                     $assign_offer_letter_name = $assigned_offer_letter['document_original_name'];
 
                     if ($assigned_offer_letter_type == "uploaded") {
-                        
+
                         $offer_letter_iframe_url  = '';
                         $offer_letter_url         = $assigned_offer_letter['document_s3_name'];
                         $offer_letter_file_info   = explode(".", $offer_letter_url);
                         $offer_letter_name        = $offer_letter_file_info[0];
                         $offer_letter_extension   = $offer_letter_file_info[1];
 
-                        if (in_array($offer_letter_extension, ['pdf', 'csv'])) { 
+                        if (in_array($offer_letter_extension, ['pdf', 'csv'])) {
                             $offer_letter_iframe_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $offer_letter_url . '&embedded=true';
                         } else if (in_array($offer_letter_extension, ['doc', 'docx'])) {
                             $offer_letter_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $offer_letter_url);
@@ -5565,7 +5520,7 @@ class Onboarding extends CI_Controller {
                 $this->load->view('onboarding/send_offer_letter');
                 $this->load->view('main/footer');
             } else {
-                
+
                 $perform_action = $this->input->post('perform_action');
                 $offer_letter_sid = $this->input->post('offer_letter_select');
                 $letter_body = $this->input->post('letter_body');
@@ -5573,10 +5528,10 @@ class Onboarding extends CI_Controller {
 
                 $post = $this->input->post(NULL, TRUE);
 
-                
+
                 if (!empty($letter_body) || $offer_letter_type == "uploaded") {
                     $offer_letter_title = $this->hr_documents_management_model->get_assigned_offer_letter_title($offer_letter_sid);
-                    
+
                     $letter_name = $offer_letter_title;
                     $data_to_insert = array();
                     $data_to_insert['company_sid'] = $company_sid;
@@ -5590,19 +5545,19 @@ class Onboarding extends CI_Controller {
                     $data_to_insert['offer_letter_type'] = $offer_letter_type;
 
                     if ($offer_letter_type == "hybrid_document") {
-                            $upload_letter_description = $this->onboarding_model->get_assign_offer_letter_info($offer_letter_sid);
-                            $data_to_insert['document_description'] = $upload_letter_description['letter_body'];
+                        $upload_letter_description = $this->onboarding_model->get_assign_offer_letter_info($offer_letter_sid);
+                        $data_to_insert['document_description'] = $upload_letter_description['letter_body'];
 
-                            $document_original_name   = $upload_letter_description['uploaded_document_original_name'];
-                            $offer_letter_file_info   = explode(".", $document_original_name);
-                            $offer_letter_name        = $offer_letter_file_info[0];
-                            $offer_letter_extension   = $offer_letter_file_info[1];
+                        $document_original_name   = $upload_letter_description['uploaded_document_original_name'];
+                        $offer_letter_file_info   = explode(".", $document_original_name);
+                        $offer_letter_name        = $offer_letter_file_info[0];
+                        $offer_letter_extension   = $offer_letter_file_info[1];
 
-                            $data_to_insert['document_original_name'] = $document_original_name;
-                            $data_to_insert['document_extension'] = $offer_letter_extension;
-                            $data_to_insert['document_s3_name'] = $upload_letter_description['uploaded_document_s3_name'];
-                            $data_to_insert['document_description'] = $letter_body;
-                        } else if ($offer_letter_type == "uploaded") {
+                        $data_to_insert['document_original_name'] = $document_original_name;
+                        $data_to_insert['document_extension'] = $offer_letter_extension;
+                        $data_to_insert['document_s3_name'] = $upload_letter_description['uploaded_document_s3_name'];
+                        $data_to_insert['document_description'] = $letter_body;
+                    } else if ($offer_letter_type == "uploaded") {
                         $upload_letter_description = $this->onboarding_model->get_assign_offer_letter_info($offer_letter_sid);
                         $data_to_insert['document_description'] = $upload_letter_description['letter_body'];
 
@@ -5633,33 +5588,33 @@ class Onboarding extends CI_Controller {
                             //
                             $this->onboarding_model->delete_from_oirignal_table($previous_assigned_sid);
                         }
-                    } 
+                    }
                     //
                     $this->onboarding_model->disable_all_previous_letter($company_sid, $user_type, $user_sid, 'offer_letter');
-                        
+
                     $data_to_insert['status'] = 1;
                     //
-                    if(isset($post['visible_to_payroll'])){
+                    if (isset($post['visible_to_payroll'])) {
                         $data_to_insert['visible_to_payroll'] = $post['visible_to_payroll'];
                     }
                     //
-                    if(isset($post['roles'])){
+                    if (isset($post['roles'])) {
                         $data_to_insert['allowed_roles'] = implode(',', $post['roles']);
                     }
                     //
-                    if(isset($post['employees'])){
+                    if (isset($post['employees'])) {
                         $data_to_insert['allowed_employees'] = implode(',', $post['employees']);
                     }
                     //
-                    if(isset($post['departments'])){
+                    if (isset($post['departments'])) {
                         $data_to_insert['allowed_departments'] = implode(',', $post['departments']);
                     }
                     //
-                    if(isset($post['teams'])){
+                    if (isset($post['teams'])) {
                         $data_to_insert['allowed_teams'] = implode(',', $post['teams']);
                     }
                     //
-                 
+
                     $verification_key = random_key(80);
                     $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
                     $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
@@ -5703,17 +5658,17 @@ class Onboarding extends CI_Controller {
                     $from_name = ucwords(STORE_DOMAIN);
                     $email_hf = message_header_footer_domain($company_sid, $company_name);
                     $body = $email_hf['header']
-                            . $emailTemplateBody
-                            . $email_hf['footer'];
+                        . $emailTemplateBody
+                        . $email_hf['footer'];
                     sendMail($from, $to, $subject, $body, $from_name);
                     $this->session->set_flashdata('message', '<strong>Success: </strong> Offer letter / Pay plan assigned and sent successfully!');
-                } else{
+                } else {
                     $this->session->set_flashdata('message', '<strong>Success: </strong> Offer letter / Pay plan assigned successfully!');
                 }
 
-                redirect('onboarding/send_offer_letter/'. $user_type .'/' . $user_sid, 'refresh');
+                redirect('onboarding/send_offer_letter/' . $user_type . '/' . $user_sid, 'refresh');
                 if ($user_type == 'applicant') {
-                    redirect('applicant_profile/' . $user_sid.'/'.$job_list_sid, 'refresh');
+                    redirect('applicant_profile/' . $user_sid . '/' . $job_list_sid, 'refresh');
                 } else {
                     redirect('employee_profile/' . $user_sid, 'refresh');
                 }
@@ -5723,7 +5678,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function view_offer_letter($user_type, $user_sid, $job_list_sid = null) {
+    public function view_offer_letter($user_type, $user_sid, $job_list_sid = null)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -5781,21 +5737,21 @@ class Onboarding extends CI_Controller {
 
                 if (!empty($offer_letter_history)) {
                     foreach ($offer_letter_history as $key => $record) {
-                        if(!empty($record['signature_timestamp']) && $record['offer_letter_type'] != 'uploaded') {
+                        if (!empty($record['signature_timestamp']) && $record['offer_letter_type'] != 'uploaded') {
                             $offer_letter_history[$key]['sort_date'] = date('m-d-Y', strtotime($record['signature_timestamp']));
                         } else if (!empty($record['uploaded_date'])) {
                             $offer_letter_history[$key]['sort_date']  = date('m-d-Y', strtotime($record['uploaded_date']));
-                        } else if  (!empty($record['acknowledged_date'])) {
+                        } else if (!empty($record['acknowledged_date'])) {
                             $offer_letter_history[$key]['sort_date']  = date('m-d-Y', strtotime($record['acknowledged_date']));
                         } else if (!empty($record['downloaded_date'])) {
                             $offer_letter_history[$key]['sort_date']  = date('m-d-Y', strtotime($record['downloaded_date']));
                         }
-                    } 
+                    }
 
-                    usort($offer_letter_history, function($a, $b) {
+                    usort($offer_letter_history, function ($a, $b) {
                         return $a['sort_date'] < $b['sort_date'];
-                    });  
-                    
+                    });
+
                     foreach ($offer_letter_history as $key => $record) {
                         $letter_type = $record['offer_letter_type'];
                         $applicant_offer_letters[$key + 1]['letter_status']         = 'Previous';
@@ -5822,7 +5778,7 @@ class Onboarding extends CI_Controller {
                     }
                 }
 
-                usort($applicant_offer_letters, function($a, $b) {
+                usort($applicant_offer_letters, function ($a, $b) {
                     return $a['signature_timestamp'] < $b['signature_timestamp'];
                 });
 
@@ -5866,7 +5822,7 @@ class Onboarding extends CI_Controller {
                     $applicant_offer_letters[0]['signature_timestamp']  = $assigned_offer_letter['signature_timestamp'];
                     $applicant_offer_letters[0]['archive']              = $assigned_offer_letter['archive'];
 
-                    if($letter_type == 'hybrid_document'){
+                    if ($letter_type == 'hybrid_document') {
                         $applicant_offer_letters[0]['uploaded_file'] = $assigned_offer_letter['uploaded_file'] == '' ? $assigned_offer_letter['document_s3_name'] : $assigned_offer_letter['uploaded_file'];
                         $applicant_offer_letters[0]['submitted_description'] = $assigned_offer_letter['submitted_description'];
                     } else if ($letter_type == 'uploaded') {
@@ -5878,24 +5834,24 @@ class Onboarding extends CI_Controller {
                 }
 
                 if (!empty($offer_letter_history)) {
-                    
+
                     foreach ($offer_letter_history as $key => $record) {
-                        if(!empty($record['signature_timestamp']) && $record['offer_letter_type'] != 'uploaded') {
+                        if (!empty($record['signature_timestamp']) && $record['offer_letter_type'] != 'uploaded') {
                             $offer_letter_history[$key]['sort_date'] = date('m-d-Y', strtotime($record['signature_timestamp']));
                         } else if (!empty($record['uploaded_date'])) {
                             $offer_letter_history[$key]['sort_date']  = date('m-d-Y', strtotime($record['uploaded_date']));
-                        } else if  (!empty($record['acknowledged_date'])) {
+                        } else if (!empty($record['acknowledged_date'])) {
                             $offer_letter_history[$key]['sort_date']  = date('m-d-Y', strtotime($record['acknowledged_date']));
                         } else if (!empty($record['downloaded_date'])) {
                             $offer_letter_history[$key]['sort_date']  = date('m-d-Y', strtotime($record['downloaded_date']));
                         }
-                    } 
+                    }
 
-                    usort($offer_letter_history, function($a, $b) {
+                    usort($offer_letter_history, function ($a, $b) {
                         return $a['sort_date'] < $b['sort_date'];
-                    });  
+                    });
 
-                    foreach ($offer_letter_history as $key => $record) {    
+                    foreach ($offer_letter_history as $key => $record) {
                         $letter_type = $record['offer_letter_type'];
                         $applicant_offer_letters[$key + 1]['letter_status']         = 'Previous';
                         $applicant_offer_letters[$key + 1]['sid']                   = $record['sid'];
@@ -5912,7 +5868,7 @@ class Onboarding extends CI_Controller {
                         $applicant_offer_letters[$key + 1]['signature_timestamp']   = $record['signature_timestamp'];
                         $applicant_offer_letters[$key + 1]['archive']               = $record['archive'];
 
-                        if($letter_type == 'hybrid_document'){
+                        if ($letter_type == 'hybrid_document') {
                             $applicant_offer_letters[$key + 1]['uploaded_file'] = $record['uploaded_file'] == '' ? $record['document_s3_name'] : $record['uploaded_file'];
                             $applicant_offer_letters[$key + 1]['submitted_description'] = $record['submitted_description'];
                         } else if ($letter_type == 'uploaded') {
@@ -5924,7 +5880,7 @@ class Onboarding extends CI_Controller {
                     }
                 }
 
-                usort($applicant_offer_letters, function($a, $b) {
+                usort($applicant_offer_letters, function ($a, $b) {
                     return $a['signature_timestamp'] < $b['signature_timestamp'];
                 });
             }
@@ -5936,21 +5892,22 @@ class Onboarding extends CI_Controller {
             $data['job_list_sid'] = $job_list_sid;
 
             //
-            if(count($applicant_offer_letters)){
-                foreach($applicant_offer_letters as $key => $letter){
+            if (count($applicant_offer_letters)) {
+                foreach ($applicant_offer_letters as $key => $letter) {
                     //
                     $applicant_offer_letters[$key]['signed_on'] = '';
                     //
                     if (isset($letter['signature_timestamp']) && $letter['signature_timestamp'] != '0000-00-00 00:00:00') {
                         $applicant_offer_letters[$key]['signed_on'] = $letter['signature_timestamp'];
-                    } else if($letter['letter_type'] == 'uploaded'){
+                    } else if ($letter['letter_type'] == 'uploaded') {
                         if (isset($letter['uploaded_date']) && $letter['uploaded_date'] != '0000-00-00 00:00:00') {
                             $applicant_offer_letters[$key]['signed_on'] = $letter['uploaded_date'];
                         }
                     }
                 }
                 //
-                function r_sort($a, $b){
+                function r_sort($a, $b)
+                {
                     return $a['signed_on'] < $b['signed_on'];
                 }
                 //
@@ -5979,18 +5936,20 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function revoke_offer_letter($offer_letter_sid) {
+    public function revoke_offer_letter($offer_letter_sid)
+    {
         $data_to_update = array();
         $data_to_update['archive'] = 1;
         $this->onboarding_model->revoke_applicant_offer_letter($offer_letter_sid, $data_to_update);
         echo 'success';
     }
 
-    public function my_offer_letter($verification_key, $type = 'a') {
+    public function my_offer_letter($verification_key, $type = 'a')
+    {
         $check_user_exist = $this->onboarding_model->check_applicant_exist($verification_key, $type);
- 
+
         if (!empty($check_user_exist)) {
-            
+
             if ($type == 'a') {
                 $company_sid = $check_user_exist['employer_sid'];
                 $user_type = 'applicant';
@@ -6054,10 +6013,10 @@ class Onboarding extends CI_Controller {
                     } else {
                         $print_button_action = base_url('onboarding/print_applicant_offer_letter/submitted/' . $offer_letter['sid']);
                     }
-                    
+
                     if ($offer_letter['document_sid'] != 0) {
                         $original_doc_sid = $offer_letter['document_sid'];
-                        $document_feature = $this->onboarding_model->get_offer_letter_feature_info($original_doc_sid); 
+                        $document_feature = $this->onboarding_model->get_offer_letter_feature_info($original_doc_sid);
                         $offer_letter['acknowledgment_required'] = $document_feature['acknowledgment_required'];
                         $offer_letter['download_required'] = $document_feature['download_required'];
                         $offer_letter['signature_required'] = $document_feature['signature_required'];
@@ -6074,30 +6033,29 @@ class Onboarding extends CI_Controller {
                             $uploaded_status = '<strong class="text-danger">Offer Letter Status:</strong> Upload the Signed Document, You have not yet uploaded this document';
                             $uploaded_button_txt = 'Upload Document';
                             $uploaded_button_css = 'blue-button';
-                        } 
+                        }
                         $data['uploaded_action_title'] = $uploaded_action_title;
                         $data['uploaded_action_desc'] = $uploaded_action_desc;
-                        $data['uploaded_status'] = $uploaded_status; 
-                        $data['uploaded_button_txt'] = $uploaded_button_txt; 
-                        $data['uploaded_button_css'] = $uploaded_button_css; 
-                    } else { 
+                        $data['uploaded_status'] = $uploaded_status;
+                        $data['uploaded_button_txt'] = $uploaded_button_txt;
+                        $data['uploaded_button_css'] = $uploaded_button_css;
+                    } else {
                         if (!empty($offer_letter['authorized_signature']) && $offer_letter['user_consent'] == 0) {
-                            $authorized_signature_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.$offer_letter['authorized_signature'].'" id="show_authorized_signature">';
-                            $offer_letter['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image , $offer_letter['document_description']);
+                            $authorized_signature_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . $offer_letter['authorized_signature'] . '" id="show_authorized_signature">';
+                            $offer_letter['document_description'] = str_replace('{{authorized_signature}}', $authorized_signature_image, $offer_letter['document_description']);
 
                             if (!empty($offer_letter['authorized_signature_date'])) {
-                                $authorized_signature_date = '<p><strong>'.date_with_time($offer_letter['authorized_signature_date']).'</strong></p>';
-                                $offer_letter['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $offer_letter['document_description']);
+                                $authorized_signature_date = '<p><strong>' . date_with_time($offer_letter['authorized_signature_date']) . '</strong></p>';
+                                $offer_letter['document_description'] = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $offer_letter['document_description']);
                             }
-
                         }
                         //
                         $document_content = replace_tags_for_document($company_info['sid'], $user_sid, $user_type, $offer_letter['document_description'], $offer_letter['document_sid']);
                         $offer_letter['document_description'] = $document_content;
                     }
-                    
 
-                   
+
+
                     $data['offer_letter'] = $offer_letter;
                     $data['download_action_title'] = $download_action_title;
                     $data['download_action_desc'] = $download_action_desc;
@@ -6136,7 +6094,7 @@ class Onboarding extends CI_Controller {
                                 // $this->hr_documents_management_model->update_acknowledge_status($user_type, $user_sid, $document_sid);
 
                                 if (!empty($document_info) && ($document_info['acknowledgment_required'] == 1 && $document_info['download_required'] == 1)) {
-                                    if($offer_letter['downloaded'] == 1) {
+                                    if ($offer_letter['downloaded'] == 1) {
                                         $data_to_update = array();
                                         $data_to_update['acknowledged'] = 1;
                                         $data_to_update['acknowledged_date'] = date('Y-m-d H:i:s');
@@ -6147,7 +6105,7 @@ class Onboarding extends CI_Controller {
                                         }
 
                                         $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
-                                    } else{
+                                    } else {
                                         $data_to_update = array();
                                         $data_to_update['acknowledged'] = 1;
                                         $data_to_update['acknowledged_date'] = date('Y-m-d H:i:s');
@@ -6178,7 +6136,7 @@ class Onboarding extends CI_Controller {
                                 $user_consent = $this->input->post('user_consent');
                                 $base64_pdf = $this->input->post('save_PDF');
 
-                                if(isset($_POST['save_input_values']) && !empty($_POST['save_input_values'])) {
+                                if (isset($_POST['save_input_values']) && !empty($_POST['save_input_values'])) {
                                     $save_input_values = $_POST['save_input_values'];
                                 }
                                 $save_input_values = serialize($save_input_values);
@@ -6233,29 +6191,29 @@ class Onboarding extends CI_Controller {
                                             if (!empty($emp_info)) {
                                                 $sms_notify = 0;
                                                 $contact_no = 0;
-                                                if($company_sms_notification_status){
-                                                    if($emp_info['employer_sid'] != 0){
+                                                if ($company_sms_notification_status) {
+                                                    if ($emp_info['employer_sid'] != 0) {
                                                         $notify_by = get_employee_sms_status($this, $emp_info['employer_sid']);
-                                                        if(strpos($notify_by['notified_by'],'sms') !== false){
+                                                        if (strpos($notify_by['notified_by'], 'sms') !== false) {
                                                             $contact_no = $notify_by['PhoneNumber'];
                                                             $sms_notify = 1;
                                                         }
-                                                    }else{
-                                                        if(!empty($emp_info['contact_no'])){
+                                                    } else {
+                                                        if (!empty($emp_info['contact_no'])) {
                                                             $contact_no = $emp_info['contact_no'];
                                                             $sms_notify = 1;
                                                         }
                                                     }
-                                                    if($sms_notify){
+                                                    if ($sms_notify) {
                                                         $this->load->library('Twilioapp');
                                                         // Send SMS
-                                                        $sms_template = get_company_sms_template($this,$company_sid,'offer_letter');
+                                                        $sms_template = get_company_sms_template($this, $company_sid, 'offer_letter');
                                                         $replacement_sms_array = array(); //Send Payment Notification to admin.
-                                                        $replacement_sms_array['applicant_name'] = $applicant['first_name']. ' '. $applicant['last_name'];
+                                                        $replacement_sms_array['applicant_name'] = $applicant['first_name'] . ' ' . $applicant['last_name'];
                                                         $replacement_sms_array['contact_name'] = ucwords(strtolower($emp_info['contact_name']));
-                                                        $sms_body = 'This sms is to inform you that '.$applicant['first_name']. ' '. $applicant['last_name'].' has Signed their Offer Letter / Pay Plan.';
-                                                        if(sizeof($sms_template)>0){
-                                                            $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_sms_array);
+                                                        $sms_body = 'This sms is to inform you that ' . $applicant['first_name'] . ' ' . $applicant['last_name'] . ' has Signed their Offer Letter / Pay Plan.';
+                                                        if (sizeof($sms_template) > 0) {
+                                                            $sms_body = replace_sms_body($sms_template['sms_body'], $replacement_sms_array);
                                                         }
                                                         sendSMS(
                                                             $contact_no,
@@ -6284,8 +6242,8 @@ class Onboarding extends CI_Controller {
                                                 $subject = str_replace('{{company_name}}', ucwords($company_info['CompanyName']), $subject);
                                                 $from_name = $emailTemplateData['from_name'];
                                                 $body = EMAIL_HEADER
-                                                        . $emailTemplateBody
-                                                        . EMAIL_FOOTER;
+                                                    . $emailTemplateBody
+                                                    . EMAIL_FOOTER;
                                                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
                                             }
                                         }
@@ -6302,7 +6260,7 @@ class Onboarding extends CI_Controller {
                                 $document_type = $this->input->post('document_type');
                                 $company_sid = $this->input->post('company_sid');
                                 $aws_file_name = upload_file_to_aws('upload_file', $company_sid, 'uploaded_offer_letter_' . $document_sid, time());
-                        
+
                                 $uploaded_file = '';
 
                                 if ($aws_file_name != 'error') {
@@ -6320,7 +6278,7 @@ class Onboarding extends CI_Controller {
                                     $this->session->set_flashdata('message', '<strong>Success</strong> Document Uploaded Successful!');
                                 } else {
                                     $this->session->set_flashdata('message', '<strong>Error</strong> Document Uploaded was not successful!');
-                                }  
+                                }
                                 redirect('onboarding/my_offer_letter/' . $verification_key, 'refresh');
                                 break;
                         }
@@ -6410,14 +6368,14 @@ class Onboarding extends CI_Controller {
                             $uploaded_status = '<strong class="text-danger">Offer Letter Status:</strong> Upload the Signed Document, You have not yet uploaded this document';
                             $uploaded_button_txt = 'Upload Document';
                             $uploaded_button_css = 'blue-button';
-                        } 
+                        }
                         $data['uploaded_action_title'] = $uploaded_action_title;
                         $data['uploaded_action_desc'] = $uploaded_action_desc;
-                        $data['uploaded_status'] = $uploaded_status; 
-                        $data['uploaded_button_txt'] = $uploaded_button_txt; 
-                        $data['uploaded_button_css'] = $uploaded_button_css; 
+                        $data['uploaded_status'] = $uploaded_status;
+                        $data['uploaded_button_txt'] = $uploaded_button_txt;
+                        $data['uploaded_button_css'] = $uploaded_button_css;
                     }
-                    
+
                     $data['offer_letter'] = $offer_letter;
                     $data['download_action_title'] = $download_action_title;
                     $data['download_action_desc'] = $download_action_desc;
@@ -6443,7 +6401,7 @@ class Onboarding extends CI_Controller {
                             $this->load->view('onboarding/view_offer_letter');
                             $this->load->view('onboarding/on_boarding_footer');
                         }
-                    } else { 
+                    } else {
                         $perform_action = $this->input->post('perform_action');
 
                         switch ($perform_action) {
@@ -6454,7 +6412,7 @@ class Onboarding extends CI_Controller {
                                 // $this->hr_documents_management_model->update_acknowledge_status($user_type, $user_sid, $document_sid);
 
                                 if (!empty($document_info) && ($document_info['acknowledgment_required'] == 1 && $document_info['download_required'] == 1)) {
-                                    if($offer_letter['downloaded'] == 1) {
+                                    if ($offer_letter['downloaded'] == 1) {
                                         $data_to_update = array();
                                         $data_to_update['acknowledged'] = 1;
                                         $data_to_update['acknowledged_date'] = date('Y-m-d H:i:s');
@@ -6465,7 +6423,7 @@ class Onboarding extends CI_Controller {
                                         }
 
                                         $this->hr_documents_management_model->update_assigned_documents($document_sid, $user_sid, $user_type, $data_to_update);
-                                    } else{
+                                    } else {
                                         $data_to_update = array();
                                         $data_to_update['acknowledged'] = 1;
                                         $data_to_update['acknowledged_date'] = date('Y-m-d H:i:s');
@@ -6496,7 +6454,7 @@ class Onboarding extends CI_Controller {
                                 $user_consent = $this->input->post('user_consent');
                                 $base64_pdf = $this->input->post('save_PDF');
 
-                                if(isset($_POST['save_input_values']) && !empty($_POST['save_input_values'])) {
+                                if (isset($_POST['save_input_values']) && !empty($_POST['save_input_values'])) {
                                     $save_input_values = $_POST['save_input_values'];
                                 }
                                 $save_input_values = serialize($save_input_values);
@@ -6548,29 +6506,29 @@ class Onboarding extends CI_Controller {
                                             if (!empty($emp_info)) {
                                                 $sms_notify = 0;
                                                 $contact_no = 0;
-                                                if($company_sms_notification_status){
-                                                    if($emp_info['employer_sid'] != 0){
+                                                if ($company_sms_notification_status) {
+                                                    if ($emp_info['employer_sid'] != 0) {
                                                         $notify_by = get_employee_sms_status($this, $emp_info['employer_sid']);
-                                                        if(strpos($notify_by['notified_by'],'sms') !== false){
+                                                        if (strpos($notify_by['notified_by'], 'sms') !== false) {
                                                             $contact_no = $notify_by['PhoneNumber'];
                                                             $sms_notify = 1;
                                                         }
-                                                    }else{
-                                                        if(!empty($emp_info['contact_no'])){
+                                                    } else {
+                                                        if (!empty($emp_info['contact_no'])) {
                                                             $contact_no = $emp_info['contact_no'];
                                                             $sms_notify = 1;
                                                         }
                                                     }
-                                                    if($sms_notify){
+                                                    if ($sms_notify) {
                                                         $this->load->library('Twilioapp');
                                                         // Send SMS
-                                                        $sms_template = get_company_sms_template($this,$company_sid,'offer_letter');
+                                                        $sms_template = get_company_sms_template($this, $company_sid, 'offer_letter');
                                                         $replacement_sms_array = array(); //Send Payment Notification to admin.
-                                                        $replacement_sms_array['applicant_name'] = $employee['first_name']. ' '. $employee['last_name'];
+                                                        $replacement_sms_array['applicant_name'] = $employee['first_name'] . ' ' . $employee['last_name'];
                                                         $replacement_sms_array['contact_name'] = ucwords(strtolower($emp_info['contact_name']));
-                                                        $sms_body = 'This sms is to inform you that '.$employee['first_name']. ' '. $employee['last_name'].' has Signed their Offer Letter / Pay Plan.';
-                                                        if(sizeof($sms_template)>0){
-                                                            $sms_body = replace_sms_body($sms_template['sms_body'],$replacement_sms_array);
+                                                        $sms_body = 'This sms is to inform you that ' . $employee['first_name'] . ' ' . $employee['last_name'] . ' has Signed their Offer Letter / Pay Plan.';
+                                                        if (sizeof($sms_template) > 0) {
+                                                            $sms_body = replace_sms_body($sms_template['sms_body'], $replacement_sms_array);
                                                         }
                                                         sendSMS(
                                                             $contact_no,
@@ -6599,8 +6557,8 @@ class Onboarding extends CI_Controller {
                                                 $subject = str_replace('{{company_name}}', ucwords($company_info['CompanyName']), $subject);
                                                 $from_name = $emailTemplateData['from_name'];
                                                 $body = EMAIL_HEADER
-                                                        . $emailTemplateBody
-                                                        . EMAIL_FOOTER;
+                                                    . $emailTemplateBody
+                                                    . EMAIL_FOOTER;
                                                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
                                             }
                                         }
@@ -6617,7 +6575,7 @@ class Onboarding extends CI_Controller {
                                 $document_type = $this->input->post('document_type');
                                 $company_sid = $this->input->post('company_sid');
                                 $aws_file_name = upload_file_to_aws('upload_file', $company_sid, 'uploaded_offer_letter_' . $document_sid, time());
-                        
+
                                 $uploaded_file = '';
 
                                 if ($aws_file_name != 'error') {
@@ -6635,7 +6593,7 @@ class Onboarding extends CI_Controller {
                                     $this->session->set_flashdata('message', '<strong>Success</strong> Document Uploaded Successful!');
                                 } else {
                                     $this->session->set_flashdata('message', '<strong>Error</strong> Document Uploaded was not successful!');
-                                }  
+                                }
                                 redirect('onboarding/my_offer_letter/' . $verification_key . '/e', 'refresh');
                                 break;
                         }
@@ -6661,7 +6619,8 @@ class Onboarding extends CI_Controller {
      *
      * @return VOID
      */
-    public function print_applicant_offer_letter($type, $offer_letter_sid, $download = NULL) {
+    public function print_applicant_offer_letter($type, $offer_letter_sid, $download = NULL)
+    {
         $offer_letter = $this->hr_documents_management_model->get_submitted_generated_document($offer_letter_sid);
         $company_sid = $offer_letter['company_sid'];
         $user_sid = $offer_letter['user_sid'];
@@ -6674,8 +6633,8 @@ class Onboarding extends CI_Controller {
             $value = '<br><input type="checkbox" class="user_checkbox"/>';
             $document_content = str_replace('[Target User Checkbox]', $value, $document_content);
             //E_signature process
-            $signature_bas64_image = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="draw_upload_img" />';
-            $init_signature_bas64_image = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="target_signature_init" />';
+            $signature_bas64_image = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="draw_upload_img" />';
+            $init_signature_bas64_image = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="target_signature_init" />';
             $signature_timestamp = '<a class="btn btn-sm blue-button get_signature_date" href="javascript:;">Sign Date</a><p id="target_signature_timestamp"></p>';
             $value = ' ';
             $document_content = str_replace($signature_bas64_image, $value, $document_content);
@@ -6696,7 +6655,8 @@ class Onboarding extends CI_Controller {
         $this->load->view('hr_documents_management/print_generated_document', $data);
     }
 
-    public function send_applicant_resume_request ($user_type, $user_sid, $job_list_sid = null) {
+    public function send_applicant_resume_request($user_type, $user_sid, $job_list_sid = null)
+    {
 
         if ($this->session->userdata('logged_in')) {
 
@@ -6712,8 +6672,8 @@ class Onboarding extends CI_Controller {
             // if (in_array($company_sid, array("7", "51"))) {
             if (!in_array($company_sid, array("0"))) {
 
-                $requested_job_sid = $this->input->post('job_sid',true);
-                $requested_job_type = $this->input->post('job_type',true);
+                $requested_job_sid = $this->input->post('job_sid', true);
+                $requested_job_type = $this->input->post('job_type', true);
                 // echo $requested_job_sid.'<br>';
                 // echo $requested_job_type.'<br>';
                 // die();
@@ -6778,7 +6738,7 @@ class Onboarding extends CI_Controller {
                 $requested_job_type = $this->encryption->encrypt($requested_job_type);
                 $requested_job_type = str_replace('/', '$type', $requested_job_type);
 
-                $url = base_url() . 'onboarding/send_requested_resume/' . $verification_key.'/'.$requested_job_sid.'/'.$requested_job_type;
+                $url = base_url() . 'onboarding/send_requested_resume/' . $verification_key . '/' . $requested_job_sid . '/' . $requested_job_type;
                 $link_btn = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Send Resume</a>';
 
                 $message_body = str_replace('{{link}}', $link_btn, $message_body);
@@ -6788,13 +6748,13 @@ class Onboarding extends CI_Controller {
                 $from_name = ucwords(STORE_DOMAIN);
                 $email_hf = message_header_footer_domain($company_sid, $company_name);
                 $body = $email_hf['header']
-                        . $message_body
-                        . $email_hf['footer'];
+                    . $message_body
+                    . $email_hf['footer'];
 
                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
 
                 $this->session->set_flashdata('message', '<strong>Success: </strong> Resume Request Sent Successfully!');
-                redirect('applicant_profile/' . $user_sid.'/'.$job_list_sid, 'refresh');
+                redirect('applicant_profile/' . $user_sid . '/' . $job_list_sid, 'refresh');
             } else {
 
 
@@ -6871,21 +6831,21 @@ class Onboarding extends CI_Controller {
                 $from_name = ucwords(STORE_DOMAIN);
                 $email_hf = message_header_footer_domain($company_sid, $company_name);
                 $body = $email_hf['header']
-                        . $message_body
-                        . $email_hf['footer'];
+                    . $message_body
+                    . $email_hf['footer'];
                 // sendMail($from, $to, $subject, $body, $from_name);
                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
 
                 $this->session->set_flashdata('message', '<strong>Success: </strong> Resume Request Sent Successfully!');
-                redirect('applicant_profile/' . $user_sid.'/'.$job_list_sid, 'refresh');
+                redirect('applicant_profile/' . $user_sid . '/' . $job_list_sid, 'refresh');
             }
-
         } else {
             redirect('login', 'refresh');
         }
     }
 
-    public function send_requested_resume($verification_key,$job_sid=null,$job_type=null) {
+    public function send_requested_resume($verification_key, $job_sid = null, $job_type = null)
+    {
 
         $applicant = $this->onboarding_model->check_applicant_exist($verification_key);
 
@@ -6918,10 +6878,10 @@ class Onboarding extends CI_Controller {
                             $job_title = '';
                             if ($requested_job_type == 'job') {
                                 $job_name = $this->onboarding_model->get_job_title($requested_job_sid, $company_sid);
-                                $job_title = 'Upload Resume For '.$job_name;
+                                $job_title = 'Upload Resume For ' . $job_name;
                             } else if ($requested_job_type == 'desired_job') {
                                 $job_name = $this->onboarding_model->get_desired_job_title($requested_job_sid, $company_sid);
-                                $job_title = 'Upload Resume For '.$job_name;
+                                $job_title = 'Upload Resume For ' . $job_name;
                             } else if ($requested_job_type == 'job_not_applied') {
                                 $job_title = 'Upload Resume';
                             }
@@ -6947,12 +6907,12 @@ class Onboarding extends CI_Controller {
                             $this->load->view('onboarding/upload_resume');
                             $this->load->view('onboarding/onboarding_public_footer');
                         }
-                    } else { 
+                    } else {
                         $resume_original_name   = '';
                         $data_to_update         = array();
                         $user_type              = 'applicant';
                         $user_sid               = $applicant['sid'];
-                        $resume_name            = 'resume '.$applicant['first_name'].' '.$applicant['last_name'];
+                        $resume_name            = 'resume ' . $applicant['first_name'] . ' ' . $applicant['last_name'];
 
                         $resume_s3_name = upload_file_to_aws('upload_resume', $company_sid, str_replace(' ', '-', $resume_name), $user_sid, AWS_S3_BUCKET_NAME);
 
@@ -6972,7 +6932,7 @@ class Onboarding extends CI_Controller {
                             $data_to_update['resume_s3_name'] = $resume_s3_name;
                         }
 
-                        $old_s3_resume = $this->onboarding_model->get_single_job_detail($user_sid,$company_sid,$requested_job_sid,$requested_job_type);
+                        $old_s3_resume = $this->onboarding_model->get_single_job_detail($user_sid, $company_sid, $requested_job_sid, $requested_job_type);
 
                         $data_to_update['is_respond']           = 1;
                         $data_to_update['old_resume_s3_name']   = $old_s3_resume;
@@ -6984,16 +6944,15 @@ class Onboarding extends CI_Controller {
                         $this->onboarding_model->update_resume_request($company_sid, $user_sid, $user_type, $requested_job_sid, $requested_job_type, $data_to_update);
                         //update resume in "portal_applicant_jobs_list" table.
                         $this->onboarding_model->update_resume_applicant_job_list($user_sid, $company_sid, $requested_job_sid, $requested_job_type, $resume_s3_name);
-                        redirect('onboarding/send_requested_resume/' . $verification_key.'/'.$job_sid, 'refresh');
+                        redirect('onboarding/send_requested_resume/' . $verification_key . '/' . $job_sid, 'refresh');
                     }
                 } else {
                     $this->load->view('onboarding/onboarding_error');
                 }
-
             } else {
 
                 $company_info = $this->onboarding_model->get_applicant_company_info($company_sid);
-                $old_resume_s3_name = !empty($applicant['resume']) ? $applicant['resume'] : '' ;
+                $old_resume_s3_name = !empty($applicant['resume']) ? $applicant['resume'] : '';
                 $is_resume_request = $this->onboarding_model->get_user_resume_request_old($company_sid, $user_type, $user_sid);
 
 
@@ -7017,7 +6976,7 @@ class Onboarding extends CI_Controller {
                         $user_type = 'applicant';
                         $user_sid = $applicant['sid'];
                         $resume_original_name = '';
-                        $resume_name = 'resume '.$applicant['first_name'].' '.$applicant['last_name'];
+                        $resume_name = 'resume ' . $applicant['first_name'] . ' ' . $applicant['last_name'];
 
                         $resume_s3_name = upload_file_to_aws('upload_resume', $company_sid, str_replace(' ', '_', $resume_name), $user_sid, AWS_S3_BUCKET_NAME);
 
@@ -7050,16 +7009,14 @@ class Onboarding extends CI_Controller {
                 } else {
                     $this->load->view('onboarding/onboarding_error');
                 }
-
             }
-
-
         } else {
             $this->load->view('onboarding/onboarding_error');
         }
     }
 
-    public function view_applicant_resume ($user_type, $user_sid, $job_list_sid) {
+    public function view_applicant_resume($user_type, $user_sid, $job_list_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -7093,7 +7050,7 @@ class Onboarding extends CI_Controller {
                 $applicant_resume = $this->onboarding_model->get_current_resume($company_sid, $user_sid);
                 $applicant_resume_history = $this->onboarding_model->get_applicant_resume_history($company_sid, $user_sid);
 
-                if(!empty($applicant_resume) && $applicant_resume != NULL){
+                if (!empty($applicant_resume) && $applicant_resume != NULL) {
                     $applicant_resume_list[0]['type']       = 'Current Resume';
                     $applicant_resume_list[0]['resume_url'] = $applicant_resume;
                 }
@@ -7106,7 +7063,7 @@ class Onboarding extends CI_Controller {
                 // }
 
                 // get all resumes from portal_applicant_jobs_list table
-                $applicant_current_resumes = $this->onboarding_model->get_current_resume_by_job_detail($user_sid,$company_sid);
+                $applicant_current_resumes = $this->onboarding_model->get_current_resume_by_job_detail($user_sid, $company_sid);
 
                 if (!empty($applicant_current_resumes)) {
                     $continue = 'on';
@@ -7126,11 +7083,10 @@ class Onboarding extends CI_Controller {
                             if (!empty($history)) {
                                 foreach ($history as $child => $resume) {
 
-                                    $resume_listing[$parent_key]['resumes'][$child+1]['type'] = 'Previous Resume';
-                                    $resume_listing[$parent_key]['resumes'][$child+1]['resume_url'] = $resume['old_resume_s3_name'];
+                                    $resume_listing[$parent_key]['resumes'][$child + 1]['type'] = 'Previous Resume';
+                                    $resume_listing[$parent_key]['resumes'][$child + 1]['resume_url'] = $resume['old_resume_s3_name'];
                                 }
                             }
-
                         } else if ($job_sid == 0 && !empty($desired_job_title)) {
 
                             $resume_listing[$parent_key]['job_name']                    = $current_resume['desired_job_title'];
@@ -7144,8 +7100,8 @@ class Onboarding extends CI_Controller {
                             if (!empty($history)) {
                                 foreach ($history as $child => $resume) {
 
-                                    $resume_listing[$parent_key]['resumes'][$child+1]['type'] = 'Previous Resume';
-                                    $resume_listing[$parent_key]['resumes'][$child+1]['resume_url'] = $resume['old_resume_s3_name'];
+                                    $resume_listing[$parent_key]['resumes'][$child + 1]['type'] = 'Previous Resume';
+                                    $resume_listing[$parent_key]['resumes'][$child + 1]['resume_url'] = $resume['old_resume_s3_name'];
                                 }
                             }
                         } else if ($job_sid == 0 && empty($desired_job_title)) {
@@ -7162,9 +7118,8 @@ class Onboarding extends CI_Controller {
                                 if (!empty($history)) {
                                     foreach ($history as $child => $resume) {
 
-                                        $resume_listing[$parent_key]['resumes'][$child+1]['type'] = 'Previous Resume';
-                                        $resume_listing[$parent_key]['resumes'][$child+1]['resume_url'] = $resume['old_resume_s3_name'];
-
+                                        $resume_listing[$parent_key]['resumes'][$child + 1]['type'] = 'Previous Resume';
+                                        $resume_listing[$parent_key]['resumes'][$child + 1]['resume_url'] = $resume['old_resume_s3_name'];
                                     }
                                 }
                             }
@@ -7198,14 +7153,13 @@ class Onboarding extends CI_Controller {
                         $resume_listing[0]['name'] = 'Current Resume';
                         $resume_listing[0]['resume'] = 'not_found';
                     }
-
                 }
 
                 if (!empty($old_resume_list)) {
                     foreach ($old_resume_list as $key => $old_resume) {
                         if (!empty($old_resume['old_resume_s3_name'])) {
-                            $resume_listing[$key+1]['name'] = 'Previous Resume';
-                            $resume_listing[$key+1]['resume'] = $old_resume['old_resume_s3_name'];
+                            $resume_listing[$key + 1]['name'] = 'Previous Resume';
+                            $resume_listing[$key + 1]['resume'] = $old_resume['old_resume_s3_name'];
                         }
                     }
                 }
@@ -7222,14 +7176,13 @@ class Onboarding extends CI_Controller {
                 $this->load->view('onboarding/view_applicant_resume_old');
                 $this->load->view('main/footer');
             }
-
         } else {
             redirect('login', 'refresh');
         }
-
     }
 
-    public function assign_welcome_video_from_library() {
+    public function assign_welcome_video_from_library()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $employer_sid = $data['session']['employer_detail']['sid'];
@@ -7273,7 +7226,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function add_custom_welcome_video() {
+    public function add_custom_welcome_video()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data["session"]["company_detail"]["sid"];
@@ -7363,7 +7317,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function sendEmailToApplicant() {
+    public function sendEmailToApplicant()
+    {
         $company_sid = $this->input->post('company_sid');
         $company_name = $this->input->post('company_name');
         $user_sid = $this->input->post('user_sid');
@@ -7383,11 +7338,12 @@ class Onboarding extends CI_Controller {
         //
         log_and_send_templated_email(APPLICANT_ONBOARDING_WELCOME, $applicant_email, $replacement_array, message_header_footer_domain($company_sid, $company_name), 1, $user_extra_info);
         $sent_date = date('Y-m-d H:i:s');
-        $this->onboarding_model->update_emailSent_date($unique_sid,array('email_sent_date' => $sent_date));
-        print_r('A Notification email has been sent at '.date('m-d-Y h:i:s A',strtotime($sent_date)));
+        $this->onboarding_model->update_emailSent_date($unique_sid, array('email_sent_date' => $sent_date));
+        print_r('A Notification email has been sent at ' . date('m-d-Y h:i:s A', strtotime($sent_date)));
     }
 
-    public function documents($unique_sid) {
+    public function documents($unique_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data = array();
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -7448,7 +7404,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function download_u_document($unique_sid, $document_sid) {
+    public function download_u_document($unique_sid, $document_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data = array();
             $data['title'] = 'Automoto HR Onboarding';
@@ -7511,7 +7468,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function sign_u_document($unique_sid, $document_sid) {
+    public function sign_u_document($unique_sid, $document_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
         if ($this->form_validation->run() == false) {
@@ -7607,7 +7565,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function sign_g_document($unique_sid, $document_sid) {
+    public function sign_g_document($unique_sid, $document_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
         if ($this->form_validation->run() == false) {
@@ -7734,7 +7693,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function sign_offer_letter($unique_sid, $document_sid) {
+    public function sign_offer_letter($unique_sid, $document_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
         if ($this->form_validation->run() == false) {
@@ -7861,7 +7821,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function e_signature($unique_sid) {
+    public function e_signature($unique_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
         $applicant_sid = '';
 
@@ -7937,7 +7898,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    private function get_single_record_from_array($records, $key, $value) {
+    private function get_single_record_from_array($records, $key, $value)
+    {
         if (is_array($records)) {
             foreach ($records as $record) {
                 foreach ($record as $k => $v) {
@@ -7953,7 +7915,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function learning_center($unique_sid) {
+    public function learning_center($unique_sid)
+    {
         $this->load->model('learning_center_model');
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
 
@@ -8050,7 +8013,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function watch_video($unique_sid, $video_sid) {
+    public function watch_video($unique_sid, $video_sid)
+    {
         $this->load->model('learning_center_model');
         $unique_key = $unique_sid;
         $video = $this->learning_center_model->get_single_online_video($video_sid);
@@ -8283,12 +8247,14 @@ class Onboarding extends CI_Controller {
                         $answered_question_score = 0;
                     }
 
-                    $array_questionnaire[$my_question] = array('answer' => $answered,
+                    $array_questionnaire[$my_question] = array(
+                        'answer' => $answered,
                         'passing_score' => $individual_passing_score,
                         'score' => $individual_score,
                         'status' => $individual_status,
                         'answered_result_status' => $answered_result_status,
-                        'answered_question_score' => $answered_question_score);
+                        'answered_question_score' => $answered_question_score
+                    );
                 } // here
 
                 $questionnaire_result = $overall_status;
@@ -8298,16 +8264,17 @@ class Onboarding extends CI_Controller {
                 $array_questionnaire_serialize = serialize($array_questionnaire);
 
                 $screening_questionnaire_results = array(
-                                                    'video_sid'                 => $video_sid,
-                                                    'video_assign_sid'          => $assignment['sid'],
-                                                    'video_title'               => $video['video_title'],
-                                                    'company_sid'               => 0,
-                                                    'questionnaire_name'        => $questionnaire_name,
-                                                    'questionnaire'             => $array_questionnaire_serialize,
-                                                    'questionnaire_result'      => $questionnaire_result,
-                                                    'attend_timestamp'          => $datetime,
-                                                    'questionnaire_ip_address'  => $remote_addr,
-                                                    'questionnaire_user_agent'  => $user_agent);
+                    'video_sid'                 => $video_sid,
+                    'video_assign_sid'          => $assignment['sid'],
+                    'video_title'               => $video['video_title'],
+                    'company_sid'               => 0,
+                    'questionnaire_name'        => $questionnaire_name,
+                    'questionnaire'             => $array_questionnaire_serialize,
+                    'questionnaire_result'      => $questionnaire_result,
+                    'attend_timestamp'          => $datetime,
+                    'questionnaire_ip_address'  => $remote_addr,
+                    'questionnaire_user_agent'  => $user_agent
+                );
 
                 $this->learning_center_model->insert_questionnaire_result($screening_questionnaire_results);
                 $this->learning_center_model->update_video_attempt_status('applicant', $applicant_sid, $video_sid);
@@ -8324,7 +8291,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    function track_video($str) {
+    function track_video($str)
+    {
         $user_sid = $this->input->post('id');
         $user_type = $this->input->post('type');
         $video_sid = $this->input->post('v_id');
@@ -8342,7 +8310,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function my_credentials($unique_sid) {
+    public function my_credentials($unique_sid)
+    {
         $this->form_validation->set_rules('perform_action', 'perform_action', 'required');
 
         if ($this->form_validation->run() == false) {
@@ -8402,7 +8371,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function validate_vimeo() {
+    public function validate_vimeo()
+    {
         $url = $this->input->post('url');
         $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($url);
         $cSession = curl_init();
@@ -8420,7 +8390,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function form_w9($unique_sid) {
+    public function form_w9($unique_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Automoto HR Onboarding';
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -8518,12 +8489,12 @@ class Onboarding extends CI_Controller {
                         //
                         $this->form_wi9_model->update_form('w9', 'applicant', $applicant_sid, $formpost);
                         //
-                        $w9_sid = getVerificationDocumentSid ($applicant_sid, 'applicant', 'w9');
+                        $w9_sid = getVerificationDocumentSid($applicant_sid, 'applicant', 'w9');
                         keepTrackVerificationDocument($applicant_sid, 'applicant', 'completed', $w9_sid, 'w9', 'Blue Panel');
                         //
                         $this->session->set_flashdata('message', '<strong>Success: </strong> Request Submitted Successfully!');
 
-                        redirect('onboarding/hr_documents'. '/' . $unique_sid, 'refresh');
+                        redirect('onboarding/hr_documents' . '/' . $unique_sid, 'refresh');
                     }
                 } else {
                     $this->session->set_flashdata('message', '<strong>Error</strong> Form Not Found');
@@ -8536,7 +8507,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function form_w4($unique_sid) {
+    public function form_w4($unique_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Automoto HR Onboarding';
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -8627,9 +8599,9 @@ class Onboarding extends CI_Controller {
                         } else {
                             $this->load->view('onboarding/form_w4');
                         }
-                        
+
                         // $this->load->view('onboarding/form_w4');
-                      //  $this->load->view('onboarding/2020_w4_form');
+                        //  $this->load->view('onboarding/2020_w4_form');
                         $this->load->view('onboarding/on_boarding_footer');
                     } else {
 
@@ -8655,7 +8627,7 @@ class Onboarding extends CI_Controller {
                         $user_consent = $this->input->post('user_consent');
 
                         if (!empty($first_date_of_employment)) {
-                            $first_date_of_employment= DateTime::createFromFormat('m-d-Y', $first_date_of_employment)->format('Y-m-d');
+                            $first_date_of_employment = DateTime::createFromFormat('m-d-Y', $first_date_of_employment)->format('Y-m-d');
                         }
 
                         if ($assign_on >= $compare_date) {
@@ -8680,7 +8652,7 @@ class Onboarding extends CI_Controller {
                             $dw_input_5             = $this->input->post('dw_input_5');
 
                             if (!empty($signature_date)) {
-                                $signature_timestamp= DateTime::createFromFormat('m-d-Y', $signature_date)->format('Y-m-d');
+                                $signature_timestamp = DateTime::createFromFormat('m-d-Y', $signature_date)->format('Y-m-d');
                             }
                         } else {
                             $different_last_name = $this->input->post('different_last_name');
@@ -8757,8 +8729,7 @@ class Onboarding extends CI_Controller {
                             $data_to_update['dw_input_3'] = $dw_input_3;
                             $data_to_update['dw_input_4'] = $dw_input_4;
                             $data_to_update['dw_input_5'] = $dw_input_5;
-
-                        } else {    
+                        } else {
                             $data_to_update['different_last_name'] = $different_last_name;
                             $data_to_update['number_of_allowance'] = $number_of_allowance;
                             $data_to_update['additional_amount'] = $additional_amount;
@@ -8790,9 +8761,9 @@ class Onboarding extends CI_Controller {
                             $data_to_update['temjw_amount_in_table_2'] = $temjw_amount_in_table_2;
                             $data_to_update['temjw_multiply_7_by_6'] = $temjw_multiply_7_by_6;
                             $data_to_update['temjw_divide_8_by_period'] = $temjw_divide_8_by_period;
-                        }  
+                        }
                         //  
-                        $w4_sid = getVerificationDocumentSid ($applicant_sid, 'applicant', 'w4');
+                        $w4_sid = getVerificationDocumentSid($applicant_sid, 'applicant', 'w4');
                         keepTrackVerificationDocument($applicant_sid, 'applicant', 'completed', $w4_sid, 'w4', 'Blue Panel');
                         //
                         $this->form_wi9_model->update_form('w4', 'applicant', $applicant_sid, $data_to_update);
@@ -8810,7 +8781,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function form_i9($unique_sid) {
+    public function form_i9($unique_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data['title'] = 'Automoto HR Onboarding';
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -9001,7 +8973,7 @@ class Onboarding extends CI_Controller {
                         //
                         $this->form_wi9_model->update_form('i9', 'applicant', $applicant_sid, $insert_data);
                         //
-                        $i9_sid = getVerificationDocumentSid ($applicant_sid, 'applicant', 'i9');
+                        $i9_sid = getVerificationDocumentSid($applicant_sid, 'applicant', 'i9');
                         keepTrackVerificationDocument($applicant_sid, 'applicant', 'completed', $i9_sid, 'i9', 'Blue Panel');
                         //
                         $this->session->set_flashdata('message', '<strong>Success: </strong> Request Submitted Successfully!');
@@ -9018,13 +8990,15 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function enable_disable_notification($id) {
+    public function enable_disable_notification($id)
+    {
         $data = array('status' => $this->input->get('status'));
         $this->onboarding_model->update_ems_notification($id, $data);
         print_r(json_encode(array('message' => 'updated')));
     }
 
-    public function edit_ems_notification($sid) {
+    public function edit_ems_notification($sid)
+    {
         echo 'lllll';
         $data['session'] = $this->session->userdata('logged_in');
         $security_sid = $data['session']['employer_detail']['sid'];
@@ -9140,7 +9114,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    function convert_array_to_1d($my_array) {
+    function convert_array_to_1d($my_array)
+    {
         $return_array = array();
 
         if (is_array($my_array) && !empty($my_array)) {
@@ -9154,7 +9129,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    function view_supported_attachment_document($unique_sid, $document_sid) {
+    function view_supported_attachment_document($unique_sid, $document_sid)
+    {
         if ($this->form_validation->run() == false) {
             $data = array();
             $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
@@ -9260,7 +9236,8 @@ class Onboarding extends CI_Controller {
         }
     }
 
-    public function download_supported_document($unique_sid, $document_sid) {
+    public function download_supported_document($unique_sid, $document_sid)
+    {
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
         if (!empty($onboarding_details)) {
@@ -9324,7 +9301,8 @@ class Onboarding extends CI_Controller {
      *
      * @return VOID
      */
-    public function send_email_to_onboarding_applicant($company_sid, $company_name, $user_sid, $unique_sid) {
+    public function send_email_to_onboarding_applicant($company_sid, $company_name, $user_sid, $unique_sid)
+    {
         $applicant_info = $this->onboarding_model->get_applicant_information($user_sid);
         $applicant_email = $applicant_info['email'];
         $applicant_name = $applicant_info['first_name'] . ' ' . $applicant_info['last_name'];
@@ -9341,12 +9319,14 @@ class Onboarding extends CI_Controller {
         log_and_send_templated_email(APPLICANT_ONBOARDING_WELCOME, $applicant_email, $replacement_array, message_header_footer_domain($company_sid, $company_name), 1, $user_extra_info);
     }
 
-    public function print_form_w4($unique_sid) {
+    public function print_form_w4($unique_sid)
+    {
         $data['title'] = 'Automoto HR Onboarding';
         $onboarding_details = $this->onboarding_model->get_details_by_unique_sid($unique_sid);
 
         if (!empty($onboarding_details)) {
-            $company_sid  = $onboarding_details['company_info'];['sid'];
+            $company_sid  = $onboarding_details['company_info'];
+            ['sid'];
             $applicant_sid = $onboarding_details['applicant_sid'];
             $data['title'] = 'Form W-4';
 
@@ -9360,7 +9340,8 @@ class Onboarding extends CI_Controller {
 
 
     //
-    function document($token){
+    function document($token)
+    {
         // Load encryptipn library
         $this->load->library('encryption', 'encrypt');
         // Clean token
@@ -9368,7 +9349,7 @@ class Onboarding extends CI_Controller {
         // Decode and convert to array
         $d = explode('/', $this->encrypt->decode($token));
         // Check for valid details
-        if(count($d) < 4) redirect('/');
+        if (count($d) < 4) redirect('/');
         //
         $document = [];
         // Validate and check for expire
@@ -9376,7 +9357,7 @@ class Onboarding extends CI_Controller {
         //
         $type = 'document';
         //
-        if(isset($d[4])) $type = $d[4];
+        if (isset($d[4])) $type = $d[4];
         //
         $document = $this->hdm->checkForExiredToken(
             $d[0],
@@ -9399,7 +9380,7 @@ class Onboarding extends CI_Controller {
         //
         $post = $this->input->post(NULL, FALSE);
         //
-        if(count($post)){
+        if (count($post)) {
             //
             $save_input_values = array();
             $users_type = $data['users_type'];
@@ -9410,7 +9391,7 @@ class Onboarding extends CI_Controller {
             $user_consent = $post['user_consent'];
             $base64_pdf = $post['save_PDF'];
 
-            if(isset($post['save_input_values']) && !empty($post['save_input_values'])) {
+            if (isset($post['save_input_values']) && !empty($post['save_input_values'])) {
                 $save_input_values = $post['save_input_values'];
             }
             $save_input_values = serialize($save_input_values);
@@ -9445,19 +9426,19 @@ class Onboarding extends CI_Controller {
             $this->hdm->update_assigned_documents($post['document_sid'], $data['users_sid'], $data['users_type'], $data_to_update);
             //
             $data['Signed'] = true;
-        } else{
+        } else {
             //
-            if((!$document || !count($document)) || ($document['link_creation_time'] <= strtotime('now')) || (isset($document['user_consent']) && $document['user_consent'] == 1)){
+            if ((!$document || !count($document)) || ($document['link_creation_time'] <= strtotime('now')) || (isset($document['user_consent']) && $document['user_consent'] == 1)) {
                 $data['Expired'] = true;
-            } else{
+            } else {
                 //
-                if($type == 'document'){
+                if ($type == 'document') {
                     //
                     if (!empty($document['document_description'])) {
                         $document_body = $document['document_description'];
                         $magic_codes = array('{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                         $magic_signature_codes = array('{{signature}}', '{{inital}}');
-    
+
                         if (str_replace($magic_signature_codes, '', $document_body) != $document_body) {
                             $save_offer_letter_type = 'consent_only';
                         } else if (str_replace($magic_codes, '', $document_body) != $document_body) {
@@ -9474,21 +9455,21 @@ class Onboarding extends CI_Controller {
                     //
                     isDocumentCompleted($e);
                     //
-                    if(count($e)) $data['Signed'] = true;
-    
+                    if (count($e)) $data['Signed'] = true;
+
                     //
-                    if(!empty($document['document_description'])){
+                    if (!empty($document['document_description'])) {
                         replaceDocumentContentTags(
                             $document['document_description'],
                             $data['session']['company_detail']['sid'],
-                            $d[1], 
+                            $d[1],
                             $d[2],
                             $document['document_sid']
                         );
                         replaceDocumentContentTags(
                             $document['print_content'],
                             $data['session']['company_detail']['sid'],
-                            $document['user_sid'], 
+                            $document['user_sid'],
                             $document['user_type'],
                             $document['document_sid'],
                             true
@@ -9496,7 +9477,7 @@ class Onboarding extends CI_Controller {
                     }
                     //
                     $document['file_path'] = getFilePathForIframe($document);
-                } else if($type == 'dependents'){
+                } else if ($type == 'dependents') {
                     //
                     $this->load->model('dependents_model');
                     //
@@ -9509,21 +9490,20 @@ class Onboarding extends CI_Controller {
                     foreach ($data_countries as $value) {
                         $states = db_get_active_states($value['sid']);
                         //
-                        foreach($states as $state) 
-                        {
+                        foreach ($states as $state) {
                             //
-                            if(!isset($d[$value['sid']])) $d[$value['sid']] = [
+                            if (!isset($d[$value['sid']])) $d[$value['sid']] = [
                                 'Name' => $value['country_name'],
                                 'States' => []
                             ];
                             //
-                            $d[$value['sid']]['States'][$state['sid']] = ['Name' => $state['state_name'] ];
+                            $d[$value['sid']]['States'][$state['sid']] = ['Name' => $state['state_name']];
                         }
                     }
                     //
                     $data['countries'] = $d;
                     $data['dependents'] = $depedents;
-                } else if($type == 'emergency_contacts'){
+                } else if ($type == 'emergency_contacts') {
                     //
                     $this->load->model('emergency_contacts_model');
                     //
@@ -9536,42 +9516,41 @@ class Onboarding extends CI_Controller {
                     foreach ($data_countries as $value) {
                         $states = db_get_active_states($value['sid']);
                         //
-                        foreach($states as $state) 
-                        {
+                        foreach ($states as $state) {
                             //
-                            if(!isset($d[$value['sid']])) $d[$value['sid']] = [
+                            if (!isset($d[$value['sid']])) $d[$value['sid']] = [
                                 'Name' => $value['country_name'],
                                 'States' => []
                             ];
                             //
-                            $d[$value['sid']]['States'][$state['sid']] = ['Name' => $state['state_name'] ];
+                            $d[$value['sid']]['States'][$state['sid']] = ['Name' => $state['state_name']];
                         }
                     }
                     //
                     $data['countries'] = $d;
                     $data['emergencyContacts'] = $emergencyContacts;
-                } else if($type == 'drivers_license'){
+                } else if ($type == 'drivers_license') {
                     //
                     $this->load->model('dashboard_model');
                     //
                     $data['license'] = $this->dashboard_model->get_license_info($userSid, $userType, 'drivers');
-                } else if($type == 'occupational_license'){
+                } else if ($type == 'occupational_license') {
                     //
                     $this->load->model('dashboard_model');
                     //
                     $data['license'] = $this->dashboard_model->get_license_info($userSid, $userType, 'occupational');
-                } else if($type == 'direct_deposit'){
+                } else if ($type == 'direct_deposit') {
                     //
                     $this->load->model('direct_deposit_model');
                     $employee_number = $this->direct_deposit_model->get_user_extra_info($userType, $userSid, $data['company_sid']);
                     $data['employee_number'] = $employee_number;
                     $data['data'] = $this->direct_deposit_model->getDDI($userType, $userSid, $data['company_sid']);
                     //
-                    if(isset($data['data'][0])) $data['data'][0]['voided_cheque_64'] = 'data:image/'.(getFileExtension($data['data'][0]['voided_cheque'])).';base64,'.base64_encode(getFileData(AWS_S3_BUCKET_URL.$data['data'][0]['voided_cheque']));
-                    if(isset($data['data'][1])) $data['data'][1]['voided_cheque_64'] = 'data:image/'.(getFileExtension($data['data'][0]['voided_cheque'])).';base64,'.base64_encode(getFileData(AWS_S3_BUCKET_URL.$data['data'][1]['voided_cheque']));
+                    if (isset($data['data'][0])) $data['data'][0]['voided_cheque_64'] = 'data:image/' . (getFileExtension($data['data'][0]['voided_cheque'])) . ';base64,' . base64_encode(getFileData(AWS_S3_BUCKET_URL . $data['data'][0]['voided_cheque']));
+                    if (isset($data['data'][1])) $data['data'][1]['voided_cheque_64'] = 'data:image/' . (getFileExtension($data['data'][0]['voided_cheque'])) . ';base64,' . base64_encode(getFileData(AWS_S3_BUCKET_URL . $data['data'][1]['voided_cheque']));
                     //
                     $data[$userType] = $data['cn'] = $this->direct_deposit_model->getUserData($userSid, $userType);
-                    $data['users_sign_info'] = get_e_signature($data['company_sid'], $userSid, $userType); 
+                    $data['users_sign_info'] = get_e_signature($data['company_sid'], $userSid, $userType);
                 }
                 //
                 $data['document'] = $document;
@@ -9591,16 +9570,17 @@ class Onboarding extends CI_Controller {
         $this->load->view('onboarding/applicant_boarding_header_public', $data);
         //
         $page = 'public/documents/document_public';
-        if($type != 'document') $page = 'public/documents/general';
-        if($data['Signed']) $page = 'public/documents/signed_public';
-        if($data['Expired']) $page = 'public/documents/expired_public';
+        if ($type != 'document') $page = 'public/documents/general';
+        if ($data['Signed']) $page = 'public/documents/signed_public';
+        if ($data['Expired']) $page = 'public/documents/expired_public';
         //
         $this->load->view($page);
         $this->load->view('onboarding/on_boarding_footer');
     }
 
     //
-    function mark_document(){
+    function mark_document()
+    {
         //
         $post = $this->input->post(NULL, FALSE);
         //
@@ -9611,7 +9591,7 @@ class Onboarding extends CI_Controller {
         //
         $this->load->model('hr_documents_management_model', 'hrm');
         //
-        if($post['action'] == 'acknowledge'){
+        if ($post['action'] == 'acknowledge') {
             //
             $this->hrm->updateAssignedDocument(
                 $post['assignedDocumentSid'],
@@ -9625,15 +9605,14 @@ class Onboarding extends CI_Controller {
             $resp['Response'] = "Document acknowledged successfully.";
             //
             $this->res($resp);
-
-        } else if($post['action'] == 'download'){
+        } else if ($post['action'] == 'download') {
             //
             $this->hrm->updateAssignedDocument(
                 $post['assignedDocumentSid'],
                 [
                     'downloaded' => 1,
                     'downloaded_date' => date('Y-m-d H:i:s', strtotime('now')),
-                    'pdf_base64' => isset($post['pdf']) ? $post['pdf']: NULL
+                    'pdf_base64' => isset($post['pdf']) ? $post['pdf'] : NULL
                 ]
             );
             //
@@ -9646,7 +9625,8 @@ class Onboarding extends CI_Controller {
 
 
     //
-    function download($assignedDocumentSid){
+    function download($assignedDocumentSid)
+    {
         //
         $data = [];
         //
@@ -9656,30 +9636,30 @@ class Onboarding extends CI_Controller {
             $assignedDocumentSid
         );
         //
-        if(!count($document)){
+        if (!count($document)) {
             die('Not found');
         }
         //
         $filepath = getFilePathForIframe($document, false);
         //
-        $dir = APPPATH.'../temp_files/';
+        $dir = APPPATH . '../temp_files/';
         //
-        if(!is_dir($dir)) mkdir($dir, 777, true);
+        if (!is_dir($dir)) mkdir($dir, 777, true);
         //
-        if($document['document_type'] == 'hybrid_document'){
+        if ($document['document_type'] == 'hybrid_document') {
             //
             $this->load->library('zip');
             //
-            $download_file = $document['document_title'].'-'.date('Y_m_d_H_i_s').'.zip';
+            $download_file = $document['document_title'] . '-' . date('Y_m_d_H_i_s') . '.zip';
             //
-            $dirs = $dir.$document['document_title'].'-part1.pdf';
+            $dirs = $dir . $document['document_title'] . '-part1.pdf';
             //
             downloadFileFromAWS($dirs, $filepath);
             //
             $this->zip->read_file($dirs);
             unlink($dirs);
             //
-            $dirs = $dir.$document['document_title'].'-part2.pdf';
+            $dirs = $dir . $document['document_title'] . '-part2.pdf';
             //
             $f = fopen($dirs, 'w');
             //
@@ -9691,18 +9671,17 @@ class Onboarding extends CI_Controller {
             $this->zip->download($download_file);
             //
             unlink($download_file);
-           
         }
         //
-        if($document['document_type'] == 'uploaded'){
+        if ($document['document_type'] == 'uploaded') {
             //
-            $dir .= $document['document_title'].'.pdf';
+            $dir .= $document['document_title'] . '.pdf';
             //
             downloadFileFromAWS($dir, $filepath);
             //
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($dir).'"');
+            header('Content-Disposition: attachment; filename="' . basename($dir) . '"');
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
@@ -9712,9 +9691,9 @@ class Onboarding extends CI_Controller {
             unlink($dir);
         }
         //
-        if($document['document_type'] == 'generated'){
+        if ($document['document_type'] == 'generated') {
             //
-            $dir .= $document['document_title'].'.pdf';
+            $dir .= $document['document_title'] . '.pdf';
             //
             $f = fopen($dir, 'w');
             //
@@ -9723,7 +9702,7 @@ class Onboarding extends CI_Controller {
             //
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($dir).'"');
+            header('Content-Disposition: attachment; filename="' . basename($dir) . '"');
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
@@ -9735,26 +9714,30 @@ class Onboarding extends CI_Controller {
     }
 
     //
-    private function res($resp){
+    private function res($resp)
+    {
         header('Content-Type: application/json');
         echo json_encode($resp);
     }
 
     // Expire link crons
-    function expire_document_links(){
+    function expire_document_links()
+    {
         //
         $this->load->model('hr_documents_management_model', 'hrm');
         //
         $this->hrm->expireLinks();
     }
-    
+
     //
-    function dependent_add(){
+    function dependent_add()
+    {
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $this->db->insert(
-            'dependant_information', [
+            'dependant_information',
+            [
                 'users_sid' => $post['userSid'],
                 'users_type' => $post['userType'],
                 'company_sid' => $post['companySid'],
@@ -9778,64 +9761,70 @@ class Onboarding extends CI_Controller {
         );
         //
         $this->db
-        ->where('user_sid', $post['userSid'])
-        ->where('user_type', $post['userType'])
-        ->where('document_type', 'dependents')
-        ->where('company_sid', $post['companySid'])
-        ->update(
-            'documents_assigned_general', [
-                'is_completed' => 1
-            ]
-        );
+            ->where('user_sid', $post['userSid'])
+            ->where('user_type', $post['userType'])
+            ->where('document_type', 'dependents')
+            ->where('company_sid', $post['companySid'])
+            ->update(
+                'documents_assigned_general',
+                [
+                    'is_completed' => 1
+                ]
+            );
     }
-    
+
     //
-    function dependent_edit(){
+    function dependent_edit()
+    {
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $this->db
-        ->where('sid', $post['sid'])
-        ->update(
-            'dependant_information', [
-                'dependant_details' => serialize([
-                    'first_name' => $post['firstName'],
-                    'last_name' => $post['lastName'],
-                    'address' => $post['address'],
-                    'address_line' => $post['address2'],
-                    'Location_Country' => $post['country'],
-                    'Location_State' => $post['state'],
-                    'city' => $post['city'],
-                    'postal_code' => $post['postalCode'],
-                    'phone' => $post['phone'],
-                    'birth_date' => $post['birthDate'],
-                    'relationship' => $post['relationship'],
-                    'ssn' => $post['ssn'],
-                    'gender' => $post['gender'],
-                    'family_member' => $post['familyMember']
-                ])
-            ]
-        );
+            ->where('sid', $post['sid'])
+            ->update(
+                'dependant_information',
+                [
+                    'dependant_details' => serialize([
+                        'first_name' => $post['firstName'],
+                        'last_name' => $post['lastName'],
+                        'address' => $post['address'],
+                        'address_line' => $post['address2'],
+                        'Location_Country' => $post['country'],
+                        'Location_State' => $post['state'],
+                        'city' => $post['city'],
+                        'postal_code' => $post['postalCode'],
+                        'phone' => $post['phone'],
+                        'birth_date' => $post['birthDate'],
+                        'relationship' => $post['relationship'],
+                        'ssn' => $post['ssn'],
+                        'gender' => $post['gender'],
+                        'family_member' => $post['familyMember']
+                    ])
+                ]
+            );
         //
         $this->db
-        ->where('user_sid', $post['userSid'])
-        ->where('user_type', $post['userType'])
-        ->where('document_type', 'dependents')
-        ->where('company_sid', $post['companySid'])
-        ->update(
-            'documents_assigned_general', [
-                'is_completed' => 1
-            ]
-        );
+            ->where('user_sid', $post['userSid'])
+            ->where('user_type', $post['userType'])
+            ->where('document_type', 'dependents')
+            ->where('company_sid', $post['companySid'])
+            ->update(
+                'documents_assigned_general',
+                [
+                    'is_completed' => 1
+                ]
+            );
     }
 
     //
-    function emergency_contacts_add(){
+    function emergency_contacts_add()
+    {
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $this->db->insert(
-            'emergency_contacts', [
+            'emergency_contacts',
+            [
                 'users_sid' => $post['userSid'],
                 'users_type' => $post['userType'],
                 'first_name' => $post['firstName'],
@@ -9853,66 +9842,71 @@ class Onboarding extends CI_Controller {
         );
         //
         $this->db
-        ->where('user_sid', $post['userSid'])
-        ->where('user_type', $post['userType'])
-        ->where('document_type', 'emergency_contacts')
-        ->where('company_sid', $post['companySid'])
-        ->update(
-            'documents_assigned_general', [
-                'is_completed' => 1
-            ]
-        );
+            ->where('user_sid', $post['userSid'])
+            ->where('user_type', $post['userType'])
+            ->where('document_type', 'emergency_contacts')
+            ->where('company_sid', $post['companySid'])
+            ->update(
+                'documents_assigned_general',
+                [
+                    'is_completed' => 1
+                ]
+            );
     }
 
     //
-    function emergency_contacts_edit(){
+    function emergency_contacts_edit()
+    {
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $this->db
-        ->where('sid', $post['sid'])
-        ->update(
-            'emergency_contacts', [
-                'first_name' => $post['firstName'],
-                'last_name' => $post['lastName'],
-                'email' => $post['email'],
-                'Location_State' => $post['state'],
-                'Location_Country' => $post['country'],
-                'Location_City' => $post['city'],
-                'Location_ZipCode' => $post['postalCode'],
-                'Location_Address' => $post['address'],
-                'PhoneNumber' => $post['phone'],
-                'Relationship' => $post['relationship'],
-                'priority' => $post['priority']
-            ]
-        );
+            ->where('sid', $post['sid'])
+            ->update(
+                'emergency_contacts',
+                [
+                    'first_name' => $post['firstName'],
+                    'last_name' => $post['lastName'],
+                    'email' => $post['email'],
+                    'Location_State' => $post['state'],
+                    'Location_Country' => $post['country'],
+                    'Location_City' => $post['city'],
+                    'Location_ZipCode' => $post['postalCode'],
+                    'Location_Address' => $post['address'],
+                    'PhoneNumber' => $post['phone'],
+                    'Relationship' => $post['relationship'],
+                    'priority' => $post['priority']
+                ]
+            );
         //
         $this->db
-        ->where('user_sid', $post['userSid'])
-        ->where('user_type', $post['userType'])
-        ->where('document_type', 'emergency_contacts')
-        ->where('company_sid', $post['companySid'])
-        ->update(
-            'documents_assigned_general', [
-                'is_completed' => 1
-            ]
-        );
+            ->where('user_sid', $post['userSid'])
+            ->where('user_type', $post['userType'])
+            ->where('document_type', 'emergency_contacts')
+            ->where('company_sid', $post['companySid'])
+            ->update(
+                'documents_assigned_general',
+                [
+                    'is_completed' => 1
+                ]
+            );
     }
 
     /** 
      * TODO
      * Re-validate incoming file
      * 
-     * */ 
-    function license_edit(){
+     * */
+    function license_edit()
+    {
         //
         $post = $this->input->post(NULL, TRUE);
         //
         $fileName = null;
         //
-        if(!empty($_FILES['file'])) $fileName = put_file_on_aws('file');
+        if (!empty($_FILES['file'])) $fileName = put_file_on_aws('file');
         //
-        if($post['sid'] != 0){
+        if ($post['sid'] != 0) {
             $d = [
                 'license_details' => serialize([
                     'license_type' => $post['type'],
@@ -9926,49 +9920,53 @@ class Onboarding extends CI_Controller {
                 ])
             ];
             //
-            if($fileName != null) $d['license_file'] = $fileName;
+            if ($fileName != null) $d['license_file'] = $fileName;
             //
             $this->db
-            ->where('sid', $post['sid'])
-            ->update(
-                'license_information', $d
-            );
-        } else{
+                ->where('sid', $post['sid'])
+                ->update(
+                    'license_information',
+                    $d
+                );
+        } else {
             $this->db
-            ->insert(
-                'license_information', [
-                    'users_sid' => $post['userSid'],
-                    'users_type' => $post['userType'],
-                    'license_type' => $post['ctype'],
-                    'license_file' => $fileName,
-                    'license_details' => serialize([
-                        'license_type' => $post['type'],
-                        'license_authority' => $post['authority'],
-                        'license_class' => $post['class'],
-                        'license_number' => $post['number'],
-                        'license_issue_date' => $post['issueDate'],
-                        'license_expiration_date' => $post['expirationDate'],
-                        'license_indefinite' => $post['indefinite'],
-                        'license_notes' => $post['notes']
-                    ])
-                ]
-            );
+                ->insert(
+                    'license_information',
+                    [
+                        'users_sid' => $post['userSid'],
+                        'users_type' => $post['userType'],
+                        'license_type' => $post['ctype'],
+                        'license_file' => $fileName,
+                        'license_details' => serialize([
+                            'license_type' => $post['type'],
+                            'license_authority' => $post['authority'],
+                            'license_class' => $post['class'],
+                            'license_number' => $post['number'],
+                            'license_issue_date' => $post['issueDate'],
+                            'license_expiration_date' => $post['expirationDate'],
+                            'license_indefinite' => $post['indefinite'],
+                            'license_notes' => $post['notes']
+                        ])
+                    ]
+                );
         }
         //
         $this->db
-        ->where('user_sid', $post['userSid'])
-        ->where('user_type', $post['userType'])
-        ->where('document_type', $post['ctype'] == 'drivers' ? 'drivers_license' : 'occupational_license')
-        ->where('company_sid', $post['companySid'])
-        ->update(
-            'documents_assigned_general', [
-                'is_completed' => 1
-            ]
-        );
+            ->where('user_sid', $post['userSid'])
+            ->where('user_type', $post['userType'])
+            ->where('document_type', $post['ctype'] == 'drivers' ? 'drivers_license' : 'occupational_license')
+            ->where('company_sid', $post['companySid'])
+            ->update(
+                'documents_assigned_general',
+                [
+                    'is_completed' => 1
+                ]
+            );
     }
-    
+
     //
-    function handler () {
+    function handler()
+    {
         //
         $post = $this->input->post();
         //
@@ -9986,9 +9984,9 @@ class Onboarding extends CI_Controller {
                 $default_template           = '';
                 $user_sid                   = $post['user_sid'];
                 $user_type                  = $post['user_type'];
-                $job_list_sid               = $post['job_list_sid']; 
-                $requested_job_sid          = $post['requested_job_sid']; 
-                $requested_job_type         = $post['requested_job_type']; 
+                $job_list_sid               = $post['job_list_sid'];
+                $requested_job_sid          = $post['requested_job_sid'];
+                $requested_job_type         = $post['requested_job_type'];
 
                 $emailTemplate = $this->onboarding_model->get_send_resume_template($company_sid);
 
@@ -10049,7 +10047,7 @@ class Onboarding extends CI_Controller {
                 $requested_job_type = $this->encryption->encrypt($requested_job_type);
                 $requested_job_type = str_replace('/', '$type', $requested_job_type);
 
-                $url = base_url() . 'onboarding/send_requested_resume/' . $verification_key.'/'.$requested_job_sid.'/'.$requested_job_type;
+                $url = base_url() . 'onboarding/send_requested_resume/' . $verification_key . '/' . $requested_job_sid . '/' . $requested_job_type;
                 $link_btn = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Send Resume</a>';
                 //
                 $message_body = str_replace('{{link}}', $link_btn, $message_body);
@@ -10059,8 +10057,8 @@ class Onboarding extends CI_Controller {
                 $from_name = ucwords(STORE_DOMAIN);
                 $email_hf = message_header_footer_domain($company_sid, $company_name);
                 $body = $email_hf['header']
-                        . $message_body
-                        . $email_hf['footer'];
+                    . $message_body
+                    . $email_hf['footer'];
                 //
                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
                 //
@@ -10070,11 +10068,12 @@ class Onboarding extends CI_Controller {
                 header('Content-Type: application/json');
                 echo @json_encode($resp);
                 exit(0);
-            break;
+                break;
         }
-    } 
+    }
 
-    function my_eeoc_form () {
+    function my_eeoc_form()
+    {
         if ($this->session->userdata('logged_in')) {
             $session = $this->session->userdata('logged_in');
             //
@@ -10089,8 +10088,8 @@ class Onboarding extends CI_Controller {
             $company_name = $employee_detail['CompanyName'];
             $user_type = 'employee';
             //
-            $print_url = base_url('hr_documents_management/print_eeoc_form/print'. '/' . $employee_sid . '/' . $user_type);
-            $download_url = base_url('hr_documents_management/print_eeoc_form/download'. '/' . $employee_sid . '/' . $user_type);
+            $print_url = base_url('hr_documents_management/print_eeoc_form/print' . '/' . $employee_sid . '/' . $user_type);
+            $download_url = base_url('hr_documents_management/print_eeoc_form/download' . '/' . $employee_sid . '/' . $user_type);
             $eeo_form_status = $this->hr_documents_management_model->get_portal_detail($company_sid);
             $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employee_sid, $user_type);
             //
@@ -10121,9 +10120,10 @@ class Onboarding extends CI_Controller {
             //
             $this->load->view('onboarding/on_boarding_header', $data);
             $this->load->view('eeo/employee_eeoc');
-            $this->load->view('onboarding/on_boarding_footer'); 
+            $this->load->view('onboarding/on_boarding_footer');
         } else {
             redirect('login', 'refresh');
         }
-    }       
+    }
+  
 }

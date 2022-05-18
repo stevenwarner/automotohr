@@ -21,47 +21,106 @@
                 </div>
                 <div class="dashboard-conetnt-wrp">
                     <div class="table-responsive table-outer">
-                        <div id="show_no_jobs">   
+                        <div id="show_no_jobs">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th class="col-lg-3">Group Name</th>
-                                        <th class="col-lg-3">Group Description</th> 
+                                        <th class="col-lg-3">Group Description</th>
                                         <th class="col-lg-3">Status</th>
+                                        <th class="col-lg-3">Documents</th>
                                         <th class="col-lg-3 text-center" colspan="3">Actions</th>
-                                    </tr> 
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <?php if (!isset($groups) || empty($groups)) { ?>
                                         <tr>
                                             <span class="applicant-not-found">No document group found</span>
                                         <tr>
-                                    <?php } else { 
-                                            foreach ($groups as $group) { ?>
-                                            <tr id='row_<?php echo $group['sid']; ?>'>
-                                                <td><?php echo ucwords($group['name']); ?></td>
-                                                <td><?php echo html_entity_decode($group['description']); ?></td>
-                                                <td><?php echo $group['status'] == 1 ? '<b class="paid">Active</b>' : '<b class="unpaid">Inactive</b>'; ?></td>
-                                                <td>
-                                                    <?php if ($group['document_status'] == 1 || $group['w4'] == 1 || $group['w9'] == 1 || $group['i9'] == 1 || $group['eeoc'] == 1 || $group['direct_deposit'] == 1|| $group['drivers_license'] == 1|| $group['occupational_license'] == 1|| $group['emergency_contacts'] == 1|| $group['dependents'] == 1) { ?>
-                                                        <button onclick="func_assign_document_group(<?php echo $group['sid']; ?>)" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
-                                                    <?php } else { ?>
-                                                        No Document Found
-                                                    <?php } ?>    
-                                                </td>
-                                                <td>
-                                                    <a href="<?php echo base_url('hr_documents_management/add_edit_document_group_management').'/'.$group['sid']; ?>" class="btn btn-info btn-sm">
-                                                        Edit Group
-                                                    </a> 
-                                                </td>
-                                                <td>
-                                                    <a href="<?php echo base_url('hr_documents_management/document_2_group').'/'.$group['sid']; ?>" class="btn btn-success btn-sm" >
-                                                        Assign Document
-                                                    </a> 
-                                                </td>
-                                            </tr>
-                                        <?php } ?>
+                                            <?php } else {
+                                            foreach ($groups as $group) {
+
+                                                $group_doc_count = 0;
+                                                $group_doc_name = "<br>";
+
+                                                if ($group['w4'] == 1) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; W4 Fillable<br>";
+                                                }
+                                                if ($group['w9'] == 1) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; W9 Fillable<br>";
+                                                }
+                                                if ($group['i9'] == 1) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; I9 Fillable<br>";
+                                                }
+                                                if ($group['eeoc'] == 1) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; EEOC Fillable<br>";
+                                                }
+                                                if ($group['direct_deposit'] == 1) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; Direct Deposit Information<br>";
+                                                }
+                                                if ($group['drivers_license'] == 1) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; Drivers License Information<br>";
+                                                }
+                                                if ($group['occupational_license'] == 1) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; Occupational License Information<br>";
+                                                }
+                                                if ($group['emergency_contacts'] == 1) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; Emergency Contacts<br>";
+                                                }
+                                                if ($group['dependents'] == 1) {
+                                                    $group_doc_count = $group_doc_count + 1;
+                                                    $group_doc_name = $group_doc_name . "&rarr; Dependents<br>";
+                                                }
+
+                                                $groups_dociments = get_all_group_documents($group['sid']);
+
+                                                if (!empty($groups_dociments)) {
+
+                                                    $group_doc_count = $group_doc_count + count($groups_dociments);
+
+                                                    foreach ($groups_dociments as $doc_row) {
+                                                        $group_doc_name = $group_doc_name . '&rarr; ' . $doc_row['document_title'] . "<br>";
+                                                    }
+                                                }
+
+
+                                            ?>
+                                        <tr id='row_<?php echo $group['sid']; ?>'>
+                                            <td><?php echo ucwords($group['name']); ?></td>
+                                            <td><?php echo html_entity_decode($group['description']); ?></td>
+                                            <td><?php echo $group['status'] == 1 ? '<b class="paid">Active</b>' : '<b class="unpaid">Inactive</b>'; ?></td>
+                                            <td>
+                                                    <a id='<?php echo $group['sid']; ?>' ><b>Total: <?php echo $group_doc_count; ?></b></a>
+                                                    <span id='docdetails_<?php echo $group['sid']; ?>' > <?php echo $group_doc_name; ?></span>
+                                            </td>
+                                            <td>
+                                                <?php if ($group['document_status'] == 1 || $group['w4'] == 1 || $group['w9'] == 1 || $group['i9'] == 1 || $group['eeoc'] == 1 || $group['direct_deposit'] == 1 || $group['drivers_license'] == 1 || $group['occupational_license'] == 1 || $group['emergency_contacts'] == 1 || $group['dependents'] == 1) { ?>
+                                                    <button onclick="func_assign_document_group(<?php echo $group['sid']; ?>)" class="btn btn-primary btn-block btn-sm">Bulk Assign</button>
+                                                <?php } else { ?>
+                                                    No Document Found
+                                                <?php } ?>
+                                            </td>
+                                            <td>
+                                                <a href="<?php echo base_url('hr_documents_management/add_edit_document_group_management') . '/' . $group['sid']; ?>" class="btn btn-info btn-sm">
+                                                    Edit Group
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="<?php echo base_url('hr_documents_management/document_2_group') . '/' . $group['sid']; ?>" class="btn btn-success btn-sm">
+                                                    Assign Document
+                                                </a>
+                                            </td>
+                                        </tr>
                                     <?php } ?>
+                                <?php } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -87,7 +146,9 @@
                             <div class="col-md-12">
                                 <div class="form-group" style="min-height: 300px">
                                     <label>Employees<span class="hr-required red"> * </span></label>
-                                    <select require multiple="multiple" name="employees[]" id="uploaded-employees" style="display: block"><option value="" selected>Please Select Employee</option></select>
+                                    <select require multiple="multiple" name="employees[]" id="uploaded-employees" style="display: block">
+                                        <option value="" selected>Please Select Employee</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-lg-12" id="uploaded-empty-emp" style="display: none;"><span class="hr-required red">This Document Group Is Assigned To All Employees!</span></div>
@@ -103,11 +164,11 @@
         </div>
     </div>
 <?php } ?>
-<link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.css')?>">
-<link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.bootstrap3.css')?>">
-<script src="<?= base_url('assets/js/selectize.min.js')?>"></script>
+<link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.css') ?>">
+<link rel="stylesheet" type="text/css" href="<?= base_url('assets/css/selectize.bootstrap3.css') ?>">
+<script src="<?= base_url('assets/js/selectize.min.js') ?>"></script>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('#uploaded-form').validate({
             rules: {
                 employees: {
@@ -119,10 +180,10 @@
                     required: 'Employee(s) Required'
                 }
             },
-            submitHandler:function(form){
+            submitHandler: function(form) {
                 var up_emp = $('#uploaded-employees').val();
-                
-                if(up_emp != '' && up_emp != null) {
+
+                if (up_emp != '' && up_emp != null) {
                     form.submit();
                 } else {
                     alertify.error('Please select Employee(s)');
@@ -134,7 +195,7 @@
     var upemployees = $('#uploaded-employees').selectize({
         plugins: ['remove_button'],
         delimiter: ',',
-        allowEmptyOption:false,
+        allowEmptyOption: false,
         persist: true,
         create: function(input) {
             return {
@@ -145,15 +206,15 @@
     });
     var up_emp = upemployees[0].selectize;
 
-    function func_assign_document_group (group_sid) {
+    function func_assign_document_group(group_sid) {
         $('#bulk_assign_document_group_model').modal('show');
         $.ajax({
-            type:'POST',
-            url: '<?= base_url('hr_documents_management/get_all_company_employees')?>',
-            success: function (data) {
+            type: 'POST',
+            url: '<?= base_url('hr_documents_management/get_all_company_employees') ?>',
+            success: function(data) {
                 var employees = JSON.parse(data);
-                
-                if(employees.length == 0){
+
+                if (employees.length == 0) {
                     up_emp.clearOptions();
                     up_emp.load(function(callback) {
                         var arr = [{}];
@@ -165,11 +226,11 @@
                         up_emp.addItems('');
                         up_emp.refreshItems();
                     });
-                    
+
                     $('#uploaded-empty-emp').show();
                     $('#send-up-doc').hide();
                     up_emp.disable();
-                } else{
+                } else {
                     $('#uploaded-empty-emp').hide();
                     $('#send-up-doc').show();
                     up_emp.enable();
@@ -181,7 +242,7 @@
                         for (var i = 0; i < employees.length; i++) {
                             arr[j++] = {
                                 value: employees[i].sid,
-                                text: employees[i].full_name 
+                                text: employees[i].full_name
                                 // text: employees[i].first_name + ' ' + employees[i].last_name
                             }
                         }
@@ -191,10 +252,11 @@
                     });
                 }
             },
-            error: function () {
+            error: function() {
 
             }
         });
         $('#assign_group_sid').val(group_sid);
     }
+
 </script>
