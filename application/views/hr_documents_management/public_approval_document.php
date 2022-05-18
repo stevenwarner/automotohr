@@ -7,28 +7,19 @@
     <link rel="shortcut icon" href="<?=base_url()?>assets/images/favi-icon.png" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/bootstrap.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/font-awesome.css') ?>">
-    <link rel="stylesheet" type="text/css"
-        href="<?php echo base_url('assets/employee_panel/alertifyjs/css/alertify.min.css') ?>" />
-    <link rel="stylesheet" type="text/css"
-        href="<?php echo base_url('assets/employee_panel/alertifyjs/css/themes/default.min.css') ?>" />
-    <link rel="stylesheet" type="text/css"
-        href="<?php echo base_url('assets/employee_panel/css/jquery.datetimepicker.css') ?>" />
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/select2.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/alertifyjs/css/alertify.min.css') ?>" />
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/alertifyjs/css/themes/default.min.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/style.css') ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/responsive.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets\css\SystemModel.css') ?>">
+    
     <script src="<?php echo base_url('assets/employee_panel/js/jquery-1.11.3.min.js') ?>"></script>
     <script src="<?php echo base_url('assets/employee_panel/js/jquery-ui.min.js') ?>"></script>
     <script src="<?php echo base_url('assets/employee_panel/js/bootstrap.min.js') ?>"></script>
-    <script src="<?php echo base_url('assets/employee_panel/js/jquery.validate.js') ?>"></script>
-    <script src="<?php echo base_url('assets/employee_panel/js/additional-methods.js') ?>"></script>
-    <script src="<?php echo base_url('assets/employee_panel/js/jquery.datetimepicker.js') ?>"></script>
     <script src="<?php echo base_url('assets/employee_panel/alertifyjs/alertify.min.js') ?>"></script>
-    <script src="<?php echo base_url('assets/employee_panel/js/functions.js') ?>"></script>
-    <?php if ($this->uri->segment(2) != 'sign_hr_document' && $this->uri->segment(2) != 'my_offer_letter') {?>
     <script src="<?php echo base_url('assets/ckeditor/ckeditor.js') ?>"></script>
-    <?php }?>
-    <script src="<?php echo base_url('assets/bootstrap-filestyle/js/bootstrap-filestyle.min.js'); ?>"></script>
-    <script src="<?php echo base_url('assets/js/select2.js') ?>"></script>
+    <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/SystemModal.js"></script>
+
     <style>
         @media only screen and (max-width: 576px){
         .arrow-links ul li a:before{
@@ -182,10 +173,10 @@
 					                <tr>
 					                    <td class="col-sm-12">
 					                        <div class="field-row">
-					                            <select id="jsSelectedApprover" class="form-control" >
+					                            <select id="approver_action_status" class="form-control" >
 					                                <option value="0" >Please Select an Action</option>
-					                                <option value="accept" <?php echo $action == "accept" ? 'selected' : '' ?>>Accept</option>
-					                                <option value="reject" <?php echo $action == "reject" ? 'selected' : '' ?>>Reject</option>
+					                                <option value="Approve" <?php echo $action == "accept" ? 'selected' : '' ?>>Approve</option>
+					                                <option value="Reject" <?php echo $action == "reject" ? 'selected' : '' ?>>Reject</option>
 					                            </select>
 					                        </div>
 					                    </td>
@@ -193,7 +184,7 @@
 					                <tr>    
 					                    <td class="col-sm-12">
 					                        <div class="field-row">
-					                            <textarea class="ckeditor" name="note" id="approval_note" cols="60" rows="10">
+					                            <textarea class="ckeditor" name="note" id="approver_action_note" cols="60" rows="10">
 			                                            
 			                                    </textarea>
 					                        </div>
@@ -202,7 +193,7 @@
 					                <tr>    
 					                    <td class="col-sm-12">
 					                        <div class="field-row">
-					                            <button class="btn btn-success btn-block js-view">Save Action</button>
+					                            <button class="btn btn-success btn-block" id="jsSaveActionBtn">Save Action</button>
 					                        </div>
 					                    </td>
 					                </tr>
@@ -228,13 +219,57 @@
 			    </div>
 			</footer>
 		</div>	
+		<?php $this->load->view('loader_new', ['id' => 'jsApprovalStatusLoader']); ?>
 		<script type="text/javascript">
-			  CKEDITOR.replace( 'approval_note', {
+			//
+			ml(false, 'jsApprovalStatusLoader');
+			//
+			CKEDITOR.replace( 'approver_action_note', {
 			    toolbar: [
 				    { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
 				    { name: 'colors', items: [ 'TextColor', 'BGColor' ] }
 				]
 			});
+
+			$('#jsSaveActionBtn').on('click', function() {
+		        //
+		        var action = $('#approver_action_status').val();
+		        //
+		        if (action != 0) {
+		        	//
+		        	ml(true, 'jsApprovalStatusLoader');
+		        	//
+		        	var approvar_sid = '<?php echo $approver_sid; ?>';
+			        var document_sid = '<?php echo $document_sid; ?>';
+			        var action_note = CKEDITOR.instances.approver_action_note.getData();
+			        //
+			        var form_data = new FormData();
+			        form_data.append('approver_sid', approvar_sid);
+			        form_data.append('approver_action', action);
+			        form_data.append('approver_note', action_note);
+			        form_data.append('document_sid', document_sid);
+			        //
+			        $.ajax({
+			            url: '<?= base_url('hr_documents_management/save_approval_document_action') ?>',
+			            cache: false,
+			            contentType: false,
+			            processData: false,
+			            type: 'post',
+			            data: form_data,
+			            success: function (data) {
+			                //
+			                alertify.alert("Success", "Your action have save successfully!");
+			                ml(false, 'jsApprovalStatusLoader');
+			                // window.location.reload();
+			                
+			            },
+			            error: function () {
+			            }
+			        });
+		        } else if (action == 0) {
+		        	alertify.alert("Notice", "Please select any action!");
+		        }
+		    });
 
 		    function googleTranslateElementInit() {
 		        new google.translate.TranslateElement({

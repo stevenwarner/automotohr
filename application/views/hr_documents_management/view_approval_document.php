@@ -11,9 +11,9 @@
                 </a>
             </div>
             <div class="col-sm-6 col-xs-12 text-right">
-                <?php if(empty($currentAssigner['approval_status'])): ?>
-                <a href="javascript:;" data-action="approve" data-sid="<?php echo $currentAssignerId; ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
-                <a href="javascript:;" data-action="reject" data-sid="<?php echo $currentAssignerId; ?>" data-doc_sid="<?php echo $document_info['document_sid'] ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
+                <?php if(empty($currentApprover['approval_status'])): ?>
+                <a href="javascript:;" data-action="Approve" data-sid="<?php echo $currentApproverId; ?>" data-doc_sid="<?php echo $document_sid; ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
+                <a href="javascript:;" data-action="Reject" data-sid="<?php echo $currentApproverId; ?>" data-doc_sid="<?php echo $document_sid; ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -40,7 +40,7 @@
                         <table class="table table-striped">
                             <tr>
                                 <th class="col-sm-3 csF16">Document Title</th>
-                                <td><p class="text-left"><?php echo $jsonToArray['document_title']; ?></p></td>
+                                <td><p class="text-left"><?php echo $document_title; ?></p></td>
                             </tr>
                             <tr>
                                 <th class="col-sm-3">Document Type</th>
@@ -56,11 +56,11 @@
                             </tr>
                             <tr>
                                 <th class="col-sm-3">Assigned By</th>
-                                <td><p class="text-left"><?=getUserNameBySID($document_info['assigned_by']);?></p></td>
+                                <td><p class="text-left"><?php echo getUserNameBySID($assigned_by); ?></p></td>
                             </tr>
                             <tr>
                                 <th class="col-sm-3">Assigned Date</th>
-                                <td><p class="text-left"><?=formatDateToDB($document_info['assigned_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME);?></p></td>
+                                <td><p class="text-left"><?=formatDateToDB($assigned_date, DB_DATE_WITH_TIME, DATE_WITH_TIME);?></p></td>
                             </tr>
                         </table>
                     </div>
@@ -82,19 +82,19 @@
                         <table class="table table-striped">
                             <tr>
                                 <th class="col-sm-3">Acknowledgment Required </th>
-                                <td><p class="text-left"><?php echo $jsonToArray['acknowledgment_required'] ? 'Yes' : 'No'; ?></p></td>
+                                <td><p class="text-left"><?php echo $document_info['acknowledgment_required'] ? 'Yes' : 'No'; ?></p></td>
                             </tr>
                             <tr>
                                 <th class="col-sm-3">Download Required </th>
-                                <td><p class="text-left"><?php echo $jsonToArray['download_required'] ? 'Yes' : 'No'; ?></p></td>
+                                <td><p class="text-left"><?php echo $document_info['download_required'] ? 'Yes' : 'No'; ?></p></td>
                             </tr>
                             <tr>
                                 <th class="col-sm-3">Signature Required </th>
-                                <td><p class="text-left"><?php echo $jsonToArray['signature_required'] ? 'Yes' : 'No'; ?></p></td>
+                                <td><p class="text-left"><?php echo $document_info['signature_required'] ? 'Yes' : 'No'; ?></p></td>
                             </tr>
                             <tr>
                                 <th class="col-sm-3">Document Required </th>
-                                <td><p class="text-left"><?php echo $jsonToArray['is_required'] ? 'Yes' : 'No'; ?></p></td>
+                                <td><p class="text-left"><?php echo $document_info['is_required'] ? 'Yes' : 'No'; ?></p></td>
                             </tr>
                         </table>
                     </div>
@@ -123,19 +123,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if(isset($assigners) && !empty($assigners)) { ?>
-                                    <?php foreach ($assigners as $assigner) { ?>
+                                <?php if(isset($approvers) && !empty($approvers)) { ?>
+                                    <?php foreach ($approvers as $approver) { ?>
                                         <?php 
                                             //
                                             $status = 'Pending';
                                             $statusClass = 'text-warning';
                                             //
-                                            if(isset($assigner['note'])){
-                                                if($assigner['approval_status'] == 'Approve'){
+                                            if(isset($approver['note'])){
+                                                if($approver['approval_status'] == 'Approve'){
                                                     $status = 'Approved';
                                                     $statusClass = 'text-success';
                                                 }
-                                                else if($assigner['approval_status'] == 'Reject'){
+                                                else if($approver['approval_status'] == 'Reject'){
                                                     $status = 'Rejected';
                                                     $statusClass = 'text-danger';
                                                 }
@@ -144,22 +144,22 @@
                                         <tr>
                                             <td>
                                                 <?php 
-                                                    echo getUserNameBySID($assigner['assigner_sid']);
+                                                    echo getUserNameBySID($approver['assigner_sid']);
                                                 ?>
                                             </td>
                                             <td>
                                                 <?php 
-                                                    if (isset($assigner['assign_on']) && $assigner['assign_on'] != '0000-00-00 00:00:00') {
-                                                        echo '<strong>Assigned on: </strong>'.reset_datetime(array('datetime' => $assigner['assign_on'], '_this' => $this));
+                                                    if (isset($approver['assign_on']) && $approver['assign_on'] != '0000-00-00 00:00:00') {
+                                                        echo '<strong>Assigned on: </strong>'.reset_datetime(array('datetime' => $approver['assign_on'], '_this' => $this));
                                                     }
-                                                    if (isset($assigner['action_date']) && $assigner['action_date'] != '0000-00-00 00:00:00') {
-                                                        echo '<br /><strong>Action taken on: </strong>'.reset_datetime(array('datetime' => $assigner['action_date'], '_this' => $this));
+                                                    if (isset($approver['action_date']) && $approver['action_date'] != '0000-00-00 00:00:00') {
+                                                        echo '<br /><strong>Action taken on: </strong>'.reset_datetime(array('datetime' => $approver['action_date'], '_this' => $this));
                                                     }
                                                 ?>
                                             </td>
                                             <td class="<?=$statusClass;?>"><strong><?=$status;?></strong>
                                             </td>
-                                            <td><?=isset($assigner['note']) ? $assigner['note'] : '-';?>
+                                            <td><?=isset($approver['note']) ? $approver['note'] : '-';?>
                                             </td>
                                         </tr>           
                                     <?php } ?>    
@@ -240,14 +240,14 @@
     $(document).on('click', '#jsSaveAction', function(event) {
         //
         var action = $('#approver_action_status').val();
-        var assigner_sid = $('#approver_action_sid').val();
+        var approver_sid = $('#approver_action_sid').val();
         var document_sid = $('#approver_document_sid').val();
         var action_note = CKEDITOR.instances.approver_action_note.getData();
         //
         var form_data = new FormData();
-        form_data.append('sid', assigner_sid);
-        form_data.append('action', action);
-        form_data.append('note', action_note);
+        form_data.append('approver_sid', approver_sid);
+        form_data.append('approver_action', action);
+        form_data.append('approver_note', action_note);
         form_data.append('document_sid', document_sid);
         //
         $.ajax({
@@ -259,7 +259,7 @@
             data: form_data,
             success: function (data) {
                 $('#approval_action_modal').modal('hide');
-                window.location.reload();
+                // window.location.reload();
             },
             error: function () {
             }

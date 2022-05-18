@@ -72,7 +72,7 @@
                                             </td>
                                             <td class="vam">
                                                 <?php 
-                                                    echo implode(' ', array_slice(explode(' ', $document['note']), 0, 10));
+                                                    echo implode(' ', array_slice(explode(' ', $document['assigner_note']), 0, 10));
                                                 ?>
                                             </td>
                                             <td class="vam">
@@ -90,10 +90,10 @@
                                             </td>
                                             <td class="text-center vam">
                                                 <?php if(!isset($document['approval_note'])): ?>
-                                                <a href="javascript:;" data-action="approve" data-sid="<?php echo $document['assigner_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
-                                                <a href="javascript:;" data-action="reject" data-sid="<?php echo $document['assigner_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
+                                                <a href="javascript:;" data-action="Approve" data-sid="<?php echo $document['approver_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
+                                                <a href="javascript:;" data-action="Reject" data-sid="<?php echo $document['approver_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
                                                 <?php endif; ?>
-                                                <a target="_blank" href="<?php echo $document_d_base . '/' . $document['portal_document_assign_sid']; ?>" class="btn btn-info csRadius5"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Document</a> 
+                                                <a target="_blank" href="<?php echo $document_d_base . '/' . $document['document_sid']; ?>" class="btn btn-info csRadius5"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Document</a> 
                                             </td>
                                         </tr>           
                                     <?php } ?>    
@@ -186,14 +186,14 @@
         ml(true, 'jsApprovalStatusLoader');
         //
         var action = $('#approver_action_status').val();
-        var assigner_sid = $('#approver_action_sid').val();
+        var approver_sid = $('#approver_action_sid').val();
         var document_sid = $('#approver_document_sid').val();
         var action_note = CKEDITOR.instances.approver_action_note.getData();
         //
         var form_data = new FormData();
-        form_data.append('sid', assigner_sid);
-        form_data.append('action', action);
-        form_data.append('note', action_note);
+        form_data.append('approver_sid', approver_sid);
+        form_data.append('approver_action', action);
+        form_data.append('approver_note', action_note);
         form_data.append('document_sid', document_sid);
         //
         $.ajax({
@@ -207,7 +207,7 @@
                 //
                 
                 $('#approval_action_modal').modal('hide');
-                window.location.reload();
+                // window.location.reload();
                 
             },
             error: function () {

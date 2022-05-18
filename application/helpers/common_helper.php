@@ -15288,3 +15288,22 @@ if(!function_exists('get_user_assign_group_status')){
         }
     }
 }
+
+if(!function_exists('get_encryption_initialize_array')) {
+    /**
+     * CReturn encryption initialize array
+     *
+     * @return
+     * 
+     */
+    function get_encryption_initialize_array () {
+        $CI = &get_instance();
+        //
+        return array(
+            'cipher' => 'aes-256',
+            'mode' => 'ctr',
+            'key' => $CI->config->item('encryption_key'),
+            'driver' => 'openssl'
+        );
+    }
+}

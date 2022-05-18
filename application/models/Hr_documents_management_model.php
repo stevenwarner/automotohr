@@ -6855,9 +6855,9 @@ class Hr_documents_management_model extends CI_Model {
 
     public function getAssignApprovalDocumentInfo ($document_sid) {
         //
-        $this->db->select('flow_json, document_type, document_sid, user_sid, user_type, assigner_note');
+        $this->db->select('document_sid, assigner_note');
         $this->db->where('sid', $document_sid);
-        $this->db->where('assign_status <>', 0);
+        $this->db->where('assign_status', 1);
         $record_obj = $this->db->get('portal_document_assign_flow');
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
@@ -6870,13 +6870,14 @@ class Hr_documents_management_model extends CI_Model {
         return $return_data;
     }
 
-    function saveAssignerAction ($sid, $data_to_update) {
-        $this->db->where('sid', $sid);
+    function saveApproverAction ($approver_sid, $document_sid, $data_to_update) {
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('assigner_sid', $approver_sid);
         $this->db->update('portal_document_assign_flow_employees', $data_to_update);
     }
 
-    function updateApproversInfo ($document_sid, $data_to_update) {
-        $this->db->where('portal_document_assign_sid', $document_sid);
+    function updateApproversInfo ($flow_sid, $data_to_update) {
+        $this->db->where('portal_document_assign_sid', $flow_sid);
         $this->db->update('portal_document_assign_flow_employees', $data_to_update);
     }
 
@@ -6913,8 +6914,8 @@ class Hr_documents_management_model extends CI_Model {
         return $record_arr;
     }
 
-    function updateApprovalDocument ($document_sid, $data_to_update) {
-        $this->db->where('sid', $document_sid);
+    function updateApprovalDocument ($flow, $data_to_update) {
+        $this->db->where('sid', $flow);
         $this->db->update('portal_document_assign_flow', $data_to_update);
     }
     
@@ -6957,7 +6958,7 @@ class Hr_documents_management_model extends CI_Model {
         return $return_data;
     }
 
-    public function getAllDocumentAssigners ($document_sid) {
+    public function getAllDocumentApprovers ($document_sid) {
         //
         $this->db->select('*');
         $this->db->where('portal_document_assign_sid', $document_sid);
@@ -7592,7 +7593,7 @@ class Hr_documents_management_model extends CI_Model {
 
     public function get_approval_document_detail($document_sid) {
         //
-        $this->db->select('company_sid, user_sid, user_type, approval_flow_sid, document_title, document_type, acknowledgment_required, download_required, signature_required, is_required');
+        $this->db->select('company_sid, user_sid, user_type, approval_flow_sid, document_title, document_type, acknowledgment_required, download_required, signature_required, is_required, assigned_by');
         $this->db->where('sid', $document_sid);
         $this->db->where('approval_process', 1);
         $record_obj = $this->db->get('documents_assigned');
@@ -7638,7 +7639,25 @@ class Hr_documents_management_model extends CI_Model {
         }
 
         return $return_data;
-    }    
+    } 
+
+
+    public function get_approver_note ($document_flow_sid, $approver_sid) {
+        //
+        $this->db->select('note');
+        $this->db->where('portal_document_assign_sid', $document_flow_sid);
+        $this->db->where('assigner_sid', $approver_sid);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr['note'];
+        }
+
+        return $return_data;
+    }   
 
 
 }
