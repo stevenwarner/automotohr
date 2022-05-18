@@ -1711,7 +1711,7 @@ class Hr_documents_management extends Public_Controller {
             //check_access_permissions($security_details, 'appearance', 'customize_appearance'); 
             // no need to check in this Module as Dashboard will be available to all
             $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
+            $eeid = $employer_sid = $data['session']['employer_detail']['sid'];
             $pp_flag = $data['session']['employer_detail']['pay_plan_flag'];
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
@@ -3156,7 +3156,7 @@ class Hr_documents_management extends Public_Controller {
                                 $user_type,
                                 $company_sid,
                                 $gk,
-                                $employer_sid
+                                $eeid
                             )){
                                 //
                                 $sendGroupEmail = 1;
