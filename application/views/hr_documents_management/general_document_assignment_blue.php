@@ -554,7 +554,7 @@
                             </h4>
                         </div>
 
-                        <div id="collapse_general_documents_notcompleted" class="panel-collapse collapse">
+                        <div id="collapse_general_documents_notcompleted" class="panel-collapse collapse  in">
                             <div class="table-responsive full-width">
                                 <table class="table table-plane">
                                     <thead>
