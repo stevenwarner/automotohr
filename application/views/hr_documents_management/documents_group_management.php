@@ -98,10 +98,8 @@
                                             <td><?php echo html_entity_decode($group['description']); ?></td>
                                             <td><?php echo $group['status'] == 1 ? '<b class="paid">Active</b>' : '<b class="unpaid">Inactive</b>'; ?></td>
                                             <td>
-                                             
-                                                    <a id='<?php echo $group['sid']; ?>' ><b>Total: (<?php echo $group_doc_count; ?>)</b></a>
+                                                    <a id='<?php echo $group['sid']; ?>' ><b>Total: <?php echo $group_doc_count; ?></b></a>
                                                     <span id='docdetails_<?php echo $group['sid']; ?>' > <?php echo $group_doc_name; ?></span>
-                                              
                                             </td>
                                             <td>
                                                 <?php if ($group['document_status'] == 1 || $group['w4'] == 1 || $group['w9'] == 1 || $group['i9'] == 1 || $group['eeoc'] == 1 || $group['direct_deposit'] == 1 || $group['drivers_license'] == 1 || $group['occupational_license'] == 1 || $group['emergency_contacts'] == 1 || $group['dependents'] == 1) { ?>

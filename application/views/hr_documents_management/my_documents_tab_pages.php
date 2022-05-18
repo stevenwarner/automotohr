@@ -126,7 +126,7 @@
                                         </h4>
                                     </div>
 
-                                    <div id="collapse_uncompleted_offer_letter" class="panel-collapse collapse">
+                                    <div id="collapse_uncompleted_offer_letter" class="panel-collapse collapse in">
                                         <div class="table-responsive full-width">
                                             <table class="table table-plane">
                                                 <thead>
@@ -220,7 +220,7 @@
                                         </h4>
                                     </div>
 
-                                    <div id="collapse_uncompleted_payroll_documents" class="panel-collapse collapse">
+                                    <div id="collapse_uncompleted_payroll_documents" class="panel-collapse collapse in">
                                         <div class="table-responsive full-width">
                                             <table class="table table-plane">
                                                 <thead>
@@ -317,7 +317,7 @@
                                 </h4>
                             </div>
 
-                            <div id="collapse_uncompleted_fillable" class="panel-collapse collapse">
+                            <div id="collapse_uncompleted_fillable" class="panel-collapse collapse in">
                                 <div class="table-responsive">
                                     <table class="table table-plane cs-w4-table">
                                         <thead>
@@ -431,7 +431,7 @@
                                 </h4>
                             </div>
 
-                            <div id="jsGeneralNotCompletedDocuments" class="panel-collapse collapse">
+                            <div id="jsGeneralNotCompletedDocuments" class="panel-collapse collapse in">
                                 <div class="table-responsive">
                                     <table class="table table-plane cs-w4-table">
                                         <thead>
