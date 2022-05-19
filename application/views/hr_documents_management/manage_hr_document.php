@@ -78,6 +78,13 @@
                                         </div>
                                     </div>
 
+                                    <?php $this->load->view('hr_documents_management/partials/settings', [
+                                        'is_confidential' =>  $document['is_confidential'],
+                                        'cl' => 'panel-success',
+                                        'btn' => true,
+                                        'documentAssignedId' => $document['sid']
+                                    ]); ?>
+
                                     <?php if($document['acknowledgment_required'] == 1) { ?>
                                         <div class="panel panel-success">
                                             <div class="panel-heading">

@@ -266,6 +266,7 @@
 			}
 			rows += getRequiredRow();
 			rows += getSignatureRequiredRow();
+			rows += `<?php $this->load->view('hr_documents_management/partials/settings'); ?>`;
 			if(do_descpt) rows += getTags();
 			//
 			// if(do_descpt){
@@ -343,6 +344,8 @@
 						trigger: 'hover',
 						placement: 'right'
 					});
+					//
+					$('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential ? true : false);
 					$('.jsModifyModalLoader').fadeOut(300);
 				}
 			);
@@ -401,6 +404,7 @@
 			rows+= getEmailContent();
 			rows += getRequiredRow();
 			rows += getSignatureRequiredRow();
+			rows += `<?php $this->load->view('hr_documents_management/partials/settings'); ?>`;
 			if(do_descpt) rows += getTags();
 			// if(do_descpt) {
 				//
@@ -468,6 +472,7 @@
 						}
 					// }
 
+					$('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential ? true : false);
 
 					$('.jsModifyModalLoader').fadeOut(300);
 
@@ -807,6 +812,7 @@
 			obj.selected_departments = $('#jsDepartments').val() || '';
 			obj.selected_teams = $('#jsTeams').val() || '';
 			obj.selected_employees = $('#jsEmployees').val() || '';
+			obj.is_confidential = $('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
 			//
 			var post = new FormData();
 			//

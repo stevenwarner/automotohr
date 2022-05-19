@@ -527,6 +527,11 @@
             rows += '               <div class="control__indicator"></div>';
             rows += '                   Visible To Payroll Plus';
             rows += '            </label>';
+            rows += '           <label class="control control--checkbox">';
+            rows += '               <input name="settings_is_confidential" this-id="'+( rowId )+'" id="settings_is_confidential'+( rowId )+'" type="checkbox" value="" class="ec_checkbox">';
+            rows += '               <div class="control__indicator"></div>';
+            rows += '                   Confidential';
+            rows += '            </label>';
             rows += '        </div>';
             rows += '        <div class="col-sm-1 col-xs-12">';
             if( rowId === 0)
@@ -626,6 +631,11 @@
             if ($(".ek_checkbox:eq( "+fileIndex+" )").is(":checked"))
             {
                 formpost.append("visible_to_payroll", "yes");
+            }
+
+            if ($(".ec_checkbox:eq( "+fileIndex+" )").is(":checked"))
+            {
+                formpost.append("settings_is_confidential", "on");
             }
 
             $.ajax({

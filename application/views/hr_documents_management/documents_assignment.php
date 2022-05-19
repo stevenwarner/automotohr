@@ -2131,11 +2131,6 @@
                         <div class="col-xs-12">
                             <label>Browse Document <span class="staric">*</span></label>
                             <input style="display: none;" type="file" name="document" id="manual_document">
-                            <!-- <div class="upload-file invoice-fields"> -->
-                                <!-- <input style="height: 38px;" type="file" name="document" id="document" required onchange="check_file('document')">
-                                <p id="name_document"></p>
-                                <a href="javascript:;" style="line-height: 38px; height: 38px;">Choose File</a> -->
-                            <!-- </div> -->
                         </div>
                     </div>
                     <div class="row">
@@ -2148,7 +2143,6 @@
                         <div class="col-xs-12 margin-top">
                             <label>Instructions / Guidance </label>
                             <textarea class="invoice-fields autoheight ckeditor" maxlength="250"  name="document_description" id="document_description" cols="54" rows="6"></textarea>
-                            <!--                                                <p id="remaining_text" class="info">500 characters left!</p>-->
                         </div>
                     </div>
                     <div class="row">
@@ -2181,7 +2175,7 @@
                                 <label class="control control--checkbox">
                                     <input name="accessable" id="accessable" type="checkbox" value="" class="ej_checkbox">
                                     <div class="control__indicator"></div>
-                                    Accessable for Admins
+                                    Accessible for Admins
                                 </label>
                             </div>
                         </div>
@@ -2206,6 +2200,9 @@
                             </label>
                         </div>
                     </div>
+                    
+                    <br />
+                    <?php $this->load->view('hr_documents_management/partials/settings'); ?>
                     <br />
 
                     <div class="row">
