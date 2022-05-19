@@ -237,6 +237,7 @@
 		        //
 		        if (action != 0) {
 		        	//
+		        	$("#jsSaveActionBtn").prop("disabled",true);
 		        	ml(true, 'jsApprovalStatusLoader');
 		        	//
 		        	var approvar_sid = '<?php echo $approver_sid; ?>';
@@ -256,12 +257,17 @@
 			            processData: false,
 			            type: 'post',
 			            data: form_data,
-			            success: function (data) {
+			            success: function (resp) {
 			                //
-			                alertify.alert("Success", "Your action have save successfully!");
-			                ml(false, 'jsApprovalStatusLoader');
-			                // window.location.reload();
-			                
+			                if (resp.Status === false) {
+			                    ml(false, 'jsApprovalStatusLoader');
+			                    alertify.alert("Notice", resp.Msg);
+			                    return;
+			                }
+			                //
+			                alertify.alert("Notice", resp.Msg, function(){
+			                    window.location.reload();
+			                });
 			            },
 			            error: function () {
 			            }

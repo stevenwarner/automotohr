@@ -203,12 +203,17 @@
             processData: false,
             type: 'post',
             data: form_data,
-            success: function (data) {
+            success: function (resp) {
                 //
-                
-                $('#approval_action_modal').modal('hide');
-                // window.location.reload();
-                
+                if (resp.Status === false) {
+                    $('#approval_action_modal').modal('hide');
+                    alertify.alert("Notice", resp.Msg);
+                    return;
+                }
+                //
+                alertify.alert("Notice", resp.Msg, function(){
+                    window.location.reload();
+                });
             },
             error: function () {
             }

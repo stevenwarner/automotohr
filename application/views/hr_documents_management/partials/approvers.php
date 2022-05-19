@@ -164,7 +164,6 @@
         } else {
             $('.jsIPLoader[data-page="jsDocumentsApproversModalLoader"]').show(0);
             // Send ajax request to convert
-            console.log("here i am")
             $.post("<?=base_url('hr_documents_management/approvers_handler');?>", {
                 approvalDocumentId: approval_document_sid,
                 documentId: document_sid,

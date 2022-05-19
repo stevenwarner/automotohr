@@ -6228,85 +6228,89 @@ class Hr_documents_management extends Public_Controller {
                         }
                     }
 
-                    if ($assigned_document['document_type'] != 'offer_letter') {
-                        if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0 && $assigned_document['status'] == 1) {
+                    if ($assigned_document['approval_process'] == 0) {
+                        if ($assigned_document['document_type'] != 'offer_letter') {
+                            if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0 && $assigned_document['status'] == 1) {
 
-                            if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
-                                if ($is_magic_tag_exist == 1) {
+                                if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
                                     if ($assigned_document['uploaded'] == 1) {
                                         $is_document_completed = 1;
                                     } else {
                                         $is_document_completed = 0;
                                     }
-                                } else if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
+                                } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
+                                    if ($is_magic_tag_exist == 1) {
+                                        if ($assigned_document['uploaded'] == 1) {
+                                            $is_document_completed = 1;
+                                        } else {
+                                            $is_document_completed = 0;
+                                        }
+                                    } else if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['acknowledgment_required'] == 1) {
+                                    if ($assigned_document['acknowledged'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['download_required'] == 1) {
+                                    if ($assigned_document['downloaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($is_magic_tag_exist == 1) {
+                                    if ($assigned_document['user_consent'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
                                 }
-                            } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['acknowledgment_required'] == 1) {
-                                if ($assigned_document['acknowledged'] == 1) {
-                                    $is_document_completed = 1;
-                                } else if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['download_required'] == 1) {
-                                if ($assigned_document['downloaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($assigned_document['signature_required'] == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            } else if ($is_magic_tag_exist == 1) {
-                                if ($assigned_document['user_consent'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
-                                }
-                            }
 
-                            if ($is_document_completed > 0) {
-                               unset($assigned_documents[$key]);
+                                if ($is_document_completed > 0) {
+                                   unset($assigned_documents[$key]);
+                                } else {
+                                    $assigned_sids[] = $assigned_document['document_sid'];
+                                }
                             } else {
-                                $assigned_sids[] = $assigned_document['document_sid'];
+                                unset($assigned_documents[$key]);
                             }
-                        } else {
-                            unset($assigned_documents[$key]);
+                        }else{
+                            //
+                            if($assigned_document['user_consent'] == 1){
+                                unset($assigned_documents[$key]);
+                            }
                         }
-                    }else{
-                        //
-                        if($assigned_document['user_consent'] == 1){
-                            unset($assigned_documents[$key]);
-                        }
-                    }
+                     } else {
+                        unset($assigned_documents[$key]);
+                    }     
                 }
 
 
@@ -13191,8 +13195,6 @@ class Hr_documents_management extends Public_Controller {
             'Msg' => 'Invalid Request'
         ];
         //
-        _e($post, true, true);
-        //
         $approver_sid = $post['approver_sid'];
         $approver_action = $post['approver_action'];
         $approver_note = $_POST['approver_note'];
@@ -13204,15 +13206,19 @@ class Hr_documents_management extends Public_Controller {
             //
             if (!empty($document_info) && $current_approver_sid == $approver_sid) {
                 //
-                $data_to_update = array();
-                $data_to_update['approval_status'] = $approver_action;
-                $data_to_update['note'] = $approver_note;
-                $data_to_update['assigner_turn'] = 0;
-                $data_to_update['action_date'] = date('Y-m-d H:i:s', strtotime('now'));
+                // Save Current Approver Action 
+                $this->hr_documents_management_model->saveApproverAction(
+                    $approver_sid, 
+                    $document_info['approval_flow_sid'], 
+                    [
+                        'approval_status' => $approver_action, 
+                        'note' => $approver_note,
+                        'assigner_turn' => 0, 
+                        'action_date' => date('Y-m-d H:i:s', strtotime('now'))
+                    ]
+                );
                 //
-                $this->hr_documents_management_model->saveApproverAction($approver_sid, $document_info['approval_flow_sid'], $data_to_update);
-                //
-                if ($assigner_action == "Reject") {
+                if ($approver_action == "Reject") {
                     // 
                     // Revoke all approvers against this document
                     $this->hr_documents_management_model->updateApproversInfo(
@@ -13227,7 +13233,6 @@ class Hr_documents_management extends Public_Controller {
                     $this->hr_documents_management_model->updateApprovalDocument(
                         $document_info['approval_flow_sid'], 
                         [
-                            'status' => 0, 
                             'assign_status' => 3 // 3 mean Reject this document
                         ]
                     );
@@ -13243,7 +13248,17 @@ class Hr_documents_management extends Public_Controller {
                     // Check any approver left against this document
                     $new_approver = $this->hr_documents_management_model->getnextApproversInfo($document_info['approval_flow_sid']);
                     // Sends email to next approver
+                    
                     if ($new_approver) {
+                        // Save Current Approver Action 
+                        $this->hr_documents_management_model->saveApproverAction(
+                            $new_approver['assigner_sid'], 
+                            $new_approver['portal_document_assign_sid'], 
+                            [
+                                'assigner_turn' => 1, 
+                                'assign_on' => date('Y-m-d H:i:s', strtotime('now'))
+                            ]
+                        );
                         //
                         // Send Email to next approver of this document
                         $this->SendEmailToCurrentApprover($document_sid);
@@ -13267,14 +13282,6 @@ class Hr_documents_management extends Public_Controller {
                             ]
                         );
                         //
-                        // Update user assigned document row
-                        $this->hr_documents_management_model->change_document_approval_status(
-                            $document_sid, 
-                            [
-                                'approval_process' => 0
-                            ]
-                        );
-                        //
                         // Send Email to initiator/assigner of this document
                         $this->SendEmailToDocumentInitiator(
                             "accept",
@@ -13282,6 +13289,15 @@ class Hr_documents_management extends Public_Controller {
                             $document_sid,
                             $approver_sid
                         );
+                        //
+                        // Update user assigned document row
+                        $this->hr_documents_management_model->change_document_approval_status(
+                            $document_sid, 
+                            [
+                                'approval_process' => 0
+                            ]
+                        );
+                       
                     }
                 }
 
@@ -13467,16 +13483,20 @@ class Hr_documents_management extends Public_Controller {
             if ($key == 0) {
                 $data_to_insert['assign_on'] = date('Y-m-d H:i:s', strtotime('now'));
                 $data_to_insert['assigner_turn'] = 1;
-                //
-                $this->SendEmailToCurrentApprover($document_sid);
             }
             //
             $this->hr_documents_management_model->insert_assigner_employee($data_to_insert);
             //
+            if ($key == 0) {
+                //
+                // Send Email to first approver of this document
+                $this->SendEmailToCurrentApprover($document_sid);
+            }
         }
     }
 
     function SendEmailToCurrentApprover ($document_sid) {
+       
         //
         $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
         //
@@ -13512,10 +13532,11 @@ class Hr_documents_management extends Public_Controller {
         $this->encryption->initialize(
             get_encryption_initialize_array()
         );
+
         //
-        $accept_code = $this->encryption->encrypt($document_sid . '/' . $approver_sid . '/' . 'accept');
-        $reject_code = $this->encryption->encrypt($document_sid . '/' . $approver_sid . '/' . 'reject');
-        $view_code = $this->encryption->encrypt($document_sid . '/' . $approver_sid . '/' . 'view');
+        $accept_code = $this->encryption->encrypt($document_sid . '/' . $current_approver_sid . '/' . 'accept');
+        $reject_code = $this->encryption->encrypt($document_sid . '/' . $current_approver_sid . '/' . 'reject');
+        $view_code = $this->encryption->encrypt($document_sid . '/' . $current_approver_sid . '/' . 'view');
         //
         $approval_public_link_accept = base_url("hr_documents_management/public_approval_document"). '/' . $accept_code;
         $approval_public_link_reject = base_url("hr_documents_management/public_approval_document"). '/' . $reject_code;
@@ -13614,12 +13635,13 @@ class Hr_documents_management extends Public_Controller {
             $replacement_array['rejector_note'] = $rejector_note; 
         }
         //
-        $replacement_array['contact-name'] = $userName;
-        $replacement_array['company_name'] = ucwords($companyName);
+        $replacement_array['contact-name'] = $document_assigned_user_name;
+        $replacement_array['company_name'] = ucwords($company_name);
         $replacement_array['first_name'] = $initiator_info['first_name'];
         $replacement_array['last_name'] = $initiator_info['last_name'];
-        $replacement_array['document_title'] = $document_info['document_title'];;
-        
+        $replacement_array['document_title'] = $document_info['document_title'];
+        //
+        // _e($replacement_array,true,true);
         //
         if(!empty($document_approvers)){
             //
@@ -13646,7 +13668,7 @@ class Hr_documents_management extends Public_Controller {
             //
             $replacement_array['approvers_list'] = $tb;
         }
-
+        //
         // Send email to initiator of this document
         log_and_send_templated_email($template, $initiator_info['email'], $replacement_array, $hf, 1);
 
@@ -13658,12 +13680,15 @@ class Hr_documents_management extends Public_Controller {
                 $document_info["assigned_by"]
             );
             //
-            $replacement_array['first_name'] = $assigner_info['first_name'];
-            $replacement_array['last_name'] = $assigner_info['last_name'];
+            if ($initiator_info['email'] != $assigner_info['email']) {
+                //
+                $replacement_array['first_name'] = $assigner_info['first_name'];
+                $replacement_array['last_name'] = $assigner_info['last_name'];
 
-            //
-            // Send email to assigner of this document
-            log_and_send_templated_email($template, $assigner_info['email'], $replacement_array, $hf, 1); 
+                //
+                // Send email to assigner of this document
+                log_and_send_templated_email($template, $assigner_info['email'], $replacement_array, $hf, 1);
+            }  
         }
     }
 
@@ -13681,7 +13706,7 @@ class Hr_documents_management extends Public_Controller {
     function public_approval_document (
         $token
     ) {
-        // _e(get_encryption_initialize_array(),true,true);
+        // 
         $this->load->library('encryption');
         //
         $this->encryption->initialize(
@@ -13692,6 +13717,7 @@ class Hr_documents_management extends Public_Controller {
         //
         if (!empty($decrypt_token)) {
             $decrypt_keys = explode("/", $decrypt_token);
+
             //
             $document_sid = $decrypt_keys[0];
             $approver_sid = $decrypt_keys[1];
@@ -13896,7 +13922,20 @@ class Hr_documents_management extends Public_Controller {
                 $data_to_insert['portal_document_assign_sid'] = $post["approvalDocumentId"];
                 $data_to_insert['assigner_sid'] = $post["approverId"];
                 //
+                $current_approver_sid = $this->hr_documents_management_model->get_document_current_approver_sid($document_detail['approval_flow_sid']);
+                //
+                if ($current_approver_sid == 0) {
+                    $data_to_insert['assign_on'] = date('Y-m-d H:i:s', strtotime('now'));
+                    $data_to_insert['assigner_turn'] = 1;
+                }
+                //
                 $this->hr_documents_management_model->insert_assigner_employee($data_to_insert);
+                //
+                if ($current_approver_sid == 0) {
+                    //
+                    // Send Email to new approver if previous all approver deactive
+                    $this->SendEmailToCurrentApprover($document_info["sid"]);
+                }
                 //
                 $resp['Status'] = true;
                 $resp['Msg'] = getUserNameBySID($post["approverId"]).' add an approver successfully.';
@@ -13913,44 +13952,16 @@ class Hr_documents_management extends Public_Controller {
 
             // 
             case "remind_approver":
-                $hf = message_header_footer_domain($company_sid, $company_name);
                 //
-                // Get the user name
-                if($document_info['user_type'] == 'employee'){
-                    //
-                    $t = $this->hr_documents_management_model->get_employee_information($company_sid, $document_info['user_sid']);
-                    //
-                    $document_assign_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
-                } else {
-                    //
-                    $t = $this->hr_documents_management_model->get_applicant_information($company_sid, $document_info['user_sid']);
-                    //
-                    $document_assign_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
-                }
+                // Send Email reminder to approver of this document
+                $this->SendEmailToCurrentApprover($document_info["sid"]);
                 //
-                $approver_info = $this->hr_documents_management_model->get_employee_information($company_sid, $post["approverId"]);
-                //
-                $replacement_array['assigner'] = getUserNameBySID($document_info['assigned_by']);
-                $replacement_array['contact-name'] = $document_assign_user_name;
-                $replacement_array['company_name'] = ucwords($company_name);
-                $replacement_array['username'] = $replacement_array['contact-name'];
-                $replacement_array['firstname'] = $approver_info['first_name'];
-                $replacement_array['lastname'] = $approver_info['last_name'];
-                $replacement_array['first_name'] = $approver_info['first_name'];
-                $replacement_array['last_name'] = $approver_info['last_name'];
-                $replacement_array['document_title'] = $document_info['document_title'];
-                $replacement_array['user_type'] = 'employee';
-                $replacement_array['note'] = $document_info['assigner_note'];
-                $replacement_array['baseurl'] = base_url();
-    
-                // Send email to assigner as a notification with private link
-                log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
                 $resp['Status'] = true;
                 $resp['Msg'] = "Send emai reminder to (".getUserNameBySID($post["approverId"]).") successfully.";
             break;
         } 
         //
-        $resp['document_sid'] = $document_info['approval_flow_sid'];
+        $resp['document_sid'] = $post["documentId"];
         $resp['user_type'] = $post["userType"];
         $resp['user_sid'] = $post["userId"];
         //  
