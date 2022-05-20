@@ -7323,23 +7323,41 @@ class Onboarding extends CI_Controller
         $company_name = $this->input->post('company_name');
         $user_sid = $this->input->post('user_sid');
         $unique_sid = $this->input->post('unique_sid');
-        $applicant_info = $this->onboarding_model->get_applicant_information($user_sid);
-        $applicant_email = $applicant_info['email'];
-        $applicant_name = $applicant_info['first_name'] . ' ' . $applicant_info['last_name'];
-        $onboarding_portal_link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('onboarding/getting_started/' . $unique_sid) . '">Onboarding Portal</a>';
-        $replacement_array = array();
-        $replacement_array['company_name'] = $company_name;
-        $replacement_array['applicant_name'] = $applicant_name;
-        $replacement_array['onboarding_portal_link'] = $onboarding_portal_link;
         //
-        $user_extra_info = array();
-        $user_extra_info['user_sid'] = $user_sid;
-        $user_extra_info['user_type'] = "applicant";
+        $response = array();
         //
-        log_and_send_templated_email(APPLICANT_ONBOARDING_WELCOME, $applicant_email, $replacement_array, message_header_footer_domain($company_sid, $company_name), 1, $user_extra_info);
-        $sent_date = date('Y-m-d H:i:s');
-        $this->onboarding_model->update_emailSent_date($unique_sid, array('email_sent_date' => $sent_date));
-        print_r('A Notification email has been sent at ' . date('m-d-Y h:i:s A', strtotime($sent_date)));
+        if (!empty($unique_sid)) {
+            //
+            $applicant_info = $this->onboarding_model->get_applicant_information($user_sid);
+            $applicant_email = $applicant_info['email'];
+            $applicant_name = $applicant_info['first_name'] . ' ' . $applicant_info['last_name'];
+            $onboarding_portal_link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('onboarding/getting_started/' . $unique_sid) . '">Onboarding Portal</a>';
+            $replacement_array = array();
+            $replacement_array['company_name'] = $company_name;
+            $replacement_array['applicant_name'] = $applicant_name;
+            $replacement_array['onboarding_portal_link'] = $onboarding_portal_link;
+            //
+            $user_extra_info = array();
+            $user_extra_info['user_sid'] = $user_sid;
+            $user_extra_info['user_type'] = "applicant";
+            //
+            log_and_send_templated_email(APPLICANT_ONBOARDING_WELCOME, $applicant_email, $replacement_array, message_header_footer_domain($company_sid, $company_name), 1, $user_extra_info);
+            $sent_date = date('Y-m-d H:i:s');
+            $this->onboarding_model->update_emailSent_date($unique_sid, array('email_sent_date' => $sent_date));
+            //
+            $response['status'] = TRUE;
+            $response['message'] = 'A Notification email has been sent at ' . date('m-d-Y h:i:s A', strtotime($sent_date));
+        } else {
+            //
+            $response['status'] = FALSE;
+            $response['message'] = 'Please save applicant setup panel first!';
+        }
+
+        //
+        header('Content-Type: application/json');
+        echo json_encode($response);
+        exit(0);
+        
     }
 
     public function documents($unique_sid)
