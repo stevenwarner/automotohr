@@ -1493,6 +1493,7 @@ class Employee_management extends Public_Controller {
                         'gender' => $gender,
                         'marital_status' => $this->input->post('marital_status')
                     );
+                   
                     //
                     if ($gender != "other") {
                         $updateGender = array();
@@ -1642,6 +1643,9 @@ class Employee_management extends Public_Controller {
                     $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                     $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                     $data_to_insert['full_employment_application'] = serialize($full_emp_app);
+                    
+                  
+
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
                     if (isset($_POST['policies']) && !empty($_POST['policies'])) {

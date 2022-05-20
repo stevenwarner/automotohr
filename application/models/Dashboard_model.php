@@ -700,6 +700,7 @@ class Dashboard_model extends CI_Model
 
     function update_user($sid, $data, $type = NULL)
     {
+       
         $this->db->where('sid', $sid);
         // Added on: 27-06-2019
         if (isset($data['team_sid']) && $data['team_sid'] == '') $data['team_sid'] = 0;

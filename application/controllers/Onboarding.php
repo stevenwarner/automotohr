@@ -5618,6 +5618,23 @@ class Onboarding extends CI_Controller
                     $verification_key = random_key(80);
                     $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
                     $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
+                  
+                    broadcastAlert(
+                        DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE,
+                        'offer_letter',
+                        'document_assigned',
+                        $company_sid,
+                        $company_name,
+                        $data['session']['employer_detail']['first_name'],
+                        $data['session']['employer_detail']['last_name'],
+                        $employer_sid,
+                        [
+                            'document_title' => $offer_letter_title,
+                            'employee_name' => $user_info['first_name'].' '.$user_info['last_name']
+                        ]
+                    );
+          
+                
                     //
                     $signers = $this->input->post('js-signers');
                     // Managers handling
@@ -5629,7 +5646,10 @@ class Onboarding extends CI_Controller
                     );
                 }
 
+                
+
                 if ($perform_action == 'save_and_send_offer_letter') {
+                    
                     $applicant_sid = $user_info['sid'];
                     $applicant_email = $user_info['email'];
                     $applicant_name = $user_info['first_name'] . ' ' . $user_info['last_name'];

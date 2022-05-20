@@ -2350,13 +2350,14 @@ if(!function_exists('getNotificationContacts')){
         $companySid,
         $slug
     ){
+        //die( $slug);
         //
         $CI = &get_instance();
         //
         if(!
             $CI->db
             ->where('company_sid', $companySid)
-            ->where($slug, 1)
+            ->where($slug =='offer_letter' ? "offer_letter_notification" :$slug , 1)
             ->count_all_results('notifications_emails_configuration')
             ) return [];
             //
