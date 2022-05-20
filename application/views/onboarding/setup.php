@@ -3452,8 +3452,8 @@ if ($user_type == 'applicant') {
                         url: send_email_url,
                         success: function(resp){
                             if (resp.status) {
-                                $('#date-sent-div').html(data);
-                                $('#jsNotificationEmailError').hide(data);
+                                $('#date-sent-div').html(resp.message);
+                                $('#jsNotificationEmailError').hide(resp.message);
                             }
                             
                             alertify.alert('SUCCESS!', resp.message , function(){
