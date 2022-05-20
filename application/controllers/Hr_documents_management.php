@@ -10565,28 +10565,32 @@ class Hr_documents_management extends Public_Controller {
                         switch ($user_type) {
                             case 'employee':
                                 $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
-                                $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
-                                $replacement_array['company_name'] = ucwords($post['CompanyName']);
-                                $replacement_array['username'] = $replacement_array['contact-name'];
-                                $replacement_array['firstname'] = $user_info['first_name'];
-                                $replacement_array['lastname'] = $user_info['last_name'];
-                                $replacement_array['first_name'] = $user_info['first_name'];
-                                $replacement_array['last_name'] = $user_info['last_name'];
-                                $replacement_array['baseurl'] = base_url();
-                                $replacement_array['url'] = base_url('hr_documents_management/my_documents');
+                                $is_hour = $this->is_one_hour_complete($user_info['document_sent_on']);
                                 //
-                                $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
-                                //
-                                $is_manual = get_document_type($assignInsertId);
-                                //
-                                if(sizeof($replacement_array) && $is_manual == 'no') {
+                                if($is_hour > 0){
+                                    $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+                                    $replacement_array['company_name'] = ucwords($post['CompanyName']);
+                                    $replacement_array['username'] = $replacement_array['contact-name'];
+                                    $replacement_array['firstname'] = $user_info['first_name'];
+                                    $replacement_array['lastname'] = $user_info['last_name'];
+                                    $replacement_array['first_name'] = $user_info['first_name'];
+                                    $replacement_array['last_name'] = $user_info['last_name'];
+                                    $replacement_array['baseurl'] = base_url();
+                                    $replacement_array['url'] = base_url('hr_documents_management/my_documents');
                                     //
-                                    $user_extra_info = array();
-                                    $user_extra_info['user_sid'] = $post['EmployeeSid'];
-                                    $user_extra_info['user_type'] = $user_type;
+                                    $this->hr_documents_management_model->update_employee($post['EmployeeSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
                                     //
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
-                                } 
+                                    $is_manual = get_document_type($assignInsertId);
+                                    //
+                                    if(sizeof($replacement_array) && $is_manual == 'no') {
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                                    } 
+                                }    
                                 //   
                             break;
 
