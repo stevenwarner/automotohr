@@ -10942,26 +10942,31 @@ class Hr_documents_management extends Public_Controller {
                 switch ($post['Type']) {
                     case 'employee':
                         $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
-                        $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
-                        $replacement_array['company_name'] = ucwords($post['CompanyName']);
-                        $replacement_array['username'] = $replacement_array['contact-name'];
-                        $replacement_array['firstname'] = $user_info['first_name'];
-                        $replacement_array['lastname'] = $user_info['last_name'];
-                        $replacement_array['first_name'] = $user_info['first_name'];
-                        $replacement_array['last_name'] = $user_info['last_name'];
-                        $replacement_array['baseurl'] = base_url();
-                        $replacement_array['url'] = base_url('hr_documents_management/my_documents');
+                        $is_hour = $this->is_one_hour_complete($user_info['document_sent_on']);
                         //
-                        $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
-                        //
-                        if(sizeof($replacement_array)) {
+                        if($is_hour > 0){
                             //
-                            $user_extra_info = array();
-                            $user_extra_info['user_sid'] = $post['EmployeeSid'];
-                            $user_extra_info['user_type'] = $post['Type'];
+                            $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+                            $replacement_array['company_name'] = ucwords($post['CompanyName']);
+                            $replacement_array['username'] = $replacement_array['contact-name'];
+                            $replacement_array['firstname'] = $user_info['first_name'];
+                            $replacement_array['lastname'] = $user_info['last_name'];
+                            $replacement_array['first_name'] = $user_info['first_name'];
+                            $replacement_array['last_name'] = $user_info['last_name'];
+                            $replacement_array['baseurl'] = base_url();
+                            $replacement_array['url'] = base_url('hr_documents_management/my_documents');
                             //
-                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
-                        }    
+                            $this->hr_documents_management_model->update_employee($post['EmployeeSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
+                            //
+                            if(sizeof($replacement_array)) {
+                                //
+                                $user_extra_info = array();
+                                $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                                $user_extra_info['user_type'] = $post['Type'];
+                                //
+                                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                            }
+                        }        
                     break;
 
                     case 'applicant':
@@ -13670,6 +13675,24 @@ class Hr_documents_management extends Public_Controller {
         header('content-type: application/json');
         echo json_encode($history_array);
         exit(0);
+    }
+
+
+    function is_one_hour_complete ($time) {
+        if (empty($time)) {
+            return 1;
+        } else {
+            $date1 = new DateTime($time);
+            $date2 = new DateTime(date('Y-m-d H:i:s'));
+
+            $diff = $date2->diff($date1);
+
+            $hours = $diff->h;
+            $hours = $hours + ($diff->days*24);
+
+            return $hours;
+        }
+        
     }
 
 }
