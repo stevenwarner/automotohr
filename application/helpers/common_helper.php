@@ -1509,7 +1509,14 @@ if (!function_exists('convert_email_template')) {
         $emailTemplateBody = str_replace('{{lastname}}', ucfirst($replacement_array['last_name']), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
-        $emailTemplateBody = str_replace('{{username}}', $replacement_array['username'], $emailTemplateBody);
+        //
+        $username = substr($replacement_array['username'], 0, strpos($replacement_array['username'], "_executive_admin_"));
+        //
+        if (empty($username)) {
+            $username = $replacement_array['username'];
+        }
+        //
+        $emailTemplateBody = str_replace('{{username}}', $username, $emailTemplateBody);
         $emailTemplateBody = str_replace('{{contact-name}}', ucfirst($replacement_array['first_name']) . ' ' . ucfirst($replacement_array['last_name']), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{applicant_name}}', ucwords($replacement_array['first_name'] . ' ' . $replacement_array['last_name']), $emailTemplateBody);
         //
