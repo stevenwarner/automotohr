@@ -774,6 +774,7 @@ class application_tracking_model extends CI_Model {
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('has_job_approval_rights', 1);
         $this->db->where('active', 1);
+        $this->db->where('terminated_status', 0);
         $this->db->from('users');
         return $this->db->get()->result_array();
     }
