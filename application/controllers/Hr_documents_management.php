@@ -651,9 +651,11 @@ class Hr_documents_management extends Public_Controller {
                             if(in_array('-1', $aEmployees)) $data_to_insert['assigned_employee_list'] = 'all';
                             else $data_to_insert['assigned_employee_list'] = json_encode($aEmployees);
                         }
+                        $data_to_insert['has_approval_flow'] = 1;
                         // Assigner handling
-                        if(isset($post['assigner']) && !empty($post['assigner'])){
-                            $data_to_insert['document_approval_employees'] = implode(',', $post['assigner']);
+                        if($post['has_approval_flow'] == 'on'){
+                            $data_to_insert['has_approval_flow'] = 1;
+                            $data_to_insert['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
                             $data_to_insert['document_approval_note'] = $post['assigner_note'];
                         }
 
@@ -699,8 +701,11 @@ class Hr_documents_management extends Public_Controller {
                         $new_history_data['signature_required'] = $this->input->post('signature_required');
                         $new_history_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
                         // Assigner handling
-                        if(isset($post['assigner']) && !empty($post['assigner'])){
-                            $new_history_data['document_approval_employees'] = implode(',', $post['assigner']);
+                        $new_history_data['has_approval_flow'] = 1;
+                        // Assigner handling
+                        if($post['has_approval_flow'] == 'on'){
+                            $new_history_data['has_approval_flow'] = 1;
+                            $new_history_data['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
                             $new_history_data['document_approval_note'] = $post['assigner_note'];
                         }
                         $this->hr_documents_management_model->insert_document_management_history($new_history_data);
@@ -884,8 +889,11 @@ class Hr_documents_management extends Public_Controller {
                             $data_to_insert['managers_list'] = implode(',', $managersList);   
                         }
                         // Assigner handling
-                        if(isset($post['assigner']) && !empty($post['assigner'])){
-                            $data_to_insert['document_approval_employees'] = implode(',', $post['assigner']);
+                        $data_to_insert['has_approval_flow'] = 1;
+                        // Assigner handling
+                        if($post['has_approval_flow'] == 'on'){
+                            $data_to_insert['has_approval_flow'] = 1;
+                            $data_to_insert['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
                             $data_to_insert['document_approval_note'] = $post['assigner_note'];
                         }
 
@@ -924,8 +932,12 @@ class Hr_documents_management extends Public_Controller {
                             $this->hr_documents_management_model->update_authorized_signature($authorized_signature_required, $update_authorized_signature);
                         }
                         // Assigner handling
-                        if(isset($post['assigner']) && !empty($post['assigner'])){
-                            $new_history_data['document_approval_employees'] = implode(',', $post['assigner']);
+                        // Assigner handling
+                        $new_history_data['has_approval_flow'] = 1;
+                        // Assigner handling
+                        if($post['has_approval_flow'] == 'on'){
+                            $new_history_data['has_approval_flow'] = 1;
+                            $new_history_data['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
                             $new_history_data['document_approval_note'] = $post['assigner_note'];
                         }
 
@@ -1405,8 +1417,11 @@ class Hr_documents_management extends Public_Controller {
                             $data_to_update['uploaded_document_s3_name'] = $this->input->post('document_url');
                         }
                         // Assigner handling
-                        if(isset($post['assigner']) && !empty($post['assigner'])){
-                            $data_to_update['document_approval_employees'] = implode(',', $post['assigner']);
+                        $data_to_update['has_approval_flow'] = 1;
+                        // Assigner handling
+                        if($post['has_approval_flow'] == 'on'){
+                            $data_to_update['has_approval_flow'] = 1;
+                            $data_to_update['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
                             $data_to_update['document_approval_note'] = $post['assigner_note'];
                         }
 
