@@ -254,10 +254,9 @@
 			if (d.approver_document == 1)
 			{
 				rows += getApproversManager();
-				//
-				//rows += `<?php //echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
 			}
-			
+			//
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
 			//
 			rows += getEmailContent();
 			//
@@ -807,6 +806,22 @@
 			obj.selected_departments = $('#jsDepartments').val() || '';
 			obj.selected_teams = $('#jsTeams').val() || '';
 			obj.selected_employees = $('#jsEmployees').val() || '';
+			//
+			var assigners = new Array();
+			//
+			$('.jsSelectedEmployee').each(function(i) {
+				var approver_id = $(this).val();
+				//
+				if (approver_id != 0) {
+					assigners.push(approver_id);
+				}
+				//
+			});
+			//
+			if(assigners.length > 0) {
+				obj.assigner = assigners;
+				obj.assigner_note = $('#assigner_note').val();
+			}
 			//
 			var post = new FormData();
 			//

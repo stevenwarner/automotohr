@@ -615,8 +615,70 @@ class Hr_documents_management_model extends CI_Model
         return $record_arr;
     }
 
-    function get_archived_manual_documents($company_sid, $user_type, $user_sid = null, $status = 1, $pp_flag = 0)
-    {
+    function get_my_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0) {
+
+        $payroll_sids = $this->get_payroll_documents_sids();
+        $documents_management_sids = $payroll_sids['documents_management_sids'];
+        $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
+
+        $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll, documents_management.is_available_for_na,  documents_management.is_specific');
+        if(ASSIGNEDOCIMPL) $this->db->select('documents_assigned.acknowledgment_required,documents_assigned.download_required,documents_assigned.signature_required, documents_management.is_available_for_na');
+        $this->db->where('documents_assigned.company_sid', $company_sid);
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('approval_process', 0);
+        $this->db->where('documents_assigned.archive', $archive);
+
+        if($fetch_offer_letter){
+            $this->db->where('documents_assigned.document_type <>', 'offer_letter');
+        }
+
+        if ($status) {
+            $this->db->where('status', $status);
+        }
+
+        if($pp_flag) {
+            $this->db->group_start();
+            $this->db->where('documents_management.visible_to_payroll',1);
+            $this->db->or_where('documents_assigned.visible_to_payroll',1);
+
+            if (!empty($documents_management_sids)) {
+                $this->db->or_where_in('documents_management.sid',$documents_management_sids);
+            }
+
+            if (!empty($documents_assigned_sids)) {
+                $this->db->or_where_in('documents_assigned.sid',$documents_assigned_sids);
+            }
+            $this->db->group_end();
+        }
+        
+        $this->db->join('documents_management','documents_management.sid = documents_assigned.document_sid','left');
+        //$this->db->order_by('documents_assigned.assigned_date', 'desc');
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if(sizeof($record_arr)){
+            foreach ($record_arr as $k => $v) {
+                $record_arr[$k]['letter_type'] = '';
+                if($v['document_type'] != 'offer_letter') continue;
+                //
+                $a = $this->db
+                ->select('letter_type')
+                ->where('sid', $v['document_sid'])
+                ->get('offer_letter');
+                //
+                $b = $a->row_array();
+                $a = $a->free_result();
+                //
+                $record_arr[$k]['letter_type'] = $b['letter_type'];
+            }
+        }
+
+        return $record_arr;
+    }
+
+    function get_archived_manual_documents ($company_sid, $user_type, $user_sid = null, $status = 1, $pp_flag = 0) {
         $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive');
         $this->db->where('documents_assigned.company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
@@ -1833,100 +1895,104 @@ class Hr_documents_management_model extends CI_Model
                     }
                 }
 
-                if ($assigned_document['document_type'] != 'offer_letter') {
-                    if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0 && $assigned_document['status'] == 1) {
+                if ($assigned_document['approval_process'] == 0) {
+                    if ($assigned_document['document_type'] != 'offer_letter') {
+                            if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) && $assigned_document['archive'] == 0 && $assigned_document['status'] == 1) {
 
-                        if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                            if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
-                            if ($is_magic_tag_exist == 1) {
-                                if ($assigned_document['uploaded'] == 1) {
-                                    $is_document_completed = 1;
-                                } else {
-                                    $is_document_completed = 0;
+                                if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['download_required'] == 1) {
+                                    if ($is_magic_tag_exist == 1) {
+                                        if ($assigned_document['uploaded'] == 1) {
+                                            $is_document_completed = 1;
+                                        } else {
+                                            $is_document_completed = 0;
+                                        }
+                                    } else if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['acknowledgment_required'] == 1) {
+                                    if ($assigned_document['acknowledged'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['download_required'] == 1) {
+                                    if ($assigned_document['downloaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($assigned_document['signature_required'] == 1) {
+                                    if ($assigned_document['uploaded'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
+                                } else if ($is_magic_tag_exist == 1) {
+                                    if ($assigned_document['user_consent'] == 1) {
+                                        $is_document_completed = 1;
+                                    } else {
+                                        $is_document_completed = 0;
+                                    }
                                 }
-                            } else if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else if ($assigned_document['acknowledged'] == 1 && $assigned_document['downloaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['acknowledgment_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                            if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['download_required'] == 1 && $assigned_document['signature_required'] == 1) {
-                            if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['acknowledgment_required'] == 1) {
-                            if ($assigned_document['acknowledged'] == 1) {
-                                $is_document_completed = 1;
-                            } else if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['download_required'] == 1) {
-                            if ($assigned_document['downloaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($assigned_document['signature_required'] == 1) {
-                            if ($assigned_document['uploaded'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        } else if ($is_magic_tag_exist == 1) {
-                            if ($assigned_document['user_consent'] == 1) {
-                                $is_document_completed = 1;
-                            } else {
-                                $is_document_completed = 0;
-                            }
-                        }
 
-                        if ($is_document_completed > 0) {
+                                if ($is_document_completed > 0) {
+                                   unset($assigned_documents[$document_key]);
+                                } else {
+                                    $assigned_sids[] = $assigned_document['document_sid'];
+                                    $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
+                                    $now = time(); 
+                                    $datediff = $now - strtotime($assigned_document['assigned_date']);
+                                    $days = round($datediff / (60 * 60 * 24));
+
+                                    $employee_sids[$emp_key]['Documents'][] = array(  'ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
+                                }
+                            } else {
+                                unset($assigned_documents[$document_key]);
+                            }
+                    }else{
+                        //
+                        if($assigned_document['user_consent'] == 1){
                             unset($assigned_documents[$document_key]);
-                        } else {
+                        }else{
                             $assigned_sids[] = $assigned_document['document_sid'];
                             $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
-                            $now = time();
+                            //
+                            $now = time(); 
                             $datediff = $now - strtotime($assigned_document['assigned_date']);
                             $days = round($datediff / (60 * 60 * 24));
-
-                            $employee_sids[$emp_key]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
+                            //
+                            $employee_sids[$emp_key]['Documents'][] = array( 'ID' => $assigned_document['document_sid'], 'AssignedBy' => $assigned_document['assigned_by'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type'] == 'offer_letter' ? $assigned_document['offer_letter_type'] : $assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
                         }
-                    } else {
-                        unset($assigned_documents[$document_key]);
                     }
                 } else {
-                    //
-                    if ($assigned_document['user_consent'] == 1) {
-                        unset($assigned_documents[$document_key]);
-                    } else {
-                        $assigned_sids[] = $assigned_document['document_sid'];
-                        $assigned_on = date('M d Y, D h:i:s', strtotime($assigned_document['assigned_date']));
-                        //
-                        $now = time();
-                        $datediff = $now - strtotime($assigned_document['assigned_date']);
-                        $days = round($datediff / (60 * 60 * 24));
-                        //
-                        $employee_sids[$emp_key]['Documents'][] = array('ID' => $assigned_document['document_sid'], 'AssignedBy' => $assigned_document['assigned_by'], 'Title' => $assigned_document['document_title'], 'Type' => ucwords($assigned_document['document_type'] == 'offer_letter' ? $assigned_document['offer_letter_type'] : $assigned_document['document_type']), 'AssignedOn' => $assigned_on, 'Days' =>  $days, 'AssignedBy' => $assigned_document['assigned_by']);
-                    }
-                }
+                    unset($assigned_documents[$emp_key]);
+                }     
             }
 
             $pending_documents  = count($assigned_documents);
@@ -7093,9 +7159,9 @@ class Hr_documents_management_model extends CI_Model
     public function getAssignApprovalDocumentInfo($document_sid)
     {
         //
-        $this->db->select('flow_json, document_type, document_sid, user_sid, user_type, assigner_note');
+        $this->db->select('document_sid, assigner_note');
         $this->db->where('sid', $document_sid);
-        $this->db->where('assign_status <>', 0);
+        $this->db->where('assign_status', 1);
         $record_obj = $this->db->get('portal_document_assign_flow');
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
@@ -7108,15 +7174,14 @@ class Hr_documents_management_model extends CI_Model
         return $return_data;
     }
 
-    function saveAssignerAction($sid, $data_to_update)
-    {
-        $this->db->where('sid', $sid);
+    function saveApproverAction ($approver_sid, $document_sid, $data_to_update) {
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('assigner_sid', $approver_sid);
         $this->db->update('portal_document_assign_flow_employees', $data_to_update);
     }
 
-    function updateApproversInfo($document_sid, $data_to_update)
-    {
-        $this->db->where('portal_document_assign_sid', $document_sid);
+    function updateApproversInfo ($flow_sid, $data_to_update) {
+        $this->db->where('portal_document_assign_sid', $flow_sid);
         $this->db->update('portal_document_assign_flow_employees', $data_to_update);
     }
 
@@ -7156,9 +7221,8 @@ class Hr_documents_management_model extends CI_Model
         return $record_arr;
     }
 
-    function updateApprovalDocument($document_sid, $data_to_update)
-    {
-        $this->db->where('sid', $document_sid);
+    function updateApprovalDocument ($flow, $data_to_update) {
+        $this->db->where('sid', $flow);
         $this->db->update('portal_document_assign_flow', $data_to_update);
     }
 
@@ -7204,8 +7268,7 @@ class Hr_documents_management_model extends CI_Model
         return $return_data;
     }
 
-    public function getAllDocumentAssigners($document_sid)
-    {
+    public function getAllDocumentApprovers ($document_sid) {
         //
         $this->db->select('*');
         $this->db->where('portal_document_assign_sid', $document_sid);
@@ -7228,9 +7291,9 @@ class Hr_documents_management_model extends CI_Model
         $this->db->select('document_sid');
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-        $this->db->where('assign_status', 1);
+        $this->db->where('approval_process', 1);
         $this->db->where('document_type <>', "offer_letter");
-        $records_obj = $this->db->get('portal_document_assign_flow');
+        $records_obj = $this->db->get('documents_assigned');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();
@@ -7248,9 +7311,9 @@ class Hr_documents_management_model extends CI_Model
         $this->db->select('document_sid');
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
-        $this->db->where('assign_status', 1);
+        $this->db->where('approval_process', 1);
         $this->db->where('document_type', "offer_letter");
-        $records_obj = $this->db->get('portal_document_assign_flow');
+        $records_obj = $this->db->get('documents_assigned');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();
@@ -7910,4 +7973,191 @@ class Hr_documents_management_model extends CI_Model
         $doc_group_data['assigned_groups'] = $assigned_groups;
         return  $doc_group_data;
     }
+
+    public function get_approval_document_information($document_sid, $user_type, $user_sid) {
+        //
+        $this->db->select('sid, approval_flow_sid, document_title, document_type');
+        $this->db->where('document_sid', $document_sid);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('user_type', $user_type);
+        $this->db->where('approval_process', 1);
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_document_approvers ($document_sid) {
+        //
+        $this->db->select('sid, assigner_sid, assigner_turn, assign_on, note as approval_note, approval_status, action_date');
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function check_document_approver_turn ($document_sid) {
+        //
+        $this->db->select('sid');
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('assigner_turn', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($records_arr)) {
+            $return_data = 1;
+        }
+
+        return $return_data;
+    }
+
+    public function get_approval_document_bySID ($sid) {
+        //
+        $this->db->select('sid, assigner_note, assigned_date, assigned_by');
+        $this->db->where('sid', $sid);
+        $records_obj = $this->db->get('portal_document_assign_flow');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function delete_document_approver_from_list ($sid) {
+        //
+        $this->db->where('sid', $sid);
+        $this->db->delete('portal_document_assign_flow_employees');
+    }    
+
+    public function change_document_approval_status ($document_sid, $data_to_update) {
+        $this->db->where('sid', $document_sid);
+        $this->db->update('documents_assigned', $data_to_update);
+    }
+
+    public function get_assigned_document_info_by_sid ($sid) {
+        $this->db->select('user_type, user_sid, document_title');
+        $this->db->where('sid', $sid);
+        $records_obj = $this->db->get('documents_assigned');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function revoke_document_previous_flow ($document_sid) {
+        $this->db->where('document_sid', $document_sid);
+        $this->db->set('assign_status', 0);
+        $this->db->update('portal_document_assign_flow');
+    }
+
+    public function get_approver_detail ($approver_sid) {
+        $this->db->select('*');
+        $this->db->where('sid', $approver_sid);
+        $this->db->where('active', 1);
+
+
+        $record_obj = $this->db->get('users');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    public function get_approval_document_detail($document_sid) {
+        //
+        $this->db->select('company_sid, user_sid, user_type, approval_flow_sid, document_title, document_type, acknowledgment_required, download_required, signature_required, is_required, assigned_by');
+        $this->db->where('sid', $document_sid);
+        $this->db->where('approval_process', 1);
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
+    }
+
+    public function get_document_current_approver_sid ($document_sid) {
+        //
+        $this->db->select('assigner_sid');
+        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('assigner_turn', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr['assigner_sid'];
+        }
+
+        return $return_data;
+    }
+
+    public function get_company_domain_by_sid ($compnay_id) {
+        //
+        $this->db->select('sub_domain');
+        $this->db->where('user_sid', $compnay_id);
+        $records_obj = $this->db->get('portal_employer');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = "";
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr['sub_domain'];
+        }
+
+        return $return_data;
+    } 
+
+
+    public function get_approver_note ($document_flow_sid, $approver_sid) {
+        //
+        $this->db->select('note');
+        $this->db->where('portal_document_assign_sid', $document_flow_sid);
+        $this->db->where('assigner_sid', $approver_sid);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr['note'];
+        }
+
+        return $return_data;
+    }   
+
+
 }

@@ -80,6 +80,10 @@
                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
                                                                     }
+
+                                                                    if ($document['approval_process'] == 1) {
+                                                                        echo '<br><b class="text-danger">(Document Approval Pending)</b>';
+                                                                    }
                                                                 ?>
                                                             </td>
                                                             <?php if ($document['document_type'] == 'hybrid_document') { ?>
@@ -309,6 +313,10 @@
                                                                         } else {
                                                                             echo "<br><b>Signed On: </b> N/A";
                                                                         }
+
+                                                                        if ($document['approval_process'] == 1) {
+                                                                        echo '<br><b class="text-danger">(Document Approval Pending)</b>';
+                                                                    }
                                                                     ?>
                                                                 </td>
                                                                 <?php if ($document['letter_type'] == 'hybrid_document') { ?>
@@ -479,6 +487,10 @@
                                                                             echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
                                                                         } else {
                                                                             echo "<br><b>Signed On: </b> N/A";
+                                                                        }
+
+                                                                        if ($document['approval_process'] == 1) {
+                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
                                                                         }
                                                                     ?>
                                                                 </td>
@@ -779,6 +791,10 @@
 
                                                                                         if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                             echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
+                                                                                        }
+
+                                                                                        if ($document['approval_process'] == 1) {
+                                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
                                                                                         }
                                                                                     ?>
                                                                                 </td>
@@ -1081,6 +1097,10 @@
                                                                         } else {
                                                                             echo "<br><b>Signed On: </b> N/A";
                                                                         }
+
+                                                                        if ($document['approval_process'] == 1) {
+                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
+                                                                        }
                                                                     ?>
                                                                 </td>
                                                                 <?php if ($document['letter_type'] == 'hybrid_document') { ?>
@@ -1332,6 +1352,10 @@
                                                                                     echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
                                                                                 } else {
                                                                                     echo "<br><b>Signed On: </b> N/A";
+                                                                                }
+
+                                                                                if ($document['approval_process'] == 1) {
+                                                                                    echo '<br><b class="text-danger">(Document Approval Pending)</b>';
                                                                                 }
                                                                             ?>
                                                                         </td>
@@ -1793,6 +1817,10 @@
                                                                                         } else {
                                                                                             echo "<br><b>Signed On: </b> N/A";
                                                                                         }
+
+                                                                                        if ($document['approval_process'] == 1) {
+                                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
+                                                                                        }
                                                                                     ?>
                                                                                 </td>
 
@@ -1980,6 +2008,10 @@
                                                                             echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
                                                                         } else {
                                                                             echo "<br><b>Signed On: </b> N/A";
+                                                                        }
+
+                                                                        if ($document['approval_process'] == 1) {
+                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
                                                                         }
                                                                     ?>
                                                                 </td>
