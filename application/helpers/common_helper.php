@@ -4358,7 +4358,7 @@ if (!function_exists('log_and_send_templated_email')) {
 
     function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
-        if (empty($to) || $to == NULL) return 0;
+        if (empty($to) || $to == NULL) {return 0;}
 
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
