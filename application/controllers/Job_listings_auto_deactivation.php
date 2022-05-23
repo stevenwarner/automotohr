@@ -43,8 +43,8 @@ class Job_listings_auto_deactivation extends CI_Controller {
                 $notifications_email_status = $this->job_listings_auto_deactivation_model->get_notifications_status($company_sid, 'approval_rights_notifications');// check if Notification email management against the company and get all emails of approval right management
                 $company_sms_notification_status                                = get_company_sms_status($this, $company_sid);
                 if($notifications_email_status > 0) { // Notification emails for approval right is enabled. Get the emails
-                    $notifications_emails = $this->job_listings_auto_deactivation_model->get_notification_emails($company_sid, 'approval_management');
-                    
+                    $notifications_emails = getNotificationContacts( $company_sid, 'approval_management' );
+                  
                     if(!empty($notifications_emails)) {
                        $contact_name = '';
                        $email = '';

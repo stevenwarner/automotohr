@@ -419,7 +419,7 @@ class Misc extends Admin_Controller
 
                 $company_billing_contacts = array();
                 if ($billing_notification_status == 1) {
-                    $company_billing_contacts = $this->notification_emails_model->get_notification_emails($company_sid, 'billing_invoice', 'active');
+                   $company_billing_contacts = getNotificationContacts( $company_sid, 'billing_invoice' );
                 }
 
                 if ($_POST) {

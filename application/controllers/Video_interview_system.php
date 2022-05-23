@@ -930,7 +930,7 @@ class Video_interview_system extends Public_Controller
 
             if (($notification_type == 'group' && $unanswered_total == 0) || ($notification_type == 'individual')) {
                 // send notification emails start //
-                $notification_list = $this->video_interview_system_model->get_video_interview_system_notification_list($questionnaire['company_sid'], 'video_interview', 'active');
+                $notification_list = getNotificationContacts($questionnaire['company_sid'], 'video_interview' );
                 $company_data = get_company_details($questionnaire['company_sid']);
                 $company_name = $company_data['CompanyName'];
                 $applicant_data = $this->video_interview_system_model->get_applicant_data($questionnaire['applicant_sid']);
