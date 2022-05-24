@@ -32,8 +32,7 @@ class Expiries_manager extends CI_Controller {
                 $expirations_flag = $this->expiries_manager_model->GetCompanyExpiration($user_details['parent_sid']);
                 
                     if($expirations_flag[0]['expiration_manager']){
-                        $expirations_manager = $this->expiries_manager_model->GetExpirationsManagerEmails($user_details['parent_sid']);
-;
+                          $expirations_manager = getNotificationContacts($user_details['parent_sid'], 'expiration_manager' );
                         foreach($expirations_manager as $expiration_handler) {
                             if($expiration_handler['status'] == 'active'){
                                 $replacement_array['contact-name'] = $expiration_handler['contact_name'];

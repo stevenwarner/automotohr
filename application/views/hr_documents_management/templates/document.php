@@ -574,6 +574,9 @@
                                                     </div>
                                                 </div>
 
+                                                <br>
+                                                <?php $this->load->view('hr_documents_management/partials/settings'); ?>
+
                                                 <div class="row">
                                                     <div class="col-xs-12">
                                                         <span class="pull-right">

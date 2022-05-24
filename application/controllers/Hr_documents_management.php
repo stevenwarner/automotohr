@@ -672,6 +672,8 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['document_approval_employees'] = implode(',', $post['assigner']);
                             $data_to_insert['document_approval_note'] = $post['assigner_note'];
                         }
+                        // Document Settings - Confidential
+                        $data_to_insert['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
 
                         $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
@@ -907,6 +909,8 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['document_approval_employees'] = implode(',', $post['assigner']);
                             $data_to_insert['document_approval_note'] = $post['assigner_note'];
                         }
+                        // Document Settings - Confidential
+                        $data_to_insert['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
 
                         $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
@@ -1434,6 +1438,8 @@ class Hr_documents_management extends Public_Controller
                             $data_to_update['document_approval_employees'] = implode(',', $post['assigner']);
                             $data_to_update['document_approval_note'] = $post['assigner_note'];
                         }
+                        // Document Settings - Confidential
+                        $data_to_update['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
 
                         $this->hr_documents_management_model->update_documents($sid, $data_to_update, 'documents_management');
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Document Info Successfully Updated!');
@@ -1740,7 +1746,7 @@ class Hr_documents_management extends Public_Controller
             //check_access_permissions($security_details, 'appearance', 'customize_appearance'); 
             // no need to check in this Module as Dashboard will be available to all
             $company_sid = $data['session']['company_detail']['sid'];
-            $employer_sid = $data['session']['employer_detail']['sid'];
+            $eeid = $employer_sid = $data['session']['employer_detail']['sid'];
             $pp_flag = $data['session']['employer_detail']['pay_plan_flag'];
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
@@ -3017,6 +3023,8 @@ class Hr_documents_management extends Public_Controller
                 }
             }
 
+            
+
             $categories = $this->hr_documents_management_model->get_all_documents_category($company_sid);
             $active_categories = [];
 
@@ -3132,7 +3140,6 @@ class Hr_documents_management extends Public_Controller
 
             $sendGroupEmail = 0;
             $assign_group_documents = $this->hr_documents_management_model->get_assign_group_documents($company_sid, $user_type, $user_sid);
-
             if (!empty($assign_group_documents)) {
                 foreach ($assign_group_documents as $key => $assign_group_document) {
                     $is_document_assign = $this->hr_documents_management_model->check_document_already_assigned($company_sid, $user_type, $user_sid, $assign_group_document['document_sid']);
@@ -3158,6 +3165,7 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
                             $data_to_insert['signature_required'] = $document['signature_required'];
                             $data_to_insert['download_required'] = $document['download_required'];
+                            $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
                             $sendGroupEmail = 1;
@@ -3191,8 +3199,8 @@ class Hr_documents_management extends Public_Controller
                                 $user_type,
                                 $company_sid,
                                 $gk,
-                                $employer_sid
-                            )) {
+                                $eeid
+                            )){
                                 //
                                 $sendGroupEmail = 1;
                             }
@@ -5118,7 +5126,7 @@ class Hr_documents_management extends Public_Controller
                 log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $data['session']['employer_detail']['email'], $replacement_array, $hf, 1, $extra_user_info);
             }
 
-            $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employer_sid, 0);
+            $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employer_sid, 0, 1, 0, 0, 1);
             //
             $history_doc_sids = array();
             //
@@ -5135,19 +5143,12 @@ class Hr_documents_management extends Public_Controller
                 //
                 if (!empty($assigned_document['document_description']) && ( $assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                     $document_body = $assigned_document['document_description'];
-                    // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                     $magic_codes = array('{{signature}}', '{{inital}}');
 
                     if (str_replace($magic_codes, '', $document_body) != $document_body) {
                         $is_magic_tag_exist = 1;
                     }
                 }
-
-                // if ($assigned_document['document_sid'] == 0) {
-                //     $doc_visible_check = $this->hr_documents_management_model->get_manual_doc_visible_payroll_check($assigned_document['sid']);
-                //     $assigned_document['visible_to_payroll'] = $doc_visible_check;
-
-                // }
 
                 $payroll_sids = $this->hr_documents_management_model->get_payroll_documents_sids();
                 $documents_management_sids = $payroll_sids['documents_management_sids'];
@@ -5418,14 +5419,16 @@ class Hr_documents_management extends Public_Controller
                 }
             }
             //
-            $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employer_sid, 'employee');
-            //
-            if (!empty($eeo_form_info) && $eeo_form_info['status'] == 1) {
-                $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_sid,'employee');
-                if (!empty($eeoc_form)) {
-                    $data['eeoc_form'] = $eeoc_form;
+            if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+                $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employer_sid, 'employee');
+                //
+                if (!empty($eeo_form_info) && $eeo_form_info['status'] == 1) {
+                    $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_sid,'employee');
+                    if (!empty($eeoc_form)) {
+                        $data['eeoc_form'] = $eeoc_form;
+                    }
                 }
-            }
+            }    
 
             $data['completed_i9']                           = $completed_i9;
             $data['completed_w9']                           = $completed_w9;
@@ -7254,9 +7257,8 @@ class Hr_documents_management extends Public_Controller
         }
     }
 
-    public function documents_group_management()
-    {
-        if ($this->session->userdata('logged_in')) {
+    public function documents_group_management() {
+            if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
@@ -7280,7 +7282,7 @@ class Hr_documents_management extends Public_Controller
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $data['groups'] = $groups;
-
+          
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('hr_documents_management/documents_group_management');
@@ -7437,7 +7439,7 @@ class Hr_documents_management extends Public_Controller
             $pre_assign_documents = $this->hr_documents_management_model->get_all_document_2_group($group_sid);
             $group = $this->hr_documents_management_model->get_document_group($group_sid);
             $assigned_documents = array();
-
+              
             if (!empty($pre_assign_documents)) {
                 foreach ($pre_assign_documents as $key => $pre_assign) {
                     array_push($assigned_documents, $pre_assign['document_sid']);
@@ -9152,6 +9154,8 @@ class Hr_documents_management extends Public_Controller
                 $data_to_insert['uploaded_document_original_name'] = $this->input->post('document_name');
                 $data_to_insert['uploaded_document_s3_name'] = $this->input->post('document_url');
             }
+            // Document Settings - Confidential
+            $data_to_insert['is_confidential'] = $this->input->post('setting_is_confidential', true) && $this->input->post('setting_is_confidential', true) == 'on' ? 1 : 0;
 
             $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
@@ -9371,6 +9375,8 @@ class Hr_documents_management extends Public_Controller
                 $data_to_update['uploaded_document_original_name'] = $this->input->post('document_name');
                 $data_to_update['uploaded_document_s3_name'] = $this->input->post('document_url');
             }
+            // Document Settings - Confidential
+            $data_to_update['is_confidential'] = $this->input->post('setting_is_confidential', true) && $this->input->post('setting_is_confidential', true) == 'on' ? 1 : 0;
 
             $this->hr_documents_management_model->update_documents($sid, $data_to_update, 'documents_management');
             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Info Successfully Updated!');
@@ -10416,25 +10422,7 @@ class Hr_documents_management extends Public_Controller
             $data_to_insert['visible_to_document_center'] = $this->input->post('visibletodocumentcenter');
           
             // Fo uploaded file
-            if ($do_upload) {
-                //
-                // $uploaded_document_s3_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
-                // $uploaded_document_original_name = $document_title;
-                // if(isset($_FILES['document']['name']) && $_FILES['document']['name'] != '' && $_SERVER['HTTP_HOST'] != 'localhost'){
-                //     //
-                //     $uploaded_document_s3_name = upload_file_to_aws('document', $company_sid, str_replace(' ', '_', $document_title), $employer_sid, AWS_S3_BUCKET_NAME);
-                //     $uploaded_document_original_name = $_FILES['document']['name'];
-
-                // }
-                //
-                // $file_info = pathinfo($uploaded_document_original_name);
-                //
-                // if (isset($file_info['extension'])) $data_to_insert['uploaded_document_extension'] = $file_info['extension'];
-                //
-                // if ($uploaded_document_s3_name != 'error') {
-                //     $data_to_insert['uploaded_document_original_name'] = $uploaded_document_original_name;
-                //     $data_to_insert['uploaded_document_s3_name'] = $uploaded_document_s3_name;
-                // }
+            if($do_upload){
 
                 $data_to_insert['uploaded_document_original_name'] = $post['document_name'];
                 $data_to_insert['uploaded_document_s3_name'] = $post['document_url'];
@@ -10586,6 +10574,9 @@ class Hr_documents_management extends Public_Controller
             $b = $data_to_insert; 
             //
             $data_to_insert['document_approval_employees'] = implode(',', $approvalEmployees);
+            //
+            // Document Settings - Confidential
+            $data_to_insert['is_confidential'] = $this->input->post('setting_is_confidential', true) && $this->input->post('setting_is_confidential', true) == 'on' ? 1 : 0;
 
             $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
@@ -10651,6 +10642,8 @@ class Hr_documents_management extends Public_Controller
 
                 $a['is_signature_required'] = $post['isSignatureRequired'];
                 $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                // Document Settings - Confidential
+                $a['is_confidential'] = $this->input->post('setting_is_confidential', true) && $this->input->post('setting_is_confidential', true) == 'on' ? 1 : 0;
 
                 // When approval employees are selected
                 if($approvalEmployees){
@@ -10684,28 +10677,32 @@ class Hr_documents_management extends Public_Controller
                         switch ($user_type) {
                             case 'employee':
                                 $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
-                                $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
-                                $replacement_array['company_name'] = ucwords($post['CompanyName']);
-                                $replacement_array['username'] = $replacement_array['contact-name'];
-                                $replacement_array['firstname'] = $user_info['first_name'];
-                                $replacement_array['lastname'] = $user_info['last_name'];
-                                $replacement_array['first_name'] = $user_info['first_name'];
-                                $replacement_array['last_name'] = $user_info['last_name'];
-                                $replacement_array['baseurl'] = base_url();
-                                $replacement_array['url'] = base_url('hr_documents_management/my_documents');
+                                $is_hour = $this->is_one_hour_complete($user_info['document_sent_on']);
                                 //
-                                $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
-                                //
-                                $is_manual = get_document_type($assignInsertId);
-                                //
-                                if(sizeof($replacement_array) && $is_manual == 'no') {
+                                if($is_hour > 0){
+                                    $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+                                    $replacement_array['company_name'] = ucwords($post['CompanyName']);
+                                    $replacement_array['username'] = $replacement_array['contact-name'];
+                                    $replacement_array['firstname'] = $user_info['first_name'];
+                                    $replacement_array['lastname'] = $user_info['last_name'];
+                                    $replacement_array['first_name'] = $user_info['first_name'];
+                                    $replacement_array['last_name'] = $user_info['last_name'];
+                                    $replacement_array['baseurl'] = base_url();
+                                    $replacement_array['url'] = base_url('hr_documents_management/my_documents');
                                     //
-                                    $user_extra_info = array();
-                                    $user_extra_info['user_sid'] = $post['EmployeeSid'];
-                                    $user_extra_info['user_type'] = $user_type;
+                                    $this->hr_documents_management_model->update_employee($post['EmployeeSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
                                     //
-                                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
-                                } 
+                                    $is_manual = get_document_type($assignInsertId);
+                                    //
+                                    if(sizeof($replacement_array) && $is_manual == 'no') {
+                                        //
+                                        $user_extra_info = array();
+                                        $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                                        $user_extra_info['user_type'] = $user_type;
+                                        //
+                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                                    } 
+                                }    
                                 //   
                             break;
 
@@ -11062,26 +11059,31 @@ class Hr_documents_management extends Public_Controller
                 switch ($post['Type']) {
                     case 'employee':
                         $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
-                        $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
-                        $replacement_array['company_name'] = ucwords($post['CompanyName']);
-                        $replacement_array['username'] = $replacement_array['contact-name'];
-                        $replacement_array['firstname'] = $user_info['first_name'];
-                        $replacement_array['lastname'] = $user_info['last_name'];
-                        $replacement_array['first_name'] = $user_info['first_name'];
-                        $replacement_array['last_name'] = $user_info['last_name'];
-                        $replacement_array['baseurl'] = base_url();
-                        $replacement_array['url'] = base_url('hr_documents_management/my_documents');
+                        $is_hour = $this->is_one_hour_complete($user_info['document_sent_on']);
                         //
-                        $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
-                        //
-                        if(sizeof($replacement_array)) {
+                        if($is_hour > 0){
                             //
-                            $user_extra_info = array();
-                            $user_extra_info['user_sid'] = $post['EmployeeSid'];
-                            $user_extra_info['user_type'] = $post['Type'];
+                            $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+                            $replacement_array['company_name'] = ucwords($post['CompanyName']);
+                            $replacement_array['username'] = $replacement_array['contact-name'];
+                            $replacement_array['firstname'] = $user_info['first_name'];
+                            $replacement_array['lastname'] = $user_info['last_name'];
+                            $replacement_array['first_name'] = $user_info['first_name'];
+                            $replacement_array['last_name'] = $user_info['last_name'];
+                            $replacement_array['baseurl'] = base_url();
+                            $replacement_array['url'] = base_url('hr_documents_management/my_documents');
                             //
-                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
-                        }    
+                            $this->hr_documents_management_model->update_employee($post['EmployeeSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
+                            //
+                            if(sizeof($replacement_array)) {
+                                //
+                                $user_extra_info = array();
+                                $user_extra_info['user_sid'] = $post['EmployeeSid'];
+                                $user_extra_info['user_type'] = $post['Type'];
+                                //
+                                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                            }
+                        }        
                     break;
 
                     case 'applicant':
@@ -11451,6 +11453,12 @@ class Hr_documents_management extends Public_Controller
         $a['allowed_employees'] = $post['selected_employees'];
         $a['allowed_departments'] = $post['selected_departments'];
         $a['allowed_teams'] = $post['selected_teams'];
+        $a['is_confidential'] = $post['is_confidential'] == 'on' ? 1 : 0;
+        //
+        $session = $this->session->userdata('logged_in');
+        $employer_sid = $session["employer_detail"]["sid"];
+        //
+        $a['assigned_by'] = $employer_sid;
         //
         if (isset($post['file'])) {
             $a['document_s3_name'] = $post['file'];
@@ -13934,6 +13942,46 @@ class Hr_documents_management extends Public_Controller
         header('content-type: application/json');
         echo json_encode($history_array);
         exit(0);
+    }
+
+
+    function is_one_hour_complete ($time) {
+        if (empty($time)) {
+            return 1;
+        } else {
+            $date1 = new DateTime($time);
+            $date2 = new DateTime(date('Y-m-d H:i:s'));
+
+            $diff = $date2->diff($date1);
+
+            $hours = $diff->h;
+            $hours = $hours + ($diff->days*24);
+
+            return $hours;
+        }
+    }
+    
+    /**
+     * Update assigned document settings
+     * 
+     * @author  Mubashir Ahmed
+     * @version 1.0
+     * @method  POST
+     */
+    public function updateAssignedDocumentSettings(){
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        if(empty($post) || !$this->session->userdata('logged_in')){
+            return SendResponse(404, ['Response' => 'Invalid URL']);
+        }
+        //
+        $this->db
+        ->where([
+            'sid' => $post['document_aid']
+        ])->update('documents_assigned', [
+            'is_confidential' => $post['is_confidential'] == 'on' ? 1 : 0
+        ]);
     }
 
 }

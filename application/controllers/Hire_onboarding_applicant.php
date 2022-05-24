@@ -341,6 +341,13 @@ class Hire_onboarding_applicant extends CI_Controller
     }
 
     public function hire_applicant_manually () {
+        $session = $this->session->userdata('logged_in');
+        $security_sid = $session['employer_detail']['sid'];
+        $security_details = db_get_access_level_details($security_sid);
+        if ($session['employer_detail']['access_level_plus'] != 1) {
+            check_access_permissions($security_details, 'dashboard', 'hire_applicant_manually');
+        }
+        //
         $company_sid        = $this->input->post('company_sid');
         $applicant_sid      = $this->input->post('applicant_sid');
         $applicant_job_sid  = $this->input->post('applicant_job_sid');
@@ -405,7 +412,13 @@ class Hire_onboarding_applicant extends CI_Controller
     }
 
     public function merge_applicant_with_employee(){
-
+        $session = $this->session->userdata('logged_in');
+        $security_sid = $session['employer_detail']['sid'];
+        $security_details = db_get_access_level_details($security_sid);
+        if ($session['employer_detail']['access_level_plus'] != 1) {
+            check_access_permissions($security_details, 'dashboard', 'merge_applicant_with_employee');
+        }
+        //
         $company_sid        = $this->input->post('company_sid');
         $applicant_sid      = $this->input->post('applicant');
         $employee_sid       = $this->input->post('employee');

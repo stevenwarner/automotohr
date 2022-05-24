@@ -369,4 +369,12 @@ class Testing extends CI_Controller
         exit(0);
     }
 
+    function myApproverScript () {
+        $approvers = $this->db->get('portal_document_assign_flow')->result_array();
+        $encode = json_encode($approvers);
+        _e($encode);
+        $decode = json_decode($encode);
+        _e($decode,true,true);
+    }
+
 }

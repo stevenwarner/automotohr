@@ -76,6 +76,7 @@
                                                                     echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                     echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                     echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+                                                                    echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
                                                                     if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
@@ -470,6 +471,7 @@
                                                                         if ($document['manual_document_type'] == 'offer_letter') {
                                                                             echo '<b>(Manual Upload)</b>';
                                                                         }
+                                                                        echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
                                                                         if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                             echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
@@ -776,6 +778,7 @@
                                                                                         echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                                         echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                                         echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+                                                                                        echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
                                                                                         if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                             echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
@@ -1323,6 +1326,7 @@
                                                                                 echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                                 echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                                 echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+                                                                                echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
                                                                                 if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                     echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'],'format' => 'M d Y, D', '_this' => $this));
@@ -1460,6 +1464,7 @@
                                                                                 echo $document['document_title'] . '&nbsp;';
                                                                                 echo $document['is_document_authorized'] == 1 && $document['authorized_sign_status'] == 0  ? '( <b style="color:red;"> Awaiting Authorized Signature </b> )' : '';
                                                                                 echo $document['status'] ? '' : '<b>(revoked)</b>';
+                                                                                echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
                                                                                 if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                     echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
@@ -1783,6 +1788,7 @@
                                                                                         echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                                         echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                                         echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+                                                                                        echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
                                                                                         if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                                             echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'],'format' => 'M d Y, D', '_this' => $this));
@@ -1971,6 +1977,7 @@
                                                                         echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                         echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                         echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+                                                                        echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
                                                                         if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
                                                                             echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'],'format' => 'M d Y, D', '_this' => $this));

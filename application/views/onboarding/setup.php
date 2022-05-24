@@ -1902,7 +1902,7 @@ if ($user_type == 'applicant') {
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         <div class="well well-sm">
-                                                            <?php if (empty($email_sent_date)) { ?>
+                                                            <?php if (empty($email_sent_date) || empty($unique_sid)) { ?>
                                                                 <p style="font-size: 20px; color: #b4052c;" id="date-sent-div"><strong>A Notification email has NOT been sent.</strong></p>
                                                             <?php } else { ?>
                                                                 <p style="font-size: 20px; color: #518401;" id="date-sent-div"><strong>A Notification email has been sent at <?php echo $email_sent_date ?></strong></p>
@@ -3450,10 +3450,13 @@ if ($user_type == 'applicant') {
                             company_name: c_name
                         },
                         url: send_email_url,
-                        success: function(data){
-                            $('#date-sent-div').html(data);
-                            $('#jsNotificationEmailError').hide(data);
-                            alertify.alert('SUCCESS!','Email sent successfully.', function(){
+                        success: function(resp){
+                            if (resp.status) {
+                                $('#date-sent-div').html(resp.message);
+                                $('#jsNotificationEmailError').hide(resp.message);
+                            }
+                            
+                            alertify.alert('SUCCESS!', resp.message , function(){
                                 window.location.reload();
                             });
                         },
@@ -3607,6 +3610,8 @@ if ($user_type == 'applicant') {
                 $("#btn_group_"+group_sid).text("Group Assigned");
 
                 alertify.success('Group Assigned Successfully');
+                location.reload();
+
             },
             error: function (data) {
 

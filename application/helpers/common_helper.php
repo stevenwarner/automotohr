@@ -1509,7 +1509,18 @@ if (!function_exists('convert_email_template')) {
         $emailTemplateBody = str_replace('{{lastname}}', ucfirst($replacement_array['last_name']), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
+<<<<<<< HEAD
         $emailTemplateBody = str_replace('{{username}}', $replacement_array['username'], $emailTemplateBody);
+=======
+        //
+        $username = substr($replacement_array['username'], 0, strpos($replacement_array['username'], "_executive_admin_"));
+        //
+        if (empty($username)) {
+            $username = $replacement_array['username'];
+        }
+        //
+        $emailTemplateBody = str_replace('{{username}}', $username, $emailTemplateBody);
+>>>>>>> staging
         $emailTemplateBody = str_replace('{{contact-name}}', ucfirst($replacement_array['first_name']) . ' ' . ucfirst($replacement_array['last_name']), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{applicant_name}}', ucwords($replacement_array['first_name'] . ' ' . $replacement_array['last_name']), $emailTemplateBody);
         //
@@ -4351,8 +4362,12 @@ if (!function_exists('log_and_send_templated_email')) {
 
     function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
+<<<<<<< HEAD
         if (empty($to) || $to == NULL || is_active_employee_or_company($to) == 0) return 0;
         // if (empty($to) || $to == NULL) return 0;
+=======
+        if (empty($to) || $to == NULL) {return 0;}
+>>>>>>> staging
 
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
@@ -15535,9 +15550,26 @@ if (!function_exists('get_documents_assigned_data')) {
         $record_obj = $CI->db->get('documents_assigned');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+}
+if (!function_exists('get_all_group_documents')) {
+    function get_all_group_documents($group_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('documents_2_group.*,documents_management.document_title');
+        $CI->db->join('documents_management', 'documents_management.sid = documents_2_group.document_sid');
+        $CI->db->where('group_sid', $group_sid);
+        $record_obj = $CI->db->get('documents_2_group');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            return $record_arr[0];
+            return $record_arr;
         } else {
             return array();
         }

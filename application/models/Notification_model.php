@@ -331,12 +331,16 @@ class Notification_model extends CI_Model {
     }
 
     private function is_eeoc_form_assign($user_type, $user_sid) {
-        $this->db->where('users_type', $user_type);
-        $this->db->where('application_sid', $user_sid);
-        $this->db->where('is_expired', 0);
-        $this->db->where('status', 1);
-        $this->db->from('portal_eeo_form');
-        return $this->db->count_all_results();
+        if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+            $this->db->where('users_type', $user_type);
+            $this->db->where('application_sid', $user_sid);
+            $this->db->where('is_expired', 0);
+            $this->db->where('status', 1);
+            $this->db->from('portal_eeo_form');
+            return $this->db->count_all_results();
+        } else {
+            return 0;
+        }
     }
 
     private function get_payroll_documents_sids () {

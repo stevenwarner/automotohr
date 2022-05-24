@@ -335,6 +335,10 @@
 
                                         <br />
                                         <?php $this->load->view('hr_documents_management/partials/send_dwmc'); ?>
+                                        <!--  -->
+                                        <?php $this->load->view('hr_documents_management/partials/settings', [
+                                            'is_confidential' =>  $document_info['is_confidential']
+                                        ]); ?>
 
                                         <div class="row">
                                                     <div class="col-xs-12">

@@ -1255,7 +1255,7 @@ class Invoice extends Admin_Controller {
                         $company_billing_contacts = array();
 
                         if ($billing_notification_status == 1) {
-                            $company_billing_contacts = $this->notification_emails_model->get_notification_emails($company_sid, 'billing_invoice', 'active');
+                            $company_billing_contacts = getNotificationContacts( $company_sid, 'billing_invoice', 'billing_invoice_notifications' );
                         }
                         
                         $this->admin_invoices_model->update_admin_invoice_payment_table($invoice_sid, $processed_by, 'paid', 'cash', $invoice_description);
@@ -1310,7 +1310,7 @@ class Invoice extends Admin_Controller {
                         $company_billing_contacts = array();
 
                         if ($billing_notification_status == 1) {
-                            $company_billing_contacts = $this->notification_emails_model->get_notification_emails($company_sid, 'billing_invoice', 'active');
+                            $company_billing_contacts = getNotificationContacts( $company_sid, 'billing_invoice', 'billing_invoice_notifications' );
                         }
 
                         $this->admin_invoices_model->update_admin_invoice_payment_table($invoice_sid, $processed_by, 'paid', 'Check', $invoice_description, $check_number);
