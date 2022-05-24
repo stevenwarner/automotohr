@@ -1509,9 +1509,7 @@ if (!function_exists('convert_email_template')) {
         $emailTemplateBody = str_replace('{{lastname}}', ucfirst($replacement_array['last_name']), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{site_url}}', base_url(), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{date}}', month_date_year(date('Y-m-d')), $emailTemplateBody);
-<<<<<<< HEAD
         $emailTemplateBody = str_replace('{{username}}', $replacement_array['username'], $emailTemplateBody);
-=======
         //
         $username = substr($replacement_array['username'], 0, strpos($replacement_array['username'], "_executive_admin_"));
         //
@@ -1520,7 +1518,6 @@ if (!function_exists('convert_email_template')) {
         }
         //
         $emailTemplateBody = str_replace('{{username}}', $username, $emailTemplateBody);
->>>>>>> staging
         $emailTemplateBody = str_replace('{{contact-name}}', ucfirst($replacement_array['first_name']) . ' ' . ucfirst($replacement_array['last_name']), $emailTemplateBody);
         $emailTemplateBody = str_replace('{{applicant_name}}', ucwords($replacement_array['first_name'] . ' ' . $replacement_array['last_name']), $emailTemplateBody);
         //
@@ -4362,12 +4359,7 @@ if (!function_exists('log_and_send_templated_email')) {
 
     function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
-<<<<<<< HEAD
-        if (empty($to) || $to == NULL || is_active_employee_or_company($to) == 0) return 0;
-        // if (empty($to) || $to == NULL) return 0;
-=======
         if (empty($to) || $to == NULL) {return 0;}
->>>>>>> staging
 
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
