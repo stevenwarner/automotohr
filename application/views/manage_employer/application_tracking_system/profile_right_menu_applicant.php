@@ -269,12 +269,11 @@ if ($this->session->userdata('logged_in')) {
                                     <i aria-hidden="true" class="fa fa-star"></i>
                                 </span>
                                 <h4>Merge Into Employee</h4>
-<!--                                <a href="javascript:0;" data-toogle="modal" data-target="#merge_modal">Merge<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>-->
                                 <a class="" href="javascript:0;" data-toggle="modal" data-target="#merge_modal">Merge<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
 
                             </li>
                         <?php }?>
-                        <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['company_detail']['has_applicant_approval_rights'] == 0 || $session['employer_detail']['has_applicant_approval_rights'] == 1)){?>
+                        <?php if(($session['company_detail']['has_applicant_approval_rights'] == 0 || $session['employer_detail']['has_applicant_approval_rights'] == 1)){?>
                             <?php if($session['employer_detail']['access_level_plus'] == 1 || check_access_permissions_for_view($security_details, 'hire_applicant_manually')) { ?>
                                 <li>
                                     <span class="left-addon">
@@ -285,7 +284,7 @@ if ($this->session->userdata('logged_in')) {
                                 </li>
                             <?php }?>
                         <?php }?>
-                        <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['company_detail']['has_applicant_approval_rights'] == 0 || $session['employer_detail']['has_applicant_approval_rights'] == 1)){?>
+                        <?php if($session['company_detail']['has_applicant_approval_rights'] == 0 || $session['employer_detail']['has_applicant_approval_rights'] == 1){?>
                             <?php if($session['employer_detail']['access_level_plus'] == 1 || check_access_permissions_for_view($security_details, 'setup')) { ?>
                                 <li>
                                     <span class="left-addon">
@@ -307,12 +306,14 @@ if ($this->session->userdata('logged_in')) {
                         <?php if(
                                 $applicant_info['is_onboarding'] == 1 &&
                                 (
-                                    $this->session->userdata('logged_in')['company_detail']['ems_status'] && 
                                     (
-                                        $session['company_detail']['has_applicant_approval_rights'] == 0 || 
-                                        $session['employer_detail']['has_applicant_approval_rights'] == 1
-                                    ) ||
-                                    $session['employer_detail']['access_level_plus'])
+                                        (
+                                            $session['company_detail']['has_applicant_approval_rights'] == 0 || 
+                                            $session['employer_detail']['has_applicant_approval_rights'] == 1
+                                        ) && check_access_permissions_for_view($security_details, 'setup')
+                                    ) 
+                                    || $session['employer_detail']['access_level_plus']
+                                )
                             ){?>
                             <li>
                                 <span class="left-addon">
