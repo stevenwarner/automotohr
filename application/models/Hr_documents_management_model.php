@@ -7912,7 +7912,7 @@ class Hr_documents_management_model extends CI_Model
     }
 
 
-     // Sending Email to Authorized Management Signers: 
+    // Sending Email to Authorized Management Signers: 
     function send_document_notifications($post_desc, $post_managerList, $assignInsertId, $post_CompanySid, $post_EmployerSid)
     {
         if (isset($post_desc) && $post_managerList != null && str_replace('{{authorized_signature}}', '', $post_desc) != $post_desc) {
@@ -7959,5 +7959,48 @@ class Hr_documents_management_model extends CI_Model
                 }
             }
         }
+    }
+
+
+    // Assigne Group Documents
+    function assign_group_documents($company_sid, $user_type, $user_sid)
+    {
+        $sendGroupEmail = 0;
+        $assign_group_documents = $this->get_assign_group_documents($company_sid, $user_type, $user_sid);
+        if (!empty($assign_group_documents)) {
+            foreach ($assign_group_documents as $key => $assign_group_document) {
+                $is_document_assign = $this->check_document_already_assigned($company_sid, $user_type, $user_sid, $assign_group_document['document_sid']);
+
+                if ($is_document_assign == 0 && $assign_group_document['document_sid'] > 0) {
+                    $document = $this->get_hr_document_details($company_sid, $assign_group_document['document_sid']);
+                    if (!empty($document)) {
+                        $data_to_insert = array();
+                        $data_to_insert['company_sid'] = $company_sid;
+                        $data_to_insert['assigned_date'] = date('Y-m-d H:i:s');
+                        $data_to_insert['assigned_by'] = $assign_group_document['assigned_by_sid'];
+                        $data_to_insert['user_type'] = $user_type;
+                        $data_to_insert['user_sid'] = $user_sid;
+                        $data_to_insert['document_type'] = $document['document_type'];
+                        $data_to_insert['document_sid'] = $assign_group_document['document_sid'];
+                        $data_to_insert['status'] = 1;
+                        $data_to_insert['document_original_name'] = $document['uploaded_document_original_name'];
+                        $data_to_insert['document_extension'] = $document['uploaded_document_extension'];
+                        $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
+                        $data_to_insert['document_title'] = $document['document_title'];
+                        $data_to_insert['document_description'] = $document['document_description'];
+                        $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                        $data_to_insert['signature_required'] = $document['signature_required'];
+                        $data_to_insert['download_required'] = $document['download_required'];
+                        $data_to_insert['managersList'] = $document['managers_list'];
+
+                        $assignInsertId = $this->insert_documents_assignment_record($data_to_insert);
+                        //
+                        $this->send_document_notifications($document['document_description'], $document['managers_list'], $assignInsertId, $company_sid, $user_sid);
+                        $sendGroupEmail = 1;
+                    }
+                }
+            }
+        }
+        return  $sendGroupEmail;
     }
 }
