@@ -349,6 +349,10 @@
 
                                         <br />
                                         <?php $this->load->view('hr_documents_management/partials/send_dwmc'); ?>
+                                        <br />
+                                        <?php $this->load->view('hr_documents_management/partials/settings', [
+                                            'is_confidential' =>  $document_info['is_confidential']
+                                        ]); ?>
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <button type="submit" onclick="validate_form();" class="btn btn-success"><?php echo isset($document_info['sid']) ? 'Update' : 'Upload'; ?></button>

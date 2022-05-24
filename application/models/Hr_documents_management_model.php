@@ -552,7 +552,7 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
-    function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0)
+    function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0, $ems = 0)
     {
 
         $payroll_sids = $this->get_payroll_documents_sids();
@@ -565,6 +565,10 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.archive', $archive);
+        //
+        if($ems == 1){
+            $this->db->where('documents_assigned.is_confidential', 0);
+        }
 
         if ($fetch_offer_letter) {
             $this->db->where('documents_assigned.document_type <>', 'offer_letter');

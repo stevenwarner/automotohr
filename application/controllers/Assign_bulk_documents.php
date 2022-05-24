@@ -256,7 +256,8 @@ class Assign_bulk_documents extends Public_Controller {
                 }
             }    
         }
-
+        // Confidential document
+        $data_to_insert['is_confidential'] = $this->input->post('settings_is_confidential', true) == 'on' ? 1 : 0;
 		//
         $insert_id = $this->assign_bulk_documents_model->insertDocumentsAssignmentRecord($data_to_insert);
         $this->assign_bulk_documents_model->add_update_categories_2_documents($insert_id,$this->input->post('categories'),"documents_assigned");

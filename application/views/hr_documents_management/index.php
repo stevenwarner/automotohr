@@ -84,7 +84,11 @@
                                                                  <?php if($active_group['documents_count'] > 0) {
                                                                         foreach ($active_group['documents'] as $document) { ?>
                                                                             <tr>
-                                                                                <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                                <td class="col-xs-6"><?php echo $document['document_title']; ?><?php 
+                                                                                if($document['is_confidential']):
+                                                                                    echo "<br /><strong>(Confidential)</strong>";
+                                                                                endif;
+                                                                            ?></td>
                                                                                 <td class="col-xs-2">
                                                                              <?php  if($document['date_created'] != NULL || $document['date_created'] != '') {
                                                                                         echo reset_datetime(array( 'datetime' => $document['date_created'], '_this' => $this));
@@ -217,7 +221,11 @@
                                                          <?php  if($active_group['documents_count'] > 0) {
                                                                         foreach ($active_group['documents'] as $document) { ?>
                                                                             <tr>
-                                                                                <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                                <td class="col-xs-6"><?php echo $document['document_title']; ?><?php 
+                                                                                if($document['is_confidential']):
+                                                                                    echo "<br /><strong>(Confidential)</strong>";
+                                                                                endif;
+                                                                            ?></td>
                                                                                 <td class="col-xs-2">
                                                                 <?php if($document['date_created'] != NULL || $document['date_created'] != '') {
                                                                                         echo reset_datetime(array( 'datetime' => $document['date_created'], '_this' => $this));
@@ -339,7 +347,11 @@
                                                          <?php if(count($uncategorized_documents) > 0) {
                                                                 foreach ($uncategorized_documents as $document) { ?>
                                                                     <tr>
-                                                                        <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                        <td class="col-xs-6"><?php echo $document['document_title']; ?><?php 
+                                                                                if($document['is_confidential']):
+                                                                                    echo "<br /><strong>(Confidential)</strong>";
+                                                                                endif;
+                                                                            ?></td>
                                                                         <td class="col-xs-2">
                                                          <?php  if($document['date_created'] != NULL || $document['date_created'] != '') {
                                                                                 echo reset_datetime(array( 'datetime' => $document['date_created'], '_this' => $this));
@@ -549,9 +561,16 @@
                                                                 foreach ($all_documents as $document) { 
                                                                     $allDocuments[$document['sid']] = $document;?>
                                                                     <tr>
-                                                                        <td class="col-xs-6"><?php echo $document['document_title']; ?></td>
+                                                                        <td class="col-xs-6">
+                                                                            <?php echo $document['document_title']; ?>
+                                                                            <?php 
+                                                                                if($document['is_confidential']):
+                                                                                    echo "<br /><strong>(Confidential)</strong>";
+                                                                                endif;
+                                                                            ?>
+                                                                        </td>
                                                                         <td class="col-xs-2">
-                                                         <?php  if($document['date_created'] != NULL || $document['date_created'] != '') {
+                                                                            <?php  if($document['date_created'] != NULL || $document['date_created'] != '') {
                                                                                 echo reset_datetime(array( 'datetime' => $document['date_created'], '_this' => $this));
                                                                             } else {
                                                                                 echo 'N/A';

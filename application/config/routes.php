@@ -1542,3 +1542,5 @@ $route['attendance/settings']['post'] = "sheet/Attendance_ajax/UpdateSettings";
  * 
  */
 $route['revert_applicant/(:num)']['delete'] = 'ajax/Applicants/revertApplicantFromOnboarding/$1';
+//
+$route['document_setting']['post'] = 'Hr_documents_management/updateAssignedDocumentSettings';
