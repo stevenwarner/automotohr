@@ -2344,19 +2344,30 @@ if(!function_exists('broadcastAlert')){
 }
 
 
-//
+/**
+ * Get people for email notifications
+ * 
+ * @param number $companySid
+ * @param number $slug
+ * @param number $mainSlug
+ * 
+ * @return array
+ */
 if(!function_exists('getNotificationContacts')){
     function getNotificationContacts(
         $companySid,
-        $slug
+        $slug,
+        $mainSlug = false
     ){
+        //
+        $mainSlug = $mainSlug ? $mainSlug : $slug;
         //
         $CI = &get_instance();
         //
         if(!
             $CI->db
             ->where('company_sid', $companySid)
-            ->where($slug, 1)
+            ->where($mainSlug, 1)
             ->count_all_results('notifications_emails_configuration')
             ) return [];
             //
