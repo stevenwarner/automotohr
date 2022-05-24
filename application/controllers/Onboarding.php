@@ -4413,6 +4413,11 @@ class Onboarding extends CI_Controller
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
+            //
+            if ($session['employer_detail']['access_level_plus'] != 1) {
+                check_access_permissions($security_details, 'dashboard', 'setup');
+            }
+            //
             $data['security_details'] = $security_details;
             $company_sid = $data['session']['company_detail']['sid'];
             $company_name = $data['session']['company_detail']['CompanyName'];

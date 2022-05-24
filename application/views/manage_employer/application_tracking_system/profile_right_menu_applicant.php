@@ -263,7 +263,7 @@ if ($this->session->userdata('logged_in')) {
                                 <!-- Light Bulb Code - End -->
                             </li>
                         <?php }?>
-                        <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['employer_detail']['access_level_plus'] == 1)){?>
+                        <?php if($session['employer_detail']['access_level_plus'] == 1 || check_access_permissions_for_view($security_details, 'merge_applicant_with_employee')){?>
                             <li>
                                 <span class="left-addon">
                                     <i aria-hidden="true" class="fa fa-star"></i>
@@ -275,30 +275,34 @@ if ($this->session->userdata('logged_in')) {
                             </li>
                         <?php }?>
                         <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['company_detail']['has_applicant_approval_rights'] == 0 || $session['employer_detail']['has_applicant_approval_rights'] == 1)){?>
-                            <li>
-                                <span class="left-addon">
-                                    <i aria-hidden="true" class="fa fa-user-plus"></i>
-                                </span>
-                                <h4>Direct Hire Candidate</h4>
-                                <a href="javascript:;" onclick="fun_hire_applicant();">Hire<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                            </li>
+                            <?php if($session['employer_detail']['access_level_plus'] == 1 || check_access_permissions_for_view($security_details, 'hire_applicant_manually')) { ?>
+                                <li>
+                                    <span class="left-addon">
+                                        <i aria-hidden="true" class="fa fa-user-plus"></i>
+                                    </span>
+                                    <h4>Direct Hire Candidate</h4>
+                                    <a href="javascript:;" onclick="fun_hire_applicant();">Hire<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                </li>
+                            <?php }?>
                         <?php }?>
                         <?php if($this->session->userdata('logged_in')['company_detail']['ems_status'] && ($session['company_detail']['has_applicant_approval_rights'] == 0 || $session['employer_detail']['has_applicant_approval_rights'] == 1)){?>
-                            <li>
-                                <span class="left-addon">
-                                    <i aria-hidden="true" class="fa fa-star"></i>
-                                </span>
-                                <h4>Setup Onboarding Panel</h4>
-                                <a href="<?php echo base_url('onboarding/setup/applicant') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
-                                <!-- Light Bulb Code - Start -->
-                                <?php $applicant_panel_config_count = count_onboarding_panel_records('applicant', $applicant_info['sid']);?>
-                                <?php if(intval($applicant_panel_config_count) > 0) { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
-                                <?php } else { ?>
-                                    <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Not Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
-                                <?php } ?>
-                                <!-- Light Bulb Code - End -->
-                            </li>
+                            <?php if($session['employer_detail']['access_level_plus'] == 1 || check_access_permissions_for_view($security_details, 'setup')) { ?>
+                                <li>
+                                    <span class="left-addon">
+                                        <i aria-hidden="true" class="fa fa-star"></i>
+                                    </span>
+                                    <h4>Setup Onboarding Panel</h4>
+                                    <a href="<?php echo base_url('onboarding/setup/applicant') . '/' . $applicant_info['sid'] . '/' . $job_list_sid; ?>">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>
+                                    <!-- Light Bulb Code - Start -->
+                                    <?php $applicant_panel_config_count = count_onboarding_panel_records('applicant', $applicant_info['sid']);?>
+                                    <?php if(intval($applicant_panel_config_count) > 0) { ?>
+                                        <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/on.gif'); ?>">
+                                    <?php } else { ?>
+                                        <img class="img-responsive pull-right" style=" width: 22px; height: 22px; margin-right:5px;" title="Applicant Panel Not Set-up" data-toggle="tooltip" data-placement="top" class="img-responsive" src="<?php echo site_url('assets/manage_admin/images/off.gif'); ?>">
+                                    <?php } ?>
+                                    <!-- Light Bulb Code - End -->
+                                </li>
+                            <?php }?>
                         <?php }?>
                         <?php if(
                                 $applicant_info['is_onboarding'] == 1 &&
@@ -754,7 +758,7 @@ if ($this->session->userdata('logged_in')) {
                         <div class="form-btns">
                             <input type="submit" value="save">
                             <input type="submit" value="cancel" id="attachment_view_button">
-                        </div>												
+                        </div>                                              
                     </div>
                     <div class="attachment-header attachment_edit">
                         <div class="remove-file">
@@ -842,7 +846,7 @@ if ($this->session->userdata('logged_in')) {
                     <div class="form-title-section">
                         <div class="form-btns">
                             <input type="submit" value="Upload">
-                        </div>												
+                        </div>                                              
                     </div>
                     
                     <?php if (!empty($applicant_extra_attachments)) { ?>
@@ -870,7 +874,7 @@ if ($this->session->userdata('logged_in')) {
             </div>
             <!--Extra attachments panel ends-->
         </div>
-    </aside>										
+    </aside>                                        
 </div>
 
 <div id="send_resume_request" class="modal fade" role="dialog">
