@@ -7740,7 +7740,7 @@ class Hr_documents_management_model extends CI_Model
 
 
     //----------  Check and Assigne  groups
-    function checkAndAssignGroups($company_sid, $user_type, $user_sid, $pp_flag)
+    function checkAndAssignGroups($company_sid, $user_type, $user_sid, $pp_flag, $employer_sid)
     {
         $groups = $this->get_all_documents_group($company_sid, 1);
 

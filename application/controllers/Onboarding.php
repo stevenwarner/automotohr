@@ -4414,7 +4414,7 @@ class Onboarding extends CI_Controller
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
             //
-            if ($session['employer_detail']['access_level_plus'] != 1) {
+            if ($data['session']['employer_detail']['access_level_plus'] != 1) {
                 check_access_permissions($security_details, 'dashboard', 'setup');
             }
             //
@@ -4596,7 +4596,7 @@ class Onboarding extends CI_Controller
 
             ///get Group Documents 
             //Params  company id , user type , user id , pp flag
-            $doc_group_data = $this->hr_documents_management_model->checkAndAssignGroups($company_sid, $user_type, $user_sid, $pp_flag);
+            $doc_group_data = $this->hr_documents_management_model->checkAndAssignGroups($company_sid, $user_type, $user_sid, $pp_flag, $employer_sid);
             extract($doc_group_data);
             $data['groups'] = $groups;
 
