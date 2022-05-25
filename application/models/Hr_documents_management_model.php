@@ -7913,11 +7913,12 @@ class Hr_documents_management_model extends CI_Model
 
 
     // Sending Email to Authorized Management Signers: 
-    function send_document_notifications($post_desc, $post_managerList, $assignInsertId, $post_CompanySid, $post_EmployerSid)
+    function send_document_notifications($post_desc, $post_managerList, $assignInsertId, $post_CompanySid, $post_EmployerSid,$employeetype)
     {
+     
         if (isset($post_desc) && $post_managerList != null && str_replace('{{authorized_signature}}', '', $post_desc) != $post_desc) {
-            // Managers handling
-            $this->addManagersToAssignedDocuments(
+            // Managers handling  
+             $this->addManagersToAssignedDocuments(
                 $post_managerList,
                 $assignInsertId,
                 $post_CompanySid,
@@ -7939,10 +7940,17 @@ class Hr_documents_management_model extends CI_Model
                     $assign_to_info  = db_get_employee_profile($v);
                     $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
                     $assign_to_email = $assign_to_info[0]['email'];
+                                    
+                    if($employeetype == "applicant"){
 
-                    $assigned_by_info  = db_get_employee_profile($post_EmployerSid);
-                    $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
+                         $assigned_by_info  = db_get_applicant_profile($post_EmployerSid);
+                         $assigned_by_name  = $assigned_by_info['first_name'] . ' ' . $assigned_by_info['last_name'];
 
+                    }else{
+                        $assigned_by_info  = db_get_employee_profile($post_EmployerSid);
+                        $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
+                    }
+                
                     //Send Email
                     $replacement_array = array();
                     $replacement_array['baseurl']           = base_url();
@@ -7954,7 +7962,7 @@ class Hr_documents_management_model extends CI_Model
                     $user_extra_info = array();
                     $user_extra_info['user_sid'] = $v;
                     $user_extra_info['user_type'] = "employee";
-                    //
+                             //
                     log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
                 }
             }
@@ -7967,10 +7975,10 @@ class Hr_documents_management_model extends CI_Model
     {
         $sendGroupEmail = 0;
         $assign_group_documents = $this->get_assign_group_documents($company_sid, $user_type, $user_sid);
+       
         if (!empty($assign_group_documents)) {
             foreach ($assign_group_documents as $key => $assign_group_document) {
                 $is_document_assign = $this->check_document_already_assigned($company_sid, $user_type, $user_sid, $assign_group_document['document_sid']);
-
                 if ($is_document_assign == 0 && $assign_group_document['document_sid'] > 0) {
                     $document = $this->get_hr_document_details($company_sid, $assign_group_document['document_sid']);
                     if (!empty($document)) {
@@ -7995,7 +8003,7 @@ class Hr_documents_management_model extends CI_Model
 
                         $assignInsertId = $this->insert_documents_assignment_record($data_to_insert);
                         //
-                        $this->send_document_notifications($document['document_description'], $document['managers_list'], $assignInsertId, $company_sid, $user_sid);
+                        $this->send_document_notifications($document['document_description'], $document['managers_list'], $assignInsertId, $company_sid, $user_sid,$user_type);
                         $sendGroupEmail = 1;
                     }
                 }

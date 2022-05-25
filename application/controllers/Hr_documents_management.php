@@ -164,8 +164,6 @@ class Hr_documents_management extends Public_Controller
                         $select_employees = $this->input->post('employees');
                         $user_type = 'employee';
 
-
-
                         $authorized_signature_required = $this->input->post('auth_sign_sid');
 
                         if ($authorized_signature_required > 0) {
@@ -263,8 +261,12 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_insert['download_required'] = $document['download_required'];
                                 $data_to_insert['signature_required'] = $document['signature_required'];
                                 $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                                $data_to_insert['managersList'] = $document['managers_list'];
 
                                 $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+
+                                $this->hr_documents_management_model->send_document_notifications($data_to_insert['document_description'], $data_to_insert['managersList'], $assignment_sid, $company_sid, $employer_sid,$user_type);
+                          
                             }
 
                             //
@@ -3125,8 +3127,9 @@ class Hr_documents_management extends Public_Controller
 
             $sendGroupEmail = 0;
             // get assign group documents
+            
             $sendGroupEmail = $this->hr_documents_management_model->assign_group_documents($company_sid, $user_type, $user_sid);
-                        
+
             $groups_assign = $this->hr_documents_management_model->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
             $assigned_groups = array();
 
@@ -9373,6 +9376,7 @@ class Hr_documents_management extends Public_Controller
         //
         $post = $this->input->post();
         //
+        
         $company_sid = isset($post['companySid']) ? $post['companySid'] : $this->session->userdata('logged_in')['company_detail']['sid'];
         $employer_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
         $company_name =  isset($post['companyName']) ? $post['companyName'] : $this->session->userdata('logged_in')['company_detail']['CompanyName'];
@@ -9422,6 +9426,7 @@ class Hr_documents_management extends Public_Controller
                     );
                 }
                 //
+            
                 foreach ($select_employees as $emp) {
                     $check_exist = $this->hr_documents_management_model->check_assigned_document($document_sid, $emp, $user_type);
                     if (!empty($check_exist)) {
@@ -9702,8 +9707,8 @@ class Hr_documents_management extends Public_Controller
 
                 //
             case "assign_document":
-                //
-                $insertId = $this->hr_documents_management_model->assignGeneralDocument(
+                // 
+                  $insertId = $this->hr_documents_management_model->assignGeneralDocument(
                     $post['userSid'],
                     $post['userType'],
                     $company_sid,
@@ -10155,7 +10160,11 @@ class Hr_documents_management extends Public_Controller
                 $a['allowed_roles'] = $post['roles'];
                 $a['allowed_departments'] = $post['departments'];
                 $a['allowed_teams'] = $post['teams'];
+                if ($ins['signers']) {
+                    $a['managersList'] = $ins['signers'];
+                }
                 $a['allowed_employees'] = $post['employees'];
+
                 //
 
                 if (isset($post["assigner"])) {
@@ -10179,9 +10188,12 @@ class Hr_documents_management extends Public_Controller
                         $approvalEmployees
                     );
                 } else {
+                   
                     //
+                    //print_r($a);
                     $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
-                    //
+                   // die($assignInsertId.'a');
+                     //
                     $verification_key = random_key(80);
                     $this->hr_documents_management_model->set_offer_letter_verification_key($a['user_sid'], $verification_key, $post['Type']);
 
@@ -10235,15 +10247,10 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    // Check if it's Authorize document
-                    if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $ins['signers'] != null) {
-                        // Managers handling
-                        $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                            $ins['signers'],
-                            $assignInsertId,
-                            $post['CompanySid'],
-                            $post['EmployerSid']
-                        );
+                                    
+                    if ($a['managersList']) {
+                          $this->hr_documents_management_model->send_document_notifications($a['document_description'], $a['managersList'], $assignInsertId, $a['company_sid'], $a['assigned_by'],$post['Type']);
+                         
                     }
                 }
             }
@@ -10514,6 +10521,7 @@ class Hr_documents_management extends Public_Controller
 
             $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
+
             if (isset($_POST['document_group_assignment'])) {
                 $document_group_assignment = $this->input->post('document_group_assignment');
 
@@ -10543,7 +10551,10 @@ class Hr_documents_management extends Public_Controller
             // Also assign it in case of 
             // assignandsave
             $todo = isset($post['saveAndAssign']) ? $post['saveAndAssign'] : $post['submit'];
+
+
             if ($todo == 'saveandassign') {
+
                 // 
                 $documentId = $insert_id;
                 // Set assign array
@@ -10574,6 +10585,10 @@ class Hr_documents_management extends Public_Controller
                 $a['is_required'] = $post['isRequired'];
                 $a['is_signature_required'] = $post['isSignatureRequired'];
                 $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                if ($b['managers_list']) {
+                    $a['managersList'] = $b['managers_list'];
+                }
+                $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
 
                 // When approval employees are selected
                 if ($approvalEmployees) {
@@ -10589,8 +10604,6 @@ class Hr_documents_management extends Public_Controller
                         $approvalEmployees
                     );
                 } else {
-                    //
-                    $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
 
                     //
                     // For email
@@ -10700,16 +10713,8 @@ class Hr_documents_management extends Public_Controller
                     }
 
                     //
-                    // Check if it's Authorize document
-                    if ($do_descpt && isset($post['managersList']) && $post['managersList'] != null && str_replace('{{authorized_signature}}', '', $document_description) != $document_description) {
-                        // Managers handling
-                        $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                            $post['managersList'],
-                            $assignInsertId,
-                            $company_sid,
-                            $employer_sid
-                        );
-                    }
+                    $this->hr_documents_management_model->send_document_notifications($document_description, $a['managersList'], $assignInsertId, $company_sid, $employer_sid,$user_type);
+                   
                 }
             }
 
@@ -10822,6 +10827,7 @@ class Hr_documents_management extends Public_Controller
             'Status' => FALSE,
             'Response' => 'Invalid request'
         ];
+
         //
         $post = array();
         //
@@ -10983,6 +10989,10 @@ class Hr_documents_management extends Public_Controller
                 $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
             else
                 $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
+
+            if (isset($post['managerList'])) {
+                 $this->hr_documents_management_model->send_document_notifications($post['desc'], $post['managerList'], $assignInsertId, $a['company_sid'], $a['assigned_by'],$post['Type']);
+             }
 
             $is_manual = get_document_type($assignInsertId);
 
