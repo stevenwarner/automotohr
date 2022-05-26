@@ -377,4 +377,9 @@ class Testing extends CI_Controller
         _e($decode,true,true);
     }
 
+
+    function test2(){
+        $this->db->from('doc')->get();
+    }
+
 }
