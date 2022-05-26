@@ -7,7 +7,7 @@
                     <div class="login-section ">
                         <div class="registered-user">
                             <h2 class="form-heading">Password Recovery</h2>
-                            <h4 class="password_forgot">Please, enter your New Passwords:<h4>
+                            <h4 class="password_forgot">Please, Enter your New Password:<h4>
                             <?php if($this->session->flashdata('message')){ ?>
                                 <div class="flash_error_message">
                                     <div class="alert alert-info alert-dismissible" role="alert">
