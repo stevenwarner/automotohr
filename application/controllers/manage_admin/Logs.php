@@ -406,6 +406,15 @@ class logs extends Admin_Controller
         $this->data['groups'] = $this->ion_auth->groups()->result(); 
         $this->data['module_data']= $this->logs_model->getModuleInfo($sid);
         //
+        $active_companies = $this->logs_model->get_all_active_companies();
+        //
+        foreach ($active_companies as $ckey => $company) {
+            $module_status = $this->logs_model->get_company_module_status($company["sid"], $sid);
+            $active_companies[$ckey]["status"] = $module_status;
+        }
+        //
+        $this->data['company_data'] = $active_companies;
+        //
         if($sid == 7){
             $this->render('payroll/company_module'); 
         } else{

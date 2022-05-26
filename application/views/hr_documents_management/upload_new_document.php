@@ -51,13 +51,14 @@
                                         <div class="col-xs-12">
                                             <label>Instructions / Guidance </label>
                                             <div style="margin-bottom:5px;"><?php $this->load->view('templates/_parts/ckeditor_gallery_link'); ?></div>
-                                            <textarea class="invoice-fields autoheight ckeditor" name="document_description" onkeyup="check_length()" id="document_description" cols="54" rows="6"><?php
-                                                                                                                                                                                                    if (isset($document_info['document_description'])) {
-                                                                                                                                                                                                        $desc = strip_tags(html_entity_decode($document_info['document_description']));
-                                                                                                                                                                                                        echo set_value('document_description', $desc);
-                                                                                                                                                                                                    } else {
-                                                                                                                                                                                                        echo set_value('document_description');
-                                                                                                                                                                                                    } ?></textarea>
+                                            <textarea class="invoice-fields autoheight ckeditor" name="document_description" onkeyup="check_length()" id="document_description" cols="54" rows="6">
+                                                <?php 
+                                                    if (isset($document_info['document_description'])) {
+                                                        $desc = strip_tags(html_entity_decode($document_info['document_description']));   
+                                                        echo set_value('document_description', $desc);
+                                                    } else {                                                                                                                  echo set_value('document_description');
+                                                } ?>
+                                            </textarea>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -352,96 +353,98 @@
 
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <div class="hr-box">
-                                                <div class="hr-box-header">
-                                                    <strong>Document Library?</strong>
-                                                </div>
-                                                <div class="hr-innerpadding">
-                                                    <?php
-                                                    if ($document_info['isdoctolibrary'] == 1) {
-                                                        $isdoctolibrary1 = 'checked="true"';
-                                                    } else {
-                                                        $isdoctolibrary0 = 'checked="true"';
-                                                    } ?>
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <p class="text-danger"><strong><em>If "Yes", the document will appear on the employee's document library and they can initiate the document.</em></strong></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <p>Is the document for library?</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <label class="control control--radio font-normal">
-                                                                <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="0" <?php echo $isdoctolibrary0; ?> />
-                                                                No &nbsp;
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                            <label class="control control--radio font-normal">
-                                                                <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="1" <?php echo $isdoctolibrary1; ?> />
-                                                                Yes &nbsp;
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <p class="text-danger"><strong><em>If "No", the document will not visible to employee on document center.</em></strong></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <p>Is the document visible to employee on document center?</p>
-                                                        </div>
-                                                    </div>
 
-                                                    <div class="row">
-                                                        <?php
-                                                        if ($document_info['visible_to_document_center'] == 1) {
-                                                            $visibletodocumentcenter1 = 'checked="true"';
-                                                        } else {
-                                                            $visibletodocumentcenter0 = 'checked="true"';
-                                                        } ?>
-                                                        <div class="col-xs-12">
-                                                            <label class="control control--radio font-normal">
-                                                                <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="0" <?php echo $visibletodocumentcenter0; ?> />
-                                                                No &nbsp;
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                            <label class="control control--radio font-normal">
-                                                                <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="1" <?php echo $visibletodocumentcenter1; ?> />
-                                                                Yes &nbsp;
-                                                                <div class="control__indicator"></div>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-
-
-
-
-
-
-
-                                                </div>
-                                            </div>
-                                        </div>
+                                            <br />
+                                            <?php $this->load->view('hr_documents_management/partials/settings', [
+                                                'is_confidential' =>  $document_info['is_confidential']
+                                            ]); ?>
+                                        </div>    
                                     </div>
 
-                                    <div class="row">
-                                        <br />
-                                        <?php $this->load->view('hr_documents_management/partials/settings', [
-                                            'is_confidential' =>  $document_info['is_confidential']
-                                        ]); ?>
+                                    <?php if (is_document_library_module_active()) { ?>
                                         <div class="row">
                                             <div class="col-xs-12">
-                                                <button type="submit" onclick="validate_form();" class="btn btn-success"><?php echo isset($document_info['sid']) ? 'Update' : 'Upload'; ?></button>
-                                                <a href="<?php echo base_url('hr_documents_management'); ?>" class="btn black-btn">Cancel</a>
+                                                <div class="hr-box">
+                                                    <div class="hr-box-header">
+                                                        <strong>Document Library?</strong>
+                                                    </div>
+                                                    <div class="hr-innerpadding">
+                                                        <?php
+                                                        if ($document_info['isdoctolibrary'] == 1) {
+                                                            $isdoctolibrary1 = 'checked="true"';
+                                                        } else {
+                                                            $isdoctolibrary0 = 'checked="true"';
+                                                        } ?>
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <p class="text-danger"><strong><em>If "Yes", the document will appear on the employee's document library and they can initiate the document.</em></strong></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <p>Is the document for library?</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <label class="control control--radio font-normal">
+                                                                    <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="0" <?php echo $isdoctolibrary0; ?> />
+                                                                    No &nbsp;
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                                <label class="control control--radio font-normal">
+                                                                    <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="1" <?php echo $isdoctolibrary1; ?> />
+                                                                    Yes &nbsp;
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <?php if (false) { ?>
+                                                            <hr>
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
+                                                                    <p class="text-danger"><strong><em>If "No", the document will not visible to employee on document center.</em></strong></p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
+                                                                    <p>Is the document visible to employee on document center?</p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <?php
+                                                                if ($document_info['visible_to_document_center'] == 1) {
+                                                                    $visibletodocumentcenter1 = 'checked="true"';
+                                                                } else {
+                                                                    $visibletodocumentcenter0 = 'checked="true"';
+                                                                } ?>
+                                                                <div class="col-xs-12">
+                                                                    <label class="control control--radio font-normal">
+                                                                        <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="0" <?php echo $visibletodocumentcenter0; ?> />
+                                                                        No &nbsp;
+                                                                        <div class="control__indicator"></div>
+                                                                    </label>
+                                                                    <label class="control control--radio font-normal">
+                                                                        <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="1" <?php echo $visibletodocumentcenter1; ?> />
+                                                                        Yes &nbsp;
+                                                                        <div class="control__indicator"></div>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        <?php } ?>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                    <?php } ?>
+
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <button type="submit" onclick="validate_form();" class="btn btn-success"><?php echo isset($document_info['sid']) ? 'Update' : 'Upload'; ?></button>
+                                            <a href="<?php echo base_url('hr_documents_management'); ?>" class="btn black-btn">Cancel</a>
+                                        </div>
+                                    </div>
+                                       
                                 </form>
                             </div>
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">

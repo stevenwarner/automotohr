@@ -13339,7 +13339,11 @@ if (!function_exists('getGeneratedDocumentURL')) {
             'html_body' => ''
         ];
 
-        if ($type == 'uncompleted') {
+        if ($type == 'company') {
+            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/company/assigned_document/print';
+            $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/company/assigned_document/download';
+            $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
+        } else if ($type == 'uncompleted') {
             $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/print';
             $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/download';
             $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
@@ -15540,7 +15544,7 @@ if (!function_exists('get_documents_assigned_data')) {
         $CI->db->where('user_sid', $employee_id);
         $CI->db->where('user_type', $employee);
         $record_obj = $CI->db->get('documents_assigned');
-        $record_arr = $record_obj->result_array();
+        $record_arr = $record_obj->row_array();
         $record_obj->free_result();
         if (!empty($record_arr)) {
             return $record_arr;
@@ -15576,6 +15580,18 @@ if (!function_exists('check_document_completed_date')) {
         $completed_date = '';
         //
         if ($assigned_document['status'] == 1) {
+            //
+            $is_magic_tag_exist = 0;
+            //
+            if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
+                $document_body = $assigned_document['document_description'];
+                $magic_codes = array('{{signature}}', '{{inital}}');
+
+                if (str_replace($magic_codes, '', $document_body) != $document_body) {
+                    $is_magic_tag_exist = 1;
+                }
+            }
+            //
             if ($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist) {
 
                 if ($assigned_document['signature_required'] == 1) {
@@ -15588,11 +15604,70 @@ if (!function_exists('check_document_completed_date')) {
                     $completed_date = $assigned_document['acknowledged_date'];
                 } else if ($assigned_document['download_required'] == 1) {
                     $completed_date = $assigned_document['downloaded_date'];
+                } else if ($is_magic_tag_exist == 1) {
+                    $completed_date = $assigned_document['signature_timestamp'];
                 }
             } else {
                 $completed_date = $assigned_document['assigned_date'];
             }
         }
         return  $completed_date;
+    }
+
+    function get_document_action_date($assigned_document, $type)
+    {
+        //
+        $return_date = '';
+        //
+        if ($assigned_document['status'] == 1) {
+            if ($type == "assigned") {
+                $return_date = $assigned_document['assigned_date'];
+
+            } else if ($type == "completed") {
+                $return_date = check_document_completed_date($assigned_document);
+            } 
+        }
+        //
+        if (!empty($return_date) && $return_date != '0000-00-00 00:00:00') {
+            $CI = &get_instance();
+            $return_date = reset_datetime(array('datetime' => $return_date, '_this' => $CI));
+        }
+        //
+        return  $return_date;
+    }
+
+
+    function is_document_library_module_active ()
+    {
+        $CI = &get_instance();
+        $session = $CI->session->userdata('logged_in');
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $CI->db->select('sid');
+        $CI->db->where('module_slug', "documentlibrary");
+        $CI->db->where('is_disabled', 0);
+        //
+        $row_data = $CI->db->get('modules')->row_array();
+        //
+        if (!empty($row_data)) {
+            $module_sid = $row_data['sid'];
+            $CI->db->select('is_active');
+            $CI->db->where('company_sid', $company_sid);
+            $CI->db->where('module_sid', $module_sid);
+            //
+            $company_module_data = $CI->db->get('company_modules')->row_array();
+            //
+            if (!empty($company_module_data)) {
+                if ($company_module_data["is_active"] == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 }
