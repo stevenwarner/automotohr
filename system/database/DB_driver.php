@@ -709,16 +709,20 @@ abstract class CI_DB_driver {
 			// Log errors
 			log_message('error', 'Query error: '.$error['message'].' - Invalid query: '.$sql);
 
-			//Email Error 
+			// Email Error 
 			if($error['message']){
-				$from="mailto:notifications@automotohr.com";
-				$to ="mubashir.saleemi123@gmail.com";
-				$subject ="Automotohr Database Error";
-				$body = 'Error Number: '.$error['code']."<br>".$error['message']."<br>".$sql."<br>";
-				sendMail($from, $to, $subject, $body, $fromName = NULL, $replyTo = NULL);
+				//
+				$body = 'An error occurred on AutomotoHR with the following details: ';
+				$body .= 'Error Code: '.$error['code'];
+				$body .= "<br> Error Message: ".$error['message'];
+				$body .= "<br> DB Query ".$sql."<br>";
+				//
+				@mail(
+					'mubashir.saleemi123@gmail.com', 
+					'DB error occurred on AutomotoHR at ' . date('Y-m-d H:i:s', strtotime('now')) . '',
+					$body
+				);
 			}
-
-
 
 			if ($this->db_debug)
 			{
