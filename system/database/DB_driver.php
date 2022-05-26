@@ -709,6 +709,17 @@ abstract class CI_DB_driver {
 			// Log errors
 			log_message('error', 'Query error: '.$error['message'].' - Invalid query: '.$sql);
 
+			//Email Error 
+			if($error['message']){
+				$from="mailto:notifications@automotohr.com";
+				$to ="mubashir.saleemi123@gmail.com";
+				$subject ="Automotohr Database Error";
+				$body = 'Error Number: '.$error['code']."<br>".$error['message']."<br>".$sql."<br>";
+				sendMail($from, $to, $subject, $body, $fromName = NULL, $replyTo = NULL);
+			}
+
+
+
 			if ($this->db_debug)
 			{
 				// We call this function in order to roll-back queries
