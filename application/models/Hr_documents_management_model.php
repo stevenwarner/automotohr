@@ -6215,7 +6215,11 @@ class Hr_documents_management_model extends CI_Model
             $user_extra_info['user_sid'] = $document['user_sid'];
             $user_extra_info['user_type'] = $document['user_type'];
             //
-            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
+            $this->load->model('hr_documents_management_model');
+            if($this->hr_documents_management_model->doSendEmail($document['user_sid'], $document['user_type'], "HREMS20")){
+                //
+                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
+            }
         }
     }
 
@@ -7920,15 +7924,17 @@ class Hr_documents_management_model extends CI_Model
      * 
      * @param number $userId
      * @param string $userType
+     * @param string $placeCode
      * 
      * @return boolean
      */
     public function doSendEmail(
         $userId,
         $userType = 'employee',
-        $controllerName,
-        $functionName
+        $placeCode
     ){
+        //
+        $this->logEmailPlace('HR_DOCUMENTS_NOTIFICATION_EMS', $userId, $placeCode, $userType);
         //
         $q = $this->db
         ->select('document_sent_on')
@@ -7940,7 +7946,10 @@ class Hr_documents_management_model extends CI_Model
         //
         if(!empty($r['document_sent_on'])) {
             //
-            if(dateDifferenceInDays(date('Y-m-d H:i:s', strtotime('now')), $r['document_sent_on'], 'h') < 120){
+            $date1 = DateTime::createFromFormat('Y-m-d H:i:s', $r['document_sent_on']);
+            $date2 = DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', strtotime('now')));
+            //
+            if($date2->diff($date1)->format('%h') < 2){
                 //
                 return false;
             }
@@ -7948,6 +7957,33 @@ class Hr_documents_management_model extends CI_Model
         //
         $this->db->where('sid', $userId)->update($userType === 'employee' ? 'users' : 'portal_job_applications', [
             'document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+        //
+        return true;
+    }
+
+    /**
+     * Saves the sent email
+     * 
+     * @param string $templateName
+     * @param number $userId
+     * @param string $placeCode
+     * @param string $userType
+     */
+    public function logEmailPlace(
+        $templateName,
+        $userId,
+        $placeCode,
+        $userType = 'employee'
+    ){
+        //
+        $this->db->insert(
+            'email_tracker', [
+                'template_name' => $templateName,
+                'user_sid' => $userId,
+                'user_type' => $userType,
+                'place_code' => $placeCode,
+                'created_at' => date('Y-m-d H:i:s', strtotime('now'))
         ]);
         //
         return true;

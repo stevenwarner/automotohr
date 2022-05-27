@@ -185,24 +185,6 @@ class Onboarding extends CI_Controller
                     }
                 }
 
-                // if ($sendGroupEmail == 1 && $user_type == 'employee') {
-                //     //
-                //     $hf = message_header_footer(
-                //         $company_info['sid'],
-                //         ucwords($company_info['CompanyName'])
-                //     );
-                //     //
-                //     $replacement_array = array();
-                //     $replacement_array['contact-name'] = ucwords($applicant_info['first_name'] . ' ' . $applicant_info['last_name']);
-                //     $replacement_array['baseurl'] = base_url();
-                //     //
-                //     $extra_user_info = array();
-                //     $extra_user_info["user_type"] = 'applicant';
-                //     $extra_user_info["user_sid"] = $applicant_sid;
-                //     //
-                //     log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $applicant_info['email'], $replacement_array, $hf, 1, $extra_user_info);
-                // }
-
                 $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_info['sid'], 'applicant', $applicant_sid, 0);
 
                 foreach ($assigned_documents as $key => $assigned_document) {
@@ -4615,8 +4597,11 @@ class Onboarding extends CI_Controller
                 $extra_user_info = array();
                 $extra_user_info["user_type"] = $user_type;
                 $extra_user_info["user_sid"] = $user_sid;
-                //
-                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS,  $user_info['email'], $replacement_array, $hf, 1, $extra_user_info);
+                $this->load->model('hr_documents_management_model');
+                if($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS19")){
+                    //
+                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS,  $user_info['email'], $replacement_array, $hf, 1, $extra_user_info);
+                }
             }
 
             $all_assigned_sids = array();
