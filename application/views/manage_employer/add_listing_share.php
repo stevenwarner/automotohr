@@ -67,7 +67,7 @@
                                                                 <div class="">
                                                                     <select data-placeholder="Please Select" multiple="multiple" name="employees[]" id="employees" class="chosen-select">
                                                                         <?php foreach ($active_users as $user) { ?>
-                                                                            <option value="<?php echo $user['sid']; ?>"><?php echo ucwords($user['employee_name']); ?></option>
+                                                                            <option value="<?php echo $user['sid']; ?>"><?php echo remakeEmployeeName($user); ?></option>
                                                                         <?php } ?>
                                                                     </select>
                                                                 </div>

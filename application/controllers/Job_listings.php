@@ -2412,13 +2412,7 @@ class Job_listings extends Public_Controller
                     $data['jobDetail'] = $jobData[0];
                     $data['title'] = "Add listing share";
                     $data['job_sid'] = $jobId;
-                    $employees_new = $this->dashboard_model->GetAllActiveUsers($company_id);
-                    foreach ($employees_new as $e_key => $employee_new) {
-                        $employee_name = ucwords($employee_new['first_name'] . ' ' . $employee_new['last_name']) . ($employee_new['job_title'] != '' && $employee_new['job_title'] != null ? ' (' . $employee_new['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee_new)) . ']';
-                        $employees_new[$e_key]['employee_name'] = $employee_name . ' [' . $employee_new['email'] . ']';
-                    }
-
-                    $data['active_users'] = $employees_new;
+                    $data['active_users'] = $this->dashboard_model->GetAllActiveUsers($company_id);
 
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/add_listing_share');
