@@ -15573,7 +15573,6 @@ if (!function_exists('get_all_group_documents')) {
 }
 
 if (!function_exists('check_document_completed_date')) {
-
     function check_document_completed_date($assigned_document)
     {
         //
@@ -15613,7 +15612,9 @@ if (!function_exists('check_document_completed_date')) {
         }
         return  $completed_date;
     }
+}
 
+if (!function_exists('get_document_action_date')) {
     function get_document_action_date($assigned_document, $type)
     {
         //
@@ -15634,40 +15635,5 @@ if (!function_exists('check_document_completed_date')) {
         }
         //
         return  $return_date;
-    }
-
-
-    function is_document_library_module_active ()
-    {
-        $CI = &get_instance();
-        $session = $CI->session->userdata('logged_in');
-        $company_sid = $session['company_detail']['sid'];
-        //
-        $CI->db->select('sid');
-        $CI->db->where('module_slug', "documentlibrary");
-        $CI->db->where('is_disabled', 0);
-        //
-        $row_data = $CI->db->get('modules')->row_array();
-        //
-        if (!empty($row_data)) {
-            $module_sid = $row_data['sid'];
-            $CI->db->select('is_active');
-            $CI->db->where('company_sid', $company_sid);
-            $CI->db->where('module_sid', $module_sid);
-            //
-            $company_module_data = $CI->db->get('company_modules')->row_array();
-            //
-            if (!empty($company_module_data)) {
-                if ($company_module_data["is_active"] == 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
     }
 }

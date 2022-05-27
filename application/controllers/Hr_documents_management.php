@@ -13238,6 +13238,9 @@ class Hr_documents_management extends Public_Controller
         if (!$this->session->userdata('logged_in')) {
             return redirect(base_url('login'), "refresh");
         }
+        if (!checkIfAppIsEnabled('documentlibrary')) {
+            return redirect(base_url('login'), "refresh");
+        }
         //
         $data['session']          = $this->session->userdata('logged_in');
         $company_sid              = $data['session']['company_detail']['sid'];

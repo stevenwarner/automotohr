@@ -340,7 +340,7 @@
                                             'is_confidential' =>  $document_info['is_confidential']
                                         ]); ?>
 
-                                        <?php if (is_document_library_module_active()) { ?>
+                                        <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
                                             <div class="row">
                                                 <div class="col-xs-12">
                                                     <div class="hr-box">

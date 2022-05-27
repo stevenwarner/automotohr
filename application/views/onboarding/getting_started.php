@@ -506,7 +506,7 @@
                             </div>
                         </div>
 
-                        <?php if (is_document_library_module_active()) { ?>
+                        <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
                             <!-- Documents Library -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                 <div class="widget-box">
