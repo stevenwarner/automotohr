@@ -42,6 +42,11 @@
                                         <?php if($incident['pending'] > 0){?>
                                             <img src="<?= base_url('assets/images/new_msg.gif')?>">
                                         <?php }?>
+                                        <?php if ($incident['on_behalf_employee_sid'] !== $incident['employer_sid'] && $incident['on_behalf_employee_sid'] != 0) {
+                                            $user_info_incident = db_get_employee_profile($incident['on_behalf_employee_sid']);
+                                            ?><br>
+                                           <p class="text-danger" style="text-align: right;">Created by: <?= remakeEmployeeName($user_info_incident[0]); ?></p>
+                                        <?php }?>
                                     </td>
                                     <td><?php echo my_date_format($incident['current_date']); ?></td>
                                     <td class="text-center">
