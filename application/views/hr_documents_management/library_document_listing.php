@@ -13,7 +13,7 @@
 
     .completedocument {}
 
-    .panel-body{
+    .panel-body {
         padding: 0px !important;
     }
 </style>
@@ -46,202 +46,180 @@
                         <div class="tab-pane fade in hr-innerpadding">
                             <div>
                                 <?php
-                                    $total_documents = 0;
-                                    $employee_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
-                                ?>    
+                                $total_documents = 0;
+                                $employee_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
+                                ?>
                                 <?php if (!empty($categories_documents)) { ?>
                                     <?php foreach ($categories_documents as $category_document) { ?>
-                                        <?php //if ($category_document['category_sid'] != 27) { ?>
-                                            <?php if (isset($category_document['documents'])) { ?>
-                                                <div class="row">
-                                                    <div class="col-xs-12">
-                                                        <div class="panel panel-default hr-documents-tab-content">
-                                                            <div class="panel-heading">
-                                                                <h4 class="panel-title">
-                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_no_action<?php echo $category_document['category_sid']; ?>">
-                                                                        <span class="glyphicon glyphicon-plus"></span>
-                                                                        <?php 
-                                                                            echo $category_document['name'];
-                                                                            //
-                                                                            $total_record = 0;
-                                                                            //
-                                                                            if (count($category_document['documents']) > 0) {
-                                                                                foreach ($category_document['documents'] as $cou => $document) {
-                                                                                    if ($document['archive'] != 1 && $document['manual_document_type'] != 'offer_letter') {
-                                                                                        $total_record = $total_record + 1;
-                                                                                        $total_documents = $total_documents + 1;
-                                                                                    }
-                                                                                }
+                                        <?php if (isset($category_document['documents'])) { ?>
+                                            <div class="row">
+                                                <div class="col-xs-12">
+                                                    <div class="panel panel-default hr-documents-tab-content">
+                                                        <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_no_action<?php echo $category_document['category_sid']; ?>">
+                                                                    <span class="glyphicon glyphicon-plus"></span>
+                                                                    <?php
+                                                                    echo $category_document['name'];
+                                                                    //
+                                                                    $total_record = 0;
+                                                                    //
+                                                                    if (count($category_document['documents']) > 0) {
+                                                                        foreach ($category_document['documents'] as $cou => $document) {
+                                                                            if ($document['archive'] != 1 && $document['manual_document_type'] != 'offer_letter') {
+                                                                                $total_record = $total_record + 1;
+                                                                                $total_documents = $total_documents + 1;
                                                                             }
-                                                                        ?>
-                                                                        <div class="pull-right total-records"><b><?php echo '&nbsp;Total: ' . $total_record; ?></b></div>
-                                                                    </a>
-                                                                </h4>
-                                                            </div>
+                                                                        }
+                                                                    }
+                                                                    ?>
+                                                                    <div class="pull-right total-records"><b><?php echo '&nbsp;Total: ' . $total_record; ?></b></div>
+                                                                </a>
+                                                            </h4>
+                                                        </div>
 
-                                                            <div id="collapse_no_action<?php echo $category_document['category_sid']; ?>" class="panel-body panel-collapse collapse in">
-                                                                <div class="table-responsive full-width">
-                                                                    <table class="table table-plane">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th class="col-lg-3">Document Name</th>
-                                                                                <th class="col-lg-1">Status</th>
-                                                                                <th class="col-lg-2">Started Date</th>
-                                                                                <th class="col-lg-2">Completed Date</th>
+                                                        <div id="collapse_no_action<?php echo $category_document['category_sid']; ?>" class="panel-body panel-collapse collapse in">
+                                                            <div class="table-responsive full-width">
+                                                                <table class="table table-plane">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="col-lg-3">Document Name</th>
+                                                                            <th class="col-lg-1">Status</th>
+                                                                            <th class="col-lg-2">Started Date</th>
+                                                                            <th class="col-lg-2">Completed Date</th>
 
-                                                                                <th class="col-lg-3 text-center" colspan="4">Actions</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <?php if (count($category_document['documents']) > 0) { ?>
-                                                                                <?php foreach ($category_document['documents'] as $document) { ?>
-                                                                                    <?php 
-                                                                                        $font_color = "";
-                                                                                        $document_show_status = "";
-                                                                                        $document_btn_name = "";
-                                                                                        $modify_assigned_date = "--";
-                                                                                        $modify_completed_date = "--";
-                                                                                        $print_original_url = "";
-                                                                                        $print_completed_url = "";
-                                                                                        $download_original_url = "";
-                                                                                        $download_completed_url = "";
+                                                                            <th class="col-lg-3 text-center" colspan="4">Actions</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <?php if (count($category_document['documents']) > 0) { ?>
+                                                                            <?php foreach ($category_document['documents'] as $document) { ?>
+                                                                                <?php
+                                                                                $font_color = "";
+                                                                                $document_show_status = "";
+                                                                                $document_btn_name = "";
+                                                                                $modify_assigned_date = "--";
+                                                                                $modify_completed_date = "--";
+                                                                                $print_original_url = "";
+                                                                                $print_completed_url = "";
+                                                                                $download_original_url = "";
+                                                                                $download_completed_url = "";
+                                                                                //
+                                                                                $assigned_document_data = get_documents_assigned_data($document['sid'], $employee_sid, 'employee');
+                                                                                //
+                                                                                $document_status = check_document_completed($assigned_document_data);
+                                                                                //
+                                                                                if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) {
+                                                                                    //
+                                                                                    $modify_assigned_date = get_document_action_date($assigned_document_data, "assigned");
+                                                                                    //
+                                                                                    if ($assigned_document_data["document_type"] == "uploaded") {
+                                                                                        $assign_links = getUploadedDocumentURL($assigned_document_data["document_s3_name"]);
+                                                                                    } else {
+                                                                                        $body = $assigned_document_data['document_description'];
+                                                                                        $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+                                                                                        $assign_links = getGeneratedDocumentURL($assigned_document_data, "uncompleted", $isAuthorized);
+                                                                                    }
+                                                                                    //
+                                                                                    $print_original_url = $assign_links["print_url"];
+                                                                                    $download_original_url = $assign_links["download_url"];
+                                                                                    //
+                                                                                    if ($document_status == 'Completed') {
+                                                                                        $font_color = "color:#81b431;";
+                                                                                        $document_show_status = strtoupper($document_status);
+                                                                                        $document_btn_name = "Re-Initiate Document";
+                                                                                        $modify_completed_date = get_document_action_date($assigned_document_data, "completed");
                                                                                         //
-                                                                                        $assigned_document_data = get_documents_assigned_data($document['sid'], $employee_sid, 'employee');
-                                                                                        //
-                                                                                        $document_status = check_document_completed($assigned_document_data);
-                                                                                        //
-                                                                                        if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) {
-                                                                                            //
-                                                                                            $modify_assigned_date = get_document_action_date($assigned_document_data, "assigned");
-                                                                                            //
-                                                                                            if ($assigned_document_data["document_type"] == "uploaded" ) {
-                                                                                                $assign_links = getUploadedDocumentURL($assigned_document_data["document_s3_name"]);
-                                                                                            } else {
-                                                                                                $body = $assigned_document_data['document_description'];
-                                                                                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
-                                                                                                $assign_links = getGeneratedDocumentURL($assigned_document_data, "uncompleted", $isAuthorized);
-                                                                                            }
-                                                                                            //
-                                                                                            $print_original_url = $assign_links["print_url"];
-                                                                                            $download_original_url = $assign_links["download_url"];
-                                                                                            //
-                                                                                            if ($document_status == 'Completed') {
-                                                                                                $font_color = "color:#81b431;";
-                                                                                                $document_show_status = strtoupper($document_status);
-                                                                                                $document_btn_name = "Re-Initiate Document";
-                                                                                                $modify_completed_date = get_document_action_date($assigned_document_data, "completed");
-                                                                                                //
-                                                                                                if ($assigned_document_data["document_type"] == "uploaded" ) {
-                                                                                                    $completed_links = getUploadedDocumentURL($assigned_document_data["uploaded_file"]);
-                                                                                                } else {
-                                                                                                    $body = $assigned_document_data['document_description'];
-                                                                                                    $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
-                                                                                                    $completed_links = getGeneratedDocumentURL($assigned_document_data, "completed", $isAuthorized);
-                                                                                                }
-                                                                                                //
-                                                                                                $print_completed_url = $completed_links["print_url"];
-                                                                                                $download_completed_url = $completed_links["download_url"];
-                                                                                            } else {
-                                                                                                $font_color = "color:#fd7a2a;";
-                                                                                                $document_show_status = strtoupper('Started');
-                                                                                                $document_btn_name = "Complete Document";
-                                                                                            } 
+                                                                                        if ($assigned_document_data["document_type"] == "uploaded") {
+                                                                                            $completed_links = getUploadedDocumentURL($assigned_document_data["uploaded_file"]);
                                                                                         } else {
-                                                                                            $font_color = "color:#3554dc;";
-                                                                                            $document_show_status = "Not Initiated";
-                                                                                            $document_btn_name = "Initiate Document";
-                                                                                            //
-                                                                                            if ($document["document_type"] == "uploaded" ) {
-                                                                                                $links = getUploadedDocumentURL($document["uploaded_document_s3_name"]);
-                                                                                            } else {
-                                                                                                $body = $document['document_description'];
-                                                                                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
-                                                                                                $links = getGeneratedDocumentURL($document, "company", $isAuthorized);
-                                                                                            }
-                                                                                            //
-                                                                                            $print_original_url = $links["print_url"];
-                                                                                            $download_original_url = $links["download_url"];
+                                                                                            $body = $assigned_document_data['document_description'];
+                                                                                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+                                                                                            $completed_links = getGeneratedDocumentURL($assigned_document_data, "completed", $isAuthorized);
                                                                                         }
+                                                                                        //
+                                                                                        $print_completed_url = $completed_links["print_url"];
+                                                                                        $download_completed_url = $completed_links["download_url"];
+                                                                                    } else {
+                                                                                        $font_color = "color:#fd7a2a;";
+                                                                                        $document_show_status = strtoupper('Started');
+                                                                                        $document_btn_name = "Complete Document";
+                                                                                    }
+                                                                                } else {
+                                                                                    $font_color = "color:#3554dc;";
+                                                                                    $document_show_status = "Not Initiated";
+                                                                                    $document_btn_name = "Initiate Document";
+                                                                                    //
+                                                                                    if ($document["document_type"] == "uploaded") {
+                                                                                        $links = getUploadedDocumentURL($document["uploaded_document_s3_name"]);
+                                                                                    } else {
+                                                                                        $body = $document['document_description'];
+                                                                                        $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $body);
+                                                                                        $links = getGeneratedDocumentURL($document, "company", $isAuthorized);
+                                                                                    }
+                                                                                    //
+                                                                                    $print_original_url = $links["print_url"];
+                                                                                    $download_original_url = $links["download_url"];
+                                                                                }
 
-                                                                                    ?>
-                                                                                    <tr>
-                                                                                        <td class="col-lg-3">
-                                                                                            <?php
-                                                                                                echo $document['document_title'];
-                                                                                            ?>
-                                                                                        </td>
-                                                                                        <td class="col-lg-1" style="<?php echo $font_color;?>">
-                                                                                            <b>
-                                                                                                <?php
-                                                                                                    echo $document_show_status . "<br>";
-                                                                                                ?> 
-                                                                                            </b>
-                                                                                        </td>
-                                                                                        <td class="col-lg-2">
-                                                                                            <?php 
-                                                                                                echo $modify_assigned_date;
-                                                                                            ?>
-                                                                                        </td>
-                                                                                        <td class="col-lg-2">
-                                                                                            <?php
-                                                                                                echo $modify_completed_date; 
-                                                                                            ?>
-                                                                                        </td>
-                                                                                        <td class="col-lg-4">
-                                                                                            <div class="col-lg-3" style="padding-left: 0px;padding-right: 5px;">
-                                                                                                <a 
-                                                                                                    class="btn btn-sm btn-info btn-orange btn-block csRadius5"
-                                                                                                    target="_blank" 
-                                                                                                    href="<?= $print_original_url; ?>" 
-                                                                                                ><i class="fa fa-print" aria-hidden="true"></i> Print</a>
-                                                                                                <?php if (!empty($print_completed_url)) { ?>
-                                                                                                    <a 
-                                                                                                        class="btn btn-sm btn-info btn-orange btn-block csRadius5"
-                                                                                                        target="_blank" 
-                                                                                                        href="<?= $print_completed_url; ?>" 
-                                                                                                    ><i class="fa fa-print" aria-hidden="true"></i> Print <br>Submitted</a>
-                                                                                                <?php } ?>
-                                                                                            </div>
-                                                                                            <div class="col-lg-4" style="padding-left: 0px; padding-right: 5px;">
-                                                                                                <a 
-                                                                                                    class="btn btn-black btn-sm btn-block csRadius5"
-                                                                                                    target="_blank" 
-                                                                                                    href="<?= $download_original_url; ?>" 
-                                                                                                ><i class="fa fa-download" aria-hidden="true"></i> Download</a>
-                                                                                                <?php if (!empty($download_completed_url)) { ?>
-                                                                                                    <a 
-                                                                                                        class="btn btn-black btn-sm btn-block csRadius5"
-                                                                                                        target="_blank" 
-                                                                                                        href="<?= $download_completed_url; ?>" 
-                                                                                                    ><i class="fa fa-download" aria-hidden="true"></i> Download <br>Submitted</a>
-                                                                                                <?php } ?>    
-                                                                                            </div>
-                                                                                            <div class="col-lg-5" style="padding-left: 0px; padding-right: 0px;">
-                                                                                                <button 
-                                                                                                    class="btn btn-sm btn-block <?php echo $document_btn_name == "Re-Initiate Document" ? "btn-warning" : "btn-success";?> completedocument csRadius5" 
-                                                                                                    document_sid="<?= $document['sid']; ?>" document_status="<? if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) { echo $document_status; }; ?>" document_assigned_sid="<?= $assigned_document_data['sid'] ?>">
-                                                                                                    <?php echo $document_btn_name; ?>
-                                                                                                </button>
-                                                                                            </div>
-                                                                                        </td>
-
-                                                                                    </tr>
-
-                                                                                <?php } ?>
-                                                                            <?php } else { ?>
+                                                                                ?>
                                                                                 <tr>
-                                                                                    <td colspan="7" class="col-lg-12 text-center"><b class="js-error">No Document(s) Found!</b></td>
+                                                                                    <td class="col-lg-3">
+                                                                                        <?php
+                                                                                        echo $document['document_title'];
+                                                                                        ?>
+                                                                                    </td>
+                                                                                    <td class="col-lg-1" style="<?php echo $font_color; ?>">
+                                                                                        <b>
+                                                                                            <?php
+                                                                                            echo $document_show_status . "<br>";
+                                                                                            ?>
+                                                                                        </b>
+                                                                                    </td>
+                                                                                    <td class="col-lg-2">
+                                                                                        <?php
+                                                                                        echo $modify_assigned_date;
+                                                                                        ?>
+                                                                                    </td>
+                                                                                    <td class="col-lg-2">
+                                                                                        <?php
+                                                                                        echo $modify_completed_date;
+                                                                                        ?>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <a class="btn btn-sm btn-info btn-orange  csRadius5 csF16" target="_blank" href="<?= $print_original_url; ?>"><i class="fa fa-print csF16" aria-hidden="true"></i> Print</a>
+                                                                                        <?php if (!empty($print_completed_url)) { ?>
+                                                                                            <a class="btn btn-sm btn-info btn-orange  csRadius5 csF16" target="_blank" href="<?= $print_completed_url; ?>"><i class="fa fa-print csF16" aria-hidden="true"></i> Print <br>Submitted</a>
+                                                                                        <?php } ?>
+                                                                                        <a class="btn btn-black btn-sm  csRadius5 csF16" target="_blank" href="<?= $download_original_url; ?>"><i class="fa fa-download csF16" aria-hidden="true"></i> Download</a>
+                                                                                        <?php if (!empty($download_completed_url)) { ?>
+                                                                                            <a class="btn btn-black btn-sm  csRadius5 csF16" target="_blank" href="<?= $download_completed_url; ?>"><i class="fa fa-download csF16" aria-hidden="true"></i> Download <br>Submitted</a>
+                                                                                        <?php } ?>
+                                                                                        <a class="btn btn-sm  csF16 <?php echo $document_btn_name == "Re-Initiate Document" ? "btn-warning" : "btn-success"; ?> completedocument csRadius5" document_sid="<?= $document['sid']; ?>" document_status="<? if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) {
+                                                                                                                                                                                                                                                                                                                echo $document_status;
+                                                                                                                                                                                                                                                                                                            }; ?>" document_assigned_sid="<?= $assigned_document_data['sid'] ?>">
+                                                                                            <?php echo $document_btn_name; ?>
+                                                                                                                                                                                                                                                                                                        </a>
+                                                                                    </td>
+
                                                                                 </tr>
+
                                                                             <?php } ?>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
+                                                                        <?php } else { ?>
+                                                                            <tr>
+                                                                                <td colspan="7" class="col-lg-12 text-center"><b class="js-error">No Document(s) Found!</b></td>
+                                                                            </tr>
+                                                                        <?php } ?>
+                                                                    </tbody>
+                                                                </table>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div> 
-                                            <?php } ?>
-                                        <?php //} ?>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                        <?php //} 
+                                        ?>
                                     <?php } ?>
                                 <?php } else { ?>
                                     <td colspan="7" class="col-lg-12 text-center"><b class="js-error">No Document(s) Found!</b></td>
@@ -253,7 +231,7 @@
             </div>
         </div>
     </div>
-</div>    
+</div>
 
 <!-- Loader Start -->
 <div id="document_loader" class="text-center my_loader" style="display: none; z-index: 1234;">
