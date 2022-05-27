@@ -5,13 +5,13 @@
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="btn-panel">
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo base_url('incident_reporting_system')?>" class="btn btn-info btn-block mb-2"><i class="fa fa-angle-left"> </i> Incident Reporting</a>
+                        <a href="<?php echo base_url('incident_reporting_system') ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-angle-left"> </i> Incident Reporting</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo base_url('incident_reporting_system/list_incidents')?>" class="btn btn-info btn-block mb-2"><i class="fa fa-heartbeat"></i> Reported Incidents</a>
+                        <a href="<?php echo base_url('incident_reporting_system/list_incidents') ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-heartbeat"></i> Reported Incidents</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo base_url('incident_reporting_system/assigned_incidents'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-stethoscope "></i> Assigned  Incidents</a></a>
+                        <a href="<?php echo base_url('incident_reporting_system/assigned_incidents'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-stethoscope "></i> Assigned Incidents</a></a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                         <a href="<?php echo base_url('incident_reporting_system/safety_check_list'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-book"></i> Safety Check List </a>
@@ -24,7 +24,7 @@
                         <?php echo $title; ?>
                         <span class="pull-right">
                             <b>
-                                <?php echo '( '. $incident_name .' )'; ?>
+                                <?php echo '( ' . $incident_name . ' )'; ?>
                             </b>
                         </span>
                     </h2>
@@ -33,22 +33,26 @@
                 <div class="table-responsive table-outer">
                     <div class="table-wrp data-table">
                         <table class="table table-bordered table-hover table-stripped" id="reference_network_table">
+                            <?php if ($on_behalf_employee_sid !== $access_employer_sid && $on_behalf_employee_sid != 0) { ?>
+                                <p class="text-danger" style="text-align: right;"><b>Created by: <?= remakeEmployeeName($on_behalf_employee[0]); ?></b></p>
+                            <?php } ?>
+
                             <b>Report Type</b>
                             <tbody>
-                            <tr>
-                                <td><?= ucfirst($incident[0]['report_type']); ?></td>
-                            </tr>
+                                <tr>
+                                    <td><?= ucfirst($incident[0]['report_type']); ?></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <!-- Question/Answer Section Start -->
-                <?php foreach($incident as $inc) { ?>
+                <?php foreach ($incident as $inc) { ?>
                     <div class="table-responsive table-outer">
                         <div class="table-wrp data-table">
                             <table class="table table-bordered table-hover table-stripped" id="reference_network_table">
-                                <b><?php echo $inc['question'];?></b>
+                                <b><?php echo $inc['question']; ?></b>
                                 <tbody>
                                     <tr>
                                         <td><?php
@@ -103,12 +107,12 @@
                                                             <td class="text-center"><?php echo $witness['witness_title']; ?></td>
                                                             <td class="text-center">
                                                                 <?php
-                                                                    $can_provide = $witness['can_provide_info'];
-                                                                    if ($can_provide == 'yes') {
-                                                                        echo '<b>YES</b>';
-                                                                    } else if ($can_provide == 'no') {
-                                                                        echo '<b>NO</b>';
-                                                                    }
+                                                                $can_provide = $witness['can_provide_info'];
+                                                                if ($can_provide == 'yes') {
+                                                                    echo '<b>YES</b>';
+                                                                } else if ($can_provide == 'no') {
+                                                                    echo '<b>NO</b>';
+                                                                }
                                                                 ?>
                                                             </td>
                                                         </tr>
@@ -199,7 +203,7 @@
                     </div>
                 <?php } ?> -->
 
-                <!-- <?php if(!empty($videos) || !empty($videos_archived)) { ?>
+                <!-- <?php if (!empty($videos) || !empty($videos_archived)) { ?>
                     <div class="table-responsive table-outer">
                         <div class="panel panel-blue">
                             <div class="panel-heading incident-panal-heading">
@@ -211,14 +215,14 @@
                                         <div class="card-header" id="hw1">
                                             <h2 class="mb-0" style="background-color: #eee;">
                                                 <button class="btn btn-link incident-panal-links" type="button" data-toggle="collapse" data-target="#activeVideo" aria-expanded="true" aria-controls="activeVideo">
-                                                    <?php 
-                                                        $act_media_count = sizeof($videos);
-                                                        $act_media_text = '';
-                                                        if ($act_media_count > 1) {
-                                                            $act_media_text = '( '. $act_media_count . ' Items )';
-                                                        } else {
-                                                            $act_media_text = '( '. $act_media_count . ' Item )';
-                                                        }
+                                                    <?php
+                                                    $act_media_count = sizeof($videos);
+                                                    $act_media_text = '';
+                                                    if ($act_media_count > 1) {
+                                                        $act_media_text = '( ' . $act_media_count . ' Items )';
+                                                    } else {
+                                                        $act_media_text = '( ' . $act_media_count . ' Item )';
+                                                    }
                                                     ?>
                                                     Active Videos <?php echo $act_media_text; ?>
                                                 </button>
@@ -232,30 +236,30 @@
                                                     <?php foreach ($videos as $video) { ?>
                                                         <article class="listing-article">
                                                             <figure>
-                                                                <?php if($video['video_type'] == 'youtube') { ?>
-                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' .$id; ?>">
+                                                                <?php if ($video['video_type'] == 'youtube') { ?>
+                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' . $id; ?>">
                                                                         <img src="https://img.youtube.com/vi/<?php echo $video['video_url']; ?>/hqdefault.jpg"/>
                                                                     </a>
-                                                                <?php } else if($video['video_type'] == 'vimeo') {
+                                                                <?php } else if ($video['video_type'] == 'vimeo') {
                                                                     $thumbnail_image = vimeo_video_data($video['video_url']); ?>
-                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' .$id; ?>"><img src="<?php echo $thumbnail_image;?>"/></a>
+                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' . $id; ?>"><img src="<?php echo $thumbnail_image; ?>"/></a>
                                                                 <?php } else if ($video['video_type'] == 'upload_video') { ?>
-                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' .$id; ?>">
+                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' . $id; ?>">
                                                                         <video width="214" height="145">
-                                                                            <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/'.$video['video_url']); ?>" type="video/mp4">
+                                                                            <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/' . $video['video_url']); ?>" type="video/mp4">
                                                                         </video>
                                                                     </a>
                                                                 <?php } else if ($video['video_type'] == 'upload_audio') { ?>
-                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' .$id; ?>">
+                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' . $id; ?>">
                                                                         <img src="<?php echo base_url('assets/images/incident_audio.png') ?>"/>
                                                                     </a>
                                                                 <?php } ?>
                                                             </figure>
                                                             <div class="text">
                                                                 <h3>
-                                                                    <?php 
-                                                                        $title = !empty($video['video_title']) ? $video['video_title'] : 'No Title';
-                                                                        echo 'Title : '. $title;
+                                                                    <?php
+                                                                    $title = !empty($video['video_title']) ? $video['video_title'] : 'No Title';
+                                                                    echo 'Title : ' . $title;
                                                                     ?>
                                                                 </h3>
                                                                 <div class="post-options">
@@ -263,16 +267,16 @@
                                                                         <li><?php echo 'Uploaded Date : ' . reset_datetime(array('datetime' => $video['uploaded_date'], '_this' => $this)); ?></li>
                                                                     </ul>
                                                                     <span class="post-author">
-                                                                        <?php 
-                                                                            $video_source = $video['video_type'];
-                                                                            $media_url = '';
-                                                                            if ($video_source == 'upload_video') {
-                                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                            } else if ($video_source == 'upload_audio') {
-                                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                            } else {
-                                                                                $media_url = $video['video_url'];
-                                                                            }
+                                                                        <?php
+                                                                        $video_source = $video['video_type'];
+                                                                        $media_url = '';
+                                                                        if ($video_source == 'upload_video') {
+                                                                            $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
+                                                                        } else if ($video_source == 'upload_audio') {
+                                                                            $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
+                                                                        } else {
+                                                                            $media_url = $video['video_url'];
+                                                                        }
                                                                         ?>
 
                                                                         <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="btn btn-block btn-info js-view-video">Watch Video</a>
@@ -280,8 +284,8 @@
                                                                 </div>
                                                                 <div class="full-width announcement-des" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                                                                     <?php
-                                                                        $user_info = db_get_employee_profile($video['uploaded_by']);
-                                                                        echo 'Uploaded By : ' . strtoupper($user_info[0]['first_name'].' '.$user_info[0]['last_name']);
+                                                                    $user_info = db_get_employee_profile($video['uploaded_by']);
+                                                                    echo 'Uploaded By : ' . strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
                                                                     ?>
                                                                 </div>
                                                             </div>
@@ -296,14 +300,14 @@
                                         <div class="card-header" id="hw2">
                                             <h2 class="mb-0" style="background-color: #eee;">
                                                 <button class="btn btn-link incident-panal-links" type="button" data-toggle="collapse" data-target="#archiveVideo" aria-expanded="true" aria-controls="archiveVideo">
-                                                    <?php 
-                                                        $Archived_media_count = sizeof($videos_archived);
-                                                        $Archived_media_text = '';
-                                                        if ($Archived_media_count > 1) {
-                                                            $Archived_media_text = '( '. $Archived_media_count . ' Items )';
-                                                        } else {
-                                                            $Archived_media_text = '( '. $Archived_media_count . ' Item )';
-                                                        }
+                                                    <?php
+                                                    $Archived_media_count = sizeof($videos_archived);
+                                                    $Archived_media_text = '';
+                                                    if ($Archived_media_count > 1) {
+                                                        $Archived_media_text = '( ' . $Archived_media_count . ' Items )';
+                                                    } else {
+                                                        $Archived_media_text = '( ' . $Archived_media_count . ' Item )';
+                                                    }
                                                     ?>
                                                     Archived Videos <?php echo $Archived_media_text; ?>
                                                 </button>
@@ -317,30 +321,30 @@
                                                     <?php foreach ($videos_archived as $video) { ?>
                                                         <article class="listing-article">
                                                             <figure>
-                                                                <?php if($video['video_type'] == 'youtube') { ?>
-                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' .$id; ?>">
+                                                                <?php if ($video['video_type'] == 'youtube') { ?>
+                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' . $id; ?>">
                                                                         <img src="https://img.youtube.com/vi/<?php echo $video['video_url']; ?>/hqdefault.jpg"/>
                                                                     </a>
-                                                                <?php } else if($video['video_type'] == 'vimeo') {
+                                                                <?php } else if ($video['video_type'] == 'vimeo') {
                                                                     $thumbnail_image = vimeo_video_data($video['video_url']); ?>
-                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' .$id; ?>"><img src="<?php echo $thumbnail_image;?>"/></a>
+                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' . $id; ?>"><img src="<?php echo $thumbnail_image; ?>"/></a>
                                                                 <?php } else if ($video['video_type'] == 'upload_video') { ?>
-                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' .$id; ?>">
+                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' . $id; ?>">
                                                                         <video width="214" height="145">
-                                                                            <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/'.$video['video_url']); ?>" type="video/mp4">
+                                                                            <source src="<?php echo base_url('assets/uploaded_videos/incident_videos/' . $video['video_url']); ?>" type="video/mp4">
                                                                         </video>
                                                                     </a>
                                                                 <?php } else if ($video['video_type'] == 'upload_audio') { ?>
-                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' .$id; ?>">
+                                                                    <a href="<?php echo $watch_video . '/' . $video['sid'] . '/1/' . $id; ?>">
                                                                         <img src="<?php echo base_url('assets/images/incident_audio.png') ?>"/>
                                                                     </a>
                                                                 <?php } ?>
                                                             </figure>
                                                             <div class="text">
                                                                 <h3>
-                                                                    <?php 
-                                                                        $title = !empty($video['video_title']) ? $video['video_title'] : 'No Title';
-                                                                        echo 'Title : '. $title;
+                                                                    <?php
+                                                                    $title = !empty($video['video_title']) ? $video['video_title'] : 'No Title';
+                                                                    echo 'Title : ' . $title;
                                                                     ?>
                                                                 </h3>
                                                                 <div class="post-options">
@@ -348,16 +352,16 @@
                                                                         <li><?php echo 'Uploaded Date : ' . reset_datetime(array('datetime' => $video['uploaded_date'], '_this' => $this)); ?></li>
                                                                     </ul>
                                                                     <span class="post-author">
-                                                                        <?php 
-                                                                            $video_source = $video['video_type'];
-                                                                            $media_url = '';
-                                                                            if ($video_source == 'upload_video') {
-                                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                            } else if ($video_source == 'upload_audio') {
-                                                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
-                                                                            } else {
-                                                                                $media_url = $video['video_url'];
-                                                                            }
+                                                                        <?php
+                                                                        $video_source = $video['video_type'];
+                                                                        $media_url = '';
+                                                                        if ($video_source == 'upload_video') {
+                                                                            $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
+                                                                        } else if ($video_source == 'upload_audio') {
+                                                                            $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $video['video_url'];
+                                                                        } else {
+                                                                            $media_url = $video['video_url'];
+                                                                        }
                                                                         ?>
 
                                                                         <a href="javascript:;" video-title="<?php echo $video['video_title']; ?>" video-source="<?php echo $video_source; ?>" video-url="<?php echo $media_url; ?>" class="btn btn-block btn-info js-view-video">Watch Video</a>
@@ -365,8 +369,8 @@
                                                                 </div>
                                                                 <div class="full-width announcement-des" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
                                                                     <?php
-                                                                        $user_info = db_get_employee_profile($video['uploaded_by']);
-                                                                        echo 'Uploaded By : ' . strtoupper($user_info[0]['first_name'].' '.$user_info[0]['last_name']);
+                                                                    $user_info = db_get_employee_profile($video['uploaded_by']);
+                                                                    echo 'Uploaded By : ' . strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
                                                                     ?>
                                                                 </div>
                                                             </div>
@@ -433,14 +437,14 @@
                                         <div class="card-header" id="headingOne">
                                             <h2 class="mb-0" style="background-color: #eee;">
                                                 <button class="btn btn-link incident-panal-links" type="button" data-toggle="collapse" data-target="#activeDocumentsTab" aria-expanded="true" aria-controls="activeDocumentsTab">
-                                                    <?php 
-                                                        $act_doc_count = sizeof($get_incident_document);
-                                                        $act_doc_text = '';
-                                                        if ($act_doc_count > 1) {
-                                                            $act_doc_text = '( '. $act_doc_count . ' Items )';
-                                                        } else {
-                                                            $act_doc_text = '( '. $act_doc_count . ' Item )';
-                                                        }
+                                                    <?php
+                                                    $act_doc_count = sizeof($get_incident_document);
+                                                    $act_doc_text = '';
+                                                    if ($act_doc_count > 1) {
+                                                        $act_doc_text = '( ' . $act_doc_count . ' Items )';
+                                                    } else {
+                                                        $act_doc_text = '( ' . $act_doc_count . ' Item )';
+                                                    }
                                                     ?>
                                                     Active Documents  <?php echo $act_doc_text; ?>
                                                 </button>
@@ -467,20 +471,20 @@
                                                                                 <?php echo $document['document_title']; ?>     
                                                                             </td>
                                                                             <td class="text-center">
-                                                                                <?php 
-                                                                                    $user_info = db_get_employee_profile($document['employer_id']);
-                                                                                    echo strtoupper($user_info[0]['first_name'].' '.$user_info[0]['last_name']);
+                                                                                <?php
+                                                                                $user_info = db_get_employee_profile($document['employer_id']);
+                                                                                echo strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
                                                                                 ?>
                                                                                 <br>
                                                                                 <?php
-                                                                                    echo '<b>Uploaded Date : </b>'.reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this));
+                                                                                echo '<b>Uploaded Date : </b>' . reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this));
                                                                                 ?>
                                                                             </td>
                                                                             <td class="text-center">
                                                                                 <?php
-                                                                                    $download_url = $document['file_code'];
-                                                                                    $file_name = explode(".",$download_url);
-                                                                                    $document_extension = $file_name[1];
+                                                                                $download_url = $document['file_code'];
+                                                                                $file_name = explode(".", $download_url);
+                                                                                $document_extension = $file_name[1];
                                                                                 ?>
                                                                                 <a href="javascript:;" class="btn btn-info btn-block" onclick="view_incident_doc(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" data-preview-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-file"></i> View</a>
                                                                             </td>
@@ -497,14 +501,14 @@
                                             <div class="card-header" id="headingTwo">
                                                 <h2 class="mb-0" style="background-color: #eee;">
                                                     <button class="btn btn-link incident-panal-links" type="button" data-toggle="collapse" data-target="#archivedDocumentsTab" aria-expanded="true" aria-controls="archivedDocumentsTab">
-                                                        <?php 
-                                                            $archived_doc_count = sizeof($get_incident_document_archived);
-                                                            $archived_doc_text = '';
-                                                            if ($archived_doc_count > 1) {
-                                                                $archived_doc_text = '( '. $archived_doc_count . ' Items )';
-                                                            } else {
-                                                                $archived_doc_text = '( '. $archived_doc_count . ' Item )';
-                                                            }
+                                                        <?php
+                                                        $archived_doc_count = sizeof($get_incident_document_archived);
+                                                        $archived_doc_text = '';
+                                                        if ($archived_doc_count > 1) {
+                                                            $archived_doc_text = '( ' . $archived_doc_count . ' Items )';
+                                                        } else {
+                                                            $archived_doc_text = '( ' . $archived_doc_count . ' Item )';
+                                                        }
                                                         ?>
                                                         Archived Documents <?php echo $archived_doc_text; ?>
                                                     </button>
@@ -531,20 +535,20 @@
                                                                                     <?php echo $document['document_title']; ?>     
                                                                                 </td>
                                                                                 <td class="text-center">
-                                                                                    <?php 
-                                                                                        $user_info = db_get_employee_profile($document['employer_id']);
-                                                                                        echo strtoupper($user_info[0]['first_name'].' '.$user_info[0]['last_name']);
+                                                                                    <?php
+                                                                                    $user_info = db_get_employee_profile($document['employer_id']);
+                                                                                    echo strtoupper($user_info[0]['first_name'] . ' ' . $user_info[0]['last_name']);
                                                                                     ?>
                                                                                     <br>
                                                                                     <?php
-                                                                                        echo '<b>Uploaded Date : </b>'.reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this));
+                                                                                    echo '<b>Uploaded Date : </b>' . reset_datetime(array('datetime' => $document['uploaded_date'], '_this' => $this));
                                                                                     ?>
                                                                                 </td>
                                                                                 <td class="text-center">
                                                                                     <?php
-                                                                                        $download_url = $document['file_code'];
-                                                                                        $file_name = explode(".",$download_url);
-                                                                                        $document_extension = $file_name[1];
+                                                                                    $download_url = $document['file_code'];
+                                                                                    $file_name = explode(".", $download_url);
+                                                                                    $document_extension = $file_name[1];
                                                                                     ?>
                                                                                     <a href="javascript:;" class="btn btn-info btn-block" onclick="view_incident_doc(this);" data-preview-url="<?= AWS_S3_BUCKET_URL . $download_url; ?>" data-preview-ext="<?php echo $document_extension; ?>" data-title="<?php echo $document['document_title']; ?>"><i class="fa fa-file"></i> View</a>
                                                                                 </td>
@@ -611,8 +615,8 @@
                                                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                                                         <a href="javascript:;" class="btn btn-info btn-block show_manual_attachment">Add Manual Attachment</a>
                                                                                     </div>
-                                                                                </div> 
-                                                                                
+                                                                                </div>
+
                                                                                 <div class="table-responsive table-outer full-width" style="margin-top: 20px; display: none;" id="email_attachment_list">
                                                                                     <div class="table-wrp data-table">
                                                                                         <table class="table table-bordered table-hover table-stripped">
@@ -625,13 +629,13 @@
                                                                                                 </tr>
                                                                                             </thead>
                                                                                             <tbody id="attachment_listing_data">
-                                                                                                
+
                                                                                             </tbody>
                                                                                         </table>
                                                                                     </div>
-                                                                                </div> 
-                                                                                <div style="display: none;" id="email_attachment_files">  
-                                                                                </div>  
+                                                                                </div>
+                                                                                <div style="display: none;" id="email_attachment_files">
+                                                                                </div>
                                                                             </td>
                                                                         </tr>
                                                                         <tr>
@@ -671,24 +675,23 @@
                                     <div class="email">
                                         <?php foreach ($incident_emails as $key => $incident_email) { ?>
                                             <?php
-                                                $mystring = $incident_email['name'];
-                                                $first = strtok($mystring, '(');
+                                            $mystring = $incident_email['name'];
+                                            $first = strtok($mystring, '(');
 
-                                                $colspan_id = str_replace(' ', '_', $first);
+                                            $colspan_id = str_replace(' ', '_', $first);
                                             ?>
                                             <div class="accordion-colored-header header-bg-gray">
                                                 <div class="panel-group" id="onboarding-configuration-accordion">
                                                     <div class="panel panel-default">
                                                         <div class="panel-heading">
                                                             <h4 class="panel-title">
-                                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion"
-                                                                   href="#<?php echo $colspan_id; ?>">
+                                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion" href="#<?php echo $colspan_id; ?>">
                                                                     <span class="glyphicon glyphicon-plus js-main-gly"></span>
-                                                                    <span> (<?php echo count($incident_email['emails']);?>)&nbsp;</span>
+                                                                    <span> (<?php echo count($incident_email['emails']); ?>)&nbsp;</span>
                                                                     <?php
-                                                                        echo $incident_email['name'];
-                                                                        $email_sender_sid = $incident_email['sender_sid'];
-                                                                        $result_one = is_user_have_unread_message($current_user, $email_sender_sid, $id);
+                                                                    echo $incident_email['name'];
+                                                                    $email_sender_sid = $incident_email['sender_sid'];
+                                                                    $result_one = is_user_have_unread_message($current_user, $email_sender_sid, $id);
                                                                     ?>
 
                                                                     <?php if ($result_one > 0) { ?>
@@ -707,21 +710,19 @@
                                                                                     <div class="panel-heading">
                                                                                         <h4 class="panel-title">
                                                                                             <?php
-                                                                                                $email_type = '';
-                                                                                                $read_function = '';
-                                                                                                if ($email['sender_sid'] == $current_user) {
-                                                                                                    $email_type = 'Sent';
-
-                                                                                                } else {
-                                                                                                    $email_type = 'Received';
-                                                                                                    if ($email['is_read'] == 0) {
-                                                                                                        $read_function = 'onclick="mark_read('.$email['sid'].')"';
-                                                                                                    }
+                                                                                            $email_type = '';
+                                                                                            $read_function = '';
+                                                                                            if ($email['sender_sid'] == $current_user) {
+                                                                                                $email_type = 'Sent';
+                                                                                            } else {
+                                                                                                $email_type = 'Received';
+                                                                                                if ($email['is_read'] == 0) {
+                                                                                                    $read_function = 'onclick="mark_read(' . $email['sid'] . ')"';
                                                                                                 }
+                                                                                            }
                                                                                             ?>
-                                                                                            <a data-toggle="collapse" data-parent="#onboarding-configuration-accordions"
-                                                                                               href="#<?php echo $colspan_id.'_'.$key; ?>" ><span class="glyphicon glyphicon-plus js-child-gly" <?php echo $read_function; ?>></span>
-                                                                                                <?php echo $email['subject'].' ( '.my_date_format($email['send_date']).' ) ( '.$email_type.' )'; ?>
+                                                                                            <a data-toggle="collapse" data-parent="#onboarding-configuration-accordions" href="#<?php echo $colspan_id . '_' . $key; ?>"><span class="glyphicon glyphicon-plus js-child-gly" <?php echo $read_function; ?>></span>
+                                                                                                <?php echo $email['subject'] . ' ( ' . my_date_format($email['send_date']) . ' ) ( ' . $email_type . ' )'; ?>
 
                                                                                                 <?php if ($email['is_read'] == 0 && $email_type == 'Received') { ?>
                                                                                                     <img src="<?php echo base_url() ?>assets/images/new_msg.gif" id="email_read_<?php echo $email['sid']; ?>">
@@ -729,7 +730,7 @@
                                                                                             </a>
                                                                                         </h4>
                                                                                     </div>
-                                                                                    <div id="<?php echo $colspan_id.'_'.$key; ?>" class="panel-collapse collapse js-child-coll">
+                                                                                    <div id="<?php echo $colspan_id . '_' . $key; ?>" class="panel-collapse collapse js-child-coll">
                                                                                         <div class="panel-body">
                                                                                             <table class="table table-bordered table-hover table-stripped">
                                                                                                 <tbody>
@@ -741,36 +742,36 @@
                                                                                                             <td>
                                                                                                                 <?php if ($email['receiver_sid'] == $current_user) { ?>
                                                                                                                     <?php
-                                                                                                                        $sender_sid = $email['sender_sid'];
-                                                                                                                        $sender_email = "";
-                                                                                                                        $sender_subject = $email["subject"];
-                                                                                                                        if (str_replace('_wid', '', $sender_sid) != $sender_sid) {
-                                                                                                                            $witness_id = str_replace('_wid', '', $sender_sid);
-                                                                                                                            $sender_email = get_witness_email_by_id($witness_id);
-                                                                                                                        } else {
-                                                                                                                            $sender_info = db_get_employee_profile($sender_sid);
-                                                                                                                            $sender_email = $sender_info[0]['email'];
-                                                                                                                        }
+                                                                                                                    $sender_sid = $email['sender_sid'];
+                                                                                                                    $sender_email = "";
+                                                                                                                    $sender_subject = $email["subject"];
+                                                                                                                    if (str_replace('_wid', '', $sender_sid) != $sender_sid) {
+                                                                                                                        $witness_id = str_replace('_wid', '', $sender_sid);
+                                                                                                                        $sender_email = get_witness_email_by_id($witness_id);
+                                                                                                                    } else {
+                                                                                                                        $sender_info = db_get_employee_profile($sender_sid);
+                                                                                                                        $sender_email = $sender_info[0]['email'];
+                                                                                                                    }
                                                                                                                     ?>
                                                                                                                     <a href="javascript:;" class="btn-blockpull-right print-incident modify-comment-btn" data-title="<?php echo 'reply'; ?>" data-sid="<?php echo $sender_sid; ?>" data-email="<?php echo $sender_email; ?>" data-subject="<?php echo $sender_subject; ?>" onclick="send_email(this);">
-                                                                                                                        <i class="fa fa-reply"></i> 
+                                                                                                                        <i class="fa fa-reply"></i>
                                                                                                                         Reply Email
                                                                                                                     </a>
                                                                                                                 <?php } else { ?>
                                                                                                                     <?php
-                                                                                                                        $receiver_sid = $email['receiver_sid'];;
-                                                                                                                        $receiver_email = "";
-                                                                                                                        $receiver_subject = $email["subject"];
-                                                                                                                        if (str_replace('_wid', '', $receiver_sid) != $receiver_sid) {
-                                                                                                                            $witness_id = str_replace('_wid', '', $receiver_sid);
-                                                                                                                            $receiver_email = get_witness_email_by_id($witness_id);
-                                                                                                                        } else {
-                                                                                                                            $receiver_info = db_get_employee_profile($receiver_sid);
-                                                                                                                            $receiver_email = $receiver_info[0]['email'];
-                                                                                                                        }
+                                                                                                                    $receiver_sid = $email['receiver_sid'];;
+                                                                                                                    $receiver_email = "";
+                                                                                                                    $receiver_subject = $email["subject"];
+                                                                                                                    if (str_replace('_wid', '', $receiver_sid) != $receiver_sid) {
+                                                                                                                        $witness_id = str_replace('_wid', '', $receiver_sid);
+                                                                                                                        $receiver_email = get_witness_email_by_id($witness_id);
+                                                                                                                    } else {
+                                                                                                                        $receiver_info = db_get_employee_profile($receiver_sid);
+                                                                                                                        $receiver_email = $receiver_info[0]['email'];
+                                                                                                                    }
                                                                                                                     ?>
                                                                                                                     <a href="javascript:;" class="btn-blockpull-right print-incident modify-comment-btn" data-title="<?php echo 'resend'; ?>" data-sid="<?php echo $receiver_sid; ?>" data-email="<?php echo $receiver_email; ?>" data-subject="<?php echo $receiver_subject; ?>" onclick="send_email(this);"><i class="fa fa-retweet"></i> Resend Email</a>
-                                                                                                                <?php } ?>    
+                                                                                                                <?php } ?>
                                                                                                             </td>
                                                                                                         </tr>
                                                                                                     <?php } ?>
@@ -778,16 +779,16 @@
                                                                                                         <td><b>Message To</b></td>
                                                                                                         <td>
                                                                                                             <?php
-                                                                                                                $receiver_sid = $email['receiver_sid'];
-                                                                                                                if (str_replace('_wid', '', $receiver_sid) != $receiver_sid) {
-                                                                                                                    $witness_id = str_replace('_wid', '', $receiver_sid);
-                                                                                                                    $receiver_name = get_witness_name_by_id($witness_id);
-                                                                                                                    echo $receiver_name;
-                                                                                                                } else {
-                                                                                                                    $receiver_info = db_get_employee_profile($receiver_sid);
-                                                                                                                    $receiver_name = $receiver_info[0]['first_name'].' '.$receiver_info[0]['last_name'];
-                                                                                                                    echo $receiver_name;
-                                                                                                                }
+                                                                                                            $receiver_sid = $email['receiver_sid'];
+                                                                                                            if (str_replace('_wid', '', $receiver_sid) != $receiver_sid) {
+                                                                                                                $witness_id = str_replace('_wid', '', $receiver_sid);
+                                                                                                                $receiver_name = get_witness_name_by_id($witness_id);
+                                                                                                                echo $receiver_name;
+                                                                                                            } else {
+                                                                                                                $receiver_info = db_get_employee_profile($receiver_sid);
+                                                                                                                $receiver_name = $receiver_info[0]['first_name'] . ' ' . $receiver_info[0]['last_name'];
+                                                                                                                echo $receiver_name;
+                                                                                                            }
                                                                                                             ?>
                                                                                                         </td>
                                                                                                     </tr>
@@ -795,16 +796,16 @@
                                                                                                         <td><b>Message From</b></td>
                                                                                                         <td>
                                                                                                             <?php
-                                                                                                                $sender_sid = $email['sender_sid'];
-                                                                                                                if (str_replace('_wid', '', $sender_sid) != $sender_sid) {
-                                                                                                                    $witness_id = str_replace('_wid', '', $sender_sid);
-                                                                                                                    $receiver_name = get_witness_name_by_id($witness_id);
-                                                                                                                    echo $receiver_name;
-                                                                                                                } else {
-                                                                                                                    $receiver_info = db_get_employee_profile($sender_sid);
-                                                                                                                    $receiver_name = $receiver_info[0]['first_name'].' '.$receiver_info[0]['last_name'];
-                                                                                                                    echo $receiver_name;
-                                                                                                                }
+                                                                                                            $sender_sid = $email['sender_sid'];
+                                                                                                            if (str_replace('_wid', '', $sender_sid) != $sender_sid) {
+                                                                                                                $witness_id = str_replace('_wid', '', $sender_sid);
+                                                                                                                $receiver_name = get_witness_name_by_id($witness_id);
+                                                                                                                echo $receiver_name;
+                                                                                                            } else {
+                                                                                                                $receiver_info = db_get_employee_profile($sender_sid);
+                                                                                                                $receiver_name = $receiver_info[0]['first_name'] . ' ' . $receiver_info[0]['last_name'];
+                                                                                                                echo $receiver_name;
+                                                                                                            }
                                                                                                             ?>
                                                                                                         </td>
                                                                                                     </tr>
@@ -820,109 +821,108 @@
                                                                                                             <?php echo $email['message_body']; ?>
                                                                                                         </td>
                                                                                                     </tr>
-                                                                                                    <?php 
-                                                                                                        $email_sid = $email['sid']; 
-                                                                                                        $attachments =get_email_attachment($id, $email_sid) ;
+                                                                                                    <?php
+                                                                                                    $email_sid = $email['sid'];
+                                                                                                    $attachments = get_email_attachment($id, $email_sid);
                                                                                                     ?>
                                                                                                     <?php if (!empty($attachments)) { ?>
                                                                                                         <tr>
                                                                                                             <td><b>Attachments</b></td>
                                                                                                             <td>
                                                                                                                 <div class="row">
-                                                                                                                    <?php 
-                                                                                                                        foreach ($attachments as $key => $attach_item) {
-                                                                                                                            
-                                                                                                                            $attach_item_type = $attach_item['attachment_type'];
-                                                                                                                            $item_sid = $attach_item['sid'];
-                                                                                                                            $item_title = $attach_item['item_title'];
-                                                                                                                            $item_source = $attach_item['item_type'];
-                                                                                                                            $item_path = $attach_item['item_path'];
-                                                                                                                            $item_url = '';
+                                                                                                                    <?php
+                                                                                                                    foreach ($attachments as $key => $attach_item) {
 
-                                                                                                                            if ($attach_item_type == 'Media') {
-                                                                                                                                $item_btn_text  = 'Watch Video';
-                                                                                                                                $download_url   = base_url('incident_reporting_system/download_incident_media/'.$item_path);
+                                                                                                                        $attach_item_type = $attach_item['attachment_type'];
+                                                                                                                        $item_sid = $attach_item['sid'];
+                                                                                                                        $item_title = $attach_item['item_title'];
+                                                                                                                        $item_source = $attach_item['item_type'];
+                                                                                                                        $item_path = $attach_item['item_path'];
+                                                                                                                        $item_url = '';
 
-                                                                                                                                if ($item_source == 'youtube') {
-                                                                                                                                    $item_url = $item_path;
-                                                                                                                                } else if ($item_source == 'vimeo') {
-                                                                                                                                    $item_url = $item_path;
-                                                                                                                                } else if ($item_source == "upload_video") {
-                                                                                                                                    $item_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $item_path;
-                                                                                                                                } else if ($item_source == "upload_audio") {
-                                                                                                                                    $item_btn_text = 'Listen Audio';
-                                                                                                                                    $item_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $item_path;
-                                                                                                                                }
+                                                                                                                        if ($attach_item_type == 'Media') {
+                                                                                                                            $item_btn_text  = 'Watch Video';
+                                                                                                                            $download_url   = base_url('incident_reporting_system/download_incident_media/' . $item_path);
 
-                                                                                                                            } else {
-                                                                                                                                
-                                                                                                                                $document_path  = explode(".",$item_path); 
-                                                                                                                                $document_name  = $document_path[0];
-                                                                                                                                $print_url = '';
-                                                                                                                                $download_url   = base_url('incident_reporting_system/download_incident_document/'.$item_path);
-
-                                                                                                                                if ($item_source == 'pdf') {
-                                                                                                                                    $document_category = 'PDF Document';
-                                                                                                                                    $item_source      = 'document';
-                                                                                                                                    $item_url = 'https://docs.google.com/gview?url='.AWS_S3_BUCKET_URL.$item_path.'&embedded=true';
-                                                                                                                                    $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pdf';
-                                                                                                                                } else if (in_array($item_source, ['doc', 'docx'])) {
-                                                                                                                                    $document_category = 'Word Document';
-                                                                                                                                    $item_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $item_path);
-
-                                                                                                                                    if ($item_source == 'doc') {
-                                                                                                                                        $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edoc&wdAccPdf=0';
-                                                                                                                                    } else if ($item_source == 'docx') {
-                                                                                                                                        $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edocx&wdAccPdf=0';
-                                                                                                                                    }
-
-                                                                                                                                    $item_source      = 'document';
-                                                                                                                                } else if (in_array($item_source, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
-                                                                                                                                    $document_category = 'Image';
-                                                                                                                                    $item_url = AWS_S3_BUCKET_URL . $item_path;
-                                                                                                                                    $item_source    = "image";
-                                                                                                                                    $print_url = base_url('incident_reporting_system/print_image/'.$item_sid);
-                                                                                                                                }
+                                                                                                                            if ($item_source == 'youtube') {
+                                                                                                                                $item_url = $item_path;
+                                                                                                                            } else if ($item_source == 'vimeo') {
+                                                                                                                                $item_url = $item_path;
+                                                                                                                            } else if ($item_source == "upload_video") {
+                                                                                                                                $item_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $item_path;
+                                                                                                                            } else if ($item_source == "upload_audio") {
+                                                                                                                                $item_btn_text = 'Listen Audio';
+                                                                                                                                $item_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $item_path;
                                                                                                                             }
-                                                                                                                        ?>
-                                                                                                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                                                                                                                <div class="widget-box">
-                                                                                                                                    <div class="attachment-box full-width">
-                                                                                                                                        <h2>
-                                                                                                                                            <?php echo $attach_item_type; ?>
-                                                                                                                                        </h2>
-                                                                                                                                        <div></div>
-                                                                                                                                        <div class="attach-title">
-                                                                                                                                            <span>Title : <sub><?php echo $item_title; ?></sub></span>
-                                                                                                                                        </div>
-                                                                                                                                        <div class="status-panel">
-                                                                                                                                            <div class="row">
-                                                                                                                                                <?php if ($attach_item_type == 'Document') { ?>
-                                                                                                                                                    <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
-                                                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_attach_item(this);" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
-                                                                                                                                                    </div>
-                                                                                                                                                    <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
-                                                                                                                                                        <a target="_blank" href="<?php echo $print_url; ?>" class="btn btn-block btn-info"><i class="fa fa-print"></i></a>
-                                                                                                                                                    </div>
-                                                                                                                                                    <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                                                                                                                        } else {
+
+                                                                                                                            $document_path  = explode(".", $item_path);
+                                                                                                                            $document_name  = $document_path[0];
+                                                                                                                            $print_url = '';
+                                                                                                                            $download_url   = base_url('incident_reporting_system/download_incident_document/' . $item_path);
+
+                                                                                                                            if ($item_source == 'pdf') {
+                                                                                                                                $document_category = 'PDF Document';
+                                                                                                                                $item_source      = 'document';
+                                                                                                                                $item_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $item_path . '&embedded=true';
+                                                                                                                                $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
+                                                                                                                            } else if (in_array($item_source, ['doc', 'docx'])) {
+                                                                                                                                $document_category = 'Word Document';
+                                                                                                                                $item_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $item_path);
+
+                                                                                                                                if ($item_source == 'doc') {
+                                                                                                                                    $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
+                                                                                                                                } else if ($item_source == 'docx') {
+                                                                                                                                    $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                                                                                                                                }
+
+                                                                                                                                $item_source      = 'document';
+                                                                                                                            } else if (in_array($item_source, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                                                                                                                $document_category = 'Image';
+                                                                                                                                $item_url = AWS_S3_BUCKET_URL . $item_path;
+                                                                                                                                $item_source    = "image";
+                                                                                                                                $print_url = base_url('incident_reporting_system/print_image/' . $item_sid);
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    ?>
+                                                                                                                        <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                                                                                                            <div class="widget-box">
+                                                                                                                                <div class="attachment-box full-width">
+                                                                                                                                    <h2>
+                                                                                                                                        <?php echo $attach_item_type; ?>
+                                                                                                                                    </h2>
+                                                                                                                                    <div></div>
+                                                                                                                                    <div class="attach-title">
+                                                                                                                                        <span>Title : <sub><?php echo $item_title; ?></sub></span>
+                                                                                                                                    </div>
+                                                                                                                                    <div class="status-panel">
+                                                                                                                                        <div class="row">
+                                                                                                                                            <?php if ($attach_item_type == 'Document') { ?>
+                                                                                                                                                <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                                                                                                                                                    <a href="javascript:;" class="btn btn-block btn-info" onclick="view_attach_item(this);" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                                                                                                                                                    <a target="_blank" href="<?php echo $print_url; ?>" class="btn btn-block btn-info"><i class="fa fa-print"></i></a>
+                                                                                                                                                </div>
+                                                                                                                                                <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
+                                                                                                                                                    <a target="_blank" href="<?php echo $download_url; ?>" class="btn btn-block btn-info"><i class="fa fa-download"></i></a>
+                                                                                                                                                </div>
+                                                                                                                                            <?php } else { ?>
+                                                                                                                                                <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+                                                                                                                                                    <a href="javascript:;" class="btn btn-block btn-info" onclick="view_attach_item(this);" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
+                                                                                                                                                </div>
+                                                                                                                                                <?php if ($item_source == 'upload_video' || $item_source == 'upload_audio') { ?>
+                                                                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                                                                                                                                                         <a target="_blank" href="<?php echo $download_url; ?>" class="btn btn-block btn-info"><i class="fa fa-download"></i></a>
                                                                                                                                                     </div>
-                                                                                                                                                <?php } else { ?>
-                                                                                                                                                    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
-                                                                                                                                                        <a href="javascript:;" class="btn btn-block btn-info" onclick="view_attach_item(this);" item-category="<?php echo $attach_item_type; ?>" item-title="<?php echo $item_title; ?>" item-type="<?php echo $item_source; ?>" item-url="<?php echo $item_url; ?>"><i class="fa fa-eye"></i></a>
-                                                                                                                                                    </div>
-                                                                                                                                                    <?php if ($item_source == 'upload_video' || $item_source == 'upload_audio') { ?>
-                                                                                                                                                        <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
-                                                                                                                                                            <a target="_blank" href="<?php echo $download_url; ?>" class="btn btn-block btn-info"><i class="fa fa-download"></i></a>
-                                                                                                                                                        </div>
-                                                                                                                                                    <?php } ?>
                                                                                                                                                 <?php } ?>
-                                                                                                                                            </div>
+                                                                                                                                            <?php } ?>
                                                                                                                                         </div>
                                                                                                                                     </div>
-                                                                                                                                </div>   
+                                                                                                                                </div>
                                                                                                                             </div>
-                                                                                                                    <?php } ?>        
+                                                                                                                        </div>
+                                                                                                                    <?php } ?>
                                                                                                                 </div>
                                                                                                             </td>
                                                                                                         </tr>
@@ -951,7 +951,7 @@
                 <!-- Email Section End -->
 
                 <!-- Notes Section Start -->
-                <?php if ($incident[0]['status'] != 'Closed'){ ?>
+                <?php if ($incident[0]['status'] != 'Closed') { ?>
                     <div class="table-responsive table-outer">
                         <div class="panel panel-blue">
                             <div class="panel-heading incident-panal-heading">
@@ -994,11 +994,11 @@
                             </div>
                             <div class="panel-body">
                                 <div class="respond">
-                                    <?php foreach($comments as $comment) { ?>
+                                    <?php foreach ($comments as $comment) { ?>
                                         <?php
-                                            $name = empty($comment['user2']) ? ucfirst($comment['user1']) : ucfirst($comment['user2']);
-                                            $pp = empty($comment['user2']) ? $comment['pp1'] : $comment['pp2'];
-                                            $url = empty($pp) ? base_url() . "assets/images/attachment-img.png" : AWS_S3_BUCKET_URL . $pp;
+                                        $name = empty($comment['user2']) ? ucfirst($comment['user1']) : ucfirst($comment['user2']);
+                                        $pp = empty($comment['user2']) ? $comment['pp1'] : $comment['pp2'];
+                                        $url = empty($pp) ? base_url() . "assets/images/attachment-img.png" : AWS_S3_BUCKET_URL . $pp;
                                         ?>
                                         <article <?php echo empty($comment['user2']) ? '' : 'class="reply"' ?>>
                                             <figure><img class="img-responsive" src="<?= $url ?>"></figure>
@@ -1055,19 +1055,19 @@
                 <?php } ?>
                 <!-- Change Incident type Section End -->
             </div>
-            <?php if ($incident[0]['status'] != 'Closed'){ ?>
+            <?php if ($incident[0]['status'] != 'Closed') { ?>
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-4 pull-right">
                     <a href="javascript:;" class="btn btn-warning pull-right" id="confirm-closed">Mark it Resolved</a>
                 </div>
-            <?php } else{?>
-            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                <div class="panel panel-blue">
-                    <div class="alert alert-success">
-                        <h2 class="text-center"><strong class="text-center">Incident Is Resolved</strong></h2>
+            <?php } else { ?>
+                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                    <div class="panel panel-blue">
+                        <div class="alert alert-success">
+                            <h2 class="text-center"><strong class="text-center">Incident Is Resolved</strong></h2>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <?php }?>
+            <?php } ?>
         </div>
     </div>
 </div>
@@ -1095,17 +1095,17 @@
                                             <label>Update</label>
                                             <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                                 Both
-                                                <input checked="checked" class="update_document_type" type="radio" name="update_document_type" value="both"/>
+                                                <input checked="checked" class="update_document_type" type="radio" name="update_document_type" value="both" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
-                                                <input class="update_document_type" type="radio" name="update_document_type" value="title"/>
+                                                <input class="update_document_type" type="radio" name="update_document_type" value="title" />
                                                 <div class="control__indicator"></div>
                                                 Title
                                             </label>
                                             <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                                 Document
-                                                <input class="update_document_type" type="radio" name="update_document_type" value="document"/>
+                                                <input class="update_document_type" type="radio" name="update_document_type" value="document" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
@@ -1117,7 +1117,7 @@
                                             <label>Upload Document <span class="hr-required">*</span></label>
                                             <div class="upload-file form-control" style="margin-bottom:10px;">
                                                 <span class="selected-file" id="name_edit_upload_document"></span>
-                                                <input type="file" name="edit_upload_document" id="edit_upload_document" onchange="check_edit_document('edit_upload_document')" >
+                                                <input type="file" name="edit_upload_document" id="edit_upload_document" onchange="check_edit_document('edit_upload_document')">
                                                 <a href="javascript:;">Choose File</a>
                                             </div>
                                         </div>
@@ -1168,33 +1168,33 @@
                                 <label>Update</label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                     Both
-                                    <input checked="checked" class="update_type" type="radio" name="update_type" value="both"/>
+                                    <input checked="checked" class="update_type" type="radio" name="update_type" value="both" />
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
-                                    <input class="update_type" type="radio" name="update_type" value="title"/>
+                                    <input class="update_type" type="radio" name="update_type" value="title" />
                                     <div class="control__indicator"></div>
                                     Title
                                 </label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                     Video
-                                    <input class="update_type" type="radio" name="update_type" value="video"/>
+                                    <input class="update_type" type="radio" name="update_type" value="video" />
                                     <div class="control__indicator"></div>
                                 </label>
-                                
+
                             </div>
-                            
+
                             <div class="form-group edit_filter autoheight" id="only_video_select">
                                 <?php $field_name = 'video_source' ?>
                                 <?php echo form_label('Video Source', $field_name); ?>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                     <?php echo YOUTUBE_VIDEO; ?>
-                                    <input checked="checked" class="update_video_source" id="update_option" type="radio" name="update_video_source" value="youtube"/>
+                                    <input checked="checked" class="update_video_source" id="update_option" type="radio" name="update_video_source" value="youtube" />
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                     <?php echo VIMEO_VIDEO; ?>
-                                    <input class="update_video_source" type="radio" name="update_video_source" value="vimeo"/>
+                                    <input class="update_video_source" type="radio" name="update_video_source" value="vimeo" />
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
@@ -1218,7 +1218,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>            
+                            </div>
 
                             <div class="row" id="only_video">
                                 <div class="field-row">
@@ -1231,7 +1231,7 @@
                                             <label>Upload Video <span class="hr-required">*</span></label>
                                             <div class="upload-file form-control" style="margin-bottom:10px;">
                                                 <span class="selected-file" id="name_update_video"></span>
-                                                <input type="file" name="video_upload" id="update_video" onchange="check_update_video_file('update_video')" >
+                                                <input type="file" name="video_upload" id="update_video" onchange="check_update_video_file('update_video')">
                                                 <a href="javascript:;">Choose Video</a>
                                             </div>
                                         </div>
@@ -1239,7 +1239,7 @@
                                             <label>Upload Audio <span class="hr-required">*</span></label>
                                             <div class="upload-file form-control" style="margin-bottom:10px;">
                                                 <span class="selected-file" id="name_update_audio"></span>
-                                                <input type="file" name="audio_upload" id="update_audio" onchange="check_update_audio_file('update_audio')" >
+                                                <input type="file" name="audio_upload" id="update_audio" onchange="check_update_audio_file('update_audio')">
                                                 <a href="javascript:;">Choose Audio</a>
                                             </div>
                                         </div>
@@ -1284,7 +1284,7 @@
                                 </div>
                                 <div id="video-section" style="display:none;">
                                     <video id="my-video" controls></video>
-                                </div>  
+                                </div>
                                 <div id="audio-section" style="display:none;">
                                     <audio id="my-audio" controls></audio>
                                 </div>
@@ -1355,8 +1355,8 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <a href="javascript:;" class="btn btn-info btn-block attachment_pop_up" attachment-type="manual">Add Manual Attachment</a>
                                             </div>
-                                        </div> 
-                                        
+                                        </div>
+
                                         <div class="table-responsive table-outer full-width" style="margin-top: 20px; display: none;" id="pop_up_email_attachment_list">
                                             <div class="table-wrp data-table">
                                                 <table class="table table-bordered table-hover table-stripped">
@@ -1369,13 +1369,13 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="pop_up_attachment_listing_data">
-                                                        
+
                                                     </tbody>
                                                 </table>
                                             </div>
-                                        </div> 
-                                        <div style="display: none;" id="pop_up_email_attachment_files">  
-                                        </div>  
+                                        </div>
+                                        <div style="display: none;" id="pop_up_email_attachment_files">
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -1396,7 +1396,7 @@
                         </table>
                     </form>
                 </div>
-                
+
                 <div id="pop_up_attachment_library_container" style="display: none;">
                     <div class="table-responsive table-outer" id="show_pop_up_library_item">
                         <div class="text-right" style="margin-top:15px;">
@@ -1417,25 +1417,25 @@
                                     <?php if (!empty($library_documets) || !empty($library_media)) { ?>
                                         <?php foreach ($library_documets as $d_key => $document) { ?>
                                             <tr>
-                                                <?php  
-                                                    $document_url       = '';
-                                                    $document_category  = '';
-                                                    $document_type      = strtolower($document['type']);
-                                                    $document_path      = $document['file_code'];
-                                                    $document_title     = $document['document_title'];
-                                                    $item_type          = "document";
+                                                <?php
+                                                $document_url       = '';
+                                                $document_category  = '';
+                                                $document_type      = strtolower($document['type']);
+                                                $document_path      = $document['file_code'];
+                                                $document_title     = $document['document_title'];
+                                                $item_type          = "document";
 
-                                                    if ($document_type == 'pdf') {
-                                                        $document_category = 'PDF Document';
-                                                        $document_url = 'https://docs.google.com/gview?url='.AWS_S3_BUCKET_URL.$document_path.'&embedded=true';
-                                                    } else if (in_array($document_type, ['doc', 'docx'])) {
-                                                        $document_category = 'Word Document';
-                                                        $document_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_path);
-                                                    } else if (in_array($document_type, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
-                                                        $document_category = 'Image';
-                                                        $document_url = AWS_S3_BUCKET_URL . $document_path;
-                                                        $item_type    = "image";
-                                                    }
+                                                if ($document_type == 'pdf') {
+                                                    $document_category = 'PDF Document';
+                                                    $document_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_path . '&embedded=true';
+                                                } else if (in_array($document_type, ['doc', 'docx'])) {
+                                                    $document_category = 'Word Document';
+                                                    $document_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_path);
+                                                } else if (in_array($document_type, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                                    $document_category = 'Image';
+                                                    $document_url = AWS_S3_BUCKET_URL . $document_path;
+                                                    $item_type    = "image";
+                                                }
                                                 ?>
 
                                                 <td class="text-center"><?php echo $document_title; ?></td>
@@ -1448,7 +1448,7 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
-                                                        <input class="email_pop_up_select_lib_item" id="pop_up_doc_key_d_<?php echo $document['id']; ?>" type="checkbox" item-category="Document" item-title="<?php echo $document_title; ?>" item-type="<?php echo $item_type; ?>" item-sid="d_<?php echo $document['id']; ?>"/>
+                                                        <input class="email_pop_up_select_lib_item" id="pop_up_doc_key_d_<?php echo $document['id']; ?>" type="checkbox" item-category="Document" item-title="<?php echo $document_title; ?>" item-type="<?php echo $item_type; ?>" item-sid="d_<?php echo $document['id']; ?>" />
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </td>
@@ -1457,37 +1457,37 @@
                                         <?php foreach ($library_media as $key => $media) { ?>
                                             <tr>
                                                 <?php
-                                                    $media_url      = '';
-                                                    $media_category = '';
-                                                    $media_btn_text = 'Watch Video'; 
-                                                    $media_title    = $media['video_title']; 
-                                                    $media_type     = strtolower($media['video_type']);
+                                                $media_url      = '';
+                                                $media_category = '';
+                                                $media_btn_text = 'Watch Video';
+                                                $media_title    = $media['video_title'];
+                                                $media_type     = strtolower($media['video_type']);
 
-                                                    if ($media_type == 'youtube') {
-                                                        $media_category = 'Youtube';
-                                                        $media_url = $media['video_url'];
-                                                    } else if ($media_type == 'vimeo') {
-                                                        $media_category = 'Vimeo';
-                                                        $media_url = $media['video_url'];
-                                                    } else if ($media_type == "upload_video") {
-                                                        $media_category = 'Upload Video';
-                                                        $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $media['video_url'];
-                                                    } else if ($media_type == "upload_audio") {
-                                                        $media_category = 'Upload Audio';
-                                                        $media_btn_text = 'Listen Audio';
-                                                        $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $media['video_url'];
-                                                    }
+                                                if ($media_type == 'youtube') {
+                                                    $media_category = 'Youtube';
+                                                    $media_url = $media['video_url'];
+                                                } else if ($media_type == 'vimeo') {
+                                                    $media_category = 'Vimeo';
+                                                    $media_url = $media['video_url'];
+                                                } else if ($media_type == "upload_video") {
+                                                    $media_category = 'Upload Video';
+                                                    $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $media['video_url'];
+                                                } else if ($media_type == "upload_audio") {
+                                                    $media_category = 'Upload Audio';
+                                                    $media_btn_text = 'Listen Audio';
+                                                    $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $media['video_url'];
+                                                }
                                                 ?>
 
-                                                <td class="text-center"><?php echo $media_title ; ?></td>
+                                                <td class="text-center"><?php echo $media_title; ?></td>
                                                 <td class="text-center">Media</td>
-                                                <td class="text-center"><?php echo $media_category ; ?></td>
+                                                <td class="text-center"><?php echo $media_category; ?></td>
                                                 <td class="text-center">
                                                     <a href="javascript:;" class="btn btn-block btn-info" onclick="view_pop_up_library_item(this);" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $media_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
                                                 </td>
                                                 <td class="text-center">
                                                     <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
-                                                        <input class="email_pop_up_select_lib_item" id="pop_up_med_key_m_<?php echo $media['sid']; ?>" type="checkbox" item-category="Media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $media_type; ?>" item-sid="m_<?php echo $media['sid']; ?>"/>
+                                                        <input class="email_pop_up_select_lib_item" id="pop_up_med_key_m_<?php echo $media['sid']; ?>" type="checkbox" item-category="Media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $media_type; ?>" item-sid="m_<?php echo $media['sid']; ?>" />
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </td>
@@ -1501,7 +1501,7 @@
                                                 </h3>
                                             </td>
                                         </tr>
-                                    <?php } ?>      
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -1510,9 +1510,9 @@
                             <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_compose_email" btn-from="library">Back To Compose Email</button>
                         </div>
                     </div>
-                    <div id="view_pop_up_library_item" style="display:none;"> 
+                    <div id="view_pop_up_library_item" style="display:none;">
                         <h3 id="pop_up_library_item_title"></h3>
-                        <hr>                   
+                        <hr>
                         <div class="embed-responsive embed-responsive-16by9">
                             <div id="email-pop-up-youtube-container" style="display:none;">
                                 <div id="email-pop-up-youtube-iframe-holder" class="embed-responsive-item">
@@ -1525,7 +1525,7 @@
                             <div id="email-pop-up-video-container" style="display:none;">
                                 <div id="email-pop-up-video-player-holder" class="embed-responsive-item">
                                 </div>
-                            </div>  
+                            </div>
                             <div id="email-pop-up-audio-container" style="display:none;">
                                 <div id="email-pop-up-audio-player-holder" class="embed-responsive-item">
                                 </div>
@@ -1534,7 +1534,7 @@
                                 <div id="email-pop-up-document-iframe-holder" class="embed-responsive-item">
                                 </div>
                             </div>
-                        </div>                    
+                        </div>
                         <div class="text-right" style="margin-top:15px;">
                             <button type="button" class="btn btn-info incident-panal-button email_pop_up_back_to_library">Back To Libraray</button>
                         </div>
@@ -1545,12 +1545,12 @@
                         <label for="attachment_type">Select Attachment Type</label>
                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                             <?php echo YOUTUBE_VIDEO; ?>
-                            <input id="default_manual_pop_up" class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source" value="youtube" checked="checked"/>
+                            <input id="default_manual_pop_up" class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source" value="youtube" checked="checked" />
                             <div class="control__indicator"></div>
                         </label>
                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                             <?php echo VIMEO_VIDEO; ?>
-                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source" value="vimeo"/>
+                            <input class="pop_up_attach_item_source" type="radio" name="pop_up_attach_item_source" value="vimeo" />
                             <div class="control__indicator"></div>
                         </label>
                         <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
@@ -1579,7 +1579,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>            
+                    </div>
 
                     <div class="row" id="only_video">
                         <div class="field-row">
@@ -1592,7 +1592,7 @@
                                     <label>Attach Video <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_video"></span>
-                                        <input type="file" name="pop_up_attach_video" id="pop_up_attach_video" onchange="pop_up_check_attach_video('pop_up_attach_video')" >
+                                        <input type="file" name="pop_up_attach_video" id="pop_up_attach_video" onchange="pop_up_check_attach_video('pop_up_attach_video')">
                                         <a href="javascript:;">Choose Video</a>
                                     </div>
                                 </div>
@@ -1600,7 +1600,7 @@
                                     <label>Attach Audio <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_audio"></span>
-                                        <input type="file" name="pop_up_attach_audio" id="pop_up_attach_audio" onchange="pop_up_check_attach_audio('pop_up_attach_audio')" >
+                                        <input type="file" name="pop_up_attach_audio" id="pop_up_attach_audio" onchange="pop_up_check_attach_audio('pop_up_attach_audio')">
                                         <a href="javascript:;">Choose Audio</a>
                                     </div>
                                 </div>
@@ -1608,7 +1608,7 @@
                                     <label>Attach Document <span class="required">*</span></label>
                                     <div class="upload-file form-control" style="margin-bottom:10px;">
                                         <span class="selected-file" id="name_pop_up_attach_document"></span>
-                                        <input type="file" name="pop_up_attach_document" id="pop_up_attach_document" onchange="pop_up_check_attach_document('pop_up_attach_document')" >
+                                        <input type="file" name="pop_up_attach_document" id="pop_up_attach_document" onchange="pop_up_check_attach_document('pop_up_attach_document')">
                                         <a href="javascript:;">Choose Document</a>
                                     </div>
                                 </div>
@@ -1623,7 +1623,7 @@
                                 <button type="button" class="btn btn-info incident-panal-button" id="pop_up_save_attach_item">Save Attachment</button>
                             </div>
                         </div>
-                    </div> 
+                    </div>
                 </div>
             </div>
         </div>
@@ -1655,25 +1655,25 @@
                                 <?php if (!empty($library_documets) || !empty($library_media)) { ?>
                                     <?php foreach ($library_documets as $d_key => $document) { ?>
                                         <tr>
-                                            <?php  
-                                                $document_url       = '';
-                                                $document_category  = '';
-                                                $document_type      = strtolower($document['type']);
-                                                $document_path      = $document['file_code'];
-                                                $document_title     = $document['document_title'];
-                                                $item_type          = "document";
+                                            <?php
+                                            $document_url       = '';
+                                            $document_category  = '';
+                                            $document_type      = strtolower($document['type']);
+                                            $document_path      = $document['file_code'];
+                                            $document_title     = $document['document_title'];
+                                            $item_type          = "document";
 
-                                                if ($document_type == 'pdf') {
-                                                    $document_category = 'PDF Document';
-                                                    $document_url = 'https://docs.google.com/gview?url='.AWS_S3_BUCKET_URL.$document_path.'&embedded=true';
-                                                } else if (in_array($document_type, ['doc', 'docx'])) {
-                                                    $document_category = 'Word Document';
-                                                    $document_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_path);
-                                                } else if (in_array($document_type, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
-                                                    $document_category = 'Image';
-                                                    $document_url = AWS_S3_BUCKET_URL . $document_path;
-                                                    $item_type    = "image";
-                                                }
+                                            if ($document_type == 'pdf') {
+                                                $document_category = 'PDF Document';
+                                                $document_url = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . $document_path . '&embedded=true';
+                                            } else if (in_array($document_type, ['doc', 'docx'])) {
+                                                $document_category = 'Word Document';
+                                                $document_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' . urlencode(AWS_S3_BUCKET_URL . $document_path);
+                                            } else if (in_array($document_type, ['jpe', 'jpg', 'jpeg', 'png', 'gif'])) {
+                                                $document_category = 'Image';
+                                                $document_url = AWS_S3_BUCKET_URL . $document_path;
+                                                $item_type    = "image";
+                                            }
                                             ?>
 
                                             <td class="text-center"><?php echo $document_title; ?></td>
@@ -1686,7 +1686,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
-                                                    <input class="select_lib_item" id="doc_key_d_<?php echo $document['id']; ?>" type="checkbox" item-category="Document" item-title="<?php echo $document_title; ?>" item-type="<?php echo $item_type; ?>" item-sid="d_<?php echo $document['id']; ?>"/>
+                                                    <input class="select_lib_item" id="doc_key_d_<?php echo $document['id']; ?>" type="checkbox" item-category="Document" item-title="<?php echo $document_title; ?>" item-type="<?php echo $item_type; ?>" item-sid="d_<?php echo $document['id']; ?>" />
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </td>
@@ -1695,37 +1695,37 @@
                                     <?php foreach ($library_media as $key => $media) { ?>
                                         <tr>
                                             <?php
-                                                $media_url      = '';
-                                                $media_category = '';
-                                                $media_btn_text = 'Watch Video'; 
-                                                $media_title    = $media['video_title']; 
-                                                $media_type     = strtolower($media['video_type']);
+                                            $media_url      = '';
+                                            $media_category = '';
+                                            $media_btn_text = 'Watch Video';
+                                            $media_title    = $media['video_title'];
+                                            $media_type     = strtolower($media['video_type']);
 
-                                                if ($media_type == 'youtube') {
-                                                    $media_category = 'Youtube';
-                                                    $media_url = $media['video_url'];
-                                                } else if ($media_type == 'vimeo') {
-                                                    $media_category = 'Vimeo';
-                                                    $media_url = $media['video_url'];
-                                                } else if ($media_type == "upload_video") {
-                                                    $media_category = 'Upload Video';
-                                                    $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $media['video_url'];
-                                                } else if ($media_type == "upload_audio") {
-                                                    $media_category = 'Upload Audio';
-                                                    $media_btn_text = 'Listen Audio';
-                                                    $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $media['video_url'];
-                                                }
+                                            if ($media_type == 'youtube') {
+                                                $media_category = 'Youtube';
+                                                $media_url = $media['video_url'];
+                                            } else if ($media_type == 'vimeo') {
+                                                $media_category = 'Vimeo';
+                                                $media_url = $media['video_url'];
+                                            } else if ($media_type == "upload_video") {
+                                                $media_category = 'Upload Video';
+                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $media['video_url'];
+                                            } else if ($media_type == "upload_audio") {
+                                                $media_category = 'Upload Audio';
+                                                $media_btn_text = 'Listen Audio';
+                                                $media_url = base_url() . 'assets/uploaded_videos/incident_videos/' . $media['video_url'];
+                                            }
                                             ?>
 
-                                            <td class="text-center"><?php echo $media_title ; ?></td>
+                                            <td class="text-center"><?php echo $media_title; ?></td>
                                             <td class="text-center">Media</td>
-                                            <td class="text-center"><?php echo $media_category ; ?></td>
+                                            <td class="text-center"><?php echo $media_category; ?></td>
                                             <td class="text-center">
                                                 <a href="javascript:;" class="btn btn-block btn-info" onclick="view_library_item(this);" item-category="media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $media_type; ?>" item-url="<?php echo $media_url; ?>"><?php echo $media_btn_text; ?></a>
                                             </td>
                                             <td class="text-center">
                                                 <label class="control control--checkbox" style="margin-left:10px; margin-top:10px;">
-                                                    <input class="select_lib_item" id="med_key_m_<?php echo $media['sid']; ?>" type="checkbox" item-category="Media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $media_type; ?>" item-sid="m_<?php echo $media['sid']; ?>"/>
+                                                    <input class="select_lib_item" id="med_key_m_<?php echo $media['sid']; ?>" type="checkbox" item-category="Media" item-title="<?php echo $media_title; ?>" item-type="<?php echo $media_type; ?>" item-sid="m_<?php echo $media['sid']; ?>" />
                                                     <div class="control__indicator"></div>
                                                 </label>
                                             </td>
@@ -1739,12 +1739,12 @@
                                             </h3>
                                         </td>
                                     </tr>
-                                <?php } ?>    
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div id="view_library_item" style="display:none;">                    
+                <div id="view_library_item" style="display:none;">
                     <div class="embed-responsive embed-responsive-16by9">
                         <div id="library-youtube-section" style="display:none;">
                             <div id="library-youtube-placeholder" class="embed-responsive-item">
@@ -1757,7 +1757,7 @@
                         <div id="library-video-section" style="display:none;">
                             <div id="library-video-placeholder" class="embed-responsive-item">
                             </div>
-                        </div>  
+                        </div>
                         <div id="library-audio-section" style="display:none;">
                             <div id="library-audio-placeholder" class="embed-responsive-item">
                             </div>
@@ -1766,7 +1766,7 @@
                             <div id="library-document-placeholder" class="embed-responsive-item">
                             </div>
                         </div>
-                    </div>                    
+                    </div>
                     <div class="text-right" style="margin-top:15px;">
                         <button type="button" class="btn btn-info incident-panal-button back_to_library">Back To Libraray</button>
                     </div>
@@ -1790,17 +1790,17 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="update_video_sid" value="" />
-                
+
                 <div class="form-group edit_filter autoheight">
                     <label for="attachment_type">Select Attachment Type</label>
                     <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                         <?php echo YOUTUBE_VIDEO; ?>
-                        <input id="default_manual_select" class="attach_item_source" type="radio" name="attach_item_source" value="youtube" checked="checked"/>
+                        <input id="default_manual_select" class="attach_item_source" type="radio" name="attach_item_source" value="youtube" checked="checked" />
                         <div class="control__indicator"></div>
                     </label>
                     <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                         <?php echo VIMEO_VIDEO; ?>
-                        <input class="attach_item_source" type="radio" name="attach_item_source" value="vimeo"/>
+                        <input class="attach_item_source" type="radio" name="attach_item_source" value="vimeo" />
                         <div class="control__indicator"></div>
                     </label>
                     <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
@@ -1829,7 +1829,7 @@
                             </div>
                         </div>
                     </div>
-                </div>            
+                </div>
 
                 <div class="row" id="only_video">
                     <div class="field-row">
@@ -1842,7 +1842,7 @@
                                 <label>Attach Video <span class="hr-required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_video"></span>
-                                    <input type="file" name="attach_video" id="attach_video" onchange="check_attach_video('attach_video')" >
+                                    <input type="file" name="attach_video" id="attach_video" onchange="check_attach_video('attach_video')">
                                     <a href="javascript:;">Choose Video</a>
                                 </div>
                             </div>
@@ -1850,7 +1850,7 @@
                                 <label>Attach Audio <span class="hr-required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_audio"></span>
-                                    <input type="file" name="attach_audio" id="attach_audio" onchange="check_attach_audio('attach_audio')" >
+                                    <input type="file" name="attach_audio" id="attach_audio" onchange="check_attach_audio('attach_audio')">
                                     <a href="javascript:;">Choose Audio</a>
                                 </div>
                             </div>
@@ -1858,7 +1858,7 @@
                                 <label>Attach Document <span class="hr-required">*</span></label>
                                 <div class="upload-file form-control" style="margin-bottom:10px;">
                                     <span class="selected-file" id="name_attach_document"></span>
-                                    <input type="file" name="attach_document" id="attach_document" onchange="check_attach_document('attach_document')" >
+                                    <input type="file" name="attach_document" id="attach_document" onchange="check_attach_document('attach_document')">
                                     <a href="javascript:;">Choose Document</a>
                                 </div>
                             </div>
@@ -1872,7 +1872,7 @@
                             <button type="button" class="btn btn-info" id="save_attach_item">Save Attachment</button>
                         </div>
                     </div>
-                </div>        
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-info incident-panal-button" data-dismiss="modal">Close</button>
@@ -1890,7 +1890,7 @@
                 <button type="button" class="close close-current-item" data-dismiss="modal" aria-label="Close" id="close_media_document_modal_up"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="view_item_title"></h4>
             </div>
-            <div class="modal-body full-width">                  
+            <div class="modal-body full-width">
                 <div class="embed-responsive embed-responsive-16by9">
                     <div id="youtube-container" style="display:none;">
                         <div id="youtube-iframe-holder" class="embed-responsive-item">
@@ -1903,7 +1903,7 @@
                     <div id="video-container" style="display:none;">
                         <div id="video-player-holder" class="embed-responsive-item">
                         </div>
-                    </div>  
+                    </div>
                     <div id="audio-container" style="display:none;">
                         <div id="audio-player-holder" class="embed-responsive-item">
                         </div>
@@ -1912,7 +1912,7 @@
                         <div id="document-iframe-holder" class="embed-responsive-item">
                         </div>
                     </div>
-                </div> 
+                </div>
             </div>
             <div class="modal-footer full-width">
                 <button type="button" class="btn btn-info incident-panal-button close-current-item" data-dismiss="modal" id="close_media_document_modal_down" file-type="">Close</button>
@@ -1938,12 +1938,12 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css"/>
+<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
 
 <script type="text/javascript">
-    if ( window.history.replaceState ) {
-        window.history.replaceState( null, null, window.location.href );
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
     }
 
     // function getParameterByName(name, url) {
@@ -1957,7 +1957,8 @@
     // }
 
     // if (getParameterByName('added')){
-    //     window.location.href = '<?php //echo base_url('incident_reporting_system/view_incident/'.$id) ?>';
+    //     window.location.href = '<?php //echo base_url('incident_reporting_system/view_incident/'.$id) 
+                                    ?>';
     // }
 
     var config = { // Multiselect
@@ -1968,7 +1969,7 @@
         $(selector).chosen(config[selector]);
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#up_video_container input').prop('disabled', true);
         $('#up_video_container').hide();
 
@@ -1977,7 +1978,7 @@
     });
 
     // Media JS Start
-    $('.video_source').on('click', function(){
+    $('.video_source').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'youtube') {
@@ -2032,7 +2033,7 @@
     });
 
     function check_video_file(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -2046,7 +2047,7 @@
                     $('#name_' + val).html('<p class="red">Only (.mp4, .m4a, .m4v, .f4v, .f4a, .m4b, .m4r, .f4b, .mov) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -2071,7 +2072,7 @@
     }
 
     function check_audio_file(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -2085,7 +2086,7 @@
                     $('#name_' + val).html('<p class="red">Only (.mp3, .m4a, .mp4, .ogg, .flac, .wav) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -2109,13 +2110,13 @@
         }
     }
 
-    $('#form_new_video').submit(function(){
+    $('#form_new_video').submit(function() {
         var flag = 0;
         var message;
         var title = $('#video_title').val();
 
-        if($('input[name="video_source"]:checked').val() == 'youtube'){
-            if($('#video_id').val() != '') {
+        if ($('input[name="video_source"]:checked').val() == 'youtube') {
+            if ($('#video_id').val() != '') {
                 var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
                 if (!$('#video_id').val().match(p)) {
                     message = 'Not a Valid Youtube URL';
@@ -2127,22 +2128,23 @@
             }
         }
 
-        if($('input[name="video_source"]:checked').val() == 'vimeo'){
-            if($('#video_id').val() != '') {
+        if ($('input[name="video_source"]:checked').val() == 'vimeo') {
+            if ($('#video_id').val() != '') {
                 var myurl = "<?php echo base_url('Incident_reporting_system/validate_vimeo'); ?>";
                 $.ajax({
                     type: "POST",
                     url: myurl,
-                    data: {url: $('#video_id').val()},
-                    async : false,
-                    success: function (data) {
+                    data: {
+                        url: $('#video_id').val()
+                    },
+                    async: false,
+                    success: function(data) {
                         if (data == false) {
                             message = 'Not a Valid Vimeo URL';
                             flag = 1;
                         }
                     },
-                    error: function (data) {
-                    }
+                    error: function(data) {}
                 });
             } else {
                 message = 'Please provide a Valid Vimeo URL';
@@ -2150,8 +2152,8 @@
             }
         }
 
-        if($('input[name="video_source"]:checked').val() == 'upload_video'){
-            var fileName  = $("#video").val();
+        if ($('input[name="video_source"]:checked').val() == 'upload_video') {
+            var fileName = $("#video").val();
 
             if (fileName.length > 0) {
                 $('#name_video').html(fileName.substring(0, 45));
@@ -2165,7 +2167,7 @@
                     message = 'Please select a valid video format.';
                     flag = 1;
                 } else {
-                    var file_size = Number(($("#video")[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#video")[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#video").val(null);
@@ -2181,8 +2183,8 @@
             }
         }
 
-        if($('input[name="video_source"]:checked').val() == 'upload_audio'){
-            var fileName  = $("#audio").val();
+        if ($('input[name="video_source"]:checked').val() == 'upload_audio') {
+            var fileName = $("#audio").val();
 
             if (fileName.length > 0) {
                 $('#name_audio').html(fileName.substring(0, 45));
@@ -2196,7 +2198,7 @@
                     message = 'Please select a valid audio format.';
                     flag = 1;
                 } else {
-                    var file_size = Number(($("#audio")[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#audio")[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#audio").val(null);
@@ -2223,7 +2225,7 @@
         }
     });
 
-    $('.js-edit-video').on('click', function (){
+    $('.js-edit-video').on('click', function() {
         var video_sid = $(this).attr('data-id');
         var old_title = $(this).attr('data-title');
 
@@ -2238,7 +2240,7 @@
         $('#update_up_video_container').hide();
     });
 
-    $('.update_type').on('click', function(){
+    $('.update_type').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'title') {
@@ -2256,7 +2258,7 @@
         }
     });
 
-    $('.update_video_source').on('click', function(){
+    $('.update_video_source').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'youtube') {
@@ -2311,7 +2313,7 @@
     });
 
     function check_update_video_file(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -2325,7 +2327,7 @@
                     $('#name_' + val).html('<p class="red">Only (.mp4, .m4a, .m4v, .f4v, .f4a, .m4b, .m4r, .f4b, .mov) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -2350,7 +2352,7 @@
     }
 
     function check_update_audio_file(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -2364,7 +2366,7 @@
                     $('#name_' + val).html('<p class="red">Only (.mp3, .m4a, .mp4, .ogg, .flac, .wav) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -2388,14 +2390,14 @@
         }
     }
 
-    $('#save_updated_video').on('click',function(){
+    $('#save_updated_video').on('click', function() {
         var flag = 0;
         var message;
         var validation = $('input[name="update_type"]:checked').val();
-        
+
         if (validation == 'video' || validation == 'both') {
-            if($('input[name="update_video_source"]:checked').val() == 'youtube'){
-                if($('#update_video_id').val() != '') {
+            if ($('input[name="update_video_source"]:checked').val() == 'youtube') {
+                if ($('#update_video_id').val() != '') {
                     var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
                     if (!$('#update_video_id').val().match(p)) {
                         message = 'Not a Valid Youtube URL';
@@ -2407,22 +2409,23 @@
                 }
             }
 
-            if($('input[name="update_video_source"]:checked').val() == 'vimeo'){
-                if($('#update_video_id').val() != '') {
+            if ($('input[name="update_video_source"]:checked').val() == 'vimeo') {
+                if ($('#update_video_id').val() != '') {
                     var myurl = "<?php echo base_url('Incident_reporting_system/validate_vimeo'); ?>";
                     $.ajax({
                         type: "POST",
                         url: myurl,
-                        data: {url: $('#update_video_id').val()},
-                        async : false,
-                        success: function (data) {
+                        data: {
+                            url: $('#update_video_id').val()
+                        },
+                        async: false,
+                        success: function(data) {
                             if (data == false) {
                                 message = 'Not a Valid Vimeo URLs';
                                 flag = 1;
                             }
                         },
-                        error: function (data) {
-                        }
+                        error: function(data) {}
                     });
                 } else {
                     message = 'Please provide a Valid Vimeo URL';
@@ -2430,8 +2433,8 @@
                 }
             }
 
-            if($('input[name="update_video_source"]:checked').val() == 'upload_video'){
-                var fileName  = $("#update_video").val();
+            if ($('input[name="update_video_source"]:checked').val() == 'upload_video') {
+                var fileName = $("#update_video").val();
 
                 if (fileName.length > 0) {
                     $('#name_update_video').html(fileName.substring(0, 45));
@@ -2445,7 +2448,7 @@
                         message = 'Please select a valid video format.';
                         flag = 1;
                     } else {
-                        var file_size = Number(($("#update_video")[0].files[0].size/1024/1024).toFixed(2));
+                        var file_size = Number(($("#update_video")[0].files[0].size / 1024 / 1024).toFixed(2));
                         var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                         if (video_size_limit < file_size) {
                             $("#update_video").val(null);
@@ -2461,8 +2464,8 @@
                 }
             }
 
-            if($('input[name="update_video_source"]:checked').val() == 'upload_audio'){
-                var fileName  = $("#update_audio").val();
+            if ($('input[name="update_video_source"]:checked').val() == 'upload_audio') {
+                var fileName = $("#update_audio").val();
 
                 if (fileName.length > 0) {
                     $('#name_update_audio').html(fileName.substring(0, 45));
@@ -2476,7 +2479,7 @@
                         message = 'Please select a valid audio format.';
                         flag = 1;
                     } else {
-                        var file_size = Number(($("#update_audio")[0].files[0].size/1024/1024).toFixed(2));
+                        var file_size = Number(($("#update_audio")[0].files[0].size / 1024 / 1024).toFixed(2));
                         var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                         if (audio_size_limit < file_size) {
                             $("#update_audio").val(null);
@@ -2491,7 +2494,7 @@
                     flag = 1;
                 }
             }
-        }  
+        }
 
         if (validation == 'title' || validation == 'both') {
             var update_title = $('#upload_video_title').val();
@@ -2500,7 +2503,7 @@
                 message = 'Please provide a Video Title.';
                 flag = 1;
             }
-        }   
+        }
 
         if (flag == 1) {
             alertify.alert(message);
@@ -2510,7 +2513,7 @@
             var targit_video = $('#update_video_sid').val();
             var form_data = new FormData();
 
-            if($('input[name="update_video_source"]:checked').val() == 'upload_audio'){
+            if ($('input[name="update_video_source"]:checked').val() == 'upload_audio') {
                 var audio_data = $('#update_audio').prop('files')[0];
 
                 form_data.append('audio', audio_data);
@@ -2545,60 +2548,65 @@
                 processData: false,
                 type: 'post',
                 data: form_data,
-                success: function(data){
+                success: function(data) {
                     if (data == 'success') {
-                       alertify.alert('Supporting Incident Video Update Successfully.');    
+                        alertify.alert('Supporting Incident Video Update Successfully.');
                     } else {
                         alertify.alert('Some error occurred while uploading video.');
                     }
                     location.reload();
-                    
+
                 },
-                error: function(){
-                }
+                error: function() {}
             });
         }
     });
 
-    $('.js-archive-video').click(function(e){
+    $('.js-archive-video').click(function(e) {
         e.preventDefault();
         var videoSid = $(this).data('id');
-        alertify.confirm('Do you really want to move this video to Archive?', function(){
-            $.post("<?=base_url('incident_reporting_system/handler')?>", {
+        alertify.confirm('Do you really want to move this video to Archive?', function() {
+            $.post("<?= base_url('incident_reporting_system/handler') ?>", {
                 action: 'archive_video',
                 videoSid: videoSid
-            }, function(resp){
-                if(resp.Status === false){
+            }, function(resp) {
+                if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
                     return;
                 }
-                alertify.alert('SUCCESS!', resp.Response, function(){
+                alertify.alert('SUCCESS!', resp.Response, function() {
                     window.location.reload();
                 });
             });
-        }).set('labels', { ok: 'Yes', cancel: 'No'});
+        }).set('labels', {
+            ok: 'Yes',
+            cancel: 'No'
+        });
     });
 
-    $('.js-active-video').click(function(e){
+    $('.js-active-video').click(function(e) {
         e.preventDefault();
         var videoSid = $(this).data('id');
-        alertify.confirm('Do you really want to move this video to Active?', function(){
-            $.post("<?=base_url('incident_reporting_system/handler')?>", {
+        alertify.confirm('Do you really want to move this video to Active?', function() {
+            $.post("<?= base_url('incident_reporting_system/handler') ?>", {
                 action: 'active_video',
                 videoSid: videoSid
-            }, function(resp){
-                if(resp.Status === false){
+            }, function(resp) {
+                if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
                     return;
                 }
-                alertify.alert('SUCCESS!', resp.Response, function(){
+                alertify.alert('SUCCESS!', resp.Response, function() {
                     window.location.reload();
                 });
             });
-        }).set('labels', { ok: 'Yes', cancel: 'No'});
+        }).set('labels', {
+            ok: 'Yes',
+            cancel: 'No'
+        });
     });
 
-    $('.js-view-video').click(function(e){
+    $('.js-view-video').click(function(e) {
         var video_title = $(this).attr('video-title');
         var video_source = $(this).attr('video-source');
         var video_url = $(this).attr('video-url');
@@ -2606,34 +2614,34 @@
         $('#video_modal_title').html(video_title);
 
         if (video_source == 'youtube') {
-            
+
             $('#youtube-section').show();
             var video = $("<iframe />")
-            .attr("id", "youtube_iframe")
-            .attr("src", "https://www.youtube.com/embed/"+video_url);
+                .attr("id", "youtube_iframe")
+                .attr("src", "https://www.youtube.com/embed/" + video_url);
             $("#youtube-video-placeholder").append(video);
 
         } else if (video_source == 'vimeo') {
-            
+
             $('#vimeo-section').show();
             var video = $("<iframe />")
-            .attr("id", "vimeo_iframe")
-            .attr("src", "https://player.vimeo.com/video/"+video_url);
+                .attr("id", "vimeo_iframe")
+                .attr("src", "https://player.vimeo.com/video/" + video_url);
             $("#vimeo-video-placeholder").append(video);
 
         } else if (video_source == 'upload_video') {
-            
+
             $('#video-section').show();
             var video = document.getElementById('my-video');
             var source = document.createElement('source');
-            $("#my-video").first().attr('src',video_url);
+            $("#my-video").first().attr('src', video_url);
 
         } else if (video_source == 'upload_audio') {
-            
+
             $('#audio-section').show();
             var video = document.getElementById('my-audio');
             var source = document.createElement('source');
-            $("#my-audio").first().attr('src',video_url);
+            $("#my-audio").first().attr('src', video_url);
 
         }
 
@@ -2641,7 +2649,7 @@
         $('#view_incident_video').modal('show');
     });
 
-    function stop_media (source) {
+    function stop_media(source) {
         var video_source = $(source).attr('video-source');
 
         if (video_source == 'youtube') {
@@ -2651,10 +2659,10 @@
             $("#vimeo-video-placeholder").append('');
             $('#vimeo-section').hide();
         } else if (video_source == 'upload_video') {
-            $("#my-video").first().attr('src','');
+            $("#my-video").first().attr('src', '');
             $('#video-section').hide();
         } else if (video_source == 'upload_audio') {
-            $("#my-audio").first().attr('src','');
+            $("#my-audio").first().attr('src', '');
             $('#audio-section').hide();
         }
     }
@@ -2662,7 +2670,7 @@
 
     // Documents JS Start
     function check_upload_document(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -2690,11 +2698,11 @@
         }
     }
 
-    $('#form_new_document').submit(function(){
+    $('#form_new_document').submit(function() {
         var flag = 0;
         var message;
-        var fileName    = $("#upload_document").val();
-        var title       = $('#document_title').val();
+        var fileName = $("#upload_document").val();
+        var title = $('#document_title').val();
 
         if (fileName.length > 0) {
             $('#name_upload_document').html(fileName.substring(0, 45));
@@ -2724,7 +2732,7 @@
         }
     });
 
-    $('.js-edit-document').on('click', function (){
+    $('.js-edit-document').on('click', function() {
         var iframe_url = $(this).attr('data-url');
         var doc_sid = $(this).attr('data-id');
         var doc_ext = $(this).attr('data-ext');
@@ -2742,7 +2750,7 @@
         $('#edit_incident_document').modal('show');
     });
 
-    $('.update_document_type').on('click', function(){
+    $('.update_document_type').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'title') {
@@ -2758,7 +2766,7 @@
     });
 
     function check_edit_document(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -2786,10 +2794,10 @@
         }
     }
 
-    $('#save_updated_doc').on('click', function(){
+    $('#save_updated_doc').on('click', function() {
         var flag = 0;
         var message;
-        var fileName  = $("#edit_upload_document").val();
+        var fileName = $("#edit_upload_document").val();
         var validation = $('input[name="update_document_type"]:checked').val();
 
         if (validation == 'document' || validation == 'both') {
@@ -2818,7 +2826,7 @@
                 message = 'Please provide a Document Title.';
                 flag = 1;
             }
-        } 
+        }
 
         if (flag == 1) {
             alertify.alert(message);
@@ -2835,7 +2843,7 @@
             form_data.append('document_sid', targit_document);
             form_data.append('incident_sid', <?php echo $id; ?>);
             form_data.append('docs', file_data);
-            form_data.append('file_name', fileName.replace('C:\\fakepath\\',''));
+            form_data.append('file_name', fileName.replace('C:\\fakepath\\', ''));
             form_data.append('file_ext', file_ext);
             form_data.append('company_sid', <?php echo $company_sid; ?>);
             $('#my_document_loader').show();
@@ -2847,61 +2855,66 @@
                 processData: false,
                 type: 'post',
                 data: form_data,
-                success: function(return_data_array){
+                success: function(return_data_array) {
                     alertify.alert('Supporting Incident Document Update Successfully.');
                     location.reload();
                 },
-                error: function(){
-                }
+                error: function() {}
             });
         }
     });
 
-    $('.js-archive-document').click(function(e){
+    $('.js-archive-document').click(function(e) {
         e.preventDefault();
         var documentSid = $(this).data('id');
-        alertify.confirm('Do you really want to move this document to Archive?', function(){
-            $.post("<?=base_url('incident_reporting_system/handler')?>", {
+        alertify.confirm('Do you really want to move this document to Archive?', function() {
+            $.post("<?= base_url('incident_reporting_system/handler') ?>", {
                 action: 'archive_document',
                 documentSid: documentSid
-            }, function(resp){
-                if(resp.Status === false){
+            }, function(resp) {
+                if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
                     return;
                 }
-                alertify.alert('SUCCESS!', resp.Response, function(){
+                alertify.alert('SUCCESS!', resp.Response, function() {
                     window.location.reload();
                 });
             });
-        }).set('labels', { ok: 'Yes', cancel: 'No'});
+        }).set('labels', {
+            ok: 'Yes',
+            cancel: 'No'
+        });
     });
 
-    $('.js-active-document').click(function(e){
+    $('.js-active-document').click(function(e) {
         e.preventDefault();
         var documentSid = $(this).data('id');
-        alertify.confirm('Do you really want to move this document to Active?', function(){
-            $.post("<?=base_url('incident_reporting_system/handler')?>", {
+        alertify.confirm('Do you really want to move this document to Active?', function() {
+            $.post("<?= base_url('incident_reporting_system/handler') ?>", {
                 action: 'active_document',
                 documentSid: documentSid
-            }, function(resp){
-                if(resp.Status === false){
+            }, function(resp) {
+                if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
                     return;
                 }
-                alertify.alert('SUCCESS!', resp.Response, function(){
+                alertify.alert('SUCCESS!', resp.Response, function() {
                     window.location.reload();
                 });
             });
-        }).set('labels', { ok: 'Yes', cancel: 'No'});
+        }).set('labels', {
+            ok: 'Yes',
+            cancel: 'No'
+        });
     });
 
-    function view_incident_doc (source) {
-        var iframe_url              = '';
-        var modal_content           = '';
-        var footer_content          = '';
-        var document_title          = $(source).attr('data-title');
-        var file_extension          = $(source).attr('data-preview-ext');
-        var document_preview_url    = $(source).attr('data-preview-url');
+    function view_incident_doc(source) {
+        var iframe_url = '';
+        var modal_content = '';
+        var footer_content = '';
+        var document_title = $(source).attr('data-title');
+        var file_extension = $(source).attr('data-preview-ext');
+        var document_preview_url = $(source).attr('data-preview-url');
 
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
@@ -2933,7 +2946,7 @@
                 case 'gif':
                     modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
                     break;
-                default :
+                default:
                     //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     break;
@@ -2946,7 +2959,7 @@
         $('#view_document_modal_body').html(modal_content);
         $('#document_modal_title').html(document_title);
         $('#document_modal').modal("toggle");
-        $('#document_modal').on("shown.bs.modal", function () {
+        $('#document_modal').on("shown.bs.modal", function() {
             if (iframe_url != '') {
                 $('#preview_iframe').attr('src', iframe_url);
             }
@@ -2955,7 +2968,7 @@
     // Documents JS End
 
     // Email JS Start
-    $("#send_normal_email").on('click',function(){
+    $("#send_normal_email").on('click', function() {
         var flag = 0;
         var message = '';
         var managers = $('#managers').val();
@@ -2964,31 +2977,31 @@
         var message_body = CKEDITOR.instances['message'].getData();
 
         if (managers == null && message_subject == '' && message_body == '') {
-            message ='All fields are required.';
+            message = 'All fields are required.';
             flag = 1;
         } else if (managers == null && message_subject == '') {
-            message ='Email address and Subject are required.';
+            message = 'Email address and Subject are required.';
             flag = 1;
         } else if (managers == null && message_body == '') {
-            message ='Email address and Message are required.';
+            message = 'Email address and Message are required.';
             flag = 1;
         } else if (message_subject == '' && message_body == '') {
-            message ='Subject and Message body are required.';
+            message = 'Subject and Message body are required.';
             flag = 1;
         } else if (managers == null) {
-            message ='Email address is required.';
+            message = 'Email address is required.';
             flag = 1;
         } else if (message_body == '') {
-            message ='Message body is required.';
+            message = 'Message body is required.';
             flag = 1;
         } else if (message_subject == '') {
-            message ='Subject is required.';
+            message = 'Subject is required.';
             flag = 1;
         }
 
         if (attachment_size > 0 && flag == 0) {
             $('#attachment_loader').show();
-            $('#attachment_listing_data > .manual_upload_items').each(function (key) {
+            $('#attachment_listing_data > .manual_upload_items').each(function(key) {
                 var item_status = $(this).attr('item-status');
                 if (item_status == 'pending') {
                     var item_row_id = $(this).attr('row-id');
@@ -2998,23 +3011,23 @@
 
                     var form_data = new FormData();
                     form_data.append('attachment_title', item_title);
-                    
+
                     if (item_source == 'youtube' || item_source == 'vimeo') {
                         var social_url = $(this).attr('item-data');
                         form_data.append('social_url', social_url);
                     } else {
-                        var item_id = item_title.replace(/ /g,'');
-                        var item_file   = $('#'+item_id).prop('files')[0];
+                        var item_id = item_title.replace(/ /g, '');
+                        var item_file = $('#' + item_id).prop('files')[0];
                         form_data.append('file', item_file);
 
                         if (item_source == 'upload_document') {
-                            var fileName    = $('#'+item_id).val();
-                            var file_ext    = fileName.split('.').pop();
-                            form_data.append('file_name', fileName.replace('C:\\fakepath\\',''));
+                            var fileName = $('#' + item_id).val();
+                            var file_ext = fileName.split('.').pop();
+                            form_data.append('file_name', fileName.replace('C:\\fakepath\\', ''));
                             form_data.append('file_ext', file_ext);
                         }
                     }
-                    
+
                     form_data.append('file_type', item_source);
                     form_data.append('user_type', 'employee');
                     form_data.append('incident_sid', <?php echo $id; ?>);
@@ -3028,31 +3041,31 @@
                         processData: false,
                         type: 'post',
                         data: form_data,
-                        success: function(response){
-                            var obj             = jQuery.parseJSON(response);
-                            var res_item_sid    = obj['item_sid'];
-                            var res_item_title  = obj['item_title'];
-                            var res_item_type   = obj['item_type'];
+                        success: function(response) {
+                            var obj = jQuery.parseJSON(response);
+                            var res_item_sid = obj['item_sid'];
+                            var res_item_title = obj['item_title'];
+                            var res_item_type = obj['item_type'];
                             var res_item_source = obj['item_source'];
 
-                            $('#'+item_row_id).html('<input type="hidden" name="attachment['+res_item_sid+'][item_type]" value="'+res_item_type+'"><input type="hidden" name="attachment['+res_item_sid+'][record_sid]" value="'+res_item_sid+'"><td class="text-center">'+res_item_title+'</td><td class="text-center">'+res_item_type+'</td><td class="text-center">'+res_item_source+'</td><td><a href="javascript:;" item-sid="'+res_item_sid+'" attachment-type="library" item-type="'+res_item_type+'" class="btn btn-block btn-info js-remove-attachment">Remove</a></td>'); 
+                            $('#' + item_row_id).html('<input type="hidden" name="attachment[' + res_item_sid + '][item_type]" value="' + res_item_type + '"><input type="hidden" name="attachment[' + res_item_sid + '][record_sid]" value="' + res_item_sid + '"><td class="text-center">' + res_item_title + '</td><td class="text-center">' + res_item_type + '</td><td class="text-center">' + res_item_source + '</td><td><a href="javascript:;" item-sid="' + res_item_sid + '" attachment-type="library" item-type="' + res_item_type + '" class="btn btn-block btn-info js-remove-attachment">Remove</a></td>');
 
-                            $('#'+item_row_id).attr("item-status","done");
+                            $('#' + item_row_id).attr("item-status", "done");
 
                             attachment_size = attachment_size - 1;
 
-                            if(attachment_size == 0) {
-                                setTimeout(function(){
+                            if (attachment_size == 0) {
+                                setTimeout(function() {
                                     $("#send_normal_email").attr('type', 'submit');
                                     $('#send_normal_email').click();
-                                }, 1000);  
+                                }, 1000);
                             }
                         },
-                        error: function(){
+                        error: function() {
 
                         }
-                   });
-                }         
+                    });
+                }
             });
         } else {
             if (flag == 1) {
@@ -3062,15 +3075,15 @@
                 $("#send_normal_email").attr('type', 'submit');
                 $('#send_normal_email').click();
             }
-        }            
+        }
     });
 
-    function mark_read (email_sid) {
+    function mark_read(email_sid) {
         var update_url = '<?php echo base_url('incident_reporting_system/update_email_read_flag'); ?>';
         var targit_document = $('#update_document_sid').val();
         var form_data = new FormData();
 
-        
+
         form_data.append('email_sid', email_sid);
         form_data.append('receiver_sid', <?php echo $current_user; ?>);
 
@@ -3081,34 +3094,33 @@
             processData: false,
             type: 'post',
             data: form_data,
-            success: function(response){
-                var obj         = jQuery.parseJSON(response);
-                var user_email_status  = obj['status_two'];
-                var sender_sid  = obj['sender_sid'];
+            success: function(response) {
+                var obj = jQuery.parseJSON(response);
+                var user_email_status = obj['status_two'];
+                var sender_sid = obj['sender_sid'];
 
 
 
                 if (user_email_status == 0) {
-                    $('#email_notification_'+sender_sid).hide();
+                    $('#email_notification_' + sender_sid).hide();
                 }
 
-                $('#email_read_'+email_sid).hide();
+                $('#email_read_' + email_sid).hide();
             },
-            error: function(){
-            }
+            error: function() {}
         });
     }
 
-    $('.show_media_library').on('click', function(){
+    $('.show_media_library').on('click', function() {
         $("#library_item_title").html('Attachment Library');
         $("#attachment_library_modal").modal('show');
     });
 
-    function view_library_item (source) {
-        var item_category   = $(source).attr('item-category');
-        var item_title      = $(source).attr('item-title');
-        var item_url        = $(source).attr('item-url');
-        var item_type       = $(source).attr('item-type');
+    function view_library_item(source) {
+        var item_category = $(source).attr('item-category');
+        var item_title = $(source).attr('item-title');
+        var item_url = $(source).attr('item-url');
+        var item_type = $(source).attr('item-type');
 
         $("#show_library_item").hide();
         $("#view_library_item").show();
@@ -3120,50 +3132,50 @@
             $('#library-document-section').show();
             if (item_type == 'document') {
                 var document_content = $("<iframe />")
-                .attr("id", "library-document-iframe")
-                .attr("class", "uploaded-file-preview")
-                .attr("src", item_url);
+                    .attr("id", "library-document-iframe")
+                    .attr("class", "uploaded-file-preview")
+                    .attr("src", item_url);
                 $("#library-document-placeholder").append(document_content);
             } else {
                 var image_content = $("<img />")
-                .attr("id", "library-image")
-                .attr("class", "img-responsive")
-                .attr("src", item_url);
+                    .attr("id", "library-image")
+                    .attr("class", "img-responsive")
+                    .attr("src", item_url);
                 $("#library-document-placeholder").append(image_content);
             }
-            
+
         } else {
 
             if (item_type == 'youtube') {
-            
+
                 $('#library-youtube-section').show();
                 var video = $("<iframe />")
-                .attr("id", "library-youtube-iframe")
-                .attr("src", "https://www.youtube.com/embed/"+item_url);
+                    .attr("id", "library-youtube-iframe")
+                    .attr("src", "https://www.youtube.com/embed/" + item_url);
                 $("#library-youtube-placeholder").append(video);
 
             } else if (item_type == 'vimeo') {
-                
+
                 $('#library-vimeo-section').show();
                 var video = $("<iframe />")
-                .attr("id", "library-vimeo-iframe")
-                .attr("src", "https://player.vimeo.com/video/"+item_url);
+                    .attr("id", "library-vimeo-iframe")
+                    .attr("src", "https://player.vimeo.com/video/" + item_url);
                 $("#library-vimeo-placeholder").append(video);
 
             } else if (item_type == 'upload_video') {
                 $('#library-video-section').show();
                 var video = $("<video />")
-                .attr("id", "library-upload-video")
-                .attr('src',item_url)
-                .attr('controls',true);
+                    .attr("id", "library-upload-video")
+                    .attr('src', item_url)
+                    .attr('controls', true);
                 $("#library-video-placeholder").append(video);
 
             } else if (item_type == 'upload_audio') {
                 $('#library-audio-section').show();
                 var audio = $("<audio />")
-                .attr("id", "library-upload-audio")
-                .attr('src',item_url)
-                .attr('controls',true);
+                    .attr("id", "library-upload-audio")
+                    .attr('src', item_url)
+                    .attr('controls', true);
                 $("#library-audio-placeholder").append(audio);
             }
         }
@@ -3197,43 +3209,43 @@
         $("#show_library_item").show();
     });
 
-    $(".select_lib_item").on("click", function () {
-        var item_id     = $(this).attr("item-sid");
-        
-        if($(this).prop('checked') == true) {
-            
-            var item_type   = $(this).attr("item-category");
+    $(".select_lib_item").on("click", function() {
+        var item_id = $(this).attr("item-sid");
+
+        if ($(this).prop('checked') == true) {
+
+            var item_type = $(this).attr("item-category");
             var item_source = $(this).attr("item-type");
-            var item_title  = $(this).attr("item-title");
+            var item_title = $(this).attr("item-title");
 
             $('#email_attachment_list').show();
-            $('#attachment_listing_data').prepend('<tr id="lib_item_'+item_id+'"><input type="hidden" name="attachment['+item_id+'][item_type]" value="'+item_type+'"><input type="hidden" name="attachment['+item_id+'][record_sid]" value="'+item_id+'"><td class="text-center">'+item_title+'</td><td class="text-center">'+item_type+'</td><td class="text-center">'+item_source+'</td><td><a href="javascript:;" item-sid="'+item_id+'" attachment-type="library" item-type="'+item_type+'" class="btn btn-block btn-info js-remove-attachment">Remove</a></td></tr>');
+            $('#attachment_listing_data').prepend('<tr id="lib_item_' + item_id + '"><input type="hidden" name="attachment[' + item_id + '][item_type]" value="' + item_type + '"><input type="hidden" name="attachment[' + item_id + '][record_sid]" value="' + item_id + '"><td class="text-center">' + item_title + '</td><td class="text-center">' + item_type + '</td><td class="text-center">' + item_source + '</td><td><a href="javascript:;" item-sid="' + item_id + '" attachment-type="library" item-type="' + item_type + '" class="btn btn-block btn-info js-remove-attachment">Remove</a></td></tr>');
         } else {
-            $('#lib_item_'+item_id).remove();
+            $('#lib_item_' + item_id).remove();
         }
     });
 
     $(document).on('click', '.js-remove-attachment', function() {
-        var remove_item_sid          = $(this).attr('item-sid');
-        var attachment_type          = $(this).attr('attachment-type');
-        var remove_item_type         = $(this).attr('item-type');
+        var remove_item_sid = $(this).attr('item-sid');
+        var attachment_type = $(this).attr('attachment-type');
+        var remove_item_type = $(this).attr('item-type');
 
         if (attachment_type == 'library') {
-           
-            $('#lib_item_'+remove_item_sid).remove();
+
+            $('#lib_item_' + remove_item_sid).remove();
             if (remove_item_type == "Document") {
-                
-                $("#doc_key_"+remove_item_sid).prop("checked", false);
+
+                $("#doc_key_" + remove_item_sid).prop("checked", false);
             } else {
-                
-                $("#med_key_"+remove_item_sid).prop("checked", false);
+
+                $("#med_key_" + remove_item_sid).prop("checked", false);
             }
         } else {
-            $('#man_item_'+remove_item_sid).remove();
-        } 
-    });    
+            $('#man_item_' + remove_item_sid).remove();
+        }
+    });
 
-    $('.show_manual_attachment').on('click', function(){
+    $('.show_manual_attachment').on('click', function() {
         $('#attachment_item_title').val('');
         $('#attach_social_video').val('');
         $('#default_manual_select').prop("checked", true);
@@ -3262,7 +3274,7 @@
         $("#manual_attachment_modal").modal('show');
     });
 
-    $('.attach_item_source').on('click', function(){
+    $('.attach_item_source').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'youtube') {
@@ -3334,7 +3346,7 @@
     });
 
     function check_attach_video(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -3348,7 +3360,7 @@
                     $('#name_' + val).html('<p class="red">Only (.mp4, .m4a, .m4v, .f4v, .f4a, .m4b, .m4r, .f4b, .mov) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -3373,7 +3385,7 @@
     }
 
     function check_attach_audio(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -3387,7 +3399,7 @@
                     $('#name_' + val).html('<p class="red">Only (.mp3, .m4a, .mp4, .ogg, .flac, .wav) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -3412,7 +3424,7 @@
     }
 
     function check_attach_document(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -3441,17 +3453,17 @@
     }
 
     var item = 1;
-    $('#save_attach_item').on('click',function(){
-        
+    $('#save_attach_item').on('click', function() {
+
         var flag = 0;
         var message;
         var item_type;
         var item_source;
         var document_type;
         var source = $('input[name="attach_item_source"]:checked').val();
-        
-        if(source == 'youtube'){
-            if($('#attach_social_video').val() != '') {
+
+        if (source == 'youtube') {
+            if ($('#attach_social_video').val() != '') {
                 var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
                 if (!$('#attach_social_video').val().match(p)) {
                     message = 'Not a Valid Youtube URL';
@@ -3463,22 +3475,23 @@
             }
         }
 
-        if(source == 'vimeo'){
-            if($('#attach_social_video').val() != '') {
+        if (source == 'vimeo') {
+            if ($('#attach_social_video').val() != '') {
                 var myurl = "<?php echo base_url('Incident_reporting_system/validate_vimeo'); ?>";
                 $.ajax({
                     type: "POST",
                     url: myurl,
-                    data: {url: $('#attach_social_video').val()},
-                    async : false,
-                    success: function (data) {
+                    data: {
+                        url: $('#attach_social_video').val()
+                    },
+                    async: false,
+                    success: function(data) {
                         if (data == false) {
                             message = 'Not a Valid Vimeo URLs';
                             flag = 1;
                         }
                     },
-                    error: function (data) {
-                    }
+                    error: function(data) {}
                 });
             } else {
                 message = 'Please provide a Valid Vimeo URL';
@@ -3486,8 +3499,8 @@
             }
         }
 
-        if(source == 'upload_video'){
-            var fileName  = $("#attach_video").val();
+        if (source == 'upload_video') {
+            var fileName = $("#attach_video").val();
 
             if (fileName.length > 0) {
                 $('#name_attach_video').html(fileName.substring(0, 45));
@@ -3501,7 +3514,7 @@
                     message = 'Please select a valid video format.';
                     flag = 1;
                 } else {
-                    var file_size = Number(($("#attach_video")[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#attach_video")[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#attach_video").val(null);
@@ -3517,8 +3530,8 @@
             }
         }
 
-        if(source == 'upload_audio'){
-            var fileName  = $("#attach_audio").val();
+        if (source == 'upload_audio') {
+            var fileName = $("#attach_audio").val();
 
             if (fileName.length > 0) {
                 $('#name_attach_audio').html(fileName.substring(0, 45));
@@ -3532,7 +3545,7 @@
                     message = 'Please select a valid audio format.';
                     flag = 1;
                 } else {
-                    var file_size = Number(($("#attach_audio")[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#attach_audio")[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#attach_audio").val(null);
@@ -3548,8 +3561,8 @@
             }
         }
 
-        if(source == 'upload_document'){
-            var fileName  = $("#attach_document").val();
+        if (source == 'upload_document') {
+            var fileName = $("#attach_document").val();
 
             if (fileName.length > 0) {
                 $('#name_attach_document').html(fileName.substring(0, 45));
@@ -3569,13 +3582,13 @@
                 flag = 1;
             }
         }
-        
+
         var attachment_title = $('#attachment_item_title').val();
 
         if (attachment_title == '' || attachment_title.length == 0) {
             message = 'Please provide a Video Title.';
             flag = 1;
-        }   
+        }
 
         if (flag == 1) {
             alertify.alert(message);
@@ -3586,14 +3599,14 @@
             var upload_data = '';
 
             if (source == 'youtube') {
-                item_type   = 'Media';
+                item_type = 'Media';
                 item_source = 'Youtube';
 
                 var youtube_video_link = $('#attach_social_video').val();
                 upload_data = youtube_video_link;
 
             } else if (source == 'vimeo') {
-                item_type   = 'Media';
+                item_type = 'Media';
                 item_source = 'Vimeo';
 
                 var vimeo_video_link = $('#attach_social_video').val();
@@ -3605,47 +3618,47 @@
 
                 var video_data = $('#attach_video').prop('files')[0];
                 upload_data = video_data;
-                var item_id = attachment_title.replace(/ /g,'');
-                $("#attach_video").clone().prop('id', item_id ).insertAfter("div#email_attachment_files:last");
-                $("#"+item_id).hide();
-                
-            } else if (source == 'upload_audio'){
+                var item_id = attachment_title.replace(/ /g, '');
+                $("#attach_video").clone().prop('id', item_id).insertAfter("div#email_attachment_files:last");
+                $("#" + item_id).hide();
+
+            } else if (source == 'upload_audio') {
                 item_type = 'Media';
                 item_source = 'Upload Audio';
 
                 var audio_data = $('#attach_audio').prop('files')[0];
                 upload_data = audio_data;
-                var item_id = attachment_title.replace(/ /g,'');
-                $("#attach_audio").clone().prop('id', item_id ).insertAfter("div#email_attachment_files:last");
-                $("#"+item_id).hide();
+                var item_id = attachment_title.replace(/ /g, '');
+                $("#attach_audio").clone().prop('id', item_id).insertAfter("div#email_attachment_files:last");
+                $("#" + item_id).hide();
 
-            } else if (source == 'upload_document'){
+            } else if (source == 'upload_document') {
                 item_type = 'Document';
                 item_source = document_type;
 
                 var document_data = $('#attach_document').prop('files')[0];
                 upload_data = document_data;
-                var item_id = attachment_title.replace(/ /g,'');
-                $("#attach_document").clone().prop('id', item_id ).insertAfter("div#email_attachment_files:last");
-                $("#"+item_id).hide();
+                var item_id = attachment_title.replace(/ /g, '');
+                $("#attach_document").clone().prop('id', item_id).insertAfter("div#email_attachment_files:last");
+                $("#" + item_id).hide();
 
             }
 
             $("#manual_attachment_modal").modal('hide');
             $('#email_attachment_list').show();
-            $('#attachment_listing_data').prepend('<tr id="man_item_'+item+'" class="manual_upload_items" item-status="pending" row-id="man_item_'+item+'" item-title="'+attachment_title+'" item-source="'+source+'" item-data="'+upload_data+'"><td class="text-center">'+attachment_title+'</td><td class="text-center">'+item_type+'</td><td class="text-center">'+item_source+'</td><td><a href="javascript:;" item-sid="'+item+'" attachment-type="manual" item-type="'+item_source+'" class="btn btn-block btn-info js-remove-attachment">Remove</a></td></tr>');
+            $('#attachment_listing_data').prepend('<tr id="man_item_' + item + '" class="manual_upload_items" item-status="pending" row-id="man_item_' + item + '" item-title="' + attachment_title + '" item-source="' + source + '" item-data="' + upload_data + '"><td class="text-center">' + attachment_title + '</td><td class="text-center">' + item_type + '</td><td class="text-center">' + item_source + '</td><td><a href="javascript:;" item-sid="' + item + '" attachment-type="manual" item-type="' + item_source + '" class="btn btn-block btn-info js-remove-attachment">Remove</a></td></tr>');
 
-            ++item; 
+            ++item;
         }
     });
 
-    function view_attach_item (source) {
-        var item_category   = $(source).attr('item-category');
-        var item_title      = $(source).attr('item-title');
-        var item_url        = $(source).attr('item-url');
-        var item_type       = $(source).attr('item-type');
+    function view_attach_item(source) {
+        var item_category = $(source).attr('item-category');
+        var item_title = $(source).attr('item-title');
+        var item_url = $(source).attr('item-url');
+        var item_type = $(source).attr('item-type');
 
-        
+
         $("#view_media_document_modal").modal('show');
         $("#view_item_title").html(item_title);
         $("#close_media_document_modal_up").attr('file-type', item_type);
@@ -3655,50 +3668,50 @@
             $('#document-container').show();
             if (item_type == 'document') {
                 var document_content = $("<iframe />")
-                .attr("id", "document-iframe")
-                .attr("class", "uploaded-file-preview")
-                .attr("src", item_url);
+                    .attr("id", "document-iframe")
+                    .attr("class", "uploaded-file-preview")
+                    .attr("src", item_url);
                 $("#document-iframe-holder").append(document_content);
             } else {
                 var image_content = $("<img />")
-                .attr("id", "image-tag")
-                .attr("class", "img-responsive")
-                .attr("src", item_url);
+                    .attr("id", "image-tag")
+                    .attr("class", "img-responsive")
+                    .attr("src", item_url);
                 $("#document-iframe-holder").append(image_content);
             }
-            
+
         } else {
 
             if (item_type == 'youtube') {
-            
+
                 $('#youtube-container').show();
                 var video = $("<iframe />")
-                .attr("id", "youtube-iframe")
-                .attr("src", "https://www.youtube.com/embed/"+item_url);
+                    .attr("id", "youtube-iframe")
+                    .attr("src", "https://www.youtube.com/embed/" + item_url);
                 $("#youtube-iframe-holder").append(video);
 
             } else if (item_type == 'vimeo') {
-                
+
                 $('#vimeo-container').show();
                 var video = $("<iframe />")
-                .attr("id", "vimeo-iframe")
-                .attr("src", "https://player.vimeo.com/video/"+item_url);
+                    .attr("id", "vimeo-iframe")
+                    .attr("src", "https://player.vimeo.com/video/" + item_url);
                 $("#vimeo-iframe-holder").append(video);
 
             } else if (item_type == 'upload_video') {
                 $('#video-container').show();
                 var video = $("<video />")
-                .attr("id", "video-player")
-                .attr('src',item_url)
-                .attr('controls',true);
+                    .attr("id", "video-player")
+                    .attr('src', item_url)
+                    .attr('controls', true);
                 $("#video-player-holder").append(video);
 
             } else if (item_type == 'upload_audio') {
                 $('#audio-container').show();
                 var audio = $("<audio />")
-                .attr("id", "audio-player")
-                .attr('src',item_url)
-                .attr('controls',true);
+                    .attr("id", "audio-player")
+                    .attr('src', item_url)
+                    .attr('controls', true);
                 $("#audio-player-holder").append(audio);
             }
         }
@@ -3728,11 +3741,11 @@
         }
     });
 
-    function send_email (source) {
-        var email_reciever      = $(source).attr('data-sid');
-        var email_subject       = $(source).attr('data-subject');
-        var email_title         = $(source).attr('data-title');
-        var system_user_email   = $(source).attr('data-email');
+    function send_email(source) {
+        var email_reciever = $(source).attr('data-sid');
+        var email_subject = $(source).attr('data-subject');
+        var email_title = $(source).attr('data-title');
+        var system_user_email = $(source).attr('data-email');
 
         $('#send_email_user').val(email_reciever);
         $('#send_email_address').val(system_user_email);
@@ -3748,7 +3761,7 @@
         $('#send_email_modal').modal('show');
     }
 
-    $(".attachment_pop_up").on('click', function(){
+    $(".attachment_pop_up").on('click', function() {
         var attachment_type = $(this).attr('attachment-type');
 
         if (attachment_type == 'library') {
@@ -3761,11 +3774,11 @@
         }
     });
 
-    function view_pop_up_library_item (source) {
-        var item_category   = $(source).attr('item-category');
-        var item_title      = $(source).attr('item-title');
-        var item_url        = $(source).attr('item-url');
-        var item_type       = $(source).attr('item-type');
+    function view_pop_up_library_item(source) {
+        var item_category = $(source).attr('item-category');
+        var item_title = $(source).attr('item-title');
+        var item_url = $(source).attr('item-url');
+        var item_type = $(source).attr('item-type');
 
         $("#show_pop_up_library_item").hide();
         $("#view_pop_up_library_item").show();
@@ -3777,56 +3790,56 @@
             $('#email-pop-up-document-container').show();
             if (item_type == 'document') {
                 var document_content = $("<iframe />")
-                .attr("id", "email-pop-up-document-iframe")
-                .attr("class", "uploaded-file-preview")
-                .attr("src", item_url);
+                    .attr("id", "email-pop-up-document-iframe")
+                    .attr("class", "uploaded-file-preview")
+                    .attr("src", item_url);
                 $("#email-pop-up-document-iframe-holder").append(document_content);
             } else {
                 var image_content = $("<img />")
-                .attr("id", "email-pop-up-image-tag")
-                .attr("class", "img-responsive")
-                .attr("src", item_url);
+                    .attr("id", "email-pop-up-image-tag")
+                    .attr("class", "img-responsive")
+                    .attr("src", item_url);
                 $("#email-pop-up-document-iframe-holder").append(image_content);
             }
-            
+
         } else {
 
             if (item_type == 'youtube') {
-            
+
                 $('#email-pop-up-youtube-container').show();
                 var video = $("<iframe />")
-                .attr("id", "email-pop-up-youtube-iframe")
-                .attr("src", "https://www.youtube.com/embed/"+item_url);
+                    .attr("id", "email-pop-up-youtube-iframe")
+                    .attr("src", "https://www.youtube.com/embed/" + item_url);
                 $("#email-pop-up-youtube-iframe-holder").append(video);
 
             } else if (item_type == 'vimeo') {
-                
+
                 $('#email-pop-up-vimeo-container').show();
                 var video = $("<iframe />")
-                .attr("id", "email-pop-up-vimeo-iframe")
-                .attr("src", "https://player.vimeo.com/video/"+item_url);
+                    .attr("id", "email-pop-up-vimeo-iframe")
+                    .attr("src", "https://player.vimeo.com/video/" + item_url);
                 $("#email-pop-up-vimeo-container").append(video);
 
             } else if (item_type == 'upload_video') {
                 $('#email-pop-up-video-container').show();
                 var video = $("<video />")
-                .attr("id", "email-pop-up-video-player")
-                .attr('src',item_url)
-                .attr('controls',true);
+                    .attr("id", "email-pop-up-video-player")
+                    .attr('src', item_url)
+                    .attr('controls', true);
                 $("#email-pop-up-video-player-holder").append(video);
 
             } else if (item_type == 'upload_audio') {
                 $('#email-pop-up-audio-container').show();
                 var audio = $("<audio />")
-                .attr("id", "email-pop-up-audio-player")
-                .attr('src',item_url)
-                .attr('controls',true);
+                    .attr("id", "email-pop-up-audio-player")
+                    .attr('src', item_url)
+                    .attr('controls', true);
                 $("#email-pop-up-audio-player-holder").append(audio);
             }
         }
     }
 
-    $(".email_pop_up_back_to_library").on("click", function () {
+    $(".email_pop_up_back_to_library").on("click", function() {
         var item_type = $(".email_pop_up_back_to_library").attr('item-type');
 
         if (item_type == 'youtube') {
@@ -3853,59 +3866,59 @@
         $("#show_pop_up_library_item").show();
     });
 
-    $(".email_pop_up_back_to_compose_email").on("click", function(){
+    $(".email_pop_up_back_to_compose_email").on("click", function() {
         var button_from = $(this).attr('btn-from');
 
         if (button_from == 'library') {
             $("#pop_up_attachment_library_container").hide();
             $("#pop_up_email_compose_container").show();
-        } else if (button_from == 'manual')  {
+        } else if (button_from == 'manual') {
             $("#pop_up_manual_attachment_container").hide();
             $("#pop_up_email_compose_container").show();
-        } else{
+        } else {
             $("#pop_up_attachment_library_container").hide();
             $("#pop_up_manual_attachment_container").hide();
             $("#pop_up_email_compose_container").show();
         }
     });
 
-    $(".email_pop_up_select_lib_item").on("click", function(){
+    $(".email_pop_up_select_lib_item").on("click", function() {
         var item_id = $(this).attr("item-sid");
-        
-        if($(this).prop('checked') == true) {
-            
-            var item_type   = $(this).attr("item-category");
+
+        if ($(this).prop('checked') == true) {
+
+            var item_type = $(this).attr("item-category");
             var item_source = $(this).attr("item-type");
-            var item_title  = $(this).attr("item-title");
+            var item_title = $(this).attr("item-title");
 
             $('#pop_up_email_attachment_list').show();
-            $('#pop_up_attachment_listing_data').prepend('<tr id="pop_up_lib_item_'+item_id+'"><input type="hidden" name="attachment['+item_id+'][item_type]" value="'+item_type+'"><input type="hidden" name="attachment['+item_id+'][record_sid]" value="'+item_id+'"><td class="text-center">'+item_title+'</td><td class="text-center">'+item_type+'</td><td class="text-center">'+item_source+'</td><td><a href="javascript:;" item-sid="'+item_id+'" attachment-type="library" item-type="'+item_type+'" class="btn btn-block btn-info js-pop-up-remove-attachment">Remove</a></td></tr>');
+            $('#pop_up_attachment_listing_data').prepend('<tr id="pop_up_lib_item_' + item_id + '"><input type="hidden" name="attachment[' + item_id + '][item_type]" value="' + item_type + '"><input type="hidden" name="attachment[' + item_id + '][record_sid]" value="' + item_id + '"><td class="text-center">' + item_title + '</td><td class="text-center">' + item_type + '</td><td class="text-center">' + item_source + '</td><td><a href="javascript:;" item-sid="' + item_id + '" attachment-type="library" item-type="' + item_type + '" class="btn btn-block btn-info js-pop-up-remove-attachment">Remove</a></td></tr>');
         } else {
-            $('#pop_up_lib_item_'+item_id).remove();
+            $('#pop_up_lib_item_' + item_id).remove();
         }
     });
 
     $(document).on('click', '.js-pop-up-remove-attachment', function() {
-        var remove_item_sid          = $(this).attr('item-sid');
-        var attachment_type          = $(this).attr('attachment-type');
-        var remove_item_type         = $(this).attr('item-type')
+        var remove_item_sid = $(this).attr('item-sid');
+        var attachment_type = $(this).attr('attachment-type');
+        var remove_item_type = $(this).attr('item-type')
 
         if (attachment_type == 'library') {
-            $('#pop_up_lib_item_'+remove_item_sid).remove();
+            $('#pop_up_lib_item_' + remove_item_sid).remove();
             if (remove_item_type == "Document") {
-                
-                $("#pop_up_doc_key_"+remove_item_sid).prop("checked", false);
+
+                $("#pop_up_doc_key_" + remove_item_sid).prop("checked", false);
             } else {
-                
-                $("#pop_up_med_key_"+remove_item_sid).prop("checked", false);
+
+                $("#pop_up_med_key_" + remove_item_sid).prop("checked", false);
             }
         } else {
-            $('#pop_up_man_item_'+remove_item_sid).remove();
-        } 
+            $('#pop_up_man_item_' + remove_item_sid).remove();
+        }
     });
 
-    function reset_manual_input_fields () {
-        
+    function reset_manual_input_fields() {
+
         $('#pop_up_attachment_item_title').val('');
         $('#pop_up_attach_social_video').val('');
         $('#default_manual_pop_up').prop("checked", true);
@@ -3932,7 +3945,7 @@
         $('#pop_up_attachment_upload_document_input_container').hide();
     }
 
-    $('.pop_up_attach_item_source').on('click', function(){
+    $('.pop_up_attach_item_source').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'youtube') {
@@ -4004,7 +4017,7 @@
     });
 
     function pop_up_check_attach_video(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -4018,7 +4031,7 @@
                     $('#name_' + val).html('<p class="red">Only (.mp4, .m4a, .m4v, .f4v, .f4a, .m4b, .m4r, .f4b, .mov) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -4043,7 +4056,7 @@
     }
 
     function pop_up_check_attach_audio(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -4057,7 +4070,7 @@
                     $('#name_' + val).html('<p class="red">Only (.mp3, .m4a, .mp4, .ogg, .flac, .wav) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -4082,7 +4095,7 @@
     }
 
     function pop_up_check_attach_document(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -4111,17 +4124,17 @@
     }
 
     var pop_up_item = 1;
-    $('#pop_up_save_attach_item').on('click',function(){
-        
+    $('#pop_up_save_attach_item').on('click', function() {
+
         var flag = 0;
         var message;
         var item_type;
         var item_source;
         var document_type;
         var source = $('input[name="pop_up_attach_item_source"]:checked').val();
-        
-        if(source == 'youtube'){
-            if($('#pop_up_attach_social_video').val() != '') {
+
+        if (source == 'youtube') {
+            if ($('#pop_up_attach_social_video').val() != '') {
                 var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
                 if (!$('#pop_up_attach_social_video').val().match(p)) {
                     message = 'Not a Valid Youtube URL';
@@ -4133,22 +4146,23 @@
             }
         }
 
-        if(source == 'vimeo'){
-            if($('#pop_up_attach_social_video').val() != '') {
+        if (source == 'vimeo') {
+            if ($('#pop_up_attach_social_video').val() != '') {
                 var myurl = "<?php echo base_url('Incident_reporting_system/validate_vimeo'); ?>";
                 $.ajax({
                     type: "POST",
                     url: myurl,
-                    data: {url: $('#pop_up_attach_social_video').val()},
-                    async : false,
-                    success: function (data) {
+                    data: {
+                        url: $('#pop_up_attach_social_video').val()
+                    },
+                    async: false,
+                    success: function(data) {
                         if (data == false) {
                             message = 'Not a Valid Vimeo URLs';
                             flag = 1;
                         }
                     },
-                    error: function (data) {
-                    }
+                    error: function(data) {}
                 });
             } else {
                 message = 'Please provide a Valid Vimeo URL';
@@ -4156,8 +4170,8 @@
             }
         }
 
-        if(source == 'upload_video'){
-            var fileName  = $("#pop_up_attach_video").val();
+        if (source == 'upload_video') {
+            var fileName = $("#pop_up_attach_video").val();
 
             if (fileName.length > 0) {
                 $('#name_pop_up_attach_video').html(fileName.substring(0, 45));
@@ -4171,7 +4185,7 @@
                     message = 'Please select a valid video format.';
                     flag = 1;
                 } else {
-                    var file_size = Number(($("#pop_up_attach_video")[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#pop_up_attach_video")[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#pop_up_attach_video").val(null);
@@ -4187,8 +4201,8 @@
             }
         }
 
-        if(source == 'upload_audio'){
-            var fileName  = $("#pop_up_attach_audio").val();
+        if (source == 'upload_audio') {
+            var fileName = $("#pop_up_attach_audio").val();
 
             if (fileName.length > 0) {
                 $('#name_pop_up_attach_audio').html(fileName.substring(0, 45));
@@ -4202,7 +4216,7 @@
                     message = 'Please select a valid audio format.';
                     flag = 1;
                 } else {
-                    var file_size = Number(($("#pop_up_attach_audio")[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#pop_up_attach_audio")[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#pop_up_attach_audio").val(null);
@@ -4218,8 +4232,8 @@
             }
         }
 
-        if(source == 'upload_document'){
-            var fileName  = $("#pop_up_attach_document").val();
+        if (source == 'upload_document') {
+            var fileName = $("#pop_up_attach_document").val();
 
             if (fileName.length > 0) {
                 $('#name_pop_up_attach_document').html(fileName.substring(0, 45));
@@ -4239,13 +4253,13 @@
                 flag = 1;
             }
         }
-        
+
         var attachment_title = $('#pop_up_attachment_item_title').val();
 
         if (attachment_title == '' || attachment_title.length == 0) {
             message = 'Please provide a Video Title.';
             flag = 1;
-        }   
+        }
 
         if (flag == 1) {
             alertify.alert(message);
@@ -4256,14 +4270,14 @@
             var upload_data = '';
 
             if (source == 'youtube') {
-                item_type   = 'Media';
+                item_type = 'Media';
                 item_source = 'Youtube';
 
                 var youtube_video_link = $('#pop_up_attach_social_video').val();
                 upload_data = youtube_video_link;
 
             } else if (source == 'vimeo') {
-                item_type   = 'Media';
+                item_type = 'Media';
                 item_source = 'Vimeo';
 
                 var vimeo_video_link = $('#pop_up_attach_social_video').val();
@@ -4275,43 +4289,43 @@
 
                 var video_data = $('#pop_up_attach_video').prop('files')[0];
                 upload_data = video_data;
-                var item_id = attachment_title.replace(/ /g,'');
-                $("#pop_up_attach_video").clone().prop('id', item_id ).insertAfter("div#pop_up_email_attachment_files:last");
-                $("#"+item_id).hide();
-                
-            } else if (source == 'upload_audio'){
+                var item_id = attachment_title.replace(/ /g, '');
+                $("#pop_up_attach_video").clone().prop('id', item_id).insertAfter("div#pop_up_email_attachment_files:last");
+                $("#" + item_id).hide();
+
+            } else if (source == 'upload_audio') {
                 item_type = 'Media';
                 item_source = 'Upload Audio';
 
                 var audio_data = $('#attach_audio').prop('files')[0];
                 upload_data = audio_data;
-                var item_id = attachment_title.replace(/ /g,'');
-                $("#pop_up_attach_audio").clone().prop('id', item_id ).insertAfter("div#pop_up_email_attachment_files:last");
-                $("#"+item_id).hide();
+                var item_id = attachment_title.replace(/ /g, '');
+                $("#pop_up_attach_audio").clone().prop('id', item_id).insertAfter("div#pop_up_email_attachment_files:last");
+                $("#" + item_id).hide();
 
-            } else if (source == 'upload_document'){
+            } else if (source == 'upload_document') {
                 item_type = 'Document';
                 item_source = document_type;
 
                 var document_data = $('#attach_document').prop('files')[0];
                 upload_data = document_data;
-                var item_id = attachment_title.replace(/ /g,'');
-                $("#pop_up_attach_document").clone().prop('id', item_id ).insertAfter("div#pop_up_email_attachment_files:last");
-                $("#"+item_id).hide();
+                var item_id = attachment_title.replace(/ /g, '');
+                $("#pop_up_attach_document").clone().prop('id', item_id).insertAfter("div#pop_up_email_attachment_files:last");
+                $("#" + item_id).hide();
 
             }
 
             $("#pop_up_manual_attachment_container").hide();
             $("#pop_up_email_compose_container").show();
             $('#pop_up_email_attachment_list').show();
-            $('#pop_up_attachment_listing_data').prepend('<tr id="pop_up_man_item_'+pop_up_item+'" class="pop_up_manual_upload_items" item-status="pending" row-id="man_item_'+pop_up_item+'" item-title="'+attachment_title+'" item-source="'+source+'" item-data="'+upload_data+'"><td class="text-center">'+attachment_title+'</td><td class="text-center">'+item_type+'</td><td class="text-center">'+item_source+'</td><td><a href="javascript:;" item-sid="'+pop_up_item+'" attachment-type="manual" item-type="'+item_source+'" class="btn btn-block btn-info js-pop-up-remove-attachment">Remove</a></td></tr>');
+            $('#pop_up_attachment_listing_data').prepend('<tr id="pop_up_man_item_' + pop_up_item + '" class="pop_up_manual_upload_items" item-status="pending" row-id="man_item_' + pop_up_item + '" item-title="' + attachment_title + '" item-source="' + source + '" item-data="' + upload_data + '"><td class="text-center">' + attachment_title + '</td><td class="text-center">' + item_type + '</td><td class="text-center">' + item_source + '</td><td><a href="javascript:;" item-sid="' + pop_up_item + '" attachment-type="manual" item-type="' + item_source + '" class="btn btn-block btn-info js-pop-up-remove-attachment">Remove</a></td></tr>');
 
-            ++pop_up_item; 
+            ++pop_up_item;
 
         }
     });
-    
-    $("#send_pop_up_email").on('click',function(){
+
+    $("#send_pop_up_email").on('click', function() {
         var flag = 0;
         var message = '';
         var receivers;
@@ -4334,7 +4348,7 @@
         if (manual_attachment_size > 0 && flag == 0) {
             $('#send_email_modal').modal('hide');
             $('#attachment_loader').show();
-            $('#pop_up_attachment_listing_data > .pop_up_manual_upload_items').each(function (key) {
+            $('#pop_up_attachment_listing_data > .pop_up_manual_upload_items').each(function(key) {
                 var item_status = $(this).attr('item-status');
                 if (item_status == 'pending') {
                     var item_row_id = $(this).attr('row-id');
@@ -4345,23 +4359,23 @@
 
                     var form_data = new FormData();
                     form_data.append('attachment_title', item_title);
-                    
+
                     if (item_source == 'youtube' || item_source == 'vimeo') {
                         var social_url = $(this).attr('item-data');
                         form_data.append('social_url', social_url);
                     } else {
-                        var item_id = item_title.replace(/ /g,'');
-                        var item_file   = $('#'+item_id).prop('files')[0];
+                        var item_id = item_title.replace(/ /g, '');
+                        var item_file = $('#' + item_id).prop('files')[0];
                         form_data.append('file', item_file);
 
                         if (item_source == 'upload_document') {
-                            var fileName    = $('#'+item_id).val();
-                            var file_ext    = fileName.split('.').pop();
-                            form_data.append('file_name', fileName.replace('C:\\fakepath\\',''));
+                            var fileName = $('#' + item_id).val();
+                            var file_ext = fileName.split('.').pop();
+                            form_data.append('file_name', fileName.replace('C:\\fakepath\\', ''));
                             form_data.append('file_ext', file_ext);
                         }
                     }
-                    
+
                     form_data.append('file_type', item_source);
                     form_data.append('user_type', 'employee');
                     form_data.append('incident_sid', <?php echo $id; ?>);
@@ -4375,31 +4389,31 @@
                         processData: false,
                         type: 'post',
                         data: form_data,
-                        success: function(response){
-                            var obj             = jQuery.parseJSON(response);
-                            var res_item_sid    = obj['item_sid'];
-                            var res_item_title  = obj['item_title'];
-                            var res_item_type   = obj['item_type'];
+                        success: function(response) {
+                            var obj = jQuery.parseJSON(response);
+                            var res_item_sid = obj['item_sid'];
+                            var res_item_title = obj['item_title'];
+                            var res_item_type = obj['item_type'];
                             var res_item_source = obj['item_source'];
 
-                            $('#pop_up_'+item_row_id).html('<input type="hidden" name="attachment['+res_item_sid+'][item_type]" value="'+res_item_type+'"><input type="hidden" name="attachment['+res_item_sid+'][record_sid]" value="'+res_item_sid+'"><td class="text-center">'+res_item_title+'</td><td class="text-center">'+res_item_type+'</td><td class="text-center">'+res_item_source+'</td><td><a href="javascript:;" item-sid="'+res_item_sid+'" attachment-type="library" item-type="'+res_item_type+'" class="btn btn-block btn-info js-remove-attachment">Remove</a></td>'); 
+                            $('#pop_up_' + item_row_id).html('<input type="hidden" name="attachment[' + res_item_sid + '][item_type]" value="' + res_item_type + '"><input type="hidden" name="attachment[' + res_item_sid + '][record_sid]" value="' + res_item_sid + '"><td class="text-center">' + res_item_title + '</td><td class="text-center">' + res_item_type + '</td><td class="text-center">' + res_item_source + '</td><td><a href="javascript:;" item-sid="' + res_item_sid + '" attachment-type="library" item-type="' + res_item_type + '" class="btn btn-block btn-info js-remove-attachment">Remove</a></td>');
 
-                            $('#pop_up_'+item_row_id).attr("item-status","done");
+                            $('#pop_up_' + item_row_id).attr("item-status", "done");
 
                             manual_attachment_size = manual_attachment_size - 1;
-                            
-                            if(manual_attachment_size == 0) {
-                                setTimeout(function(){
+
+                            if (manual_attachment_size == 0) {
+                                setTimeout(function() {
                                     $("#send_pop_up_email").attr('type', 'submit');
                                     $('#send_pop_up_email').click();
-                                }, 1000); 
+                                }, 1000);
                             }
                         },
-                        error: function(){
+                        error: function() {
 
                         }
-                   });
-                }         
+                    });
+                }
             });
         } else {
             if (flag == 1) {
@@ -4409,72 +4423,75 @@
                 $("#send_pop_up_email").attr('type', 'submit');
                 $('#send_pop_up_email').click();
             }
-        }            
+        }
     });
     // Email JS End
 
     // Notes JS Start
-    $('#form_new_note').submit(function(){
+    $('#form_new_note').submit(function() {
         var comment_body = CKEDITOR.instances['response'].getData();
 
         if (comment_body == '') {
             alertify.alert('Please provide response message.');
             return false;
         }
-    }); 
+    });
     // Notes JS End
 
     // Change Incident type JS Start
-    $(document).on('click','#change_type',function(){
+    $(document).on('click', '#change_type', function() {
         var incident_sid = $('#incident_change_type').val();
 
         alertify.confirm(
             'Are you sure?',
             'Are you sure you want to change the Incident Type?',
-            function () {
-                var myurl = "<?php echo base_url('incident_reporting_system/ajax_change_incident_type'); ?>"+'/'+incident_sid;
+            function() {
+                var myurl = "<?php echo base_url('incident_reporting_system/ajax_change_incident_type'); ?>" + '/' + incident_sid;
 
                 $.ajax({
                     type: "POST",
                     url: myurl,
-                    async : false,
-                    success: function (data) {
+                    async: false,
+                    success: function(data) {
                         if (data == 1) {
                             // alertify.success('Incident Type Change Successfully');
                             location.reload();
                         }
                     },
-                    error: function (data) {
+                    error: function(data) {
 
                     }
                 });
-        },
-        function () {
-            alertify.alert('Cancelled!');
-        }).set('labels', {ok: 'Yes', cancel: 'No'});
+            },
+            function() {
+                alertify.alert('Cancelled!');
+            }).set('labels', {
+            ok: 'Yes',
+            cancel: 'No'
+        });
     });
     // Change Incident type JS End
 
     // Change Incident type JS Start
-    $(document).on('click','#confirm-closed',function(){
-        alertify.confirm('Resolved?','Are you sure, you want to mark this incident resolved?',function(){
-            var iid = '<?= $id?>';
+    $(document).on('click', '#confirm-closed', function() {
+        alertify.confirm('Resolved?', 'Are you sure, you want to mark this incident resolved?', function() {
+            var iid = '<?= $id ?>';
             $.ajax({
                 type: 'POST',
-                url: '<?= base_url('incident_reporting_system/mark_resolved')?>',
+                url: '<?= base_url('incident_reporting_system/mark_resolved') ?>',
                 data: {
                     id: iid
                 },
-                success: function(response){
-                    if(response == 'Done'){
+                success: function(response) {
+                    if (response == 'Done') {
                         window.location.href = window.location.href;
                     }
                 },
-                error: function(){
+                error: function() {
 
                 }
             });
-        }, function(){
+        }, function() {
 
         });
     });
