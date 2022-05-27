@@ -190,13 +190,13 @@
                                                                                         <td class="col-lg-4">
                                                                                             <div class="col-lg-3" style="padding-left: 0px;padding-right: 5px;">
                                                                                                 <a 
-                                                                                                    class="btn btn-sm btn-info btn-orange btn-block csRadius5"
+                                                                                                    class="btn btn-info btn-orange btn-block csRadius5"
                                                                                                     target="_blank" 
                                                                                                     href="<?= $print_original_url; ?>" 
                                                                                                 ><i class="fa fa-print" aria-hidden="true"></i> Print</a>
                                                                                                 <?php if (!empty($print_completed_url)) { ?>
                                                                                                     <a 
-                                                                                                        class="btn btn-sm btn-info btn-orange btn-block csRadius5"
+                                                                                                        class="btn btn-info btn-orange btn-block csRadius5"
                                                                                                         target="_blank" 
                                                                                                         href="<?= $print_completed_url; ?>" 
                                                                                                     ><i class="fa fa-print" aria-hidden="true"></i> Print <br>Submitted</a>
@@ -204,13 +204,13 @@
                                                                                             </div>
                                                                                             <div class="col-lg-4" style="padding-left: 0px; padding-right: 5px;">
                                                                                                 <a 
-                                                                                                    class="btn btn-black btn-sm btn-block csRadius5"
+                                                                                                    class="btn btn-black btn-block csRadius5"
                                                                                                     target="_blank" 
                                                                                                     href="<?= $download_original_url; ?>" 
                                                                                                 ><i class="fa fa-download" aria-hidden="true"></i> Download</a>
                                                                                                 <?php if (!empty($download_completed_url)) { ?>
                                                                                                     <a 
-                                                                                                        class="btn btn-black btn-sm btn-block csRadius5"
+                                                                                                        class="btn btn-black btn-block csRadius5"
                                                                                                         target="_blank" 
                                                                                                         href="<?= $download_completed_url; ?>" 
                                                                                                     ><i class="fa fa-download" aria-hidden="true"></i> Download <br>Submitted</a>
@@ -218,15 +218,42 @@
                                                                                             </div>
                                                                                             <div class="col-lg-5" style="padding-left: 0px; padding-right: 0px;">
                                                                                                 <button 
-                                                                                                    class="btn btn-sm btn-block <?php echo $document_btn_name == "Re-Initiate Document" ? "btn-warning" : "btn-success";?> completedocument csRadius5" 
+                                                                                                    class="btn btn-block <?php echo $document_btn_name == "Re-Initiate Document" ? "btn-warning" : "btn-success";?> completedocument csRadius5" 
                                                                                                     document_sid="<?= $document['sid']; ?>" document_status="<? if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) { echo $document_status; }; ?>" document_assigned_sid="<?= $assigned_document_data['sid'] ?>">
                                                                                                     <?php echo $document_btn_name; ?>
                                                                                                 </button>
+                                                                                                <?php if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) { ?>
+                                                                                                    <a 
+                                                                                                        class="btn btn-success btn-block csRadius5"
+                                                                                                        target="_blank" 
+                                                                                                        href="<?= base_url('hr_documents_management/sign_hr_document/d') . '/' . $assigned_document_data['sid']; ?>" 
+                                                                                                        >
+                                                                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                                                                        Preview
+                                                                                                    </a>
+                                                                                                    <?php if ($document_status == 'Completed') { ?>
+                                                                                                        <a 
+                                                                                                            class="btn btn-success btn-block csRadius5"
+                                                                                                            target="_blank" 
+                                                                                                            href="<?= base_url('hr_documents_management/sign_hr_document/d') . '/' . $assigned_document_data['sid']; ?>" 
+                                                                                                            >
+                                                                                                            <i class="fa fa-eye" aria-hidden="true"></i>
+                                                                                                            Preview <br>Submitted
+                                                                                                        </a>
+                                                                                                    <?php } ?>    
+                                                                                                <?php } else { ?>
+                                                                                                    <a 
+                                                                                                        class="btn btn-success btn-block csRadius5"
+                                                                                                        target="_blank" 
+                                                                                                        href="<?= base_url('hr_documents_management/preview_document') . '/company/' . $document['sid']; ?>" 
+                                                                                                        >
+                                                                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                                                                        Preview
+                                                                                                    </a>
+                                                                                                <?php } ?>
                                                                                             </div>
                                                                                         </td>
-
                                                                                     </tr>
-
                                                                                 <?php } ?>
                                                                             <?php } else { ?>
                                                                                 <tr>

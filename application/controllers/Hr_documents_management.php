@@ -13985,4 +13985,117 @@ class Hr_documents_management extends Public_Controller
         ]);
     }
 
+
+     /**
+     * Preview Document
+     * 
+     * @version 1.0
+     * @date    04/27/2022
+     * 
+     * @param string $type
+     * @param number $document_sid
+     */
+    public function preview_document($type, $document_sid){
+        //
+        if (!$this->session->userdata('logged_in')) {
+            return redirect(base_url('login'), "refresh");
+        }
+        //
+        $session                    = $this->session->userdata('logged_in');
+        $company_sid                = $session['company_detail']['sid'];
+        $employers_details          = $session['employer_detail'];
+        $employer_sid               = $employers_details['sid'];
+        $security_details           = db_get_access_level_details($employer_sid);                   
+        //
+        $document = $this->hr_documents_management_model->get_preview_document($type, $document_sid);    
+        if ($document["document_type"] == "generated" || $document["document_type"] == "hybrid_document") {
+            $document_content = $document['document_description'];
+            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document_content);
+
+            $first_name = 'First Name : ------------------------------';
+            $document_content = str_replace('{{first_name}}', $first_name, $document_content);
+            $document_content = str_replace('{{firstname}}', $first_name, $document_content);
+            //
+            $last_name = 'Last Name : ------------------------------';
+            $document_content = str_replace('{{last_name}}', $last_name, $document_content);
+            $document_content = str_replace('{{lastname}}', $last_name, $document_content);
+            //
+            $email = 'Email : ------------------------------';
+            $document_content = str_replace('{{email}}', $email, $document_content);
+            //
+            $job_title = 'Job Title : ------------------------------';
+            $document_content = str_replace('{{job_title}}', $job_title, $document_content);
+            //
+            $company_name = 'Company Name : ------------------------------';
+            $document_content = str_replace('{{company_name}}', $company_name, $document_content);
+            //
+            $company_address = 'Company Address : ------------------------------';
+            $document_content = str_replace('{{company_address}}', $company_address, $document_content);
+            //
+            $company_phone = 'Company Phone : ------------------------------';
+            $document_content = str_replace('{{company_phone}}', $company_phone, $document_content);
+            //
+            $career_site_url = 'Career Site Url : ------------------------------';
+            $document_content = str_replace('{{career_site_url}}', $career_site_url, $document_content);
+            //
+            $authorized_signature_image = '------------------------------(Authorized Signature Required)';
+            $document_content = str_replace('{{authorized_signature}}', $authorized_signature_image, $document_content);
+            //
+            $authorized_signature_date = '------------------------------(Authorized Sign Date Required)';
+            $document_content = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $document_content);
+            //
+            $signature_bas64_image = '------------------------------(Signature Required)';
+            $document_content = str_replace('{{signature}}', $signature_bas64_image, $document_content);
+            //
+            $init_signature_bas64_image = '------------------------------(Signature Initial Required)';
+            $document_content = str_replace('{{inital}}', $init_signature_bas64_image, $document_content);
+            //
+            $sign_date = '------------------------------(Sign Date Required)';
+            $document_content = str_replace('{{sign_date}}', $sign_date, $document_content);
+            //
+            //
+            $signature_print_name = 'Signature Person Name : ------------------------------';
+            $document_content = str_replace('{{signature_print_name}}', $signature_print_name, $document_content);
+            //
+            $start_date = '------/-------/----------------';
+            $document_content = str_replace('{{start_date}}', $start_date, $document_content);
+            //
+            $date = 'Date :------/-------/----------------';
+            $document_content = str_replace('{{date}}', $date, $document_content);
+            //
+            $valueUP = 'Please contact with your manager';
+            $document_content = str_replace('{{username}}', $valueUP, $document_content);
+            $document_content = str_replace('{{password}}', $valueUP, $document_content);
+            //
+            $checkbox = '<br><input type="checkbox" class="user_checkbox input-grey"/>';
+            $document_content = str_replace('{{checkbox}}', $checkbox, $document_content);
+
+            $short_text = '<div style="border: 1px dotted #777; padding:5px;background-color:#eee;"  contenteditable="true"></div>';
+            $document_content = str_replace('{{text}}', $short_text, $document_content);
+            $document_content = str_replace('{{short_text}}', $short_text, $document_content);
+
+            $text_area = '<div style="border: 1px dotted #777; padding:5px; min-height: 145px;background-color:#eee;" class="div-editable fillable_input_field" id="div_editable_text" contenteditable="true" data-placeholder="Type Here"></div>';
+            $document_content = str_replace('{{text_area}}', $text_area, $document_content);
+            //
+            $document['document_description'] = $document_content;
+            $links = getGeneratedDocumentURL($document, "company", $isAuthorized);
+        } else if ($document["document_type"] == "uploaded" ) {
+            $links = getUploadedDocumentURL($document["document_s3_name"]);
+        }
+        //
+        $data['load_view']          = 'old';
+        $data['title']              = 'AutomotoHR :: Documents Preview';
+        $data['employer_sid']       = $employer_sid;
+        $data['document']           = $document;
+        $data['session']            = $session;
+        $data['employee']           = $employers_details;
+        $data['security_details']   = $security_details;
+        $data['print_url']          = $links["print_url"];
+        $data['download_url']       = $links["download_url"];
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('hr_documents_management/templates/preview_document');
+        $this->load->view('main/footer');
+    }
+
 }
