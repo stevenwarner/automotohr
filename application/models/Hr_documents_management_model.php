@@ -7925,7 +7925,9 @@ class Hr_documents_management_model extends CI_Model
      */
     public function doSendEmail(
         $userId,
-        $userType = 'employee'
+        $userType = 'employee',
+        $controllerName,
+        $functionName
     ){
         //
         $q = $this->db

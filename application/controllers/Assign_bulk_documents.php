@@ -4,6 +4,7 @@ class Assign_bulk_documents extends Public_Controller {
     function __construct() {
         parent::__construct();
         $this->load->model('assign_bulk_documents_model');
+        $this->load->model('hr_documents_management_model');
     }
 
     /**
@@ -295,7 +296,11 @@ class Assign_bulk_documents extends Public_Controller {
         $replacement_array['baseurl'] = base_url();
         $replacement_array['url'] = base_url('hr_documents_management/my_documents');
         //
-        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+        $doSendEmail = $this->hr_documents_management_model->doSendEmail($_POST['employeeId'], "employee", "Assign_bulk_documents", "send_notification_email");
+        //
+        if ($doSendEmail) {
+            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+        }
         //
         $resp['Status'] = TRUE;
         $resp['Response'] = 'HR document email has ben sent.';

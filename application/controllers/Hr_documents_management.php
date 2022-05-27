@@ -315,7 +315,13 @@ class Hr_documents_management extends Public_Controller {
                                             $user_extra_info['user_sid'] = $emp;
                                             $user_extra_info['user_type'] = "employee";
                                             //
-                                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                                            //
+                                            $doSendEmail = $this->hr_documents_management_model->doSendEmail($emp, "employee", "Hr_documents_management", "index");
+                                            //
+                                            if ($doSendEmail) {
+                                                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                                            }
+                                            //
                                             $this->hr_documents_management_model->update_employee($emp, array('document_sent_on' => date('Y-m-d H:i:s')));
                                         }
                                         
@@ -1968,7 +1974,12 @@ class Hr_documents_management extends Public_Controller {
                                         $user_extra_info['user_sid'] = $user_sid;
                                         $user_extra_info['user_type'] = $user_type;
                                         //
-                                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
+                                        //
+                                        $doSendEmail = $this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "Hr_documents_management", "documents_assignment");
+                                        //
+                                        if ($doSendEmail) {
+                                            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
+                                        }    
 
                                         $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s')));
                                     }
