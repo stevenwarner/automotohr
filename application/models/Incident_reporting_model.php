@@ -1371,7 +1371,4 @@ class Incident_reporting_model extends CI_Model
 		$records_obj->free_result();
 		return $records_arr;
 	}
-
-
-
 }
