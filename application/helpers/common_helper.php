@@ -13340,8 +13340,8 @@ if (!function_exists('getGeneratedDocumentURL')) {
         ];
 
         if ($type == 'company') {
-            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/company/assigned_document/print';
-            $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/company/assigned_document/download';
+            $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/company/company_document/print';
+            $ra['download_url'] = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/company/company_document/download';
             $ra['html_body'] = getDocumentBody($document, $type, $isAuthorized);
         } else if ($type == 'uncompleted') {
             $ra['print_url']  = base_url('hr_documents_management/perform_action_on_document_content') . '/' . $document['sid'] . '/assigned/assigned_document/print';

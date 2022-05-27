@@ -7997,4 +7997,26 @@ class Hr_documents_management_model extends CI_Model
             return  $doc_group_data;
         }
     }
+
+
+    function get_preview_document($type, $document_sid)
+    {
+        if ($type == "company") {
+            $this->db->select('sid, document_title, document_type, document_description, uploaded_document_s3_name as document_s3_name');
+        } else {
+            $this->db->select('sid, document_title, document_type, document_description, document_s3_name, uploaded_file, form_input_data, submitted_description, authorized_signature, authorized_signature_date, signature_base64, signature_initial, signature_timestamp');
+        }
+        
+        $this->db->where('sid', $document_sid);
+
+        $record_obj = $this->db->get($type == "company" ? "documents_management" : "documents_assigned");
+        $records_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
 }
