@@ -82,7 +82,7 @@ if (isset($applicant)) {
                                         <?php if (sizeof($employees_new) > 0) { ?>
                                             <select class='invoice-fields' name="incident_employee_id" id="incident_employee_id">
                                                 <?php foreach ($employees_new as $employee) { ?>
-                                                    <option value="<?= $employee['sid']; ?>" <?= $employee['sid'] == $currentEmployeeId ? 'selected' : ''; ?> data-name="<?=$employee['first_name'].' '.$employee['last_name'];?>"><?= remakeEmployeeName($employee); ?></option>
+                                                    <option value="<?= $employee['sid']; ?>" <?= $employee['sid'] == $currentEmployeeId ? 'selected' : ''; ?> data-name="<?= $employee['first_name'] . ' ' . $employee['last_name']; ?>"><?= remakeEmployeeName($employee); ?></option>
                                                 <?php } ?>
                                             </select>
                                         <?php } else { ?>
@@ -2336,7 +2336,7 @@ if (isset($applicant)) {
 
 <script>
     $(document).ready(function() {
-    //
+        //
         $("#incident_employee_id").select2();
         //
         $('#incident_employee_id').on("change", function(e) {
