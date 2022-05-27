@@ -7914,4 +7914,40 @@ class Hr_documents_management_model extends CI_Model
         $doc_group_data['assigned_groups'] = $assigned_groups;
         return  $doc_group_data;
     }
+
+    /**
+     * Check the email last sent date time
+     * 
+     * @param number $userId
+     * @param string $userType
+     * 
+     * @return boolean
+     */
+    public function doSendEmail(
+        $userId,
+        $userType = 'employee'
+    ){
+        //
+        $q = $this->db
+        ->select('document_sent_on')
+        ->where('sid', $userId)
+        ->get($userType === 'employee' ? 'users' : 'portal_job_applications');
+        //
+        $r = $q->row_array();
+        $q->free_result();
+        //
+        if(!empty($r['document_sent_on'])) {
+            //
+            if(dateDifferenceInDays(date('Y-m-d H:i:s', strtotime('now')), $r['document_sent_on'], 'h') < 120){
+                //
+                return false;
+            }
+        }
+        //
+        $this->db->where('sid', $userId)->update($userType === 'employee' ? 'users' : 'portal_job_applications', [
+            'document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+        //
+        return true;
+    }
 }
