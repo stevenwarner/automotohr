@@ -10,6 +10,9 @@ $next_btn = '';
 $center_btn = '';
 $back_btn = 'Dashboard';
 
+//
+$currentEmployeeId = $session['employer_detail']['sid'];
+
 if (isset($applicant)) {
     $company_sid = $applicant['employer_sid'];
     $users_type = 'applicant';
@@ -63,33 +66,34 @@ if (isset($applicant)) {
                     <h3 class="text-blue">You are about to report a "<?php echo ucwords($report_type); ?>" Report</h3>
                 </div>
 
-                <div class="create-job-wrap">
-                    <div class="universal-form-style-v2">
-                        <div class="row">
+                <form method="post" action="" id="inc-form" enctype="multipart/form-data" autocomplete="off">
 
-                            <div class="col-md-12">
-                                <div class="field-row">
-                                    <?php if (sizeof($employees_new) > 0) { ?>
-                                        <select class='invoice-fields' name='employee' id='employee'>
-                                            <?php foreach ($employees_new as $employee) { ?>
-                                                <option value="<?php echo $employee['first_name'] . ' ' . $employee['last_name'];  ?>" <?php echo (isset($employer_sid) && ($employer_sid == $employee['sid'])) ? 'selected' : ''; ?>>
-                                                    <?php echo $employee['employee_name'];  ?>
-                                                </option>
-                                            <?php } ?>
-                                        </select>
-                                    <?php } else { ?>
-                                        <p>No Employee Found.</p>
-                                    <?php } ?>
+                    <div class="create-job-wrap">
+                        <div class="universal-form-style-v2">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Select Employee:</label>
+                                    <p class="text-danger">Select employee on whose behalf you are creating an incident. Ignore it, if the incident is yours.</p>
                                 </div>
-
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="field-row">
+                                        <?php if (sizeof($employees_new) > 0) { ?>
+                                            <select class='invoice-fields' name="incident_employee_id" id="incident_employee_id">
+                                                <?php foreach ($employees_new as $employee) { ?>
+                                                    <option value="<?= $employee['sid']; ?>" <?= $employee['sid'] == $currentEmployeeId ? 'selected' : ''; ?> data-name="<?=$employee['first_name'].' '.$employee['last_name'];?>"><?= remakeEmployeeName($employee); ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        <?php } else { ?>
+                                            <p>No Employee Found.</p>
+                                        <?php } ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
                     </div>
-                </div>
 
-
-                <form method="post" action="" id="inc-form" enctype="multipart/form-data" autocomplete="off">
                     <div class="form-wrp">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -2332,17 +2336,14 @@ if (isset($applicant)) {
 
 <script>
     $(document).ready(function() {
-        $("#employee").select2();
-    });
-
-
-    $('#employee').on("change", function(e) {
-        var emp_val = $(this).val();
-
-        var employeename = $(this).find("option:selected").text();
-
-        $('#full-name').val(emp_val);
-
+    //
+        $("#incident_employee_id").select2();
+        //
+        $('#incident_employee_id').on("change", function(e) {
+            $('#full-name').val(
+                $(this).find("option:selected").data('name')
+            );
+        });
     });
 </script>
 <style>
