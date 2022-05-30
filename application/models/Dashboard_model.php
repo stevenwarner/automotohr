@@ -2014,6 +2014,7 @@ class Dashboard_model extends CI_Model
         $this->db->where('parent_sid', $parent_sid);
         $this->db->where('sid', $user_sid);
         $this->db->where('active', 1);
+        $this->db->where('terminated_status', 0);
         return $this->db->get('users')->result_array();
     }
 
