@@ -2281,207 +2281,194 @@ class Job_listings extends Public_Controller
 
     function add_listing_share($jobId = NULL)
     {
-        if ($this->session->has_userdata('logged_in')) { //cheking the user is login
-            $data['session'] = $this->session->userdata('logged_in');
-            $ems_status = $data['session']['company_detail']['ems_status'];
-            if ($jobId != NULL) { // checking the job id Exists
-                $security_sid = $data['session']['employer_detail']['sid'];
-                $security_details = db_get_access_level_details($security_sid);
-                $data['security_details'] = $security_details;
-                check_access_permissions($security_details, 'my_listings', 'add_listing_share'); // Param2: Redirect URL, Param3: Function Name
-                $company_id = $data["session"]["company_detail"]["sid"];
-                $employer_sid = $data["session"]["employer_detail"]["sid"];
-                $jobCheck = $this->dashboard_model->checkJobId($company_id, $jobId);
-                $company_name = $data['session']['company_detail']['CompanyName'];
-                $sub_domain_url = db_get_sub_domain($company_id);
-                $portal_job_url = STORE_PROTOCOL . $sub_domain_url . '/job_details/' . $jobId;
+        if (!$this->session->has_userdata('logged_in')) { //cheking the user is 
+            return redirect(base_url('login'));
+        }
+        //
+        if ($jobId == NULL) { // checking the job id Exists
+            $this->session->set_flashdata('message', '<b>Error:</b> Please select a valid job to advertise.');
+            return redirect('add_listing');
+        }
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $ems_status = $data['session']['company_detail']['ems_status'];
+        //
+        $security_sid = $data['session']['employer_detail']['sid'];
+        $security_details = db_get_access_level_details($security_sid);
+        $data['security_details'] = $security_details;
+        check_access_permissions($security_details, 'my_listings', 'add_listing_share'); // Param2: Redirect URL, Param3: Function Name
+        $company_id = $data["session"]["company_detail"]["sid"];
+        $employer_sid = $data["session"]["employer_detail"]["sid"];
+        $jobCheck = $this->dashboard_model->checkJobId($company_id, $jobId);
+        $company_name = $data['session']['company_detail']['CompanyName'];
+        $sub_domain_url = db_get_sub_domain($company_id);
+        $portal_job_url = STORE_PROTOCOL . $sub_domain_url . '/job_details/' . $jobId;
 
-                if ($jobCheck == 1) { //getting job detials
-                    $jobData = $this->dashboard_model->getJobDetailWithPortalDetail($jobId);
-                    $jobDetail = $this->dashboard_model->getJobDetail($jobId);
-                    $btn_facebook = '';
-                    $btn_google = '';
-                    $btn_twitter = '';
-                    $btn_linkedin = '';
-                    $btn_job_link = '';
-                    $links = '';
-                    $jobAd = '';
-                    $email_header_footer = message_header_footer($company_id, ucwords($company_name));
+        if ($jobCheck != 1) { //getting job detials
+            $this->session->set_flashdata('message', '<b>Error:</b> You are not authorized to advertise this job.');
+            return redirect('add_listing');
+        }
+        $jobData = $this->dashboard_model->getJobDetailWithPortalDetail($jobId);
+        $jobDetail = $this->dashboard_model->getJobDetail($jobId);
+        $btn_facebook = '';
+        $btn_google = '';
+        $btn_twitter = '';
+        $btn_linkedin = '';
+        $btn_job_link = '';
+        $links = '';
+        $jobAd = '';
+        $email_header_footer = message_header_footer($company_id, ucwords($company_name));
 
-                    if (!empty($jobDetail)) {
-                        $jobDetail = $jobDetail[0];
-                        $sub_domain_url = strpos(current_url(), 'localhost') ? 'localhost/ahr/manage_portal' : db_get_sub_domain($company_id);
-                        $btn_facebook = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . urlencode($portal_job_url) . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL . $sub_domain_url . '/assets/theme-1/images/social-2.png"></a>';
-                        $btn_twitter = '<a target="_blank" href="https://twitter.com/intent/tweet?text=' . urlencode($jobDetail['Title']) . '&amp;url=' . urlencode($portal_job_url) . '"><img alt="" src="' . STORE_PROTOCOL . $sub_domain_url . '/assets/theme-1/images/social-3.png"></a>';
-                        $btn_linkedin = '<a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=' . urlencode($portal_job_url) . '&amp;title=' . urlencode($jobDetail['Title']) . '&amp;summary=' . urlencode($jobDetail['Title']) . '&amp;source=' . urlencode(base_url('/job_details/' . $jobDetail['sid'])) . '"><img alt="" src="' . STORE_PROTOCOL . $sub_domain_url . '/assets/theme-1/images/social-4.png"></a>';
-                        $btn_job_link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $portal_job_url . '">' . ucwords($jobDetail['Title']) . '</a>';
-                        $jobAd .= '<div style="float:left; width: 100%; margin-bottom:20px; border-radius: 4px; border: 1px solid #d8d8d8; background-color: white; padding: 20px; opacity: 0.75;">';
-                        $jobAd .= '<h3><strong>' . ucwords($jobDetail['Title']) . '</strong></h3>';
-                        $jobAd .= '<h3>' . 'Job Description' . '</h3>';
-                        $jobAd .= '<p style="word-wrap: break-word;">' . ucwords($jobDetail['JobDescription']) . '</p>';
-                        $jobAd .= '<h3>' . 'Job Requirements' . '</h3>';
-                        $jobAd .= '<p style="word-wrap: break-word;">' . ucwords($jobDetail['JobRequirements']) . '</p>';
-                        $jobAd .= '</div><hr />';
-                        $links .= '<ul style="float:left; width:100%; padding:0; list-style: none">';
-                        $links .= '<li style="float: left; margin-right: 10px;">' . $btn_google . '</li>';
-                        $links .= '<li style="float: left; margin-right: 10px;">' . $btn_facebook . '</li>';
-                        $links .= '<li style="float: left; margin-right: 10px;">' . $btn_linkedin . '</li>';
-                        $links .= '<li style="float: left; margin-right: 10px;">' . $btn_twitter . '</li>';
-                        $links .= '</ul><hr />';
-                        $data['share_links'] = $links;
-                    }
+        if (!empty($jobDetail)) {
+            $jobDetail = $jobDetail[0];
+            $sub_domain_url = strpos(current_url(), 'localhost') ? 'localhost/ahr/manage_portal' : db_get_sub_domain($company_id);
+            $btn_facebook = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . urlencode($portal_job_url) . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL . $sub_domain_url . '/assets/theme-1/images/social-2.png"></a>';
+            $btn_twitter = '<a target="_blank" href="https://twitter.com/intent/tweet?text=' . urlencode($jobDetail['Title']) . '&amp;url=' . urlencode($portal_job_url) . '"><img alt="" src="' . STORE_PROTOCOL . $sub_domain_url . '/assets/theme-1/images/social-3.png"></a>';
+            $btn_linkedin = '<a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=' . urlencode($portal_job_url) . '&amp;title=' . urlencode($jobDetail['Title']) . '&amp;summary=' . urlencode($jobDetail['Title']) . '&amp;source=' . urlencode(base_url('/job_details/' . $jobDetail['sid'])) . '"><img alt="" src="' . STORE_PROTOCOL . $sub_domain_url . '/assets/theme-1/images/social-4.png"></a>';
+            $btn_job_link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $portal_job_url . '">' . ucwords($jobDetail['Title']) . '</a>';
+            $jobAd .= '<div style="float:left; width: 100%; margin-bottom:20px; border-radius: 4px; border: 1px solid #d8d8d8; background-color: white; padding: 20px; opacity: 0.75;">';
+            $jobAd .= '<h3><strong>' . ucwords($jobDetail['Title']) . '</strong></h3>';
+            $jobAd .= '<h3>' . 'Job Description' . '</h3>';
+            $jobAd .= '<p style="word-wrap: break-word;">' . ucwords($jobDetail['JobDescription']) . '</p>';
+            $jobAd .= '<h3>' . 'Job Requirements' . '</h3>';
+            $jobAd .= '<p style="word-wrap: break-word;">' . ucwords($jobDetail['JobRequirements']) . '</p>';
+            $jobAd .= '</div><hr />';
+            $links .= '<ul style="float:left; width:100%; padding:0; list-style: none">';
+            $links .= '<li style="float: left; margin-right: 10px;">' . $btn_google . '</li>';
+            $links .= '<li style="float: left; margin-right: 10px;">' . $btn_facebook . '</li>';
+            $links .= '<li style="float: left; margin-right: 10px;">' . $btn_linkedin . '</li>';
+            $links .= '<li style="float: left; margin-right: 10px;">' . $btn_twitter . '</li>';
+            $links .= '</ul><hr />';
+            $data['share_links'] = $links;
+        }
 
-                    if ($_POST) {
-                        $performAction = $this->input->post('perform_action');
+        if ($_POST) {
+            $performAction = $this->input->post('perform_action');
 
-                        if ($performAction == 'email_job_info_to_users') {
+            if ($performAction == 'email_job_info_to_users') {
 
-                            $this->form_validation->set_rules('employees[]', 'Employees', 'trim');
-                        } elseif ($performAction == 'email_job') {
-                            $this->form_validation->set_rules('email_address', 'Email Address', 'valid_email|required|trim');
-                            $this->form_validation->set_rules('full_name', 'Full Name', 'required|trim');
-                        }
-                    }
-
-
-                    if ($this->form_validation->run() == false) {
-                        //Handle Validation Errors
-                        //var_dump($_POST);
-                    } else {
-                        $performAction = $this->input->post('perform_action');
-
-
-                        $selectedUsers = array();
-                        $selected_departmsent = $this->input->post('selected_departments');
-                        $selected_teams = $this->input->post('selected_teams');
-
-
-
-                        if ($ems_status == 1) {
-                            $alertmsg = "Please Select at least one Department, Team, User";
-
-                            if (!empty($selected_teams)) {
-                                $select_employees = $this->hr_documents_management_model->getEmployeesFromTeams($selected_teams, $company_id);
-                            }
-                            if (!empty($selected_departments)) {
-                                $select_employees_dep = $this->hr_documents_management_model->getEmployeesFromDepartment($selected_departments, $company_id);
-                            }
-                        } else {
-                            $alertmsg = "Please Select a User";
-                        }
-
-                        if ($this->input->post('employees')) {
-                            $selectedUsers = $this->input->post('employees');
-                        }
-
-
-                        if (empty($selected_departmsent) && empty($selected_teams) && empty($selectedUsers)) {
-                            $this->session->set_flashdata('message', '<b>Notification:</d> ' . $alertmsg);
-                            redirect('add_listing_share/' . $jobId);
-                        }
-
-
-                        if (!empty($select_employees)) {
-                            $selectedUsers = array_merge($selectedUsers, $select_employees);
-                        }
-                        if (!empty($select_employees_dep)) {
-                            $selectedUsers = array_merge($selectedUsers, $select_employees_dep);
-                        }
-
-                        $selectedUsers = array_unique($selectedUsers);
-                        $usersInformation = array();
-
-
-                        if (empty($selectedUsers) && $performAction != 'email_job') {
-                            $this->session->set_flashdata('message', '<b>Notification:</d> Employs are not found under selected Departments/Teams');
-                            redirect('add_listing_share/' . $jobId);
-                        }
-
-                        if (!empty($selectedUsers)) {
-
-                            foreach ($selectedUsers as $selectedUser) {
-                                $userInfo = $this->dashboard_model->GetSingleActiveUser($company_id, $selectedUser);
-                                if (!empty($userInfo)) {
-                                    $usersInformation[] = $userInfo[0];
-                                }
-                            }
-
-                            $insert_data = array();
-
-
-                            foreach ($usersInformation as $userInformation) {
-                                $email = $userInformation['email'];
-                                $userFullName = $userInformation['first_name'] . ' ' . $userInformation['last_name'];
-                                $replacement_array = array();
-                                $replacement_array['employee-name'] = ucwords($userFullName);
-                                $replacement_array['company-name'] = ucwords($company_name);
-                                $replacement_array['job-link'] = $btn_job_link;
-                                $replacement_array['job-ad'] = $jobAd;
-                                $replacement_array['share-links'] = $links;
-                                $replacement_array['job-title'] = $jobDetail['Title'];
-                                $insert_data['coworker_sid'] = $userInformation['sid'];
-                                $insert_data['company_sid'] = $company_id;
-                                $insert_data['referral_sid'] = $employer_sid;
-                                $insert_data['referral_name'] = ucwords($data["session"]["employer_detail"]['first_name'] . ' ' . $data["session"]["employer_detail"]['last_name']);
-                                $insert_data['referral_email'] = ucwords($data["session"]["employer_detail"]['email']);
-                                $insert_data['date_time'] = date('Y-m-d H:i:s');
-                                $insert_data['type'] = 'coworker';
-                                $insert_data['job_sid'] = $jobId;
-                                $this->dashboard_model->insert_share_record($insert_data);
-                                log_and_send_templated_email(JOB_LISTING_SHARE_TO_EMPLOYEES, $email, $replacement_array, $email_header_footer);
-                            }
-
-                            $this->session->set_flashdata('message', '<b>Notification: ' . $jobDetail['Title'] . ' - ' . 'has been shared with ' . count($selectedUsers) . ' users!' . ' </b>');
-                            redirect('my_listings', 'refresh');
-                        } elseif ($performAction = 'email_job') {
-                            $email = $this->input->post('email_address');
-                            $userFullName = $this->input->post('full_name');
-                            $replacement_array = array();
-                            $replacement_array['employee-name'] = ucwords($userFullName);
-                            $replacement_array['company-name'] = ucwords($company_name);
-                            $replacement_array['job-link'] = $btn_job_link;
-                            $replacement_array['job-ad'] = $jobAd;
-                            $replacement_array['share-links'] = $links;
-                            $replacement_array['job-title'] = $jobDetail['Title'];
-                            $insert_data['company_sid'] = $company_id;
-                            $insert_data['referral_sid'] = $employer_sid;
-                            $insert_data['share_name'] = ucwords($userFullName);
-                            $insert_data['share_email'] = $email;
-                            $insert_data['referral_name'] = ucwords($data["session"]["employer_detail"]['first_name'] . ' ' . $data["session"]["employer_detail"]['last_name']);
-                            $insert_data['referral_email'] = ucwords($data["session"]["employer_detail"]['email']);
-                            $insert_data['date_time'] = date('Y-m-d H:i:s');
-                            $insert_data['type'] = 'via_email';
-                            $insert_data['job_sid'] = $jobId;
-                            $this->dashboard_model->insert_share_record($insert_data);
-                            log_and_send_templated_email(JOB_LISTING_SHARE_TO_EMAIL_ADDRESS, $email, $replacement_array, $email_header_footer);
-                            $this->session->set_flashdata('message', '<b>Notification: ' . $jobDetail['Title'] . ' - ' . 'has been shared with ' . ucwords($userFullName) . '!' . ' </b>');
-                            redirect('my_listings', 'refresh');
-                        }
-                    }
-
-                    $data['ems_status'] = $ems_status;
-
-                    $data['jobDetail'] = $jobData[0];
-                    $data['title'] = "Add listing share";
-                    $data['job_sid'] = $jobId;
-                    $data['active_users'] = $this->dashboard_model->GetAllActiveUsers($company_id);
-                    $data['departments'] = $this->hr_documents_management_model->getDepartments($company_id);
-                    $data['teams'] = $this->hr_documents_management_model->getTeams($company_id, $data['departments']);
-
-                    $this->load->view('main/header', $data);
-                    $this->load->view('manage_employer/add_listing_share');
-                    $this->load->view('main/footer');
-                } else { //Job doesnt owned by this company
-                    $this->session->set_flashdata('message', '<b>Error:</b> You are not authorized to advertise this job.');
-                    redirect('add_listing');
-                }
-            } else { //No job id given
-                $this->session->set_flashdata('message', '<b>Error:</b> Please select a valid job to advertise.');
-                redirect('add_listing');
+                $this->form_validation->set_rules('employees[]', 'Employees', 'trim');
+            } elseif ($performAction == 'email_job') {
+                $this->form_validation->set_rules('email_address', 'Email Address', 'valid_email|required|trim');
+                $this->form_validation->set_rules('full_name', 'Full Name', 'required|trim');
             }
+        }
+        //
+        $data['ems_status'] = $ems_status;
+        //
+        if ($this->form_validation->run() == false) {
+            $data['jobDetail'] = $jobData[0];
+            $data['title'] = "Add listing share";
+            $data['job_sid'] = $jobId;
+            $data['active_users'] = $this->dashboard_model->GetAllActiveUsers($company_id);
+            $data['departments'] = $this->hr_documents_management_model->getDepartments($company_id);
+            $data['teams'] = $this->hr_documents_management_model->getTeams($company_id, $data['departments']);
+
+            $this->load->view('main/header', $data);
+            $this->load->view('manage_employer/add_listing_share');
+            $this->load->view('main/footer');
         } else {
-            redirect(base_url('login'));
-        } //else end for session check fail
+            $performAction = $this->input->post('perform_action');
+            //
+            $selectedUsers = array();
+            //  
+            if ($this->input->post('employees')) {
+                $selectedUsers = $this->input->post('employees');
+            }
+            // Only execute when EMS is enabled
+            if ($ems_status == 1) {
+                $selected_departments = $this->input->post('selected_departments');
+                $selected_teams = $this->input->post('selected_teams');
+                //
+                if (!empty($selected_departments)) {
+                    $s = $this->hr_documents_management_model->getEmployeesFromDepartment($selected_departments, $company_id);
+                    //
+                    if (!empty($s)) {
+                        $selectedUsers = array_merge($selectedUsers, $s);
+                    }
+                }
+                //
+                if (!empty($selected_teams)) {
+                    $s = $this->hr_documents_management_model->getEmployeesFromTeams($selected_teams, $company_id);
+                    //
+                    if (!empty($s)) {
+                        $selectedUsers = array_merge($selectedUsers, $s);
+                    }
+                }
+            }
+
+            //
+            if(empty($selectedUsers)){
+                $this->session->set_flashdata('message', '<b>Error:</b> Please select at least one employee.');
+                redirect('add_listing_share/' . $jobId);
+            }
+            //
+            $selectedUsers = array_unique($selectedUsers);
+            $usersInformation = array();
+
+            if (!empty($selectedUsers)) {
+
+                foreach ($selectedUsers as $selectedUser) {
+                    $userInfo = $this->dashboard_model->GetSingleActiveUser($company_id, $selectedUser);
+                    if (!empty($userInfo)) {
+                        $usersInformation[] = $userInfo[0];
+                    }
+                }
+
+                $insert_data = array();
+
+
+                foreach ($usersInformation as $userInformation) {
+                    $email = $userInformation['email'];
+                    $userFullName = $userInformation['first_name'] . ' ' . $userInformation['last_name'];
+                    $replacement_array = array();
+                    $replacement_array['employee-name'] = ucwords($userFullName);
+                    $replacement_array['company-name'] = ucwords($company_name);
+                    $replacement_array['job-link'] = $btn_job_link;
+                    $replacement_array['job-ad'] = $jobAd;
+                    $replacement_array['share-links'] = $links;
+                    $replacement_array['job-title'] = $jobDetail['Title'];
+                    $insert_data['coworker_sid'] = $userInformation['sid'];
+                    $insert_data['company_sid'] = $company_id;
+                    $insert_data['referral_sid'] = $employer_sid;
+                    $insert_data['referral_name'] = ucwords($data["session"]["employer_detail"]['first_name'] . ' ' . $data["session"]["employer_detail"]['last_name']);
+                    $insert_data['referral_email'] = ucwords($data["session"]["employer_detail"]['email']);
+                    $insert_data['date_time'] = date('Y-m-d H:i:s');
+                    $insert_data['type'] = 'coworker';
+                    $insert_data['job_sid'] = $jobId;
+                    $this->dashboard_model->insert_share_record($insert_data);
+                    log_and_send_templated_email(JOB_LISTING_SHARE_TO_EMPLOYEES, $email, $replacement_array, $email_header_footer);
+                }
+
+                $this->session->set_flashdata('message', '<b>Notification: ' . $jobDetail['Title'] . ' - ' . 'has been shared with ' . count($selectedUsers) . ' users!' . ' </b>');
+                redirect('my_listings', 'refresh');
+            } elseif ($performAction == 'email_job') {
+                $email = $this->input->post('email_address');
+                $userFullName = $this->input->post('full_name');
+                $replacement_array = array();
+                $replacement_array['employee-name'] = ucwords($userFullName);
+                $replacement_array['company-name'] = ucwords($company_name);
+                $replacement_array['job-link'] = $btn_job_link;
+                $replacement_array['job-ad'] = $jobAd;
+                $replacement_array['share-links'] = $links;
+                $replacement_array['job-title'] = $jobDetail['Title'];
+                $insert_data['company_sid'] = $company_id;
+                $insert_data['referral_sid'] = $employer_sid;
+                $insert_data['share_name'] = ucwords($userFullName);
+                $insert_data['share_email'] = $email;
+                $insert_data['referral_name'] = ucwords($data["session"]["employer_detail"]['first_name'] . ' ' . $data["session"]["employer_detail"]['last_name']);
+                $insert_data['referral_email'] = ucwords($data["session"]["employer_detail"]['email']);
+                $insert_data['date_time'] = date('Y-m-d H:i:s');
+                $insert_data['type'] = 'via_email';
+                $insert_data['job_sid'] = $jobId;
+                $this->dashboard_model->insert_share_record($insert_data);
+                log_and_send_templated_email(JOB_LISTING_SHARE_TO_EMAIL_ADDRESS, $email, $replacement_array, $email_header_footer);
+                $this->session->set_flashdata('message', '<b>Notification: ' . $jobDetail['Title'] . ' - ' . 'has been shared with ' . ucwords($userFullName) . '!' . ' </b>');
+                redirect('my_listings', 'refresh');
+            }
+        }
+
+        
     }
 
     function preview_listing($sid = NULL)

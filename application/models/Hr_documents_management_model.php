@@ -4430,7 +4430,7 @@ class Hr_documents_management_model extends CI_Model
         if (!sizeof($departmentSids)) return array();
         //
         $a = $this->db
-            ->select('employee_sid')
+            ->select('employee_sid, team_sid')
             ->where_in('department_sid', $departmentSids)
             ->get('departments_employee_2_team');
         //
@@ -4439,8 +4439,37 @@ class Hr_documents_management_model extends CI_Model
         //
         $r = array();
         //
-        if (sizeof($b)) foreach ($b as $k => $v) $r[] = $v['employee_sid'];
+        if (sizeof($b)) {
+            //
+            $activeTeamsByIds = $this->getActiveTeamsIdsByIds(
+                array_column($b, 'team_sid')
+            );
+            //
+            if(!$activeTeamsByIds){
+                return $r;
+            }
+
+            foreach ($b as $k => $v) {
+                if(in_array($v['team_sid'], $activeTeamsByIds)){
+                    $r[] = $v['employee_sid'];
+                }
+            }
+        }
         return $r;
+    }
+
+    public function getActiveTeamsIdsByIds($teamIds){
+        $a = $this->db
+        ->select('sid')
+        ->where_in('sid', $teamIds)
+        ->where('status', 1)
+        ->where('is_deleted', 0)
+        ->get('departments_team_management');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b ? array_column($b, 'sid') : [];
     }
 
     function getEmployeesFromTeams($teamList, $companySid)
