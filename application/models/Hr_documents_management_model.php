@@ -4513,7 +4513,46 @@ class Hr_documents_management_model extends CI_Model
                     'assigned_to_sid' => $v,
                     'assigned_status' => 0
                 ));
+            //
+            $this->sendEmailToAuthorizedManagers($v, $employerSid);    
+                
         }
+    }
+
+    function sendEmailToAuthorizedManagers ($assignTo, $assignBy) {
+        $session = $this->session->userdata('logged_in');
+        $CompanySID = $session['company_detail']['sid'];
+        $CompanyName = ucwords($session['company_detail']['CompanyName']);
+        //
+        $hf = message_header_footer(
+                $CompanySID,
+                $CompanyName
+            );
+        
+        $assign_to_info  = db_get_employee_profile($assignTo);
+        $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
+        $assign_to_email = $assign_to_info[0]['email'];
+
+        $assigned_by_info  = db_get_employee_profile($assignBy);
+        $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
+
+        //Send Email
+        $replacement_array = array();
+        $replacement_array['baseurl']           = base_url();
+        $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
+        $replacement_array['company_name']  = $CompanyName;
+        $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
+        $replacement_array['employee_name']  = ucwords($assigned_by_name);
+        //
+        $user_extra_info = array();
+        $user_extra_info['user_sid'] = $assignTo;
+        $user_extra_info['user_type'] = "employee";
+        //
+        if($this->isActiveUser($assignTo)){
+            //
+            log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
+        }
+        
     }
 
     //
@@ -6215,8 +6254,7 @@ class Hr_documents_management_model extends CI_Model
             $user_extra_info['user_sid'] = $document['user_sid'];
             $user_extra_info['user_type'] = $document['user_type'];
             //
-            $this->load->model('Hr_documents_management_model', 'HRDMM');
-            if($this->HRDMM->isActiveUser($document['user_sid'])){
+            if($this->isActiveUser($document['user_sid'])){
                 //
                 $this->load->model('hr_documents_management_model');
                 if($this->hr_documents_management_model->doSendEmail($document['user_sid'], $document['user_type'], "HREMS20")){

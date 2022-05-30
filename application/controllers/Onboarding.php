@@ -178,7 +178,22 @@ class Onboarding extends CI_Controller
                             $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
                             $data_to_insert['signature_required'] = $document['signature_required'];
                             $data_to_insert['download_required'] = $document['download_required'];
-                            $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                            //
+                            $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                            //
+                            if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
+                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                                //
+                                if ($isAuthorized == 1) {
+                                    // Managers handling
+                                    $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                        $document['managers_list'],
+                                        $assignment_sid,
+                                        $company_info['sid'],
+                                        $assign_group_document['assigned_by_sid']
+                                    );
+                                }
+                            }
                             //
                             $sendGroupEmail = 1;
                         }
@@ -4560,13 +4575,20 @@ class Onboarding extends CI_Controller
                             $data_to_insert['download_required'] = $document['download_required'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
-                            // Managers handling
-                            $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                                $document['managers_list'],
-                                $assignment_sid,
-                                $company_sid,
-                                $employer_sid
-                            );
+                            //
+                            if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
+                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                                //
+                                if ($isAuthorized == 1) {
+                                    // Managers handling
+                                    $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                        $document['managers_list'],
+                                        $assignment_sid,
+                                        $company_sid,
+                                        $assign_group_document['assigned_by_sid']
+                                    );
+                                }
+                            }
                             //
                             $sendGroupEmail = 1;
                         }

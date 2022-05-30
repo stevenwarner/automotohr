@@ -3046,8 +3046,6 @@ class Hr_documents_management extends Public_Controller
                 }
             }
 
-
-
             $categories = $this->hr_documents_management_model->get_all_documents_category($company_sid);
             $active_categories = [];
 
@@ -3190,7 +3188,22 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['signature_required'] = $document['signature_required'];
                             $data_to_insert['download_required'] = $document['download_required'];
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
-                            $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                            //
+                            $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                            //
+                            if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
+                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                                //
+                                if ($isAuthorized == 1) {
+                                    // Managers handling
+                                    $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                        $document['managers_list'],
+                                        $assignment_sid,
+                                        $company_sid,
+                                        $assign_group_document['assigned_by_sid']
+                                    );
+                                }
+                            }
                             //
                             $sendGroupEmail = 1;
                         }
@@ -3298,7 +3311,7 @@ class Hr_documents_management extends Public_Controller
                             //
                             $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
                             //
-                            $sendGroupEmail = 1;
+                            $sendGroupEmail = 1;https://www.youtube.com/
                         }
                     }
                 }
@@ -4438,41 +4451,6 @@ class Hr_documents_management extends Public_Controller
             //
             $this->hr_documents_management_model->update_documents($document_sid, $data_to_update, 'documents_assigned');
             //
-            $hf = message_header_footer(
-                $company_sid,
-                ucwords($session['company_detail']['CompanyName'])
-            );
-            //
-            if (!empty($new_assign_manger)) {
-                //
-                foreach ($new_assign_manger as $k => $v) {
-                    $assign_to_info  = db_get_employee_profile($v);
-                    $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
-                    $assign_to_email = $assign_to_info[0]['email'];
-
-                    $assigned_by_info  = db_get_employee_profile($assigned_by_sid);
-                    $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
-
-                    //Send Email
-                    $replacement_array = array();
-                    $replacement_array['baseurl']           = base_url();
-                    $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
-                    $replacement_array['company_name']  = ucwords($session['company_detail']['CompanyName']);
-                    $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-                    $replacement_array['employee_name']  = ucwords($assigned_by_name);
-                    //
-                    $user_extra_info = array();
-                    $user_extra_info['user_sid'] = $v;
-                    $user_extra_info['user_type'] = "employee";
-                    //
-                    $this->load->model('Hr_documents_management_model', 'HRDMM');
-                    if($this->HRDMM->isActiveUser($v)){
-                        //
-                        log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
-                    }
-                }
-            }
-            //
             echo 'success';
         }
     }
@@ -5129,7 +5107,22 @@ class Hr_documents_management extends Public_Controller
                             $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
                             $data_to_insert['signature_required'] = $document['signature_required'];
                             $data_to_insert['download_required'] = $document['download_required'];
-                            $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                            //
+                            $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                            //
+                            if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
+                                $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                                //
+                                if ($isAuthorized == 1) {
+                                    // Managers handling
+                                    $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                        $document['managers_list'],
+                                        $assignment_sid,
+                                        $company_sid,
+                                        $assign_group_document['assigned_by_sid']
+                                    );
+                                }
+                            }
                             //
                             $sendGroupEmail = 1;
                         }
@@ -7650,8 +7643,10 @@ class Hr_documents_management extends Public_Controller
                     );
                     //
                     if (!empty($assigned_document)) {
+                        //
+                        $assignInsertId = $assigned_document['sid'];
+                        //
                         if ($assigned_document["user_consent"] == 1) {
-                            $assignInsertId = $assigned_document['sid'];
                             //
                             unset($assigned_document['sid']);
                             unset($assigned_document['is_pending']);
@@ -7682,17 +7677,33 @@ class Hr_documents_management extends Public_Controller
                         $document_to_update['authorized_signature_date'] = NULL;
                         //
                         $this->hr_documents_management_model->reassign_group_document($document['document_sid'], $user_type, $user_sid, $document_to_update);
+                        //
+                        $original_document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document['document_sid']);
+                        //
+                        if ($original_document['document_type'] != "uploaded" && !empty($original_document['document_description'])) {
+                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $original_document['document_description']);
+                            //
+                            if ($isAuthorized == 1) {
+                                // Managers handling
+                                $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                    $original_document['managers_list'],
+                                    $assignInsertId,
+                                    $company_sid,
+                                    $employer_sid
+                                );
+                            }
+                        }
                     } else {
                         $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document['document_sid']);
                         //
                         $document_to_insert = array();
                         $document_to_insert['company_sid'] = $company_sid;
                         $document_to_insert['assigned_date'] = date('Y-m-d H:i:s');
-                        $document_to_insert['assigned_by'] = $assign_group_document['assigned_by_sid'];
+                        $document_to_insert['assigned_by'] = $employer_sid;
                         $document_to_insert['user_type'] = $user_type;
                         $document_to_insert['user_sid'] = $user_sid;
                         $document_to_insert['document_type'] = $document['document_type'];
-                        $document_to_insert['document_sid'] = $assign_group_document['document_sid'];
+                        $document_to_insert['document_sid'] = $document['document_sid'];
                         $document_to_insert['status'] = 1;
                         $document_to_insert['document_original_name'] = $document['uploaded_document_original_name'];
                         $document_to_insert['document_extension'] = $document['uploaded_document_extension'];
@@ -7703,8 +7714,24 @@ class Hr_documents_management extends Public_Controller
                         $document_to_insert['signature_required'] = $document['signature_required'];
                         $document_to_insert['download_required'] = $document['download_required'];
                         //
-                        $this->hr_documents_management_model->insert_documents_assignment_record($document_to_insert);
+                        $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($document_to_insert);
+                        //
+                        if ($document['document_type'] != "uploaded" && !empty($document['document_description'])) {
+                            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
+                            //
+                            if ($isAuthorized == 1) {
+                                // Managers handling
+                                $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                    $document['managers_list'],
+                                    $assignment_sid,
+                                    $company_sid,
+                                    $employer_sid
+                                );
+                            }
+                        }
                     }
+
+
                 }
                 //
             }
@@ -11170,44 +11197,6 @@ class Hr_documents_management extends Public_Controller
                     $post['EmployerSid']
                 );
                 //
-                $company_name = ucwords(getCompanyNameBySid($post['CompanySid']));
-                //
-                $hf = message_header_footer(
-                    $post['CompanySid'],
-                    $company_name
-                );
-                //
-                $new_assign_manger = explode(',', $post['managerList']);
-                //
-                if (!empty($new_assign_manger)) {
-                    //
-                    foreach ($new_assign_manger as $k => $v) {
-                        $assign_to_info  = db_get_employee_profile($v);
-                        $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
-                        $assign_to_email = $assign_to_info[0]['email'];
-
-                        $assigned_by_info  = db_get_employee_profile($post['EmployerSid']);
-                        $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
-
-                        //Send Email
-                        $replacement_array = array();
-                        $replacement_array['baseurl']           = base_url();
-                        $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
-                        $replacement_array['company_name']  = $company_name;
-                        $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-                        $replacement_array['employee_name']  = ucwords($assigned_by_name);
-                        //
-                        $user_extra_info = array();
-                        $user_extra_info['user_sid'] = $v;
-                        $user_extra_info['user_type'] = "employee";
-                        //
-                        $this->load->model('Hr_documents_management_model', 'HRDMM');
-                        if($this->HRDMM->isActiveUser($v)){
-                            //
-                            log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
-                        }
-                    }
-                }
             }
         }
 
@@ -11398,45 +11387,6 @@ class Hr_documents_management extends Public_Controller
                     $post['CompanySid'],
                     $post['EmployerSid']
                 );
-                //
-                $company_name = ucwords(getCompanyNameBySid($post['CompanySid']));
-                //
-                $hf = message_header_footer(
-                    $post['CompanySid'],
-                    $company_name
-                );
-                //
-                $new_assign_manger = explode(',', $post['managerList']);
-                //
-                if (!empty($new_assign_manger)) {
-                    //
-                    foreach ($new_assign_manger as $k => $v) {
-                        $assign_to_info  = db_get_employee_profile($v);
-                        $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
-                        $assign_to_email = $assign_to_info[0]['email'];
-
-                        $assigned_by_info  = db_get_employee_profile($post['EmployerSid']);
-                        $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
-
-                        //Send Email
-                        $replacement_array = array();
-                        $replacement_array['baseurl']           = base_url();
-                        $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
-                        $replacement_array['company_name']  = $company_name;
-                        $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-                        $replacement_array['employee_name']  = ucwords($assigned_by_name);
-                        //
-                        $user_extra_info = array();
-                        $user_extra_info['user_sid'] = $v;
-                        $user_extra_info['user_type'] = "employee";
-                        //
-                        $this->load->model('Hr_documents_management_model', 'HRDMM');
-                        if($this->HRDMM->isActiveUser($v)){
-                            //
-                            log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
-                        }
-                    }
-                }
             }
         }
         //
@@ -13897,4 +13847,7 @@ class Hr_documents_management extends Public_Controller
                 'is_confidential' => $post['is_confidential'] == 'on' ? 1 : 0
             ]);
     }
+
+
+
 }
