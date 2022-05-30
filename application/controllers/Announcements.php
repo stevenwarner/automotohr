@@ -289,6 +289,11 @@ class Announcements extends Public_Controller {
                     //
                     foreach($all_employees as $employee){
                         //
+                        $this->load->model('Hr_documents_management_model', 'HRDMM');
+                        if(!$this->HRDMM->isActiveUser($employee['sid'])){
+                            continue;
+                        }
+                        //
                         if($toEmployees[0] != 0 && !in_array($employee['sid'], $toEmployees)) continue;
 
                         $replacement_array = array();
@@ -684,6 +689,11 @@ class Announcements extends Public_Controller {
                     $toEmployees = explode(',', $insert_array['announcement_for']);
                     //
                     foreach($all_employees as $employee){
+                        //
+                        $this->load->model('Hr_documents_management_model', 'HRDMM');
+                        if(!$this->HRDMM->isActiveUser($employee['sid'])){
+                            continue;
+                        }
                         //
                         if($toEmployees[0] != 0 && !in_array($employee['sid'], $toEmployees)) continue;
 
