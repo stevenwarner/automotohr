@@ -763,6 +763,7 @@ class Hr_documents_management extends Public_Controller
                 $data['company_sid'],
                 $data['employer_sid']
             );
+
             $data['pre_assigned_employees'] = array();
 
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
@@ -9447,6 +9448,11 @@ class Hr_documents_management extends Public_Controller
         // Get departments & teams
         $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
         $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
+        //
+        $data['employeesList'] = $this->hr_documents_management_model->fetch_all_company_managers(
+            $data['company_sid'],
+            $data['employer_sid']
+        );
         //
         $this->load->view('main/header', $data);
         $this->load->view('hr_documents_management/hybrid/' . ($type) . '');
