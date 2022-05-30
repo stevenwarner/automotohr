@@ -56,14 +56,53 @@
                                                             Ask Co-Workers for Referrals
                                                         </p>
                                                         Send an e-mail to co-workers to see if they know a candidate for this Job.
+
+                                                        <?php if ($this->session->flashdata('message')) { ?>
+                                                            <div class="alert alert-danger  alert-dismissible" role="alert">
+                                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                                <p> <?php echo $this->session->flashdata('message'); ?></p>
+                                                            </div> <?php } ?>
                                                     </h4>
                                                 </div>
                                                 <div class="universal-form-style-v2">
-                                                    <ul>
-                                                        <form method="post" id="form_email_job_info_to_users">
+                                                    <form method="post" id="form_email_job_info_to_users">
+                                                        <ul>
+
+
+                                                            <?php if ($ems_status == 1) { ?>
+                                                                <!-- Departments -->
+                                                                <li class="form-col-100">
+
+                                                                    <div>
+                                                                        <label class="pull-left text-left">Departments:</label>
+
+                                                                        <select multiple="true" id="js-specific-department-visibility" name="selected_departments[]">
+                                                                            <?php foreach ($departments as $key => $department) { ?>
+                                                                                <option value="<?= $department['sid']; ?>" <?= in_array($department['sid'], $selectedDepartments) ? 'selected="true"' : ''; ?>><?= $department['name']; ?></option>
+                                                                            <?php } ?>
+                                                                        </select>
+
+                                                                    </div>
+                                                                </li>
+
+                                                                <!-- Teams -->
+                                                                <li class="form-col-100">
+                                                                    <div>
+                                                                        <label class="pull-left text-left">Teams:</label>
+                                                                        <select multiple="true" id="js-specific-team-visibility" name="selected_teams[]">
+                                                                            <?php foreach ($teams as $key => $team) { ?>
+                                                                                <option value="<?= $team['sid']; ?>" <?= in_array($team['sid'], $selectedTeams) ? 'selected="true"' : ''; ?>><?= $team['name']; ?></option>
+                                                                            <?php } ?>
+                                                                        </select>
+                                                                    </div>
+                                                                </li>
+                                                                <br />
+                                                            <?php } ?>
+
                                                             <input type="hidden" id="perform_action" name="perform_action" value="email_job_info_to_users" />
+
                                                             <li class="form-col-100">
-                                                                <label class="pull-left text-left">User(s):<span class="staric">*</span></label>
+                                                                <label class="pull-left text-left">User(s):</label>
                                                                 <div class="">
                                                                     <select data-placeholder="Please Select" multiple="multiple" name="employees[]" id="employees" class="chosen-select">
                                                                         <?php foreach ($active_users as $user) { ?>
@@ -74,8 +113,9 @@
                                                                 <?php echo form_error('employees'); ?>
                                                             </li>
                                                             <button class="submit-btn send-email-to-selected-user" type="submit">Send Email to Selected Users</button>
-                                                        </form>
-                                                    </ul>
+
+                                                        </ul>
+                                                    </form>
                                                 </div>
                                             </div>
 
@@ -174,4 +214,31 @@
             );
         }
     }
+</script>
+
+
+
+<style>
+    .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+        height: 35px !important;
+    }
+</style>
+
+<script>
+    $('#js-roles').select2({
+        closeOnSelect: false
+    });
+    $('#js-specific-employee-visibility').select2({
+        closeOnSelect: false
+    });
+    $('#js-specific-department-visibility').select2({
+        closeOnSelect: false
+    });
+    $('#js-specific-team-visibility').select2({
+        closeOnSelect: false
+    });
+    $('[data-toggle="propover"]').popover({
+        trigger: 'hover',
+        placement: 'right'
+    });
 </script>
