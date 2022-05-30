@@ -2282,8 +2282,9 @@ class Job_listings extends Public_Controller
     function add_listing_share($jobId = NULL)
     {
         if ($this->session->has_userdata('logged_in')) { //cheking the user is login
+            $data['session'] = $this->session->userdata('logged_in');
+            $ems_status = $data['session']['company_detail']['ems_status'];
             if ($jobId != NULL) { // checking the job id Exists
-                $data['session'] = $this->session->userdata('logged_in');
                 $security_sid = $data['session']['employer_detail']['sid'];
                 $security_details = db_get_access_level_details($security_sid);
                 $data['security_details'] = $security_details;
@@ -2334,26 +2335,30 @@ class Job_listings extends Public_Controller
                         $performAction = $this->input->post('perform_action');
 
                         if ($performAction == 'email_job_info_to_users') {
-                       
-                           $this->form_validation->set_rules('employees[]', 'Employees', 'trim');
+
+                            $this->form_validation->set_rules('employees[]', 'Employees', 'trim');
                         } elseif ($performAction == 'email_job') {
                             $this->form_validation->set_rules('email_address', 'Email Address', 'valid_email|required|trim');
                             $this->form_validation->set_rules('full_name', 'Full Name', 'required|trim');
                         }
                     }
 
-                    
+
                     if ($this->form_validation->run() == false) {
                         //Handle Validation Errors
                         //var_dump($_POST);
                     } else {
                         $performAction = $this->input->post('perform_action');
-                     
-                        //if ($performAction == 'email_job_info_to_users') {
-                           
-                            $selectedUsers = array();
-                            $selected_departments = $this->input->post('selected_departments');
-                            $selected_teams = $this->input->post('selected_teams');
+
+
+                        $selectedUsers = array();
+                        $selected_departmsent = $this->input->post('selected_departments');
+                        $selected_teams = $this->input->post('selected_teams');
+
+
+
+                        if ($ems_status == 1) {
+                            $alertmsg = "Please Select at least one Department, Team, User";
 
                             if (!empty($selected_teams)) {
                                 $select_employees = $this->hr_documents_management_model->getEmployeesFromTeams($selected_teams, $company_id);
@@ -2361,28 +2366,39 @@ class Job_listings extends Public_Controller
                             if (!empty($selected_departments)) {
                                 $select_employees_dep = $this->hr_documents_management_model->getEmployeesFromDepartment($selected_departments, $company_id);
                             }
-                           
-                            if($this->input->post('employees')){
+                        } else {
+                            $alertmsg = "Please Select a User";
+                        }
+
+                        if ($this->input->post('employees')) {
                             $selectedUsers = $this->input->post('employees');
-                            }
+                        }
 
-                            if (!empty($select_employees)) {
-                                $selectedUsers = array_merge($selectedUsers, $select_employees);
-                            }
-                            if (!empty($select_employees_dep)) {
-                                $selectedUsers = array_merge($selectedUsers, $select_employees_dep);
-                            }
 
-                            $selectedUsers = array_unique($selectedUsers);
-                            $usersInformation = array();
-                          
-                              
-                            if (empty($selectedUsers) && $performAction != 'email_job'){
-                                redirect('add_listing_share/'.$jobId);
-                               }
+                        if (empty($selected_departmsent) && empty($selected_teams) && empty($selectedUsers)) {
+                            $this->session->set_flashdata('message', '<b>Notification:</d> ' . $alertmsg);
+                            redirect('add_listing_share/' . $jobId);
+                        }
 
-                            if (!empty($selectedUsers)){
-                            
+
+                        if (!empty($select_employees)) {
+                            $selectedUsers = array_merge($selectedUsers, $select_employees);
+                        }
+                        if (!empty($select_employees_dep)) {
+                            $selectedUsers = array_merge($selectedUsers, $select_employees_dep);
+                        }
+
+                        $selectedUsers = array_unique($selectedUsers);
+                        $usersInformation = array();
+
+
+                        if (empty($selectedUsers) && $performAction != 'email_job') {
+                            $this->session->set_flashdata('message', '<b>Notification:</d> Employs are not found under selected Departments/Teams');
+                            redirect('add_listing_share/' . $jobId);
+                        }
+
+                        if (!empty($selectedUsers)) {
+
                             foreach ($selectedUsers as $selectedUser) {
                                 $userInfo = $this->dashboard_model->GetSingleActiveUser($company_id, $selectedUser);
                                 if (!empty($userInfo)) {
@@ -2392,7 +2408,7 @@ class Job_listings extends Public_Controller
 
                             $insert_data = array();
 
-                         
+
                             foreach ($usersInformation as $userInformation) {
                                 $email = $userInformation['email'];
                                 $userFullName = $userInformation['first_name'] . ' ' . $userInformation['last_name'];
@@ -2417,7 +2433,6 @@ class Job_listings extends Public_Controller
 
                             $this->session->set_flashdata('message', '<b>Notification: ' . $jobDetail['Title'] . ' - ' . 'has been shared with ' . count($selectedUsers) . ' users!' . ' </b>');
                             redirect('my_listings', 'refresh');
-                        
                         } elseif ($performAction = 'email_job') {
                             $email = $this->input->post('email_address');
                             $userFullName = $this->input->post('full_name');
@@ -2443,6 +2458,8 @@ class Job_listings extends Public_Controller
                             redirect('my_listings', 'refresh');
                         }
                     }
+
+                    $data['ems_status'] = $ems_status;
 
                     $data['jobDetail'] = $jobData[0];
                     $data['title'] = "Add listing share";

@@ -56,36 +56,49 @@
                                                             Ask Co-Workers for Referrals
                                                         </p>
                                                         Send an e-mail to co-workers to see if they know a candidate for this Job.
+
+                                                        <?php if ($this->session->flashdata('message')) { ?>
+                                                            <div class="alert alert-danger  alert-dismissible" role="alert">
+                                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                                <p> <?php echo $this->session->flashdata('message'); ?></p>
+                                                            </div> <?php } ?>
                                                     </h4>
                                                 </div>
                                                 <div class="universal-form-style-v2">
                                                     <form method="post" id="form_email_job_info_to_users">
-
-                                                        <!-- Departments -->
-                                                        <div>
-                                                            <label class="pull-left text-left">Departments:</label>
-
-                                                            <select multiple="true" id="js-specific-department-visibility" name="selected_departments[]">
-                                                                <?php foreach ($departments as $key => $department) { ?>
-                                                                    <option value="<?= $department['sid']; ?>" <?= in_array($department['sid'], $selectedDepartments) ? 'selected="true"' : ''; ?>><?= $department['name']; ?></option>
-                                                                <?php } ?>
-                                                            </select>
-
-                                                        </div>
-
-                                                        <!-- Teams -->
-                                                        <div>
-                                                        <label class="pull-left text-left">Teams:</label>
-
-                                                        <select multiple="true" id="js-specific-team-visibility" name="selected_teams[]">
-                                                            <?php foreach ($teams as $key => $team) { ?>
-                                                                <option value="<?= $team['sid']; ?>" <?= in_array($team['sid'], $selectedTeams) ? 'selected="true"' : ''; ?>><?= $team['name']; ?></option>
-                                                            <?php } ?>
-                                                        </select>
-                                                            </div>
-                                                        <br />
-
                                                         <ul>
+
+
+                                                            <?php if ($ems_status == 1) { ?>
+                                                                <!-- Departments -->
+                                                                <li class="form-col-100">
+
+                                                                    <div>
+                                                                        <label class="pull-left text-left">Departments:</label>
+
+                                                                        <select multiple="true" id="js-specific-department-visibility" name="selected_departments[]">
+                                                                            <?php foreach ($departments as $key => $department) { ?>
+                                                                                <option value="<?= $department['sid']; ?>" <?= in_array($department['sid'], $selectedDepartments) ? 'selected="true"' : ''; ?>><?= $department['name']; ?></option>
+                                                                            <?php } ?>
+                                                                        </select>
+
+                                                                    </div>
+                                                                </li>
+
+                                                                <!-- Teams -->
+                                                                <li class="form-col-100">
+                                                                    <div>
+                                                                        <label class="pull-left text-left">Teams:</label>
+                                                                        <select multiple="true" id="js-specific-team-visibility" name="selected_teams[]">
+                                                                            <?php foreach ($teams as $key => $team) { ?>
+                                                                                <option value="<?= $team['sid']; ?>" <?= in_array($team['sid'], $selectedTeams) ? 'selected="true"' : ''; ?>><?= $team['name']; ?></option>
+                                                                            <?php } ?>
+                                                                        </select>
+                                                                    </div>
+                                                                </li>
+                                                                <br />
+                                                            <?php } ?>
+
                                                             <input type="hidden" id="perform_action" name="perform_action" value="email_job_info_to_users" />
 
                                                             <li class="form-col-100">
