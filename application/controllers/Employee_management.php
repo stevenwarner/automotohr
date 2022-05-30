@@ -2250,10 +2250,26 @@ class Employee_management extends Public_Controller {
                     $changedData .= '    </thead>';
                     $changedData .= '    <tbody>';
                     foreach($difference['data'] as $k => $v):
-                        $changedData .= '        <tr>';
-                        $changedData .= '            <th>'.(ucwords(str_replace('_', ' ', $k))).'</th>';
-                        $changedData .= '            <td style="color: red;">'.($v['old']).'</td>';
-                        $changedData .= '            <td style="color: green;">'.($v['new']).'</td>';
+                        if ($k != "ssn") {
+                            $changedData .= '        <tr>';
+                            $changedData .= '            <th>'.(ucwords(str_replace('_', ' ', $k))).'</th>';
+                            if($k == "dob") {
+                                if(isset($v['old']) && $v['old'] != '' && $v['old'] != '0000-00-00') $old_dob = DateTime::createFromFormat('Y-m-d', $v['old'])->format('m-d-Y');
+                                else $old_dob = '';
+                                if($old_dob != '') $old_dob = DateTime::createFromFormat('m-d-Y', $old_dob)->format('M d Y, D');
+                                //
+                                if(isset($v['new']) && $v['new'] != '' && $v['new'] != '0000-00-00') $new_dob = DateTime::createFromFormat('Y-m-d', $v['new'])->format('m-d-Y');
+                                else $new_dob = '';
+                                if($new_dob != '') $new_dob = DateTime::createFromFormat('m-d-Y', $new_dob)->format('M d Y, D');
+                                //
+                                $changedData .= '            <td style="color: red;">'.($old_dob).'</td>';
+                                $changedData .= '            <td style="color: green;">'.($new_dob).'</td>';
+                            } else {
+                                $changedData .= '            <td style="color: red;">'.($v['old']).'</td>';
+                                $changedData .= '            <td style="color: green;">'.($v['new']).'</td>';
+                            }
+                        }    
+                        
                         $changedData .= '        </tr>';
                     endforeach;
                     $changedData .= '    </tbody>';
