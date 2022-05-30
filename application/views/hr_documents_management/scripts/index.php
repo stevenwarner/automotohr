@@ -398,6 +398,7 @@
 			<?php } ?>
 			if(do_descpt) rows += getSigners();
 			rows += getVisibilty(do_descpt);
+			console.log(d.managers_list);
 			//
 			rows += `<?php echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
 			//
@@ -442,8 +443,12 @@
 					$('#js-modify-assign-document-signature option[value="'+( d.signature_required )+'"]').prop('selected', true);
 					$('#js-modify-assign-document-download option[value="'+( d.download_required )+'"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="'+( d.acknowledgment_required )+'"]').prop('selected', true);
-					do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
-
+					//
+					if (d.signers != null && d.signers != '') {
+						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.signers.split(',')) : '';
+					} else if (d.managers_list != null && d.managers_list != '') {
+						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.managers_list.split(',')) : '';
+					}
 					//
 					if(d.visible_to_payroll){
 						$('#jsVisibleToPayroll').prop('checked', true);
