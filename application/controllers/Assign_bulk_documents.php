@@ -282,25 +282,28 @@ class Assign_bulk_documents extends Public_Controller
         if (!$this->session->userdata('logged_in')) $this->response($resp);
         //
         if (!isset($_POST['employeeId']) || empty($_POST['employeeId'])) $this->response($resp);
-        // Fetch employee information
-        $user_info = $this->assign_bulk_documents_model->get_employee_information(
-            $this->session->userdata('logged_in')['company_detail']['sid'],
-            $_POST['employeeId']
-        );
         //
-        $replacement_array = array();
-        $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
-        $replacement_array['username'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
-        $replacement_array['company_name'] = ucwords($this->session->userdata('logged_in')['company_detail']['CompanyName']);
-        $replacement_array['firstname'] = $user_info['first_name'];
-        $replacement_array['lastname'] = $user_info['last_name'];
-        $replacement_array['first_name'] = $user_info['first_name'];
-        $replacement_array['last_name'] = $user_info['last_name'];
-        $replacement_array['baseurl'] = base_url();
-        $replacement_array['url'] = base_url('hr_documents_management/my_documents');
-        //
-        if ($this->hr_documents_management_model->doSendEmail($_POST['employeeId'], "employee", "HREMS1")) {
-            log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+        $this->load->model('Hr_documents_management_model', 'HRDMM');
+        if($this->HRDMM->isActiveUser($_POST['employeeId'])){
+            // Fetch employee information
+            $user_info = $this->assign_bulk_documents_model->get_employee_information(
+                $this->session->userdata('logged_in')['company_detail']['sid'],
+                $_POST['employeeId']
+            );
+            //
+            $replacement_array = array();
+            $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+            $replacement_array['username'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+            $replacement_array['company_name'] = ucwords($this->session->userdata('logged_in')['company_detail']['CompanyName']);
+            $replacement_array['firstname'] = $user_info['first_name'];
+            $replacement_array['lastname'] = $user_info['last_name'];
+            $replacement_array['first_name'] = $user_info['first_name'];
+            $replacement_array['last_name'] = $user_info['last_name'];
+            $replacement_array['baseurl'] = base_url();
+            $replacement_array['url'] = base_url('hr_documents_management/my_documents');
+            if ($this->hr_documents_management_model->doSendEmail($_POST['employeeId'], "employee", "HREMS1")) {
+                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array);
+            }
         }
         //
         $resp['Status'] = TRUE;

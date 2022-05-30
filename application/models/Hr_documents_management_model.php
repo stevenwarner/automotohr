@@ -6215,10 +6215,14 @@ class Hr_documents_management_model extends CI_Model
             $user_extra_info['user_sid'] = $document['user_sid'];
             $user_extra_info['user_type'] = $document['user_type'];
             //
-            $this->load->model('hr_documents_management_model');
-            if($this->hr_documents_management_model->doSendEmail($document['user_sid'], $document['user_type'], "HREMS20")){
+            $this->load->model('Hr_documents_management_model', 'HRDMM');
+            if($this->HRDMM->isActiveUser($document['user_sid'])){
                 //
-                log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
+                $this->load->model('hr_documents_management_model');
+                if($this->hr_documents_management_model->doSendEmail($document['user_sid'], $document['user_type'], "HREMS20")){
+                    //
+                    log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
+                }
             }
         }
     }
@@ -7987,5 +7991,35 @@ class Hr_documents_management_model extends CI_Model
         ]);
         //
         return true;
+    }
+
+    /**
+     * Check if employee is active
+     * 
+     * @version 1.0
+     * @date    30/05/2022
+     * 
+     * @param number $userId
+     * @param string $userType 
+     *               This is optional for the time being
+     * 
+     * @return number
+     */
+    public function isActiveUser(
+        $userId,
+        $userType = 'employee'
+    ){
+        //
+        if(empty($userId) || $userId == 0 || $userType != 'employee'){
+            return 1;
+        }
+        //
+        return $this->db
+        ->where([
+            'sid' => $userId,
+            'terminated_status' => 0,
+            'active' => 1
+        ])
+        ->count_all_results('users');
     }
 }
