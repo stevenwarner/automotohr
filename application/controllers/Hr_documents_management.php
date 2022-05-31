@@ -13292,15 +13292,21 @@ class Hr_documents_management extends Public_Controller
         $employer_sid             = $employers_details['sid'];
         $security_details         = db_get_access_level_details($employer_sid);
         $data['security_details'] = $security_details;
+        //
+        $data['verificationDocuments'] = $this->hr_documents_management_model->getVerificationDocumentsForLibrary(
+            $company_sid,
+            $employer_sid,
+            'employee'
+        );
         //                    
         $documents_list = $this->hr_documents_management_model->get_all_paginate_library_documents($company_sid);
         $categorized_docs = $this->hr_documents_management_model->categrize_documents($company_sid, null, $documents_list, $data['session']['employer_detail']['access_level_plus']);
-        // _e($categorized_docs,true,true);
 
         $data['categories_documents'] = $categorized_docs['categories_no_action_documents'];
 
         $data['title']          = 'AutomotoHR :: Documents Library';
         $data['employer_sid']   = $employer_sid;
+        $data['company_sid']   = $company_sid;
         $data['employer']       = $employer_sid;
         $data['employer']       = $employers_details;
         $data['documents_list'] = $documents_list;
@@ -14163,6 +14169,45 @@ class Hr_documents_management extends Public_Controller
         $this->load->view('main/header', $data);
         $this->load->view('hr_documents_management/templates/preview_document');
         $this->load->view('main/footer');
+    }
+
+    /**
+     * Handles assignment process of 
+     * verification documents; I9, W9, W4
+     * 
+     * @author  Mubashir Ahmed
+     * @version 1.0
+     */
+    public function assignVD(){
+        // Let fetch the cleaned post
+        $post = $this->input->post(null, true);
+        //
+        $func;
+        //
+        if($post['documentType'] == 'I9'){
+            $func = 'handleI9Assign';
+        }
+        else if($post['documentType'] == 'W9'){
+            $func = 'handleW9Assign';
+        }
+        else if($post['documentType'] == 'W4'){
+            $func = 'handleW4Assign';
+        }
+        else{
+            exit(0);
+        }
+        //
+        $id = $this->hr_documents_management_model->$func(
+            $post['companyId'],
+            $post['userId'],
+            $post['userType']
+        );
+        //
+        SendResponse(200, [
+            'status' => true,
+            'response' => 'Success',
+            'id' => $id
+        ]);
     }
 
 }

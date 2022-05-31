@@ -8257,4 +8257,356 @@ class Hr_documents_management_model extends CI_Model
         //
         return $d ? $d[$column] : 0;
     }
+
+    /**
+     * 
+     */
+    public function getVerificationDocumentsForLibrary(
+        $companyId,
+        $userId,
+        $userType = 'employee'
+    ){
+        $r = [];
+        // Check for I9 permission
+        if($this->getDefaultRequiredFlag($companyId, 'dl_i9')){
+            // 
+            $r['I9'] = [
+                'id' => 0,
+                'status' => 0,
+                'assigned_on' => '',
+                'completed_on' => ''
+            ];
+            // Check if I9 is assigned
+            $form = $this->getData('applicant_i9form', [
+                'company_sid' => $companyId,
+                'user_sid' => $userId,
+                'user_type' => $userType
+            ], [
+                'sid',
+                'status',
+                'user_consent',
+                'sent_date',
+                'employer_filled_date'
+            ], true);
+            //
+            if($form){
+                $r['I9']['id'] = $form['sid'];
+                $r['I9']['status'] = $form['user_consent'] == 1 ? 2 : ($form['status'] == 1 ?  1 : 0);
+                $r['I9']['assigned_on'] = $form['sent_date'];
+                $r['I9']['completed_on'] = $form['employer_filled_date'];
+            }
+        }
+        // Check for W9 permission
+        if($this->getDefaultRequiredFlag($companyId, 'dl_w9')){
+            // 
+            $r['W9'] = [
+                'id' => 0,
+                'status' => 0,
+                'assigned_on' => '',
+                'completed_on' => ''
+            ];
+            // Check if I9 is assigned
+            $form = $this->getData('applicant_w9form', [
+                'company_sid' => $companyId,
+                'user_sid' => $userId,
+                'user_type' => $userType
+            ], [
+                'sid',
+                'status',
+                'user_consent',
+                'sent_date',
+                'signature_timestamp'
+            ], true);
+            //
+            if($form){
+                $r['W9']['id'] = $form['sid'];
+                $r['W9']['status'] = $form['user_consent'] == 1 ? 2 : ($form['status'] == 1 ?  1 : 0);
+                $r['W9']['assigned_on'] = $form['sent_date'];
+                $r['W9']['completed_on'] = $form['signature_timestamp'];
+            }
+        }
+        // Check for W4 permission
+        if($this->getDefaultRequiredFlag($companyId, 'dl_w4')){
+            // 
+            $r['W4'] = [
+                'id' => 0,
+                'status' => 0,
+                'assigned_on' => '',
+                'completed_on' => ''
+            ];
+            // Check if I9 is assigned
+            $form = $this->getData('form_w4_original', [
+                'company_sid' => $companyId,
+                'employer_sid' => $userId,
+                'user_type' => $userType
+            ], [
+                'sid',
+                'status',
+                'user_consent',
+                'sent_date',
+                'signature_timestamp'
+            ], true);
+            //
+            if($form){
+                $r['W4']['id'] = $form['sid'];
+                $r['W4']['status'] = $form['user_consent'] == 1 ? 2 : ($form['status'] == 1 ?  1 : 0);
+                $r['W4']['assigned_on'] = $form['sent_date'];
+                $r['W4']['completed_on'] = $form['signature_timestamp'];
+            }
+        }
+        //
+        return $r;
+    }
+
+
+    /**
+     * Get a tables data
+     * 
+     * @param string  $table
+     * @param array   $where
+     * @param array   $columns
+     * @param boolean $single
+     * 
+     * @return array
+     */
+    public function getData(
+        $table,
+        $where,
+        $columns,
+        $single = false
+    ){
+        //
+        $q = $this->db->select($columns)
+        ->where($where)
+        ->get($table);
+        //
+        $d = $single ? $q->row_array() : $q->result_array();
+        //
+        $q = $q->free_result();
+        //
+        return $d;
+    }
+
+    /**
+     * Handled I9 assignment process
+     * 
+     * @param number $companyId
+     * @param number $userId
+     * @param string $userType
+     * 
+     * @return number
+     */
+    public function handleI9Assign(
+        $companyId,
+        $userId,
+        $userType
+    ){
+        //
+        $whereArray = [
+            'company_sid' => $companyId,
+            'user_sid' => $userId,
+            'user_type' => $userType
+        ];
+        //
+        $form = $this->getData('applicant_i9form', $whereArray, [
+            'sid',
+            'status',
+            'user_consent'
+        ], true);
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        // Needs to add a fresh record
+        if(!$form){
+            $ins = array();
+            $ins['user_sid'] = $userId;
+            $ins['user_type'] = $userType;
+            $ins['company_sid'] = $companyId;
+            $ins['status'] = $ins['sent_status'] = 1;
+            $ins['sent_date'] = $dateTime;
+            //
+            $this->db->insert('applicant_i9form', $ins);
+            //
+            return $this->db->insert_id();
+        }
+        // Means the user has completed and the document is assigned
+        if($form['status'] == 1 && $form['user_consent']){
+            // Fetch the old doc and move to history
+            $fullForm = $this->getData('applicant_i9form', $whereArray, [
+                '*'
+            ], true);
+            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            //
+            unset($fullForm['sid']);
+            //
+            $this->i9_forms_history($fullForm);
+        }
+        // Flush the data
+        $upd = array();
+        $upd["status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_date"] = $dateTime;
+        $upd["section1_emp_signature"] = NULL;
+        $upd["section1_emp_signature_init"] = NULL;
+        $upd["section1_emp_signature_ip_address"] = NULL;
+        $upd["section1_emp_signature_user_agent"] = NULL;
+        $upd["section1_preparer_signature"] = NULL;
+        $upd["section1_preparer_signature_init"] = NULL;
+        $upd["section1_preparer_signature_ip_address"] = NULL;
+        $upd["section1_preparer_signature_user_agent"] = NULL;
+        $upd["section2_sig_emp_auth_rep"] = NULL;
+        $upd["section3_emp_sign"] = NULL;
+        $upd["employer_flag"] = NULL;
+        $upd["user_consent"] = NULL;
+        //
+        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        //
+        return $form['sid'];
+    }
+
+    /**
+     * Handled W9 assignment process
+     * 
+     * @param number $companyId
+     * @param number $userId
+     * @param string $userType
+     * 
+     * @return number
+     */
+    public function handleW9Assign(
+        $companyId,
+        $userId,
+        $userType
+    ){
+        //
+        $whereArray = [
+            'company_sid' => $companyId,
+            'user_sid' => $userId,
+            'user_type' => $userType
+        ];
+        //
+        $form = $this->getData('applicant_w9form', $whereArray, [
+            'sid',
+            'status',
+            'user_consent'
+        ], true);
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        // Needs to add a fresh record
+        if(!$form){
+            $ins = array();
+            $ins['user_sid'] = $userId;
+            $ins['user_type'] = $userType;
+            $ins['company_sid'] = $companyId;
+            $ins['status'] = $ins['sent_status'] = 1;
+            $ins['sent_date'] = $dateTime;
+            //
+            $this->db->insert('applicant_w9form', $ins);
+            //
+            return $this->db->insert_id();
+        }
+        // Means the user has completed and the document is assigned
+        if($form['status'] == 1 && $form['user_consent']){
+            // Fetch the old doc and move to history
+            $fullForm = $this->getData('applicant_w9form', $whereArray, [
+                '*'
+            ], true);
+            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            //
+            unset($fullForm['sid']);
+            //
+            $this->w9_forms_history($fullForm);
+        }
+        // Flush the data
+        $upd = array();
+        $upd["status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_date"] = $dateTime;
+        $upd["user_consent"] = NULL;
+        $upd['ip_address'] = NULL;
+        $upd['user_agent'] = NULL;
+        $upd['active_signature'] = NULL;
+        $upd['signature'] = NULL;
+        $upd['user_consent'] = NULL;
+        $upd['signature_timestamp'] = NULL;
+        $upd['signature_email_address'] = NULL;
+        $upd['signature_bas64_image'] = NULL;
+        $upd['init_signature_bas64_image'] = NULL;
+        $upd['signature_ip_address'] = NULL;
+        $upd['signature_user_agent'] = NULL;
+        //
+        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        //
+        return $form['sid'];
+    }
+
+    /**
+     * Handled W4 assignment process
+     * 
+     * @param number $companyId
+     * @param number $userId
+     * @param string $userType
+     * 
+     * @return number
+     */
+    public function handleW4Assign(
+        $companyId,
+        $userId,
+        $userType
+    ){
+        //
+        $whereArray = [
+            'company_sid' => $companyId,
+            'employer_sid' => $userId,
+            'user_type' => $userType
+        ];
+        //
+        $form = $this->getData('form_w4_original', $whereArray, [
+            'sid',
+            'status',
+            'user_consent'
+        ], true);
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        // Needs to add a fresh record
+        if(!$form){
+            $ins = array();
+            $ins['employer_sid'] = $userId;
+            $ins['user_type'] = $userType;
+            $ins['company_sid'] = $companyId;
+            $ins['status'] = $ins['sent_status'] = 1;
+            $ins['sent_date'] = $dateTime;
+            //
+            $this->db->insert('form_w4_original', $ins);
+            //
+            return $this->db->insert_id();
+        }
+        // Means the user has completed and the document is assigned
+        if($form['status'] == 1 && $form['user_consent']){
+            // Fetch the old doc and move to history
+            $fullForm = $this->getData('form_w4_original', $whereArray, [
+                '*'
+            ], true);
+            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            //
+            unset($fullForm['sid']);
+            //
+            $this->w4_forms_history($fullForm);
+        }
+        // Flush the data
+        $upd = array();
+        $upd["status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_date"] = $dateTime;
+        $upd["user_consent"] = NULL;
+        $upd['signature_timestamp']        = NULL;
+        $upd['signature_email_address']    = NULL;
+        $upd['signature_bas64_image']      = NULL;
+        $upd['init_signature_bas64_image'] = NULL;
+        $upd['ip_address']                 = NULL;
+        $upd['user_agent']                 = NULL;
+        //
+        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        //
+        return $form['sid'];
+    }
 }

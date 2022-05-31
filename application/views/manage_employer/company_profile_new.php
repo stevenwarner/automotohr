@@ -328,6 +328,41 @@
                                 </label>
                             </div>
                         </div>
+                        <?php if(checkIfAppIsEnabled('documentlibrary')): ?>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <h3>Document Library <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
+                                <p>Make the following selected documents available on document library.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    I9 <small class="help_text">Make the I9 available on document library.</small>
+                                    <input class="" type="checkbox" id="dl_i9" name="dl_i9" <?php echo (isset($portal['dl_i9']) && $portal['dl_i9'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    W9 <small class="help_text">Make the W9 available on document library.</small>
+                                    <input class="" type="checkbox" id="dl_w9" name="dl_w9" <?php echo (isset($portal['dl_w9']) && $portal['dl_w9'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    W4 <small class="help_text">Make the W4 available on document library.</small>
+                                    <input class="" type="checkbox" id="dl_w4" name="dl_w4" <?php echo (isset($portal['dl_w4']) && $portal['dl_w4'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <?php endif; ?>
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-timezone-row">
                                 <div class="form-group autoheight">

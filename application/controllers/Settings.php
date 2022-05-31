@@ -631,6 +631,12 @@ class Settings extends Public_Controller
                 $portal_data['man_d4'] = $this->input->post('man_d4', true) == 'on' ? 1 : 0;
                 $portal_data['man_d5'] = $this->input->post('man_d5', true) == 'on' ? 1 : 0;
                 //
+                if(checkIfAppIsEnabled('documentlibrary')):
+                    $portal_data['dl_i9'] = $this->input->post('dl_i9', true) == 'on' ? 1 : 0;
+                    $portal_data['dl_w9'] = $this->input->post('dl_w9', true) == 'on' ? 1 : 0;
+                    $portal_data['dl_w4'] = $this->input->post('dl_w4', true) == 'on' ? 1 : 0;
+                endif;
+                //
                 $this->dashboard_model->update_portal($portal_data, $company_id);
                 $this->session->set_flashdata('message', '<b>Success:</b> Company Profile is updated successfully');
                 redirect("my_settings", "location");

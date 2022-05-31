@@ -1545,3 +1545,11 @@ $route['revert_applicant/(:num)']['delete'] = 'ajax/Applicants/revertApplicantFr
 $route['library_document'] = 'hr_documents_management/library_document_listing';
 //
 $route['document_setting']['post'] = 'Hr_documents_management/updateAssignedDocumentSettings';
+
+/**
+ * Assign verification documents
+ * 
+ * @author  Mubashir Ahmed
+ * @version 1.0
+ */
+$route['assign_vd']['post'] = 'Hr_documents_management/assignVD';
