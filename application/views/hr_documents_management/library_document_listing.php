@@ -11,8 +11,6 @@
         color: #518401 !important;
     }
 
-    .completedocument {}
-
     .panel-body {
         padding: 0px !important;
     }
@@ -83,12 +81,11 @@
                                                                 <table class="table table-plane">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th class="col-lg-3">Document Name</th>
+                                                                            <th class="col-lg-2">Document Name</th>
                                                                             <th class="col-lg-1">Status</th>
                                                                             <th class="col-lg-2">Started Date</th>
                                                                             <th class="col-lg-2">Completed Date</th>
-
-                                                                            <th class="col-lg-3 text-center" colspan="4">Actions</th>
+                                                                            <th class="col-lg-5 text-center" colspan="3">Actions</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -98,8 +95,8 @@
                                                                                 $font_color = "";
                                                                                 $document_show_status = "";
                                                                                 $document_btn_name = "";
-                                                                                $modify_assigned_date = "--";
-                                                                                $modify_completed_date = "--";
+                                                                                $modify_assigned_date = "-";
+                                                                                $modify_completed_date = "-";
                                                                                 $print_original_url = "";
                                                                                 $print_completed_url = "";
                                                                                 $download_original_url = "";
@@ -127,7 +124,7 @@
                                                                                     if ($document_status == 'Completed') {
                                                                                         $font_color = "color:#81b431;";
                                                                                         $document_show_status = strtoupper($document_status);
-                                                                                        $document_btn_name = "Re-Initiate Document";
+                                                                                        $document_btn_name = "Re-Initiate";
                                                                                         $modify_completed_date = get_document_action_date($assigned_document_data, "completed");
                                                                                         //
                                                                                         if ($assigned_document_data["document_type"] == "uploaded") {
@@ -143,12 +140,12 @@
                                                                                     } else {
                                                                                         $font_color = "color:#fd7a2a;";
                                                                                         $document_show_status = strtoupper('Started');
-                                                                                        $document_btn_name = "Complete Document";
+                                                                                        $document_btn_name = "Complete";
                                                                                     }
                                                                                 } else {
                                                                                     $font_color = "color:#3554dc;";
                                                                                     $document_show_status = "Not Initiated";
-                                                                                    $document_btn_name = "Initiate Document";
+                                                                                    $document_btn_name = "Initiate";
                                                                                     //
                                                                                     if ($document["document_type"] == "uploaded") {
                                                                                         $links = getUploadedDocumentURL($document["uploaded_document_s3_name"]);
@@ -170,84 +167,53 @@
                                                                                         ?>
                                                                                     </td>
                                                                                     <td class="col-lg-1" style="<?php echo $font_color; ?>">
-                                                                                        <b>
-                                                                                            <?php
-                                                                                            echo $document_show_status . "<br>";
-                                                                                            ?>
-                                                                                        </td>
-                                                                                        <td class="col-lg-4">
-                                                                                            <div class="col-lg-3" style="padding-left: 0px;padding-right: 5px;">
-                                                                                                <a 
-                                                                                                    class="btn btn-info btn-orange btn-block csRadius5"
-                                                                                                    target="_blank" 
-                                                                                                    href="<?= $print_original_url; ?>" 
-                                                                                                ><i class="fa fa-print" aria-hidden="true"></i> Print</a>
-                                                                                                <?php if (!empty($print_completed_url)) { ?>
-                                                                                                    <a 
-                                                                                                        class="btn btn-info btn-orange btn-block csRadius5"
-                                                                                                        target="_blank" 
-                                                                                                        href="<?= $print_completed_url; ?>" 
-                                                                                                    ><i class="fa fa-print" aria-hidden="true"></i> Print <br>Submitted</a>
-                                                                                                <?php } ?>
-                                                                                            </div>
-                                                                                            <div class="col-lg-4" style="padding-left: 0px; padding-right: 5px;">
-                                                                                                <a 
-                                                                                                    class="btn btn-black btn-block csRadius5"
-                                                                                                    target="_blank" 
-                                                                                                    href="<?= $download_original_url; ?>" 
-                                                                                                ><i class="fa fa-download" aria-hidden="true"></i> Download</a>
-                                                                                                <?php if (!empty($download_completed_url)) { ?>
-                                                                                                    <a 
-                                                                                                        class="btn btn-black btn-block csRadius5"
-                                                                                                        target="_blank" 
-                                                                                                        href="<?= $download_completed_url; ?>" 
-                                                                                                    ><i class="fa fa-download" aria-hidden="true"></i> Download <br>Submitted</a>
-                                                                                                <?php } ?>    
-                                                                                            </div>
-                                                                                            <div class="col-lg-5" style="padding-left: 0px; padding-right: 0px;">
-                                                                                                <button 
-                                                                                                    class="btn btn-block <?php echo $document_btn_name == "Re-Initiate Document" ? "btn-warning" : "btn-success";?> completedocument csRadius5" 
-                                                                                                    document_sid="<?= $document['sid']; ?>" document_status="<? if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) { echo $document_status; }; ?>" document_assigned_sid="<?= $assigned_document_data['sid'] ?>">
-                                                                                                    <?php echo $document_btn_name; ?>
-                                                                                                </button>
-                                                                                                <?php if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) { ?>
-                                                                                                    <a 
-                                                                                                        class="btn btn-success btn-block csRadius5"
-                                                                                                        target="_blank" 
-                                                                                                        href="<?= base_url('hr_documents_management/sign_hr_document/d') . '/' . $assigned_document_data['sid']; ?>" 
-                                                                                                        >
-                                                                                                        <i class="fa fa-eye" aria-hidden="true"></i>
-                                                                                                        Preview
-                                                                                                    </a>
-                                                                                                    <?php if ($document_status == 'Completed') { ?>
-                                                                                                        <a 
-                                                                                                            class="btn btn-success btn-block csRadius5"
-                                                                                                            target="_blank" 
-                                                                                                            href="<?= base_url('hr_documents_management/sign_hr_document/d') . '/' . $assigned_document_data['sid']; ?>" 
-                                                                                                            >
-                                                                                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                                                                                            Preview <br>Submitted
-                                                                                                        </a>
-                                                                                                    <?php } ?>    
-                                                                                                <?php } else { ?>
-                                                                                                    <a 
-                                                                                                        class="btn btn-success btn-block csRadius5"
-                                                                                                        target="_blank" 
-                                                                                                        href="<?= base_url('hr_documents_management/preview_document') . '/company/' . $document['sid']; ?>" 
-                                                                                                        >
-                                                                                                        <i class="fa fa-eye" aria-hidden="true"></i>
-                                                                                                        Preview
-                                                                                                    </a>
-                                                                                                <?php } ?>
-                                                                                            </div>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                <?php } ?>
-                                                                            <?php } else { ?>
-                                                                                <tr>
-                                                                                    <td colspan="7" class="col-lg-12 text-center"><b class="js-error">No Document(s) Found!</b></td>
+                                                                                        <?php
+                                                                                        echo $document_show_status . "<br>";
+                                                                                        ?>
+                                                                                    </td>
+                                                                                    <td class="col-lg-2">
+                                                                                        <?php
+                                                                                        echo $modify_assigned_date;
+                                                                                        ?>
+                                                                                    </td>
+                                                                                    <td class="col-lg-2">
+                                                                                        <?php
+                                                                                        echo $modify_completed_date;
+                                                                                        ?>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <a title="Print the original document" class="btn  btn-info btn-orange csRadius5" target="_blank" href="<?= $print_original_url; ?>"><i class="fa fa-print" aria-hidden="true"></i></a>
+                                                                                        <a title="Download the original document" class="btn  btn-black csRadius5" target="_blank" href="<?= $download_original_url; ?>"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                                                                        <?php if (empty($assigned_document_data) || $assigned_document_data['status'] != 1) : ?>
+                                                                                            <a  title="View the assigned document" class="btn  btn-success csRadius5" target="_blank" href="<?= base_url('hr_documents_management/preview_document') . '/company/' . $document['sid']; ?>">
+                                                                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                                                                            </a>
+                                                                                        <?php else: ?>
+                                                                                            <a  title="View the original document" class="btn  btn-success csRadius5" target="_blank" href="<?= base_url('hr_documents_management/sign_hr_document/d') . '/' . $assigned_document_data['sid']; ?>">
+                                                                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                                                                            </a>
+                                                                                        <?php endif; ?>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <?php if (!empty($print_completed_url)) { ?>
+                                                                                            <a  title="Print the submitted document" class="btn btn-info btn-orange csRadius5" target="_blank" href="<?= $print_completed_url; ?>"><i class="fa fa-print" aria-hidden="true"></i></a>
+                                                                                        <?php } ?>
+                                                                                        <?php if (!empty($download_completed_url)) { ?>
+                                                                                            <a  title="Download the submitted document" class="btn btn-black csRadius5" target="_blank" href="<?= $download_completed_url; ?>"><i class="fa fa-download" aria-hidden="true"></i></a>
+                                                                                        <?php } ?>
+                                                                                        <?php if (!empty($assigned_document_data) && $assigned_document_data['status'] == 1) { ?>
+                                                                                            <?php if ($document_status == 'Completed') { ?>
+                                                                                                <a  title="View the submitted document" class="btn btn-success csRadius5" target="_blank" href="<?= base_url('hr_documents_management/sign_hr_document/d') . '/' . $assigned_document_data['sid']; ?>">
+                                                                                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                                                                                </a>
+                                                                                            <?php } ?>
+                                                                                        <?php } ?>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <button class="btn btn-block <?php echo $document_btn_name == "Re-Initiate" ? "btn-warning" : "btn-success"; ?> completedocument csRadius5" document_sid="<?= $document['sid']; ?>" document_status="<?=!empty($assigned_document_data) && $assigned_document_data['status'] == 1 ?  $document_status : '' ?>" document_assigned_sid="<?= $assigned_document_data['sid']; ?>"><?= $document_btn_name; ?>
+                                                                                        </button>
+                                                                                    </td>
                                                                                 </tr>
-
                                                                             <?php } ?>
                                                                         <?php } else { ?>
                                                                             <tr>
