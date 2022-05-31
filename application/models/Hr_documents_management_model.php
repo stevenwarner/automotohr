@@ -8056,26 +8056,8 @@ class Hr_documents_management_model extends CI_Model
     }
 
 
-
-
-
-    function getGeneralAssignedDocument($Sid)
+    public function getGeneralDocumentsinfo($Sid, $employerSid)
     {
-
-        $this->db->where('sid', $Sid);
-        $a = $this->db->get('documents_assigned_general');
-        $b = $a->result_array();
-        $a = $a->free_result();
-        //
-        return $b;
-    }
-
-
-
-
-    function getGeneralDocumentsinfo($Sid, $employerSid)
-    {
-
         $this->db->where('documents_assigned_general_sid', $Sid);
         $this->db->where('user_sid', $employerSid);
         $a = $this->db->get('documents_assigned_general_assigners_history');
@@ -8085,76 +8067,104 @@ class Hr_documents_management_model extends CI_Model
         return $b;
     }
 
-
-
-
-    function assignGeneralDocumentHistory($employer_sid, $serType, $documentType)
+    /**
+     * Manage general document history
+     * 
+     * @method getGeneralAssignedDocument
+     * 
+     * @param number $userId
+     * @param string $userType
+     * @param string $documentType
+     * @param number $documentId
+     * 
+     * @return number
+     */
+    public function assignGeneralDocumentHistory($userId, $userType, $documentType, $documentId)
     {
+        //
+        if(empty($this->getGeneralAssignedDocument($documentId))){
+            return 0;
+        }
+        $mainTable = '';
+        $historyTable = '';
+        $whereArray = [
+            'users_sid' => $userId,
+            'users_type' => $userType
+        ];
         // 
         if ($documentType == 'dependents') {
-            $this->db->where('users_sid', $employer_sid);
-            $this->db->where('users_type', $serType);
-            $a = $this->db->get('dependant_information');
-            $dependant_information_data = $a->result_array();
-            if (!empty($dependant_information_data)) {
-                foreach ($dependant_information_data as $dependant_row)
-                    $dependant_row['loged_at'] = date('Y-m-d H:i:s');
-                $this->db->insert('dependant_information_history', $dependant_row);
-            }
+            $mainTable = 'dependant_information';
+            $historyTable = 'dependant_information_history';
+        } else if ($documentType == 'direct_deposit') {
+            $mainTable = 'bank_account_details';
+            $historyTable = 'bank_account_details_history_new';
+        } else if ($documentType == 'drivers_license') {
+            $mainTable = 'license_information';
+            $historyTable = 'license_information_history';
+            //
+            $whereArray['license_type'] = 'drivers';
+        } else if ($documentType == 'occupational_license') {
+            $mainTable = 'license_information';
+            $historyTable = 'license_information_history';
+            //
+            $whereArray['license_type'] = 'occupational';
+        } else if ($documentType == 'emergency_contacts') {
+            $mainTable = 'emergency_contacts';
+            $historyTable = 'emergency_contacts_history';
+        } else{
+            return 0;
         }
 
+        $a = $this->db
+        ->where($whereArray)
+        ->get($mainTable);
         //
-        if ($documentType == 'direct_deposit') {
-            $this->db->where('users_sid', $employer_sid);
-            $this->db->where('users_type', $serType);
-            $a = $this->db->get('bank_account_details');
-            $bank_information_data = $a->result_array();
-            if (!empty($bank_information_data)) {
-                foreach ($bank_information_data as $bank_row)
-                    $bank_row['loged_at'] = date('Y-m-d H:i:s');
-                $this->db->insert('bank_account_details_history_new', $bank_row);
+        $data = $a->result_array();
+        //
+        if(!empty($data)){
+            //
+            $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            $insertBatch = [];
+            //
+            foreach($data as $dt){
+                //
+                $dt['logged_at'] = $dateTime;
+                //
+                $insertBatch[] = $dt;
             }
+            //
+            $this->db->insert_batch(
+                $historyTable, 
+                $insertBatch
+            );
+            //
+            return 1;
         }
+        //
+        return 0;
+    }
 
+     /**
+     * Check if a general document is
+     * assigned
+     * 
+     * @author  Nisar
+     * @version 1.0
+     * 
+     * @param number $sid
+     * @return
+     */
+    public function getGeneralAssignedDocument($sid){
         //
-        if ($documentType == 'drivers_license') {
-            $this->db->where('users_sid', $employer_sid);
-            $this->db->where('users_type', $serType);
-            $this->db->where('license_type', 'drivers');
-            $a = $this->db->get('license_information');
-            $drivers_license_data = $a->result_array();
-            if (!empty($drivers_license_data)) {
-                foreach ($drivers_license_data as $drivers_license_data_row)
-                    $drivers_license_data_row['loged_at'] = date('Y-m-d H:i:s');
-                $this->db->insert('license_information_history', $drivers_license_data_row);
-            }
-        }
-
+        $a = $this->db
+        ->where('sid', $sid)
+        ->get('documents_assigned_general');
         //
-        if ($documentType == 'emergency_contacts') {
-            $this->db->where('users_sid', $employer_sid);
-            $this->db->where('users_type', $serType);
-            $a = $this->db->get('emergency_contacts');
-            $contacts_information_data = $a->result_array();
-            if (!empty($contacts_information_data)) {
-                foreach ($contacts_information_data as $contacts_row)
-                    $contacts_row['loged_at'] = date('Y-m-d H:i:s');
-                $this->db->insert('emergency_contacts_history', $contacts_row);
-            }
-        }
-
+        $b = $a->result_array();
         //
-        if ($documentType == 'occupational_license') {
-            $this->db->where('users_sid', $employer_sid);
-            $this->db->where('users_type', $serType);
-            $this->db->where('license_type', 'occupational');
-            $a = $this->db->get('license_information');
-            $license_information_data = $a->result_array();
-            if (!empty($license_information_data)) {
-                foreach ($license_information_data as $license_row)
-                    $license_row['loged_at'] = date('Y-m-d H:i:s');
-                $this->db->insert('license_information_history', $license_row);
-            }
-        }
+        $a = $a->free_result();
+        //
+        return $b ? $b : [];
     }
 }

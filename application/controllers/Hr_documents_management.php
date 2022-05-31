@@ -9773,14 +9773,8 @@ class Hr_documents_management extends Public_Controller
 
                 //
             case "assign_document":
-                //
-             
-                //Save General Documents history  Start
-                $assigned_general_doc_details = $this->hr_documents_management_model->getGeneralAssignedDocument($post['sid']);
-                if (!empty($assigned_general_doc_details)) {
-                    $this->hr_documents_management_model->assignGeneralDocumentHistory($post['userSid'],$post['userType'],$post['documentType']);
-                }
-                // End 
+                // Save General Documents history  Start
+                
 
                 $insertId = $this->hr_documents_management_model->assignGeneralDocument(
                     $post['userSid'],
@@ -9882,6 +9876,8 @@ class Hr_documents_management extends Public_Controller
 
                 //
             case "revoke_document":
+                // Check if the document is assigned/completed
+                $this->hr_documents_management_model->assignGeneralDocumentHistory($post['userSid'],$post['userType'],$post['documentType'], $post['sid']);
                 //
                 $insertId = $this->hr_documents_management_model->revokeGeneralDocument(
                     $post['userSid'],
