@@ -2178,10 +2178,6 @@
                 $('#my_loader').show();
                 //
                 sendDocumentByEmail(sid);
-                // setTimeout(() => {
-                //     $('#my_loader .loader-text').html('Please wait while we generate your E-Signature...');
-                //     $('body').css('overflow-y', 'auto');
-                // }, 5000);
             },
             () => {}
         ).set('labels', {
@@ -2235,10 +2231,6 @@
             });
         });
     }
-
-    $(document).ready(function(){
-        // $('.open_not_completed_doc').trigger('click');
-    })
     
 </script>
 
@@ -2248,11 +2240,3 @@
     $GLOBALS['completedDocumentsList'] = $completedDocumentsList;
     $GLOBALS['noActionRequiredDocumentsList'] = $noActionRequiredDocumentsList;
 ?>
-
-<script>
-    $(function(){
-        setTimeout(function () {
-            // $('[data-toggle="collapse"]').click();
-        }, 2000);
-    })
-</script>

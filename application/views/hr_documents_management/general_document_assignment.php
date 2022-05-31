@@ -593,7 +593,7 @@
                     completedDocs += `
                         <tr class="jsGeneralRowCompleted${v.document_type}">
                             <td class="">
-                                ${v.document_type.replace(/_/, ' ').ucwords()} <br />
+                                ${v.document_type.replace(/_/, ' ').ucwords()} ${v.is_required == 1 ? '<i class="fa fa-asterisk text-danger"></i>' : ''} <br />
                                 <strong>Assigned on: </strong> ${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')} <br />
                                 <strong>Completed on: </strong> ${moment(v.updated_at).format('MMM Do YYYY, ddd H:m:s')}
                             </td>
@@ -609,7 +609,7 @@
                     notCompletedDocs += `
                         <tr class="jsGeneralRowNotCompleted${v.document_type}">
                             <td class="">
-                                ${v.document_type.replace(/_/, ' ').ucwords()} <br />
+                                ${v.document_type.replace(/_/, ' ').ucwords()} ${v.is_required == 1 ? '<i class="fa fa-asterisk text-danger"></i>' : ''}<br />
                                 <strong>Assigned on: </strong> ${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')}
                             </td>
                             <td class="text-center">
@@ -756,8 +756,6 @@
             $('.js-ncd').text(
                 parseInt($('.js-ncd').text()) + cc
             );
-            //
-            $('').trigger('click');
         }
     });
 </script>

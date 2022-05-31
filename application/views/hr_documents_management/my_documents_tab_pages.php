@@ -450,7 +450,10 @@
                                             <tr>
                                                 <td class="">
                                                     <?php
-                                                        echo ucwords(str_replace('_', ' ', $v['document_type']));
+                                                        echo ucwords(str_replace('_', ' ', $v['document_type'])).'';
+                                                        if($v['is_required'] == 1){
+                                                            echo ' <i class="fa fa-asterisk text-danger"></i>';
+                                                        }
                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $v['updated_at'], '_this' => $this));
                                                     ?>
                                                     <div class="hidden-sm hidden-lg hidden-md">
@@ -1000,6 +1003,9 @@
                                                         <td class="">
                                                             <?php
                                                                 echo ucwords(str_replace('_', ' ', $v['document_type']));
+                                                                if($v['is_required'] == 1){
+                                                                    echo ' <i class="fa fa-asterisk text-danger"></i>';
+                                                                }
                                                                 echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $v['updated_at'], '_this' => $this));
                                                             ?>
                                                             <div class="hidden-sm hidden-lg hidden-md">
