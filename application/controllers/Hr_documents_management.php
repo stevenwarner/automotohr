@@ -652,6 +652,7 @@ class Hr_documents_management extends Public_Controller {
                             else $data_to_insert['assigned_employee_list'] = json_encode($aEmployees);
                         }
                         $data_to_insert['has_approval_flow'] = 1;
+                        $data_to_insert['document_approval_note'] = $data_to_insert['document_approval_employees'] = '';
                         // Assigner handling
                         if($post['has_approval_flow'] == 'on'){
                             $data_to_insert['has_approval_flow'] = 1;
@@ -702,6 +703,7 @@ class Hr_documents_management extends Public_Controller {
                         $new_history_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
                         // Assigner handling
                         $new_history_data['has_approval_flow'] = 1;
+                        $new_history_data['document_approval_note'] = $new_history_data['document_approval_employees'] = '';
                         // Assigner handling
                         if($post['has_approval_flow'] == 'on'){
                             $new_history_data['has_approval_flow'] = 1;
@@ -890,6 +892,7 @@ class Hr_documents_management extends Public_Controller {
                         }
                         // Assigner handling
                         $data_to_insert['has_approval_flow'] = 1;
+                        $data_to_insert['document_approval_note'] = $data_to_insert['document_approval_employees'] = '';
                         // Assigner handling
                         if($post['has_approval_flow'] == 'on'){
                             $data_to_insert['has_approval_flow'] = 1;
@@ -934,6 +937,7 @@ class Hr_documents_management extends Public_Controller {
                         // Assigner handling
                         // Assigner handling
                         $new_history_data['has_approval_flow'] = 1;
+                        $new_history_data['document_approval_note'] = $new_history_data['document_approval_employees'] = '';
                         // Assigner handling
                         if($post['has_approval_flow'] == 'on'){
                             $new_history_data['has_approval_flow'] = 1;
@@ -1418,6 +1422,7 @@ class Hr_documents_management extends Public_Controller {
                         }
                         // Assigner handling
                         $data_to_update['has_approval_flow'] = 1;
+                        $data_to_update['document_approval_note'] = $data_to_update['document_approval_employees'] = '';
                         // Assigner handling
                         if($post['has_approval_flow'] == 'on'){
                             $data_to_update['has_approval_flow'] = 1;

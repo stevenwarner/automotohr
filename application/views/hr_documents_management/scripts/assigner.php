@@ -1,17 +1,17 @@
 <script>
-	$(function() {
+	$(function documentApprovalFlow() {
 		// 
 		var selectedApprovers = {};
 		//
 		var approvalContainer = $('.jsApproverFlowContainer');
 
 		//
-		$('#jsHasApprovalFlow').click(function(){
+		$('#jsHasApprovalFlow').click(function() {
 			//
-			if($(this).prop('checked')){
+			if ($(this).prop('checked')) {
 				//
 				approvalContainer.show(0);
-			} else{
+			} else {
 				//
 				approvalContainer.hide(0);
 				$('.jsEmployeesadditionalBox').html('');
@@ -19,26 +19,13 @@
 			}
 		});
 
-
 		//
 		$(document).on('click', '#jsAddDocumentAssigner', function(event) {
 			//
 			$(".jsAssignerEmployeesNote").show();
 			var rowId = Math.round((Math.random() * 10000) + 1);
 			var row = generateRow(rowId);
-			$('.jsEmployeesadditionalBox').prepend(row);
-			//
-			if(Object.keys(selectedApprovers).length){
-				Object.keys(selectedApprovers).map(function(sa){
-					$('.js-employee-'+(rowId)+' option[value="'+(sa)+'"]').remove();
-				});
-			}
-			//
-			$('#js-employees-' + rowId).select2({
-				closeOnSelect: false,
-				allowHtml: true,
-				allowClear: true,
-			});
+			AddApproverRow(row, rowId);
 		});
 
 		//
@@ -47,31 +34,29 @@
 			selectedApprovers[$(this).val()] = true;
 		});
 
-
 		//
 		$(document).on('click', '.js-employee-delete-btn', function(e) {
 			//
 			e.preventDefault();
 			//
-			var _this = $(this);
-
-			if ($(this).closest('.cs-employee').find('.js-text').val() == '') {
-				$(this).closest('.cs-employee').remove();
-				return;
+			if ($(this).closest('.row_id').find('.jsSelectedEmployee').val() == 0) {
+				return $(this).closest('.row_id').remove();
 			}
 			//
+			var _this = $(this);
+			//
 			alertify.confirm('Do you want to delete this approver?', function() {
-				_this.closest('.cs-employee').remove();
+				_this.closest('.row_id').remove();
+				delete selectedApprovers[_this.closest('.row_id').find('.jsSelectedEmployee').val()];
 			});
 		});
-
-
 
 		// generates row
 		function generateRow(rowId) {
 			//
-			var rows = '<br />';
+			var rows = '';
 			rows += '<div class="row js-employee-' + (rowId) + ' row_id" data-id="' + (rowId) + '">';
+			rows += '<br />';
 			rows += '    <div class="cs-employee js-employee csMT">';
 			rows += '        <div class="col-sm-10 col-sm-offset-0 text-left">';
 			rows += '           <select id="js-employees-' + (rowId) + '" name="assigner[]" class="jsSelectedEmployee">';
@@ -90,7 +75,7 @@
 			//
 			return rows;
 		}
-		
+
 		function DOGenerate(assigners) {
 			//
 			if (!assigners) {
@@ -115,8 +100,25 @@
 
 		}
 
-		<?php if(isset($document_info['document_approval_employees'])): ?>
-		DOGenerate("<?= $document_info['document_approval_employees']; ?>");
+		function AddApproverRow(row, rowId){
+			$('.jsEmployeesadditionalBox').prepend(row);
+			//
+			if (Object.keys(selectedApprovers).length) {
+				Object.keys(selectedApprovers).map(function(sa) {
+					$('.js-employee-' + (rowId) + ' option[value="' + (sa) + '"]').remove();
+				});
+			}
+			//
+			$('#js-employees-' + rowId).select2({
+				closeOnSelect: false,
+				allowHtml: true,
+				allowClear: true,
+			});
+		}
+
+		<?php if (isset($document_info['has_approval_flow']) && $document_info['has_approval_flow'] == 1) : ?>
+			$('#jsHasApprovalFlow').prop('checked', true);
+			DOGenerate("<?= $document_info['document_approval_employees']; ?>");
 		<?php endif; ?>
 	});
 </script>
