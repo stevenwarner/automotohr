@@ -566,7 +566,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.archive', $archive);
         //
-        if($ems == 1){
+        if ($ems == 1) {
             $this->db->where('documents_assigned.is_confidential', 0);
         }
 
@@ -1483,7 +1483,7 @@ class Hr_documents_management_model extends CI_Model
             }
         } else {
             return array();
-        }    
+        }
     }
 
     function check_w4_form_exist($user_type, $user_sid)
@@ -2232,7 +2232,7 @@ class Hr_documents_management_model extends CI_Model
             return $this->db->count_all_results();
         } else {
             return 0;
-        }    
+        }
     }
 
     function getEmployeesDetails($employees)
@@ -3106,6 +3106,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('company_sid', $company_sid);
         $this->db->where('archive', 0);
         $this->db->where('is_specific', 0);
+        $this->db->where('isdoctolibrary', 0);
 
         if ($pp_flag) {
             $this->db->group_start();
@@ -3883,13 +3884,12 @@ class Hr_documents_management_model extends CI_Model
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-
             $company_sid = $record_arr[0]['company_sid'];
             $user_sid = isset($record_arr[0]['user_sid']) ? $record_arr[0]['user_sid'] : '';
             $user_type = isset($record_arr[0]['user_type']) ? $record_arr[0]['user_type'] : '';
             $document_body = $record_arr[0]['document_description'];
 
-            if ($request_type == 'assigned' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history')) {
+            if ($request_type == 'assigned' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history' || $request_from == 'company_document')) {
 
                 if ($request_for == 'P&D') {
                     $contant_body = $this->replace_magic_tag_for_print_and_download($company_sid, $document_sid, $document_body);
@@ -7815,8 +7815,30 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
+    /**
+     * Get all the active documents belongs
+     * to library
+     * 
+     * @author Nisar [05-11-2022]
+     * @param number $company_sid
+     * @return array
+     */
+    function get_all_paginate_library_documents($company_sid)
+    {
+        $this->db->select('document_title,document_type,sid,sid as document_sid');
+        $this->db->where('documents_management.company_sid', $company_sid);
+        $this->db->where('documents_management.isdoctolibrary', 1);
+        $this->db->where('documents_management.archive', 0);
+        $this->db->order_by('documents_management.sid', 'DESC');
+        //
+        $record_obj = $this->db->get('documents_management');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        return !$record_arr ? [] : $record_arr;
+    }
 
-    //----------  Check and Assigne  groups
+    // Check and Assigne  groups
     function checkAndAssignGroups($company_sid, $user_type, $user_sid, $pp_flag, $employer_sid)
     {
         $groups = $this->get_all_documents_group($company_sid, 1);
@@ -7990,6 +8012,265 @@ class Hr_documents_management_model extends CI_Model
         $doc_group_data['group_ids'] = $group_ids;
         $doc_group_data['assigned_groups'] = $assigned_groups;
         return  $doc_group_data;
+    }
+
+    /**
+     * Get the assigned document
+     * 
+     * @author Nisar [05-11-2022]
+     * @param number $document_sid
+     * @param number $userId
+     * @param string $userType [applicant|employee]
+     * @return array
+     */
+    function is_library_document_exist($document_sid, $userId, $userType = 'employee')
+    {
+        $this->db->where('document_sid', $document_sid);
+        $this->db->where('user_sid', $userId);
+        $this->db->where('user_type', $userType);
+        //
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        return !$record_arr ? [] : $record_arr;
+    }
+
+    /**
+     * Get the original document by id
+     * 
+     * @author Nisar [05-11-2022]
+     * @param number $sid
+     * @return array
+     */
+    function get_documents_assigned($sid)
+    {
+        //
+        $record_obj = $this->db
+            ->where('sid', $sid)
+            ->get('documents_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        return !$record_arr ? [] : $record_arr;
+    }
+
+    /**
+     * Assigns a document
+     * 
+     * @author Nisar [05-11-2022]
+     * @param array $data_to_insert
+     * @return number
+     */
+    function insert_documents_assigned($data_to_insert)
+    {
+        $this->db->insert('documents_assigned', $data_to_insert);
+        return $this->db->insert_id();
+    }
+
+    // Change Docuemnt  visibility on document center
+    function change_document_visible($sid, $data_to_update)
+    {
+        $this->db->where('sid', $sid);
+        $this->db->update('documents_assigned', $data_to_update);
+
+        //----------  Check and Assigne  groups
+        function checkAndAssignGroups($company_sid, $user_type, $user_sid, $pp_flag)
+        {
+            $groups = $this->get_all_documents_group($company_sid, 1);
+
+            if (!empty($groups)) {
+                foreach ($groups as $key => $group) {
+                    $document_status = $this->is_document_assign_2_group($group['sid']);
+                    $groups[$key]['document_status'] = $document_status;
+                    //start
+                    $group_status = $group['status'];
+                    $group_sid = $group['sid'];
+                    $group_ids[] = $group_sid;
+                    $group_documents = $this->get_all_documents_in_group($group_sid, 0, $pp_flag);
+
+                    if ($group_status) {
+                        $active_groups[] = array(
+                            'sid' => $group_sid,
+                            'name' => $group['name'],
+                            'sort_order' => $group['sort_order'],
+                            'description' => $group['description'],
+                            'created_date' => $group['created_date'],
+                            'w4' => $group['w4'],
+                            'w9' => $group['w9'],
+                            'i9' => $group['i9'],
+                            'eeoc' => $group['eeoc'],
+                            'direct_deposit' => $group['direct_deposit'],
+                            'drivers_license' => $group['drivers_license'],
+                            'occupational_license' => $group['occupational_license'],
+                            'emergency_contacts' => $group['emergency_contacts'],
+                            'dependents' => $group['dependents'],
+                            'documents_count' => count($group_documents),
+                            'documents' => $group_documents
+                        );
+                    } else {
+                        $in_active_groups[] = array(
+                            'sid' => $group_sid,
+                            'name' => $group['name'],
+                            'sort_order' => $group['sort_order'],
+                            'description' => $group['description'],
+                            'created_date' => $group['created_date'],
+                            'w4' => $group['w4'],
+                            'w9' => $group['w9'],
+                            'i9' => $group['i9'],
+                            'eeoc' => $group['eeoc'],
+                            'direct_deposit' => $group['direct_deposit'],
+                            'drivers_license' => $group['drivers_license'],
+                            'occupational_license' => $group['occupational_license'],
+                            'emergency_contacts' => $group['emergency_contacts'],
+                            'dependents' => $group['dependents'],
+                            'documents_count' => count($group_documents),
+                            'documents' => $group_documents
+                        );
+                    }
+
+                    //end 
+                }
+            }
+
+            $groups_assign = $this->get_all_documents_group_assigned($company_sid, $user_type, $user_sid);
+            $assigned_groups = array();
+
+            if (!empty($groups_assign)) {
+                foreach ($groups_assign as $value) {
+                    array_push($assigned_groups, $value['group_sid']);
+                    $system_document = $this->get_document_group($value['group_sid']);
+
+                    //start
+                    // General Documents 
+                    foreach ($system_document as $gk => $gv) {
+                        //
+                        if (!in_array($gk, [
+                            'direct_deposit',
+                            'drivers_license',
+                            'occupational_license',
+                            'emergency_contacts',
+                            'dependents'
+                        ])) continue;
+                        //
+                        if ($gv == 1) {
+                            if ($this->checkAndAssignGeneralDocument(
+                                $user_sid,
+                                $user_type,
+                                $company_sid,
+                                $gk,
+                                $employer_sid
+                            )) {
+                                //
+                                $sendGroupEmail = 1;
+                            }
+                        }
+                    }
+                    //end
+
+                    if ($system_document['w4'] == 1) {
+                        $is_w4_assign = $this->check_w4_form_exist($user_type, $user_sid);
+                        if (empty($is_w4_assign)) {
+                            $w4_data_to_insert = array();
+                            $w4_data_to_insert['employer_sid'] = $user_sid;
+                            $w4_data_to_insert['company_sid'] = $company_sid;
+                            $w4_data_to_insert['user_type'] = $user_type;
+                            $w4_data_to_insert['sent_status'] = 1;
+                            $w4_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                            $w4_data_to_insert['status'] = 1;
+                            $this->insert_w4_form_record($w4_data_to_insert);
+                            //
+                            $sendGroupEmail = 1;
+                        }
+                    }
+
+                    if ($system_document['w9'] == 1) {
+                        $is_w9_assign = $this->check_w9_form_exist($user_type, $user_sid);
+
+                        if (empty($is_w9_assign)) {
+                            $w9_data_to_insert = array();
+                            $w9_data_to_insert['user_sid'] = $user_sid;
+                            $w9_data_to_insert['company_sid'] = $company_sid;
+                            $w9_data_to_insert['user_type'] = $user_type;
+                            $w9_data_to_insert['sent_status'] = 1;
+                            $w9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                            $w9_data_to_insert['status'] = 1;
+                            $this->insert_w9_form_record($w9_data_to_insert);
+                            //
+                            $sendGroupEmail = 1;
+                        }
+                    }
+
+                    if ($system_document['i9'] == 1) {
+                        $is_i9_assign = $this->check_i9_exist($user_type, $user_sid);
+
+                        if (empty($is_i9_assign)) {
+                            $i9_data_to_insert = array();
+                            $i9_data_to_insert['user_sid'] = $user_sid;
+                            $i9_data_to_insert['user_type'] = $user_type;
+                            $i9_data_to_insert['company_sid'] = $company_sid;
+                            $i9_data_to_insert['sent_status'] = 1;
+                            $i9_data_to_insert['sent_date'] = date('Y-m-d H:i:s');
+                            $i9_data_to_insert['status'] = 1;
+                            $this->insert_i9_form_record($i9_data_to_insert);
+                            //
+                            $sendGroupEmail = 1;
+                        }
+                    }
+
+                    if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
+                        $is_eeoc_assign = $this->check_eeoc_exist($user_sid, $user_type);
+
+                        if (empty($is_eeoc_assign)) {
+                            $eeoc_data_to_insert = array();
+                            $eeoc_data_to_insert['application_sid'] = $user_sid;
+                            $eeoc_data_to_insert['users_type'] = $user_type;
+                            $eeoc_data_to_insert['status'] = 1;
+                            $eeoc_data_to_insert['is_expired'] = 0;
+                            $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
+                            $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                            $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                            $eeoc_data_to_insert['last_assigned_by'] = 0;
+                            //
+                            $this->insert_eeoc_form_record($eeoc_data_to_insert);
+                            //
+                            $sendGroupEmail = 1;
+                        }
+                    }
+                }
+            }
+
+            $doc_group_data['groups'] = $groups;
+            $doc_group_data['group_status'] = $group_status;
+            $doc_group_data['active_groups'] = $active_groups;
+            $doc_group_data['in_active_groups'] = $in_active_groups;
+            $doc_group_data['sendGroupEmail'] = $sendGroupEmail;
+            $doc_group_data['group_ids'] = $group_ids;
+            $doc_group_data['assigned_groups'] = $assigned_groups;
+            return  $doc_group_data;
+        }
+    }
+
+
+    function get_preview_document($type, $document_sid)
+    {
+        if ($type == "company") {
+            $this->db->select('sid, document_title, document_type, document_description, uploaded_document_s3_name as document_s3_name');
+        } else {
+            $this->db->select('sid, document_title, document_type, document_description, document_s3_name, uploaded_file, form_input_data, submitted_description, authorized_signature, authorized_signature_date, signature_base64, signature_initial, signature_timestamp');
+        }
+        
+        $this->db->where('sid', $document_sid);
+
+        $record_obj = $this->db->get($type == "company" ? "documents_management" : "documents_assigned");
+        $records_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
     }
 
     /**

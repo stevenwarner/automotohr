@@ -75,6 +75,7 @@
                                                                     echo $document['document_title'] . '&nbsp;';
                                                                     echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                     echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
+                                                                    echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                     echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
                                                                     echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
@@ -90,12 +91,12 @@
                                                                         data-id="<?=$document['sid'];?>"
                                                                         data-document="assigned"
                                                                         class="btn btn-success btn-sm btn-block js-hybrid-preview">Preview Assigned</button>
-                                                                    <?php if ($document_all_permission) { ?>    
+                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>    
                                                                         <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'notCompletedDocuments'], $modifyBTN);?>
                                                                     <?php } ?>    
                                                                 </td>
                                                                 <td>
-                                                                    <?php if ($document_all_permission) { ?>
+                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                         <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/'.($user_type).'/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                         <?=getSendDocumentEmailButton($document, $session['employer_detail'], $user_type);?>
                                                                     <?php } ?> 
@@ -148,13 +149,13 @@
                                                                             data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
                                                                             Preview Assigned
                                                                         </button>
-                                                                        <?php if ($document_all_permission) { ?> 
+                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                             <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'notCompletedDocuments'], $modifyBTN);?> 
                                                                         <?php } ?>  
                                                                     </td>
                                                                 <?php } ?>
                                                                 <td class="col-lg-1">
-                                                                    <?php if ($document_all_permission) { ?> 
+                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                         <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
                                                                             <?php if ($document['document_sid'] != 0) { ?>
                                                                                 <?php if ($document['status'] == 1) { ?>
@@ -187,13 +188,13 @@
                                                                         data-from="assigned_document">
                                                                         Preview Assigned
                                                                     </button>
-                                                                    <?php if ($document_all_permission) { ?> 
+                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                         <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'notCompletedDocuments'], $modifyBTN);?>
                                                                     <?php } ?>    
                                                                 </td>
 
                                                                 <td class="col-lg-2">
-                                                                    <?php if ($document_all_permission) { ?> 
+                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                         <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
                                                                             <?php if ($document['status'] == 1) { ?>
                                                                                 <?php if ($user_type == 'applicant') { ?>
@@ -218,6 +219,8 @@
                                                                         data-asid="<?=$document['sid'];?>"
                                                                         data-sid="<?=$document['document_sid'];?>"
                                                                     >Manage Category</a>
+                                                                <?php } ?>    
+                                                                <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                     <?php if ($document['is_document_authorized'] == 1) { ?> 
                                                                         <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
                                                                         <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
@@ -297,6 +300,7 @@
                                                                     <?php
                                                                         echo $document['document_title'] . '&nbsp;';
                                                                         echo $document['status'] ? '' : '<b>(revoked)&nbsp;</b>';
+                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                         if ($document['manual_document_type'] == 'offer_letter') {
                                                                             echo '<b>(Manual Upload)</b>';
                                                                         }
@@ -468,6 +472,7 @@
                                                                     <?php
                                                                         echo $document['document_title'] . '&nbsp;';
                                                                         echo $document['status'] ? '' : '<b>(revoked)&nbsp;</b>';
+                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                         if ($document['manual_document_type'] == 'offer_letter') {
                                                                             echo '<b>(Manual Upload)</b>';
                                                                         }
@@ -494,7 +499,7 @@
                                                                             data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
                                                                             Preview Assigned
                                                                         </button>
-                                                                        <?php if ($document_all_permission) { ?> 
+                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                             <?=str_replace(['{{sid}}','{{type}}'], [$document['document_sid'], 'notCompletedDocuments'], $modifyBTN);?>
                                                                         <?php } ?>    
                                                                     <?php } else { ?>
@@ -506,7 +511,7 @@
                                                                             data-from="assigned_document">
                                                                             Preview Assigned
                                                                         </button>
-                                                                        <?php if ($document_all_permission) { ?> 
+                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                             <?=str_replace(['{{sid}}','{{type}}'], [$document['document_sid'], 'notCompletedDocuments'], $modifyBTN);?>
                                                                         <?php } ?>
                                                                     <?php } ?>
@@ -545,7 +550,9 @@
                                                                             data-asid="<?=$document['sid'];?>"
                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                         >Manage Category</a>
-
+                                                                    <?php } ?>
+                                                                        
+                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                         <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
                                                                             <?php if ($document['document_sid'] != 0) { ?>
                                                                                 <?php if ($document['status'] == 1) { ?>
@@ -775,6 +782,7 @@
                                                                                     <?php
                                                                                         echo $document['document_title'] . '&nbsp;';
                                                                                         echo $document['is_document_authorized'] == 1 && $document['authorized_sign_status'] == 0  ? '( <b style="color:red;"> Awaiting Authorized Signature </b> )' : '';
+                                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                                         echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                                         echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                                         echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
@@ -796,8 +804,10 @@
                                                                                         >
                                                                                             Preview Assigned
                                                                                         </button>
-                                                                                        <?php if ($document_all_permission) { ?> 
+                                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                                             <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedDocuments'], $modifyBTN);?>
+                                                                                        <?php } ?>    
+                                                                                        <?php if ($document_all_permission) { ?> 
                                                                                            
                                                                                             <?php if ($document['is_document_authorized'] == 1) { ?>
                                                                                                 <?php
@@ -836,7 +846,9 @@
                                                                                                     <?php } ?>     
                                                                                                 </a>
                                                                                             <?php } ?>
+                                                                                        <?php } ?>
 
+                                                                                        <?php if ($document_all_permission  && $document['isdoctolibrary'] == 0) { ?>
                                                                                             <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
                                                                                                 <?php if ($document['document_sid'] != 0) { ?>
                                                                                                     <?php if ($document['status'] == 1) { ?>
@@ -863,7 +875,7 @@
                                                                                                 data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
                                                                                                 Preview Assigned
                                                                                             </button>
-                                                                                            <?php if ($document_all_permission) { ?>
+                                                                                            <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                                 <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedDocuments'], $modifyBTN);?>
                                                                                             <?php } ?>    
                                                                                         </td>
@@ -881,7 +893,9 @@
                                                                                                     Preview Submitted
                                                                                                 </button>
                                                                                             <?php } ?>
+                                                                                        <?php } ?>
 
+                                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                             <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
                                                                                                 <?php if ($document['document_sid'] != 0) { ?>
                                                                                                     <?php if ($document['status'] == 1) { ?>
@@ -907,9 +921,11 @@
                                                                                             data-from="assigned_document">
                                                                                             Preview Assigned
                                                                                         </button>
-                                                                                        <?php if ($document_all_permission) { ?>
+                                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                             <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedDocuments'], $modifyBTN);?>   
-
+                                                                                        <?php } ?>
+                                                                                            
+                                                                                        <?php if ($document_all_permission) { ?>
                                                                                             <?php if ($document['is_document_authorized'] == 1) { ?>
                                                                                                 <?php
                                                                                                     $authorized_signature_url = '';
@@ -965,7 +981,7 @@
                                                                                             <?php } ?> 
 
                                                                                             <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
-                                                                                                <?php if ($document['document_sid'] != 0) { ?>
+                                                                                                <?php if ($document['document_sid'] != 0 && $document['isdoctolibrary'] == 0) { ?>
                                                                                                     <?php if ($document['status'] == 1) { ?>
                                                                                                         <?php if ($user_type == 'applicant') { ?>
                                                                                                             <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
@@ -1070,6 +1086,7 @@
                                                                     <?php
                                                                         echo $document['document_title'] . '&nbsp;';
                                                                         echo $document['is_document_authorized'] == 1 && $document['authorized_sign_status'] == 0  ? '( <b style="color:red;"> Awaiting Authorized Signature </b> )' : '';
+                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                         echo $document['status'] ? '' : '<b>(revoked)&nbsp;</b>';
                                                                         if ($document['manual_document_type'] == 'offer_letter') {
                                                                             echo '<b>(Manual Upload)</b>';
@@ -1389,7 +1406,7 @@
                                                                                     data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
                                                                                     Preview Assigned
                                                                                 </button>
-                                                                                <?php if ($action_btn_flag == true) { ?>
+                                                                                <?php if ($action_btn_flag == true && $document['isdoctolibrary'] == 0) { ?>
                                                                                     <?php
                                                                                         $categories = isset($no_action_document_categories[$document['sid']]) ? json_encode($no_action_document_categories[$document['sid']]) : "[]";
                                                                                         $manual_document_type = $document['manual_document_type'] == "offer_letter" ? true : false;
@@ -1440,7 +1457,9 @@
                                                                                     data-asid="<?=$document['sid'];?>"
                                                                                     data-sid="<?=$document['document_sid'];?>"
                                                                                 >Manage Category</a>
+                                                                            <?php } ?>
 
+                                                                            <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                 <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
                                                                                     <?php if ($document['document_sid'] != 0) { ?>
                                                                                         <?php if ($document['status'] == 1) { ?>
@@ -1463,6 +1482,7 @@
                                                                             <?php
                                                                                 echo $document['document_title'] . '&nbsp;';
                                                                                 echo $document['is_document_authorized'] == 1 && $document['authorized_sign_status'] == 0  ? '( <b style="color:red;"> Awaiting Authorized Signature </b> )' : '';
+                                                                                echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                                 echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                                 echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
@@ -1557,6 +1577,8 @@
                                                                                     data-sid="<?=$document['document_sid'];?>"
                                                                                 >Manage Category</a>
 
+                                                                            <?php } ?>
+                                                                            <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                 <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
                                                                                     <?php if ($document['document_sid'] != 0) { ?>
                                                                                         <?php if ($document['status'] == 1) { ?>
@@ -1787,6 +1809,7 @@
                                                                                         echo $document['document_title'] . '&nbsp;';
                                                                                         echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                                         echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
+                                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                                         echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
                                                                                         echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
 
@@ -1827,7 +1850,7 @@
                                                                                                 data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
                                                                                                 data-s3-name="<?php echo $document['document_s3_name']; ?>">Preview Document
                                                                                             </button> 
-                                                                                            <?php if ($document_all_permission) { ?>
+                                                                                            <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                                 <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'noActionDocuments'], $modifyBTN);?>
                                                                                             <?php } ?>    
 
@@ -1840,7 +1863,7 @@
                                                                                                 data-s3-name="<?php echo $document['document_s3_name']; ?>">Preview Document
                                                                                             </button> 
                                                                                             <?php if ($action_btn_flag == true) { ?>
-                                                                                                <?php if ($document_all_permission) { ?>
+                                                                                                <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                                     <?php
                                                                                                         $categories = isset($no_action_document_categories[$document['sid']]) ? json_encode($no_action_document_categories[$document['sid']]) : "[]";
                                                                                                         $manual_document_type = $document['manual_document_type'] == "offer_letter" ? true : false;
@@ -1889,7 +1912,7 @@
                                                                                             data-from="assigned_document">
                                                                                             Preview Assigned
                                                                                         </button>
-                                                                                        <?php if ($document_all_permission) { ?>
+                                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                             <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'noActionDocuments'], $modifyBTN);?>
                                                                                         <?php } ?>     
                                                                                     </td>
@@ -1903,6 +1926,8 @@
                                                                                             data-asid="<?=$document['sid'];?>"
                                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                                         >Manage Category</a>
+                                                                                    <?php } ?>
+                                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                         <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/'.($user_type).'/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                                         <?php if ($document['is_document_authorized'] == 1) { ?> 
                                                                                             <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
@@ -1975,6 +2000,7 @@
                                                                     <?php
                                                                         echo $document['document_title'] . '&nbsp;';
                                                                         echo $document['status'] ? '' : '<b>(revoked)</b>';
+                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
                                                                         echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                         echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
                                                                         echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
@@ -2050,7 +2076,7 @@
                                                                                 data-s3-name="<?php echo $document['document_s3_name']; ?>">Preview Document
                                                                             </button> 
                                                                             <?php if ($action_btn_flag == true) { ?>
-                                                                                <?php if ($document_all_permission) { ?>
+                                                                                <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                     <?php
                                                                                         $categories = isset($no_action_document_categories[$document['sid']]) ? json_encode($no_action_document_categories[$document['sid']]) : "[]";
                                                                                         $manual_document_type = $document['manual_document_type'] == "offer_letter" ? true : false;
@@ -2101,7 +2127,7 @@
                                                                             data-from="assigned_document">
                                                                             Preview Document
                                                                         </button>
-                                                                        <?php if ($document_all_permission) { ?>
+                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                             <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'noActionDocuments'], $modifyBTN);?></td>
                                                                         <?php } ?>
                                                                 <?php } ?>
@@ -2115,6 +2141,8 @@
                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                         >Manage Category</a>
 
+                                                                    <?php } ?>
+                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                         <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
                                                                             <?php if ($document['status'] == 1) { ?>
                                                                                 <?php if ($user_type == 'applicant') { ?>
