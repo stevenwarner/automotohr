@@ -10079,6 +10079,22 @@ class Hr_documents_management extends Public_Controller
                 $this->resp();
                 //
                 break;
+            
+            //
+            case "mark_general_document_mandatory":
+                //
+                $this->hr_documents_management_model->makeGeneralDocumentRequired(
+                    $post['document_id'],
+                    $post['document_type'],
+                    $post['user_sid'],
+                    $post['user_type'],
+                    $post['required']
+                );
+                //
+                $this->res['Status'] = true;
+                //
+                $this->resp();
+            break;
         }
         //
         $this->resp();

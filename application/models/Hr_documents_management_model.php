@@ -5707,6 +5707,24 @@ class Hr_documents_management_model extends CI_Model
         if (
             !count($b)
         ) {
+            //
+            $key = 'man_d1';
+            //
+            if($documentType == 'direct_deposit'){
+                $key = 'man_d2';
+            } else if($documentType == 'drivers_license'){
+                $key = 'man_d3';
+            } else if($documentType == 'emergency_contacts'){
+                $key = 'man_d4';
+            } else if($documentType == 'occupational_license'){
+                $key = 'man_d5';
+            }
+            //
+            $isRequired = $this->getDefaultRequiredFlag(
+                $companySid, 
+                $key
+            );
+            //
             $ins = [
                 'company_sid' => $companySid,
                 'user_sid' => $userSid,
@@ -5714,7 +5732,8 @@ class Hr_documents_management_model extends CI_Model
                 'document_type' => $documentType,
                 'assigned_at' => date('Y-m-d H:i:s'),
                 'status' => 1,
-                'is_completed' => (int) $isCompleted
+                'is_completed' => (int) $isCompleted,
+                'is_required' => (int) $isRequired
             ];
 
             if ($assignedAt) {
@@ -5761,23 +5780,6 @@ class Hr_documents_management_model extends CI_Model
             }
             return $insertId;
         } else if (isset($b['status']) && $b['status'] == 0) {
-            // $this->db
-            // ->where('sid', $b['sid'])
-            // ->update('documents_assigned_general', [
-            //     'status' => 1,
-            //     'is_completed' => 0
-            // ]);
-            // //
-            // $this->db
-            // ->insert(
-            //     'documents_assigned_general_assigners', [
-            //         'documents_assigned_general_sid' => $b['sid'],
-            //         'user_sid' => $employerSid,
-            //         'user_type' => 'employee',
-            //         'assigned_from' => 'group',
-            //         'action' => 'assign'
-            //     ]
-            // );
             return 0;
         }
     }
@@ -8088,5 +8090,65 @@ class Hr_documents_management_model extends CI_Model
             'active' => 1
         ])
         ->count_all_results('users');
+    }
+
+
+    /**
+     * Update the general document required flag
+     * 
+     * @param number $documentId
+     * @param string $documentType
+     * @param number $userId
+     * @param string $userType
+     * @param string $isRequired
+     */
+    public function makeGeneralDocumentRequired(
+        $documentId,
+        $documentType,
+        $userId,
+        $userType,
+        $isRequired
+    ){
+        //
+        $whereArray = [
+            'user_sid' => $userId,
+            'user_type' => $userType,
+            'document_type' => $documentType,
+            'sid' => $documentId
+        ];
+        //
+        if(
+            $this->db->where($whereArray)->count_all_results('documents_assigned_general')
+        ) {
+            $this->db->where($whereArray)->update('documents_assigned_general', [
+                'is_required' => ($isRequired == 'on' ? 1 : 0)
+            ]);
+        }
+    }
+
+    /**
+     * Get a column from portal
+     * 
+     * @param number $companyId
+     * @param string $companyId
+     * 
+     * @return array|number
+     */
+    public function getDefaultRequiredFlag(
+        $companyId,
+        $column
+    ){
+        //
+        $q = 
+        $this->db
+        ->select($column)
+        ->where('user_sid', $companyId)
+        ->get('portal_employer');
+        //
+        $d = $q->row_array();
+        //
+        $q = $q->free_result();
+        //
+        return $d ? $d[$column] : 0;
     }
 }
