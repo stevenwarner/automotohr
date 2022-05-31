@@ -319,9 +319,9 @@ class Hr_documents_management extends Public_Controller
                                             $user_extra_info['user_type'] = "employee";
                                             //
                                             $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                            if($this->HRDMM->isActiveUser($emp)){
+                                            if ($this->HRDMM->isActiveUser($emp)) {
                                                 //
-                                                if ($this->hr_documents_management_model->doSendEmail($emp, "employee","HREMS2")) {
+                                                if ($this->hr_documents_management_model->doSendEmail($emp, "employee", "HREMS2")) {
                                                     log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                                                 }
                                             }
@@ -1994,7 +1994,7 @@ class Hr_documents_management extends Public_Controller
                                         $user_extra_info['user_type'] = $user_type;
                                         //
                                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                        if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                                        if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                                             //
                                             if ($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS3")) {
                                                 log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
@@ -2112,7 +2112,7 @@ class Hr_documents_management extends Public_Controller
                                     $user_extra_info['user_type'] = $user_type;
                                     //
                                     $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                    if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                                    if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                                         //
                                         if ($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS4")) {
                                             log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
@@ -2253,7 +2253,7 @@ class Hr_documents_management extends Public_Controller
                                     $user_extra_info['user_type'] = $user_type;
                                     //
                                     $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                    if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                                    if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                                         //
                                         if ($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS5")) {
                                             log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
@@ -2402,7 +2402,7 @@ class Hr_documents_management extends Public_Controller
 
                                     //
                                     $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                    if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                                    if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                                         //
                                         if ($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS6")) {
                                             log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
@@ -2738,7 +2738,7 @@ class Hr_documents_management extends Public_Controller
                                         $user_extra_info['user_type'] = $user_type;
                                         //
                                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                        if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                                        if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                                             //
                                             if ($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS7")) {
                                                 log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
@@ -3320,7 +3320,7 @@ class Hr_documents_management extends Public_Controller
                 $extra_user_info["user_type"] = $user_type;
                 //
                 $this->load->model('Hr_documents_management_model', 'HRDMM');
-                if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                     //
                     if ($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS8")) {
                         //
@@ -4466,7 +4466,7 @@ class Hr_documents_management extends Public_Controller
                     $user_extra_info['user_type'] = "employee";
                     //
                     $this->load->model('Hr_documents_management_model', 'HRDMM');
-                    if($this->HRDMM->isActiveUser($v)){
+                    if ($this->HRDMM->isActiveUser($v)) {
                         //
                         log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
                     }
@@ -5153,7 +5153,7 @@ class Hr_documents_management extends Public_Controller
                 $extra_user_info["user_sid"] = $employer_sid;
                 //
                 $this->load->model('Hr_documents_management_model', 'HRDMM');
-                if($this->HRDMM->isActiveUser($employer_sid)){
+                if ($this->HRDMM->isActiveUser($employer_sid)) {
                     //
                     if ($this->hr_documents_management_model->doSendEmail($employer_sid, 'employee', "HREMS9")) {
                         log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $data['session']['employer_detail']['email'], $replacement_array, $hf, 1, $extra_user_info);
@@ -5894,7 +5894,7 @@ class Hr_documents_management extends Public_Controller
                                         $user_extra_info['user_type'] = $user_type;
                                         //
                                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                        if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                                        if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                                             //
                                             log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
                                         }
@@ -5974,7 +5974,7 @@ class Hr_documents_management extends Public_Controller
                                         $user_extra_info['user_type'] = $user_type;
                                         //
                                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                        if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                                        if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                                             //
                                             log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
                                         }
@@ -6067,7 +6067,7 @@ class Hr_documents_management extends Public_Controller
                                         $user_extra_info['user_type'] = $user_type;
                                         //
                                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                        if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                                        if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                                             //
                                             log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
                                         }
@@ -6481,8 +6481,8 @@ class Hr_documents_management extends Public_Controller
             $to = $userData['email'];
             $subject = $emailTemplateData['subject'];
             $from_name = ucwords(str_replace('{{company_name}}', $company_name, $emailTemplateData['from_name']));
-            
-            if($this->hr_documents_management_model->doSendEmail($userDocumentSid, 'employee', "HREMS10")){
+
+            if ($this->hr_documents_management_model->doSendEmail($userDocumentSid, 'employee', "HREMS10")) {
                 $emailData = array(
                     'date' => date('Y-m-d H:i:s'),
                     'subject' => $subject,
@@ -7941,9 +7941,9 @@ class Hr_documents_management extends Public_Controller
                 $extra_user_info["user_type"] = $user_type;
                 //
                 $this->load->model('Hr_documents_management_model', 'HRDMM');
-                if($this->HRDMM->isActiveUser($user_sid, $user_type)){
+                if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
                     //
-                    if($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS11")){
+                    if ($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS11")) {
                         log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $extra_user_info);
                     }
                 }
@@ -9599,9 +9599,9 @@ class Hr_documents_management extends Public_Controller
                                 $user_extra_info['user_type'] = $user_type;
                                 //
                                 $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                if($this->HRDMM->isActiveUser($emp, $user_type)){
+                                if ($this->HRDMM->isActiveUser($emp, $user_type)) {
                                     //
-                                    if($this->hr_documents_management_model->doSendEmail($emp, $user_type, "HREMS12")){
+                                    if ($this->hr_documents_management_model->doSendEmail($emp, $user_type, "HREMS12")) {
                                         //
                                         log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                                     }
@@ -9774,6 +9774,14 @@ class Hr_documents_management extends Public_Controller
                 //
             case "assign_document":
                 //
+             
+                //Save General Documents history  Start
+                $assigned_general_doc_details = $this->hr_documents_management_model->getGeneralAssignedDocument($post['sid']);
+                if (!empty($assigned_general_doc_details)) {
+                    $this->hr_documents_management_model->assignGeneralDocumentHistory($post['userSid'],$post['userType'],$post['documentType']);
+                }
+                // End 
+
                 $insertId = $this->hr_documents_management_model->assignGeneralDocument(
                     $post['userSid'],
                     $post['userType'],
@@ -9784,6 +9792,8 @@ class Hr_documents_management extends Public_Controller
                     $post['note'],
                     $post['isRequired']
                 );
+                //
+
                 //
                 if (!$insertId) {
                     $this->res['Response'] = 'Oops! Looks like some thing went wrong. Please, try again in a few moments.';
@@ -9819,9 +9829,9 @@ class Hr_documents_management extends Public_Controller
                         $user_extra_info['user_type'] = $post['userType'];
                         //
                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                        if($this->HRDMM->isActiveUser($post['userSid'], $post['userType'])){
+                        if ($this->HRDMM->isActiveUser($post['userSid'], $post['userType'])) {
                             //
-                            if($this->hr_documents_management_model->doSendEmail($post['userSid'], $post['userType'], "HREMS13")){
+                            if ($this->hr_documents_management_model->doSendEmail($post['userSid'], $post['userType'], "HREMS13")) {
                                 log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $userInfoE['email'], $replacement_array, $hf, 1, $user_extra_info);
                             }
                         }
@@ -10309,9 +10319,9 @@ class Hr_documents_management extends Public_Controller
                             $user_extra_info['user_type'] = $post['Type'];
                             //
                             $this->load->model('Hr_documents_management_model', 'HRDMM');
-                            if($this->HRDMM->isActiveUser($post['EmployeeSid'], $post['Type'])){
+                            if ($this->HRDMM->isActiveUser($post['EmployeeSid'], $post['Type'])) {
                                 //
-                                if($this->hr_documents_management_model->doSendEmail($post['EmployeeSid'], $post['Type'], "HREMS14")){
+                                if ($this->hr_documents_management_model->doSendEmail($post['EmployeeSid'], $post['Type'], "HREMS14")) {
                                     log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                                 }
                             }
@@ -10701,9 +10711,9 @@ class Hr_documents_management extends Public_Controller
                                         $user_extra_info['user_type'] = $user_type;
                                         //
                                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                        if($this->HRDMM->isActiveUser($post['EmployeeSid'], $user_type)){
+                                        if ($this->HRDMM->isActiveUser($post['EmployeeSid'], $user_type)) {
                                             //
-                                            if($this->hr_documents_management_model->doSendEmail($post['EmployeeSid'], $user_type, "HREMS15")){
+                                            if ($this->hr_documents_management_model->doSendEmail($post['EmployeeSid'], $user_type, "HREMS15")) {
                                                 log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                                             }
                                         }
@@ -11094,9 +11104,9 @@ class Hr_documents_management extends Public_Controller
                                 $user_extra_info['user_type'] = $post['Type'];
                                 //
                                 $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                if($this->HRDMM->isActiveUser($post['EmployeeSid'], $post['Type'])){
+                                if ($this->HRDMM->isActiveUser($post['EmployeeSid'], $post['Type'])) {
                                     //
-                                    if($this->hr_documents_management_model->doSendEmail($post['EmployeeSid'], $post['Type'], "HREMS16")){
+                                    if ($this->hr_documents_management_model->doSendEmail($post['EmployeeSid'], $post['Type'], "HREMS16")) {
                                         log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                                     }
                                 }
@@ -11130,7 +11140,7 @@ class Hr_documents_management extends Public_Controller
                             $user_extra_info['user_type'] = $post['Type'];
                             //
                             $this->load->model('Hr_documents_management_model', 'HRDMM');
-                            if($this->HRDMM->isActiveUser($post['EmployeeSid'], $post['Type'])){
+                            if ($this->HRDMM->isActiveUser($post['EmployeeSid'], $post['Type'])) {
                                 //
                                 log_and_send_templated_email(HR_DOCUMENTS_FOR_APPLICANT, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                             }
@@ -11202,7 +11212,7 @@ class Hr_documents_management extends Public_Controller
                         $user_extra_info['user_type'] = "employee";
                         //
                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                        if($this->HRDMM->isActiveUser($v)){
+                        if ($this->HRDMM->isActiveUser($v)) {
                             //
                             log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
                         }
@@ -11431,7 +11441,7 @@ class Hr_documents_management extends Public_Controller
                         $user_extra_info['user_type'] = "employee";
                         //
                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                        if($this->HRDMM->isActiveUser($v)){
+                        if ($this->HRDMM->isActiveUser($v)) {
                             //
                             log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
                         }
@@ -11552,9 +11562,9 @@ class Hr_documents_management extends Public_Controller
                         $user_extra_info['user_type'] = $post['Type'];
                         //
                         $this->load->model('Hr_documents_management_model', 'HRDMM');
-                        if($this->HRDMM->isActiveUser($post['EmployeeSid'], $post['Type'])){
+                        if ($this->HRDMM->isActiveUser($post['EmployeeSid'], $post['Type'])) {
                             //
-                            if($this->hr_documents_management_model->doSendEmail($post['EmployeeSid'], $post['Type'], "HREMS17")){
+                            if ($this->hr_documents_management_model->doSendEmail($post['EmployeeSid'], $post['Type'], "HREMS17")) {
                                 log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
                             }
                         }
@@ -13403,7 +13413,7 @@ class Hr_documents_management extends Public_Controller
             $user_info = $this->hr_documents_management_model->get_employee_information($documentInfo['company_sid'], $documentInfo['assigned_by']);
             //
             $this->load->model('Hr_documents_management_model', 'HRDMM');
-            if($this->HRDMM->isActiveUser($documentInfo['assigned_by'])){
+            if ($this->HRDMM->isActiveUser($documentInfo['assigned_by'])) {
                 // Send Email
                 $this->SendEmailToDocumentApprover(
                     $assignerName,
@@ -13431,7 +13441,7 @@ class Hr_documents_management extends Public_Controller
                 //
                 $this->hr_documents_management_model->saveAssignerAction($new_approver['sid'], $data_to_update);
                 $this->load->model('Hr_documents_management_model', 'HRDMM');
-                if($this->HRDMM->isActiveUser($new_approver['assigner_sid'])){
+                if ($this->HRDMM->isActiveUser($new_approver['assigner_sid'])) {
                     // Send Email
                     $this->SendEmailToDocumentApprover(
                         $assignerName,
@@ -13460,7 +13470,7 @@ class Hr_documents_management extends Public_Controller
                 // Get approvers saying
                 $getAllDocumentAssigners = $this->hr_documents_management_model->getAllDocumentAssigners($assignedId);
                 $this->load->model('Hr_documents_management_model', 'HRDMM');
-                if($this->HRDMM->isActiveUser($new_approver['assigner_sid'])){
+                if ($this->HRDMM->isActiveUser($new_approver['assigner_sid'])) {
                     // Send Email
                     $this->SendEmailToDocumentApprover(
                         $assignerName,
@@ -13704,7 +13714,7 @@ class Hr_documents_management extends Public_Controller
             $this->hr_documents_management_model->insert_assigner_employee($data_to_insert);
             //
             $this->load->model('Hr_documents_management_model', 'HRDMM');
-            if($this->HRDMM->isActiveUser($assigner_sid)){
+            if ($this->HRDMM->isActiveUser($assigner_sid)) {
                 //
                 if ($key == 0) {
                     //
@@ -13722,7 +13732,7 @@ class Hr_documents_management extends Public_Controller
                     $replacement_array['user_type'] = 'employee';
                     $replacement_array['note'] = $note;
                     $replacement_array['baseurl'] = base_url();
-    
+
                     // Send email to assigner as a notification with private link
                     log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $user_info['email'], $replacement_array, $hf, 1);
                 }

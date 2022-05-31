@@ -566,7 +566,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.archive', $archive);
         //
-        if($ems == 1){
+        if ($ems == 1) {
             $this->db->where('documents_assigned.is_confidential', 0);
         }
 
@@ -1483,7 +1483,7 @@ class Hr_documents_management_model extends CI_Model
             }
         } else {
             return array();
-        }    
+        }
     }
 
     function check_w4_form_exist($user_type, $user_sid)
@@ -2232,7 +2232,7 @@ class Hr_documents_management_model extends CI_Model
             return $this->db->count_all_results();
         } else {
             return 0;
-        }    
+        }
     }
 
     function getEmployeesDetails($employees)
@@ -4445,12 +4445,12 @@ class Hr_documents_management_model extends CI_Model
                 array_column($b, 'team_sid')
             );
             //
-            if(!$activeTeamsByIds){
+            if (!$activeTeamsByIds) {
                 return $r;
             }
 
             foreach ($b as $k => $v) {
-                if(in_array($v['team_sid'], $activeTeamsByIds)){
+                if (in_array($v['team_sid'], $activeTeamsByIds)) {
                     $r[] = $v['employee_sid'];
                 }
             }
@@ -4458,13 +4458,14 @@ class Hr_documents_management_model extends CI_Model
         return $r;
     }
 
-    public function getActiveTeamsIdsByIds($teamIds){
+    public function getActiveTeamsIdsByIds($teamIds)
+    {
         $a = $this->db
-        ->select('sid')
-        ->where_in('sid', $teamIds)
-        ->where('status', 1)
-        ->where('is_deleted', 0)
-        ->get('departments_team_management');
+            ->select('sid')
+            ->where_in('sid', $teamIds)
+            ->where('status', 1)
+            ->where('is_deleted', 0)
+            ->get('departments_team_management');
         //
         $b = $a->result_array();
         $a = $a->free_result();
@@ -6245,10 +6246,10 @@ class Hr_documents_management_model extends CI_Model
             $user_extra_info['user_type'] = $document['user_type'];
             //
             $this->load->model('Hr_documents_management_model', 'HRDMM');
-            if($this->HRDMM->isActiveUser($document['user_sid'])){
+            if ($this->HRDMM->isActiveUser($document['user_sid'])) {
                 //
                 $this->load->model('hr_documents_management_model');
-                if($this->hr_documents_management_model->doSendEmail($document['user_sid'], $document['user_type'], "HREMS20")){
+                if ($this->hr_documents_management_model->doSendEmail($document['user_sid'], $document['user_type'], "HREMS20")) {
                     //
                     log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, [], 1, $user_extra_info);
                 }
@@ -7965,24 +7966,24 @@ class Hr_documents_management_model extends CI_Model
         $userId,
         $userType = 'employee',
         $placeCode
-    ){
+    ) {
         //
         $this->logEmailPlace('HR_DOCUMENTS_NOTIFICATION_EMS', $userId, $placeCode, $userType);
         //
         $q = $this->db
-        ->select('document_sent_on')
-        ->where('sid', $userId)
-        ->get($userType === 'employee' ? 'users' : 'portal_job_applications');
+            ->select('document_sent_on')
+            ->where('sid', $userId)
+            ->get($userType === 'employee' ? 'users' : 'portal_job_applications');
         //
         $r = $q->row_array();
         $q->free_result();
         //
-        if(!empty($r['document_sent_on'])) {
+        if (!empty($r['document_sent_on'])) {
             //
             $date1 = DateTime::createFromFormat('Y-m-d H:i:s', $r['document_sent_on']);
             $date2 = DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s', strtotime('now')));
             //
-            if($date2->diff($date1)->format('%h') < 2){
+            if ($date2->diff($date1)->format('%h') < 2) {
                 //
                 return false;
             }
@@ -8008,16 +8009,18 @@ class Hr_documents_management_model extends CI_Model
         $userId,
         $placeCode,
         $userType = 'employee'
-    ){
+    ) {
         //
         $this->db->insert(
-            'email_tracker', [
+            'email_tracker',
+            [
                 'template_name' => $templateName,
                 'user_sid' => $userId,
                 'user_type' => $userType,
                 'place_code' => $placeCode,
                 'created_at' => date('Y-m-d H:i:s', strtotime('now'))
-        ]);
+            ]
+        );
         //
         return true;
     }
@@ -8037,18 +8040,121 @@ class Hr_documents_management_model extends CI_Model
     public function isActiveUser(
         $userId,
         $userType = 'employee'
-    ){
+    ) {
         //
-        if(empty($userId) || $userId == 0 || $userType != 'employee'){
+        if (empty($userId) || $userId == 0 || $userType != 'employee') {
             return 1;
         }
         //
         return $this->db
-        ->where([
-            'sid' => $userId,
-            'terminated_status' => 0,
-            'active' => 1
-        ])
-        ->count_all_results('users');
+            ->where([
+                'sid' => $userId,
+                'terminated_status' => 0,
+                'active' => 1
+            ])
+            ->count_all_results('users');
+    }
+
+
+
+
+
+    function getGeneralAssignedDocument($Sid)
+    {
+
+        $this->db->where('sid', $Sid);
+        $a = $this->db->get('documents_assigned_general');
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+
+
+
+    function getGeneralDocumentsinfo($Sid, $employerSid)
+    {
+
+        $this->db->where('documents_assigned_general_sid', $Sid);
+        $this->db->where('user_sid', $employerSid);
+        $a = $this->db->get('documents_assigned_general_assigners_history');
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
+
+
+
+    function assignGeneralDocumentHistory($employer_sid, $serType, $documentType)
+    {
+        // 
+        if ($documentType == 'dependents') {
+            $this->db->where('users_sid', $employer_sid);
+            $this->db->where('users_type', $serType);
+            $a = $this->db->get('dependant_information');
+            $dependant_information_data = $a->result_array();
+            if (!empty($dependant_information_data)) {
+                foreach ($dependant_information_data as $dependant_row)
+                    $dependant_row['loged_at'] = date('Y-m-d H:i:s');
+                $this->db->insert('dependant_information_history', $dependant_row);
+            }
+        }
+
+        //
+        if ($documentType == 'direct_deposit') {
+            $this->db->where('users_sid', $employer_sid);
+            $this->db->where('users_type', $serType);
+            $a = $this->db->get('bank_account_details');
+            $bank_information_data = $a->result_array();
+            if (!empty($bank_information_data)) {
+                foreach ($bank_information_data as $bank_row)
+                    $bank_row['loged_at'] = date('Y-m-d H:i:s');
+                $this->db->insert('bank_account_details_history_new', $bank_row);
+            }
+        }
+
+        //
+        if ($documentType == 'drivers_license') {
+            $this->db->where('users_sid', $employer_sid);
+            $this->db->where('users_type', $serType);
+            $this->db->where('license_type', 'drivers');
+            $a = $this->db->get('license_information');
+            $drivers_license_data = $a->result_array();
+            if (!empty($drivers_license_data)) {
+                foreach ($drivers_license_data as $drivers_license_data_row)
+                    $drivers_license_data_row['loged_at'] = date('Y-m-d H:i:s');
+                $this->db->insert('license_information_history', $drivers_license_data_row);
+            }
+        }
+
+        //
+        if ($documentType == 'emergency_contacts') {
+            $this->db->where('users_sid', $employer_sid);
+            $this->db->where('users_type', $serType);
+            $a = $this->db->get('emergency_contacts');
+            $contacts_information_data = $a->result_array();
+            if (!empty($contacts_information_data)) {
+                foreach ($contacts_information_data as $contacts_row)
+                    $contacts_row['loged_at'] = date('Y-m-d H:i:s');
+                $this->db->insert('emergency_contacts_history', $contacts_row);
+            }
+        }
+
+        //
+        if ($documentType == 'occupational_license') {
+            $this->db->where('users_sid', $employer_sid);
+            $this->db->where('users_type', $serType);
+            $this->db->where('license_type', 'occupational');
+            $a = $this->db->get('license_information');
+            $license_information_data = $a->result_array();
+            if (!empty($license_information_data)) {
+                foreach ($license_information_data as $license_row)
+                    $license_row['loged_at'] = date('Y-m-d H:i:s');
+                $this->db->insert('license_information_history', $license_row);
+            }
+        }
     }
 }
