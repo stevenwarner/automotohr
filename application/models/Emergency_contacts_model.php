@@ -175,4 +175,18 @@ class Emergency_contacts_model extends CI_Model {
 
         return $result;
     }
+
+
+    public function get_emergency_contacts_history($type, $users_sid) {
+        $this->db->where('users_type', $type);
+        $this->db->where('users_sid', $users_sid);
+        $this->db->order_by('logged_at ', 'Desc');
+        $this->db->from('emergency_contacts_history');
+        $records_obj = $this->db->get();
+        $result = $records_obj->result_array();
+        $records_obj->free_result();
+        return $result;
+    }
+
+
 }

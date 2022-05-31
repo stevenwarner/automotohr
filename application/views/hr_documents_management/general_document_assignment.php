@@ -257,6 +257,50 @@
             `;
         }
         
+// General Documents view History 
+        $(document).on('click', '.jsGeneralDocumentViewHistory', function(e) { 
+            //
+            e.preventDefault();
+            //
+            if(xhr !== null) xhr.abort();
+            //
+            let _this = $(this).closest('tr');
+            //
+            $('#jsBodyHolder').remove();
+            $('.jsInLoader').show();
+            $('#jsGeneralViewModel .modal-title').html(`<strong>${_this.data('id').replace(/_/, ' ').ucwords()}</strong>`);
+            $('.jsGeneralViewModelBTNs').remove();
+            $('#jsGeneralViewModel').modal('show');
+            // Let's check the cache first
+            if(cacheOBJ[_this.data('idhistory')] !== undefined){
+                $('.jsInLoader').hide();
+                $('#jsGeneralViewModel .modal-body').append(`<div id="jsBodyHolder">${cacheOBJ[_this.data('idhistory')].html}</div>`);
+               // $('#jsGeneralViewModel .modal-footer').prepend(getFooterButtons(_this.data('idhistory')));
+            } else{
+                xhr = $.post("<?=base_url('hr_documents_management/handler');?>", {
+                    action: 'get_general_document_view_history',
+                    userSid: <?=$user_sid;?>,
+                    companySid: <?=$company_sid;?>,
+                    companyName: "<?=$company_name;?>",
+                    userType: "<?=$user_type;?>",
+                    documentType: _this.data('id')
+                }, (resp) => {
+                    //
+                    xhr = null;
+                    cacheOBJ[_this.data('idhistory')] = {
+                        html: `<div id="jsBodyHolder">${resp.template}</div>`,
+                        expiresAt: moment().add(30, 'minutes') 
+                    }
+                    $('.jsInLoader').hide();
+                    $('#jsGeneralViewModel .modal-body').append(`<div id="jsBodyHolder">${resp.template}</div>`);
+                   // $('#jsGeneralViewModel .modal-footer').prepend(getFooterButtons(_this.data('id')));
+                });
+           }
+        });
+
+
+
+
         //
         $(document).on('click', '.jsGeneralAssignModelBTN', (e) => {
             e.preventDefault();
@@ -615,7 +659,7 @@
                     }
                 }
                 rows += `
-                    <tr data-id="${v.document_type}" data-key="${v.sid}">
+                    <tr data-id="${v.document_type}" data-key="${v.sid}" data-idhistory="${v.document_type+'_history'}" >
                         <td>${slugToName[v.document_type]}</td>
                         <td class="text-center jsAssignedOn">
                             ${ v.assigned_at === undefined || v.status == 0 ? '<i class="fa fa-times fa-2x text-danger"></i>' : `<i class="fa fa-check fa-2x text-success"></i> <br />${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')}` }
@@ -627,7 +671,8 @@
                         </td>
                         <td class="text-center">
                             <button class="btn ${btnClass} jsGeneralDocumentAssign" data-type="${btnType}" title="${btnType.ucwords()} this document">${btnText}</button>
-                            ${v.sid == 0 ? '' : '<button class="btn btn-success jsGeneralDocumentHistory" title="Assign/Revoke history">History</button>'}
+                            ${v.sid == 0 ? '' : '<button class="btn btn-success jsGeneralDocumentHistory" title="Assign/Revoke history">Footprint</button>'}
+                            ${v.sid == 0 ? '' : '<button class="btn btn-success jsGeneralDocumentViewHistory" title="View this document history">History</button>'}
                             ${v.is_completed == 0 ? '' : '<button class="btn btn-success jsGeneralDocumentView" title="View this document">View</button>'}
                         </td>
                     </tr>

@@ -3318,4 +3318,16 @@ class Dashboard_model extends CI_Model
 
         return array_column($b, 'sid');
     }
+
+
+    
+    function get_license_info_history($employer_id, $employer_type, $license_type)
+    {
+        return $this->db->where('users_sid', $employer_id)
+            ->where('users_type', $employer_type)
+            ->where('license_type', $license_type)
+            ->order_by('logged_at', 'Desc')
+            ->get('license_information_history')->result_array();
+    }
+
 }

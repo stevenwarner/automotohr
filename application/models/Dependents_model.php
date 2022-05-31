@@ -130,4 +130,14 @@ class Dependents_model extends CI_Model {
         $this->db->insert('dependant_information', $data);
     }
 
+    function get_dependant_info_history($type, $users_sid)
+    {
+        return $this->db->select('*')
+               ->where('users_type', $type)
+               ->where('users_sid', $users_sid)
+               ->order_by('logged_at', 'Desc')
+               ->get('dependant_information_history')->result_array();
+    }
+
+
 }
