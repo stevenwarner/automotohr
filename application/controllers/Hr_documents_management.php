@@ -9774,7 +9774,7 @@ class Hr_documents_management extends Public_Controller
                 //
             case "assign_document":
                 // Save General Documents history  Start
-                
+
 
                 $insertId = $this->hr_documents_management_model->assignGeneralDocument(
                     $post['userSid'],
@@ -9877,7 +9877,7 @@ class Hr_documents_management extends Public_Controller
                 //
             case "revoke_document":
                 // Check if the document is assigned/completed
-                $this->hr_documents_management_model->assignGeneralDocumentHistory($post['userSid'],$post['userType'],$post['documentType'], $post['sid']);
+                $this->hr_documents_management_model->assignGeneralDocumentHistory($post['userSid'], $post['userType'], $post['documentType'], $post['sid']);
                 //
                 $insertId = $this->hr_documents_management_model->revokeGeneralDocument(
                     $post['userSid'],
@@ -10052,147 +10052,124 @@ class Hr_documents_management extends Public_Controller
                 $this->resp();
                 //
                 break;
+                // General Document History View
 
-
-
-
-
-
-
-
-         // General Document History View
-
-                case "get_general_document_view_history":
-                    //
-                    switch ($post['documentType']) {
-                        case "dependents":
+            case "get_general_document_view_history":
+                //
+                switch ($post['documentType']) {
+                    case "dependents":
+                        //
+                        $this->load->model('dependents_model');
+                        // 
+                        $data = $this->dependents_model->get_dependant_info_history($post['userType'], $post['userSid']);
+                        //
+                        if (count($data)) {
+                            $data_countries = db_get_active_countries();
                             //
-                            $this->load->model('dependents_model');
-                            // 
-                            $data = $this->dependents_model->get_dependant_info_history($post['userType'], $post['userSid']);
-                           //
-                            if (count($data)) {
-                                $data_countries = db_get_active_countries();
+                            $d = [];
+
+                            foreach ($data_countries as $value) {
+                                $states = db_get_active_states($value['sid']);
                                 //
-                                $d = [];
-    
-                                foreach ($data_countries as $value) {
-                                    $states = db_get_active_states($value['sid']);
+                                foreach ($states as $state) {
                                     //
-                                    foreach ($states as $state) {
-                                        //
-                                        if (!isset($d[$value['sid']])) $d[$value['sid']] = [
-                                            'Name' => $value['country_name'],
-                                            'States' => []
-                                        ];
-                                        //
-                                        $d[$value['sid']]['States'][$state['sid']] = ['Name' => $state['state_name']];
-                                    }
-                                }
-                                //
-                                $this->res['template'] = $this->load->view('hr_documents_management/templates/dependents_history', ['data' => $data, 'cs' => $d], true);
-                                $this->res['Status'] = TRUE;
-                                $this->res['Response'] = 'Proceed';
-                                $this->resp();
-                            }
-                            break;
-                            //
-                        case "emergency_contacts":
-                            //
-                            $this->load->model('emergency_contacts_model');
-                            //
-                            $data = $this->emergency_contacts_model->get_emergency_contacts_history($post['userType'], $post['userSid']);
-                            //
-                            if (count($data)) {
-                                $data_countries = db_get_active_countries();
-                                //
-                                $d = [];
-    
-                                foreach ($data_countries as $value) {
-                                    $states = db_get_active_states($value['sid']);
+                                    if (!isset($d[$value['sid']])) $d[$value['sid']] = [
+                                        'Name' => $value['country_name'],
+                                        'States' => []
+                                    ];
                                     //
-                                    foreach ($states as $state) {
-                                        //
-                                        if (!isset($d[$value['sid']])) $d[$value['sid']] = [
-                                            'Name' => $value['country_name'],
-                                            'States' => []
-                                        ];
-                                        //
-                                        $d[$value['sid']]['States'][$state['sid']] = ['Name' => $state['state_name']];
-                                    }
+                                    $d[$value['sid']]['States'][$state['sid']] = ['Name' => $state['state_name']];
                                 }
-                                //
-                                $this->res['template'] = $this->load->view('hr_documents_management/templates/emergency_contacts_history', ['data' => $data, 'cs' => $d], true);
-                                $this->res['Status'] = TRUE;
-                                $this->res['Response'] = 'Proceed';
-                                $this->resp();
                             }
-                            break;
                             //
-                        case "drivers_license":
-                            //
-                            $this->load->model('dashboard_model');
-                            //
-                            $data = $this->dashboard_model->get_license_info_history($post['userSid'], $post['userType'], 'drivers');
-                            //
-                            if (count($data)) {
-                                //
-                                $this->res['template'] = $this->load->view('hr_documents_management/templates/drivers_license_history', ['data' => $data], true);
-                                $this->res['Status'] = TRUE;
-                                $this->res['Response'] = 'Proceed';
-                                $this->resp();
-                            }
-                            break;
-                            //
-                        case "occupational_license":
-                            //
-                            $this->load->model('dashboard_model');
-                            //
-                            $data = $this->dashboard_model->get_license_info_history($post['userSid'], $post['userType'], 'occupational');
-                            //
-                            if (count($data)) {
-                                //
-                                $this->res['template'] = $this->load->view('hr_documents_management/templates/occupational_license_history', ['data' => $data], true);
-                                $this->res['Status'] = TRUE;
-                                $this->res['Response'] = 'Proceed';
-                                $this->resp();
-                            }
-                            break;
-                            //
-                        case "direct_deposit":
-                            //
-                            $this->load->model('direct_deposit_model');
-                            $data['users_type'] = $userType = $post['userType'];
-                            $data['users_sid'] = $userSid = $post['userSid'];
-                            $data['type'] = 'prints';
-                            $employee_number = $this->direct_deposit_model->get_user_extra_info($post['userType'], $post['userSid'], $company_sid);
-                            $data['employee_number'] = $employee_number;
-                            $data['data'] = $this->direct_deposit_model->getDDI_history($post['userType'], $post['userSid'], $company_sid);
-                            //
-                            $data['data'][0]['voided_cheque_64'] = 'data:image/' . (getFileExtension($data['data'][0]['voided_cheque'])) . ';base64,' . base64_encode(getFileData(AWS_S3_BUCKET_URL . $data['data'][0]['voided_cheque']));
-                            if (isset($data['data'][1])) $data['data'][1]['voided_cheque_64'] = 'data:image/' . (getFileExtension($data['data'][0]['voided_cheque'])) . ';base64,' . base64_encode(getFileData(AWS_S3_BUCKET_URL . $data['data'][1]['voided_cheque']));
-    
-                            $data[$userType] = $data['cn'] = $this->direct_deposit_model->getUserData($userSid, $userType);
-                            //
-                            $this->res['template'] = $this->load->view('direct_deposit/pd_history', $data, true);
+                            $this->res['template'] = $this->load->view('hr_documents_management/templates/dependents_history', ['data' => $data, 'cs' => $d], true);
                             $this->res['Status'] = TRUE;
                             $this->res['Response'] = 'Proceed';
                             $this->resp();
-                            break;
-                    }
-    
-                    $this->resp();
-                    break;
+                        }
+                        break;
+                        //
+                    case "emergency_contacts":
+                        //
+                        $this->load->model('emergency_contacts_model');
+                        //
+                        $data = $this->emergency_contacts_model->get_emergency_contacts_history($post['userType'], $post['userSid']);
+                        //
+                        if (count($data)) {
+                            $data_countries = db_get_active_countries();
+                            //
+                            $d = [];
 
+                            foreach ($data_countries as $value) {
+                                $states = db_get_active_states($value['sid']);
+                                //
+                                foreach ($states as $state) {
+                                    //
+                                    if (!isset($d[$value['sid']])) $d[$value['sid']] = [
+                                        'Name' => $value['country_name'],
+                                        'States' => []
+                                    ];
+                                    //
+                                    $d[$value['sid']]['States'][$state['sid']] = ['Name' => $state['state_name']];
+                                }
+                            }
+                            //
+                            $this->res['template'] = $this->load->view('hr_documents_management/templates/emergency_contacts_history', ['data' => $data, 'cs' => $d], true);
+                            $this->res['Status'] = TRUE;
+                            $this->res['Response'] = 'Proceed';
+                            $this->resp();
+                        }
+                        break;
+                        //
+                    case "drivers_license":
+                        //
+                        $this->load->model('dashboard_model');
+                        //
+                        $data = $this->dashboard_model->get_license_info_history($post['userSid'], $post['userType'], 'drivers');
+                        //
+                        if (count($data)) {
+                            //
+                            $this->res['template'] = $this->load->view('hr_documents_management/templates/drivers_license_history', ['data' => $data], true);
+                            $this->res['Status'] = TRUE;
+                            $this->res['Response'] = 'Proceed';
+                            $this->resp();
+                        }
+                        break;
+                        //
+                    case "occupational_license":
+                        //
+                        $this->load->model('dashboard_model');
+                        //
+                        $data = $this->dashboard_model->get_license_info_history($post['userSid'], $post['userType'], 'occupational');
+                        //
+                        if (count($data)) {
+                            //
+                            $this->res['template'] = $this->load->view('hr_documents_management/templates/occupational_license_history', ['data' => $data], true);
+                            $this->res['Status'] = TRUE;
+                            $this->res['Response'] = 'Proceed';
+                            $this->resp();
+                        }
+                        break;
+                        //
+                    case "direct_deposit":
+                        //
+                        $this->load->model('direct_deposit_model');
+                        $data['users_type'] = $userType = $post['userType'];
+                        $data['users_sid'] = $userSid = $post['userSid'];
+                        $data['type'] = 'prints';
+                        $employee_number = $this->direct_deposit_model->get_user_extra_info($post['userType'], $post['userSid'], $company_sid);
+                        $data['employee_number'] = $employee_number;
+                        $data['data'] = $this->direct_deposit_model->getDDI_history($post['userType'], $post['userSid'], $company_sid);
+                        //
+                        $this->res['template'] = $this->load->view('direct_deposit/pd_history_main', $data, true);
+                        $this->res['Status'] = TRUE;
+                        $this->res['Response'] = 'Proceed';
+                        $this->resp();
+                        break;
+                }
 
-
-
-
-
-
-
-
-
+                $this->resp();
+                break;
         }
         //
         $this->resp();

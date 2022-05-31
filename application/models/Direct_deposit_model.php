@@ -267,7 +267,7 @@ class Direct_deposit_model extends CI_Model
         $this->db->select('bank_account_details_history_new.*, users.CompanyName');
         $this->db->where('users_type', $users_type);
         $this->db->where('users_sid', $user_sid);
-        $this->db->order_by('bank_account_details_history_new.logged_at', 'ASC');
+        $this->db->order_by('bank_account_details_history_new.logged_at', 'DESC');
         $this->db->join('users', 'users.sid = bank_account_details_history_new.company_sid', 'inner');
         //
         if($company_sid > 0) $this->db->where('bank_account_details_history_new.company_sid', $company_sid);

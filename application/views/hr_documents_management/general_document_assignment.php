@@ -287,10 +287,7 @@
                 }, (resp) => {
                     //
                     xhr = null;
-                    cacheOBJ[_this.data('idhistory')] = {
-                        html: `<div id="jsBodyHolder">${resp.template}</div>`,
-                        expiresAt: moment().add(30, 'minutes') 
-                    }
+                 
                     $('.jsInLoader').hide();
                     $('#jsGeneralViewModel .modal-body').append(`<div id="jsBodyHolder">${resp.template}</div>`);
                    // $('#jsGeneralViewModel .modal-footer').prepend(getFooterButtons(_this.data('id')));
