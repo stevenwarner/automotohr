@@ -114,16 +114,8 @@ class Incident_reporting_system extends Public_Controller
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $data['employees'] = $this->incident_reporting_model->fetch_all_company_employees($company_sid);
-
             //
-            $employees_new = $this->incident_reporting_model->get_all_employees($company_sid);
-
-            foreach ($employees_new as $e_key => $employee_new) {
-                $employee_name = ucwords($employee_new['first_name'] . ' ' . $employee_new['last_name']) . ($employee_new['job_title'] != '' && $employee_new['job_title'] != null ? ' (' . $employee_new['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee_new)) . ']';
-                $employees_new[$e_key]['employee_name'] = $employee_name . ' [' . $employee_new['email'] . ']';
-            }
-            //
-            $data['employees_new'] = $employees_new;
+            $data['employees_new'] = $this->incident_reporting_model->get_all_employees($company_sid);
 
             $this->form_validation->set_rules('submit', 'Form Submit', 'trim');
 
