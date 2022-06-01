@@ -224,7 +224,6 @@ class Incident_reporting_system extends Public_Controller
 
                         $this->incident_reporting_model->assign_incident_to_emp($assigned_emp);     //Add the employees who are gonna receive this incident from employee reporting
                         $emp = $this->incident_reporting_model->fetch_employee_name_by_sid($manager);
-
                         $reply_url = base_url('incident_reporting_system/view_single_assign') . '/' . $incident;
                         $replacement_array['applicant_name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
                         $replacement_array['applicant-name'] = ucwords($emp[0]['first_name'] . ' ' . $emp[0]['last_name']);
@@ -235,9 +234,23 @@ class Incident_reporting_system extends Public_Controller
                         $replacement_array['first_name'] = ucwords($emp[0]['first_name']);
                         $replacement_array['last_name'] = ucfirst($emp[0]['last_name']);
                         $replacement_array['reply_url'] = $reply_url;
-
+                       
                         log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array);
                     }
+                   
+                    // Sending incident email to Steven start
+                    $stevendata = $this->userDetails = [
+                        'first_name'=> 'Steven',
+                        'last_name'=> 'Warner',
+                        'email'=> FROM_EMAIL_STEVEN,
+                        'phone' => '',
+                        'firstname'=>'Steven',
+                        'lastname'=>'Warner',
+                        'company_name'=> getCompanyNameBySid($company_sid)
+                    ];
+                
+                    log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $stevendata['email'], $stevendata);
+                    // end 
                     $this->session->set_flashdata('message', '<b>Success:</b> New ' . ucfirst($report_type) . ' Incident Reported');
                     redirect(base_url('incident_reporting_system/list_incidents'), "refresh");
                 }
