@@ -5651,13 +5651,8 @@ class Hr_documents_management extends Public_Controller
                 $data['company_sid'] = $data['session']['company_detail']['sid'];
                 $data['users_type'] = 'employee';
                 $data['users_sid'] = $employer_sid;
-
-                $document_backurl = $this->input->get('document_backurl');
-                if(!empty($document_backurl)){
-                    $data['back_url'] = base_url('library_document');
-                }else{
-                    $data['back_url'] = base_url('hr_documents_management/my_documents');
-                }
+                // Hanlded back url
+                $data['back_url'] = base_url($this->input->get('document_backurl') ? 'library_document' : 'hr_documents_management/my_documents');
                 
                 $data['download_url'] = base_url('hr_documents_management/download_hr_document/' . $document['sid']);
                 $data['unique_sid'] = ''; //No Need for Unique Sid for Employee
