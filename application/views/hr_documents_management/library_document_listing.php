@@ -192,7 +192,7 @@
                                                                                             <i class="fa fa-eye" aria-hidden="true"></i>
                                                                                         </a>
                                                                                     <?php else : ?>
-                                                                                        <a title="View the original document" class="btn  btn-success csRadius5" target="_blank" href="<?= base_url('hr_documents_management/sign_hr_document/d') . '/' . $assigned_document_data['sid']; ?>">
+                                                                                        <a title="View the original document" class="btn  btn-success csRadius5" target="_blank" href="<?= base_url('hr_documents_management/sign_hr_document/d') . '/' . $assigned_document_data['sid'].'/?document_backurl=library_document'; ?>">
                                                                                             <i class="fa fa-eye" aria-hidden="true"></i>
                                                                                         </a>
                                                                                     <?php endif; ?>
@@ -262,9 +262,9 @@
         var document_sid = $(this).attr('document_sid');
         var document_status = $(this).attr('document_status');
         var document_assigned_sid = $(this).attr('document_assigned_sid');
-
+       
         if (document_status == 'not_completed') {
-            var document_url_view = '<?= base_url('hr_documents_management/sign_hr_document/d') ?>/' + document_assigned_sid;
+            var document_url_view = '<?= base_url('hr_documents_management/sign_hr_document/d') ?>/' + document_assigned_sid+'/?document_backurl=library_document';
             window.location.href = document_url_view;
             exit();
 
@@ -274,7 +274,7 @@
 
         var form_data = new FormData();
         form_data.append('document_sid', document_sid);
-
+      
         $.ajax({
             url: document_url,
             cache: false,
@@ -290,7 +290,7 @@
                 $('#loader_text_div').text('');
                 $('#document_loader').hide();
                 // alertify.alert('SUCCESS!', 'Saved Successfully', function(){
-                var document_url_view = '<?= base_url('hr_documents_management/sign_hr_document/d') ?>/' + resp;
+                var document_url_view = '<?= base_url('hr_documents_management/sign_hr_document/d') ?>/' + resp+'/?document_backurl=library_document';
                 window.location.href = document_url_view;
                 //  });
 
