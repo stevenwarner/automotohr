@@ -13299,7 +13299,7 @@ class Hr_documents_management extends Public_Controller
             $company_sid,
             $employer_sid,
             'employee'
-        );
+        ); 
         //                    
         $documents_list = $this->hr_documents_management_model->get_all_paginate_library_documents($company_sid);
         $categorized_docs = $this->hr_documents_management_model->categrize_documents($company_sid, null, $documents_list, $data['session']['employer_detail']['access_level_plus']);

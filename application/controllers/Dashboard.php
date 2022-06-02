@@ -8,6 +8,7 @@ class Dashboard extends Public_Controller {
         $this->load->model('job_approval_rights_model');
         $this->load->model('tickets_model');
         $this->load->model('onboarding_model');
+        $this->load->model('hr_documents_management_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library('pagination');
@@ -550,8 +551,20 @@ class Dashboard extends Public_Controller {
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
             //
-            $data['total_library_doc']    = $this->dashboard_model->get_all_library_doc_count($company_id);
-            //
+            $verificationDocuments = $this->hr_documents_management_model->getVerificationDocumentsForLibrary(
+                $company_id,
+                $employer_id,
+                'employee'
+            );
+
+            $verificationDocuments_total=0;
+            if(!empty($verificationDocuments)){
+                $verificationDocuments_total=count($verificationDocuments);
+            }
+
+           $data['total_library_doc']    = $verificationDocuments_total+$this->dashboard_model->get_all_library_doc_count($company_id);
+          
+           //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
             $this->load->view('main/footer');
@@ -955,10 +968,20 @@ class Dashboard extends Public_Controller {
             $total_document_approval = count($this->varification_document_model->getMyApprovalDocuments($data['session']['employer_detail']['sid']));
             $data["all_documents_approval"] = $total_document_approval;
             //
-            $total_library_doc    = $this->dashboard_model->get_all_library_doc_count($company_id);
-            $data['total_library_doc']    = $total_library_doc;
 
+            $verificationDocuments = $this->hr_documents_management_model->getVerificationDocumentsForLibrary(
+                $company_id,
+                $employer_id,
+                'employee'
+            );
 
+            $verificationDocuments_total=0;
+            if(!empty($verificationDocuments)){
+                $verificationDocuments_total=count($verificationDocuments);
+            }
+
+            $data['total_library_doc']    = $verificationDocuments_total+$this->dashboard_model->get_all_library_doc_count($company_id);
+           
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
             $this->load->view('main/footer');
