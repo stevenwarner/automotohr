@@ -206,7 +206,7 @@ class Company_model extends CI_Model {
 
         if ($company != null && $company != 'all') {
             $this->db->group_start();
-            $this->db->like('table_two.CompanyName', $company);
+            $this->db->where('REPLACE(table_two.CompanyName, " ", "") = ', str_replace(' ', '', $company));
             $this->db->group_end();
         }
 
