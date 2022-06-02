@@ -14,7 +14,7 @@ class Application_tracking_system extends Public_Controller {
 
     public function index($archive = 'active', $searchKeyword = NULL, $job_sid = NULL, $status = NULL, $job_fit_category_sid = 0, $app_type = 'all', $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
         // _e($this->db->get('portal_company_sms_module')->result_array(), true, true);
-        if ($this->session->userdata('logged_in')) {
+         if ($this->session->userdata('logged_in')) {
             $job_sid_urldecode                                                  = urldecode($job_sid);
             $app_type                                                           = urldecode($app_type);
             $fair_type                                                          = urldecode($fair_type);

@@ -32,7 +32,7 @@
                                                                 $title = '';
                                                                 $class = 'ats_search_filter_active';
                                                                 //
-                                                                if(isset($job['Title'])) {
+                                                                if(isset($job['Title'])) { 
                                                                     $jobSid = $job['sid'];
                                                                     $class = $job['active'] == 1 ? 'ats_search_filter_active' : 'ats_search_filter_inactive';
                                                                     //
@@ -1319,6 +1319,8 @@
 <!--                                    </select>-->
 <!--                                </div>-->
 <!--                            </li>-->
+
+
                             <form method='post' id='candidate-register-form' name='register-form' autocomplete="off">
 
                                 <li class="form-col-100 autoheight"  style="display: none" id="to_email_div">
@@ -2081,9 +2083,11 @@
                     var job_titles = [{}];
 
                     $.each($(".ej_checkbox:checked"), function () {
+                       
                         job_titles[counter] = $(this).attr('data-job_title');
                         ids[counter] = $(this).val();
                         list_ids[counter++] = $(this).attr('data-list');
+                        
 
                         //  job_titles[$(this).val()] = $(this).attr('data-job_title');
                     });
@@ -2107,6 +2111,7 @@
                     $('#send-candidate-message-email').addClass('disabled-btn');
                     $('#send-candidate-message-email').prop('disabled', true);
                     url_to = "<?= base_url() ?>send_manual_email/send_candidate_email";
+                    
                     $.ajax({
                         url: url_to,
                         cache: false,
@@ -2162,10 +2167,14 @@
                     var ids = [{}];
                     var counter = 0;
                     var job_titles = [{}];
+                    var list_ids = [{}];
 
                     $.each($(".ej_checkbox:checked"), function () {
+                    
                         job_titles[counter] =$(this).attr('data-job_title');
+                        list_ids[counter] = $(this).attr('data-list');
                         ids[counter++] = $(this).val();
+                       // list_ids[counter] = $(this).attr('data-list');
                         // job_titles[$(this).val()] =$(this).attr('data-job_title');
                     });
 
@@ -2177,6 +2186,7 @@
                     var form_data = new FormData();
                     form_data.set('subject', subject);
                     form_data.set('ids', ids);
+                    form_data.set('list_ids', list_ids);
                     form_data.set('employee', employee);
                     form_data.set('action', 'candidate_bulk_email');
                     form_data.set('message', message);

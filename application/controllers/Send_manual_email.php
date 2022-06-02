@@ -30,6 +30,7 @@ class Send_manual_email extends Public_Controller {
             $applicant_data = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
             $rejection_email_template = $this->portal_email_templates_model->get_portal_email_template_by_code($letter, $company_sid);
             
+          
             if (empty($rejection_email_template)) { // portal email template not found - Email will not be sent to applicant(s)
                 echo 'Error: Email not sent due to missing email template.'; exit(0);
             }
@@ -227,6 +228,7 @@ class Send_manual_email extends Public_Controller {
        // $template_from_email = $this->input->post('from_email');
         $template_from_email = REPLY_TO;
         $job_titles          = explode(',',$this->input->post('job_titles'));
+
         $final_body          = '';
         $start               = strpos($post_body,'{{block_start}}');
         $end                 = strpos($post_body,'{{block_end}}');
@@ -236,11 +238,17 @@ class Send_manual_email extends Public_Controller {
         replace_magic_quotes($post_subject);
 
         if(!isset($employee)){
+           
             $i = 0;
             
             foreach ($applicant_ids as $applicant_id) {
                 $applicant_data  = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
+                              //     $list_ids[$i];
+              //  $job_title       = isset($job_titles[$i]) ? $job_titles[$i] : $applicant_data['job_title'];
                 $job_title       = isset($job_titles[$i]) ? $job_titles[$i] : $applicant_data['job_title'];
+                  
+            
+
                 $applicant_fname = $applicant_data['first_name'];
                 $applicant_lname = $applicant_data['last_name'];
                 $body            = $repeat;
@@ -327,10 +335,28 @@ class Send_manual_email extends Public_Controller {
 
         // when employee is set
         $employee_ids = explode(',',$employee);
-
         foreach ($applicant_ids as $applicant_id) {
-            $applicant_data  = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
-            $job_title       = $job_titles[$i];
+                      
+            $jobsid = $this->portal_email_templates_model->get_applicant_jobs($list_ids[$i],$applicant_id);
+        
+            $job_title ="";
+           if(!empty($jobsid)){
+            
+            if (isset($jobsid[0]['Title']) && $jobsid[0]['Title'] != NULL) {
+                $job_title  .= $jobsid[0]['Title'];
+            }
+
+            if (isset($jobsid[0]['Location_City']) && $jobsid[0]['Location_City'] != NULL) {
+                $job_title  .= ' - '.ucfirst($jobsid[0]['Location_City']);
+            }
+            if (isset($jobsid[0]['Location_State']) && $jobsid[0]['Location_State'] != NULL) {
+                $job_title  .= ', '.db_get_state_name($jobsid[0]['Location_State'])['state_name'];
+            }
+                
+           }
+
+                  $applicant_data  = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
+          //  $job_title       = $job_titles[$i];
             $applicant_fname = $applicant_data['first_name'];
             $applicant_lname = $applicant_data['last_name'];
             $body            = str_replace('{{company_name}}', $company_name, $repeat);
@@ -350,6 +376,8 @@ class Send_manual_email extends Public_Controller {
             $body                                                           .= '<hr>';
             $final_body                                                     .= $body;
         }
+
+        
 
         $post_body                                                          = str_replace($repeat,$final_body,$post_body);
         $post_body                                                          = str_replace('{{block_start}}','',$post_body);

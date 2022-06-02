@@ -401,4 +401,21 @@ class portal_email_templates_model extends CI_Model {
         return $result;
     }
 
+
+    public function get_applicant_jobs ($sid, $portal_job_applications_sid) {
+        $this->db->select('job_sid');
+        $this->db->where('sid', $sid);
+        $this->db->where('portal_job_applications_sid', $portal_job_applications_sid);
+        $applicant_data = $this->db->get('portal_applicant_jobs_list')->result_array();
+
+       if(!empty($applicant_data)){
+            $this->db->select('*');
+            $this->db->where('sid', $applicant_data[0]['job_sid']);
+            return $this->db->get('portal_job_listings')->result_array();
+        }else{
+            return '[]';
+        }
+    }
+
+
 }
