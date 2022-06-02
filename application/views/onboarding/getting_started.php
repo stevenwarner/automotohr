@@ -534,7 +534,7 @@
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <div class="widget-box">
                                 <a href="<?php echo base_url('my_learning_center'); ?>">
-                                    <div class="link-box bg-redish full-width">
+                                    <div class="link-box bg-bgcyan full-width">
                                         <h2>My Learning Center</h2>
                                         <div class="current-date">
                                             <span><?php echo $training_session_count; ?><sub>Pending</sub></span>
@@ -602,7 +602,7 @@
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <div class="widget-box">
                                 <a href="<?php echo base_url('hr_documents_management/approval_documents'); ?>">
-                                    <div class="link-box bg-redish full-width">
+                                    <div class="link-box bglime full-width">
                                         <h2>Approval Documents</h2>
                                         <div class="current-date">
                                             <span><?php echo $all_documents_approval; ?><sub>Pending</sub></span>
@@ -772,7 +772,7 @@
                         <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                             <a href="<?=base_url('authorized_document');?>">
                                 <div class="widget-box">
-                                    <div class="link-box bg-redish full-width">
+                                    <div class="link-box bg-redish bgdarkblue full-width">
                                         <h2 class="text-blue">Assigned Document(s)</h2>
                                         <ul class="pto-box">
                                             <li>

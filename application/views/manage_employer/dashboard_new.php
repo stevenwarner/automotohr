@@ -694,7 +694,7 @@
                                             <div class="dashboard-widget-box">
                                                 <figure><i class="fa fa-clipboard" aria-hidden="true"></i></figure>
                                                 <h2 class="post-title" style="margin: 2px 0;">
-                                                    <a href="<?php echo base_url('library_document'); ?>">Documents Library</a>
+                                                    <a href="<?php echo base_url('library_document'); ?>">Employee Document Library</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
                                                     <small style="font-size: 12px"><?php echo $total_library_doc; ?> Total Document(s)</small>
