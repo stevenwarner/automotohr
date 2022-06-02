@@ -311,8 +311,10 @@ class Hr_documents_management_model extends CI_Model
             portal_applicant_jobs_list.portal_job_applications_sid as sid
         ')
             ->where('portal_applicant_jobs_list.company_sid', $companySid)
+            ->group_start()
             ->where('portal_applicant_jobs_list.archived', 1)
             ->or_where('portal_job_applications.hired_status', 1)
+            ->group_end()
             ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
             ->get('portal_applicant_jobs_list');
         //
@@ -322,7 +324,7 @@ class Hr_documents_management_model extends CI_Model
         return array_column($b, 'sid');
     }
 
-    function get_all_assigned_auth_documents($company_sid, $employer_sid)
+    function get_all_assigned_auth_documents($company_sid, $employer_sid, $ine = [], $ina= [])
     {
         $this->db->select('documents_assigned.*, authorized_document_assigned_manager.assigned_by_date');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
@@ -340,9 +342,9 @@ class Hr_documents_management_model extends CI_Model
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+            $inactive_employee_sid = $ine ? $ine : $this->getAllCompanyInactiveEmployee($company_sid);
             //
-            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+            $inactive_applicant_sid = $ina ? $ina : $this->getAllCompanyInactiveApplicant($company_sid);
             //
             foreach ($record_arr as $d_key => $aut_doc) {
                 if (in_array($aut_doc['user_sid'], $inactive_employee_sid) && $aut_doc['user_type'] == 'employee') {
@@ -358,7 +360,7 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
-    function get_all_paginate_auth_documents($company_sid, $employer_sid, $limit = null, $start = null)
+    function get_all_paginate_auth_documents($company_sid, $employer_sid, $limit = null, $start = null, $ine = [], $ina= [])
     {
         $this->db->select('documents_assigned.*, authorized_document_assigned_manager.assigned_by_date, authorized_document_assigned_manager.is_archive as  assign_archive, authorized_document_assigned_manager.archived_by_date, authorized_document_assigned_manager.archived_by');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
@@ -383,9 +385,9 @@ class Hr_documents_management_model extends CI_Model
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+            $inactive_employee_sid = $ine ? $ine : $this->getAllCompanyInactiveEmployee($company_sid);
             //
-            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+            $inactive_applicant_sid = $ina ? $ina : $this->getAllCompanyInactiveApplicant($company_sid);
             //
             foreach ($record_arr as $d_key => $aut_doc) {
                 if (in_array($aut_doc['user_sid'], $inactive_employee_sid) && $aut_doc['user_type'] == 'employee') {
@@ -4543,45 +4545,43 @@ class Hr_documents_management_model extends CI_Model
                     'assigned_status' => 0
                 ));
             //
-            $this->sendEmailToAuthorizedManagers($v, $employerSid);    
+            $this->sendEmailToAuthorizedManagers($v, $assignedSid);    
                 
         }
     }
 
-    function sendEmailToAuthorizedManagers ($assignTo, $assignBy) {
+    function sendEmailToAuthorizedManagers ($managerId, $assignedDocumentId) {
+        //
         $session = $this->session->userdata('logged_in');
         $CompanySID = $session['company_detail']['sid'];
         $CompanyName = ucwords($session['company_detail']['CompanyName']);
         //
         $hf = message_header_footer(
-                $CompanySID,
-                $CompanyName
-            );
-        
-        $assign_to_info  = db_get_employee_profile($assignTo);
-        $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
-        $assign_to_email = $assign_to_info[0]['email'];
-
-        $assigned_by_info  = db_get_employee_profile($assignBy);
-        $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
-
+            $CompanySID,
+            $CompanyName
+        );
+        // Details of the manager
+        $managerInfo  = db_get_employee_profile($managerId);
+        $assign_to_name  = ucwords($managerInfo[0]['first_name'] . ' ' . $managerInfo[0]['last_name']);
+        $assign_to_email = $managerInfo[0]['email'];
+        // Get the assigned user details by assigned document id
+        $userDetails = $this->getAssignedDocumentUserDetailsById($assignedDocumentId);
         //Send Email
         $replacement_array = array();
         $replacement_array['baseurl']           = base_url();
         $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
         $replacement_array['company_name']  = $CompanyName;
-        $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-        $replacement_array['employee_name']  = ucwords($assigned_by_name);
+        $replacement_array['employee_name']  = ucwords($userDetails['first_name'].' '.$userDetails['last_name']);
+        $replacement_array['link']  = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . (base_url('authorized_document')) . '">Show Document</a>';
         //
         $user_extra_info = array();
-        $user_extra_info['user_sid'] = $assignTo;
+        $user_extra_info['user_sid'] = $managerId;
         $user_extra_info['user_type'] = "employee";
         //
-        if($this->isActiveUser($assignTo)){
+        if($this->isActiveUser($managerId) && $this->doSendEmail($managerId, 'employee', "HREMSM1")){
             //
             log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
         }
-        
     }
 
     //
@@ -6756,7 +6756,7 @@ class Hr_documents_management_model extends CI_Model
 
     function getAllAuthorizedAssignManagers($company_sid, $document_sid)
     {
-        $this->db->select('users.first_name, users.last_name, users.email');
+        $this->db->select('users.first_name, users.last_name, users.email, users.sid');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
         $this->db->where('authorized_document_assigned_manager.document_assigned_sid', $document_sid);
         $this->db->join('users', 'users.sid = authorized_document_assigned_manager.assigned_to_sid', 'inner');
@@ -8608,5 +8608,38 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where($whereArray)->update('applicant_i9form', $upd);
         //
         return $form['sid'];
+    }
+
+    /**
+     * Get the user details of assigned
+     * document
+     * 
+     * @author  Mubashir Ahmed
+     * @version 1.0   
+     * @date    06/02/2022
+     * 
+     * @param number $sid
+     * @return array
+     */
+    public function getAssignedDocumentUserDetailsById($sid){
+        //
+        $q = $this->db
+        ->select('user_sid, user_type')
+        ->where('sid', $sid)
+        ->get('documents_assigned');
+        //
+        $d = $q->row_array();
+        //
+        if(!$d){
+            return [];
+        }
+        //
+        $q = $this->db
+        ->select('first_name, last_name')
+        ->where('sid', $d['user_sid'])
+        ->get($d['user_type'] == 'employee' ? 'users' : 'portal_job_application')
+        ->row_array();
+        //
+        return $q ? $q : [];
     }
 }

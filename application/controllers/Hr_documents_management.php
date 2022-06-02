@@ -4530,7 +4530,15 @@ class Hr_documents_management extends Public_Controller
             $ats_active_job_flag                                                = null; // get both active and inactive jobs
             $security_details                                                   = db_get_access_level_details($employer_sid);
             $data['security_details']                                           = $security_details;
-            $total_documents                                                    = $this->hr_documents_management_model->get_all_assigned_auth_documents($company_sid, $employer_sid);
+            // Get inactive employee and applicants
+            $inactiveEmployees = $this->hr_documents_management_model->getAllCompanyInactiveEmployee($company_sid);
+            $inactiveApplicants = $this->hr_documents_management_model->getAllCompanyInactiveApplicant($company_sid);
+            $total_documents                                                    = $this->hr_documents_management_model->get_all_assigned_auth_documents(
+                $company_sid, 
+                $employer_sid,
+                $inactiveEmployees,
+                $inactiveApplicants
+            );
             $documents_count                                                    = count($total_documents);
 
             $records_per_page                                                   = PAGINATION_RECORDS_PER_PAGE;
@@ -4573,7 +4581,14 @@ class Hr_documents_management extends Public_Controller
             $this->pagination->initialize($config);
             $links                                                              = $this->pagination->create_links();
 
-            $documents_list = $this->hr_documents_management_model->get_all_paginate_auth_documents($company_sid, $employer_sid, $records_per_page, $my_offset);
+            $documents_list = $this->hr_documents_management_model->get_all_paginate_auth_documents(
+                $company_sid, 
+                $employer_sid, 
+                $records_per_page,
+                $my_offset,
+                $inactiveEmployees,
+                $inactiveApplicants
+            );
 
             $data['title']          = 'Authorized Documents';
             $data['employer_sid']   = $employer_sid;
@@ -6058,36 +6073,17 @@ class Hr_documents_management extends Public_Controller
                         checkAndInsertCompletedDocument($cpArray);
 
                         if ($isCompleted) {
-                            $this->check_complete_document_send_email($company_sid, $employer_sid);
-
+                            $this->check_complete_document_send_email($company_sid, $employer_sid); 
                             if ($is_authorized_document == 'yes') {
+                                
                                 $assign_managers = $this->hr_documents_management_model->getAllAuthorizedAssignManagers($company_sid, $document_sid);
 
-                                $employee_name = getUserNameBySID($employer_sid);
-
-                                $email_template_id = $this->hr_documents_management_model->getAuthorizedManagerTemplate('Authorized Manager Notification');
-
-                                $link_html = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url('view_assigned_authorized_document/' . $document_sid) . '">Assign Authorized Document</a>';
-
                                 if (!empty($assign_managers)) {
-                                    foreach ($assign_managers as $manager) {
-                                        $replacement_array['first_name'] = $manager['first_name'];
-                                        $replacement_array['last_name'] = $manager['last_name'];
-                                        $replacement_array['employee_name'] = $employee_name;
-                                        $replacement_array['link'] = $link_html;
-                                        $to_email = $manager['email'];
-
-                                        $message_header_footer = message_header_footer($company_sid, ucwords($company_name));
-                                        //
-                                        $user_extra_info = array();
-                                        $user_extra_info['user_sid'] = $user_sid;
-                                        $user_extra_info['user_type'] = $user_type;
-                                        //
-                                        $this->load->model('Hr_documents_management_model', 'HRDMM');
-                                        if($this->HRDMM->isActiveUser($user_sid, $user_type)){
-                                            //
-                                            log_and_send_templated_email($email_template_id, $to_email, $replacement_array, $message_header_footer, 1, $user_extra_info);
-                                        }
+                                    //
+                                    $managerIds = array_column($assign_managers, 'sid');
+                                    //
+                                    foreach ($managerIds as $managerId) {
+                                        $this->hr_documents_management_model->sendEmailToAuthorizedManagers($managerId, $document_sid);
                                     }
                                 }
                             }

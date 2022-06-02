@@ -15637,3 +15637,27 @@ if (!function_exists('get_document_action_date')) {
         return  $return_date;
     }
 }
+
+if(!function_exists('generateEmailButton')){
+    /**
+     * Generate button for email
+     * 
+     * @author Mubashir Ahmed
+     * @version 1.0
+     * 
+     * @param string $bgColor
+     * @param string $link
+     * @param string $text
+     * @param string $color
+     * 
+     * @return string
+     */
+    function generateEmailButton(
+        $bgColor = '#0000FF',
+        $link = '',
+        $text = 'Click Here',
+        $color = '#ffffff'
+    ){
+        return '<a style="color: '.($color).'; background-color: '.($bgColor).'; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url($link) . '">'.($text).'</a>';
+    }
+}
