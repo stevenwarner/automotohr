@@ -1,3 +1,76 @@
+<style>
+.bgred{
+    background-color: #FF0000;
+}
+
+.bgred .status-panel {
+  background: rgba(125, 4, 4, 0.6);
+}
+
+.bgcyan{
+    background-color: #00FFFF;
+}
+.bgcyan .status-panel {
+  background: rgba(3, 83, 64, 0.6);
+}
+
+.bgblue{
+    background-color: #0000FF;
+}
+
+.bgblue .status-panel {
+  background: rgba(3, 83, 64, 0.6);
+}
+
+.bgdarkblue{
+    background-color: #00008B;
+}
+
+.bgdarkblue .status-panel {
+  background: rgba(0, 1, 6, 0.6);
+}
+
+.bglightblue{
+    background-color: #ADD8E6;
+}
+
+.bglightblue .status-panel {
+  background: rgba(3, 83, 64, 0.6);
+}
+
+.bgpurple{
+    background-color: #800080;
+}
+
+.bgpurple .status-panel {
+  background: rgba(35, 2, 38, 0.6);
+}
+
+.bgyellow{
+    background-color: #FFFF00;
+}
+
+.bgyellow .status-panel {
+  background: rgba(166, 141, 6, 0.6);
+}
+
+.bglime{
+    background-color: #00FF00;
+}
+
+.bglime .status-panel {
+  background: rgba(166, 141, 6, 0.6);
+}
+
+.bgpink{
+    background-color: #FFC0CB;
+}
+
+.bgpink .status-panel {
+  background: rgba(215, 68, 178, 0.6);
+}
+
+</style>
 <?php 
     $show_empty_box = true; 
     $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
@@ -509,12 +582,12 @@
                         <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
                             <!-- Documents Library -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                <div class="widget-box">
+                                <div class="widget-box ">
                                     <a href="<?php echo base_url('library_document'); ?>">
-                                        <div class="link-box bg-redish full-width">
-                                            <h2>Documents Library</h2>
-                                            <div class="current-date">
-                                                <span><?php echo $total_library_doc; ?><sub>Total Document(s)</sub></span>
+                                        <div class="link-box bgdarkblue full-width">
+                                            <h2>Employee Document Library</h2>
+                                            <div class="current-date" style="margin-top: -25px;">
+                                                <span><?php echo $total_library_doc; ?><sub>Total</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>View Documents</h3>

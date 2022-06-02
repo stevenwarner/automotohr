@@ -5667,7 +5667,9 @@ class Hr_documents_management extends Public_Controller
                 $data['company_sid'] = $data['session']['company_detail']['sid'];
                 $data['users_type'] = 'employee';
                 $data['users_sid'] = $employer_sid;
-                $data['back_url'] = base_url('hr_documents_management/my_documents');
+                // Hanlded back url
+                $data['back_url'] = base_url($this->input->get('document_backurl') ? 'library_document' : 'hr_documents_management/my_documents');
+                
                 $data['download_url'] = base_url('hr_documents_management/download_hr_document/' . $document['sid']);
                 $data['unique_sid'] = ''; //No Need for Unique Sid for Employee
 
@@ -5797,6 +5799,9 @@ class Hr_documents_management extends Public_Controller
                 $uploaded_action_title = 'Document Action: <b>Upload Signed Copy!</b>';
                 $uploaded_action_desc = '<b>Please sign this document and upload the signed copy.</b>';
 
+                
+                
+               
                 $data['download_action_title'] = $download_action_title;
                 $data['download_action_desc'] = $download_action_desc;
                 $data['download_button_txt'] = $download_button_txt;
@@ -13326,6 +13331,8 @@ class Hr_documents_management extends Public_Controller
         $post = $this->input->post();
         $document_sid = $post['document_sid'];
         $employee_sid = $this->session->userdata('logged_in')['employer_detail']['sid'];
+       
+
 
         $documents_list = $this->hr_documents_management_model->is_library_document_exist($document_sid, $employee_sid, 'employee');
 

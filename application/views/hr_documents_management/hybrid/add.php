@@ -393,12 +393,12 @@
                                                             ?>
                                                             <div class="row">
                                                                 <div class="col-xs-12">
-                                                                    <p class="text-danger"><strong><em>If "Yes", the document will appear on the employee's document library and they can initiate the document.</em></strong></p>
+<p class="text-danger"><strong><em>If marked "Yes", this document will appear in the Employee Document library and allow Employees to initiate this document themselves.</em></strong></p>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-xs-12">
-                                                                    <p>Is the document for library?</p>
+                                                                    <p>Add this document to the Employee library?</p>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
