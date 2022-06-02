@@ -8637,7 +8637,7 @@ class Hr_documents_management_model extends CI_Model
         $q = $this->db
         ->select('first_name, last_name')
         ->where('sid', $d['user_sid'])
-        ->get($d['user_type'] == 'employee' ? 'users' : 'portal_job_application')
+        ->get($d['user_type'] == 'employee' ? 'users' : 'portal_job_applications')
         ->row_array();
         //
         return $q ? $q : [];
