@@ -8522,7 +8522,6 @@ class Hr_documents_management_model extends CI_Model
         $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
         $upd["sent_date"] = $dateTime;
         $upd["user_consent"] = NULL;
-        $upd['ip_address'] = NULL;
         $upd['user_agent'] = NULL;
         $upd['active_signature'] = NULL;
         $upd['signature'] = NULL;
