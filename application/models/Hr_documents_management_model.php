@@ -5423,6 +5423,11 @@ class Hr_documents_management_model extends CI_Model
         $note = '',
         $is_required = 0
     ) {
+
+        if(empty($is_required)){
+            $is_required = 0;
+        }
+
         if ($sid == 0) {
             //
             $this->db
