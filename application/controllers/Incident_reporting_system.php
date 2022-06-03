@@ -230,6 +230,20 @@ class Incident_reporting_system extends Public_Controller
 
                         log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $emp[0]['email'], $replacement_array);
                     }
+
+                    // Sending incident email to Steven start
+                    $stevendata = [
+                        'first_name'=> 'Steven',
+                        'last_name'=> 'Warner',
+                        'email'=> FROM_EMAIL_STEVEN,
+                        'phone' => '',
+                        'firstname'=>'Steven',
+                        'lastname'=>'Warner',
+                        'company_name'=> getCompanyNameBySid($company_sid)
+                    ];
+                
+                    log_and_send_templated_email(INCIDENT_REPORT_NOTIFICATION, $stevendata['email'], $stevendata);
+                    
                     $this->session->set_flashdata('message', '<b>Success:</b> New ' . ucfirst($report_type) . ' Incident Reported');
                     redirect(base_url('incident_reporting_system/list_incidents'), "refresh");
                 }
