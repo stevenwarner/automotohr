@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Form_i9 extends Public_Controller
 {
@@ -87,7 +87,7 @@ class Form_i9 extends Public_Controller
                 $data['applicant_average_rating'] = $this->form_wi9_model->getApplicantAverageRating($sid, 'employee'); // getting applicant ratings - getting average rating of applicant
 
                 $load_view = check_blue_panel_status(false, $type);
-                $redirect_url = base_url('hr_documents_management/documents_assignment/employee/'.$sid);
+                $redirect_url = base_url('hr_documents_management/documents_assignment/employee/' . $sid);
             } else if ($type == 'applicant') {
                 check_access_permissions($security_details, 'application_tracking', 'applicant_form_i9'); // Param2: Redirect URL, Param3: Function Name
                 $employer_sid = $sid;
@@ -122,7 +122,8 @@ class Form_i9 extends Public_Controller
                     redirect($url, 'refresh');
                 }
 
-                $data_employer = array('sid' => $applicant_info['sid'],
+                $data_employer = array(
+                    'sid' => $applicant_info['sid'],
                     'first_name' => $applicant_info['first_name'],
                     'last_name' => $applicant_info['last_name'],
                     'email' => $applicant_info['email'],
@@ -133,14 +134,15 @@ class Form_i9 extends Public_Controller
                     'Location_ZipCode' => $applicant_info['zipcode'],
                     'PhoneNumber' => $applicant_info['phone_number'],
                     'profile_picture' => $applicant_info['pictures'],
-                    'user_type' => ucwords($type));
+                    'user_type' => ucwords($type)
+                );
 
                 $data['applicant_notes'] = $this->form_wi9_model->getApplicantNotes($employer_sid); //Getting Notes
                 $data['applicant_average_rating'] = $this->form_wi9_model->getApplicantAverageRating($employer_sid, 'applicant'); //getting average rating of applicant
                 $data['employer'] = $data_employer;
 
                 $load_view = check_blue_panel_status(false, $type);
-                $redirect_url = base_url('hr_documents_management/applicant/'.$sid.'/'.$jobs_listing);
+                $redirect_url = base_url('hr_documents_management/applicant/' . $sid . '/' . $jobs_listing);
             }
 
             $data['states'] = db_get_active_states(227);
@@ -213,14 +215,14 @@ class Form_i9 extends Public_Controller
                     }
                 }
                 $this->load->view('main/header', $data);
-                if(!empty($previous_form['s3_filename']) && $previous_form['s3_filename'] != NULL) $this->load->view('form_i9/index_uploaded');
+                if (!empty($previous_form['s3_filename']) && $previous_form['s3_filename'] != NULL) $this->load->view('form_i9/index_uploaded');
                 else $this->load->view('form_i9/index');
                 $this->load->view('main/footer');
             } else {
                 //
                 $formpost = $this->input->post(NULL, TRUE);
                 //
-                if($type != 'applicant' && $formpost['user_consent'] == 1){
+                if ($type != 'applicant' && $formpost['user_consent'] == 1) {
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_ACTION_TEMPLATE,
@@ -321,7 +323,7 @@ class Form_i9 extends Public_Controller
 
                     $signature = get_e_signature($company_sid, $user_sid, $user_type);
 
-                    if (!empty($signature) ) {
+                    if (!empty($signature)) {
                         $reviewer_signature_base64 = $signature['signature_bas64_image'];
                     }
 
@@ -351,7 +353,7 @@ class Form_i9 extends Public_Controller
                     $insert_data['lista_part2_issuing_select_input'] = isset($formpost['lista_part2_issuing_select_input']) ? $formpost['lista_part2_issuing_select_input'] : '';
                     $insert_data['lista_part3_doc_select_input'] = isset($formpost['lista_part3_doc_select_input']) ? $formpost['lista_part3_doc_select_input'] : '';
                     $insert_data['lista_part3_issuing_select_input'] = isset($formpost['lista_part3_issuing_select_input']) ? $formpost['lista_part3_issuing_select_input'] : '';
-            
+
                     $insert_data['section2_listb_document_title'] = $formpost['section2_listb_document_title'];
                     $insert_data['section2_listb_issuing_authority'] = isset($formpost['section2_listb_issuing_authority']) && $formpost['listb-auth-select-input'] != 'input' ? $formpost['section2_listb_issuing_authority'] : $formpost['section2_listb_issuing_authority_text_val'];
                     $insert_data['section2_listb_document_number'] = $formpost['section2_listb_document_number'];
@@ -365,7 +367,7 @@ class Form_i9 extends Public_Controller
                     $insert_data['section2_listc_expiration_date'] = empty($formpost['section2_listc_expiration_date']) || $formpost['section2_listc_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listc_expiration_date'])->format('Y-m-d H:i:s');
 
                     $insert_data['section2_firstday_of_emp_date'] = empty($formpost['section2_firstday_of_emp_date']) || $formpost['section2_firstday_of_emp_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_firstday_of_emp_date'])->format('Y-m-d H:i:s');
-                        $insert_data['section2_sig_emp_auth_rep'] = $reviewer_signature_base64;
+                    $insert_data['section2_sig_emp_auth_rep'] = $reviewer_signature_base64;
 
                     $insert_data['section2_today_date'] = empty($formpost['section2_today_date']) || $formpost['section2_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_today_date'])->format('Y-m-d H:i:s');
                     $insert_data['section2_title_of_emp'] = $formpost['section2_title_of_emp'];
@@ -401,19 +403,19 @@ class Form_i9 extends Public_Controller
                 //$this->form_wi9_model->insert_form_data('i9', $insert_data, $employer_sid);
                 $this->form_wi9_model->update_form('i9', $type, $employer_sid, $insert_data);
                 //
-                $i9_sid = getVerificationDocumentSid ($employer_sid, $type, 'i9');
+                $i9_sid = getVerificationDocumentSid($employer_sid, $type, 'i9');
                 keepTrackVerificationDocument($employer_sid, $type, 'completed', $i9_sid, 'i9', 'Blue Panel');
                 //
                 $this->session->set_flashdata('message', '<strong>Success: </strong> I-9 Submitted Successfully!');
                 redirect($redirect_url, 'refresh');
-
             }
         } else {
             redirect('login', "refresh");
         }
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data["session"]["company_detail"]["sid"];
@@ -483,13 +485,13 @@ class Form_i9 extends Public_Controller
                                 $this->form_wi9_model->insert_i9_form_record($i9_data_to_insert);
                             }
 
-                            
+
                             $response['Status'] = TRUE;
                             $response['Response'] = 'i9 form upload successfully';
-                        }  else {
+                        } else {
                             $response['Status'] = FALSE;
                             $response['Response'] = 'Something went wrong!';
-                        }  
+                        }
 
                         header('Content-Type: application/json');
                         echo json_encode($response);
@@ -543,7 +545,6 @@ class Form_i9 extends Public_Controller
         } else {
             echo 'error';
         }
-
     }
 
     public function verify_docs()
@@ -556,20 +557,20 @@ class Form_i9 extends Public_Controller
         echo 'Verified';
     }
 
-    public function print_i9_form ($type, $sid) {
+    public function print_i9_form($type, $sid)
+    {
         if ($this->session->userdata('logged_in')) {
 
             $previous_form = $this->form_wi9_model->fetch_form('i9', $type, $sid);
             $data['pre_form'] = $previous_form;
 
             $this->load->view('form_i9/print_i9_pdf', $data);
-
         } else {
             redirect('login', "refresh");
         }
     }
 
-    public function preview_i9form($user_type,$employee_sid)
+    public function preview_i9form($user_type, $employee_sid)
     {
         if ($this->session->userdata('logged_in')) {
 
@@ -580,13 +581,12 @@ class Form_i9 extends Public_Controller
 
 
             $this->load->view('form_i9/index-pdf', $data);
-
         } else {
             redirect('login', "refresh");
         }
     }
 
-    public function download_i9form($user_type,$employee_sid)
+    public function download_i9form($user_type, $employee_sid)
     {
         if ($this->session->userdata('logged_in')) {
 
@@ -596,7 +596,6 @@ class Form_i9 extends Public_Controller
 
             $data['pre_form'] = $previous_form;
             $this->load->view('form_i9/form_i9_pdf', $data);
-
         } else {
             redirect('login', "refresh");
         }
@@ -612,13 +611,13 @@ class Form_i9 extends Public_Controller
 
             $data['pre_form'] = $previous_form;
             $this->load->view('form_i9/download_i9_pdf', $data);
-
         } else {
             redirect('login', "refresh");
         }
     }
 
-    public function print_i9_img($document_file) {
+    public function print_i9_img($document_file)
+    {
         if ($this->session->userdata('logged_in')) {
             $session = $this->session->userdata('logged_in');
             $data['session'] = $session;
@@ -629,7 +628,7 @@ class Form_i9 extends Public_Controller
             $load_view = check_blue_panel_status(false, 'self');
 
             $company_name = $session['company_detail']['CompanyName'];
-            $employee_name = $session['employer_detail']['first_name'] .' '. $session['employer_detail']['last_name'];
+            $employee_name = $session['employer_detail']['first_name'] . ' ' . $session['employer_detail']['last_name'];
 
             $data['company_name']   = $company_name;
             $data['employee_name']  = $employee_name;
