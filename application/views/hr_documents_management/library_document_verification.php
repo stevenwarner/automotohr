@@ -118,7 +118,11 @@ if (isset($verificationDocuments['W4'])) :
     $trs .= '   <td class="col-lg-2">';
     $trs .= '       <span>' . ($verificationDocuments['W4']['completed_on'] ? formatDateToDB($verificationDocuments['W4']['completed_on'], DB_DATE_WITH_TIME, DATE_WITH_TIME) : '-') . '</span>';
     $trs .= '   </td>';
-    $trs .= '   <td></td>';
+    $trs .= '   <td>  <a title="Print the original document" class="btn  btn-info btn-orange csRadius5" target="_blank" href="'.$print_original_url.'"><i class="fa fa-print" aria-hidden="true"></i></a>
+    <a title="Download the original document" class="btn  btn-black csRadius5" target="_blank" href="'.$download_original_url.'"><i class="fa fa-download" aria-hidden="true"></i></a>  <a title="View the assigned document" class="btn  btn-success csRadius5" target="_blank" href="'.base_url('hr_documents_management/preview_verification_document') . '/company/' . $document['sid'].'">
+    <i class="fa fa-eye" aria-hidden="true"></i>
+</a>
+  </td>';
     $trs .= '   <td></td>';
     $trs .= '   <td>';
     $trs .= '       <button class="btn btn-block csRadius5 btn-' . ($cl) . ' jsInitiateVerificationDocuments">';

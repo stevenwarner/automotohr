@@ -14214,4 +14214,37 @@ class Hr_documents_management extends Public_Controller
         ]);
     }
 
+
+    public function preview_verification_document(){
+        //
+        if (!$this->session->userdata('logged_in')) {
+            return redirect(base_url('login'), "refresh");
+        }
+        //
+        $session                    = $this->session->userdata('logged_in');
+        $company_sid                = $session['company_detail']['sid'];
+        $employers_details          = $session['employer_detail'];
+        $employer_sid               = $employers_details['sid'];
+        $security_details           = db_get_access_level_details($employer_sid);                   
+        
+       
+      
+        //
+        $data['load_view']          = 'old';
+        $data['title']              = 'AutomotoHR :: Documents Preview';
+        $data['employer_sid']       = $employer_sid;
+        $data['document']           = $document;
+        $data['session']            = $session;
+        $data['employee']           = $employers_details;
+        $data['security_details']   = $security_details;
+        $data['print_url']          = '';//$links["print_url"];
+        $data['download_url']       = '';//$links["download_url"];
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('hr_documents_management/templates/preview_document_verification');
+        $this->load->view('main/footer');
+    }
+
+
+
 }

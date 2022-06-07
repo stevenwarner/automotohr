@@ -828,7 +828,7 @@
             <div class="modal-content">
                 <div class="modal-header modal-header-bg">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="review_modal_title">Assigned W4 Form</h4>
+                    <h4 class="modal-title" id="review_modal_title">Assigned W4 Form </h4>
                 </div>
                 <div id="review_modal_body" class="modal-body">
                     <?php $view = get_form_view('w4',$w4_form);

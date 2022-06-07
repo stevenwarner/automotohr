@@ -117,7 +117,7 @@ if (!function_exists('get_form_view')) {
             $assign_on = date("Y-m-d", strtotime($form_data['sent_date']));
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
 
-            if ($assign_on >= $compare_date) {
+            if ($assign_on >= $compare_date) { 
                 $view = $CI->load->view('form_w4/form_w4_2020_pdf', $form_values, TRUE);
             } else {
                 $view = $CI->load->view('form_w4/test_form_w4', $form_values, TRUE);
