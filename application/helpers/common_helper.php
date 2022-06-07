@@ -66,6 +66,30 @@ if (!function_exists('getCompanyNameBySid')) {
     }
 }
 
+if (!function_exists('getDefaultApproverName')) {
+    function getDefaultApproverName($company_sid, $email)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db->select('contact_name');
+        $CI->db->where('company_sid', $company_sid);
+        $CI->db->where('email', $email);
+        $CI->db->where('notifications_type', "default_approvers");
+        $CI->db->where('status', "active");
+        $record_obj = $CI->db->get('notifications_emails_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = ucwords($record_arr["contact_name"]);
+        } 
+
+        return $return_data;
+    }
+}
+
 if (!function_exists('getCompanyLogoBySid')) {
     function getCompanyLogoBySid($company_sid)
     {

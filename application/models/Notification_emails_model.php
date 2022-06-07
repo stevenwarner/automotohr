@@ -148,6 +148,7 @@
     }
 
     function update_notifications_configuration_record($company_sid, $data) {
+
         $this->db->where('company_sid', $company_sid);
         $this->db->update('notifications_emails_configuration', $data);
     }

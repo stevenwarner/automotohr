@@ -7174,9 +7174,15 @@ class Hr_documents_management_model extends CI_Model
         return $return_data;
     }
 
-    function saveApproverAction ($approver_sid, $document_sid, $data_to_update) {
+    function saveApproverAction ($approver_reference, $document_sid, $data_to_update) {
         $this->db->where('portal_document_assign_sid', $document_sid);
-        $this->db->where('assigner_sid', $approver_sid);
+        //
+        if(is_numeric($approver_reference) && $approver_reference > 0){
+            $this->db->where('assigner_sid', $approver_reference);
+        } else {
+            $this->db->where('approver_email', $approver_reference);
+        }
+        //
         $this->db->update('portal_document_assign_flow_employees', $data_to_update);
     }
 
@@ -7185,10 +7191,10 @@ class Hr_documents_management_model extends CI_Model
         $this->db->update('portal_document_assign_flow_employees', $data_to_update);
     }
 
-    function getnextApproversInfo($document_sid)
+    function getnextApproversInfo($approval_flow_sid)
     {
         //
-        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('portal_document_assign_sid', $approval_flow_sid);
         $this->db->where('status', 1);
         $this->db->where('assigner_turn', 0);
         $this->db->where('assign_on', NULL);
@@ -7976,7 +7982,7 @@ class Hr_documents_management_model extends CI_Model
 
     public function get_approval_document_information($document_sid, $user_type, $user_sid) {
         //
-        $this->db->select('sid, approval_flow_sid, document_title, document_type');
+        $this->db->select('sid, company_sid, approval_flow_sid, document_title, document_type, document_approval_employees');
         $this->db->where('document_sid', $document_sid);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('user_type', $user_type);
@@ -7995,7 +8001,7 @@ class Hr_documents_management_model extends CI_Model
 
     public function get_document_approvers ($document_sid) {
         //
-        $this->db->select('sid, assigner_sid, assigner_turn, assign_on, note as approval_note, approval_status, action_date');
+        $this->db->select('sid, assigner_sid, assigner_turn, assign_on, note as approval_note, approval_status, action_date, approver_email');
         $this->db->where('portal_document_assign_sid', $document_sid);
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->result_array();
@@ -8091,11 +8097,15 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
-    public function get_approval_document_detail($document_sid) {
+    public function get_approval_document_detail($document_sid, $status = true) {
         //
-        $this->db->select('company_sid, user_sid, user_type, approval_flow_sid, document_title, document_type, acknowledgment_required, download_required, signature_required, is_required, assigned_by');
+        $this->db->select('company_sid, user_sid, user_type, approval_flow_sid, document_title, document_type, document_sid, acknowledgment_required, download_required, signature_required, is_required, assigned_by, document_approval_employees, has_approval_flow');
         $this->db->where('sid', $document_sid);
-        $this->db->where('approval_process', 1);
+        //
+        if ($status) {
+            $this->db->where('approval_process', 1);
+        }
+        //
         $record_obj = $this->db->get('documents_assigned');
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
@@ -8110,7 +8120,7 @@ class Hr_documents_management_model extends CI_Model
 
     public function get_document_current_approver_sid ($document_sid) {
         //
-        $this->db->select('assigner_sid');
+        $this->db->select('assigner_sid, approver_email');
         $this->db->where('portal_document_assign_sid', $document_sid);
         $this->db->where('assigner_turn', 1);
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
@@ -8119,7 +8129,7 @@ class Hr_documents_management_model extends CI_Model
         $return_data = 0;
 
         if (!empty($records_arr)) {
-            $return_data = $records_arr['assigner_sid'];
+            $return_data = $records_arr;
         }
 
         return $return_data;
@@ -8142,11 +8152,17 @@ class Hr_documents_management_model extends CI_Model
     } 
 
 
-    public function get_approver_note ($document_flow_sid, $approver_sid) {
+    public function get_approver_note ($document_flow_sid, $approver_reference) {
         //
         $this->db->select('note');
         $this->db->where('portal_document_assign_sid', $document_flow_sid);
-        $this->db->where('assigner_sid', $approver_sid);
+        //
+        if(is_numeric($approver_reference) && $approver_reference > 0){
+            $this->db->where('assigner_sid', $approver_reference);
+        } else {
+            $this->db->where('approver_email', $approver_reference);
+        }
+        //
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->row_array();
         $records_obj->free_result();
@@ -8157,7 +8173,158 @@ class Hr_documents_management_model extends CI_Model
         }
 
         return $return_data;
+    }
+
+    public function get_document_approver_info ($flow_sid, $approver_sid) {
+        //
+        $this->db->select('assign_on, approval_status, note, action_date');
+        $this->db->where('portal_document_assign_sid', $flow_sid);
+        $this->db->where('assigner_sid', $approver_sid);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
     }   
+
+    public function getDefaultApprovers ($company_sid, $flow_sid, $status) {
+        //
+        //
+        $return_data = 0;
+        //
+        if ($status == 1) {
+            $this->db->select('default_approvers');
+            $this->db->where('company_sid', $company_sid);
+            $record_obj = $this->db->get('notifications_emails_configuration');
+            $record_arr = $record_obj->row_array();
+            $record_obj->free_result();
+            
+            //
+            if (!empty($record_arr) && $record_arr["default_approvers"] == 1) {
+                $this->db->select('employer_sid, email');
+                $this->db->where('company_sid', $company_sid);
+                $this->db->where('notifications_type', "default_approvers");
+                $this->db->where('status', "active");
+                $records_obj = $this->db->get('notifications_emails_management');
+                $default_approvers = $records_obj->result_array();
+                $records_obj->free_result();
+                //
+                if (!empty($default_approvers)) {
+                    foreach ($default_approvers as $approver) {
+                        $this->db->select('sid');
+                        $this->db->where('status', 1);
+                        $this->db->where('portal_document_assign_sid', $flow_sid);
+                        //
+                        if ($approver["employer_sid"] == 0) {
+                            $this->db->where('approver_email', $approver["email"]);
+                        } else {
+                            $this->db->where('assigner_sid', $approver["employer_sid"]);
+                        }
+                        //
+                        $record_obj = $this->db->get('portal_document_assign_flow_employees');
+                        $approver_data = $record_obj->row_array();
+                        $record_obj->free_result();
+                        //
+                        if (empty($approver_data)) {
+                            if ($approver["employer_sid"] == 0) {
+                                $return_data = $approver["email"];
+                            } else {
+                                $return_data =  $approver["employer_sid"];
+                            }
+                            //
+                            break;
+                        }
+                    }
+                }
+            } 
+        }    
+
+        return $return_data;
+    } 
+
+
+    public function get_default_outer_approver ($company_sid, $email) {
+        //
+        $this->db->select('contact_name, email');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('email', $email);
+        $this->db->where('notifications_type', "default_approvers");
+        $this->db->where('status', "active");
+        $record_obj = $this->db->get('notifications_emails_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        } 
+
+        return $return_data;
+    }
+
+    public function is_document_has_approval_flow ($document_sid) {
+        //
+        $this->db->select('has_approval_flow, document_approval_note');
+        $this->db->where('sid', $document_sid);
+        $record_obj = $this->db->get('documents_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        } 
+
+        return $return_data;
+    }
+
+    public function get_document_external_approver_info ($flow_sid, $company_sid) {
+        //
+        $this->db->select('assign_on, action_date, note, approval_status, approver_email');
+        $this->db->where('portal_document_assign_sid', $flow_sid);
+        $this->db->where('assigner_sid', 0);
+        $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        //
+        $return_approvers = array();
+        //
+        if (!empty($records_arr)) {
+            foreach ($records_arr as $key => $approver) {
+                $records_arr[$key]["approver_name"] = getDefaultApproverName($company_sid, $approver["approver_email"]);
+            }
+            //
+            $return_approvers = $records_arr;
+        } 
+
+        return $return_approvers;
+    }
+
+    public function is_default_approver ($employee_sid) {
+        //
+        $this->db->select('sid');
+        $this->db->where('employer_sid', $employee_sid);
+        $this->db->where('notifications_type', "default_approvers");
+        $this->db->where('status', "active");
+        $record_obj = $this->db->get('notifications_emails_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return false;
+        } else {
+            return true;
+        }
+
+        
+    }
 
 
 }

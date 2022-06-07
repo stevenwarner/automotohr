@@ -45,6 +45,8 @@
     .js-page-partial .select2-container--default .select2-selection--multiple .select2-selection__rendered{ height: auto !important; }
     .js-page-partial .select2-container--default .select2-selection--single{ background-color: #fff !important; border: 1px solid #aaa !important; }
 </style>
+<?php $this->load->view("hr_documents_management/scripts/approvers"); ?>
+<script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>assets/js/approver.js"></script>
 <script>
 	//
 	function remakeEmployeeName(o, i){
@@ -120,6 +122,7 @@
 		offerLetters = <?=json_encode($offerLetters);?>,
 		allDocuments = <?=json_encode($all_documents);?>,
 		allEmployees = <?=json_encode($managers_list);?>,
+		jsBaseURL = '<?=base_url();?>',
 		tabDocs = {
 			notCompletedDocuments: <?=json_encode($AllNotCompletedDocuments);?>,
 			completedDocuments: <?=json_encode($AllCompletedDocuments);?>,
@@ -256,7 +259,7 @@
 				rows += getApproversManager();
 			}
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section',true); ?>`;
 			//
 			rows += getEmailContent();
 			//
@@ -315,6 +318,14 @@
 					do_descpt ? $('#js-modify-assigned-document-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
 					$('.js-modify-assign-document-required[value="'+( selectedTemplate.is_required)+'"]').prop('checked', true);
 					$('.js-modify-assign-document-signature-required[value="'+( selectedTemplate.is_signature_required )+'"]').prop('checked', true);
+					//
+					if (d.has_approval_flow && d.has_approval_flow == 1) {
+						$('#jsHasApprovalFlow').prop('checked', true);
+						$('.jsApproverFlowContainer').show();
+
+						DocumentApproverPrefill(d.document_approval_employees, d.document_approval_note, d.sid);
+						DocumentExternalApproverPrefill(d.sid)
+					}
 					
 					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
 					if(do_descpt){
@@ -395,7 +406,7 @@
 			if(do_descpt) rows += getSigners();
 			rows += getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section',true); ?>`;
 			//
 			rows+= getEmailContent();
 			rows += getRequiredRow();
@@ -438,6 +449,14 @@
 					$('#js-modify-assign-document-download option[value="'+( d.download_required )+'"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="'+( d.acknowledgment_required )+'"]').prop('selected', true);
 					do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
+					//
+					if (d.has_approval_flow && d.has_approval_flow == 1) {
+						$('#jsHasApprovalFlow').prop('checked', true);
+						$('.jsApproverFlowContainer').show();
+
+						DocumentApproverPrefill(d.document_approval_employees, d.document_approval_note, 0);
+					}	
+				
 
 					//
 					if(d.visible_to_payroll){
@@ -513,7 +532,7 @@
 			if(do_descpt) rows += getSigners('js-modify-assign-offer-letter-signers');
 			rows+= getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/assigner',true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section',true); ?>`;
 			rows+= getEmailContent();
 			if(do_descpt) rows += getTags();
 			//
@@ -2279,7 +2298,7 @@
 		}
 	});
 </script>
-<?php $this->load->view("hr_documents_management/scripts/assigner"); ?>
+
 <style>
 	#modify-assign-document-modal .select2-container--default .select2-selection--multiple .select2-selection__rendered{ height: auto !important; }
 </style>

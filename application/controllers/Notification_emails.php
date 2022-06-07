@@ -863,7 +863,9 @@ class Notification_emails extends Public_Controller {
                 } else if ($type == 'documents_status') {
                     redirect("notification_emails/documents");
                 } else if ($type == 'general_information_status') {
-                    redirect("notification_emails/general_information");        
+                    redirect("notification_emails/general_information");   
+                } else if ($type == 'default_approvers') {
+                    redirect("notification_emails/default_approvers");           
                 } else {
                     redirect("notification_emails/new_applicant_notifications");
                 }
@@ -1854,6 +1856,145 @@ class Notification_emails extends Public_Controller {
                         }
 
                         redirect('notification_emails/employee_profile', 'refresh');
+                        break;
+                }
+            }
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
+    }
+
+    public function default_approvers() {
+        if ($this->session->userdata('logged_in')) {
+            $data['session']                                                    = $this->session->userdata('logged_in');
+            $security_sid                                                       = $data['session']['employer_detail']['sid'];
+            $security_details                                                   = db_get_access_level_details($security_sid);
+            $data['security_details']                                           = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'notification_emails');
+            $company_sid                                                        = $data['session']['company_detail']['sid'];
+            $data['company_sid']                                                = $company_sid;
+            $notifications_type                                                 = 'default_approvers';
+            $data['title']                                                      = 'Default Document Approvers Notifications';
+            $data['notification_type']                                          = $notifications_type;
+            $data['sub_title']                                                  = 'Add Employee as Defallt Approver';
+            $employees = $this->notification_emails_model->get_all_employees($company_sid);
+            //
+            foreach ($employees as $e_key => $employee) {
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
+                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+            }
+            //
+            $data['employees'] = $employees;
+
+            $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
+            $perform_action                                                     = $this->input->post('perform_action');
+
+            switch ($perform_action) {
+                case 'set_notifications_status':
+                    $this->form_validation->set_rules('notifications_status', 'Notifications Status', 'required|trim|xss_clean');
+                    break;
+                case 'add_notification_email':
+                    $this->form_validation->set_rules('contact_name', 'Contact name', 'trim|xss_clean|required');
+                    $this->form_validation->set_rules('contact_no', 'Contact Number', 'trim|xss_clean');
+                    $this->form_validation->set_rules('short_description', 'Short Description', 'trim|xss_clean');
+                    $this->form_validation->set_rules('email', 'Email Address', 'trim|xss_clean|required');
+                    $this->form_validation->set_rules('notifications_type', 'notifications type', 'trim|xss_clean');
+                    break;
+                case 'add_notification_employee':
+                    $this->form_validation->set_rules('employee', 'Employee Email', 'trim|xss_clean|required|callback_check_employee_profile_employee');
+                default:
+                    break;
+            }
+
+            if ($this->form_validation->run() === FALSE) {
+                $notifications_emails                                       = $this->notification_emails_model->get_notification_emails($company_sid, $notifications_type);
+                $data['notifications_emails']                               = $notifications_emails;
+                $notifications_status                                       = $this->notification_emails_model->get_notifications_status($company_sid, $notifications_type);
+                $data['notifications_status']                               = $notifications_status;
+                $data['current_notification_status']                        = $notifications_status['default_approvers'];
+                
+                // $data['notifications_type']                                 = 'general_information_status';
+                $data['title_for_js_dialog']                                = 'Default Document Approver Notifications';
+
+                if($perform_action == 'add_notification_employee'){
+                    $data['emp_id'] = $this->input->post('employee');
+                    $data['duplicate_employee'] = true;
+                }
+
+                $this->load->view('main/header', $data);
+                $this->load->view('notification_emails/default_approver');
+                $this->load->view('main/footer');
+            } else {
+                $perform_action = $this->input->post('perform_action');
+
+                switch ($perform_action) {
+                    case 'add_notification_employee':
+                        $formpost = $this->input->post(NULL, true);
+                        $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
+
+                        if(isset($employee_data[0])){
+                            $employee_data = $employee_data[0];
+                        }
+
+                        $insert_array                                           = array();
+                        $insert_array['email']                                  = $employee_data['email'];
+                        $insert_array['contact_name']                           = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
+                        $insert_array['contact_no']                             = $employee_data['PhoneNumber'];
+                        $insert_array['status']                                 = 'active';
+                        $insert_array['date_added']                             = date('Y-m-d H:i:s');
+                        $insert_array['short_description']                      = 'Company Employee';
+                        $insert_array['notifications_type']                     = $formpost['notifications_type'];
+                        $insert_array['company_sid']                            = $company_sid;
+                        $insert_array['employer_sid']                           = $employee_data['sid'];
+                        $result                                                 = $this->notification_emails_model->save_notification_email($insert_array); 
+
+                        if ($result == 'success') {
+                            $this->session->set_flashdata('message', 'Success: New Contact is added!');
+                        } else {
+                            $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
+                        }
+
+                        redirect('notification_emails/default_approvers', 'refresh');
+                        break;
+                    case 'set_notifications_status':
+                        $notifications_status                               = $this->input->post('notifications_status');
+                        $company_sid                                        = $this->input->post('company_sid');
+                        $data_to_update                                     = array();
+                        $data_to_update['default_approvers']                = $notifications_status;
+                        //
+                        $this->notification_emails_model->update_notifications_configuration_record($company_sid, $data_to_update);
+                        $this->session->set_flashdata('message', '<strong>Success: </strong>Notifications Status successfully updated!');
+                        redirect('notification_emails/default_approvers', 'refresh');
+                        break;
+                    default:
+                        $formpost = $this->input->post(NULL, TRUE);
+                        $data_to_save['company_sid'] = $company_sid;
+                        $data_to_save['date_added'] = date('Y-m-d H:i:s');
+
+                        foreach ($formpost as $key => $value) { //Check Form Post and handle status - start
+                            if ($key != 'status') { // remove status from save data as it is an DB Enum
+                                $data_to_save[$key] = $value;
+                            }
+                        }
+
+                        $status = $this->input->post('status');
+
+                        if (!empty($status) && intval($status) == 1) {
+                            $status = 'active';
+                        } else {
+                            $status = 'deactive';
+                        }
+
+                        $data_to_save['status'] = $status;
+                        $result = $this->notification_emails_model->save_notification_email($data_to_save);
+
+                        if ($result == 'success') {
+                            $this->session->set_flashdata('message', 'Success: New Contact is added!');
+                        } else {
+                            $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
+                        }
+
+                        redirect('notification_emails/default_approvers', 'refresh');
                         break;
                 }
             }

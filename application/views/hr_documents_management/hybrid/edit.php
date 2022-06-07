@@ -283,6 +283,8 @@
                                         <?php } ?>
 
                                         <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
+                                        <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                        
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="hr-box">
@@ -1021,3 +1023,4 @@
 </div>
 
 <?php $this->load->view('iframeLoader'); ?>
+<?php $this->load->view('hr_documents_management/scripts/approvers'); ?>

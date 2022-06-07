@@ -178,9 +178,20 @@ class Onboarding extends CI_Controller
                             $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
                             $data_to_insert['signature_required'] = $document['signature_required'];
                             $data_to_insert['download_required'] = $document['download_required'];
-                            $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                            $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
-                            $sendGroupEmail = 1;
+                            if ($document['has_approval_flow'] == 1) {
+                                $this->HandleApprovalFlow(
+                                    $assignInsertId,
+                                    $document['document_approval_note'],
+                                    $document["document_approval_employees"],
+                                    0,
+                                    $document['managers_list']
+                                );
+                            } else {
+                                //
+                                $sendGroupEmail = 1;
+                            }
                         }
                     }
                 }
@@ -4572,16 +4583,28 @@ class Onboarding extends CI_Controller
                             $data_to_insert['signature_required'] = $document['signature_required'];
                             $data_to_insert['download_required'] = $document['download_required'];
                             //
-                            $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
-                            // Managers handling
-                            $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                                $document['managers_list'],
-                                $assignment_sid,
-                                $company_sid,
-                                $employer_sid
-                            );
+                            $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
-                            $sendGroupEmail = 1;
+                            if ($document['has_approval_flow'] == 1) {
+                                $this->HandleApprovalFlow(
+                                    $assignInsertId,
+                                    $document['document_approval_note'],
+                                    $document["document_approval_employees"],
+                                    0,
+                                    $document['managers_list']
+                                );
+                            } else {
+                                // Managers handling
+                                $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                    $document['managers_list'],
+                                    $assignInsertId,
+                                    $company_sid,
+                                    $employer_sid
+                                );
+                                //
+                                $sendGroupEmail = 1;
+                            }
+                            
                         }
                     }
                 }

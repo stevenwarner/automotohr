@@ -34,6 +34,7 @@
                     </div>
                     <!--  -->
                     <div class="jsEmployeesadditionalBox"></div>
+                    <div class="jsEmployeesadditionalExternalBox"></div>
                     <!--  -->
                     <div class="row">
                         <hr />

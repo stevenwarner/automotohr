@@ -3,17 +3,15 @@
 		// 
 		var selectedApprovers = {};
 		//
-		var approvalContainer = $('.jsApproverFlowContainer');
-
-		//
-		$('#jsHasApprovalFlow').click(function() {
+		$(document).on('click', '#jsHasApprovalFlow', function(event) {		
 			//
-			if ($(this).prop('checked')) {
+			// if ($(this).prop('checked')) {
+			if ($("#jsHasApprovalFlow").prop('checked')) {
 				//
-				approvalContainer.show(0);
+				$('.jsApproverFlowContainer').show();
 			} else {
 				//
-				approvalContainer.hide(0);
+				$('.jsApproverFlowContainer').hide(0);
 				$('.jsEmployeesadditionalBox').html('');
 				$('#assigner_note').val('');
 			}
@@ -118,6 +116,8 @@
 
 		<?php if (isset($document_info['has_approval_flow']) && $document_info['has_approval_flow'] == 1) : ?>
 			$('#jsHasApprovalFlow').prop('checked', true);
+			$('.jsApproverFlowContainer').show();
+
 			DOGenerate("<?= $document_info['document_approval_employees']; ?>");
 		<?php endif; ?>
 	});

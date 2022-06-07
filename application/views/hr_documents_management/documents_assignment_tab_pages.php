@@ -72,7 +72,7 @@
                                                         <tr>
                                                             <td class="col-lg-6">
                                                                 <?php
-                                                                    echo $document['document_title'] . '&nbsp;';
+                                                                    echo $document['document_title']. '&nbsp;';
                                                                     echo $document['status'] ? '' : '<b>(revoked)</b>';
                                                                     echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
                                                                     echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
@@ -101,6 +101,15 @@
                                                                     <?php if ($document_all_permission) { ?>
                                                                         <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/'.($user_type).'/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                         <?=getSendDocumentEmailButton($document, $session['employer_detail'], $user_type);?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?> 
                                                                 </td>
                                                             <?php } else if ($document['document_type'] == 'uploaded') { ?>
@@ -170,8 +179,26 @@
                                                                                     <button class="btn btn-warning  btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                 <?php } ?>
                                                                             <?php } ?>
+                                                                            <?php if ($document['approval_process'] == 1) { ?>
+                                                                                <button 
+                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                    data-user_type="<?=$user_type;?>"
+                                                                                    data-user_sid="<?=$user_sid;?>"
+                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                    View Approver(s)
+                                                                                </button>
+                                                                            <?php } ?>
                                                                         <?php } ?>
                                                                         <?=getSendDocumentEmailButton($document, $session['employer_detail'], $user_type);?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?>    
                                                                 </td>
                                                             <?php } else { ?>
@@ -209,6 +236,15 @@
                                                                             <?php } ?>   
                                                                         <?php } ?>
                                                                         <?=getSendDocumentEmailButton($document, $session['employer_detail'], $user_type);?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?>
                                                                 </td>
                                                             <?php } ?>
@@ -415,6 +451,15 @@
                                                                             <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                         <?php } ?>
                                                                         <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?>    
                                                                 </td>
                                                             </tr>
@@ -568,6 +613,15 @@
                                                                                     <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                 <?php } ?>
                                                                             <?php } ?>
+                                                                        <?php } ?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
                                                                         <?php } ?>
                                                                     <?php } ?>  
                                                                 </td>  
@@ -863,6 +917,15 @@
                                                                                                     <?php } ?>
                                                                                                 <?php } ?>
                                                                                             <?php } ?> 
+                                                                                            <?php if ($document['approval_process'] == 1) { ?>
+                                                                                                <button 
+                                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                                    data-user_type="<?=$user_type;?>"
+                                                                                                    data-user_sid="<?=$user_sid;?>"
+                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                    View Approver(s)
+                                                                                                </button>
+                                                                                            <?php } ?>
                                                                                         <?php } ?> 
                                                                                     </td>
                                                                                 <?php } else if ($document['document_type'] == 'uploaded') { ?>
@@ -908,6 +971,15 @@
                                                                                                     <?php } ?>
                                                                                                 <?php } ?>
                                                                                             <?php } ?> 
+                                                                                            <?php if ($document['approval_process'] == 1) { ?>
+                                                                                                <button 
+                                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                                    data-user_type="<?=$user_type;?>"
+                                                                                                    data-user_sid="<?=$user_sid;?>"
+                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                    View Approver(s)
+                                                                                                </button>
+                                                                                            <?php } ?>
                                                                                         <?php } ?> 
                                                                                     </td>
                                                                                 <?php } else { ?>
@@ -990,6 +1062,15 @@
                                                                                                     <?php } ?>
                                                                                                 <?php } ?>
                                                                                             <?php } ?> 
+                                                                                            <?php if ($document['approval_process'] == 1) { ?>
+                                                                                                <button 
+                                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                                    data-user_type="<?=$user_type;?>"
+                                                                                                    data-user_sid="<?=$user_sid;?>"
+                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                    View Approver(s)
+                                                                                                </button>
+                                                                                            <?php } ?>
                                                                                         <?php } ?> 
                                                                                     </td>
                                                                                 <?php } ?>
@@ -1281,6 +1362,15 @@
                                                                             <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
                                                                         <?php } ?>
                                                                         <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
+                                                                        <?php } ?>
                                                                     <?php } ?>    
                                                                 </td>
                                                             </tr>
@@ -1474,6 +1564,15 @@
                                                                                         <?php } ?>
                                                                                     <?php } ?>
                                                                                 <?php } ?>
+                                                                                <?php if ($document['approval_process'] == 1) { ?>
+                                                                                    <button 
+                                                                                        data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                        data-user_type="<?=$user_type;?>"
+                                                                                        data-user_sid="<?=$user_sid;?>"
+                                                                                        class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                        View Approver(s)
+                                                                                    </button>
+                                                                                <?php } ?>
                                                                             <?php } ?>    
                                                                         </td>
                                                                     </tr>
@@ -1588,6 +1687,15 @@
                                                                                             <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                         <?php } ?>
                                                                                     <?php } ?>
+                                                                                <?php } ?>
+                                                                                <?php if ($document['approval_process'] == 1) { ?>
+                                                                                    <button 
+                                                                                        data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                        data-user_type="<?=$user_type;?>"
+                                                                                        data-user_sid="<?=$user_sid;?>"
+                                                                                        class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                        View Approver(s)
+                                                                                    </button>
                                                                                 <?php } ?>
                                                                             <?php } ?>  
                                                                         </td>
@@ -1936,6 +2044,15 @@
                                                                                                 <?php } ?>     
                                                                                             </a>
                                                                                         <?php } ?>
+                                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                                            <button 
+                                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                                data-user_type="<?=$user_type;?>"
+                                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                View Approver(s)
+                                                                                            </button>
+                                                                                        <?php } ?>
                                                                                     <?php } ?>
                                                                                 </td>
                                                                             </tr>
@@ -2150,6 +2267,15 @@
                                                                             <?php } else { ?>
                                                                                 <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                             <?php } ?>
+                                                                        <?php } ?>
+                                                                        <?php if ($document['approval_process'] == 1) { ?>
+                                                                            <button 
+                                                                                data-document_sid="<?=$document['document_sid'];?>" 
+                                                                                data-user_type="<?=$user_type;?>"
+                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                View Approver(s)
+                                                                            </button>
                                                                         <?php } ?>
                                                                     <?php } ?> 
                                                                 </td>

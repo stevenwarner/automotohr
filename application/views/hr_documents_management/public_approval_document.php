@@ -240,12 +240,12 @@
 		        	$("#jsSaveActionBtn").prop("disabled",true);
 		        	ml(true, 'jsApprovalStatusLoader');
 		        	//
-		        	var approvar_sid = '<?php echo $approver_sid; ?>';
+		        	var approver_reference = '<?php echo $approver_reference; ?>';
 			        var document_sid = '<?php echo $document_sid; ?>';
 			        var action_note = CKEDITOR.instances.approver_action_note.getData();
 			        //
 			        var form_data = new FormData();
-			        form_data.append('approver_sid', approvar_sid);
+			        form_data.append('approver_reference', approver_reference);
 			        form_data.append('approver_action', action);
 			        form_data.append('approver_note', action_note);
 			        form_data.append('document_sid', document_sid);
