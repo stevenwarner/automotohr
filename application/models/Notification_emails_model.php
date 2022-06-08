@@ -209,15 +209,29 @@
     }
 
     function get_all_documents_without_approvers($company_id) {
-        $this->db->select('documents_assigned.sid, documents_assigned.approval_flow_sid');
-        $this->db->where('documents_assigned.company_sid', $company_id);
-        $this->db->where('documents_assigned.has_approval_flow', 1);
-        $this->db->where('documents_assigned.status', 1);
-        $this->db->join('portal_document_assign_flow_employees','portal_document_assign_flow_employees.portal_document_assign_sid = documents_assigned.approval_flow_sid','left');
-        $records_arr = $this->db->get('documents_assigned')->result_array();
+        $this->db->select('sid, approval_flow_sid');
+        $this->db->where('company_sid', $company_id);
+        $this->db->where('has_approval_flow', 1);
+        $this->db->where('status', 1);
+        $records_obj = $this->db->get('documents_assigned');
+        $approver_documents = $records_obj->result_array();
+        $records_obj->free_result();
 
-        if (!empty($records_arr)) {
-            return $records_arr;
+        if (!empty($approver_documents)) {
+            foreach ($approver_documents as $dkey => $document) {
+                $this->db->select('sid');
+                $this->db->where('portal_document_assign_sid', $document["approval_flow_sid"]);
+                $this->db->where('status', 1);
+                $records_obj = $this->db->get('portal_document_assign_flow_employees');
+                $approvers = $records_obj->result_array();
+                $records_obj->free_result();
+                //
+                if (!empty($approvers)) {
+                    unset($approver_documents[$dkey]);
+                } 
+            }
+            //
+            return $approver_documents;
         } else {
             return array();
         }

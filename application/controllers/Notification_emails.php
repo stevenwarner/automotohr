@@ -2022,7 +2022,7 @@ class Notification_emails extends Public_Controller {
             $approver_email = "";
             //
             if(is_numeric($default_approver["employer_sid"]) && $default_approver["employer_sid"] > 0){
-                $approver_sid = $default_approver;
+                $approver_sid = $default_approver["employer_sid"];
                 //
                 $this->hr_documents_management_model->change_document_approval_status(
                     $document_sid, 
