@@ -26,6 +26,8 @@
             <a href="<?= base_url('jobs') ?>" class="site-btn bg-color">Back</a>
         </div>
 <?php } ?>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="main">
     <div class="container-fluid">
         <div class="row">					
@@ -139,12 +141,9 @@
                                         <label for="squared" class="hint-label">I have Read and Understand the <a href="javascript:viod(0);" data-toggle="modal" data-target="#terms_and_conditions">Terms & Conditions</a> and <a href="javascript:viod(0);" data-toggle="modal" data-target="#privay_policy">Privacy Policy</a><span class="staric">*</span></label>
                                         <input type="checkbox" required="required" name="check_box" value="1" id="squared">
                                     </li>
-
-                                    <li style="display: none;">
-                                        <?php echo isset( $this->form_validation->error_array()['g-recaptcha-response'] ) ? '<p>Captcha is required</p>' : ''; ?> 
-                                        <div id="jsGoogleCaptcha"></div> 
-                                    </li>
-                                    <li></li>
+                                    
+                                    <div class="g-recaptcha" data-sitekey="<?=getCreds('AHR')->GOOGLE_CAPTCHA_API_KEY_V2;?>"></div>
+                                                                  
                                     <li>
                                         <?php 
                                         $csrf = array(

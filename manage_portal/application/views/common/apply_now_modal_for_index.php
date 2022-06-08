@@ -46,6 +46,15 @@
         }
     }
 
+
+    var googleCaptchaToken = null;
+    
+    function googleCaptchaChecker(don) {
+        googleCaptchaToken = don;
+    }
+
+
+
     function validate_form() {
         youtube_check();
         $("#register-form").validate({
@@ -75,7 +84,7 @@
                 },
                 state: {
                     required: true,
-                },
+               },
                 country: {
                     required: true,
                 },
@@ -129,6 +138,10 @@
                 <?php }?>
             },
             submitHandler: function (form) {
+                if(googleCaptchaToken === null){
+                       $("#captchaerror").show();
+                        return;
+                    }
                 $('#mySubmitBtn').prop('disabled', true);
                 <?php if($is_regex === 1){ ?>
                 $("#register-form").append('<input type="hidden" name="txt_phonenumber" id="txt_phonenumber" value="+1'+($('#PhoneNumber').val().replace(/\D/g, ''))+'" />')
@@ -176,6 +189,7 @@
     }
 </script>
 
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog custom-popup" role="document">
         <div class="modal-content">
@@ -523,7 +537,13 @@
                             <li class="terms-conditions full-width">
                                 <label for="squared" class="hint-label">I have Read and Understand the <a target="_blank" href="javascript:viod(0);" data-toggle="modal" data-target="#terms_and_conditions_apply_now">Terms & Conditions</a> and <a href="javascript:viod(0);" data-toggle="modal" data-target="#privay_policy_apply_now">Privacy Policy</a><span class="staric">*</span></label>
                                 <input type="checkbox" required="required" name="check_box" value="1" id="squared">
-                            </li>    
+                            </li> 
+                            
+                            <li>
+                                <div class="g-recaptcha" data-callback="googleCaptchaChecker" data-sitekey="<?= getCreds('AHR')->GOOGLE_CAPTCHA_API_KEY_V2; ?>"></div>
+                                <label id='captchaerror' generated="true" class="error" style="display: none;">Empty/Invalid Captcha </label>
+                            </li>
+
                             <li>
                                 <input type="hidden" name='job_sid' id="job_sid" value="">
                                 <input type="hidden" name="questionnaire_sid" id="questionnaire_sid" value="">
