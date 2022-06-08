@@ -44,10 +44,6 @@
                                                                     if (isset($job['Location_State']) && $job['Location_State'] != NULL) {
                                                                         $job['Title'] .= ', '.db_get_state_name($job['Location_State'])['state_name'];
                                                                     }
-                                                                    // if (isset($job['Location_Country']) && $job['Location_Country'] != NULL) {
-                                                                    //     $country = db_get_country_name($job['Location_Country'])['country_name'];
-                                                                    // }
-                                                                    // $job['Title'] .= ', '.$country;
                                                                     //
                                                                     $title .= $job['Title'];
                                                                     $title .= ' ['.( $job['active'] == 1 ? 'Active' : 'Inactive').']';
@@ -454,6 +450,7 @@
                                 <?php foreach ($employer_jobs as $employer_job) { ?>
 
                                     <?php
+                                        $originalJobTitle = $employer_job['job_title'];
                                         // Add CSC to job title
                                         // $country = "United States";
                                         if (isset($employer_job['Location_City']) && $employer_job['Location_City'] != NULL) {
@@ -462,10 +459,6 @@
                                         if (isset($employer_job['Location_State']) && $employer_job['Location_State'] != NULL) {
                                             $employer_job['job_title'] .= ', '.db_get_state_name($employer_job['Location_State'])['state_name'];
                                         }
-                                        // if (isset($employer_job['Location_Country']) && $employer_job['Location_Country'] != NULL) {
-                                        //     $country = db_get_country_name($employer_job['Location_Country'])['country_name'];
-                                        // }
-                                        // $employer_job['job_title'] .= ', '.$country;
                                     ?>
 
                                     <article id="manual_row<?php echo $employer_job["sid"]; ?>" class="applicant-box <?php echo check_blue_panel_status() && $employer_job['is_onboarding'] == 1 ? 'onboarding' : '';?>">
@@ -473,7 +466,7 @@
                                             <div class="row date-bar">
                                                 <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1">
                                                     <label class="control control--checkbox">
-                                                        <input name="ej_check[]" data-applicant-name="<?php echo $employer_job["first_name"] . ' ' . $employer_job["last_name"]; ?>" data-job_title="<?php echo $employer_job['job_title']; ?>" type="checkbox" value="<?php echo $employer_job["applicant_sid"]; ?>" data-list = '<?php echo $employer_job['sid']?>' class="ej_checkbox applicant_sids">
+                                                        <input name="ej_check[]" data-applicant-name="<?php echo $employer_job["first_name"] . ' ' . $employer_job["last_name"]; ?>" data-job_title="<?php echo $originalJobTitle; ?>" type="checkbox" value="<?php echo $employer_job["applicant_sid"]; ?>" data-list = '<?php echo $employer_job['sid']?>' class="ej_checkbox applicant_sids">
                                                         <div class="control__indicator"></div>
                                                     </label>
                                                 </div>

@@ -330,7 +330,7 @@ class Send_manual_email extends Public_Controller {
 
         foreach ($applicant_ids as $applicant_id) {
             $applicant_data  = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
-            $job_title       = $job_titles[$i];
+            $job_title       = isset($job_titles[$i]) ? $job_titles[$i] : $applicant_data['job_title'];
             $applicant_fname = $applicant_data['first_name'];
             $applicant_lname = $applicant_data['last_name'];
             $body            = str_replace('{{company_name}}', $company_name, $repeat);

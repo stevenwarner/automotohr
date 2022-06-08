@@ -333,6 +333,31 @@ class logs_model extends CI_Model
         ->row_array();
     }
 
+    function get_all_active_companies() {
+        $result = $this->db->query("SELECT `sid`, `CompanyName` FROM `users` WHERE `parent_sid` = '0' AND `career_site_listings_only` = 0 AND `active` = '1' AND (`expiry_date` > '2016-04-20 13:26:27' OR `expiry_date` IS NULL)")->result_array();
+        if (count($result) > 0) {
+            //
+            return $result;
+        } else {
+            return array();
+        }
+    }
+
+    function get_company_module_status ($company_sid, $module_sid) {
+        $this->db->select('is_active');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('module_sid', $module_sid);
+        $record_obj = $this->db->get('company_modules');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr["is_active"];
+        } else {
+            return 0;
+        }
+    }
+
     function UpdateCompanyData($companyId, $oldStatus){
         //
         if(

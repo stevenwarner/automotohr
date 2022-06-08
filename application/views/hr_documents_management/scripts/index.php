@@ -345,7 +345,7 @@
 						placement: 'right'
 					});
 					//
-					$('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential ? true : false);
+					$('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == "1" ? true : false);
 					$('.jsModifyModalLoader').fadeOut(300);
 				}
 			);
@@ -477,7 +477,7 @@
 						}
 					// }
 
-					$('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential ? true : false);
+					$('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == '1' ? true : false);
 
 					$('.jsModifyModalLoader').fadeOut(300);
 

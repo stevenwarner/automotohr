@@ -311,8 +311,10 @@ class Hr_documents_management_model extends CI_Model
             portal_applicant_jobs_list.portal_job_applications_sid as sid
         ')
             ->where('portal_applicant_jobs_list.company_sid', $companySid)
+            ->group_start()
             ->where('portal_applicant_jobs_list.archived', 1)
             ->or_where('portal_job_applications.hired_status', 1)
+            ->group_end()
             ->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left')
             ->get('portal_applicant_jobs_list');
         //
@@ -322,7 +324,7 @@ class Hr_documents_management_model extends CI_Model
         return array_column($b, 'sid');
     }
 
-    function get_all_assigned_auth_documents($company_sid, $employer_sid)
+    function get_all_assigned_auth_documents($company_sid, $employer_sid, $ine = [], $ina= [])
     {
         $this->db->select('documents_assigned.*, authorized_document_assigned_manager.assigned_by_date');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
@@ -340,9 +342,9 @@ class Hr_documents_management_model extends CI_Model
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+            $inactive_employee_sid = $ine ? $ine : $this->getAllCompanyInactiveEmployee($company_sid);
             //
-            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+            $inactive_applicant_sid = $ina ? $ina : $this->getAllCompanyInactiveApplicant($company_sid);
             //
             foreach ($record_arr as $d_key => $aut_doc) {
                 if (in_array($aut_doc['user_sid'], $inactive_employee_sid) && $aut_doc['user_type'] == 'employee') {
@@ -358,7 +360,7 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
-    function get_all_paginate_auth_documents($company_sid, $employer_sid, $limit = null, $start = null)
+    function get_all_paginate_auth_documents($company_sid, $employer_sid, $limit = null, $start = null, $ine = [], $ina= [])
     {
         $this->db->select('documents_assigned.*, authorized_document_assigned_manager.assigned_by_date, authorized_document_assigned_manager.is_archive as  assign_archive, authorized_document_assigned_manager.archived_by_date, authorized_document_assigned_manager.archived_by');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
@@ -383,9 +385,9 @@ class Hr_documents_management_model extends CI_Model
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-            $inactive_employee_sid = $this->getAllCompanyInactiveEmployee($company_sid);
+            $inactive_employee_sid = $ine ? $ine : $this->getAllCompanyInactiveEmployee($company_sid);
             //
-            $inactive_applicant_sid = $this->getAllCompanyInactiveApplicant($company_sid);
+            $inactive_applicant_sid = $ina ? $ina : $this->getAllCompanyInactiveApplicant($company_sid);
             //
             foreach ($record_arr as $d_key => $aut_doc) {
                 if (in_array($aut_doc['user_sid'], $inactive_employee_sid) && $aut_doc['user_type'] == 'employee') {
@@ -566,7 +568,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.archive', $archive);
         //
-        if($ems == 1){
+        if ($ems == 1) {
             $this->db->where('documents_assigned.is_confidential', 0);
         }
 
@@ -1483,7 +1485,7 @@ class Hr_documents_management_model extends CI_Model
             }
         } else {
             return array();
-        }    
+        }
     }
 
     function check_w4_form_exist($user_type, $user_sid)
@@ -2232,7 +2234,7 @@ class Hr_documents_management_model extends CI_Model
             return $this->db->count_all_results();
         } else {
             return 0;
-        }    
+        }
     }
 
     function getEmployeesDetails($employees)
@@ -3106,6 +3108,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('company_sid', $company_sid);
         $this->db->where('archive', 0);
         $this->db->where('is_specific', 0);
+        $this->db->where('isdoctolibrary', 0);
 
         if ($pp_flag) {
             $this->db->group_start();
@@ -3883,13 +3886,12 @@ class Hr_documents_management_model extends CI_Model
         $record_obj->free_result();
 
         if (!empty($record_arr)) {
-
             $company_sid = $record_arr[0]['company_sid'];
             $user_sid = isset($record_arr[0]['user_sid']) ? $record_arr[0]['user_sid'] : '';
             $user_type = isset($record_arr[0]['user_type']) ? $record_arr[0]['user_type'] : '';
             $document_body = $record_arr[0]['document_description'];
 
-            if ($request_type == 'assigned' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history')) {
+            if ($request_type == 'assigned' && ($request_from == 'assigned_document' || $request_from == 'assigned_document_history' || $request_from == 'company_document')) {
 
                 if ($request_for == 'P&D') {
                     $contant_body = $this->replace_magic_tag_for_print_and_download($company_sid, $document_sid, $document_body);
@@ -4430,7 +4432,7 @@ class Hr_documents_management_model extends CI_Model
         if (!sizeof($departmentSids)) return array();
         //
         $a = $this->db
-            ->select('employee_sid')
+            ->select('employee_sid, team_sid')
             ->where_in('department_sid', $departmentSids)
             ->get('departments_employee_2_team');
         //
@@ -4439,8 +4441,37 @@ class Hr_documents_management_model extends CI_Model
         //
         $r = array();
         //
-        if (sizeof($b)) foreach ($b as $k => $v) $r[] = $v['employee_sid'];
+        if (sizeof($b)) {
+            //
+            $activeTeamsByIds = $this->getActiveTeamsIdsByIds(
+                array_column($b, 'team_sid')
+            );
+            //
+            if(!$activeTeamsByIds){
+                return $r;
+            }
+
+            foreach ($b as $k => $v) {
+                if(in_array($v['team_sid'], $activeTeamsByIds)){
+                    $r[] = $v['employee_sid'];
+                }
+            }
+        }
         return $r;
+    }
+
+    public function getActiveTeamsIdsByIds($teamIds){
+        $a = $this->db
+        ->select('sid')
+        ->where_in('sid', $teamIds)
+        ->where('status', 1)
+        ->where('is_deleted', 0)
+        ->get('departments_team_management');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b ? array_column($b, 'sid') : [];
     }
 
     function getEmployeesFromTeams($teamList, $companySid)
@@ -4514,45 +4545,43 @@ class Hr_documents_management_model extends CI_Model
                     'assigned_status' => 0
                 ));
             //
-            $this->sendEmailToAuthorizedManagers($v, $employerSid);    
+            $this->sendEmailToAuthorizedManagers($v, $assignedSid);    
                 
         }
     }
 
-    function sendEmailToAuthorizedManagers ($assignTo, $assignBy) {
+    function sendEmailToAuthorizedManagers ($managerId, $assignedDocumentId) {
+        //
         $session = $this->session->userdata('logged_in');
         $CompanySID = $session['company_detail']['sid'];
         $CompanyName = ucwords($session['company_detail']['CompanyName']);
         //
         $hf = message_header_footer(
-                $CompanySID,
-                $CompanyName
-            );
-        
-        $assign_to_info  = db_get_employee_profile($assignTo);
-        $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
-        $assign_to_email = $assign_to_info[0]['email'];
-
-        $assigned_by_info  = db_get_employee_profile($assignBy);
-        $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
-
+            $CompanySID,
+            $CompanyName
+        );
+        // Details of the manager
+        $managerInfo  = db_get_employee_profile($managerId);
+        $assign_to_name  = ucwords($managerInfo[0]['first_name'] . ' ' . $managerInfo[0]['last_name']);
+        $assign_to_email = $managerInfo[0]['email'];
+        // Get the assigned user details by assigned document id
+        $userDetails = $this->getAssignedDocumentUserDetailsById($assignedDocumentId);
         //Send Email
         $replacement_array = array();
         $replacement_array['baseurl']           = base_url();
         $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
         $replacement_array['company_name']  = $CompanyName;
-        $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-        $replacement_array['employee_name']  = ucwords($assigned_by_name);
+        $replacement_array['employee_name']  = ucwords($userDetails['first_name'].' '.$userDetails['last_name']);
+        $replacement_array['link']  = '<a style="background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . (base_url('authorized_document')) . '">Show Document</a>';
         //
         $user_extra_info = array();
-        $user_extra_info['user_sid'] = $assignTo;
+        $user_extra_info['user_sid'] = $managerId;
         $user_extra_info['user_type'] = "employee";
         //
-        if($this->isActiveUser($assignTo)){
+        if($this->isActiveUser($managerId) && $this->doSendEmail($managerId, 'employee', "HREMSM1")){
             //
             log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
         }
-        
     }
 
     //
@@ -5678,6 +5707,24 @@ class Hr_documents_management_model extends CI_Model
         if (
             !count($b)
         ) {
+            //
+            $key = 'man_d1';
+            //
+            if($documentType == 'direct_deposit'){
+                $key = 'man_d2';
+            } else if($documentType == 'drivers_license'){
+                $key = 'man_d3';
+            } else if($documentType == 'emergency_contacts'){
+                $key = 'man_d4';
+            } else if($documentType == 'occupational_license'){
+                $key = 'man_d5';
+            }
+            //
+            $isRequired = $this->getDefaultRequiredFlag(
+                $companySid, 
+                $key
+            );
+            //
             $ins = [
                 'company_sid' => $companySid,
                 'user_sid' => $userSid,
@@ -5685,7 +5732,8 @@ class Hr_documents_management_model extends CI_Model
                 'document_type' => $documentType,
                 'assigned_at' => date('Y-m-d H:i:s'),
                 'status' => 1,
-                'is_completed' => (int) $isCompleted
+                'is_completed' => (int) $isCompleted,
+                'is_required' => (int) $isRequired
             ];
 
             if ($assignedAt) {
@@ -5732,23 +5780,6 @@ class Hr_documents_management_model extends CI_Model
             }
             return $insertId;
         } else if (isset($b['status']) && $b['status'] == 0) {
-            // $this->db
-            // ->where('sid', $b['sid'])
-            // ->update('documents_assigned_general', [
-            //     'status' => 1,
-            //     'is_completed' => 0
-            // ]);
-            // //
-            // $this->db
-            // ->insert(
-            //     'documents_assigned_general_assigners', [
-            //         'documents_assigned_general_sid' => $b['sid'],
-            //         'user_sid' => $employerSid,
-            //         'user_type' => 'employee',
-            //         'assigned_from' => 'group',
-            //         'action' => 'assign'
-            //     ]
-            // );
             return 0;
         }
     }
@@ -6725,7 +6756,7 @@ class Hr_documents_management_model extends CI_Model
 
     function getAllAuthorizedAssignManagers($company_sid, $document_sid)
     {
-        $this->db->select('users.first_name, users.last_name, users.email');
+        $this->db->select('users.first_name, users.last_name, users.email, users.sid');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
         $this->db->where('authorized_document_assigned_manager.document_assigned_sid', $document_sid);
         $this->db->join('users', 'users.sid = authorized_document_assigned_manager.assigned_to_sid', 'inner');
@@ -7784,7 +7815,30 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
+    /**
+     * Get all the active documents belongs
+     * to library
+     * 
+     * @author Nisar [05-11-2022]
+     * @param number $company_sid
+     * @return array
+     */
+    function get_all_paginate_library_documents($company_sid)
+    {
+        $this->db->select('document_title,document_type,sid,sid as document_sid');
+        $this->db->where('documents_management.company_sid', $company_sid);
+        $this->db->where('documents_management.isdoctolibrary', 1);
+        $this->db->where('documents_management.archive', 0);
+        $this->db->order_by('documents_management.sid', 'DESC');
+        //
+        $record_obj = $this->db->get('documents_management');
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+        //
+        return !$record_arr ? [] : $record_arr;
+    }
 
+    // Check and Assigne  groups
     //----------  Check and Assigne  groups
     function checkAndAssignGroups($company_sid, $user_type, $user_sid, $pp_flag, $employer_sid)
     {
@@ -7962,6 +8016,89 @@ class Hr_documents_management_model extends CI_Model
     }
 
     /**
+     * Get the assigned document
+     * 
+     * @author Nisar [05-11-2022]
+     * @param number $document_sid
+     * @param number $userId
+     * @param string $userType [applicant|employee]
+     * @return array
+     */
+    function is_library_document_exist($document_sid, $userId, $userType = 'employee')
+    {
+        $this->db->where('document_sid', $document_sid);
+        $this->db->where('user_sid', $userId);
+        $this->db->where('user_type', $userType);
+        //
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        return !$record_arr ? [] : $record_arr;
+    }
+
+    /**
+     * Get the original document by id
+     * 
+     * @author Nisar [05-11-2022]
+     * @param number $sid
+     * @return array
+     */
+    function get_documents_assigned($sid)
+    {
+        //
+        $record_obj = $this->db
+            ->where('sid', $sid)
+            ->get('documents_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        return !$record_arr ? [] : $record_arr;
+    }
+
+    /**
+     * Assigns a document
+     * 
+     * @author Nisar [05-11-2022]
+     * @param array $data_to_insert
+     * @return number
+     */
+    function insert_documents_assigned($data_to_insert)
+    {
+        $this->db->insert('documents_assigned', $data_to_insert);
+        return $this->db->insert_id();
+    }
+
+    // Change Docuemnt  visibility on document center
+    function change_document_visible($sid, $data_to_update)
+    {
+        $this->db->where('sid', $sid);
+        $this->db->update('documents_assigned', $data_to_update);
+    }
+
+
+    function get_preview_document($type, $document_sid)
+    {
+        if ($type == "company") {
+            $this->db->select('sid, document_title, document_type, document_description, uploaded_document_s3_name as document_s3_name');
+        } else {
+            $this->db->select('sid, document_title, document_type, document_description, document_s3_name, uploaded_file, form_input_data, submitted_description, authorized_signature, authorized_signature_date, signature_base64, signature_initial, signature_timestamp');
+        }
+        
+        $this->db->where('sid', $document_sid);
+
+        $record_obj = $this->db->get($type == "company" ? "documents_management" : "documents_assigned");
+        $records_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
+    /**
      * Check the email last sent date time
      * 
      * @param number $userId
@@ -8059,5 +8196,449 @@ class Hr_documents_management_model extends CI_Model
             'active' => 1
         ])
         ->count_all_results('users');
+    }
+
+
+    /**
+     * Update the general document required flag
+     * 
+     * @param number $documentId
+     * @param string $documentType
+     * @param number $userId
+     * @param string $userType
+     * @param string $isRequired
+     */
+    public function makeGeneralDocumentRequired(
+        $documentId,
+        $documentType,
+        $userId,
+        $userType,
+        $isRequired
+    ){
+        //
+        $whereArray = [
+            'user_sid' => $userId,
+            'user_type' => $userType,
+            'document_type' => $documentType,
+            'sid' => $documentId
+        ];
+        //
+        if(
+            $this->db->where($whereArray)->count_all_results('documents_assigned_general')
+        ) {
+            $this->db->where($whereArray)->update('documents_assigned_general', [
+                'is_required' => ($isRequired == 'on' ? 1 : 0)
+            ]);
+        }
+    }
+
+    /**
+     * Get a column from portal
+     * 
+     * @param number $companyId
+     * @param string $companyId
+     * 
+     * @return array|number
+     */
+    public function getDefaultRequiredFlag(
+        $companyId,
+        $column
+    ){
+        //
+        $q = 
+        $this->db
+        ->select($column)
+        ->where('user_sid', $companyId)
+        ->get('portal_employer');
+        //
+        $d = $q->row_array();
+        //
+        $q = $q->free_result();
+        //
+        return $d ? $d[$column] : 0;
+    }
+
+    /**
+     * 
+     */
+    public function getVerificationDocumentsForLibrary(
+        $companyId,
+        $userId,
+        $userType = 'employee'
+    ){
+        $r = [];
+        // Check for I9 permission
+        if($this->getDefaultRequiredFlag($companyId, 'dl_i9')){
+            // 
+            $r['I9'] = [
+                'id' => 0,
+                'status' => 0,
+                'assigned_on' => '',
+                'completed_on' => ''
+            ];
+            // Check if I9 is assigned
+            $form = $this->getData('applicant_i9form', [
+                'company_sid' => $companyId,
+                'user_sid' => $userId,
+                'user_type' => $userType
+            ], [
+                'sid',
+                'status',
+                'user_consent',
+                'sent_date',
+                'employer_filled_date'
+            ], true);
+            //
+            if($form){
+                $r['I9']['id'] = $form['sid'];
+                $r['I9']['status'] = $form['user_consent'] == 1 ? 2 : ($form['status'] == 1 ?  1 : 0);
+                $r['I9']['assigned_on'] = $form['sent_date'];
+                $r['I9']['completed_on'] = $form['employer_filled_date'];
+            }
+        }
+        // Check for W9 permission
+        if($this->getDefaultRequiredFlag($companyId, 'dl_w9')){
+            // 
+            $r['W9'] = [
+                'id' => 0,
+                'status' => 0,
+                'assigned_on' => '',
+                'completed_on' => ''
+            ];
+            // Check if I9 is assigned
+            $form = $this->getData('applicant_w9form', [
+                'company_sid' => $companyId,
+                'user_sid' => $userId,
+                'user_type' => $userType
+            ], [
+                'sid',
+                'status',
+                'user_consent',
+                'sent_date',
+                'signature_timestamp'
+            ], true);
+            //
+            if($form){
+                $r['W9']['id'] = $form['sid'];
+                $r['W9']['status'] = $form['user_consent'] == 1 ? 2 : ($form['status'] == 1 ?  1 : 0);
+                $r['W9']['assigned_on'] = $form['sent_date'];
+                $r['W9']['completed_on'] = $form['signature_timestamp'];
+            }
+        }
+        // Check for W4 permission
+        if($this->getDefaultRequiredFlag($companyId, 'dl_w4')){
+            // 
+            $r['W4'] = [
+                'id' => 0,
+                'status' => 0,
+                'assigned_on' => '',
+                'completed_on' => ''
+            ];
+            // Check if I9 is assigned
+            $form = $this->getData('form_w4_original', [
+                'company_sid' => $companyId,
+                'employer_sid' => $userId,
+                'user_type' => $userType
+            ], [
+                'sid',
+                'status',
+                'user_consent',
+                'sent_date',
+                'signature_timestamp'
+            ], true);
+            //
+            if($form){
+                $r['W4']['id'] = $form['sid'];
+                $r['W4']['status'] = $form['user_consent'] == 1 ? 2 : ($form['status'] == 1 ?  1 : 0);
+                $r['W4']['assigned_on'] = $form['sent_date'];
+                $r['W4']['completed_on'] = $form['signature_timestamp'];
+            }
+        }
+        //
+        return $r;
+    }
+
+
+    /**
+     * Get a tables data
+     * 
+     * @param string  $table
+     * @param array   $where
+     * @param array   $columns
+     * @param boolean $single
+     * 
+     * @return array
+     */
+    public function getData(
+        $table,
+        $where,
+        $columns,
+        $single = false
+    ){
+        //
+        $q = $this->db->select($columns)
+        ->where($where)
+        ->get($table);
+        //
+        $d = $single ? $q->row_array() : $q->result_array();
+        //
+        $q = $q->free_result();
+        //
+        return $d;
+    }
+
+    /**
+     * Handled I9 assignment process
+     * 
+     * @param number $companyId
+     * @param number $userId
+     * @param string $userType
+     * 
+     * @return number
+     */
+    public function handleI9Assign(
+        $companyId,
+        $userId,
+        $userType
+    ){
+        //
+        $whereArray = [
+            'company_sid' => $companyId,
+            'user_sid' => $userId,
+            'user_type' => $userType
+        ];
+        //
+        $form = $this->getData('applicant_i9form', $whereArray, [
+            'sid',
+            'status',
+            'user_consent'
+        ], true);
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        // Needs to add a fresh record
+        if(!$form){
+            $ins = array();
+            $ins['user_sid'] = $userId;
+            $ins['user_type'] = $userType;
+            $ins['company_sid'] = $companyId;
+            $ins['status'] = $ins['sent_status'] = 1;
+            $ins['sent_date'] = $dateTime;
+            //
+            $this->db->insert('applicant_i9form', $ins);
+            //
+            return $this->db->insert_id();
+        }
+        // Means the user has completed and the document is assigned
+        if($form['status'] == 1 && $form['user_consent']){
+            // Fetch the old doc and move to history
+            $fullForm = $this->getData('applicant_i9form', $whereArray, [
+                '*'
+            ], true);
+            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            //
+            unset($fullForm['sid']);
+            //
+            $this->i9_forms_history($fullForm);
+        }
+        // Flush the data
+        $upd = array();
+        $upd["status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_date"] = $dateTime;
+        $upd["section1_emp_signature"] = NULL;
+        $upd["section1_emp_signature_init"] = NULL;
+        $upd["section1_emp_signature_ip_address"] = NULL;
+        $upd["section1_emp_signature_user_agent"] = NULL;
+        $upd["section1_preparer_signature"] = NULL;
+        $upd["section1_preparer_signature_init"] = NULL;
+        $upd["section1_preparer_signature_ip_address"] = NULL;
+        $upd["section1_preparer_signature_user_agent"] = NULL;
+        $upd["section2_sig_emp_auth_rep"] = NULL;
+        $upd["section3_emp_sign"] = NULL;
+        $upd["employer_flag"] = NULL;
+        $upd["user_consent"] = NULL;
+        //
+        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        //
+        return $form['sid'];
+    }
+
+    /**
+     * Handled W9 assignment process
+     * 
+     * @param number $companyId
+     * @param number $userId
+     * @param string $userType
+     * 
+     * @return number
+     */
+    public function handleW9Assign(
+        $companyId,
+        $userId,
+        $userType
+    ){
+        //
+        $whereArray = [
+            'company_sid' => $companyId,
+            'user_sid' => $userId,
+            'user_type' => $userType
+        ];
+        //
+        $form = $this->getData('applicant_w9form', $whereArray, [
+            'sid',
+            'status',
+            'user_consent'
+        ], true);
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        // Needs to add a fresh record
+        if(!$form){
+            $ins = array();
+            $ins['user_sid'] = $userId;
+            $ins['user_type'] = $userType;
+            $ins['company_sid'] = $companyId;
+            $ins['status'] = $ins['sent_status'] = 1;
+            $ins['sent_date'] = $dateTime;
+            //
+            $this->db->insert('applicant_w9form', $ins);
+            //
+            return $this->db->insert_id();
+        }
+        // Means the user has completed and the document is assigned
+        if($form['status'] == 1 && $form['user_consent']){
+            // Fetch the old doc and move to history
+            $fullForm = $this->getData('applicant_w9form', $whereArray, [
+                '*'
+            ], true);
+            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            //
+            unset($fullForm['sid']);
+            //
+            $this->w9_forms_history($fullForm);
+        }
+        // Flush the data
+        $upd = array();
+        $upd["status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_date"] = $dateTime;
+        $upd["user_consent"] = NULL;
+        $upd['user_agent'] = NULL;
+        $upd['active_signature'] = NULL;
+        $upd['signature'] = NULL;
+        $upd['user_consent'] = NULL;
+        $upd['signature_timestamp'] = NULL;
+        $upd['signature_email_address'] = NULL;
+        $upd['signature_bas64_image'] = NULL;
+        $upd['init_signature_bas64_image'] = NULL;
+        $upd['signature_ip_address'] = NULL;
+        $upd['signature_user_agent'] = NULL;
+        //
+        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        //
+        return $form['sid'];
+    }
+
+    /**
+     * Handled W4 assignment process
+     * 
+     * @param number $companyId
+     * @param number $userId
+     * @param string $userType
+     * 
+     * @return number
+     */
+    public function handleW4Assign(
+        $companyId,
+        $userId,
+        $userType
+    ){
+        //
+        $whereArray = [
+            'company_sid' => $companyId,
+            'employer_sid' => $userId,
+            'user_type' => $userType
+        ];
+        //
+        $form = $this->getData('form_w4_original', $whereArray, [
+            'sid',
+            'status',
+            'user_consent'
+        ], true);
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        // Needs to add a fresh record
+        if(!$form){
+            $ins = array();
+            $ins['employer_sid'] = $userId;
+            $ins['user_type'] = $userType;
+            $ins['company_sid'] = $companyId;
+            $ins['status'] = $ins['sent_status'] = 1;
+            $ins['sent_date'] = $dateTime;
+            //
+            $this->db->insert('form_w4_original', $ins);
+            //
+            return $this->db->insert_id();
+        }
+        // Means the user has completed and the document is assigned
+        if($form['status'] == 1 && $form['user_consent']){
+            // Fetch the old doc and move to history
+            $fullForm = $this->getData('form_w4_original', $whereArray, [
+                '*'
+            ], true);
+            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            //
+            unset($fullForm['sid']);
+            //
+            $this->w4_forms_history($fullForm);
+        }
+        // Flush the data
+        $upd = array();
+        $upd["status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["sent_date"] = $dateTime;
+        $upd["user_consent"] = NULL;
+        $upd['signature_timestamp']        = NULL;
+        $upd['signature_email_address']    = NULL;
+        $upd['signature_bas64_image']      = NULL;
+        $upd['init_signature_bas64_image'] = NULL;
+        $upd['ip_address']                 = NULL;
+        $upd['user_agent']                 = NULL;
+        //
+        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        //
+        return $form['sid'];
+    }
+
+    /**
+     * Get the user details of assigned
+     * document
+     * 
+     * @author  Mubashir Ahmed
+     * @version 1.0   
+     * @date    06/02/2022
+     * 
+     * @param number $sid
+     * @return array
+     */
+    public function getAssignedDocumentUserDetailsById($sid){
+        //
+        $q = $this->db
+        ->select('user_sid, user_type')
+        ->where('sid', $sid)
+        ->get('documents_assigned');
+        //
+        $d = $q->row_array();
+        //
+        if(!$d){
+            return [];
+        }
+        //
+        $q = $this->db
+        ->select('first_name, last_name')
+        ->where('sid', $d['user_sid'])
+        ->get($d['user_type'] == 'employee' ? 'users' : 'portal_job_applications')
+        ->row_array();
+        //
+        return $q ? $q : [];
     }
 }

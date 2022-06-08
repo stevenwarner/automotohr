@@ -39,6 +39,7 @@
                                 <th>Document Name</th>
                                 <th class="text-center">Assigned On</th>
                                 <th class="text-center">Completion Status</th>
+                                <th class="text-center">Is Required?</th>
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -175,6 +176,13 @@
             'emergency_contacts': `emergency_contacts/<?=$user_type;?>/<?=$user_sid;?>`,
             'dependents': `dependants/<?=$user_type;?>/<?=$user_sid;?>`
         };
+        var defaultRequires = <?=json_encode([
+            'man_d1' => $session['portal_detail']['man_d1'],
+            'man_d2' => $session['portal_detail']['man_d2'],
+            'man_d3' => $session['portal_detail']['man_d3'],
+            'man_d4' => $session['portal_detail']['man_d4'],
+            'man_d5' => $session['portal_detail']['man_d5']
+        ])?>;
         //
         let _this = null;
         //
@@ -201,6 +209,36 @@
         setTimeout(() => {
             getGeneralDocumentStatus();
         }, 1000);
+
+
+        //
+        $(document).on(
+            'click',
+            '.jsRequiredCheckbox',
+            function(event){
+                //
+                var obj = {
+                    'document_type': $(this).closest('tr').data('id'),
+                    'document_id': $(this).closest('tr').data('key'),
+                    'required': $(this).prop('checked') === true ? 'on' : 'off'
+                };
+                //
+                nl();
+                //
+                obj.action = "mark_general_document_mandatory";
+                obj.user_sid = <?=$user_sid;?>;
+                obj.user_type = "<?=$user_type;?>";
+                //
+                $.post(
+                    "<?=base_url("hr_documents_management/handler");?>",
+                    obj,
+                    (resp) => {
+                        //
+                        nl(false);
+                    }
+                );
+            }
+        );
 
         //
         $(document).on('click', '.jsGeneralDocumentView', function(e) {
@@ -390,61 +428,10 @@
                     alertify.alert(
                         'SUCCESS!',
                         resp.Response,
-                        () => {}
+                        () => {
+                            getGeneralDocumentStatus();
+                        }
                     );
-                    //
-                    target
-                    .text('Revoke')
-                    .prop('title', 'Revoke this document')
-                    .data('type', 'revoke')
-                    .removeClass('btn-success')
-                    .removeClass('btn-warning')
-                    .addClass('btn-danger');
-                    //
-                    target
-                    .closest('tr')
-                    .find('img')
-                    .prop('src', "<?=base_url('assets/manage_admin/images');?>/off.gif")
-                    .prop('title', 'Pending');
-                    //
-                    target
-                    .closest('tr')
-                    .find('.jsAssignedOn')
-                    .html(`<i class="fa fa-check fa-2x text-success"></i> <br />${moment(resp.Date).format('MMM Do YYYY, ddd H:m:s')}`);
-                    //
-                    let o = {
-                        c: $(`.jsGeneralRowCompleted${obj.documentType}`).length,
-                        n: $(`.jsGeneralRowNotCompleted${obj.documentType}`).length
-                    };
-                    //
-                    $('.js-ncd').text( parseInt($('.js-ncd').text()) - o.n );
-                    $('.js-cd').text( parseInt($('.js-cd').text()) - o.c );
-                    //
-                    //
-                    $(`.jsGeneralRowCompleted${obj.documentType}`).remove();
-                    $(`.jsGeneralRowNotCompleted${obj.documentType}`).remove();
-                    // //
-                    // let row = `
-                    // <tr class="jsGeneralRowCompleted${obj.documentType}">
-                    //     <td>
-                    //         ${obj.documentType.replace(/_/, ' ').ucwords()} <br />
-                    //         <strong>Assigned on: </strong> ${moment(resp.Date).format('MMM Do YYYY, ddd H:m:s')}
-                    //     </td>
-                    //     <td>
-                    //         <a class="btn btn-success btn-sm btn-block" href="<?=base_url();?>/${typeToUrl[obj.documentType]}">View Doc</a>
-                    //         </td>
-                    // </tr>
-                    // `;
-                    // //
-                    // setNotCompletedView(row, 1);
-                    // //
-                    // if( $('#collapse_general_documents_notcompleted tbody tr').length == 0 ){
-                    //     $('#collapse_general_documents_notcompleted').closest('.jsGDR').remove();
-                    // }
-                    // //
-                    // if( $('#collapse_general_documents_completed tbody tr').length == 0 ){
-                    //     $('#collapse_general_documents_completed').closest('.jsGDR').remove();
-                    // }
                 }
             );
         }
@@ -482,52 +469,10 @@
                     alertify.alert(
                         'SUCCESS!',
                         resp.Response,
-                        () => {}
+                        () => {
+                            getGeneralDocumentStatus();
+                        }
                     );
-                    //
-                    target
-                    .text('Reassign')
-                    .prop('title', 'Assign this document')
-                    .data('type', 'assign')
-                    .removeClass('btn-danger')
-                    .addClass('btn-warning');
-                    //
-                    target
-                    .closest('tr')
-                    .find('img')
-                    .prop('src', "<?=base_url('assets/manage_admin/images');?>/off.gif")
-                    .prop('title', 'Pending');
-                    //
-                    target
-                    .closest('tr')
-                    .find('img')
-                    .parent()
-                    .find('span')
-                    .remove();
-                    //
-                    target
-                    .closest('tr')
-                    .find('.jsAssignedOn')
-                    .html(`<i class="fa fa-close fa-2x text-danger"></i>`);
-                    //
-                    let o = {
-                        c: $(`.jsGeneralRowCompleted${obj.documentType}`).length,
-                        n: $(`.jsGeneralRowNotCompleted${obj.documentType}`).length
-                    };
-                    //
-                    $('.js-ncd').text( parseInt($('.js-ncd').text()) - o.n );
-                    $('.js-cd').text( parseInt($('.js-cd').text()) - o.c );
-                    //
-                    $(`tr.jsGeneralRowCompleted${obj.documentType}`).remove();
-                    $(`tr.jsGeneralRowNotCompleted${obj.documentType}`).remove();
-                    //
-                    if( $('#collapse_general_documents_notcompleted tbody tr').length == 0 ){
-                        $('#collapse_general_documents_notcompleted').closest('.jsGDR').remove();
-                    }
-                    //
-                    if( $('#collapse_general_documents_completed tbody tr').length == 0 ){
-                        $('#collapse_general_documents_completed').closest('.jsGDR').remove();
-                    }
                 }
             );
         }
@@ -626,6 +571,12 @@
                             <span>${v.is_completed == 1 ? moment(v.updated_at).format('MMM Do YYYY, ddd H:m:s') : ''}</span>
                         </td>
                         <td class="text-center">
+                            <label class="control control--checkbox">
+                                <input type="checkbox" name="jsRequiredCheckbox${v.sid}" class="${v.sid != 0 ? 'jsRequiredCheckbox' : ''}" ${v.sid == 0 ? "disabled" : ""} ${v.is_required == 1 ? 'checked' : ''} />
+                                <div class="control__indicator"></div>
+                            </label>
+                        </td>
+                        <td class="text-center">
                             <button class="btn ${btnClass} jsGeneralDocumentAssign" data-type="${btnType}" title="${btnType.ucwords()} this document">${btnText}</button>
                             ${v.sid == 0 ? '' : '<button class="btn btn-success jsGeneralDocumentHistory" title="Assign/Revoke history">History</button>'}
                             ${v.is_completed == 0 ? '' : '<button class="btn btn-success jsGeneralDocumentView" title="View this document">View</button>'}
@@ -642,7 +593,7 @@
                     completedDocs += `
                         <tr class="jsGeneralRowCompleted${v.document_type}">
                             <td class="">
-                                ${v.document_type.replace(/_/, ' ').ucwords()} <br />
+                                ${v.document_type.replace(/_/, ' ').ucwords()} ${v.is_required == 1 ? '<i class="fa fa-asterisk text-danger"></i>' : ''} <br />
                                 <strong>Assigned on: </strong> ${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')} <br />
                                 <strong>Completed on: </strong> ${moment(v.updated_at).format('MMM Do YYYY, ddd H:m:s')}
                             </td>
@@ -658,7 +609,7 @@
                     notCompletedDocs += `
                         <tr class="jsGeneralRowNotCompleted${v.document_type}">
                             <td class="">
-                                ${v.document_type.replace(/_/, ' ').ucwords()} <br />
+                                ${v.document_type.replace(/_/, ' ').ucwords()} ${v.is_required == 1 ? '<i class="fa fa-asterisk text-danger"></i>' : ''}<br />
                                 <strong>Assigned on: </strong> ${moment(v.assigned_at).format('MMM Do YYYY, ddd H:m:s')}
                             </td>
                             <td class="text-center">
@@ -805,8 +756,6 @@
             $('.js-ncd').text(
                 parseInt($('.js-ncd').text()) + cc
             );
-            //
-            $('').trigger('click');
         }
     });
 </script>

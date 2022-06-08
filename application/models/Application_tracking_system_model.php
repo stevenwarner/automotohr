@@ -1287,26 +1287,11 @@ class Application_tracking_system_model extends CI_Model {
             $position = strpos($keywords, '@');
 
             if ($position === false) { // not an email
-                $exp = explode(' ', $keywords);
-
-                if (sizeof($exp) > 1) { // there are more than 1 keywords
-                    $firstname = $exp[0];
-                    $lastname = '';
-
-                    for ($i = 1; $i < sizeof($exp); $i++) {
-                        $lastname = $lastname . $exp[$i] . ' ';
-                    }
-
-                    $this->db->group_start();
-                    $this->db->like('portal_job_applications.first_name', trim($firstname));
-                    $this->db->like('portal_job_applications.last_name', trim($lastname));
-                    $this->db->group_end();
-                } else { // there is only one keyword
-                    $this->db->group_start();
-                    $this->db->like('portal_job_applications.first_name', trim($keywords));
-                    $this->db->or_like('portal_job_applications.last_name', trim($keywords));
-                    $this->db->group_end();
-                }
+                //
+                $this->db->group_start();
+                $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ','',$keywords));
+                $this->db->group_end();
+               
             } else {   // this is an email
                 $this->db->group_start();
                 $this->db->like('portal_job_applications.email', trim($keywords));

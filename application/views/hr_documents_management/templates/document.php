@@ -482,6 +482,71 @@
                                                     </div>
                                                 </div>
 
+                                                <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
+                                                    <div class="row">
+                                                        <div class="col-xs-12">
+                                                            <div class="hr-box">
+                                                                <div class="hr-box-header">
+                                                                    <strong>Document Library?</strong>
+                                                                </div>
+                                                                <div class="hr-innerpadding">
+                                                                    <div class="row">
+                                                                        <div class="col-xs-12">
+                                                                            <p class="text-danger"><strong><em>If marked "Yes", this document will appear in the Employee Document library and allow Employees to initiate this document themselves.</em></strong></p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-xs-12">
+                                                                            <p>Add this document to the Employee library?</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col-xs-12">
+                                                                            <label class="control control--radio font-normal">
+                                                                                <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="0" checked="true" />
+                                                                                No &nbsp;
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                            <label class="control control--radio font-normal">
+                                                                                <input class="disable_doc_checkbox" name="isdoctolibrary" type="radio" value="1"  />
+                                                                                Yes &nbsp;
+                                                                                <div class="control__indicator"></div>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <?php if (false) { ?>
+                                                                        <hr>
+                                                                        <div class="row">
+                                                                            <div class="col-xs-12">
+                                                                                <p class="text-danger"><strong><em>If "No", the document will not visible to employee on document center.</em></strong></p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-xs-12">
+                                                                                <p>Is the document visible to employee on document center?</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-xs-12">
+                                                                                <label class="control control--radio font-normal">
+                                                                                <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="0" checked="true" />
+                                                                                    No &nbsp;
+                                                                                    <div class="control__indicator"></div>
+                                                                                </label>
+                                                                                <label class="control control--radio font-normal">
+                                                                                    <input class="disable_doc_checkbox" name="visibletodocumentcenter" type="radio" value="1" />
+                                                                                    Yes &nbsp;
+                                                                                    <div class="control__indicator"></div>
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    <?php } ?>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?>    
+
                                                 <!-- Send email -->
                                                 <div class="row hidden">
                                                     <div class="col-xs-12">
@@ -729,7 +794,6 @@
         resetView();
 
         // Helpers
-
         //
         function ShowUploadedFilePreview(e){
             e.preventDefault();
@@ -912,7 +976,6 @@
         }
 
         // 
-
         $('input[name="assign-in-days"]').val(0);
         $('input[name="assign-in-months"]').val(0);
         $('.js-type').hide();

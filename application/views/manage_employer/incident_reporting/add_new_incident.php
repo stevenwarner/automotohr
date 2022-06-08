@@ -10,13 +10,16 @@ $next_btn = '';
 $center_btn = '';
 $back_btn = 'Dashboard';
 
+//
+$currentEmployeeId = $session['employer_detail']['sid'];
+
 if (isset($applicant)) {
     $company_sid = $applicant['employer_sid'];
     $users_type = 'applicant';
     $users_sid = $applicant['sid'];
     $back_url = base_url('onboarding/general_information/' . $unique_sid);
     $next_btn = '<a href="javascript:;" class="btn btn-success btn-block" id="go_next" onclick="func_save_e_signature();"> Save And Proceed Next <i class="fa fa-angle-right"></i></a>';
-    $center_btn = '<a href="'.base_url('onboarding/documents/' . $unique_sid).'" class="btn btn-warning btn-block"> Bypass This Step <i class="fa fa-angle-right"></i></a>';
+    $center_btn = '<a href="' . base_url('onboarding/documents/' . $unique_sid) . '" class="btn btn-warning btn-block"> Bypass This Step <i class="fa fa-angle-right"></i></a>';
     $back_btn = 'Review Previous Step';
     $save_post_url = current_url();
     $first_name = $applicant['first_name'];
@@ -44,13 +47,14 @@ if (isset($applicant)) {
                         <a href="<?php echo base_url('incident_reporting_system/list_incidents') ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-heartbeat"></i> Reported Incidents</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo base_url('incident_reporting_system/assigned_incidents'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-stethoscope "></i> Assigned  Incidents</a></a>
+                        <a href="<?php echo base_url('incident_reporting_system/assigned_incidents'); ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-stethoscope "></i> Assigned Incidents</a></a>
                     </div>
                     <!-- <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php //echo base_url('incident_reporting_system/view_general_guide')?>" class="btn btn-info btn-block mb-2"><i class="fa fa-book"></i> Incident Guide </a>
+                        <a href="<?php //echo base_url('incident_reporting_system/view_general_guide')
+                                    ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-book"></i> Incident Guide </a>
                     </div> -->
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a href="<?php echo base_url('incident_reporting_system/safety_check_list')?>" class="btn btn-info btn-block mb-2"><i class="fa fa-book"></i> Safety Check List </a>
+                        <a href="<?php echo base_url('incident_reporting_system/safety_check_list') ?>" class="btn btn-info btn-block mb-2"><i class="fa fa-book"></i> Safety Check List </a>
                     </div>
                 </div>
             </div>
@@ -59,9 +63,37 @@ if (isset($applicant)) {
                     <h2 class="section-ttile"><?php echo $title; ?></h2>
                 </div>
                 <div class="form-group">
-                    <h3 class="text-blue">You are about to report a "<?php echo ucwords($report_type);?>" Report</h3>
+                    <h3 class="text-blue">You are about to report a "<?php echo ucwords($report_type); ?>" Report</h3>
                 </div>
+
                 <form method="post" action="" id="inc-form" enctype="multipart/form-data" autocomplete="off">
+
+                    <div class="create-job-wrap">
+                        <div class="universal-form-style-v2">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>Select Employee:</label>
+                                    <p class="text-danger">Select employee on whose behalf you are creating an incident. Ignore it, if the incident is yours.</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="field-row">
+                                        <?php if (sizeof($employees_new) > 0) { ?>
+                                            <select class='invoice-fields' name="incident_employee_id" id="incident_employee_id">
+                                                <?php foreach ($employees_new as $employee) { ?>
+                                                    <option value="<?= $employee['sid']; ?>" <?= $employee['sid'] == $currentEmployeeId ? 'selected' : ''; ?> data-name="<?= $employee['first_name'] . ' ' . $employee['last_name']; ?>"><?= remakeEmployeeName($employee); ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        <?php } else { ?>
+                                            <p>No Employee Found.</p>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-wrp">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -81,77 +113,77 @@ if (isset($applicant)) {
                             <?php foreach ($questions as $question) { ?>
                                 <?php echo '<div class="row"><div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"><div class="form-group autoheight">'; ?>
 
-                                    <?php if ($question['question_type'] == 'textarea') { ?>
-                                        <label class="auto-height"><?php echo strip_tags($question['label']); ?>: <span class="required required_<?php echo $question['related_to_question'];?>"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
-                                        <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                        <textarea id="text_<?php echo $question['id']; ?>" class="form-control textarea related_<?php echo $question['related_to_question']; ?>" data-require="<?php echo $question['is_required'];?>" data-attr="<?php echo $question['related_to_question'];?>" name="text_<?php echo $question['id']; ?>" rows="8" cols="60" <?php echo $question['is_required'] ? "required" : "" ?>><?php echo set_value('text_' . $question['id']); ?></textarea>
-                                    <?php } elseif ($question['question_type'] == 'text') { ?>
-                                        <label class="auto-height"><?php echo strip_tags($question['label']) ?> : <span class="required required_<?php echo $question['related_to_question'];?>"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
-                                        <?php
-                                            $required = $question['is_required'] ? "required" : "";
-                                            echo form_input('text_' . $question['id'], set_value('text_' . $question['id']), 'class="form-control related_'.$question['related_to_question']. '" id="'. $question['id'] .'" data-require="'.$question['is_required'].'" '. $required . ' data-attr="'.$question['related_to_question'].'"');
-                                        ?>
-                                    <?php } elseif ($question['question_type'] == 'time') { ?>
-                                        <label class="auto-height"><?php echo strip_tags($question['label']) ?> : <span class="required required_<?php echo $question['related_to_question'];?>"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
-                                        <?php $required = $question['is_required'] ? "required" : ""; ?>
-                                        <input id="<?php echo $question['id']; ?>" type="text" name="time_<?php echo $question['id']; ?>" value="12:00AM" class="form-control start_time related_<?php echo $question['related_to_question']; ?>" readonly data-require="<?php echo $question['is_required'];?>" data-attr="<?php echo $question['related_to_question'];?>" aria-invalid="false" <?php echo $required; ?>>
-                                    <?php } elseif ($question['question_type'] == 'date') { ?>
-                                        <label class="auto-height"><?php echo strip_tags($question['label']) ?> : <span class="required required_<?php echo $question['related_to_question'];?>"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
-                                        <?php $required = $question['is_required'] ? "required" : ""; ?>
-                                        <input id="<?php echo $question['id']; ?>" type="text" name="date_<?php echo $question['id']; ?>" value="" data-require="<?php echo $question['is_required'];?>" data-attr="<?php echo $question['related_to_question'];?>" class="form-control start_date related_<?php echo $question['related_to_question']; ?>"  aria-invalid="false" <?php echo $required; ?> autocomplete="off" readonly>
-                                    <?php } elseif ($question['question_type'] == 'signature') { ?>
-                                        <div class="form-group">
-                                            <label class="auto-height">Signature : <span class="required">*</span></label>
-                                        </div>
+                                <?php if ($question['question_type'] == 'textarea') { ?>
+                                    <label class="auto-height"><?php echo strip_tags($question['label']); ?>: <span class="required required_<?php echo $question['related_to_question']; ?>"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
+                                    <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
+                                    <textarea id="text_<?php echo $question['id']; ?>" class="form-control textarea related_<?php echo $question['related_to_question']; ?>" data-require="<?php echo $question['is_required']; ?>" data-attr="<?php echo $question['related_to_question']; ?>" name="text_<?php echo $question['id']; ?>" rows="8" cols="60" <?php echo $question['is_required'] ? "required" : "" ?>><?php echo set_value('text_' . $question['id']); ?></textarea>
+                                <?php } elseif ($question['question_type'] == 'text') { ?>
+                                    <label class="auto-height"><?php echo strip_tags($question['label']) ?> : <span class="required required_<?php echo $question['related_to_question']; ?>"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
+                                    <?php
+                                    $required = $question['is_required'] ? "required" : "";
+                                    echo form_input('text_' . $question['id'], set_value('text_' . $question['id']), 'class="form-control related_' . $question['related_to_question'] . '" id="' . $question['id'] . '" data-require="' . $question['is_required'] . '" ' . $required . ' data-attr="' . $question['related_to_question'] . '"');
+                                    ?>
+                                <?php } elseif ($question['question_type'] == 'time') { ?>
+                                    <label class="auto-height"><?php echo strip_tags($question['label']) ?> : <span class="required required_<?php echo $question['related_to_question']; ?>"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
+                                    <?php $required = $question['is_required'] ? "required" : ""; ?>
+                                    <input id="<?php echo $question['id']; ?>" type="text" name="time_<?php echo $question['id']; ?>" value="12:00AM" class="form-control start_time related_<?php echo $question['related_to_question']; ?>" readonly data-require="<?php echo $question['is_required']; ?>" data-attr="<?php echo $question['related_to_question']; ?>" aria-invalid="false" <?php echo $required; ?>>
+                                <?php } elseif ($question['question_type'] == 'date') { ?>
+                                    <label class="auto-height"><?php echo strip_tags($question['label']) ?> : <span class="required required_<?php echo $question['related_to_question']; ?>"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
+                                    <?php $required = $question['is_required'] ? "required" : ""; ?>
+                                    <input id="<?php echo $question['id']; ?>" type="text" name="date_<?php echo $question['id']; ?>" value="" data-require="<?php echo $question['is_required']; ?>" data-attr="<?php echo $question['related_to_question']; ?>" class="form-control start_date related_<?php echo $question['related_to_question']; ?>" aria-invalid="false" <?php echo $required; ?> autocomplete="off" readonly>
+                                <?php } elseif ($question['question_type'] == 'signature') { ?>
+                                    <div class="form-group">
+                                        <label class="auto-height">Signature : <span class="required">*</span></label>
+                                    </div>
 
-                                        <!-- the below loaded view add e-signature -->
-                                        <?php $this->load->view('static-pages/e_signature_button'); ?>
-                                        <input type="hidden" name="signature" value="" id="signature_bas64_image">
+                                    <!-- the below loaded view add e-signature -->
+                                    <?php $this->load->view('static-pages/e_signature_button'); ?>
+                                    <input type="hidden" name="signature" value="" id="signature_bas64_image">
 
-                                    <?php } elseif ($question['question_type'] == 'radio') { ?>
-                                        <label><?php echo strip_tags($question['label']) ?>: <span class="required"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
-                                        <div class="row">
-                                            <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
-                                                <label class="control control--radio">
-                                                    Yes<input type="radio" id="<?php echo $question['id']; ?>" name="radio_<?php echo $question['id']; ?>" data-attr="<?php echo $question['is_required']; ?>" value="yes" style="position: relative;" checked>
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                            </div>
-                                            <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
-                                                <label class="control control--radio">
-                                                    No<input type="radio" id="<?php echo $question['id']; ?>" name="radio_<?php echo $question['id']; ?>" data-attr="<?php echo $question['is_required']; ?>" value="no" style="position: relative;">
-                                                    <div class="control__indicator"></div>
-                                                </label>
-                                            </div>
+                                <?php } elseif ($question['question_type'] == 'radio') { ?>
+                                    <label><?php echo strip_tags($question['label']) ?>: <span class="required"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                            <label class="control control--radio">
+                                                Yes<input type="radio" id="<?php echo $question['id']; ?>" name="radio_<?php echo $question['id']; ?>" data-attr="<?php echo $question['is_required']; ?>" value="yes" style="position: relative;" checked>
+                                                <div class="control__indicator"></div>
+                                            </label>
                                         </div>
-                                    <?php } elseif ($question['question_type'] == 'single select') { ?>
-                                        <label class="auto-height"><?php echo strip_tags($question['label']) ?> : <span class="required"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
-                                        <div class="hr-select-dropdown">
-                                            <select id="<?php echo $question['id']; ?>" name="list_<?php echo $question['id']; ?>" class="form-control" <?php if ($question['is_required'] == 1) { ?> required <?php } ?>>
-                                                <option value="">-- Please Select --</option>
-                                                <?php
-                                                    $options = explode(',', $question['options']);
-                                                    foreach ($options as $option) {
-                                                ?>
-                                                    <option value="<?php echo $option; ?>"> <?php echo ucfirst($option); ?></option>
-                                                <?php } ?>
-                                            </select>
+                                        <div class="col-lg-3 col-md-6 col-xs-12 col-sm-6">
+                                            <label class="control control--radio">
+                                                No<input type="radio" id="<?php echo $question['id']; ?>" name="radio_<?php echo $question['id']; ?>" data-attr="<?php echo $question['is_required']; ?>" value="no" style="position: relative;">
+                                                <div class="control__indicator"></div>
+                                            </label>
                                         </div>
-                                    <?php } elseif ($question['question_type'] == 'multi select') { ?>
-                                        <label class="multi-checkbox auto-height" data-attr="<?php echo $question['is_required'] ?>" data-key="<?php echo $question['id']; ?>" data-value="<?php echo $question['label'] ?>"><?php echo strip_tags($question['label']); ?> <span class="required"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
-                                        <div class="row">
-                                            <?php $options = explode(',', $question['options']); ?>
-                                            <?php foreach ($options as $option) { ?>
-                                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                                    <label class="control control--checkbox">
-                                                        <?php echo $option; ?>
-                                                        <input id="<?php echo $question['id']; ?>" type="checkbox" name="multi-list_<?php echo $question['id']; ?>[]" value="<?php echo $option; ?>" style="position: relative;">
-                                                        <div class="control__indicator"></div>
-                                                    </label>
-                                                </div>
+                                    </div>
+                                <?php } elseif ($question['question_type'] == 'single select') { ?>
+                                    <label class="auto-height"><?php echo strip_tags($question['label']) ?> : <span class="required"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
+                                    <div class="hr-select-dropdown">
+                                        <select id="<?php echo $question['id']; ?>" name="list_<?php echo $question['id']; ?>" class="form-control" <?php if ($question['is_required'] == 1) { ?> required <?php } ?>>
+                                            <option value="">-- Please Select --</option>
+                                            <?php
+                                            $options = explode(',', $question['options']);
+                                            foreach ($options as $option) {
+                                            ?>
+                                                <option value="<?php echo $option; ?>"> <?php echo ucfirst($option); ?></option>
                                             <?php } ?>
-                                        </div>
-                                    <?php } ?>
+                                        </select>
+                                    </div>
+                                <?php } elseif ($question['question_type'] == 'multi select') { ?>
+                                    <label class="multi-checkbox auto-height" data-attr="<?php echo $question['is_required'] ?>" data-key="<?php echo $question['id']; ?>" data-value="<?php echo $question['label'] ?>"><?php echo strip_tags($question['label']); ?> <span class="required"><?php echo $question['is_required'] ? '*' : '' ?></span></label>
+                                    <div class="row">
+                                        <?php $options = explode(',', $question['options']); ?>
+                                        <?php foreach ($options as $option) { ?>
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                <label class="control control--checkbox">
+                                                    <?php echo $option; ?>
+                                                    <input id="<?php echo $question['id']; ?>" type="checkbox" name="multi-list_<?php echo $question['id']; ?>[]" value="<?php echo $option; ?>" style="position: relative;">
+                                                    <div class="control__indicator"></div>
+                                                </label>
+                                            </div>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
                                 <?php echo '</div> </div> </div>'; ?>
                             <?php } ?>
                             <div class="row">
@@ -176,7 +208,7 @@ if (isset($applicant)) {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>        
+                                    </div>
                                 </div>
 
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -196,11 +228,11 @@ if (isset($applicant)) {
                                                                 <option>Please Select Employee as Witness</option>
                                                                 <?php foreach ($employees as $employee) { ?>
                                                                     <?php
-                                                                        if ($employer_sid == $employee['sid']) {
-                                                                            continue;
-                                                                        }
-                                                                        $employee_full_name =  $employee['first_name'] . ' ' . $employee['last_name'];
-                                                                        $option_value = $employee_full_name.','.$employee['email'].','.$employee['PhoneNumber'];
+                                                                    if ($employer_sid == $employee['sid']) {
+                                                                        continue;
+                                                                    }
+                                                                    $employee_full_name =  $employee['first_name'] . ' ' . $employee['last_name'];
+                                                                    $option_value = $employee_full_name . ',' . $employee['email'] . ',' . $employee['PhoneNumber'];
                                                                     ?>
 
                                                                     <option value="<?php echo $option_value; ?>"><?php echo $employee_full_name; ?></option>
@@ -219,10 +251,10 @@ if (isset($applicant)) {
                                                         <a href="javascript:;" id="add_new_witrness" class="btn btn-info btn-block mb-2" src="1" onclick="add_new_witrness('outter');" style="height: : 30px; line-height: 30px">Add Witness</a>
                                                     </div>
                                                 </div>
-                                            </div >
+                                            </div>
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div class="panel panel-info" >
+                                                    <div class="panel panel-info">
                                                         <div class="panel-heading">
                                                             <strong>Company Witnesses</strong>
                                                         </div>
@@ -231,7 +263,7 @@ if (isset($applicant)) {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="panel panel-info" >
+                                                    <div class="panel panel-info">
                                                         <div class="panel-heading">
                                                             <strong>Outside Witnesses</strong>
                                                         </div>
@@ -245,7 +277,7 @@ if (isset($applicant)) {
                                         </div>
                                     </div>
                                 </div>
-                    
+
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" id="media_section">
                                     <div class="panel panel-blue">
                                         <div class="panel-heading incident-panal-heading">
@@ -257,12 +289,12 @@ if (isset($applicant)) {
                                                 <?php echo form_label('Video Source', $field_name); ?>
                                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                                     <?php echo YOUTUBE_VIDEO; ?>
-                                                    <input checked="checked" class="video_source" type="radio" name="video_source" value="youtube"/>
+                                                    <input checked="checked" class="video_source" type="radio" name="video_source" value="youtube" />
                                                     <div class="control__indicator"></div>
                                                 </label>
                                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                                     <?php echo VIMEO_VIDEO; ?>
-                                                    <input class="video_source" type="radio" name="video_source" value="vimeo"/>
+                                                    <input class="video_source" type="radio" name="video_source" value="vimeo" />
                                                     <div class="control__indicator"></div>
                                                 </label>
                                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
@@ -292,7 +324,7 @@ if (isset($applicant)) {
                                                             <label>Upload Video <span class="required">*</span></label>
                                                             <div class="upload-file form-control" style="margin-bottom:10px;">
                                                                 <span class="selected-file" id="name_video"></span>
-                                                                <input type="file" name="video_upload" id="video" onchange="check_video_file('video')" >
+                                                                <input type="file" name="video_upload" id="video" onchange="check_video_file('video')">
                                                                 <a href="javascript:;">Choose Video</a>
                                                             </div>
                                                         </div>
@@ -300,7 +332,7 @@ if (isset($applicant)) {
                                                             <label>Upload Audio <span class="required">*</span></label>
                                                             <div class="upload-file form-control" style="margin-bottom:10px;">
                                                                 <span class="selected-file" id="name_audio"></span>
-                                                                <input type="file" name="audio_upload" id="audio" onchange="check_audio_file('audio')" >
+                                                                <input type="file" name="audio_upload" id="audio" onchange="check_audio_file('audio')">
                                                                 <a href="javascript:;">Choose Audio</a>
                                                             </div>
                                                         </div>
@@ -324,7 +356,7 @@ if (isset($applicant)) {
                                                             </tr>
                                                         </thead>
                                                         <tbody id="video_listing_data">
-                                                            
+
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -332,7 +364,7 @@ if (isset($applicant)) {
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" id="document_section">
                                     <div class="panel panel-blue">
                                         <div class="panel-heading incident-panal-heading">
@@ -350,7 +382,7 @@ if (isset($applicant)) {
                                                             <label>Upload Document <span class="required">*</span></label>
                                                             <div class="upload-file form-control" style="margin-bottom:10px;">
                                                                 <span class="selected-file" id="name_upload_document"></span>
-                                                                <input type="file" name="upload_document" id="upload_document" onchange="check_upload_document('upload_document')" >
+                                                                <input type="file" name="upload_document" id="upload_document" onchange="check_upload_document('upload_document')">
                                                                 <a href="javascript:;">Choose File</a>
                                                             </div>
                                                         </div>
@@ -374,7 +406,7 @@ if (isset($applicant)) {
                                                             </tr>
                                                         </thead>
                                                         <tbody id="document_listing_data">
-                                                            
+
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -404,7 +436,9 @@ if (isset($applicant)) {
 
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="form-group">
-                                        <b><h4>BY CLICKING ON "SUBMIT" I CERTIFY THAT I HAVE BEEN TRUTHFUL IN EVERY RESPECT IN FILLING THIS REPORT</h4></b>
+                                        <b>
+                                            <h4>BY CLICKING ON "SUBMIT" I CERTIFY THAT I HAVE BEEN TRUTHFUL IN EVERY RESPECT IN FILLING THIS REPORT</h4>
+                                        </b>
                                     </div>
                                 </div>
 
@@ -418,23 +452,25 @@ if (isset($applicant)) {
                                                 <span>Submitting...</span>
                                             </div>
                                         </div>
-                                        <?php 
-                                            foreach ($incident_managers as $key => $manager) {
-                                                if($manager['employee_id'] == $employer_sid) {
-                                                    unset($incident_managers[$key]);
-                                                }
+                                        <?php
+                                        foreach ($incident_managers as $key => $manager) {
+                                            if ($manager['employee_id'] == $employer_sid) {
+                                                unset($incident_managers[$key]);
                                             }
-                                            $show_button = count($incident_managers);
+                                        }
+                                        $show_button = count($incident_managers);
                                         ?>
-                                        <?php //if ($show_button > 0) { ?>
-                                            <div class="btn-wrp full-width text-right">
-                                                <input type="submit" value="Submit" name="submit" class="btn btn-info" id="submit">
-                                            </div>
-                                        <?php //} ?>
+                                        <?php //if ($show_button > 0) { 
+                                        ?>
+                                        <div class="btn-wrp full-width text-right">
+                                            <input type="submit" value="Submit" name="submit" class="btn btn-info" id="submit">
+                                        </div>
+                                        <?php //} 
+                                        ?>
                                     </div>
                                 </div>
 
-                                <input type="hidden" id="inc-id" name="inc-id" value="0"/>
+                                <input type="hidden" id="inc-id" name="inc-id" value="0" />
                             </div>
                         <?php } else { ?>
                             <?php echo "<span class='no-data'>No Questions Scheduled For This Type</span>"; ?>
@@ -468,33 +504,33 @@ if (isset($applicant)) {
                                 <label>Update</label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                     Both
-                                    <input checked="checked" class="update_type" type="radio" name="update_type" id="update_option" value="both"/>
+                                    <input checked="checked" class="update_type" type="radio" name="update_type" id="update_option" value="both" />
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
-                                    <input class="update_type" type="radio" name="update_type" value="title"/>
+                                    <input class="update_type" type="radio" name="update_type" value="title" />
                                     <div class="control__indicator"></div>
                                     Title
                                 </label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                     Video
-                                    <input class="update_type" type="radio" name="update_type" value="video"/>
+                                    <input class="update_type" type="radio" name="update_type" value="video" />
                                     <div class="control__indicator"></div>
                                 </label>
-                                
+
                             </div>
-                            
+
                             <div class="form-group edit_filter autoheight" id="only_video_select">
                                 <?php $field_name = 'video_source' ?>
                                 <?php echo form_label('Video Source', $field_name); ?>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                     <?php echo YOUTUBE_VIDEO; ?>
-                                    <input checked="checked" class="update_video_source" id="update_media_option" type="radio" name="update_video_source" value="youtube"/>
+                                    <input checked="checked" class="update_video_source" id="update_media_option" type="radio" name="update_video_source" value="youtube" />
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                     <?php echo VIMEO_VIDEO; ?>
-                                    <input class="update_video_source" type="radio" name="update_video_source" value="vimeo"/>
+                                    <input class="update_video_source" type="radio" name="update_video_source" value="vimeo" />
                                     <div class="control__indicator"></div>
                                 </label>
                                 <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
@@ -518,7 +554,7 @@ if (isset($applicant)) {
                                         </div>
                                     </div>
                                 </div>
-                            </div>            
+                            </div>
 
                             <div class="row" id="only_video">
                                 <div class="field-row">
@@ -531,7 +567,7 @@ if (isset($applicant)) {
                                             <label>Upload Video <span class="required">*</span></label>
                                             <div class="upload-file form-control" style="margin-bottom:10px;">
                                                 <span class="selected-file" id="name_update_video"></span>
-                                                <input type="file" name="video_upload" id="update_video" onchange="check_update_video_file('update_video')" >
+                                                <input type="file" name="video_upload" id="update_video" onchange="check_update_video_file('update_video')">
                                                 <a href="javascript:;">Choose Video</a>
                                             </div>
                                         </div>
@@ -539,7 +575,7 @@ if (isset($applicant)) {
                                             <label>Upload Audio <span class="required">*</span></label>
                                             <div class="upload-file form-control" style="margin-bottom:10px;">
                                                 <span class="selected-file" id="name_update_audio"></span>
-                                                <input type="file" name="audio_upload" id="update_audio" onchange="check_update_audio_file('update_audio')" >
+                                                <input type="file" name="audio_upload" id="update_audio" onchange="check_update_audio_file('update_audio')">
                                                 <a href="javascript:;">Choose Audio</a>
                                             </div>
                                         </div>
@@ -583,7 +619,7 @@ if (isset($applicant)) {
                                 </div>
                                 <div id="video-section" style="display:none;">
                                     <video id="my-video" controls></video>
-                                </div>  
+                                </div>
                                 <div id="audio-section" style="display:none;">
                                     <audio id="my-audio" controls></audio>
                                 </div>
@@ -623,17 +659,17 @@ if (isset($applicant)) {
                                             <label>Update</label>
                                             <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                                 Both
-                                                <input checked="checked" class="update_document_type" type="radio" name="update_document_type" value="both"/>
+                                                <input checked="checked" class="update_document_type" type="radio" name="update_document_type" value="both" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                             <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
-                                                <input class="update_document_type" type="radio" name="update_document_type" value="title"/>
+                                                <input class="update_document_type" type="radio" name="update_document_type" value="title" />
                                                 <div class="control__indicator"></div>
                                                 Title
                                             </label>
                                             <label class="control control--radio" style="margin-left:10px; margin-top:10px;">
                                                 Document
-                                                <input class="update_document_type" type="radio" name="update_document_type" value="document"/>
+                                                <input class="update_document_type" type="radio" name="update_document_type" value="document" />
                                                 <div class="control__indicator"></div>
                                             </label>
                                         </div>
@@ -645,7 +681,7 @@ if (isset($applicant)) {
                                             <label>Upload Document <span class="required">*</span></label>
                                             <div class="upload-file form-control" style="margin-bottom:10px;">
                                                 <span class="selected-file" id="name_edit_upload_document"></span>
-                                                <input type="file" name="edit_upload_document" id="edit_upload_document" onchange="check_edit_document('edit_upload_document')" >
+                                                <input type="file" name="edit_upload_document" id="edit_upload_document" onchange="check_edit_document('edit_upload_document')">
                                                 <a href="javascript:;">Choose File</a>
                                             </div>
                                         </div>
@@ -709,17 +745,17 @@ if (isset($applicant)) {
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css"/>
+<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         <?php
-            foreach ($questions as $question) {
-                if($question['question_type'] == 'textarea'){
-                    echo 'CKEDITOR.replace("text_'.$question['id'].'");'."\r\n";
-                }
+        foreach ($questions as $question) {
+            if ($question['question_type'] == 'textarea') {
+                echo 'CKEDITOR.replace("text_' . $question['id'] . '");' . "\r\n";
             }
+        }
         ?>
 
         $('#up_video_container input').prop('disabled', true);
@@ -732,15 +768,15 @@ if (isset($applicant)) {
         $('#document_listing').hide();
     });
 
-    $('.witnesses').on('click', function () {
-        if($("#yes_witnesses").is(':checked')) {
+    $('.witnesses').on('click', function() {
+        if ($("#yes_witnesses").is(':checked')) {
             $('#add_wirnesses').show();
         } else if ($("#no_witnesses").is(':checked')) {
             $('#add_wirnesses').hide();
         }
     });
 
-    $("#employee_to_witness").on('change', function () {
+    $("#employee_to_witness").on('change', function() {
         var selected_witness = $("#employee_to_witness").val();
         var selected_witness_info = selected_witness.split(',');
         var selected_witness_name = selected_witness_info[0];
@@ -750,16 +786,17 @@ if (isset($applicant)) {
 
 
         add_new_witrness('inner');
-        $("#witnesses_name_0_"+current).val(selected_witness_name);
-        $("#witnesses_phone_0_"+current).val(selected_witness_phone);
-        $("#witnesses_email_0_"+current).val(selected_witness_email);
-        $("#witnesses_title_0_"+current).val('Office Colleague');
-        $("#employee_to_witness option[value='"+selected_witness+"']").remove();
+        $("#witnesses_name_0_" + current).val(selected_witness_name);
+        $("#witnesses_phone_0_" + current).val(selected_witness_phone);
+        $("#witnesses_email_0_" + current).val(selected_witness_email);
+        $("#witnesses_title_0_" + current).val('Office Colleague');
+        $("#employee_to_witness option[value='" + selected_witness + "']").remove();
 
     });
 
     var field_name = 0;
-    function add_new_witrness (section) {
+
+    function add_new_witrness(section) {
 
         var current;
         var div_color;
@@ -772,29 +809,29 @@ if (isset($applicant)) {
         if (section == 'inner') {
             readonly = 'readonly';
             current = $('#employee_to_witness').attr('src');
-            div_id = 'witness_inner_'+current;
-            field_id = 0+"_"+current;
+            div_id = 'witness_inner_' + current;
+            field_id = 0 + "_" + current;
             delete_witness = 0;
         } else if (section == 'outter') {
             readonly = '';
             current = $('#add_new_witrness').attr('src');
-            div_id = 'witness_outter_'+current;
-            field_id = 1+"_"+current;
+            div_id = 'witness_outter_' + current;
+            field_id = 1 + "_" + current;
             delete_witness = 1;
         }
 
 
-        if (current  % 2 != 0) {
+        if (current % 2 != 0) {
             div_color = '#eee';
             field_color = '#fff !important';
         }
 
         var witness = '';
-        witness += '<div class="full-width" id="'+div_id+'" src="'+current+'" style="border-top: 1px solid #ddd; padding :5px 0px; background-color:'+div_color+';">';
+        witness += '<div class="full-width" id="' + div_id + '" src="' + current + '" style="border-top: 1px solid #ddd; padding :5px 0px; background-color:' + div_color + ';">';
         if (section == 'inner') {
-            witness += '<input type="hidden" name="witnesses['+field_name+'][type]" value="employee">';
+            witness += '<input type="hidden" name="witnesses[' + field_name + '][type]" value="employee">';
         } else if (section == 'outter') {
-            witness += '<input type="hidden" name="witnesses['+field_name+'][type]" value="others">';
+            witness += '<input type="hidden" name="witnesses[' + field_name + '][type]" value="others">';
         }
 
         witness += '<div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">';
@@ -803,7 +840,7 @@ if (isset($applicant)) {
         witness += 'WITNESS FULL NAME : ';
         witness += '<span class="required">*</span>';
         witness += '</label>';
-        witness += '<input id="witnesses_name_'+field_id+'" type="text" name="witnesses['+field_name+'][full_name]" value="" '+readonly+' class="form-control" style=" background-color:'+field_color+';">';
+        witness += '<input id="witnesses_name_' + field_id + '" type="text" name="witnesses[' + field_name + '][full_name]" value="" ' + readonly + ' class="form-control" style=" background-color:' + field_color + ';">';
         witness += '</div>';
         witness += '</div>';
 
@@ -813,7 +850,7 @@ if (isset($applicant)) {
         witness += 'WITNESS TELEPHONE NUMBER : ';
         witness += '<span class="required">*</span>';
         witness += '</label>';
-        witness += '<input id="witnesses_phone_'+field_id+'" type="text" name="witnesses['+field_name+'][phone]" value="" class="form-control" style=" background-color:'+field_color+';">';
+        witness += '<input id="witnesses_phone_' + field_id + '" type="text" name="witnesses[' + field_name + '][phone]" value="" class="form-control" style=" background-color:' + field_color + ';">';
         witness += '</div>';
         witness += '</div>';
 
@@ -823,7 +860,7 @@ if (isset($applicant)) {
         witness += 'WITNESS EMAIL : ';
         witness += '<span class="required">*</span>';
         witness += '</label>';
-        witness += '<input id="witnesses_email_'+field_id+'" type="text" name="witnesses['+field_name+'][email]" value="" '+readonly+' class="form-control" style=" background-color:'+field_color+';">';
+        witness += '<input id="witnesses_email_' + field_id + '" type="text" name="witnesses[' + field_name + '][email]" value="" ' + readonly + ' class="form-control" style=" background-color:' + field_color + ';">';
         witness += '</div>';
         witness += '</div>';
 
@@ -833,7 +870,7 @@ if (isset($applicant)) {
         witness += 'WITNESS TITLE/RELATIONSHIP : ';
         witness += '<span class="required">*</span>';
         witness += '</label>';
-        witness += '<input id="witnesses_title_'+field_id+'" type="text" name="witnesses['+field_name+'][title]" value="" '+readonly+' class="form-control" style=" background-color:'+field_color+';">';
+        witness += '<input id="witnesses_title_' + field_id + '" type="text" name="witnesses[' + field_name + '][title]" value="" ' + readonly + ' class="form-control" style=" background-color:' + field_color + ';">';
         witness += '</div>';
         witness += '</div>';
 
@@ -844,7 +881,7 @@ if (isset($applicant)) {
         witness += '<span class="required">*</span> ';
         witness += '</label>';
         witness += '<div class="hr-select-dropdown">';
-        witness += '<select id="can_witness_provide_info_'+current+'" name="witnesses['+field_name+'][can_provide_info]" class="form-control" style=" background-color:'+field_color+';">';
+        witness += '<select id="can_witness_provide_info_' + current + '" name="witnesses[' + field_name + '][can_provide_info]" class="form-control" style=" background-color:' + field_color + ';">';
         witness += '<option value="yes" selected="selected">Yes</option>';
         witness += '<option value="no">No</option>';
         witness += '</select>';
@@ -854,7 +891,7 @@ if (isset($applicant)) {
 
         witness += '<div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">';
         witness += '<div class="btn-wrp full-width text-right">';
-        witness += '<a href="javascript:;" class="btn btn-danger" onclick="delete_witrness('+current+','+delete_witness+');" style="margin-top: 16px;">';
+        witness += '<a href="javascript:;" class="btn btn-danger" onclick="delete_witrness(' + current + ',' + delete_witness + ');" style="margin-top: 16px;">';
         witness += '<i class="fa fa-user-times" aria-hidden="true"></i>';
         witness += '</a>';
         witness += '</div>';
@@ -864,31 +901,31 @@ if (isset($applicant)) {
 
         if (section == 'inner') {
             $('#add_inner_wirnesses_section').prepend(witness);
-            $("#employee_to_witness").attr("src",++current);
+            $("#employee_to_witness").attr("src", ++current);
 
         } else if (section == 'outter') {
             $('#add_outter_wirnesses_section').prepend(witness);
-            $("#add_new_witrness").attr("src",++current);
+            $("#add_new_witrness").attr("src", ++current);
         }
         ++field_name;
 
     }
 
-    function delete_witrness (id,type) {
+    function delete_witrness(id, type) {
         if (type == 0) {
-            var inner_name = $("#witnesses_name_0_"+id).val();
-            var inner_phone = $("#witnesses_phone_0_"+id).val();
-            var inner_email = $("#witnesses_email_0_"+id).val();
-            var inner_title = $("#witnesses_title_0_"+id).val();
+            var inner_name = $("#witnesses_name_0_" + id).val();
+            var inner_phone = $("#witnesses_phone_0_" + id).val();
+            var inner_email = $("#witnesses_email_0_" + id).val();
+            var inner_title = $("#witnesses_title_0_" + id).val();
 
             if (inner_name != '' || inner_phone != '' || inner_email != '' || inner_title != '') {
                 alertify.confirm(
                     'Are you Sure?',
                     'Are you sure you want to Delete this witness?',
                     function() {
-                        var option_value = inner_name+','+inner_email+','+inner_phone;
-                        $('#employee_to_witness').append($("<option></option>").attr("value",option_value).text(inner_name));
-                        $("#witness_inner_"+id).remove();
+                        var option_value = inner_name + ',' + inner_email + ',' + inner_phone;
+                        $('#employee_to_witness').append($("<option></option>").attr("value", option_value).text(inner_name));
+                        $("#witness_inner_" + id).remove();
                     },
                     function() {
                         alertify.alert('Cancelled!');
@@ -897,21 +934,21 @@ if (isset($applicant)) {
                     cancel: 'Cancel'
                 });
             } else {
-                $("#witness_inner_"+id).remove();
+                $("#witness_inner_" + id).remove();
             }
 
         } else if (type == 1) {
-            var outter_name = $("#witnesses_name_1_"+id).val();
-            var outter_phone = $("#witnesses_phone_1_"+id).val();
-            var outter_email = $("#witnesses_email_1_"+id).val();
-            var outter_title = $("#witnesses_title_1_"+id).val();
+            var outter_name = $("#witnesses_name_1_" + id).val();
+            var outter_phone = $("#witnesses_phone_1_" + id).val();
+            var outter_email = $("#witnesses_email_1_" + id).val();
+            var outter_title = $("#witnesses_title_1_" + id).val();
 
             if (outter_name != '' || outter_phone != '' || outter_email != '' || outter_title != '') {
                 alertify.confirm(
                     'Are you Sure?',
                     'Are you sure you want to Delete this witness?',
                     function() {
-                        $("#witness_outter_"+id).remove();
+                        $("#witness_outter_" + id).remove();
                     },
                     function() {
                         alertify.alert('Cancelled!');
@@ -920,13 +957,13 @@ if (isset($applicant)) {
                     cancel: 'Cancel'
                 });
             } else {
-                $("#witness_outter_"+id).remove();
+                $("#witness_outter_" + id).remove();
             }
         }
     }
 
     // Media JS Start
-    $('.video_source').on('click', function(){
+    $('.video_source').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'youtube') {
@@ -981,7 +1018,7 @@ if (isset($applicant)) {
     });
 
     function check_video_file(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -995,7 +1032,7 @@ if (isset($applicant)) {
                     $('#name_' + val).html('<p class="red">Only (.mp4, .m4a, .m4v, .f4v, .f4a, .m4b, .m4r, .f4b, .mov) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -1020,7 +1057,7 @@ if (isset($applicant)) {
     }
 
     function check_audio_file(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -1034,7 +1071,7 @@ if (isset($applicant)) {
                     $('#name_' + val).html('<p class="red">Only (.mp3, .m4a, .mp4, .ogg, .flac, .wav) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -1058,14 +1095,14 @@ if (isset($applicant)) {
         }
     }
 
-    $('#save_incident_video').on('click',function(){
-        var flag            = 0;
-        var message         = '';
-        var video_title     = $('#video_title').val();
-        var video_source    = $('input[name="video_source"]:checked').val();
-        
-        if(video_source == 'youtube'){
-            if($('#video_id').val() != '') {
+    $('#save_incident_video').on('click', function() {
+        var flag = 0;
+        var message = '';
+        var video_title = $('#video_title').val();
+        var video_source = $('input[name="video_source"]:checked').val();
+
+        if (video_source == 'youtube') {
+            if ($('#video_id').val() != '') {
                 var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
                 if (!$('#video_id').val().match(p)) {
                     message = 'Not a Valid Youtube URL';
@@ -1077,22 +1114,23 @@ if (isset($applicant)) {
             }
         }
 
-        if(video_source == 'vimeo'){
-            if($('#video_id').val() != '') {
+        if (video_source == 'vimeo') {
+            if ($('#video_id').val() != '') {
                 var myurl = "<?php echo base_url('Incident_reporting_system/validate_vimeo'); ?>";
                 $.ajax({
                     type: "POST",
                     url: myurl,
-                    data: {url: $('#video_id').val()},
-                    async : false,
-                    success: function (data) {
+                    data: {
+                        url: $('#video_id').val()
+                    },
+                    async: false,
+                    success: function(data) {
                         if (data == false) {
                             message = 'Not a Valid Vimeo URLs';
                             flag = 1;
                         }
                     },
-                    error: function (data) {
-                    }
+                    error: function(data) {}
                 });
             } else {
                 message = 'Please provide a Valid Vimeo URL';
@@ -1100,8 +1138,8 @@ if (isset($applicant)) {
             }
         }
 
-        if(video_source == 'upload_video'){
-            var fileName  = $("#video").val();
+        if (video_source == 'upload_video') {
+            var fileName = $("#video").val();
 
             if (fileName.length > 0) {
                 $('#name_video').html(fileName.substring(0, 45));
@@ -1115,7 +1153,7 @@ if (isset($applicant)) {
                     message = 'Please select a valid video format.';
                     flag = 1;
                 } else {
-                    var file_size = Number(($("#video")[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#video")[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#video").val(null);
@@ -1131,8 +1169,8 @@ if (isset($applicant)) {
             }
         }
 
-        if(video_source == 'upload_audio'){
-            var fileName  = $("#audio").val();
+        if (video_source == 'upload_audio') {
+            var fileName = $("#audio").val();
 
             if (fileName.length > 0) {
                 $('#name_audio').html(fileName.substring(0, 45));
@@ -1146,7 +1184,7 @@ if (isset($applicant)) {
                     message = 'Please select a valid audio format.';
                     flag = 1;
                 } else {
-                    var file_size = Number(($("#audio")[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#audio")[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#audio").val(null);
@@ -1160,13 +1198,13 @@ if (isset($applicant)) {
                 message = 'Please select audio to upload';
                 flag = 1;
             }
-        }  
-        
+        }
+
 
         if (video_title == '' || video_title.length == 0) {
             message = 'Please provide a Video Title.';
             flag = 1;
-        }  
+        }
 
         if (flag == 1) {
             alertify.alert(message);
@@ -1178,7 +1216,7 @@ if (isset($applicant)) {
             var update_url = '<?php echo base_url('incident_reporting_system/add_incident_video'); ?>';
             var form_data = new FormData();
 
-            if(video_source == 'upload_audio'){
+            if (video_source == 'upload_audio') {
                 var audio_data = $('#audio').prop('files')[0];
 
                 form_data.append('audio', audio_data);
@@ -1201,7 +1239,7 @@ if (isset($applicant)) {
             }
 
             if ($('#inc-id').val() != '0') {
-                var incident_sid    = $('#inc-id').val();
+                var incident_sid = $('#inc-id').val();
                 form_data.append('incident_sid', incident_sid);
             }
 
@@ -1219,11 +1257,11 @@ if (isset($applicant)) {
                 processData: false,
                 type: 'post',
                 data: form_data,
-                success: function(response){
-                    $("#incident_loader").hide(); 
+                success: function(response) {
+                    $("#incident_loader").hide();
 
                     $('#video_title').val('');
-                    if(video_source == 'upload_audio'){
+                    if (video_source == 'upload_audio') {
                         $('#name_audio').html('');
                     } else if (video_source == 'upload_video') {
                         $('#name_video').html('');
@@ -1234,17 +1272,17 @@ if (isset($applicant)) {
                     $('#save_incident_video').removeClass('disabled-btn');
                     $('#save_incident_video').prop('disabled', false);
                     if (response != "error") {
-                        var obj                 = jQuery.parseJSON(response);
-                        var res_incident_sid    = obj['incident_sid'];
-                        var res_video_sid       = obj['video_sid'];
-                        var res_video_title     = obj['video_title'];
-                        var res_video_source    = obj['video_source'];
-                        var res_video_url       = obj['video_url'];
+                        var obj = jQuery.parseJSON(response);
+                        var res_incident_sid = obj['incident_sid'];
+                        var res_video_sid = obj['video_sid'];
+                        var res_video_title = obj['video_title'];
+                        var res_video_source = obj['video_source'];
+                        var res_video_url = obj['video_url'];
                         $('#inc-id').val(res_incident_sid);
                         $('#video_listing').show();
-                        $('#video_listing_data').prepend('<tr id="video_'+res_video_sid+'"><td class="text-center">'+res_video_title+'</td><td class="text-center">'+res_video_source+'</td><td class="text-center">Success</td><td><a href="javascript:;" video-sid="'+res_video_sid+'" video-title="'+res_video_title+'" class="btn btn-block btn-info js-edit-video">Edit Video</a></td><td><a href="javascript:;" video-title="'+res_video_title+'" video-source="'+res_video_source+'" video-url="'+res_video_url+'" class="btn btn-block btn-info js-view-video">Watch Video</a></td></tr>');
-                        
-                        alertify.alert('Supporting Incident Video Uploaded Successfully!', function(){
+                        $('#video_listing_data').prepend('<tr id="video_' + res_video_sid + '"><td class="text-center">' + res_video_title + '</td><td class="text-center">' + res_video_source + '</td><td class="text-center">Success</td><td><a href="javascript:;" video-sid="' + res_video_sid + '" video-title="' + res_video_title + '" class="btn btn-block btn-info js-edit-video">Edit Video</a></td><td><a href="javascript:;" video-title="' + res_video_title + '" video-source="' + res_video_source + '" video-url="' + res_video_url + '" class="btn btn-block btn-info js-view-video">Watch Video</a></td></tr>');
+
+                        alertify.alert('Supporting Incident Video Uploaded Successfully!', function() {
                             $('html, body').animate({
                                 scrollTop: $("#media_section").offset().top
                             }, 2000);
@@ -1253,8 +1291,7 @@ if (isset($applicant)) {
                         alertify.alert('Error Occurred While Uploading Video');
                     }
                 },
-                error: function(){
-                }
+                error: function() {}
             });
         }
     });
@@ -1267,34 +1304,34 @@ if (isset($applicant)) {
         $('#video_modal_title').html(video_title);
 
         if (video_source == 'youtube') {
-            
+
             $('#youtube-section').show();
             var video = $("<iframe />")
-            .attr("id", "youtube_iframe")
-            .attr("src", "https://www.youtube.com/embed/"+video_url);
+                .attr("id", "youtube_iframe")
+                .attr("src", "https://www.youtube.com/embed/" + video_url);
             $("#youtube-video-placeholder").append(video);
 
         } else if (video_source == 'vimeo') {
-            
+
             $('#vimeo-section').show();
             var video = $("<iframe />")
-            .attr("id", "vimeo_iframe")
-            .attr("src", "https://player.vimeo.com/video/"+video_url);
+                .attr("id", "vimeo_iframe")
+                .attr("src", "https://player.vimeo.com/video/" + video_url);
             $("#vimeo-video-placeholder").append(video);
 
         } else if (video_source == 'upload_video') {
-            
+
             $('#video-section').show();
             var video = document.getElementById('my-video');
             var source = document.createElement('source');
-            $("#my-video").first().attr('src',video_url);
+            $("#my-video").first().attr('src', video_url);
 
         } else if (video_source == 'upload_audio') {
-            
+
             $('#audio-section').show();
             var video = document.getElementById('my-audio');
             var source = document.createElement('source');
-            $("#my-audio").first().attr('src',video_url);
+            $("#my-audio").first().attr('src', video_url);
 
         }
 
@@ -1303,7 +1340,7 @@ if (isset($applicant)) {
         $('#view_incident_video').modal('show');
     });
 
-    function stop_media (source) {
+    function stop_media(source) {
         var video_source = $(source).attr('video-source');
 
         if (video_source == 'youtube') {
@@ -1315,10 +1352,10 @@ if (isset($applicant)) {
             $("#vimeo_iframe").remove();
             $('#vimeo-section').hide();
         } else if (video_source == 'upload_video') {
-            $("#my-video").first().attr('src','');
+            $("#my-video").first().attr('src', '');
             $('#video-section').hide();
         } else if (video_source == 'upload_audio') {
-            $("#my-audio").first().attr('src','');
+            $("#my-audio").first().attr('src', '');
             $('#audio-section').hide();
         }
     }
@@ -1344,7 +1381,7 @@ if (isset($applicant)) {
         $('#update_up_video_container').hide();
     });
 
-    $('.update_type').on('click', function(){
+    $('.update_type').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'title') {
@@ -1362,7 +1399,7 @@ if (isset($applicant)) {
         }
     });
 
-    $('.update_video_source').on('click', function(){
+    $('.update_video_source').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'youtube') {
@@ -1417,7 +1454,7 @@ if (isset($applicant)) {
     });
 
     function check_update_video_file(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -1431,7 +1468,7 @@ if (isset($applicant)) {
                     $('#name_' + val).html('<p class="red">Only (.mp4, .m4a, .m4v, .f4v, .f4a, .m4b, .m4r, .f4b, .mov) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                     if (video_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -1456,7 +1493,7 @@ if (isset($applicant)) {
     }
 
     function check_update_audio_file(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -1470,7 +1507,7 @@ if (isset($applicant)) {
                     $('#name_' + val).html('<p class="red">Only (.mp3, .m4a, .mp4, .ogg, .flac, .wav) allowed!</p>');
                     return false;
                 } else {
-                    var file_size = Number(($("#" + val)[0].files[0].size/1024/1024).toFixed(2));
+                    var file_size = Number(($("#" + val)[0].files[0].size / 1024 / 1024).toFixed(2));
                     var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                     if (audio_size_limit < file_size) {
                         $("#" + val).val(null);
@@ -1494,14 +1531,14 @@ if (isset($applicant)) {
         }
     }
 
-    $('#save_updated_video').on('click',function(event){
+    $('#save_updated_video').on('click', function(event) {
         var flag = 0;
         var message;
         var validation = $('input[name="update_type"]:checked').val();
-        
+
         if (validation == 'video' || validation == 'both') {
-            if($('input[name="update_video_source"]:checked').val() == 'youtube'){
-                if($('#update_video_id').val() != '') {
+            if ($('input[name="update_video_source"]:checked').val() == 'youtube') {
+                if ($('#update_video_id').val() != '') {
                     var p = /(?:https?:\/\/)?(?:youtu\.be\/|(?:www\.)?youtube\.com\/watch(?:\.php)?\?.*v=)([a-zA-Z0-9\-_]+)/;
                     if (!$('#update_video_id').val().match(p)) {
                         message = 'Not a Valid Youtube URL';
@@ -1513,22 +1550,23 @@ if (isset($applicant)) {
                 }
             }
 
-            if($('input[name="update_video_source"]:checked').val() == 'vimeo'){
-                if($('#update_video_id').val() != '') {
+            if ($('input[name="update_video_source"]:checked').val() == 'vimeo') {
+                if ($('#update_video_id').val() != '') {
                     var myurl = "<?php echo base_url('Incident_reporting_system/validate_vimeo'); ?>";
                     $.ajax({
                         type: "POST",
                         url: myurl,
-                        data: {url: $('#update_video_id').val()},
-                        async : false,
-                        success: function (data) {
+                        data: {
+                            url: $('#update_video_id').val()
+                        },
+                        async: false,
+                        success: function(data) {
                             if (data == false) {
                                 message = 'Not a Valid Vimeo URLs';
                                 flag = 1;
                             }
                         },
-                        error: function (data) {
-                        }
+                        error: function(data) {}
                     });
                 } else {
                     message = 'Please provide a Valid Vimeo URL';
@@ -1536,8 +1574,8 @@ if (isset($applicant)) {
                 }
             }
 
-            if($('input[name="update_video_source"]:checked').val() == 'upload_video'){
-                var fileName  = $("#update_video").val();
+            if ($('input[name="update_video_source"]:checked').val() == 'upload_video') {
+                var fileName = $("#update_video").val();
 
                 if (fileName.length > 0) {
                     $('#name_update_video').html(fileName.substring(0, 45));
@@ -1551,7 +1589,7 @@ if (isset($applicant)) {
                         message = 'Please select a valid video format.';
                         flag = 1;
                     } else {
-                        var file_size = Number(($("#update_video")[0].files[0].size/1024/1024).toFixed(2));
+                        var file_size = Number(($("#update_video")[0].files[0].size / 1024 / 1024).toFixed(2));
                         var video_size_limit = Number('<?php echo UPLOAD_VIDEO_SIZE; ?>');
                         if (video_size_limit < file_size) {
                             $("#update_video").val(null);
@@ -1567,8 +1605,8 @@ if (isset($applicant)) {
                 }
             }
 
-            if($('input[name="update_video_source"]:checked').val() == 'upload_audio'){
-                var fileName  = $("#update_audio").val();
+            if ($('input[name="update_video_source"]:checked').val() == 'upload_audio') {
+                var fileName = $("#update_audio").val();
 
                 if (fileName.length > 0) {
                     $('#name_update_audio').html(fileName.substring(0, 45));
@@ -1582,7 +1620,7 @@ if (isset($applicant)) {
                         message = 'Please select a valid audio format.';
                         flag = 1;
                     } else {
-                        var file_size = Number(($("#update_audio")[0].files[0].size/1024/1024).toFixed(2));
+                        var file_size = Number(($("#update_audio")[0].files[0].size / 1024 / 1024).toFixed(2));
                         var audio_size_limit = Number('<?php echo UPLOAD_AUDIO_SIZE; ?>');
                         if (audio_size_limit < file_size) {
                             $("#update_audio").val(null);
@@ -1597,7 +1635,7 @@ if (isset($applicant)) {
                     flag = 1;
                 }
             }
-        }  
+        }
 
         if (validation == 'title' || validation == 'both') {
             var update_title = $('#upload_video_title').val();
@@ -1606,7 +1644,7 @@ if (isset($applicant)) {
                 message = 'Please provide a Video Title.';
                 flag = 1;
             }
-        }   
+        }
 
         if (flag == 1) {
             alertify.alert(message);
@@ -1615,12 +1653,12 @@ if (isset($applicant)) {
             $("#incident_loader").show();
             $("#loader_text_div").text('Please wait while we are uploading media ...');
 
-            var update_url      = '<?php echo base_url('incident_reporting_system/update_incident_video'); ?>';
-            var targit_video    = $('#update_video_sid').val();
-            var incident_sid    = $('#inc-id').val();
-            var form_data       = new FormData();
+            var update_url = '<?php echo base_url('incident_reporting_system/update_incident_video'); ?>';
+            var targit_video = $('#update_video_sid').val();
+            var incident_sid = $('#inc-id').val();
+            var form_data = new FormData();
 
-            if($('input[name="update_video_source"]:checked').val() == 'upload_audio'){
+            if ($('input[name="update_video_source"]:checked').val() == 'upload_audio') {
                 var audio_data = $('#update_audio').prop('files')[0];
 
                 form_data.append('audio', audio_data);
@@ -1658,19 +1696,19 @@ if (isset($applicant)) {
                 processData: false,
                 type: 'post',
                 data: form_data,
-                success: function(response){
+                success: function(response) {
                     $("#incident_loader").hide();
                     if (response != "error") {
-                        var obj                 = jQuery.parseJSON(response);
-                        var res_incident_sid    = obj['incident_sid'];
-                        var res_video_sid       = obj['video_sid'];
-                        var res_video_title     = obj['video_title'];
-                        var res_video_source    = obj['video_source'];
-                        var res_video_url       = obj['video_url'];
+                        var obj = jQuery.parseJSON(response);
+                        var res_incident_sid = obj['incident_sid'];
+                        var res_video_sid = obj['video_sid'];
+                        var res_video_title = obj['video_title'];
+                        var res_video_source = obj['video_source'];
+                        var res_video_url = obj['video_url'];
 
-                        $('#video_'+res_video_sid).html('<td class="text-center">'+res_video_title+'</td><td class="text-center">'+res_video_source+'</td><td class="text-center">Success</td><td><a href="javascript:;" video-sid="'+res_video_sid+'" video-title="'+res_video_title+'" class="btn btn-block btn-info js-edit-video">Edit Video</a></td><td><a href="javascript:;" video-title="'+res_video_title+'" video-source="'+res_video_source+'" video-url="'+res_video_url+'" class="btn btn-block btn-info js-view-video">Watch Video</a></td>'); 
-                        
-                        alertify.alert('Supporting Incident Video Update Successfully!', function(){
+                        $('#video_' + res_video_sid).html('<td class="text-center">' + res_video_title + '</td><td class="text-center">' + res_video_source + '</td><td class="text-center">Success</td><td><a href="javascript:;" video-sid="' + res_video_sid + '" video-title="' + res_video_title + '" class="btn btn-block btn-info js-edit-video">Edit Video</a></td><td><a href="javascript:;" video-title="' + res_video_title + '" video-source="' + res_video_source + '" video-url="' + res_video_url + '" class="btn btn-block btn-info js-view-video">Watch Video</a></td>');
+
+                        alertify.alert('Supporting Incident Video Update Successfully!', function() {
                             $('html, body').animate({
                                 scrollTop: $("#media_section").offset().top
                             }, 2000);
@@ -1678,21 +1716,20 @@ if (isset($applicant)) {
                     } else {
                         alertify.alert('Some error occurred while uploading video.');
                     }
-                    
+
                 },
-                error: function(){
-                }
+                error: function() {}
             });
         }
     });
     // Media JS End
 
     // Document JS Start
-    $('#save_incident_document').on('click',function(){
+    $('#save_incident_document').on('click', function() {
         var flag = 0;
         var message;
-        var fileName    = $("#upload_document").val();
-        var title       = $('#document_title').val();
+        var fileName = $("#upload_document").val();
+        var title = $('#document_title').val();
 
         if (fileName.length > 0) {
             $('#name_upload_document').html(fileName.substring(0, 45));
@@ -1721,7 +1758,7 @@ if (isset($applicant)) {
             return false;
         } else {
             $("#incident_loader").show();
-            $("#loader_text_div").text('Please wait while we are uploading document ...'); 
+            $("#loader_text_div").text('Please wait while we are uploading document ...');
 
             var update_url = '<?php echo base_url('incident_reporting_system/add_incident_document'); ?>';
             var file_data = $('#upload_document').prop('files')[0];
@@ -1729,17 +1766,17 @@ if (isset($applicant)) {
             var form_data = new FormData();
 
             if ($('#inc-id').val() != '0') {
-                var incident_sid    = $('#inc-id').val();
+                var incident_sid = $('#inc-id').val();
                 form_data.append('incident_sid', incident_sid);
             }
 
             form_data.append('document_title', title);
             form_data.append('docs', file_data);
-            form_data.append('file_name', fileName.replace('C:\\fakepath\\',''));
+            form_data.append('file_name', fileName.replace('C:\\fakepath\\', ''));
             form_data.append('file_ext', file_ext);
             form_data.append('company_sid', <?php echo $company_sid; ?>);
             form_data.append('incident_type_sid', <?php echo $id; ?>);
-            
+
             $('#save_incident_document').addClass('disabled-btn');
             $('#save_incident_document').prop('disabled', true);
 
@@ -1750,7 +1787,7 @@ if (isset($applicant)) {
                 processData: false,
                 type: 'post',
                 data: form_data,
-                success: function(response){
+                success: function(response) {
                     $("#incident_loader").hide();
                     $('#save_incident_document').removeClass('disabled-btn');
                     $('#save_incident_document').prop('disabled', false);
@@ -1758,18 +1795,18 @@ if (isset($applicant)) {
                     $('#name_upload_document').html('');
                     $('#document_title').val('');
                     if (response != "error") {
-                        var obj                 = jQuery.parseJSON(response);
-                        var res_incident_sid    = obj['incident_sid'];
-                        var res_document_sid    = obj['document_sid'];
-                        var res_document_title  = obj['document_title'];
-                        var res_document_type   = obj['document_type'];
-                        var res_document_ext    = obj['document_extension'];
-                        var res_document_url    = obj['document_url'];
+                        var obj = jQuery.parseJSON(response);
+                        var res_incident_sid = obj['incident_sid'];
+                        var res_document_sid = obj['document_sid'];
+                        var res_document_title = obj['document_title'];
+                        var res_document_type = obj['document_type'];
+                        var res_document_ext = obj['document_extension'];
+                        var res_document_url = obj['document_url'];
                         $('#inc-id').val(res_incident_sid);
                         $('#document_listing').show();
-                        $('#document_listing_data').prepend('<tr id="document_'+res_document_sid+'"><td class="text-center">'+res_document_title+'</td><td class="text-center">'+res_document_type+'</td><td class="text-center">Success</td><td><a href="javascript:;" document-sid="'+res_document_sid+'" document-title="'+res_document_title+'" document-ext="'+res_document_ext+'" document-url="'+res_document_url+'" class="btn btn-block btn-info js-edit-document">Edit Document</a></td><td><a href="javascript:;" document-title="'+res_document_title+'" document-ext="'+res_document_ext+'" document-url="'+res_document_url+'" class="btn btn-block btn-info js-view-document">View Document</a></td></tr>');
-                        
-                        alertify.alert('Supporting Incident Document Update Successfully!', function(){
+                        $('#document_listing_data').prepend('<tr id="document_' + res_document_sid + '"><td class="text-center">' + res_document_title + '</td><td class="text-center">' + res_document_type + '</td><td class="text-center">Success</td><td><a href="javascript:;" document-sid="' + res_document_sid + '" document-title="' + res_document_title + '" document-ext="' + res_document_ext + '" document-url="' + res_document_url + '" class="btn btn-block btn-info js-edit-document">Edit Document</a></td><td><a href="javascript:;" document-title="' + res_document_title + '" document-ext="' + res_document_ext + '" document-url="' + res_document_url + '" class="btn btn-block btn-info js-view-document">View Document</a></td></tr>');
+
+                        alertify.alert('Supporting Incident Document Update Successfully!', function() {
                             $('html, body').animate({
                                 scrollTop: $("#document_section").offset().top
                             }, 2000);
@@ -1778,14 +1815,13 @@ if (isset($applicant)) {
                         alertify.alert('Error Occurred While Uploading Supporting Incident Document');
                     }
                 },
-                error: function(){
-                }
+                error: function() {}
             });
         }
     });
 
     function check_upload_document(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -1815,13 +1851,13 @@ if (isset($applicant)) {
 
     $(document).on('click', '.js-edit-document', function() {
 
-        var iframe_url              = '';
-        var modal_content           = '';
-        var footer_content          = '';
-        var document_sid                 = $(this).attr('document-sid');
-        var document_title          = $(this).attr('document-title');
-        var file_extension          = $(this).attr('document-ext');
-        var document_preview_url    = $(this).attr('document-url');
+        var iframe_url = '';
+        var modal_content = '';
+        var footer_content = '';
+        var document_sid = $(this).attr('document-sid');
+        var document_title = $(this).attr('document-title');
+        var file_extension = $(this).attr('document-ext');
+        var document_preview_url = $(this).attr('document-url');
 
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
@@ -1853,7 +1889,7 @@ if (isset($applicant)) {
                 case 'gif':
                     modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
                     break;
-                default :
+                default:
                     //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     break;
@@ -1868,7 +1904,7 @@ if (isset($applicant)) {
         $('#edit_incident_document').modal('show');
     });
 
-    $('.update_document_type').on('click', function(){
+    $('.update_document_type').on('click', function() {
         var selected = $(this).val();
 
         if (selected == 'title') {
@@ -1884,7 +1920,7 @@ if (isset($applicant)) {
     });
 
     function check_edit_document(val) {
-        var fileName  = $("#" + val).val();
+        var fileName = $("#" + val).val();
 
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
@@ -1912,11 +1948,11 @@ if (isset($applicant)) {
         }
     }
 
-    $('#save_updated_doc').on('click', function(){
+    $('#save_updated_doc').on('click', function() {
 
         var flag = 0;
         var message;
-        var fileName  = $("#edit_upload_document").val();
+        var fileName = $("#edit_upload_document").val();
         var validation = $('input[name="update_document_type"]:checked').val();
 
         if (validation == 'document' || validation == 'both') {
@@ -1945,7 +1981,7 @@ if (isset($applicant)) {
                 message = 'Please provide a Document Title.';
                 flag = 1;
             }
-        } 
+        }
 
         if (flag == 1) {
             alertify.alert(message);
@@ -1953,13 +1989,13 @@ if (isset($applicant)) {
         } else {
             $("#incident_loader").show();
             $("#loader_text_div").text('Please wait while we are uploading document ...');
-        
-            var incident_sid    = $('#inc-id').val();
-            var update_url      = '<?php echo base_url('incident_reporting_system/update_incident_document'); ?>';
+
+            var incident_sid = $('#inc-id').val();
+            var update_url = '<?php echo base_url('incident_reporting_system/update_incident_document'); ?>';
             var targit_document = $('#update_document_sid').val();
-            var file_data       = $('#edit_upload_document').prop('files')[0];
-            var file_ext        = fileName.split('.').pop();
-            var form_data       = new FormData();
+            var file_data = $('#edit_upload_document').prop('files')[0];
+            var file_ext = fileName.split('.').pop();
+            var form_data = new FormData();
 
 
             form_data.append('update_type', validation);
@@ -1967,7 +2003,7 @@ if (isset($applicant)) {
             form_data.append('document_sid', targit_document);
             form_data.append('incident_sid', incident_sid);
             form_data.append('docs', file_data);
-            form_data.append('file_name', fileName.replace('C:\\fakepath\\',''));
+            form_data.append('file_name', fileName.replace('C:\\fakepath\\', ''));
             form_data.append('file_ext', file_ext);
             form_data.append('company_sid', <?php echo $company_sid; ?>);
             form_data.append('user_type', 'employee');
@@ -1981,20 +2017,20 @@ if (isset($applicant)) {
                 processData: false,
                 type: 'post',
                 data: form_data,
-                success: function(response){
+                success: function(response) {
                     $("#incident_loader").hide();
                     if (response != "error") {
-                        var obj                 = jQuery.parseJSON(response);
-                        var res_incident_sid    = obj['incident_sid'];
-                        var res_document_sid    = obj['document_sid'];
-                        var res_document_title  = obj['document_title'];
-                        var res_document_type   = obj['document_type'];
-                        var res_document_ext    = obj['document_extension'];
-                        var res_document_url    = obj['document_url'];
+                        var obj = jQuery.parseJSON(response);
+                        var res_incident_sid = obj['incident_sid'];
+                        var res_document_sid = obj['document_sid'];
+                        var res_document_title = obj['document_title'];
+                        var res_document_type = obj['document_type'];
+                        var res_document_ext = obj['document_extension'];
+                        var res_document_url = obj['document_url'];
 
-                        $('#document_'+res_document_sid).html('<td class="text-center">'+res_document_title+'</td><td class="text-center">'+res_document_type+'</td><td class="text-center">Success</td><td><a href="javascript:;" document-sid="'+res_document_sid+'" document-title="'+res_document_title+'" document-ext="'+res_document_ext+'" document-url="'+res_document_url+'" class="btn btn-block btn-info js-edit-document">Edit Document</a></td><td><a href="javascript:;" document-title="'+res_document_title+'" document-ext="'+res_document_ext+'" document-url="'+res_document_url+'" class="btn btn-block btn-info js-view-document">View Document</a></td>'); 
-                        
-                        alertify.alert('Supporting Incident Document Update Successfully!', function(){
+                        $('#document_' + res_document_sid).html('<td class="text-center">' + res_document_title + '</td><td class="text-center">' + res_document_type + '</td><td class="text-center">Success</td><td><a href="javascript:;" document-sid="' + res_document_sid + '" document-title="' + res_document_title + '" document-ext="' + res_document_ext + '" document-url="' + res_document_url + '" class="btn btn-block btn-info js-edit-document">Edit Document</a></td><td><a href="javascript:;" document-title="' + res_document_title + '" document-ext="' + res_document_ext + '" document-url="' + res_document_url + '" class="btn btn-block btn-info js-view-document">View Document</a></td>');
+
+                        alertify.alert('Supporting Incident Document Update Successfully!', function() {
                             $('html, body').animate({
                                 scrollTop: $("#document_section").offset().top
                             }, 2000);
@@ -2003,19 +2039,18 @@ if (isset($applicant)) {
                         alertify.alert('Some Error Occurred While Uploading Supporting Incident Document.');
                     }
                 },
-                error: function(){
-                }
+                error: function() {}
             });
         }
     });
 
     $(document).on('click', '.js-view-document', function() {
-        var iframe_url              = '';
-        var modal_content           = '';
-        var footer_content          = '';
-        var document_title          = $(this).attr('document-title');
-        var file_extension          = $(this).attr('document-ext');
-        var document_preview_url    = $(this).attr('document-url');
+        var iframe_url = '';
+        var modal_content = '';
+        var footer_content = '';
+        var document_title = $(this).attr('document-title');
+        var file_extension = $(this).attr('document-ext');
+        var document_preview_url = $(this).attr('document-url');
 
         if (document_preview_url != '') {
             switch (file_extension.toLowerCase()) {
@@ -2047,7 +2082,7 @@ if (isset($applicant)) {
                 case 'gif':
                     modal_content = '<img src="' + document_preview_url + '" style="width:100%; height:500px;" />';
                     break;
-                default :
+                default:
                     //using google docs
                     iframe_url = 'https://docs.google.com/gview?url=' + document_preview_url + '&embedded=true';
                     break;
@@ -2059,7 +2094,7 @@ if (isset($applicant)) {
         $('#view_document_modal_body').html(modal_content);
         $('#document_modal_title').html(document_title);
         $('#document_modal').modal("toggle");
-        $('#document_modal').on("shown.bs.modal", function () {
+        $('#document_modal').on("shown.bs.modal", function() {
             if (iframe_url != '') {
                 $('#preview_iframe').attr('src', iframe_url);
             }
@@ -2069,68 +2104,68 @@ if (isset($applicant)) {
 
     $("#inc-form").validate({
         ignore: ":hidden:not(select)",
-        submitHandler: function (form) {
+        submitHandler: function(form) {
             var flag = 0;
 
-            if($("#yes_witnesses").is(':checked')) {
-                $('#add_inner_wirnesses_section > div').each(function (key) {
+            if ($("#yes_witnesses").is(':checked')) {
+                $('#add_inner_wirnesses_section > div').each(function(key) {
                     var i = key + 1;
                     var div = 0;
                     div = $(this).attr('src');
                     var email = /\S+@\S+\.\S+/;
 
-                    var witness_name = $("#witnesses_name_0_"+div).val();
-                    var witnesses_phone = $("#witnesses_phone_0_"+div).val();
-                    var witnesses_email = $("#witnesses_email_0_"+div).val();
-                    var witnesses_title = $("#witnesses_title_0_"+div).val();
+                    var witness_name = $("#witnesses_name_0_" + div).val();
+                    var witnesses_phone = $("#witnesses_phone_0_" + div).val();
+                    var witnesses_email = $("#witnesses_email_0_" + div).val();
+                    var witnesses_title = $("#witnesses_title_0_" + div).val();
 
                     if (witness_name == '' || witnesses_phone == '' || witnesses_email == '' || witnesses_title == '') {
                         if (witness_name == '') {
-                            alertify.alert('Please add witness full name at row '+ i +' !');
+                            alertify.alert('Please add witness full name at row ' + i + ' !');
                         } else if (witnesses_phone == '') {
-                            alertify.alert('Please add witness phone number at row '+ i +' !');
+                            alertify.alert('Please add witness phone number at row ' + i + ' !');
                         } else if (witnesses_email == '') {
-                            alertify.alert('Please add witness email at row '+ i +' !');
+                            alertify.alert('Please add witness email at row ' + i + ' !');
                         } else if (witnesses_title == '') {
-                            alertify.alert('Please add witness title / relationship at row '+ i +' !');
+                            alertify.alert('Please add witness title / relationship at row ' + i + ' !');
                         }
                         $("#submit").removeAttr("disabled");
                         flag = 1;
                         return false;
                     } else if (witnesses_email != '' && !email.test(witnesses_email)) {
-                        alertify.alert('Please add valid witness email at row '+ i +' !');
+                        alertify.alert('Please add valid witness email at row ' + i + ' !');
                         $("#submit").removeAttr("disabled");
                         flag = 1;
                         return false;
                     }
                 });
 
-                $('#add_outter_wirnesses_section > div').each(function (key) {
+                $('#add_outter_wirnesses_section > div').each(function(key) {
                     var i = key + 1;
                     var div = 0;
                     div = $(this).attr('src');
                     var email = /\S+@\S+\.\S+/;
 
-                    var witness_name = $("#witnesses_name_1_"+div).val();
-                    var witnesses_phone = $("#witnesses_phone_1_"+div).val();
-                    var witnesses_email = $("#witnesses_email_1_"+div).val();
-                    var witnesses_title = $("#witnesses_title_1_"+div).val();
+                    var witness_name = $("#witnesses_name_1_" + div).val();
+                    var witnesses_phone = $("#witnesses_phone_1_" + div).val();
+                    var witnesses_email = $("#witnesses_email_1_" + div).val();
+                    var witnesses_title = $("#witnesses_title_1_" + div).val();
 
                     if (witness_name == '' || witnesses_phone == '' || witnesses_email == '' || witnesses_title == '') {
                         if (witness_name == '') {
-                            alertify.alert('Please add witness full name at row '+ i +' !');
+                            alertify.alert('Please add witness full name at row ' + i + ' !');
                         } else if (witnesses_phone == '') {
-                            alertify.alert('Please add witness phone number at row '+ i +' !');
+                            alertify.alert('Please add witness phone number at row ' + i + ' !');
                         } else if (witnesses_email == '') {
-                            alertify.alert('Please add witness email at row '+ i +' !');
+                            alertify.alert('Please add witness email at row ' + i + ' !');
                         } else if (witnesses_title == '') {
-                            alertify.alert('Please add witness title / relationship at row '+ i +' !');
+                            alertify.alert('Please add witness title / relationship at row ' + i + ' !');
                         }
                         $("#submit").removeAttr("disabled");
                         flag = 1;
                         return false;
                     } else if (witnesses_email != '' && !email.test(witnesses_email)) {
-                        alertify.alert('Please add valid witness email at row '+ i +' !');
+                        alertify.alert('Please add valid witness email at row ' + i + ' !');
                         $("#submit").removeAttr("disabled");
                         flag = 1;
                         return false;
@@ -2139,20 +2174,20 @@ if (isset($applicant)) {
             }
 
             var is_signature_exist = $('#signature_bas64_image').val();
-            $('#submit').attr('disabled','disabled');
+            $('#submit').attr('disabled', 'disabled');
             <?php
-                foreach ($questions as $question) {
-                    if($question['question_type'] == 'textarea' && $question['is_required'] == 1){
-                        echo 'var instances'.$question['id'].' = $.trim(CKEDITOR.instances.text_'.$question['id'].'.getData());'."\r\n";
-                        echo 'if (instances'.$question['id'].'.length === 0) {'."\r\n";
-                        echo 'alertify.alert("Error! Answer Missing", "Please Provide All (*)Required Fields");'."\r\n";
-                        echo '$("#submit").removeAttr("disabled");'."\r\n";
-                        echo 'return false;'."\r\n";
-                        echo '}'."\r\n";
-                    }
+            foreach ($questions as $question) {
+                if ($question['question_type'] == 'textarea' && $question['is_required'] == 1) {
+                    echo 'var instances' . $question['id'] . ' = $.trim(CKEDITOR.instances.text_' . $question['id'] . '.getData());' . "\r\n";
+                    echo 'if (instances' . $question['id'] . '.length === 0) {' . "\r\n";
+                    echo 'alertify.alert("Error! Answer Missing", "Please Provide All (*)Required Fields");' . "\r\n";
+                    echo '$("#submit").removeAttr("disabled");' . "\r\n";
+                    echo 'return false;' . "\r\n";
+                    echo '}' . "\r\n";
                 }
+            }
             ?>
-            if(is_signature_exist == ""){
+            if (is_signature_exist == "") {
                 alertify.alert('Please Add Your Signature!');
                 $("#submit").removeAttr("disabled");
                 return false;
@@ -2160,7 +2195,7 @@ if (isset($applicant)) {
 
 
 
-            $(".multi-checkbox").each(function (index, element) {
+            $(".multi-checkbox").each(function(index, element) {
                 if ($(this).attr('data-attr') != '0') {
                     var key = "multi-list_" + $(this).attr('data-key');
                     var name = "input:checkbox[name^='" + key + "']:checked";
@@ -2175,7 +2210,7 @@ if (isset($applicant)) {
                 }
             });
 
-            if($('[name="review_manager[]"]:checked').length == 0){
+            if ($('[name="review_manager[]"]:checked').length == 0) {
                 alertify.alert('Please select manager');
                 flag = 1;
                 $('#submit').removeAttr('disabled');
@@ -2206,26 +2241,26 @@ if (isset($applicant)) {
         step: 15
     });
 
-    $(document).on('change','input[type="radio"]',function(){
+    $(document).on('change', 'input[type="radio"]', function() {
         var related = $(this).attr('id');
-        var value = $("input[type='radio'][name='radio_"+related+"']:checked").val();
-        if(value == 'no'){
+        var value = $("input[type='radio'][name='radio_" + related + "']:checked").val();
+        if (value == 'no') {
 
-            $('.related_'+related).removeClass('error');
-            $('.related_'+related).removeAttr('required');
-            $('.required_'+related).hide();
-        } else{
-            $('.related_'+related).each(function(index,object){
+            $('.related_' + related).removeClass('error');
+            $('.related_' + related).removeAttr('required');
+            $('.required_' + related).hide();
+        } else {
+            $('.related_' + related).each(function(index, object) {
                 var require = $(object).attr('data-require');
-                if(require == '1'){
+                if (require == '1') {
 
                     $(object).addClass('error');
-                    $(object).prop('required',true);
-                    $(object).prev().find('.required_'+related).show();
-                } else{
+                    $(object).prop('required', true);
+                    $(object).prev().find('.required_' + related).show();
+                } else {
                     $(object).removeClass('error');
                     $(object).removeAttr('required');
-                    $(object).prev().find('.required_'+related).hide();
+                    $(object).prev().find('.required_' + related).hide();
                 }
             });
         }
@@ -2275,7 +2310,7 @@ if (isset($applicant)) {
             processData: false,
             type: 'post',
             data: form_data,
-            success: function (data) {
+            success: function(data) {
                 $('#loader').hide();
                 $('#upload').removeClass('disabled-btn');
                 $('#upload').prop('disabled', false);
@@ -2292,8 +2327,34 @@ if (isset($applicant)) {
                     alert('Doc error');
                 }
             },
-            error: function () {
-            }
+            error: function() {}
         });
     }
 </script>
+
+
+
+<script>
+    $(document).ready(function() {
+        //
+        $("#incident_employee_id").select2();
+        //
+        $('#incident_employee_id').on("change", function(e) {
+            $('#full-name').val(
+                $(this).find("option:selected").data('name')
+            );
+        });
+    });
+</script>
+<style>
+    .select2-container--default .select2-selection--single {
+        background-color: #fff !important;
+        border: 1px solid #aaa !important;
+        padding: 5px !important;
+        border-radius: 4px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 12px !important;
+    }
+</style>

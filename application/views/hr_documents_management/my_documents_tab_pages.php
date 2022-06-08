@@ -450,7 +450,10 @@
                                             <tr>
                                                 <td class="">
                                                     <?php
-                                                        echo ucwords(str_replace('_', ' ', $v['document_type']));
+                                                        echo ucwords(str_replace('_', ' ', $v['document_type'])).'';
+                                                        if($v['is_required'] == 1){
+                                                            echo ' <i class="fa fa-asterisk text-danger"></i>';
+                                                        }
                                                         echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $v['updated_at'], '_this' => $this));
                                                     ?>
                                                     <div class="hidden-sm hidden-lg hidden-md">
@@ -595,7 +598,10 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <?php if (count($category_document['documents']) > 0) { ?>
+                                                                <?php 
+                                                                 // print_r($category_document['documents']);
+                                                                  
+                                                                   if (count($category_document['documents']) > 0) { ?>
                                                                     <?php foreach ($category_document['documents'] as $document) { ?>
                                                                         <?php if ($document["is_history"] == 0) { ?>
                                                                             <?php $pdBtn = getPDBTN($document, 'btn-info'); ?> 
@@ -1000,6 +1006,9 @@
                                                         <td class="">
                                                             <?php
                                                                 echo ucwords(str_replace('_', ' ', $v['document_type']));
+                                                                if($v['is_required'] == 1){
+                                                                    echo ' <i class="fa fa-asterisk text-danger"></i>';
+                                                                }
                                                                 echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $v['updated_at'], '_this' => $this));
                                                             ?>
                                                             <div class="hidden-sm hidden-lg hidden-md">
