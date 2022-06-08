@@ -950,8 +950,8 @@ if(!function_exists('job_meta_keywords')){
     }
 }
 
-if(!function_exists('verifyCaptcha')){
-    function verifyCaptcha(
+if(!function_exists('verifyCaptcha_old')){
+    function verifyCaptcha_old(
         $secret,
         $token
     ){
@@ -984,6 +984,9 @@ if(!function_exists('verifyCaptcha')){
         return false;
     }
 }
+
+
+
 
 if(!function_exists('checkSpammer')){
         function checkSpammer($p, $r){
@@ -1855,5 +1858,37 @@ if (!function_exists('check_company_status')) {
         $result = $CI->db->get('users')->row_array();
         //
         return $result["active"]; 
+    }
+}
+
+
+if (!function_exists('verifyCaptcha')) {
+    /**
+     * 
+     */
+    function verifyCaptcha($token)
+    {
+        //
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => array('secret' => getCreds('AHR')->GOOGLE_CAPTCHA_API_SECRET_V2, 'response' => $token)
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        return json_decode($response, true);
     }
 }

@@ -818,21 +818,27 @@ class Home extends CI_Controller {
                 $data['meta_description'] = $data['meta_description'];
                 $data['meta_keywords'] = $data['meta_keywords'];
                 $data['embedded_code'] = $data['embedded_code'];
+               // die($theme_name);
                 $this->load->view($theme_name . '/_parts/header_view', $data);
                 $this->load->view($theme_name . '/join_network_view');
                 $this->load->view($theme_name . '/_parts/footer_view');
             } else { 
                 $applied_by = '';
-                $recaptcha_response = $this->input->post('g-recaptcha-response');
-                $google_secret = $this->config->item('google_secret');
+               $formpost = $this->input->post(NULL, TRUE);
+               //
+               if(!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])){
+                    $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                   return redirect('join_our_talent_network', 'refresh');
+               }
+               //
+               $gr = verifyCaptcha($formpost['g-recaptcha-response']);
+              //
+               if(!$gr['success']){
+                   $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                   return redirect('join_our_talent_network', 'refresh');
+               }
+              
 
-                $recaptcha = verifyCaptcha($google_secret, $recaptcha_response);
-
-                // if ($recaptcha == false) {
-                //     $this->session->set_flashdata('message', '<b>Error: </b>Sorry Google Recaptcha Failed.');
-                //     redirect('/join_our_talent_network'.$applied_by, 'refresh');
-                // }
-                
                 $status = $this->job_details->update_applicant_status_sid($data['company_details']['sid']); // get the statuses first for current company
                 $email = $this->input->post('email');
                 $first_name = $this->input->post('first_name');
@@ -1370,6 +1376,7 @@ class Home extends CI_Controller {
                                 //     break;
                                 // } 
 
+                              
                                 $this->checkUserAppliedForJob($company_sid);
                                 $job_sid                                        = $this->input->post('job_sid');
                                 $first_name                                     = $this->input->post('first_name');

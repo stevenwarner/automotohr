@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="btn-panel top-btn">
     <a href="javascript:void(0);" class="site-btn-lg custom-apply-now" data-toggle="modal" data-target="#myModal">apply now</a>
 </div>
