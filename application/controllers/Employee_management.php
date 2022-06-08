@@ -3289,25 +3289,37 @@ class Employee_management extends Public_Controller {
             'Msg' => 'Invalid Request'
         ];
         //
-        if (!$this->session->userdata('logged_in')) {
-            //
-            $resp['Msg'] = 'Your session has expired';
-            res($resp);
-        }
+        $admin_id = $this->session->userdata('user_id');
         //
-        if (!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {
+        if (!empty($admin_id) && $admin_id == 1) {
+            $companyId = $this->employee_model->getEmployeesCompanyId($employeeId);
+        } else {
+            if (!$this->session->userdata('logged_in')) {
+                //
+                $resp['Msg'] = 'Your session has expired';
+                res($resp);
+            }
             //
-            $resp['Msg'] = 'You don\'t permission to the employee profile.';
-            res($resp);
+            if (!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {
+                //
+                $resp['Msg'] = 'You don\'t permission to the employee profile.';
+                res($resp);
+            }
+            //
+            $companyId = $this->session->userdata('logged_in')['company_detail']['sid'];
         }
+        
         //
-        $companyId = $this->session->userdata('logged_in')['company_detail']['sid'];
+        
         // Fetch employees profile
         $record = $this->employee_model->GetEmployeeProfile($employeeId, $companyId);
         //
         if(empty($record)){
             $resp['Msg'] = 'Employee not found';
         } else{
+            $assigned_auth_documents = $this->employee_model->GetEmployeeAssignAuthDocument($employeeId, $companyId);
+            $record["assigned_auth_documents"] = $assigned_auth_documents;
+            //
             $resp['Status'] = true;
             $resp['Msg'] = 'Proceed.';
             $resp['Data'] = $this->load->view('quick_view', $record, true);

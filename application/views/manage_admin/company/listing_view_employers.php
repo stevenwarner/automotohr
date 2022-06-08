@@ -87,7 +87,7 @@
                                                             <th>Company Name</th>
                                                             <?php $function_names = array('show_employer_multiple_actions', 'employerLogin', 'edit_employers'); ?>
                                                             <?php if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
-                                                                <th class="last-col" width="1%" colspan="4">Actions</th>
+                                                                <th class="last-col" width="1%" colspan="5">Actions</th>
                                                             <?php } ?>
                                                         </tr>
                                                         </thead>

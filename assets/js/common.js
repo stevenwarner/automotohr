@@ -318,7 +318,6 @@ function GetSpecificEmployeeDetails(
     employeeId,
     id
 ) {
-
     //
     if (employeeId === 0) {
         // flush view

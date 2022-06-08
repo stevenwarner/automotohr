@@ -28,7 +28,7 @@
                 <tr>
                     <td class="col-sm-3"><strong>Joined On</strong></td>
                     <td class="col-sm-9">
-                        <?php
+                        <?phphttps://www.youtube.com/watch?v=A_YtGh1UB_M
                             if (!empty($JoinedDate)) {
                                 echo $JoinedDate;
                             } else {
@@ -186,6 +186,47 @@
                         ?>
                     </td>
                 </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--  -->
+<div class="row">
+    <div class="col-sm-12">
+        <table class="table table-striped table-bordered">
+            <caption>Assign Authorized document</caption>
+            <thead>
+                <th>Company Name</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Document Title</th>
+            </thead>
+            <tbody>
+                <?php if (!empty($assigned_auth_documents)) { ?>
+                    <?php foreach ($assigned_auth_documents as $document) { ?>
+                        <tr>
+                            <td>
+                                <?php echo ucwords($document["company_name"]); ?>
+                            </td>
+                            <td>
+                                <?php echo ucwords($document["user_name"]); ?>
+                            </td>
+                            <td>
+                                <?php echo ucwords($document["user_type"]); ?>
+                            </td>
+                            <td>
+                                <?php echo $document["document_title"]; ?>
+                            </td>
+                        </tr>
+                    <?php } ?>        
+                <?php } else { ?>
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            Document Not Assigned  
+                        </td>
+                    </tr>
+                <?php } ?>        
             </tbody>
         </table>
     </div>

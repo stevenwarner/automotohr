@@ -403,7 +403,8 @@
                                                             <div class="input-group" style="float: left;">
                                                                 <a href="<?php echo base_url('manage_admin/employers/AssignBulkDocuments')."/".$data['sid']; ?>" class="btn btn-success">Add Bulk Documents</a> 
                                                                 <a href="<?php echo base_url('manage_admin/employers/EmployeeDocuments')."/".$data['sid']; ?>" class="btn btn-success change_status">Employee Documents</a> 
-                                                                <a href="<?php echo base_url('manage_admin/employers/EmployeeStatusDetail')."/".$data['sid']; ?>" class="btn btn-warning change_status">Change Employee Status</a>  
+                                                                <a href="<?php echo base_url('manage_admin/employers/EmployeeStatusDetail')."/".$data['sid']; ?>" class="btn btn-warning change_status">Change Employee Status</a> 
+                                                                <a href="javascript:;" class="btn btn-success change_status jsEmployeeQuickProfile" data-id="<?php echo $data['sid']; ?>">Quick View</a> 
                                                             </div>
                                                         </div>
                                                     </div>
@@ -431,7 +432,8 @@
         </div>
     </div>
 </div>
-
+<link rel="stylesheet" href="<?=base_url('assets/css/theme-2021.css?v='.time());?>">
+<script src="<?=base_url('assets/js/common.js');?>"></script>
 <script type="text/javascript">
     var old_rehire_date = '<?php echo $rehireDate; ?>';
     // 
