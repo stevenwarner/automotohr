@@ -4,6 +4,7 @@ class Notification_emails extends Public_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('notification_emails_model');
+        $this->load->model('hr_documents_management_model');
         $this->load->library("pagination");
     }
 
@@ -1873,6 +1874,7 @@ class Notification_emails extends Public_Controller {
             check_access_permissions($security_details, 'my_settings', 'notification_emails');
             $company_sid                                                        = $data['session']['company_detail']['sid'];
             $data['company_sid']                                                = $company_sid;
+            //
             $notifications_type                                                 = 'default_approvers';
             $data['title']                                                      = 'Default Document Approvers Notifications';
             $data['notification_type']                                          = $notifications_type;
@@ -1949,6 +1951,9 @@ class Notification_emails extends Public_Controller {
                         $result                                                 = $this->notification_emails_model->save_notification_email($insert_array); 
 
                         if ($result == 'success') {
+                            //
+                            $this->add_default_approver_to_document($company_sid);
+                            //
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
                         } else {
                             $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
@@ -1989,6 +1994,9 @@ class Notification_emails extends Public_Controller {
                         $result = $this->notification_emails_model->save_notification_email($data_to_save);
 
                         if ($result == 'success') {
+                            //
+                            $this->add_default_approver_to_document($company_sid);
+                            //
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
                         } else {
                             $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
@@ -2001,5 +2009,147 @@ class Notification_emails extends Public_Controller {
         } else {
             redirect(base_url('login'), "refresh");
         }
+    }
+
+    public function add_default_approver_to_document($company_sid) {
+        //
+        $default_approver = $this->notification_emails_model->get_active_default_approver($company_sid);
+        $approval_documents = $this->notification_emails_model->get_all_documents_without_approvers($company_sid);
+        //
+        if (!empty($approval_documents) && !empty($default_approver)) {
+            //
+            $approver_sid = 0;
+            $approver_email = "";
+            //
+            if(is_numeric($default_approver["employer_sid"]) && $default_approver["employer_sid"] > 0){
+                $approver_sid = $default_approver;
+                //
+                $this->hr_documents_management_model->change_document_approval_status(
+                    $document_sid, 
+                    [
+                        'document_approval_employees' => $approver_sid
+                    ]
+                );
+            } else {
+                $approver_email = $default_approver["email"];
+            }
+            //
+            foreach ($approval_documents as $document) {
+                if ($default_approver != 0) {
+                    $this->hr_documents_management_model->insert_assigner_employee(
+                        [
+                            'portal_document_assign_sid' =>  $document['approval_flow_sid'],
+                            'assigner_sid' => $approver_sid,
+                            'approver_email' => $approver_email,
+                            'assign_on' =>  date('Y-m-d H:i:s', strtotime('now')),
+                            'assigner_turn' => 1,
+                        ]
+                    );
+                    //
+                    // Send Email to first approver of this document
+                    $this->SendEmailToCurrentApprover($document['sid']);
+                }
+            }
+        }
+        //
+    }
+
+    function SendEmailToCurrentApprover ($document_sid) {
+        //
+        $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
+        //
+        $current_approver_info = $this->hr_documents_management_model->get_document_current_approver_sid($document_info['approval_flow_sid']);
+        //
+        $approver_info = array();
+        $current_approver_reference = '';
+        //
+        if($current_approver_info["assigner_sid"] == 0 && !empty($current_approver_info["approver_email"])){
+            //
+            $default_approver = $this->hr_documents_management_model->get_default_outer_approver($document_info['company_sid'], $current_approver_info["approver_email"]);
+            //
+            $approver_name = explode(" ", $default_approver["contact_name"]);
+            //
+            $approver_info['first_name'] = isset($approver_name[0]) ? $approver_name[0] : "";
+            $approver_info['last_name'] = isset($approver_name[1]) ? $approver_name[1] : "";
+            $approver_info['email'] = $default_approver["email"];
+            //
+            $current_approver_reference = $default_approver["email"];
+        } else {
+            //
+            $approver_info = $this->hr_documents_management_model->get_employee_information($document_info['company_sid'], $current_approver_info["assigner_sid"]);
+            //
+            $current_approver_reference = $current_approver_info["assigner_sid"];
+        }
+        
+        //
+        $approvers_flow_info = $this->hr_documents_management_model->get_approval_document_bySID($document_info['approval_flow_sid']);
+        //
+        // Get the initiator name
+        $document_initiator_name = getUserNameBySID($approvers_flow_info["assigned_by"]);
+        //
+        // Get the company name
+        $company_name = getCompanyNameBySid($document_info['company_sid']);
+        //
+        // Get assigned document user name
+        if($document_info['user_type'] == 'employee'){
+            //
+            $t = $this->hr_documents_management_model->get_employee_information($document_info['company_sid'], $document_info['user_sid']);
+            //
+            $document_assigned_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        } else{
+            //
+            $t = $this->hr_documents_management_model->get_applicant_information($document_info['company_sid'], $document_info['user_sid']);
+            //
+            $document_assigned_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        }
+        //
+        $hf = message_header_footer_domain($document_info['company_sid'], $company_name);
+        //
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
+        //
+        $accept_code = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'accept')
+        );
+        //
+        $reject_code = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'reject')
+        );
+        //
+        $view_code = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'view')
+        );
+        //
+        $approval_public_link_accept = base_url("hr_documents_management/public_approval_document"). '/' . $accept_code;
+        $approval_public_link_reject = base_url("hr_documents_management/public_approval_document"). '/' . $reject_code;
+        $approval_public_link_view = base_url("hr_documents_management/public_approval_document"). '/' . $view_code;
+        // 
+        $replacement_array['initiator']             = $document_initiator_name;
+        $replacement_array['contact-name']          = $document_assigned_user_name;
+        $replacement_array['company_name']          = ucwords($company_name);
+        $replacement_array['username']              = $replacement_array['contact-name'];
+        $replacement_array['firstname']             = $approver_info['first_name'];
+        $replacement_array['lastname']              = $approver_info['last_name'];
+        $replacement_array['first_name']            = $approver_info['first_name'];
+        $replacement_array['last_name']             = $approver_info['last_name'];
+        $replacement_array['document_title']        = $document_info['document_title'];
+        $replacement_array['user_type']             = $document_info['user_type'];
+        $replacement_array['note']                  = $approvers_flow_info["assigner_note"];
+        $replacement_array['baseurl']               = base_url();
+        $replacement_array['accept_link']           = $approval_public_link_accept;
+        $replacement_array['reject_link']           = $approval_public_link_reject;
+        $replacement_array['view_link']             = $approval_public_link_view;
+        //
+        // Send email notification to approver with a private link
+        log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
     }
 }

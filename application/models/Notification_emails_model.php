@@ -191,4 +191,35 @@
         $sms_module = $this->db->get('users')->result_array();
         return $sms_module[0];
     }
+
+    function get_active_default_approver($company_id) {
+        $this->db->select('employer_sid, email');
+        $this->db->where('company_sid', $company_id);
+        $this->db->where('notifications_type', "default_approvers");
+        $this->db->where('status', "active");
+        $record_obj = $this->db->get('notifications_emails_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        if (!empty($record_arr)) {
+            return $record_arr;
+        } else {
+            return array();
+        }
+    }
+
+    function get_all_documents_without_approvers($company_id) {
+        $this->db->select('documents_assigned.sid, documents_assigned.approval_flow_sid');
+        $this->db->where('documents_assigned.company_sid', $company_id);
+        $this->db->where('documents_assigned.has_approval_flow', 1);
+        $this->db->where('documents_assigned.status', 1);
+        $this->db->join('portal_document_assign_flow_employees','portal_document_assign_flow_employees.portal_document_assign_sid = documents_assigned.approval_flow_sid','left');
+        $records_arr = $this->db->get('documents_assigned')->result_array();
+
+        if (!empty($records_arr)) {
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
 }

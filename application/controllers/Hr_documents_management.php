@@ -13679,35 +13679,39 @@ class Hr_documents_management extends Public_Controller {
                 $document_info['approval_flow_sid'],
                 $document_info['has_approval_flow']
             );
-            //
-            $approver_sid = 0;
-            $approver_email = "";
-            //
-            if(is_numeric($default_approver) && $default_approver > 0){
-                $approver_sid = $default_approver;
+
+            if ($default_approver != 0) {
                 //
-                $this->hr_documents_management_model->change_document_approval_status(
-                    $document_sid, 
+                $approver_sid = 0;
+                $approver_email = "";
+                //
+                if(is_numeric($default_approver) && $default_approver > 0){
+                    $approver_sid = $default_approver;
+                    //
+                    $this->hr_documents_management_model->change_document_approval_status(
+                        $document_sid, 
+                        [
+                            'document_approval_employees' => $approver_sid
+                        ]
+                    );
+                } else {
+                    $approver_email = $default_approver;
+                }
+                //
+            
+                $this->hr_documents_management_model->insert_assigner_employee(
                     [
-                        'document_approval_employees' => $approver_sid
+                        'portal_document_assign_sid' =>  $document_info['approval_flow_sid'],
+                        'assigner_sid' => $approver_sid,
+                        'approver_email' => $approver_email,
+                        'assign_on' =>  date('Y-m-d H:i:s', strtotime('now')),
+                        'assigner_turn' => 1,
                     ]
                 );
-            } else {
-                $approver_email = $default_approver;
+                //
+                // Send Email to first approver of this document
+                $this->SendEmailToCurrentApprover($document_sid);
             }
-            //
-            $this->hr_documents_management_model->insert_assigner_employee(
-                [
-                    'portal_document_assign_sid' =>  $document_info['approval_flow_sid'],
-                    'assigner_sid' => $approver_sid,
-                    'approver_email' => $approver_email,
-                    'assign_on' =>  date('Y-m-d H:i:s', strtotime('now')),
-                    'assigner_turn' => 1,
-                ]
-            );
-            //
-            // Send Email to first approver of this document
-            $this->SendEmailToCurrentApprover($document_sid);
         }
         
     }
