@@ -136,6 +136,8 @@ class Pmg_cron extends CI_Controller {
         //
         $body = $hf['header']. str_replace(array_keys($replaceArray), $replaceArray, $template['text']).$hf['footer'];
         //
+        $this->load->model('Hr_documents_management_model', 'HRDMM');
+        if($this->HRDMM->isActiveUser($employeeId)){
         log_and_sendEmail(
             'notification@automotohr.com', 
             $employeeDetails['email'],
@@ -143,5 +145,7 @@ class Pmg_cron extends CI_Controller {
             $body,
             $companyName
         );
+    }
+
     }
 }

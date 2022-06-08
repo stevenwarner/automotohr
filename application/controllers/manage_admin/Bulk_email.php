@@ -96,7 +96,10 @@ class Bulk_email extends Admin_Controller {
                     . '</div><div class = "footer" style = "width:100%; float:left; background-color:#000; padding:20px 30px; box-sizing:border-box;"><div style = "float:left; width:100%; "><p style = "color:#fff; text-align:center; font-style:italic; line-height:normal; font-family: "Open Sans", sans-serif; font-weight:600; font-size:14px;"><a style = "color:#fff; text-decoration:none;" href = "' . STORE_FULL_URL . '">' . ucwords(STORE_DOMAIN) . '</a></p></div></div></div>'
                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                     . generateRandomString(48) . "__" . '</div>';
+                    $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                            if($this->HRDMM->isActiveUser($employee_id)){
             log_and_sendEmail($from, $to, $user_subject, $messagebody, $sender_name);
+                                            }
         }
     }
 

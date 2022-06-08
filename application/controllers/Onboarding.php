@@ -5674,7 +5674,11 @@ class Onboarding extends CI_Controller
                     $body = $email_hf['header']
                         . $emailTemplateBody
                         . $email_hf['footer'];
-                    sendMail($from, $to, $subject, $body, $from_name);
+                    
+                    $this->load->model('Hr_documents_management_model', 'HRDMM');
+                        if($this->HRDMM->isActiveUser($user_info['sid'])){
+                        sendMail($from, $to, $subject, $body, $from_name);
+                        }
                     $this->session->set_flashdata('message', '<strong>Success: </strong> Offer letter / Pay plan assigned and sent successfully!');
                 } else {
                     $this->session->set_flashdata('message', '<strong>Success: </strong> Offer letter / Pay plan assigned successfully!');
@@ -6258,7 +6262,10 @@ class Onboarding extends CI_Controller
                                                 $body = EMAIL_HEADER
                                                     . $emailTemplateBody
                                                     . EMAIL_FOOTER;
+                                        $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                            if($this->HRDMM->isActiveUser($emp_info['employer_sid'])){
                                                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                                                }
                                             }
                                         }
                                     }
@@ -6573,7 +6580,11 @@ class Onboarding extends CI_Controller
                                                 $body = EMAIL_HEADER
                                                     . $emailTemplateBody
                                                     . EMAIL_FOOTER;
+                                                    
+                                            $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                            if($this->HRDMM->isActiveUser($emp_info['employer_sid'])){
                                                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                                              }
                                             }
                                         }
                                     }

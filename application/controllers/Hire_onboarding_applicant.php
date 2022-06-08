@@ -131,7 +131,11 @@ class Hire_onboarding_applicant extends CI_Controller
                                         $body = EMAIL_HEADER
                                             . $emailTemplateBody
                                             . EMAIL_FOOTER;
+                                            $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                            if($this->HRDMM->isActiveUser($emp_info['employer_sid'])){
                                         log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                                            }
+                                    
                                     }
                                 }
                             }

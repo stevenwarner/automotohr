@@ -307,8 +307,12 @@ class Send_manual_email extends Public_Controller {
 
                // sendMail($template_from_email, $email, $subject, $autoemailbody, $from_name, REPLY_TO);
                 $sent_to_pm  = common_save_message($message_data);
+                $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                            if($this->HRDMM->isActiveUser($employer_id)){
                 log_and_sendEmail($template_from_email, $email, $subject, $autoemailbody, $from_name);
-               // $email_log_autoresponder = array();
+                                            }
+               
+                // $email_log_autoresponder = array();
                // $email_log_autoresponder['company_sid'] = $company_sid;
                // $email_log_autoresponder['sender'] = $template_from_email;
                // $email_log_autoresponder['receiver'] = $email;
@@ -396,7 +400,11 @@ class Send_manual_email extends Public_Controller {
                 $this->portal_email_templates_model->save_message($message_data);
             }
 
+            $this->load->model('Hr_documents_management_model', 'HRDMM');
+                if($this->HRDMM->isActiveUser($employee_id)){
             log_and_sendEmail($template_from_email, $employee_email, $subject, $autoemailbody, $from_name);
+                                            }
+                                            
            // $email_log_autoresponder = array();
            // $email_log_autoresponder['company_sid'] = $company_sid;
            // $email_log_autoresponder['sender'] = $template_from_email;

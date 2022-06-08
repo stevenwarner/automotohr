@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 use \PayPal\Api\ExecutePayment;
 use \PayPal\Api\PaymentExecution; // required
@@ -30,10 +30,12 @@ use \PayPal\Exception\PayPalConnectionException;
 
 ini_set('max_execution_time', 300);
 
-class Misc extends CI_Controller {
+class Misc extends CI_Controller
+{
     private $apiContext;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('ext_model');
         $this->load->model('manage_admin/admin_invoices_model');
@@ -50,10 +52,11 @@ class Misc extends CI_Controller {
         } else {
             require_once '/' . DOC_ROOT . 'ext/autoload.php';
         }
-        
+
         $this->apiContext = new \PayPal\Rest\ApiContext(
             new \PayPal\Auth\OAuthTokenCredential(
-                $ClientID, $ClientSecret
+                $ClientID,
+                $ClientSecret
             )
         );
 
@@ -68,7 +71,8 @@ class Misc extends CI_Controller {
         }
     }
 
-    function cc_apply_main() {
+    function cc_apply_main()
+    {
         $data = $_POST;
         //echo json_encode($data['product']);
         $products_details = array();
@@ -130,7 +134,7 @@ class Misc extends CI_Controller {
                 //product_price, product_total, company_sid
                 $no_of_days = $value['no_of_days'];
                 $product_qty = $value['number_of_postings'] * $value['qty'];
-                $daily = $value ['daily'];
+                $daily = $value['daily'];
 
                 if ($daily > 0) {
                     $expiry_days = $no_of_days;
@@ -143,14 +147,16 @@ class Misc extends CI_Controller {
                 }
 
                 $cost_price = $this->ext_model->get_product_cost_price($value['sid']);
-                $ordered_products[] = array('product_sid' => $value['sid'],
-                                            'product_qty' => $product_qty,
-                                            'product_remaining_qty' => $product_qty,
-                                            'order_qty' => $value['qty'],
-                                            'product_price' => $value['price'],
-                                            'cost_price' => $cost_price,
-                                            'product_total' => $product_total,
-                                            'company_sid' => $company_sid);
+                $ordered_products[] = array(
+                    'product_sid' => $value['sid'],
+                    'product_qty' => $product_qty,
+                    'product_remaining_qty' => $product_qty,
+                    'order_qty' => $value['qty'],
+                    'product_price' => $value['price'],
+                    'cost_price' => $cost_price,
+                    'product_total' => $product_total,
+                    'company_sid' => $company_sid
+                );
 
                 $serialized_items_info['custom_text'][] = '';
                 $serialized_items_info['item_qty'][] = $product_qty;
@@ -163,7 +169,7 @@ class Misc extends CI_Controller {
                 $serialized_items_info['total_cost'][] = $cost_price * $value['qty'];
                 $order_amount = $order_amount + $product_total;
                 $order_description .= 'Product: ' . $value['qty'] . ' * ' . $value['name'] . ', ';
-                $proucts_sid [] = $value['sid'];
+                $proucts_sid[] = $value['sid'];
 
                 if ($value['sid'] == 26) {
                     $fb_api_product_flag = 'true';
@@ -192,7 +198,7 @@ class Misc extends CI_Controller {
 
                 if ($start_date != null) { // check whether coupon is started
                     $current_date_time = date('Y-m-d H:i:s');
-                    
+
                     if ($start_date > $current_date_time) { // Coupon code is not started yet.
                         $error_flag = true;
                         $coupon_error = 'coupon_error';
@@ -201,26 +207,28 @@ class Misc extends CI_Controller {
 
                 if ($end_date != null) { // check whether coupon has expired
                     $current_date_time = date('Y-m-d H:i:s');
-                    
+
                     if ($current_date_time > $end_date) { // coupon code has expired
                         $error_flag = true;
                         $coupon_error = 'coupon_error';
                     }
                 }
-                
+
                 if ($maximum_uses == null || $maximum_uses == 0) { // need to figure out the maxium uses information
                     //it is umlimited, no need to perform any checks - APPLY CHECKS PLEASE
                 }
-                
+
                 if ($type == 'fixed') {
                     $total_discount = $discount;
                 } else {
                     $total_discount = round((($order_amount * $discount) / 100), 2);
                 }
-                
-                $coupon_array = array(  'coupon_code' => $coupon_code,
-                                        'coupon_discount' => $discount,
-                                        'coupon_type' => $type);
+
+                $coupon_array = array(
+                    'coupon_code' => $coupon_code,
+                    'coupon_discount' => $discount,
+                    'coupon_type' => $type
+                );
 
                 $order_description .= 'Coupon Code: ' . $coupon_code . ', total_discount: ' . $total_discount . ', ';
             }
@@ -257,7 +265,7 @@ class Misc extends CI_Controller {
             if (isset($data['process_credit_card']) && intval($data['process_credit_card'] == 1)) {
                 // there is no error found. now we can process the order and save the details
                 //cardCARD-57C588728W287145BK26IVNI
-                if (isset($data ['cc_id']) && !empty($data['cc_id'])) { // make payment from saved cc
+                if (isset($data['cc_id']) && !empty($data['cc_id'])) { // make payment from saved cc
                     $mycard = db_get_cc_detail($data['cc_id'], $company_sid);
 
                     if (empty($mycard)) { // card not found, generate error
@@ -276,15 +284,17 @@ class Misc extends CI_Controller {
                     } else {
                         $creditCardToken = trim($card->getId());
 
-                        if ($cc_future_payment != 'off') {// Save the credit card to vault and save its unique id to DB
+                        if ($cc_future_payment != 'off') { // Save the credit card to vault and save its unique id to DB
                             $carddata = array();
-                            $carddata = array(  'id' => $card->getId(),
-                                                'number' => $card->getNumber(),
-                                                'type' => $card->getType(),
-                                                'expire_month' => $card->getExpireMonth(),
-                                                'expire_year' => $card->getExpireYear(),
-                                                'merchant_id' => $card->getMerchantId(),
-                                                'state' => $card->getState());
+                            $carddata = array(
+                                'id' => $card->getId(),
+                                'number' => $card->getNumber(),
+                                'type' => $card->getType(),
+                                'expire_month' => $card->getExpireMonth(),
+                                'expire_year' => $card->getExpireYear(),
+                                'merchant_id' => $card->getMerchantId(),
+                                'state' => $card->getState()
+                            );
 
                             $this->ext_model->cc_future_store($carddata, $company_sid, $employer_sid);
                         }
@@ -302,7 +312,10 @@ class Misc extends CI_Controller {
                         . 'order total: ' . $order_final_total . "<br>"
                         . 'total discount: ' . $total_discount . "<br>";
 
-                    sendMail($from, $to, $subject, $body);
+                    $this->load->model('Hr_documents_management_model', 'HRDMM');
+                    if ($this->HRDMM->isActiveUser($employer_sid)) {
+                        sendMail($from, $to, $subject, $body);
+                    }
                     //sending email to DEV ends
                     $payment = $this->makePaymentUsingCC($creditCardToken, $order_final_total, $order_currency, 'AHR_Payments', $this->apiContext);
 
@@ -340,41 +353,45 @@ class Misc extends CI_Controller {
                             $cc_type = $cc_token->getType();
 
                             $orders_data = array();
-                            $orders_data = array(   'order_status' => 'paid',
-                                                    'employer_sid' => $employer_sid,
-                                                    'purchased_date' => $purchased_date,
-                                                    'company_sid' => $company_sid,
-                                                    'total' => $order_final_total,
-                                                    'payment_method' => 'Paypal',
-                                                    'verification_response' => $payment_id);
+                            $orders_data = array(
+                                'order_status' => 'paid',
+                                'employer_sid' => $employer_sid,
+                                'purchased_date' => $purchased_date,
+                                'company_sid' => $company_sid,
+                                'total' => $order_final_total,
+                                'payment_method' => 'Paypal',
+                                'verification_response' => $payment_id
+                            );
 
                             $invoice_data = array();
-                            $invoice_data = array(  'user_sid' => $employer_sid,
-                                                    'company_sid' => $company_sid,
-                                                    'date' => $purchased_date,
-                                                    'payment_method' => 'Paypal',
-                                                    'total_discount' => $total_discount,
-                                                    'sub_total' => $order_amount,
-                                                    'total' => $order_final_total,
-                                                    'serialized_items_info' => serialize($serialized_items_info),
-                                                    'status' => 'Paid',
-                                                    'payment_date' => date('Y-m-d H:i:s'),
-                                                    'verification_response' => $payment_id,
-                                                    'product_sid' => implode(',', $proucts_sid),
-                                                    'credit_card_number' => $cc_number,
-                                                    'credit_card_type' => $cc_type);
+                            $invoice_data = array(
+                                'user_sid' => $employer_sid,
+                                'company_sid' => $company_sid,
+                                'date' => $purchased_date,
+                                'payment_method' => 'Paypal',
+                                'total_discount' => $total_discount,
+                                'sub_total' => $order_amount,
+                                'total' => $order_final_total,
+                                'serialized_items_info' => serialize($serialized_items_info),
+                                'status' => 'Paid',
+                                'payment_date' => date('Y-m-d H:i:s'),
+                                'verification_response' => $payment_id,
+                                'product_sid' => implode(',', $proucts_sid),
+                                'credit_card_number' => $cc_number,
+                                'credit_card_type' => $cc_type
+                            );
 
                             if (!empty($coupon_array)) {
                                 $orders_data = array_merge($orders_data, $coupon_array); // array merge
                                 $invoice_data = array_merge($invoice_data, $coupon_array);
                             }
-                            
+
                             $order_id = $this->ext_model->cc_add_order($orders_data); // insert query and get order id
-                            
+
                             foreach ($ordered_products as $ordered_product) { // insert products details in DB
                                 $this->ext_model->cc_add_product($order_id, $ordered_product);
                             }
-                            
+
                             $invoice_id = $this->ext_model->cc_add_invoice($invoice_data); // insert info at invoices table
                             $this->ext_model->empty_cart($company_sid); // empty cart and coupon info
                             //Fetching email template
@@ -384,17 +401,17 @@ class Misc extends CI_Controller {
                             $invoiceData = $this->invoice_model->get_invoice_detail($invoice_id);
                             //Store Data for Product Usage Track
                             $purchased_products = $_POST['product'];
-                            if(!empty($purchased_products)) {
-                                foreach (   $purchased_products as $product) {
-                                            $product_sid = $product['id'];
-                                            $quantity = $product['qty'];
-                                            $name = $product['name'];
-                                            $days = $product['no_of_days'];
-                                            $price = $product['price'];
+                            if (!empty($purchased_products)) {
+                                foreach ($purchased_products as $product) {
+                                    $product_sid = $product['id'];
+                                    $quantity = $product['qty'];
+                                    $name = $product['name'];
+                                    $days = $product['no_of_days'];
+                                    $price = $product['price'];
 
                                     $product_info = db_get_products_details($product_sid);
 
-                                    if(isset($product_info['number_of_postings']) && $product_info['number_of_postings'] > 0){
+                                    if (isset($product_info['number_of_postings']) && $product_info['number_of_postings'] > 0) {
                                         $quantity = $quantity * $product_info['number_of_postings'];
                                     }
 
@@ -417,11 +434,11 @@ class Misc extends CI_Controller {
                             $commission_invoice_sid = $this->admin_invoices_model->Save_commission_invoice($employer_sid, $company_sid, $product_sids, $id_to_rooftops, $id_to_quantity, 'manual', 'employer_portal');
                             //Update Commission Invoice Sid in Admin Invoices Table
                             $secondary_invoice = 0;
-                            
-                            if(isset($commission_invoice_sid['secondary'])) {
+
+                            if (isset($commission_invoice_sid['secondary'])) {
                                 $secondary_invoice = $commission_invoice_sid['secondary'];
                             }
-                            
+
                             $this->admin_invoices_model->update_commission_invoice_sid($invoice_id, $commission_invoice_sid['primary'], 'admin_invoice', $secondary_invoice);
                             //Update Admin Invoice Sid in Commission Invoices Table
                             $this->admin_invoices_model->update_invoice_sid_in_commission_invoice($commission_invoice_sid['primary'], $invoice_id, $secondary_invoice);
@@ -437,7 +454,7 @@ class Misc extends CI_Controller {
                             //Re Calculate Commission
                             $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['primary']);
 
-                            if(isset($commission_invoice_sid['secondary'])){ //Update Discount in Commission Invoice Table
+                            if (isset($commission_invoice_sid['secondary'])) { //Update Discount in Commission Invoice Table
                                 if ($total_discount > $order_amount) {
                                     $total_discount = $order_amount;
                                 }
@@ -449,7 +466,7 @@ class Misc extends CI_Controller {
                                 //Re Calculate Commission
                                 $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['secondary']);
                             }
-                            
+
                             //Generate Receipt - Start
                             $this->receipts_model->generate_new_receipt($company_sid, $invoice_id, $invoiceData['total'], $invoiceData['payment_method'], $employer_sid, 'employer_portal', 'market_place');
                             //Generate Receipt - End
@@ -525,40 +542,44 @@ class Misc extends CI_Controller {
                 }
 
                 $orders_data = array();
-                $orders_data = array(   'order_status' => 'paid',
-                                        'employer_sid' => $employer_sid,
-                                        'purchased_date' => $purchased_date,
-                                        'company_sid' => $company_sid,
-                                        'total' => $order_final_total,
-                                        'payment_method' => 'Free_checkout',
-                                        'verification_response' => $payment_id);
+                $orders_data = array(
+                    'order_status' => 'paid',
+                    'employer_sid' => $employer_sid,
+                    'purchased_date' => $purchased_date,
+                    'company_sid' => $company_sid,
+                    'total' => $order_final_total,
+                    'payment_method' => 'Free_checkout',
+                    'verification_response' => $payment_id
+                );
 
                 $invoice_data = array();
-                $invoice_data = array(  'user_sid' => $employer_sid,
-                                        'company_sid' => $company_sid,
-                                        'date' => $purchased_date,
-                                        'payment_method' => 'Free_checkout',
-                                        'total_discount' => $total_discount,
-                                        'sub_total' => $order_amount,
-                                        'total' => $order_final_total,
-                                        'serialized_items_info' => serialize($serialized_items_info),
-                                        'status' => 'Paid',
-                                        'payment_date' => date('Y-m-d H:i:s'),
-                                        'verification_response' => $payment_id,
-                                        'product_sid' => implode(',', $proucts_sid));
+                $invoice_data = array(
+                    'user_sid' => $employer_sid,
+                    'company_sid' => $company_sid,
+                    'date' => $purchased_date,
+                    'payment_method' => 'Free_checkout',
+                    'total_discount' => $total_discount,
+                    'sub_total' => $order_amount,
+                    'total' => $order_final_total,
+                    'serialized_items_info' => serialize($serialized_items_info),
+                    'status' => 'Paid',
+                    'payment_date' => date('Y-m-d H:i:s'),
+                    'verification_response' => $payment_id,
+                    'product_sid' => implode(',', $proucts_sid)
+                );
 
                 if (!empty($coupon_array)) {
                     $orders_data = array_merge($orders_data, $coupon_array); // array merge
                     $invoice_data = array_merge($invoice_data, $coupon_array);
                 }
-               
+
                 $order_id = $this->ext_model->cc_add_order($orders_data); // insert query and get order id
-                
+
                 foreach ($ordered_products as $ordered_product) { // insert products details in DB
                     $this->ext_model->cc_add_product($order_id, $ordered_product);
                 }
-                
-                $invoice_id = $this->ext_model->cc_add_invoice($invoice_data);// insert info at invoices table
+
+                $invoice_id = $this->ext_model->cc_add_invoice($invoice_data); // insert info at invoices table
                 // empty cart and coupon info
                 $this->ext_model->empty_cart($company_sid);
                 //Fetching email template
@@ -610,7 +631,7 @@ class Misc extends CI_Controller {
                 $company_sid = $invoiceData['company_sid'];
                 send_email_through_notifications($company_sid, 'billing_invoice', INVOICE_NOTIFICATION, $replacement_array);
                 //Send Email Through Notifications Module - End
-                
+
                 $this->session->set_flashdata('message', '<b>Success:</b> You have successfully purchased the product(s)');
                 //redirect('market_place', 'refresh');
             }
@@ -631,7 +652,8 @@ class Misc extends CI_Controller {
         }
     }
 
-    function cc_apply_muba() {
+    function cc_apply_muba()
+    {
         echo 'INnn<pre>';
         // getId(), getPayer(), getCart(), getTransactions(), getState(), getCreateTime()
         $creditCardToken = 'CARD-5VV12290X07720356K3BNG7Y';
@@ -668,7 +690,8 @@ class Misc extends CI_Controller {
         echo $payment->$payment->getState();
     }
 
-    function saveCard_muba() {
+    function saveCard_muba()
+    {
         $card = new CreditCard();
         $card->setType("visa")
             ->setNumber("4417119669820331")
@@ -710,7 +733,8 @@ class Misc extends CI_Controller {
      * Create a payment using a Direct Credit Card Details.
      * API used: /v1/payments/payment
      */
-    function makeDirectPayment_muba() {
+    function makeDirectPayment_muba()
+    {
         // A resource representing a credit card that can be used to fund a payment.
         echo "procees direct Payment<br><br><br>";
         $card = new CreditCard();
@@ -818,17 +842,18 @@ class Misc extends CI_Controller {
      * @param string $errorJson
      * @return string
      */
-    function parseApiError($errorJson) {
+    function parseApiError($errorJson)
+    {
         $msg = '';
         $data = json_decode($errorJson, true);
 
-        if (isset($data ['name']) && isset($data['message'])) {
-            $msg .= "<b>" . $data ['name'] . " : </b>" . $data ['message'] . "<br/>";
+        if (isset($data['name']) && isset($data['message'])) {
+            $msg .= "<b>" . $data['name'] . " : </b>" . $data['message'] . "<br/>";
         }
 
         if (isset($data['details'])) {
             foreach ($data['details'] as $detail) {
-                $msg .= "<br><b>" . $detail ['field'] . " : </b>" . $detail ['issue'];
+                $msg .= "<br><b>" . $detail['field'] . " : </b>" . $detail['issue'];
             }
         }
 
@@ -847,7 +872,8 @@ class Misc extends CI_Controller {
      *
      * @param array $params credit card parameters
      */
-    function saveCard($params, $apiContext, $company_sid) {
+    function saveCard($params, $apiContext, $company_sid)
+    {
         $card = new CreditCard();
         $card->setType($params['cc_type']);
         $card->setNumber($params['cc_card_no']);
@@ -885,7 +911,8 @@ class Misc extends CI_Controller {
      * @param string $cardId credit card id obtained from
      * a previous create API call.
      */
-    function getCreditCard($cardId) {
+    function getCreditCard($cardId)
+    {
         try {
             $card = CreditCard::get($cardId, $this->apiContext);
             return $card;
@@ -900,7 +927,8 @@ class Misc extends CI_Controller {
      * @param string $cardId credit card id obtained from
      * a previous create API call.
      */
-    function updateCreditCard($cardId, $month, $year) {
+    function updateCreditCard($cardId, $month, $year)
+    {
         $card = $this->getCreditCard($cardId);
         $pathOperation = new Patch();
         $pathOperation->setOp("replace")
@@ -946,12 +974,14 @@ class Misc extends CI_Controller {
      * @param string $cardId credit card id obtained from
      * a previous create API call.
      */
-    function deleteCreditCard($cardId) {
+    function deleteCreditCard($cardId)
+    {
         $card = CreditCard::get($cardId, $this->apiContext);
         $card->delete($this->apiContext);
     }
 
-    function listAllCards($merchant_id) {
+    function listAllCards($merchant_id)
+    {
         $params = array(
             "sort_by" => "create_time",
             "sort_order" => "desc",
@@ -972,7 +1002,8 @@ class Misc extends CI_Controller {
      * @param string $currency 3 letter ISO code for currency
      * @param string $paymentDesc
      */
-    function makePaymentUsingCC($ccId, $total, $currency, $paymentDesc, $apiContext) {
+    function makePaymentUsingCC($ccId, $total, $currency, $paymentDesc, $apiContext)
+    {
         $ccToken = new CreditCardToken();
         $ccToken->setCreditCardId($ccId);
         $fi = new FundingInstrument();
@@ -1023,7 +1054,8 @@ class Misc extends CI_Controller {
      * Create a payment using a Direct Credit Card Details.
      * API used: /v1/payments/payment
      */
-    function makeDirectPayment($params, $invoice_total, $currency, $payment_description, $company_sid, $apiContext) {
+    function makeDirectPayment($params, $invoice_total, $currency, $payment_description, $company_sid, $apiContext)
+    {
         // A resource representing a credit card that can be used to fund a payment.
         $card = new CreditCard();
         $card->setType($params['cc_type']);
@@ -1128,7 +1160,8 @@ class Misc extends CI_Controller {
      * @param string $payerId PayerId as returned by PayPal post
      *        buyer approval.
      */
-    function executePayment($paymentId, $payerId) {
+    function executePayment($paymentId, $payerId)
+    {
         $payment = getPaymentDetails($paymentId);
         $paymentExecution = new PaymentExecution();
         $paymentExecution->setPayerId($payerId);
@@ -1143,8 +1176,9 @@ class Misc extends CI_Controller {
      *
      * @return Payment
      */
-    function getPaymentDetails($paymentId) {
-        $payment = Payment:: get($paymentId, getApiContext());
+    function getPaymentDetails($paymentId)
+    {
+        $payment = Payment::get($paymentId, getApiContext());
         return $payment;
     }
 
@@ -1154,10 +1188,11 @@ class Misc extends CI_Controller {
      * cancel urls.
      * @return string
      */
-    function getBaseUrl() {
+    function getBaseUrl()
+    {
         $protocol = STORE_PROTOCOL;
 
-        if ($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER ['HTTPS']) && strtolower($_SERVER ['HTTPS']) == 'on')) {
+        if ($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on')) {
             $protocol = STORE_PROTOCOL_SSL;
         }
 
@@ -1166,7 +1201,8 @@ class Misc extends CI_Controller {
         return dirname($protocol . $host . $request);
     }
 
-    function cc_apply_mini() { //echo 'I AM IN MISC 1297 <pre>';
+    function cc_apply_mini()
+    { //echo 'I AM IN MISC 1297 <pre>';
         $data = $_POST;
         $products_details = array();
         $product = $data['product'];
@@ -1219,7 +1255,7 @@ class Misc extends CI_Controller {
         if (!empty($products_details)) {
             foreach ($products_details as $key => $value) { // step 1 - check if the ordered product is still active or not
 
-                if ($value ['active'] == '0') { // the product is offline
+                if ($value['active'] == '0') { // the product is offline
                     $error_flag = true;
                     $response[] = $value['mid'];
                 }
@@ -1231,7 +1267,7 @@ class Misc extends CI_Controller {
 
                 if ($daily > 0) {
                     $expiry_days = $no_of_days;
-                    $product_total = $value ['price'] * $no_of_days;
+                    $product_total = $value['price'] * $no_of_days;
 
                     //For Commission Invoice
                     $product_quantity = $no_of_days;
@@ -1245,14 +1281,16 @@ class Misc extends CI_Controller {
 
                 $cost_price = $this->ext_model->get_product_cost_price($value['sid']);
 
-                $ordered_products[] = array('product_sid'                       => $value['sid'],
-                                            'product_qty'                       => $product_qty,
-                                            'product_remaining_qty'             => $product_qty,
-                                            'order_qty'                         => '1',
-                                            'product_price'                     => $value['price'],
-                                            'cost_price'                        => $cost_price,
-                                            'product_total'                     => $product_total,
-                                            'company_sid'                       => $company_sid);
+                $ordered_products[] = array(
+                    'product_sid'                       => $value['sid'],
+                    'product_qty'                       => $product_qty,
+                    'product_remaining_qty'             => $product_qty,
+                    'order_qty'                         => '1',
+                    'product_price'                     => $value['price'],
+                    'cost_price'                        => $cost_price,
+                    'product_total'                     => $product_total,
+                    'company_sid'                       => $company_sid
+                );
 
                 $serialized_items_info['custom_text'][]                         = '';
                 $serialized_items_info['item_qty'][]                            = $product_qty;
@@ -1264,7 +1302,7 @@ class Misc extends CI_Controller {
                 $serialized_items_info['cost_price'][]                          = $cost_price;
                 $serialized_items_info['total_cost'][]                          = isset($value['qty']) ? $cost_price * $value['qty'] : $cost_price;
                 $order_amount                                                   = $order_amount + $product_total;
-                $order_description                                              .= 'Product: 1 * ' . $value ['name'] . ', ';
+                $order_description                                              .= 'Product: 1 * ' . $value['name'] . ', ';
                 $proucts_sid[]                                                  = $value['sid'];
                 //For Commission Invoice
                 $id_to_quantity[$value['sid']]                                  = $product_quantity;
@@ -1277,7 +1315,7 @@ class Misc extends CI_Controller {
         //        exit;
         if ($has_coupon) { // check if coupon code is applied
             $coupon_data = db_get_coupon_content($coupon_code);
-            
+
             if (empty($coupon_data)) { // Coupon code does not exists or it is not active
                 $error_flag = true;
                 $coupon_error = 'coupon_error';
@@ -1316,9 +1354,11 @@ class Misc extends CI_Controller {
                     $total_discount = round((($order_amount * $discount) / 100), 2);
                 }
                 // All well than assign the coupon and apply discount
-                $coupon_array = array('coupon_code' => $coupon_code,
+                $coupon_array = array(
+                    'coupon_code' => $coupon_code,
                     'coupon_discount' => $discount,
-                    'coupon_type' => $type);
+                    'coupon_type' => $type
+                );
                 $order_description .= 'Coupon Code: ' . $coupon_code . ', total_discount: ' . $total_discount . ', ';
             }
         }
@@ -1353,9 +1393,9 @@ class Misc extends CI_Controller {
             if (isset($data['process_credit_card']) && intval($data['process_credit_card'] == 1)) {
                 // there is no error found. now we can process the order and save the details
                 //cardCARD-57C588728W287145BK26IVNI
-                if (isset($data ['cc_id']) && !empty($data['cc_id'])) { // make payment from saved cc
+                if (isset($data['cc_id']) && !empty($data['cc_id'])) { // make payment from saved cc
                     $mycard = db_get_cc_detail($data['cc_id'], $company_sid);
-                    
+
                     if (empty($mycard)) { // card not found, generate error
                         $error_flag = true;
                         $card_error = 'Error: Please select valid card for payment!';
@@ -1364,23 +1404,25 @@ class Misc extends CI_Controller {
                     }
                 } else { // make payment with new cc
                     $card = $this->savecard($data, $this->apiContext, $company_sid);
-                    
+
                     if ($error_flag) { // check if there was error while card save
                         $card_error = 'Error: There was some error while processing payment!';
                         echo json_encode($card);
                         exit;
                     } else {
                         $creditCardToken = trim($card->getId());
-                        
-                        if ($cc_future_payment != 'off') {// Save the credit card to vault and save its unique id to DB
+
+                        if ($cc_future_payment != 'off') { // Save the credit card to vault and save its unique id to DB
                             $carddata = array();
-                            $carddata = array(  'id'                            => $card->getId(),
-                                                'number'                        => $card->getNumber(),
-                                                'type'                          => $card->getType(),
-                                                'expire_month'                  => $card->getExpireMonth(),
-                                                'expire_year'                   => $card->getExpireYear(),
-                                                'merchant_id'                   => $card->getMerchantId(),
-                                                'state'                         => $card->getState());
+                            $carddata = array(
+                                'id'                            => $card->getId(),
+                                'number'                        => $card->getNumber(),
+                                'type'                          => $card->getType(),
+                                'expire_month'                  => $card->getExpireMonth(),
+                                'expire_year'                   => $card->getExpireYear(),
+                                'merchant_id'                   => $card->getMerchantId(),
+                                'state'                         => $card->getState()
+                            );
                             $this->ext_model->cc_future_store($carddata, $company_sid, $employer_sid);
                         }
                     }
@@ -1394,10 +1436,14 @@ class Misc extends CI_Controller {
                     $to = TO_EMAIL_DEV;
                     $subject = "Inner Cart Order";
                     $body = 'employer sid: ' . $employer_sid . "<br>"
-                            . 'customer name: ' . $userdata["employer_detail"]['username'] . "<br>"
-                            . 'order total: ' . $order_final_total . "<br>"
-                            . 'total discount: ' . $total_discount . "<br>";
-                    sendMail($from, $to, $subject, $body, STORE_NAME);
+                        . 'customer name: ' . $userdata["employer_detail"]['username'] . "<br>"
+                        . 'order total: ' . $order_final_total . "<br>"
+                        . 'total discount: ' . $total_discount . "<br>";
+
+                    $this->load->model('Hr_documents_management_model', 'HRDMM');
+                    if ($this->HRDMM->isActiveUser($employer_sid)) {
+                        sendMail($from, $to, $subject, $body, STORE_NAME);
+                    }
                     //sending email to DEV ends
                     $payment = $this->makePaymentUsingCC($creditCardToken, $order_final_total, $order_currency, 'AHR_Payments', $this->apiContext);
 
@@ -1422,69 +1468,75 @@ class Misc extends CI_Controller {
                     $last4 = $cc_token->getLast4();
                     $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
                     $cc_type = $cc_token->getType();
-                    
+
                     $orders_data = array();
-                    $orders_data = array(   'order_status'                      => 'paid',
-                                            'employer_sid'                      => $employer_sid,
-                                            'purchased_date'                    => $purchased_date,
-                                            'company_sid'                       => $company_sid,
-                                            'total'                             => $order_final_total,
-                                            'payment_method'                    => 'Paypal',
-                                            'verification_response'             => $payment_id);
+                    $orders_data = array(
+                        'order_status'                      => 'paid',
+                        'employer_sid'                      => $employer_sid,
+                        'purchased_date'                    => $purchased_date,
+                        'company_sid'                       => $company_sid,
+                        'total'                             => $order_final_total,
+                        'payment_method'                    => 'Paypal',
+                        'verification_response'             => $payment_id
+                    );
                     $invoice_data = array();
-                    $invoice_data = array(  'user_sid'                          => $employer_sid,
-                                            'company_sid'                       => $company_sid,
-                                            'date'                              => $purchased_date,
-                                            'payment_method'                    => 'Paypal',
-                                            'total_discount'                    => $total_discount,
-                                            'sub_total'                         => $order_amount,
-                                            'total'                             => $order_final_total,
-                                            'serialized_items_info'             => serialize($serialized_items_info),
-                                            'status'                            => 'Paid',
-                                            'payment_date'                      => date('Y-m-d H:i:s'),
-                                            'verification_response'             => $payment_id,
-                                            'product_sid'                       => implode(',', $proucts_sid),
-                                            'credit_card_number'                => $cc_number,
-                                            'credit_card_type'                  => $cc_type);
+                    $invoice_data = array(
+                        'user_sid'                          => $employer_sid,
+                        'company_sid'                       => $company_sid,
+                        'date'                              => $purchased_date,
+                        'payment_method'                    => 'Paypal',
+                        'total_discount'                    => $total_discount,
+                        'sub_total'                         => $order_amount,
+                        'total'                             => $order_final_total,
+                        'serialized_items_info'             => serialize($serialized_items_info),
+                        'status'                            => 'Paid',
+                        'payment_date'                      => date('Y-m-d H:i:s'),
+                        'verification_response'             => $payment_id,
+                        'product_sid'                       => implode(',', $proucts_sid),
+                        'credit_card_number'                => $cc_number,
+                        'credit_card_type'                  => $cc_type
+                    );
 
                     if (!empty($coupon_array)) {
                         $orders_data                                            = array_merge($orders_data, $coupon_array); // array merge
                         $invoice_data                                           = array_merge($invoice_data, $coupon_array);
                     }
-                    
+
                     $order_id = $this->ext_model->cc_add_order($orders_data); // insert query and get order id
-                    
+
                     foreach ($ordered_products as $ordered_product) { // insert products details in DB
                         $this->ext_model->cc_add_product($order_id, $ordered_product);
                     }
-                    
+
                     foreach ($products_details as $key => $value) { // insert data to feeds
                         $purchased_date = date('Y-m-d H:i:s');
                         $daily = $value['daily'];
 
                         if ($daily > 0) {
                             $expiry_days = $value['no_of_days'];
-                            $budget = $value ['price'] * $expiry_days;
+                            $budget = $value['price'] * $expiry_days;
                         } else {
                             $expiry_days = $value['expiry_days'];
                             $budget = $value['price'];
                         }
 
-                        $job_data = array(  'job_sid' => $job_sid,
-                                            'employer_sid' => $employer_sid,
-                                            'purchased_date' => $purchased_date,
-                                            'product_sid' => $value['sid'],
-                                            //'expiry_date' => date('Y-m-d H:i:s', strtotime("+" . $expiry_days . " days")), //New Scenario to Set the Expiry Date from Super Admin Upon Activation instead store Number of Days
-                                            'budget' => $budget,
-                                            'no_of_days' => $expiry_days,
-                                            'company_sid' => $company_sid);
+                        $job_data = array(
+                            'job_sid' => $job_sid,
+                            'employer_sid' => $employer_sid,
+                            'purchased_date' => $purchased_date,
+                            'product_sid' => $value['sid'],
+                            //'expiry_date' => date('Y-m-d H:i:s', strtotime("+" . $expiry_days . " days")), //New Scenario to Set the Expiry Date from Super Admin Upon Activation instead store Number of Days
+                            'budget' => $budget,
+                            'no_of_days' => $expiry_days,
+                            'company_sid' => $company_sid
+                        );
                         $this->ext_model->insertJobFeed($job_data); //hassan working area
                     }
                     // insert info at invoices table
                     $invoice_id = $this->ext_model->cc_add_invoice($invoice_data);
                     //Store Data for Product Usage Track
                     $purchased_products = $_POST['product'];
-                    
+
                     foreach ($purchased_products as $product) {
                         $product_sid = $product['id'];
                         $quantity = isset($product['qty']) ? $product['qty'] : 1;
@@ -1493,7 +1545,7 @@ class Misc extends CI_Controller {
                         $price = $product['price'];
                         $product_info = db_get_products_details($product_sid);
 
-                        if(isset($product_info['number_of_postings']) && $product_info['number_of_postings'] > 0){
+                        if (isset($product_info['number_of_postings']) && $product_info['number_of_postings'] > 0) {
                             $quantity = $quantity * $product_info['number_of_postings'];
                         }
 
@@ -1513,7 +1565,7 @@ class Misc extends CI_Controller {
                             $this->dashboard_model->mark_product_as_used($product_sid, $company_sid, $employer_sid, $job_sid);
                         }
                     }
-                    
+
                     //getting invoice selected product details
                     $products = "";
                     $this->load->model('manage_admin/invoice_model');
@@ -1522,7 +1574,7 @@ class Misc extends CI_Controller {
                     $commission_invoice_sid = $this->admin_invoices_model->Save_commission_invoice($employer_sid, $company_sid, $product_sids, $id_to_rooftops, $id_to_quantity, 'manual', 'employer_portal');
                     $secondary_invoice = 0;
 
-                    if(isset($commission_invoice_sid['secondary'])) {
+                    if (isset($commission_invoice_sid['secondary'])) {
                         $secondary_invoice = $commission_invoice_sid['secondary'];
                     }
 
@@ -1542,7 +1594,7 @@ class Misc extends CI_Controller {
                     //Re Calculate Commission
                     $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['primary']);
 
-                    if(isset($commission_invoice_sid['secondary'])){
+                    if (isset($commission_invoice_sid['secondary'])) {
                         if ($total_discount > $order_amount) {
                             $total_discount = $order_amount;
                         }
@@ -1554,7 +1606,7 @@ class Misc extends CI_Controller {
                         //Re Calculate Commission
                         $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['secondary']);
                     }
-                    
+
                     //Generate Receipt - Start
                     $this->receipts_model->generate_new_receipt($company_sid, $invoice_id, $invoiceData['total'], $invoiceData['payment_method'], $employer_sid, 'employer_portal', 'market_place');
                     //Generate Receipt - End
@@ -1609,63 +1661,69 @@ class Misc extends CI_Controller {
                 $purchased_date = date('Y-m-d H:i:s');
 
                 $orders_data = array();
-                $orders_data = array(   'order_status' => 'paid',
-                                        'employer_sid' => $employer_sid,
-                                        'purchased_date' => $purchased_date,
-                                        'company_sid' => $company_sid,
-                                        'total' => $order_final_total,
-                                        'payment_method' => 'Free_checkout',
-                                        'verification_response' => $payment_id);
+                $orders_data = array(
+                    'order_status' => 'paid',
+                    'employer_sid' => $employer_sid,
+                    'purchased_date' => $purchased_date,
+                    'company_sid' => $company_sid,
+                    'total' => $order_final_total,
+                    'payment_method' => 'Free_checkout',
+                    'verification_response' => $payment_id
+                );
 
                 $invoice_data = array();
-                $invoice_data = array(  'user_sid' => $employer_sid,
-                                        'company_sid' => $company_sid,
-                                        'date' => $purchased_date,
-                                        'payment_method' => 'Free_checkout',
-                                        'total_discount' => $total_discount,
-                                        'sub_total' => $order_amount,
-                                        'total' => $order_final_total,
-                                        'serialized_items_info' => serialize($serialized_items_info),
-                                        'status' => 'Paid',
-                                        'payment_date' => date('Y-m-d H:i:s'),
-                                        'verification_response' => $payment_id,
-                                        'product_sid' => implode(',', $proucts_sid));
+                $invoice_data = array(
+                    'user_sid' => $employer_sid,
+                    'company_sid' => $company_sid,
+                    'date' => $purchased_date,
+                    'payment_method' => 'Free_checkout',
+                    'total_discount' => $total_discount,
+                    'sub_total' => $order_amount,
+                    'total' => $order_final_total,
+                    'serialized_items_info' => serialize($serialized_items_info),
+                    'status' => 'Paid',
+                    'payment_date' => date('Y-m-d H:i:s'),
+                    'verification_response' => $payment_id,
+                    'product_sid' => implode(',', $proucts_sid)
+                );
 
                 if (!empty($coupon_array)) {
                     $orders_data = array_merge($orders_data, $coupon_array); // array merge
                     $invoice_data = array_merge($invoice_data, $coupon_array);
                 }
-                
+
                 $order_id = $this->ext_model->cc_add_order($orders_data); // insert query and get order id
-                
+
                 foreach ($ordered_products as $ordered_product) { // insert products details in DB
                     $this->ext_model->cc_add_product($order_id, $ordered_product);
                 }
-                
+
                 foreach ($products_details as $key => $value) { // insert data to feeds
                     $purchased_date = date('Y-m-d H:i:s');
                     $daily = $value['daily'];
 
                     if ($daily > 0) {
                         $expiry_days = $value['no_of_days'];
-                        $budget = $value ['price'] * $expiry_days;
+                        $budget = $value['price'] * $expiry_days;
                     } else {
                         $expiry_days = $value['expiry_days'];
                         $budget = $value['price'];
                     }
 
-                    $job_data = array(  'job_sid' => $job_sid, 
-                                        'employer_sid' => $employer_sid, 
-                                        'purchased_date' => $purchased_date, 
-                                        'product_sid' => $value['sid'], 
-                                        //'expiry_date' => date('Y-m-d H:i:s', strtotime("+" . $expiry_days . " days")), 
-                                        'budget' => $budget, 
-                                        'no_of_days' => $expiry_days,
-                                        'company_sid' => $company_sid);
-                    
+                    $job_data = array(
+                        'job_sid' => $job_sid,
+                        'employer_sid' => $employer_sid,
+                        'purchased_date' => $purchased_date,
+                        'product_sid' => $value['sid'],
+                        //'expiry_date' => date('Y-m-d H:i:s', strtotime("+" . $expiry_days . " days")), 
+                        'budget' => $budget,
+                        'no_of_days' => $expiry_days,
+                        'company_sid' => $company_sid
+                    );
+
                     $this->ext_model->insertJobFeed($job_data);
                 }
-                
+
                 $invoice_id = $this->ext_model->cc_add_invoice($invoice_data); // insert info at invoices table
                 //sending invoice email
                 //Fetching email template
@@ -1737,7 +1795,8 @@ class Misc extends CI_Controller {
         }
     }
 
-    function account_package_payment() {
+    function account_package_payment()
+    {
         $data = $_POST;
         $products_details = array();
         $cc_future_payment = 'off';
@@ -1799,23 +1858,25 @@ class Misc extends CI_Controller {
 
                 if ($daily > 0) {
                     $expiry_days = $no_of_days;
-                    $product_total = $products_details ['price'] * $products_details ['qty'] * $no_of_days;
+                    $product_total = $products_details['price'] * $products_details['qty'] * $no_of_days;
                 } else {
                     $expiry_days = $products_details['expiry_days'];
-                    $product_total = $products_details ['price'] * $products_details['qty'];
+                    $product_total = $products_details['price'] * $products_details['qty'];
                 }
 
                 $cost_price = $this->ext_model->get_product_cost_price($products_details['sid']);
 
-                $ordered_products[] = array('product_sid' => $products_details['sid'],
-                                            'product_qty' => $product_qty,
-                                            'product_remaining_qty' => $product_qty,
-                                            'order_qty' => $products_details['qty'],
-                                            'product_price' => $products_details['price'],
-                                            'cost_price' => $cost_price,
-                                            'product_total' => $product_total,
-                                            'company_sid' => $company_sid);
-                
+                $ordered_products[] = array(
+                    'product_sid' => $products_details['sid'],
+                    'product_qty' => $product_qty,
+                    'product_remaining_qty' => $product_qty,
+                    'order_qty' => $products_details['qty'],
+                    'product_price' => $products_details['price'],
+                    'cost_price' => $cost_price,
+                    'product_total' => $product_total,
+                    'company_sid' => $company_sid
+                );
+
                 $serialized_items_info['custom_text'][] = '';
                 $serialized_items_info['item_qty'][] = $product_qty;
                 $serialized_items_info['item_price'][] = $product_total;
@@ -1825,7 +1886,7 @@ class Misc extends CI_Controller {
                 $serialized_items_info['flag'][] = 'no_edit';
                 $serialized_items_info['special_discount'] = $special_discount;
                 $order_amount = $order_amount + $product_total;
-                $order_description .= 'Product: ' . $products_details ['qty'] . ' * ' . $products_details ['name'] . ', ';
+                $order_description .= 'Product: ' . $products_details['qty'] . ' * ' . $products_details['name'] . ', ';
                 $proucts_sid[] = $products_details['sid'];
             }
 
@@ -1845,7 +1906,7 @@ class Misc extends CI_Controller {
 
                     if ($start_date != null) { // check whether coupon is started
                         $current_date_time = date('Y-m-d H:i:s');
-                        
+
                         if ($start_date > $current_date_time) { // Coupon code is not started yet.
                             $error_flag = true;
                             $coupon_error = 'coupon_error';
@@ -1854,7 +1915,7 @@ class Misc extends CI_Controller {
 
                     if ($end_date != null) { // check whether coupon has expired
                         $current_date_time = date('Y-m-d H:i:s');
-                        
+
                         if ($current_date_time > $end_date) { // coupon code has expired
                             $error_flag = true;
                             $coupon_error = 'coupon_error';
@@ -1871,9 +1932,11 @@ class Misc extends CI_Controller {
                         $total_discount = round((($order_amount * $discount) / 100), 2);
                     }
                     // All well than assign the coupon and apply discount
-                    $coupon_array = array(  'coupon_code' => $coupon_code,
-                                            'coupon_discount' => $discount,
-                                            'coupon_type' => $type);
+                    $coupon_array = array(
+                        'coupon_code' => $coupon_code,
+                        'coupon_discount' => $discount,
+                        'coupon_type' => $type
+                    );
                     $order_description .= 'Coupon Code: ' . $coupon_code . ', total_discount: ' . $total_discount . ', ';
                 }
             }
@@ -1901,7 +1964,7 @@ class Misc extends CI_Controller {
             } else {
                 // there is no error found. now we can process the order and save the details
                 //cardCARD-57C588728W287145BK26IVNI
-                if (isset($data ['cc_id']) && !empty($data['cc_id'])) { // make payment from saved cc
+                if (isset($data['cc_id']) && !empty($data['cc_id'])) { // make payment from saved cc
                     $mycard = db_get_cc_detail($data['cc_id'], $company_sid);
 
                     if (empty($mycard)) { // card not found, generate error
@@ -1919,16 +1982,18 @@ class Misc extends CI_Controller {
                         exit;
                     } else {
                         $creditCardToken = trim($card->getId());
-                        
-                        if ($cc_future_payment != 'off') {// Save the credit card to vault and save its unique id to DB
+
+                        if ($cc_future_payment != 'off') { // Save the credit card to vault and save its unique id to DB
                             $carddata = array();
-                            $carddata = array(  'id' => $card->getId(),
-                                                'number' => $card->getNumber(),
-                                                'type' => $card->getType(),
-                                                'expire_month' => $card->getExpireMonth(),
-                                                'expire_year' => $card->getExpireYear(),
-                                                'merchant_id' => $card->getMerchantId(),
-                                                'state' => $card->getState());
+                            $carddata = array(
+                                'id' => $card->getId(),
+                                'number' => $card->getNumber(),
+                                'type' => $card->getType(),
+                                'expire_month' => $card->getExpireMonth(),
+                                'expire_year' => $card->getExpireYear(),
+                                'merchant_id' => $card->getMerchantId(),
+                                'state' => $card->getState()
+                            );
                             $this->ext_model->cc_future_store($carddata, $company_sid, $employer_sid);
                         }
                     }
@@ -1945,7 +2010,10 @@ class Misc extends CI_Controller {
                         . 'total discount: ' . $total_discount . "<br>"
                         . 'special discount: ' . $special_discount . "<br>";
 
-                    sendMail($from, $to, $subject, $body);
+                    $this->load->model('Hr_documents_management_model', 'HRDMM');
+                    if ($this->HRDMM->isActiveUser($employer_sid)) {
+                        sendMail($from, $to, $subject, $body);
+                    }
                     //sending email to DEV ends
                     $payment = $this->makePaymentUsingCC($creditCardToken, $order_final_total, $order_currency, 'AHR_Payments', $this->apiContext);
 
@@ -1983,44 +2051,48 @@ class Misc extends CI_Controller {
                                     $this->company_model->updateToActiveOtherTheme($company_sid, array('theme_status' => 1));
                                     $dataToUpdateThemes['theme_status'] = 0;
                                 }
-                                
+
                                 $dataToUpdateThemes['purchased'] = 0;
                                 $this->company_model->updateEnterpriseTheme($company_sid, $dataToUpdateThemes);
                             }
                             //Extending Expiry date of account according to product days ENDS
                             $orders_data = array();
-                            $orders_data = array(   'order_status' => 'paid',
-                                                    'employer_sid' => $employer_sid,
-                                                    'purchased_date' => $purchased_date,
-                                                    'company_sid' => $company_sid,
-                                                    'total' => $order_final_total,
-                                                    'payment_method' => 'Paypal',
-                                                    'verification_response' => $payment_id);
+                            $orders_data = array(
+                                'order_status' => 'paid',
+                                'employer_sid' => $employer_sid,
+                                'purchased_date' => $purchased_date,
+                                'company_sid' => $company_sid,
+                                'total' => $order_final_total,
+                                'payment_method' => 'Paypal',
+                                'verification_response' => $payment_id
+                            );
                             $invoice_data = array();
-                            $invoice_data = array(  'user_sid' => $employer_sid,
-                                                    'company_sid' => $company_sid,
-                                                    'date' => $purchased_date,
-                                                    'payment_method' => 'Paypal',
-                                                    'total_discount' => $total_discount,
-                                                    'sub_total' => $order_amount,
-                                                    'total' => $order_final_total,
-                                                    'serialized_items_info' => serialize($serialized_items_info),
-                                                    'status' => 'Paid',
-                                                    'payment_date' => date('Y-m-d H:i:s'),
-                                                    'verification_response' => $payment_id,
-                                                    'product_sid' => implode(',', $proucts_sid));
+                            $invoice_data = array(
+                                'user_sid' => $employer_sid,
+                                'company_sid' => $company_sid,
+                                'date' => $purchased_date,
+                                'payment_method' => 'Paypal',
+                                'total_discount' => $total_discount,
+                                'sub_total' => $order_amount,
+                                'total' => $order_final_total,
+                                'serialized_items_info' => serialize($serialized_items_info),
+                                'status' => 'Paid',
+                                'payment_date' => date('Y-m-d H:i:s'),
+                                'verification_response' => $payment_id,
+                                'product_sid' => implode(',', $proucts_sid)
+                            );
 
                             if (!empty($coupon_array)) {
                                 $orders_data = array_merge($orders_data, $coupon_array); // array merge
                                 $invoice_data = array_merge($invoice_data, $coupon_array);
                             }
-                            
+
                             $order_id = $this->ext_model->cc_add_order($orders_data); // insert query and get order id
 
                             foreach ($ordered_products as $ordered_product) { // insert products details in DB
                                 $this->ext_model->cc_add_product($order_id, $ordered_product);
                             }
-                            
+
                             $invoice_id = $this->ext_model->cc_add_invoice($invoice_data); // insert info at invoices table
                             $this->ext_model->empty_cart($company_sid); // empty cart and coupon info
                             //Fetching email template
@@ -2055,7 +2127,7 @@ class Misc extends CI_Controller {
                                 $emailTemplateBody = str_replace('{{firstname}}', $userdata["employer_detail"]['first_name'] . ' ' . $userdata["employer_detail"]['last_name'], $emailTemplateBody);
                                 $emailTemplateBody = str_replace('{{invoice_id}}', $invoice_id, $emailTemplateBody);
                                 $emailTemplateBody = str_replace('{{product_list}}', $products, $emailTemplateBody);
-                                $emailTemplateBody = str_replace('{{invoice_subtotal}}', '$' . $invoiceData ["sub_total"], $emailTemplateBody);
+                                $emailTemplateBody = str_replace('{{invoice_subtotal}}', '$' . $invoiceData["sub_total"], $emailTemplateBody);
                                 $emailTemplateBody = str_replace('{{discount}}', '$' . $invoiceData["total_discount"], $emailTemplateBody);
                                 $emailTemplateBody = str_replace('{{invoice_total}}', '$' . $invoiceData["total"], $emailTemplateBody);
 
@@ -2121,7 +2193,8 @@ class Misc extends CI_Controller {
         }
     }
 
-    function enterprise_theme_payment() {
+    function enterprise_theme_payment()
+    {
         $data = $_POST;
         $products_details = array();
         $cc_future_payment = 'off';
@@ -2175,15 +2248,15 @@ class Misc extends CI_Controller {
 
                 if ($daily > 0) {
                     $expiry_days = $no_of_days;
-                    $product_total = $products_details ['price'] * $products_details ['qty'] * $no_of_days;
+                    $product_total = $products_details['price'] * $products_details['qty'] * $no_of_days;
                 } else {
                     $expiry_days = $products_details['expiry_days'];
-                    $product_total = $products_details ['price'] * $products_details['qty'];
+                    $product_total = $products_details['price'] * $products_details['qty'];
                 }
 
                 $cost_price = $this->ext_model->get_product_cost_price($products_details['sid']);
                 $ordered_products[] = array('product_sid' => $products_details['sid'], 'product_qty' => $product_qty, 'product_remaining_qty' => $product_qty, 'order_qty' => $products_details['qty'], 'product_price' => $products_details['price'], 'cost_price' => $cost_price, 'product_total' => $product_total, 'company_sid' => $company_sid);
-                
+
                 $serialized_items_info['custom_text'][] = '';
                 $serialized_items_info['item_qty'][] = $product_qty;
                 $serialized_items_info['item_price'][] = $product_total;
@@ -2192,7 +2265,7 @@ class Misc extends CI_Controller {
                 $serialized_items_info['no_of_days'][] = $expiry_days;
                 $serialized_items_info['flag'][] = 'no_edit';
                 $order_amount = $order_amount + $product_total;
-                $order_description .= 'Product: ' . $products_details ['qty'] . ' * ' . $products_details ['name'] . ', ';
+                $order_description .= 'Product: ' . $products_details['qty'] . ' * ' . $products_details['name'] . ', ';
                 $proucts_sid[] = $products_details['sid'];
             }
 
@@ -2237,9 +2310,11 @@ class Misc extends CI_Controller {
                         $total_discount = round((($order_amount * $discount) / 100), 2);
                     }
                     // All well than assign the coupon and apply discount
-                    $coupon_array = array(  'coupon_code' => $coupon_code,
-                                            'coupon_discount' => $discount,
-                                            'coupon_type' => $type);
+                    $coupon_array = array(
+                        'coupon_code' => $coupon_code,
+                        'coupon_discount' => $discount,
+                        'coupon_type' => $type
+                    );
                     $order_description .= 'Coupon Code: ' . $coupon_code . ', total_discount: ' . $total_discount . ', ';
                 }
             }
@@ -2267,7 +2342,7 @@ class Misc extends CI_Controller {
             } else {
                 // there is no error found. now we can process the order and save the details
                 //cardCARD-57C588728W287145BK26IVNI
-                if (isset($data ['cc_id']) && !empty($data['cc_id'])) { // make payment from saved cc
+                if (isset($data['cc_id']) && !empty($data['cc_id'])) { // make payment from saved cc
                     $mycard = db_get_cc_detail($data['cc_id'], $company_sid);
 
                     if (empty($mycard)) { // card not found, generate error
@@ -2278,23 +2353,25 @@ class Misc extends CI_Controller {
                     }
                 } else { // make payment with new cc
                     $card = $this->savecard($data, $this->apiContext, $company_sid);
-                    
+
                     if ($error_flag) { // check if there was error while card save
                         $card_error = 'Error: There was some error while processing payment!';
                         echo json_encode($card);
                         exit;
                     } else {
                         $creditCardToken = trim($card->getId());
-                        
-                        if ($cc_future_payment != 'off') {// Save the credit card to vault and save its unique id to DB
+
+                        if ($cc_future_payment != 'off') { // Save the credit card to vault and save its unique id to DB
                             $carddata = array();
-                            $carddata = array(  'id' => $card->getId(),
-                                                'number' => $card->getNumber(),
-                                                'type' => $card->getType(),
-                                                'expire_month' => $card->getExpireMonth(),
-                                                'expire_year' => $card->getExpireYear(),
-                                                'merchant_id' => $card->getMerchantId(),
-                                                'state' => $card->getState());
+                            $carddata = array(
+                                'id' => $card->getId(),
+                                'number' => $card->getNumber(),
+                                'type' => $card->getType(),
+                                'expire_month' => $card->getExpireMonth(),
+                                'expire_year' => $card->getExpireYear(),
+                                'merchant_id' => $card->getMerchantId(),
+                                'state' => $card->getState()
+                            );
                             $this->ext_model->cc_future_store($carddata, $company_sid, $employer_sid);
                         }
                     }
@@ -2310,8 +2387,10 @@ class Misc extends CI_Controller {
                         . 'customer name: ' . $userdata["employer_detail"]['username'] . "<br>"
                         . 'order total: ' . $order_final_total . "<br>"
                         . 'total discount: ' . $total_discount . "<br>";
-
-                    sendMail($from, $to, $subject, $body);
+                    $this->load->model('Hr_documents_management_model', 'HRDMM');
+                    if ($this->HRDMM->isActiveUser($employer_sid)) {
+                        sendMail($from, $to, $subject, $body);
+                    }
 
                     //sending email to DEV ends
                     $payment = $this->makePaymentUsingCC($creditCardToken, $order_final_total, $order_currency, 'AHR_Payments', $this->apiContext);
@@ -2332,40 +2411,44 @@ class Misc extends CI_Controller {
                             //Activating theme-4 against company ENDS
                             //Other data to save invoice
                             $orders_data = array();
-                            $orders_data = array(   'order_status' => 'paid',
-                                                    'employer_sid' => $employer_sid,
-                                                    'purchased_date' => $purchased_date,
-                                                    'company_sid' => $company_sid,
-                                                    'total' => $order_final_total,
-                                                    'payment_method' => 'Paypal',
-                                                    'verification_response' => $payment_id);
+                            $orders_data = array(
+                                'order_status' => 'paid',
+                                'employer_sid' => $employer_sid,
+                                'purchased_date' => $purchased_date,
+                                'company_sid' => $company_sid,
+                                'total' => $order_final_total,
+                                'payment_method' => 'Paypal',
+                                'verification_response' => $payment_id
+                            );
                             $invoice_data = array();
-                            $invoice_data = array(  'user_sid' => $employer_sid,
-                                                    'company_sid' => $company_sid,
-                                                    'date' => $purchased_date,
-                                                    'payment_method' => 'Paypal',
-                                                    'total_discount' => $total_discount,
-                                                    'sub_total' => $order_amount,
-                                                    'total' => $order_final_total,
-                                                    'serialized_items_info' => serialize($serialized_items_info),
-                                                    'status' => 'Paid',
-                                                    'payment_date' => date('Y-m-d H:i:s'),
-                                                    'verification_response' => $payment_id,
-                                                    'product_sid' => implode(',', $proucts_sid));
+                            $invoice_data = array(
+                                'user_sid' => $employer_sid,
+                                'company_sid' => $company_sid,
+                                'date' => $purchased_date,
+                                'payment_method' => 'Paypal',
+                                'total_discount' => $total_discount,
+                                'sub_total' => $order_amount,
+                                'total' => $order_final_total,
+                                'serialized_items_info' => serialize($serialized_items_info),
+                                'status' => 'Paid',
+                                'payment_date' => date('Y-m-d H:i:s'),
+                                'verification_response' => $payment_id,
+                                'product_sid' => implode(',', $proucts_sid)
+                            );
 
                             if (!empty($coupon_array)) {
                                 $orders_data = array_merge($orders_data, $coupon_array); // array merge
                                 $invoice_data = array_merge($invoice_data, $coupon_array);
                             }
-                            
+
                             $order_id = $this->ext_model->cc_add_order($orders_data); // insert query and get order id
-                            
+
                             foreach ($ordered_products as $ordered_product) { // insert products details in DB
                                 $this->ext_model->cc_add_product($order_id, $ordered_product);
                             }
                             // insert info at invoices table
                             $invoice_id = $this->ext_model->cc_add_invoice($invoice_data);
-                            
+
                             $this->ext_model->empty_cart($company_sid); // empty cart and coupon info
                             //Fetching email template
                             //getting invoice selected product details
@@ -2399,7 +2482,7 @@ class Misc extends CI_Controller {
                                 $emailTemplateBody = str_replace('{{firstname}}', $userdata["employer_detail"]['first_name'] . ' ' . $userdata["employer_detail"]['last_name'], $emailTemplateBody);
                                 $emailTemplateBody = str_replace('{{invoice_id}}', $invoice_id, $emailTemplateBody);
                                 $emailTemplateBody = str_replace('{{product_list}}', $products, $emailTemplateBody);
-                                $emailTemplateBody = str_replace('{{invoice_subtotal}}', '$' . $invoiceData ["sub_total"], $emailTemplateBody);
+                                $emailTemplateBody = str_replace('{{invoice_subtotal}}', '$' . $invoiceData["sub_total"], $emailTemplateBody);
                                 $emailTemplateBody = str_replace('{{discount}}', '$' . $invoiceData["total_discount"], $emailTemplateBody);
                                 $emailTemplateBody = str_replace('{{invoice_total}}', '$' . $invoiceData["total"], $emailTemplateBody);
 
@@ -2424,8 +2507,12 @@ class Misc extends CI_Controller {
                             $body = EMAIL_HEADER
                                 . $emailTemplateBody
                                 . EMAIL_FOOTER;
-
+                                
+                                $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                            if($this->HRDMM->isActiveUser($data['employer_sid'])){
                             sendMail($from, $to, $subject, $body, $from_name);
+                                            }
+                            
                             sendMail($from, TO_EMAIL_DEV, $subject, $body, $from_name);
                             $system_notification_emails = get_system_notification_emails('billing_and_invoice_emails');
 
@@ -2466,7 +2553,8 @@ class Misc extends CI_Controller {
         }
     }
 
-    function process_payment_admin_invoice($invoice_sid = 0) {
+    function process_payment_admin_invoice($invoice_sid = 0)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -2549,13 +2637,13 @@ class Misc extends CI_Controller {
                 }
 
                 if (is_array($payment)) {
-                    
+
                     if (isset($payment['error_message'])) {
                         $this->session->set_flashdata('message', $payment['error_message']);
                     } else {
                         $this->session->set_flashdata('message', 'Payment could not be processed due to unknown error!');
                     }
-                    
+
                     redirect('misc/process_payment_admin_invoice/' . $invoice_sid, 'refresh');
                 }
 
@@ -2604,7 +2692,7 @@ class Misc extends CI_Controller {
                             log_and_send_templated_email(ADMIN_INVOICE_PAYMENT_NOTIFICATION, $system_notification_email['email'], $replacement_array);
                         }
                     }
-                    
+
                     $this->session->set_flashdata('message', 'Payment Successfully Processed!');
                 } else {
                     $this->session->set_flashdata('message', 'Could not process Payment!');
@@ -2616,7 +2704,8 @@ class Misc extends CI_Controller {
         }
     }
 
-    public function cc_management() {
+    public function cc_management()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -2646,7 +2735,7 @@ class Misc extends CI_Controller {
                     } else {
                         $this->session->set_flashdata('message', 'Card could not be saved due to unknown error!');
                     }
-                    
+
                     redirect('cc_management', 'refresh');
                 }
 
@@ -2655,16 +2744,18 @@ class Misc extends CI_Controller {
                 if (strtolower($card_state) == 'ok') { // card is fine
                     $creditCardToken = trim($card->getId());
                     $carddetails = array();
-                    $carddetails = array(   'id' => $creditCardToken,
-                                            'number' => trim($card->getNumber()),
-                                            'type' => trim($card->getType()),
-                                            'expire_month' => $_POST['expire_month'],
-                                            'expire_year' => $_POST['expire_year'],
-                                            'merchant_id' => trim($card->getMerchantId()),
-                                            'state' => $card_state,
-                                            'name_on_card' => $_POST['name_on_card']);
+                    $carddetails = array(
+                        'id' => $creditCardToken,
+                        'number' => trim($card->getNumber()),
+                        'type' => trim($card->getType()),
+                        'expire_month' => $_POST['expire_month'],
+                        'expire_year' => $_POST['expire_year'],
+                        'merchant_id' => trim($card->getMerchantId()),
+                        'state' => $card_state,
+                        'name_on_card' => $_POST['name_on_card']
+                    );
 
-                    if (isset($_POST['is_default'])) {//make this card default
+                    if (isset($_POST['is_default'])) { //make this card default
                         $this->ext_model->reset_all_cards($company_sid);
                         $carddetails['is_default'] = 1;
                     }
@@ -2700,7 +2791,8 @@ class Misc extends CI_Controller {
         }
     }
 
-    function cc_management_saveCard($params, $apiContext, $company_sid) {
+    function cc_management_saveCard($params, $apiContext, $company_sid)
+    {
         $card = new CreditCard();
         $card->setType($params['type']);
         $card->setNumber($params['number']);
@@ -2725,22 +2817,27 @@ class Misc extends CI_Controller {
             $message = $this->parseApiError($ex->getData());
             $messageType = "error";
             $error_flag = true;
-            $card = array(  "error_status" => "error",
-                            "error_code" => $error_code,
-                            "error_message" => $message);  // Filtering by MerchantId set during CreateCreditCard.
-                        
+            $card = array(
+                "error_status" => "error",
+                "error_code" => $error_code,
+                "error_message" => $message
+            );  // Filtering by MerchantId set during CreateCreditCard.
+
             return $card;
         } catch (Exception $ex) {
             $messageType = "error";
             $error_flag = true;
-            $card = array(  "error_status" => "error",
-                            "error_message" => $ex);  // Filtering by MerchantId set during CreateCreditCard.
-            
+            $card = array(
+                "error_status" => "error",
+                "error_message" => $ex
+            );  // Filtering by MerchantId set during CreateCreditCard.
+
             return $card;
         }
     }
 
-    public function my_ajax_responder() {
+    public function my_ajax_responder()
+    {
         if ($this->session->userdata('logged_in')) {
             if ($_POST) {
                 if (isset($_POST['perform_action']) && $_POST['perform_action'] != '') {
@@ -2775,7 +2872,8 @@ class Misc extends CI_Controller {
         }
     }
 
-    public function edit_card($card_sid = 0) {
+    public function edit_card($card_sid = 0)
+    {
         if ($card_sid != 0) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -2796,7 +2894,7 @@ class Misc extends CI_Controller {
                     } else {
                         $this->session->set_flashdata('message', 'Card could not be saved due to unknown error!');
                     }
-                    
+
                     redirect('edit_card/' . $card_sid, 'refresh');
                 }
 
@@ -2805,11 +2903,13 @@ class Misc extends CI_Controller {
                 if (strtolower($card_state) == 'ok') { // card is fine
                     $creditCardToken = trim($card->getId());
                     $carddetails = array();
-                    $carddetails = array(   'name_on_card' => $_POST['name_on_card'],
-                                            'expire_month' => $_POST['expire_month'],
-                                            'expire_year' => $_POST['expire_year'],
-                                            'merchant_id' => trim($card->getMerchantId()),
-                                            'state' => $card_state);
+                    $carddetails = array(
+                        'name_on_card' => $_POST['name_on_card'],
+                        'expire_month' => $_POST['expire_month'],
+                        'expire_year' => $_POST['expire_year'],
+                        'merchant_id' => trim($card->getMerchantId()),
+                        'state' => $card_state
+                    );
 
                     //serialize extra data of address
                     $custom_data['address_1'] = $formpost['address_1'];
@@ -2837,7 +2937,8 @@ class Misc extends CI_Controller {
         }
     }
 
-    public function process_payment_pending_invoices() {
+    public function process_payment_pending_invoices()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -2863,7 +2964,6 @@ class Misc extends CI_Controller {
             $this->form_validation->set_rules('invoice_sid[]', 'Invoice Sid', 'required');
 
             if ($this->form_validation->run() == false) {
-
             } else {
                 $company_admin_user = db_get_first_admin_user($company_sid);
                 $prev_saved_cc = $this->input->post('prev_saved_cc');
@@ -2914,11 +3014,11 @@ class Misc extends CI_Controller {
                     } else {
                         $this->session->set_flashdata('message', 'Payment could not be processed due to unknown error!');
                     }
-                    
+
                     redirect('settings/pending_invoices', 'refresh');
                 } else if (is_object($payment)) {
                     $payment_state = strtolower($payment->getState());
-                    
+
                     if ($payment_state == 'approved') {
                         $payer = $payment->getPayer();
                         $fi = $payer->getFundingInstruments();
@@ -2932,9 +3032,9 @@ class Misc extends CI_Controller {
                         $data_to_update['payment_method'] = 'credit-card';
                         $data_to_update['payment_processed_by'] = $employer_sid;
                         $data_to_update['credit_card_number'] = $cc_number;
-                        $data_to_update['credit_card_type'] = $cc_type;                        
+                        $data_to_update['credit_card_type'] = $cc_type;
                         $invoices = $this->ext_model->get_admin_invoices($invoice_sid);
-                        
+
                         foreach ($invoices as $invoice) {
                             $this->admin_invoices_model->update_admin_invoice($invoice['sid'], $data_to_update);
                             $invoice_amount = $invoice['total_after_discount'];
@@ -2972,8 +3072,9 @@ class Misc extends CI_Controller {
             redirect('login', "refresh");
         }
     }
-    
-    function pay_per_job() { //echo 'I AM IN MISC 1297 <pre>';
+
+    function pay_per_job()
+    { //echo 'I AM IN MISC 1297 <pre>';
         $data = $_POST;
         $userdata = $this->session->userdata('logged_in');
         $company_sid = $userdata['company_detail']['sid'];
@@ -2981,7 +3082,7 @@ class Misc extends CI_Controller {
         $first_name = $userdata['employer_detail']['first_name'];
         $last_name = $userdata['employer_detail']['last_name'];
         $product_id = $data['ppj_id'];
-        
+
         $cc_future_payment = 'off';
         $has_coupon = false;
         $error_flag = false;
@@ -3006,7 +3107,7 @@ class Misc extends CI_Controller {
         $product_sids = array();
         $product_quantity = 0;
         $products = '';
-        
+
         if ($product_id > 0) {
             $products_details = db_get_products_details($product_id);
             $products_details['qty'] = 1;
@@ -3027,24 +3128,26 @@ class Misc extends CI_Controller {
 
             if ($daily > 0) {
                 $expiry_days = $no_of_days;
-                $product_total = $products_details ['price'] * $products_details ['qty'] * $no_of_days;
+                $product_total = $products_details['price'] * $products_details['qty'] * $no_of_days;
                 $product_quantity = $no_of_days; //For Commission Invoice
             } else {
                 $expiry_days = $products_details['expiry_days'];
-                $product_total = $products_details ['price'] * $products_details['qty'];
+                $product_total = $products_details['price'] * $products_details['qty'];
                 $product_quantity = 1; //For Commission Invoice
             }
 
             $cost_price = $this->ext_model->get_product_cost_price($products_details['sid']);
 
-            $ordered_products[] = array('product_sid'                           => $products_details['sid'],
-                                        'product_qty'                           => $product_qty,
-                                        'product_remaining_qty'                 => $product_qty,
-                                        'order_qty'                             => $products_details['qty'],
-                                        'product_price'                         => $products_details['price'],
-                                        'cost_price'                            => $cost_price,
-                                        'product_total'                         => $product_total,
-                                        'company_sid'                           => $company_sid);
+            $ordered_products[] = array(
+                'product_sid'                           => $products_details['sid'],
+                'product_qty'                           => $product_qty,
+                'product_remaining_qty'                 => $product_qty,
+                'order_qty'                             => $products_details['qty'],
+                'product_price'                         => $products_details['price'],
+                'cost_price'                            => $cost_price,
+                'product_total'                         => $product_total,
+                'company_sid'                           => $company_sid
+            );
 
             $serialized_items_info['custom_text'][]                             = '';
             $serialized_items_info['item_qty'][]                                = $product_qty;
@@ -3056,16 +3159,16 @@ class Misc extends CI_Controller {
             $serialized_items_info['cost_price'][]                              = $cost_price;
             $serialized_items_info['total_cost'][]                              = isset($products_details['qty']) ? $cost_price * $products_details['qty'] : $cost_price;
             $order_amount                                                       = $order_amount + $product_total;
-            $order_description                                                  .= 'Product: 1 * ' . $products_details ['name'];
+            $order_description                                                  .= 'Product: 1 * ' . $products_details['name'];
             $proucts_sid[]                                                      = $products_details['sid'];
             //For Commission Invoice
             $id_to_quantity[$products_details['sid']]                           = $product_quantity;
             $id_to_rooftops[$products_details['sid']]                           = 1;
             $product_sids[]                                                     = $products_details['sid'];
         }
-        
+
         $order_final_total                                                      = $order_amount;
-        
+
         if (isset($data['cc_future_payment'])) {
             $cc_future_payment = $data['cc_future_payment'];
         }
@@ -3079,7 +3182,7 @@ class Misc extends CI_Controller {
 
         if ($has_coupon) { // check if coupon code is applied
             $coupon_data = db_get_coupon_content($coupon_code);
-            
+
             if (empty($coupon_data)) { // Coupon code does not exists or it is not active
                 $error_flag = true;
                 $coupon_error = 'coupon_error';
@@ -3101,7 +3204,7 @@ class Misc extends CI_Controller {
 
                 if ($end_date != null) { // check whether coupon has expired
                     $current_date_time = date('Y-m-d H:i:s');
-                    
+
                     if ($current_date_time > $end_date) { // coupon code has expired
                         $error_flag = true;
                         $coupon_error = 'coupon_error';
@@ -3118,10 +3221,12 @@ class Misc extends CI_Controller {
                 } else {
                     $total_discount = round((($order_amount * $discount) / 100), 2);
                 }
-                
-                $coupon_array = array(  'coupon_code' => $coupon_code,
-                                        'coupon_discount' => $discount,
-                                        'coupon_type' => $type);
+
+                $coupon_array = array(
+                    'coupon_code' => $coupon_code,
+                    'coupon_discount' => $discount,
+                    'coupon_type' => $type
+                );
                 $order_description .= 'Coupon Code: ' . $coupon_code . ', total_discount: ' . $total_discount . ', ';
                 $order_final_total = $order_amount - $total_discount;
             }
@@ -3148,7 +3253,7 @@ class Misc extends CI_Controller {
             echo json_encode($array);
             exit();
         } else {
-            if($data['payment_type'] == 'new') { //make direct payment
+            if ($data['payment_type'] == 'new') { //make direct payment
                 $card_params['cc_type'] = $data['cc_type'];
                 $card_params['cc_card_no'] = $data['cc_card_no'];
                 $card_params['cc_expire_month'] = $data['cc_expire_month'];
@@ -3165,7 +3270,7 @@ class Misc extends CI_Controller {
 
             if (is_object($payment)) {
                 $payment_state = strtolower($payment->getState());
-                
+
                 if ($payment_state == 'approved') { // payment was successful, add to db and show success message
                     $payment_id = trim($payment->getId());
                     $payment_state = trim($payment->getState());
@@ -3173,8 +3278,8 @@ class Misc extends CI_Controller {
                     $payer = $payment->getPayer();
                     $fi = $payer->getFundingInstruments();
                     $cc_token = $fi[0]->getCreditCardToken();
-                    
-                    if(is_object($cc_token)) {
+
+                    if (is_object($cc_token)) {
                         $last4 = $cc_token->getLast4();
                         $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
                         $cc_type = $cc_token->getType();
@@ -3185,28 +3290,32 @@ class Misc extends CI_Controller {
                     }
 
                     $orders_data = array();
-                    $orders_data = array(   'order_status'                      => 'paid',
-                                            'employer_sid'                      => $employer_sid,
-                                            'purchased_date'                    => $purchased_date,
-                                            'company_sid'                       => $company_sid,
-                                            'total'                             => $order_final_total,
-                                            'payment_method'                    => 'Paypal',
-                                            'verification_response'             => $payment_id);
+                    $orders_data = array(
+                        'order_status'                      => 'paid',
+                        'employer_sid'                      => $employer_sid,
+                        'purchased_date'                    => $purchased_date,
+                        'company_sid'                       => $company_sid,
+                        'total'                             => $order_final_total,
+                        'payment_method'                    => 'Paypal',
+                        'verification_response'             => $payment_id
+                    );
                     $invoice_data = array();
-                    $invoice_data = array(  'user_sid'                          => $employer_sid,
-                                            'company_sid'                       => $company_sid,
-                                            'date'                              => $purchased_date,
-                                            'payment_method'                    => 'Paypal',
-                                            'total_discount'                    => $total_discount,
-                                            'sub_total'                         => $order_amount,
-                                            'total'                             => $order_final_total,
-                                            'serialized_items_info'             => serialize($serialized_items_info),
-                                            'status'                            => 'Paid',
-                                            'payment_date'                      => $purchased_date,
-                                            'verification_response'             => $payment_id,
-                                            'product_sid'                       => implode(',', $proucts_sid),
-                                            'credit_card_number'                => $cc_number,
-                                            'credit_card_type'                  => $cc_type);
+                    $invoice_data = array(
+                        'user_sid'                          => $employer_sid,
+                        'company_sid'                       => $company_sid,
+                        'date'                              => $purchased_date,
+                        'payment_method'                    => 'Paypal',
+                        'total_discount'                    => $total_discount,
+                        'sub_total'                         => $order_amount,
+                        'total'                             => $order_final_total,
+                        'serialized_items_info'             => serialize($serialized_items_info),
+                        'status'                            => 'Paid',
+                        'payment_date'                      => $purchased_date,
+                        'verification_response'             => $payment_id,
+                        'product_sid'                       => implode(',', $proucts_sid),
+                        'credit_card_number'                => $cc_number,
+                        'credit_card_type'                  => $cc_type
+                    );
 
                     if (!empty($coupon_array)) {
                         $orders_data                                            = array_merge($orders_data, $coupon_array); // array merge
@@ -3223,7 +3332,7 @@ class Misc extends CI_Controller {
                     $commission_invoice_sid = $this->admin_invoices_model->Save_commission_invoice($employer_sid, $company_sid, $product_sids, $id_to_rooftops, $id_to_quantity, 'manual', 'employer_portal');
                     $secondary_invoice = 0;
 
-                    if(isset($commission_invoice_sid['secondary'])) {
+                    if (isset($commission_invoice_sid['secondary'])) {
                         $secondary_invoice = $commission_invoice_sid['secondary'];
                     }
 
@@ -3239,7 +3348,7 @@ class Misc extends CI_Controller {
                     $this->admin_invoices_model->apply_discount_on_commission($commission_invoice_sid['primary']);
                     $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['primary']);
 
-                    if(isset($commission_invoice_sid['secondary'])) {
+                    if (isset($commission_invoice_sid['secondary'])) {
                         if ($total_discount > $order_amount) {
                             $total_discount = $order_amount;
                         }
@@ -3249,7 +3358,7 @@ class Misc extends CI_Controller {
                         $this->admin_invoices_model->apply_discount_on_commission($commission_invoice_sid['secondary']);
                         $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['secondary']);
                     }
-                    
+
                     $this->load->model('manage_admin/invoice_model');
                     $invoiceData = $this->invoice_model->get_invoice_detail($invoice_id);
                     $this->receipts_model->generate_new_receipt($company_sid, $invoice_id, $invoiceData['total'], $invoiceData['payment_method'], $employer_sid, 'employer_portal', 'market_place');
@@ -3292,10 +3401,9 @@ class Misc extends CI_Controller {
 
                     $company_sid = $invoiceData['company_sid'];
                     send_email_through_notifications($company_sid, 'billing_invoice', INVOICE_NOTIFICATION, $replacement_array);
-
                 }
             }
-            
+
             if ($error_flag) {
                 $array[0] = "error";
                 $array[1] = 'no_error';

@@ -881,8 +881,10 @@ class Incident_reporting_system extends Public_Controller
                             $body = $email_hf['header']
                                 . $emailTemplateBody
                                 . $email_hf['footer'];
-
+                                $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                if($this->HRDMM->isActiveUser($employer_sid)){
                             log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                                }
                         }
 
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Send Incident Email Successfully!');
@@ -1360,8 +1362,12 @@ class Incident_reporting_system extends Public_Controller
                         $body = $email_hf['header']
                             . $emailTemplateBody
                             . $email_hf['footer'];
-
+                            
+                        $this->load->model('Hr_documents_management_model', 'HRDMM');
+                               if($this->HRDMM->isActiveUser($employer_sid)){
                         log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                                   }
+
                     } else if ('system') {
                         $receivers = $_POST['receivers'];
                         $subject = $_POST['subject'];
@@ -1468,8 +1474,10 @@ class Incident_reporting_system extends Public_Controller
                             $body = $email_hf['header']
                                 . $emailTemplateBody
                                 . $email_hf['footer'];
-
+$this->load->model('Hr_documents_management_model', 'HRDMM');
+                                            if($this->HRDMM->isActiveUser($employer_sid)){
                             log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                                            }
                         }
                     }
 
@@ -2135,6 +2143,8 @@ class Incident_reporting_system extends Public_Controller
                         . $email_hf['footer'];
 
                     log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                                        
+
                 } else {
 
                     $subject        = $this->input->post('subject');

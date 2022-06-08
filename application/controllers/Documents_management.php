@@ -1,13 +1,16 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Documents_management extends Public_Controller {
-    public function __construct() {
+class Documents_management extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('documents_management_model');
         $this->load->model('onboarding_model');
     }
 
-    public function index() {
+    public function index()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -17,10 +20,10 @@ class Documents_management extends Public_Controller {
             $company_sid = $data["session"]["company_detail"]["sid"];
             $employer_sid = $data["session"]["employer_detail"]["sid"];
             $data['title'] = 'Document Management';
-// hassan working area - move documents to new module
-//            $this->documents_management_model->copy_old_documents_to_new_documents_management($company_sid, $employer_sid);
+            // hassan working area - move documents to new module
+            //            $this->documents_management_model->copy_old_documents_to_new_documents_management($company_sid, $employer_sid);
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
-            
+
             if ($this->form_validation->run() == false) {
                 // die('up');
                 $uploaded_documents = $this->documents_management_model->get_all_documents($company_sid, 0);
@@ -37,10 +40,10 @@ class Documents_management extends Public_Controller {
                 $data['archived_offer_letters'] = $archived_offer_letters;
                 $this->load->view('main/header', $data);
                 $this->load->view('documents_management/new_index');
-//                $this->load->view('documents_management/index');
+                //                $this->load->view('documents_management/index');
                 $this->load->view('main/footer');
             } else {
-                 // die('down');
+                // die('down');
                 $perform_action = $this->input->post('perform_action');
 
                 switch ($perform_action) {
@@ -105,7 +108,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function upload_new_document() {
+    public function upload_new_document()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -118,7 +122,7 @@ class Documents_management extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
-            
+
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('documents_management/upload_new_document');
@@ -135,7 +139,7 @@ class Documents_management extends Public_Controller {
                         $action_required = $this->input->post('action_required');
                         $s3_file_name = upload_file_to_aws('document_file', $company_sid, str_replace(' ', '_', $document_name), $employer_sid, AWS_S3_BUCKET_NAME);
                         $original_name = $document_name;
-                        
+
                         if (isset($_FILES['document_file']["name"])) {
                             $original_name = $_FILES['document_file']["name"];
                         }
@@ -170,7 +174,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function edit_document_info($document_sid) {
+    public function edit_document_info($document_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -184,7 +189,7 @@ class Documents_management extends Public_Controller {
             $data['employer_sid'] = $employer_sid;
 
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
-            
+
             if ($this->form_validation->run() == false) {
                 $document_info = $this->documents_management_model->get_uploaded_document_record($company_sid, $document_sid);
 
@@ -210,7 +215,7 @@ class Documents_management extends Public_Controller {
                         $action_required = $this->input->post('action_required');
                         $s3_file_name = upload_file_to_aws('document_file', $company_sid, str_replace(' ', '_', $document_name), $employer_sid);
                         $original_name = $document_name;
-                        
+
                         if (isset($_FILES['document_file']["name"])) {
                             $original_name = $_FILES['document_file']["name"];
                         }
@@ -243,7 +248,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function generate_new_document() {
+    public function generate_new_document()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -257,14 +263,14 @@ class Documents_management extends Public_Controller {
             $data['employer_sid'] = $employer_sid;
 
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
-            
+
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('documents_management/generate_new_document');
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
-                
+
                 switch ($perform_action) {
                     case 'generate_new_document':
                         $company_sid = $this->input->post('company_sid');
@@ -291,7 +297,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function edit_generated_document($document_sid) {
+    public function edit_generated_document($document_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -346,7 +353,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function documents_assignment($user_type = NULL, $user_sid = NULL, $jobs_listing = NULL) {
+    public function documents_assignment($user_type = NULL, $user_sid = NULL, $jobs_listing = NULL)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -363,9 +371,9 @@ class Documents_management extends Public_Controller {
                 $this->session->set_flashdata('message', '<b>Warning:</b> Not Accessable');
                 redirect(base_url('dashboard'), "refresh");
             }
-            
+
             $user_info = array();
-            
+
             switch ($user_type) {
                 case 'employee':
                     $user_info = $this->documents_management_model->get_employee_information($company_sid, $user_sid);
@@ -374,7 +382,7 @@ class Documents_management extends Public_Controller {
                         $this->session->set_flashdata('message', '<strong>Error:</strong> Employee Not Found!');
                         redirect('employee_management', 'refresh');
                     }
-                    
+
                     $old_pending_documents = $this->documents_management_model->get_old_sent_documents($company_sid, $user_sid);
                     $data['old_pending_documents'] = $old_pending_documents;
                     break;
@@ -389,7 +397,7 @@ class Documents_management extends Public_Controller {
                     $data['old_pending_documents'] = $old_pending_documents;
                     break;
             }
-            
+
             if (empty($user_info)) {
                 $this->session->set_flashdata('message', '<strong>Error:</strong> User Not Found!');
                 redirect('documents_management', 'refresh');
@@ -428,14 +436,14 @@ class Documents_management extends Public_Controller {
             $data['user_sid'] = $user_sid;
             $data['job_list_sid'] = $jobs_listing;
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
-            
+
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('documents_management/documents_assignment');
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
-                
+
                 switch ($perform_action) {
                     case 'assign_document':
                         $company_sid = $this->input->post('company_sid');
@@ -446,7 +454,7 @@ class Documents_management extends Public_Controller {
                         $user_sid = $this->input->post('user_sid');
                         $file_exists = false;
                         $document_info = array();
-                        
+
                         switch ($document_type) {
                             case 'uploaded':
                                 $document_info = $this->documents_management_model->get_uploaded_document_record($company_sid, $document_sid);
@@ -524,7 +532,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function my_documents() {
+    public function my_documents()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -545,15 +554,15 @@ class Documents_management extends Public_Controller {
             $data['i9_form'] = $this->onboarding_model->get_i9_form('employee', $employer_sid);
             $old_documents = $this->onboarding_model->get_old_system_documents('employee', $employer_sid);
 
-            $data['old_system_documents'] = $old_documents;     
-           
+            $data['old_system_documents'] = $old_documents;
+
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('documents_management/my_documents');
                 $this->load->view('main/footer');
-//                $this->load->view('onboarding/on_boarding_header', $data);
-//                $this->load->view('onboarding/documents');
-//                $this->load->view('onboarding/on_boarding_footer');
+                //                $this->load->view('onboarding/on_boarding_header', $data);
+                //                $this->load->view('onboarding/documents');
+                //                $this->load->view('onboarding/on_boarding_footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
                 switch ($perform_action) {
@@ -566,7 +575,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function sign_u_document($document_sid) {
+    public function sign_u_document($document_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -590,7 +600,7 @@ class Documents_management extends Public_Controller {
                 $this->load->view('onboarding/on_boarding_footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
-                
+
                 switch ($perform_action) {
                     case 'acknowledge_document':
                         $user_type = $this->input->post('user_type');
@@ -610,7 +620,7 @@ class Documents_management extends Public_Controller {
                         $aws_file_name = upload_file_to_aws('upload_file', $company_sid, $document_type . '_' . $document_sid, time());
 
                         $uploaded_file = '';
-                        
+
                         if ($aws_file_name != 'error') {
                             $uploaded_file = $aws_file_name;
                         }
@@ -631,7 +641,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function download_u_document($document_sid) {
+    public function download_u_document($document_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -668,7 +679,7 @@ class Documents_management extends Public_Controller {
                     header('Content-Length: ' . filesize($temp_file_path));
                     $handle = fopen($temp_file_path, 'rb');
                     $buffer = '';
-                    
+
                     while (!feof($handle)) {
                         $buffer = fread($handle, 4096);
                         echo $buffer;
@@ -690,7 +701,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function sign_g_document($document_sid) {
+    public function sign_g_document($document_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -703,7 +715,7 @@ class Documents_management extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
-            
+
             if ($this->form_validation->run() == false) {
                 $data['title'] = 'Automoto HR Onboarding';
                 $this->load->model('documents_management_model');
@@ -792,7 +804,7 @@ class Documents_management extends Public_Controller {
                         } else {
                             redirect('onboarding/sign_g_document/' . $document_sid);
                         }
-                        
+
                         break;
                 }
             }
@@ -801,7 +813,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function sign_offer_letter($document_sid) {
+    public function sign_offer_letter($document_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -815,7 +828,7 @@ class Documents_management extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
-            
+
             if ($this->form_validation->run() == false) {
                 $data['title'] = 'Automoto HR Onboarding';
                 $this->load->model('documents_management_model');
@@ -904,7 +917,7 @@ class Documents_management extends Public_Controller {
                         } else {
                             redirect('onboarding/sign_offer_letter/' . $document_sid);
                         }
-                        
+
                         break;
                 }
             }
@@ -913,7 +926,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function view_g_document($user_type, $user_sid, $document_sid) {
+    public function view_g_document($user_type, $user_sid, $document_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -926,7 +940,7 @@ class Documents_management extends Public_Controller {
             $data['company_sid'] = $company_sid;
             $data['employer_sid'] = $employer_sid;
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
-            
+
             if ($this->form_validation->run() == false) {
                 $data['title'] = 'Automoto HR Onboarding';
                 $this->load->model('documents_management_model');
@@ -962,7 +976,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function people_with_pending_documents() {
+    public function people_with_pending_documents()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1019,7 +1034,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function employee_document($employee_id = NULL) {
+    public function employee_document($employee_id = NULL)
+    {
         if ($employee_id != NULL) {
             if ($this->session->has_userdata('logged_in')) {
                 $data['session'] = $this->session->userdata('logged_in');
@@ -1049,14 +1065,15 @@ class Documents_management extends Public_Controller {
                 $this->load->view('main/footer');
             } else {
                 redirect(base_url('login'), "refresh");
-            }//else end for session check fail
+            } //else end for session check fail
         } else {
             $this->session->set_flashdata('message', '<b>Error:</b> Please select an Employee to review documents');
             redirect(base_url('hr_documents'));
-        }//else end for session check fail
+        } //else end for session check fail
     }
 
-    public function send_document_reminder() {
+    public function send_document_reminder()
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $security_sid = $data['session']['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);
@@ -1083,7 +1100,7 @@ class Documents_management extends Public_Controller {
             $emailTemplateBody = str_replace('{{company_name}}', $company_name, $emailTemplateBody);
 
             replace_magic_quotes($emailTemplateBody);
-            
+
             $from = $emailTemplateData['from_email'];
             $to = $userData['email'];
             $subject = $emailTemplateData['subject'];
@@ -1121,7 +1138,12 @@ class Documents_management extends Public_Controller {
                     'message' => $emailTemplateBody,
                 );
                 save_email_log_common($emailData);
-                sendMail($from, $to, $subject, $emailTemplateBody, $from_name);
+
+
+                $this->load->model('Hr_documents_management_model', 'HRDMM');
+                if ($this->HRDMM->isActiveUser($userData['sid'])) {
+                    sendMail($from, $to, $subject, $emailTemplateBody, $from_name);
+                }
             }
 
             //saving email logs
@@ -1138,7 +1160,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data["session"]["company_detail"]["sid"];
@@ -1148,7 +1171,7 @@ class Documents_management extends Public_Controller {
                 //Handle Get
             } else {
                 $perform_action = $this->input->post('perform_action');
-                
+
                 switch ($perform_action) {
                     case 'get_generated_document_preview':
                         $document_sid = $this->input->post('document_sid');
@@ -1157,11 +1180,11 @@ class Documents_management extends Public_Controller {
                         $source = $this->input->post('source');
                         $user_type = empty($user_type) ? null : $user_type;
                         $user_sid = empty($user_sid) ? null : $user_sid;
-                        
+
                         if ($source == 'generated' || $source == 'original' || ($user_type == null && $user_sid == null)) {
-                            if($source == 'offer'){
+                            if ($source == 'offer') {
                                 $document_info = $this->documents_management_model->get_offer_letter($company_sid, $document_sid);
-                            } else{
+                            } else {
                                 $document_info = $this->documents_management_model->get_generated_document($company_sid, $document_sid);
                             }
                         } else {
@@ -1183,7 +1206,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function generate_new_offer_letter() {
+    public function generate_new_offer_letter()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1230,7 +1254,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function edit_offer_letter($offer_letter_sid) {
+    public function edit_offer_letter($offer_letter_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1277,7 +1302,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function old_system_document($record_sid) {
+    public function old_system_document($record_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1294,9 +1320,9 @@ class Documents_management extends Public_Controller {
             $data['employee'] = $data['session']['employer_detail'];
             $document = $this->documents_management_model->get_old_document($company_sid, $employer_sid, $record_sid);
             $data['document'] = $document;
-//            echo '<pre>';
-//            print_r($document);
-//            die();
+            //            echo '<pre>';
+            //            print_r($document);
+            //            die();
             $this->load->model('e_signature_model');
             $e_signature_data = $this->e_signature_model->get_signature_record('employee', $employer_sid);
             $signed_flag = false;
@@ -1324,7 +1350,7 @@ class Documents_management extends Public_Controller {
 
             $data['e_signature_data'] = $e_signature_data;
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim');
-            
+
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('documents_management/view_sign_old_document_green');
@@ -1366,7 +1392,8 @@ class Documents_management extends Public_Controller {
         }
     }
 
-    public function download_old_system_document($record_sid) {
+    public function download_old_system_document($record_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1407,14 +1434,14 @@ class Documents_management extends Public_Controller {
                         header('Content-Length: ' . filesize($temp_file_path));
                         $handle = fopen($temp_file_path, 'rb');
                         $buffer = '';
-                        
+
                         while (!feof($handle)) {
                             $buffer = fread($handle, 4096);
                             echo $buffer;
                             ob_flush();
                             flush();
                         }
-                        
+
                         fclose($handle);
                         unlink($temp_file_path);
                     }

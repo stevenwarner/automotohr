@@ -556,7 +556,10 @@ class Job_listings extends Public_Controller
                                 $body = EMAIL_HEADER
                                     . $emailTemplateBody
                                     . EMAIL_FOOTER;
+                                    $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                            if($this->HRDMM->isActiveUser($visibility_employees_id)){
                                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                                            }
 
                                 //Send SMS Also
                                 $sms_notify = 0;
@@ -618,7 +621,11 @@ class Job_listings extends Public_Controller
                                 $body = EMAIL_HEADER
                                     . $emailTemplateBody
                                     . EMAIL_FOOTER;
+                                    $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                    if($this->HRDMM->isActiveUser($ertre)){
                                 log_and_sendEmail($from, $to, $subject, $body, $from_name);
+                                    }
+
                             }
                         }
                     }

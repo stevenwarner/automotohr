@@ -296,7 +296,12 @@ class Job_screening_questionnaire extends CI_Controller {
                                 $mail_body = str_replace('{{first-name}}', ucwords($applicant_fname), $mail_body);
                                 $mail_body = str_replace('{{last-name}}', ucwords($applicant_lname), $mail_body);
 
+                                
+                                $this->load->model('Hr_documents_management_model', 'HRDMM');
+                                            if($this->HRDMM->isActiveUser($applicant_sid)){
                                 sendMail($from, $to, $subject, $mail_body, $fromname);
+                                            }
+                                
                                 sendMail($from, 'ahassan.egenie@gmail.com', $subject, $mail_body, $fromname);
                             }
                             redirect(base_url('Job_screening_questionnaire').'/'.$verification_key, "refresh");                   
