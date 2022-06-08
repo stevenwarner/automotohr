@@ -13624,7 +13624,7 @@ class Hr_documents_management extends Public_Controller
                 // Get approvers saying
                 $getAllDocumentAssigners = $this->hr_documents_management_model->getAllDocumentAssigners($assignedId);
                 $this->load->model('Hr_documents_management_model', 'HRDMM');
-                if($this->HRDMM->isActiveUser($new_approver['assigner_sid'])){
+                if($this->HRDMM->isActiveUser($new_approver['assigned_by'])){
                     // Send Email
                     $this->SendEmailToDocumentApprover(
                         $assignerName,
