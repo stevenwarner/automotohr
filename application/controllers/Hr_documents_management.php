@@ -14189,7 +14189,7 @@ class Hr_documents_management extends Public_Controller
      * @author  Mubashir Ahmed
      * @version 1.0
      */
-    public function assignVD(){
+    public function assignVD(){ 
         // Let fetch the cleaned post
         $post = $this->input->post(null, true);
         //

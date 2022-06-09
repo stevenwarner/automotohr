@@ -8444,8 +8444,8 @@ class Hr_documents_management_model extends CI_Model
         }
         // Flush the data
         $upd = array();
-        $upd["status"] = $form['status'] == 1 ? 0 : 1;
-        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["status"] = 1;
+        $upd["sent_status"] = 1;
         $upd["sent_date"] = $dateTime;
         $upd["section1_emp_signature"] = NULL;
         $upd["section1_emp_signature_init"] = NULL;
@@ -8520,8 +8520,8 @@ class Hr_documents_management_model extends CI_Model
         }
         // Flush the data
         $upd = array();
-        $upd["status"] = $form['status'] == 1 ? 0 : 1;
-        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["status"] =  1;
+        $upd["sent_status"] =  1;
         $upd["sent_date"] = $dateTime;
         $upd["user_consent"] = NULL;
         $upd['user_agent'] = NULL;
@@ -8587,7 +8587,9 @@ class Hr_documents_management_model extends CI_Model
             $fullForm = $this->getData('form_w4_original', $whereArray, [
                 '*'
             ], true);
-            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            $fullForm['form_w4_ref_sid'] = $fullForm['sid'];
+          //  $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            
             //
             unset($fullForm['sid']);
             //
@@ -8595,8 +8597,8 @@ class Hr_documents_management_model extends CI_Model
         }
         // Flush the data
         $upd = array();
-        $upd["status"] = $form['status'] == 1 ? 0 : 1;
-        $upd["sent_status"] = $form['status'] == 1 ? 0 : 1;
+        $upd["status"] = 1;
+        $upd["sent_status"] = 1;
         $upd["sent_date"] = $dateTime;
         $upd["user_consent"] = NULL;
         $upd['signature_timestamp']        = NULL;
@@ -8606,7 +8608,7 @@ class Hr_documents_management_model extends CI_Model
         $upd['ip_address']                 = NULL;
         $upd['user_agent']                 = NULL;
         //
-        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        $this->db->where($whereArray)->update('form_w4_original', $upd);
         //
         return $form['sid'];
     }

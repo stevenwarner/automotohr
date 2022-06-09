@@ -36,7 +36,7 @@
 
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header full-width">
-                                <h1 class="section-ttile">Documents Library</h1>
+                                <h1 class="section-ttile">Employee Document Library</h1>
                                 <strong> Information:</strong> If you are unable to view the documents library, kindly reload the page. <h3 style="float: right;margin-top: 0px; margin-bottom: 0px;" id="total_documents"><?php echo $total_documents + count($verificationDocuments); ?> </h3>
                             </div>
                         </div>
