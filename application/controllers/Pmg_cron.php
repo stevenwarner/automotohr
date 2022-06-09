@@ -122,6 +122,11 @@ class Pmg_cron extends CI_Controller {
     private function sendEmail($templateId, $employeeId, $companyId, $companyName, $title, $days){
         // Get employee details
         $employeeDetails = $this->pmm->getEmployeeDetails($employeeId);
+        $this->load->model('Hr_documents_management_model', 'HRDMM');
+        //
+        if(!$this->HRDMM->isActiveUser($employeeId)){
+            return;
+        }
         // Get template details
         $template = $this->pmm->getTemplate($templateId);
         //

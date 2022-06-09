@@ -1952,12 +1952,17 @@ class Performance_management extends Public_Controller{
         //
         $template = get_email_template(REVIEW_ADDED);
 
+        $this->load->model('Hr_documents_management_model', 'HRDMM');
         foreach($record['Reviewees'] as $row){
             //
             if(!empty($ids)){
                 if(!in_array($row[0]['reviewer_sid'], $ids)){
                     continue;
                 }
+            }
+            //
+            if(!$this->HRDMM->isActiveUser($row[0]['reviewer_sid'])){
+                continue;
             }
             //
             $replaceArray = [];
