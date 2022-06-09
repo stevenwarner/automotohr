@@ -1421,7 +1421,7 @@ class Hr_documents_management extends Public_Controller {
                             $data_to_update['uploaded_document_s3_name'] = $this->input->post('document_url');
                         }
                         // Assigner handling
-                        $data_to_update['has_approval_flow'] = 1;
+                        $data_to_update['has_approval_flow'] = 0;
                         $data_to_update['document_approval_note'] = $data_to_update['document_approval_employees'] = '';
                         // Assigner handling
                         if($post['has_approval_flow'] == 'on'){
@@ -10990,7 +10990,6 @@ class Hr_documents_management extends Public_Controller {
                 }
             }
         } 
-        _e($post);
         //
 
         if($assignInsertId == null)
@@ -13399,7 +13398,7 @@ class Hr_documents_management extends Public_Controller {
                         $document_info['has_approval_flow']
                     );
                     //
-                    if (is_numeric($default_approver) && $default_approver == 0) {
+                    if (empty($default_approver)) {
                         // 
                         // Update flow row because last approver approve it
                         $this->hr_documents_management_model->updateApprovalDocument(
@@ -13434,6 +13433,9 @@ class Hr_documents_management extends Public_Controller {
                                 'approval_process' => 0
                             ]
                         );
+                        //
+                        //
+                        $this->after_approval_document_process($document_sid);
                     } else {
                         $approver_sid = 0;
                         $approver_email = "";
@@ -13475,6 +13477,94 @@ class Hr_documents_management extends Public_Controller {
             $resp['Msg'] = 'You are not allowed to perform that action!';
             res($resp);
         }    
+    }
+
+    function after_approval_document_process ($document_sid) {
+        //
+        $document_info = $this->hr_documents_management_model->get_document_detail_for_end_process($document_sid);
+        $companyName = getCompanyNameBySid($document_info["company_sid"]);
+        // For email
+        if($document_info['sendEmail'] == 'yes'){
+            // 
+            $hf = message_header_footer_domain($document_info["company_sid"], $companyName );
+            // Send Email and SMS
+            $replacement_array = array();
+            //
+            switch ($document_info["user_type"]) {
+                case 'employee':
+                    $user_info = $this->hr_documents_management_model->get_employee_information($document_info["company_sid"], $document_info["user_sid"]);
+                    $replacement_array['contact-name'] = ucwords($user_info['first_name'] . ' ' . $user_info['last_name']);
+                    $replacement_array['company_name'] = ucwords($companyName);
+                    $replacement_array['username'] = $replacement_array['contact-name'];
+                    $replacement_array['firstname'] = $user_info['first_name'];
+                    $replacement_array['lastname'] = $user_info['last_name'];
+                    $replacement_array['first_name'] = $user_info['first_name'];
+                    $replacement_array['last_name'] = $user_info['last_name'];
+                    $replacement_array['baseurl'] = base_url();
+                    $replacement_array['url'] = base_url('hr_documents_management/my_documents');
+                    //
+                    $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
+                    //
+                    $is_manual = get_document_type($document_sid);
+                    //
+                    if(sizeof($replacement_array) && $is_manual == 'no') {
+                        //
+                        $user_extra_info = array();
+                        $user_extra_info['user_sid'] = $document_info["user_sid"];
+                        $user_extra_info['user_type'] = $document_info["user_type"];
+                        //
+                        log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS, $user_info['email'], $replacement_array, $hf, 1, $user_extra_info);
+                    }    
+                break;
+
+                case 'applicant':
+                    $user_info = $this->hr_documents_management_model->get_applicant_information($document_info["company_sid"], $document_info["user_sid"]);
+                    // Set email content
+                    $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
+                    //
+                    $this->load->library('encryption', 'encrypt');
+                    //
+                    $time = strtotime('+10 days');
+                    //
+                    $encryptedKey = $this->encrypt->encode($document_sid.'/'.$user_info['sid'].'/applicant/'.$time);
+                    $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
+                    //
+                    $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url('document/'.( $encryptedKey ).'') ).'">'.( $post['documentTitle'] ).'</a>';
+                    //
+                    $subject = convert_email_template($template['subject'], $user_info);
+                    $message = convert_email_template($template['text'], $user_info);
+                    //
+                    $body = $hf['header'];
+                    $body .= $message;
+                    $body .= $hf['footer'];
+                    //
+                    $this->hr_documents_management_model
+                    ->updateAssignedDocumentLinkTime(
+                        $time,
+                        $document_sid
+                    );
+                    //
+                    log_and_sendEmail(
+                        FROM_EMAIL_NOTIFICATIONS,
+                        $user_info['email'],
+                        $subject,
+                        $body,
+                        $companyName
+                    );
+                break;
+            }
+        }
+        //
+        // Check if it's Authorize document
+        if ($document_info['managersList'] != null && str_replace('{{authorized_signature}}', '', $document_info["document_description"]) != $document_info["document_description"]){
+            // Managers handling
+            $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                $document_info['managersList'],
+                $document_sid,
+                $document_info["company_sid"],
+                $document_info['assigned_by']
+            );
+        }
     }
 
     function review_approval_document ($document_sid) {
@@ -13610,7 +13700,7 @@ class Hr_documents_management extends Public_Controller {
             [
                 'approval_process' => 1, 
                 'approval_flow_sid' => $approvalInsertId,
-                'sendEmail' => $approvalInsertId,
+                'sendEmail' => $send_email,
                 'managersList' => $managers_list,
                 'has_approval_flow' => 1,
                 'document_approval_employees' => $approvers_list,
@@ -13646,6 +13736,7 @@ class Hr_documents_management extends Public_Controller {
         $approvers_list,
         $initiator_note
     ) {
+        
         if (!empty($approvers_list)) {
             $approvalEmployees = explode(",", $approvers_list);
             //
@@ -13672,6 +13763,7 @@ class Hr_documents_management extends Public_Controller {
                 }    
             }
         } else {
+            
             $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
             //
             $default_approver = $this->hr_documents_management_model->getDefaultApprovers(
@@ -13679,8 +13771,8 @@ class Hr_documents_management extends Public_Controller {
                 $document_info['approval_flow_sid'],
                 $document_info['has_approval_flow']
             );
-
-            if ($default_approver != 0) {
+            
+            if (!empty($default_approver)) {
                 //
                 $approver_sid = 0;
                 $approver_email = "";
@@ -13698,7 +13790,7 @@ class Hr_documents_management extends Public_Controller {
                     $approver_email = $default_approver;
                 }
                 //
-            
+                
                 $this->hr_documents_management_model->insert_assigner_employee(
                     [
                         'portal_document_assign_sid' =>  $document_info['approval_flow_sid'],

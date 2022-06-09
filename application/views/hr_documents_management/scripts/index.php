@@ -323,8 +323,9 @@
 						$('#jsHasApprovalFlow').prop('checked', true);
 						$('.jsApproverFlowContainer').show();
 
-						DocumentApproverPrefill(d.document_approval_employees, d.document_approval_note, d.sid);
-						DocumentExternalApproverPrefill(d.sid)
+						DocumentApproverPrefill(d.document_approval_employees, d.sid);
+						DocumentExternalApproverPrefill(d.sid);
+						$("#assigner_note").val(d.document_approval_note);
 					}
 					
 					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
@@ -454,7 +455,8 @@
 						$('#jsHasApprovalFlow').prop('checked', true);
 						$('.jsApproverFlowContainer').show();
 
-						DocumentApproverPrefill(d.document_approval_employees, d.document_approval_note, 0);
+						DocumentApproverPrefill(d.document_approval_employees, 0);
+						$("#assigner_note").val(d.document_approval_note);
 					}	
 				
 

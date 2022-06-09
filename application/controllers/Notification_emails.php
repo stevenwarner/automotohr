@@ -803,6 +803,7 @@ class Notification_emails extends Public_Controller {
 
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
+            $company_sid  = $data['session']['company_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
             check_access_permissions($security_details, 'my_settings', 'notification_emails');
@@ -845,6 +846,11 @@ class Notification_emails extends Public_Controller {
                 $update_data['status'] = $status;
                 //Check Form Post and handle status - end
                 $this->notification_emails_model->update_contact($contact_sid, $update_data);
+                //
+                if ($type == "default_approvers" && $status == 'active') {
+                    $this->add_default_approver_to_document($company_sid);
+                } 
+                //
                 $this->session->set_flashdata('message', 'Success: Contact Updated');
 
                 if ($type == 'billing_invoice') {

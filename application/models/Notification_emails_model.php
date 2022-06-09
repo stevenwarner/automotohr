@@ -193,19 +193,30 @@
     }
 
     function get_active_default_approver($company_id) {
-        $this->db->select('employer_sid, email');
+        $this->db->select('default_approvers');
         $this->db->where('company_sid', $company_id);
-        $this->db->where('notifications_type', "default_approvers");
-        $this->db->where('status', "active");
-        $record_obj = $this->db->get('notifications_emails_management');
-        $record_arr = $record_obj->row_array();
+        $record_obj = $this->db->get('notifications_emails_configuration');
+        $configuration_data = $record_obj->row_array();
         $record_obj->free_result();
+        
         //
-        if (!empty($record_arr)) {
-            return $record_arr;
-        } else {
+        if (!empty($configuration_data) && $configuration_data["default_approvers"] == 1) {
+            $this->db->select('employer_sid, email');
+            $this->db->where('company_sid', $company_id);
+            $this->db->where('notifications_type', "default_approvers");
+            $this->db->where('status', "active");
+            $record_obj = $this->db->get('notifications_emails_management');
+            $default_approvers = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($default_approvers)) {
+                return $default_approvers;
+            } else {
+                return array();
+            }
+        } else{
             return array();
-        }
+        }    
     }
 
     function get_all_documents_without_approvers($company_id) {

@@ -94,7 +94,6 @@
 				$('#js-employees-' + rowId).select2('val', sa);
 			});
 			$(".jsAssignerEmployeesNote").show();
-			$("#assigner_note").val("<?= $document_info['document_approval_note']; ?>");
 
 		}
 
@@ -119,6 +118,7 @@
 			$('.jsApproverFlowContainer').show();
 
 			DOGenerate("<?= $document_info['document_approval_employees']; ?>");
+			$("#assigner_note").val("<?= $document_info['document_approval_note']; ?>");
 		<?php endif; ?>
 	});
 </script>

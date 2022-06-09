@@ -8195,7 +8195,7 @@ class Hr_documents_management_model extends CI_Model
     public function getDefaultApprovers ($company_sid, $flow_sid, $status) {
         //
         //
-        $return_data = 0;
+        $return_data = "";
         //
         if ($status == 1) {
             $this->db->select('default_approvers');
@@ -8322,8 +8322,23 @@ class Hr_documents_management_model extends CI_Model
         } else {
             return true;
         }
+    }
 
-        
+    public function get_document_detail_for_end_process($document_sid) {
+        //
+        $this->db->select('company_sid, user_sid, user_type, assigned_by, document_description, sendEmail, managersList');
+        $this->db->where('sid', $document_sid);
+        //
+        $record_obj = $this->db->get('documents_assigned');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        $return_data = array();
+
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        }
+
+        return $return_data;
     }
 
 

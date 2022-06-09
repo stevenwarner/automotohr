@@ -1,4 +1,4 @@
-function DocumentApproverPrefill(assigners, note, documentID) {
+function DocumentApproverPrefill(assigners, documentID) {
 	//
 	if (!assigners) {
 		return '';
@@ -21,7 +21,6 @@ function DocumentApproverPrefill(assigners, note, documentID) {
 	});
 	//
 	$(".jsAssignerEmployeesNote").show();
-	$("#assigner_note").val(note);
 
 }
 
