@@ -8326,7 +8326,7 @@ class Hr_documents_management_model extends CI_Model
 
     public function get_document_detail_for_end_process($document_sid) {
         //
-        $this->db->select('company_sid, user_sid, user_type, assigned_by, document_description, sendEmail, managersList');
+        $this->db->select('company_sid, user_sid, user_type, assigned_by, document_title, document_description, sendEmail, managersList');
         $this->db->where('sid', $document_sid);
         //
         $record_obj = $this->db->get('documents_assigned');

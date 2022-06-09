@@ -10999,9 +10999,7 @@ class Hr_documents_management extends Public_Controller {
         //
         $is_manual = get_document_type($assignInsertId); 
         //
-        $is_approval_document = $this->hr_documents_management_model->is_document_has_approval_flow($post['documentSid']);
-        //
-        if (isset($post["assigner"]) || $is_approval_document["has_approval_flow"] == 1) {
+        if (isset($post["assigner"]) || $post["hasApprovalFlow"]) {
             //
             $managersList = '';
             //
@@ -11312,9 +11310,7 @@ class Hr_documents_management extends Public_Controller {
         else
             $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
         //
-        $is_approval_document = $this->hr_documents_management_model->is_document_has_approval_flow($post['documentSid']);
-        //
-        if (isset($post["assigner"]) || $is_approval_document["has_approval_flow"] == 1) {
+        if (isset($post["assigner"]) || $post["hasApprovalFlow"] == 1) {
             //
             $managersList = '';
             //
@@ -11465,9 +11461,9 @@ class Hr_documents_management extends Public_Controller {
         //
         $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
         $document_info = $this->hr_documents_management_model->get_approval_document_detail($assignInsertId, false);
-        $is_approval_document = $this->hr_documents_management_model->is_document_has_approval_flow($document_info['document_sid']);
 
-        if (isset($post["assigner"]) || $is_approval_document["has_approval_flow"] == 1) {
+        if (isset($post["assigner"]) || $post["hasApprovalFlow"] == 1) {
+
             //
             $managersList = "";
             //
@@ -11489,6 +11485,14 @@ class Hr_documents_management extends Public_Controller {
             //
 
         } else {
+
+            $this->hr_documents_management_model->change_document_approval_status(
+                $assignInsertId, 
+                [
+                    'approval_process' => 0,
+                    'has_approval_flow' => 0
+                ]
+            );
        
             // For email
             if($post['sendEmail'] == 'yes'){
@@ -13565,6 +13569,29 @@ class Hr_documents_management extends Public_Controller {
                 $document_info['assigned_by']
             );
         }
+        //
+        //
+        if($document_info["user_type"] == 'employee'){
+            //
+            $user_info = $this->hr_documents_management_model->get_employee_information($document_info["company_sid"], $document_info['user_sid']);
+            $assigner_info = $this->hr_documents_management_model->get_employee_information($document_info["company_sid"], $document_info['assigned_by']);
+            // Send document completion alert
+            broadcastAlert(
+                DOCUMENT_NOTIFICATION_ASSIGNED_TEMPLATE,
+                'documents_status',
+                'document_assigned',
+                $document_info["company_sid"],
+                $companyName,
+                $assigner_info['first_name'],
+                $assigner_info['last_name'],
+                $document_info["user_sid"],
+                [
+                    'document_title' => $document_info['document_title'],
+                    'employee_name' => $user_info['first_name'].' '.$user_info['last_name']
+                ]
+            );
+        }
+        //
     }
 
     function review_approval_document ($document_sid) {

@@ -823,6 +823,7 @@
 			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			// Visibility
 			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
+			obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
 			obj.selected_roles = $('#jsRoles').val() || '';
 			obj.selected_departments = $('#jsDepartments').val() || '';
 			obj.selected_teams = $('#jsTeams').val() || '';
@@ -897,6 +898,7 @@
 			}
 			// Visibility
 			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
+			obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
 			obj.roles = $('#jsRoles').val() || '';
 			obj.departments = $('#jsDepartments').val() || '';
 			obj.teams = $('#jsTeams').val() || '';
@@ -967,6 +969,7 @@
 				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
 			}
 			// Visibility
+			obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
 			obj.roles = $('#jsRoles').val() || '';
 			obj.departments = $('#jsDepartments').val() || '';
 			obj.teams = $('#jsTeams').val() || '';
