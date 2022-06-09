@@ -661,7 +661,7 @@
 
                             <li>
                                 <div class="g-recaptcha" data-callback="googleCaptchaChecker" data-sitekey="<?= getCreds('AHR')->GOOGLE_CAPTCHA_API_KEY_V2; ?>"></div>
-                                <label id='captchaerror'  class="error" style="display: none;">Empty/Invalid Captcha </label>
+                                <label id='captchaerror'  style="display: none; float: none !important;color: #CC0000 !important;font-weight: 400;margin: 0 !important;">Empty/Invalid Captcha </label>
                             </li>
 
                             <li>
