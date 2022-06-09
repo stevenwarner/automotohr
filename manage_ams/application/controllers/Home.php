@@ -1107,6 +1107,11 @@ class Home extends CI_Controller
                                  
                                  $redirecturl = "";
                                  $applied_from   = $this->input->post('applied_from');
+                                 
+                                 if($this->input->post('dr',true)){
+                                    echo "Applied job form";
+                                    exit();
+                                }
 
                                  if ($applied_from == 'job') {
                                     $redirecturl ='/job_details/' . $sid;
@@ -1120,6 +1125,10 @@ class Home extends CI_Controller
                                 //
                                 if (!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])) {
                                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                                    if($this->input->post('dr',true)){
+                                        echo "Google captcha not set";
+                                        exit();
+                                    }
                                     return redirect( $redirecturl, 'refresh');
                                 }
                                 //
@@ -1127,6 +1136,10 @@ class Home extends CI_Controller
                                 //
                                 if (!$gr['success']) {
                                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                                    if($this->input->post('dr',true)){
+                                        echo "Google captcha not set";
+                                        exit();
+                                    }
                                     return redirect( $redirecturl, 'refresh');
                                 }
 
@@ -1145,7 +1158,10 @@ class Home extends CI_Controller
                                     if ($is_blocked_email == 'blocked') {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Blocked email";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1179,7 +1195,10 @@ class Home extends CI_Controller
 
                                     if (check_company_status($company_sid) == 0) {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Applied job";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1194,7 +1213,10 @@ class Home extends CI_Controller
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
                                         $this->session->set_flashdata('message', "<b>Error!</b> You have already applied for this Job '" . $data['job_details']['Title'] . "'");
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Already applied job";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1292,7 +1314,10 @@ class Home extends CI_Controller
                                         //
                                         if (check_company_status($employer_sid) == 0) {
                                             $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-
+                                            if($this->input->post('dr',true)){
+                                                echo "Application for job";
+                                                exit();
+                                            }
                                             if ($applied_from == 'job') {
                                                 redirect('/job-feed-details/' . $sid, 'refresh');
                                             } else if ($applied_from == 'jobs_list_view') {
@@ -1782,7 +1807,10 @@ class Home extends CI_Controller
                                         }
 
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Job Applied Form";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid . "?applied_by=" . $portal_applicant_jobs_list_sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1802,7 +1830,10 @@ class Home extends CI_Controller
                                     if ($is_blocked_email == 'blocked') {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Job application success";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1871,7 +1902,10 @@ class Home extends CI_Controller
                                     //
                                     if (check_company_status($company_sid) == 0) {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Job application success";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1886,7 +1920,10 @@ class Home extends CI_Controller
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
                                         $this->session->set_flashdata('message', "<b>Error!</b> You have already applied for this Job '" . $data['job_details']['Title'] . "'");
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Already applied for job";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1945,7 +1982,10 @@ class Home extends CI_Controller
                                         //
                                         if (check_company_status($employer_sid) == 0) {
                                             $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-
+                                            if($this->input->post('dr',true)){
+                                                echo "Job application success";
+                                                exit();
+                                            }
                                             if ($applied_from == 'job') {
                                                 redirect('/job_details/' . $sid, 'refresh');
                                             } else if ($applied_from == 'jobs_list_view') {
@@ -2391,7 +2431,10 @@ class Home extends CI_Controller
                                         }
 
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Applied job form";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid . "?applied_by=" . $portal_applicant_jobs_list_sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
