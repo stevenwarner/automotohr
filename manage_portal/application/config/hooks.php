@@ -11,3 +11,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |	http://codeigniter.com/user_guide/general/hooks.html
 |
 */
+
+$hooks['pre_controller'][] = array(
+    'filepath' => 'hooks',
+    'filename' => 'IpVerify.php',
+    'function' => 'ipCheck',
+    'class' => 'IpVerify'
+);
