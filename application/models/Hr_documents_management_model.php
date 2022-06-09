@@ -6758,6 +6758,8 @@ class Hr_documents_management_model extends CI_Model
     {
         $this->db->select('users.first_name, users.last_name, users.email, users.sid');
         $this->db->where('authorized_document_assigned_manager.company_sid', $company_sid);
+        $this->db->where('users.active', 1);
+        $this->db->where('users.terminated_status', 0);
         $this->db->where('authorized_document_assigned_manager.document_assigned_sid', $document_sid);
         $this->db->join('users', 'users.sid = authorized_document_assigned_manager.assigned_to_sid', 'inner');
         $record_obj = $this->db->get('authorized_document_assigned_manager');

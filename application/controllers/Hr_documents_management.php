@@ -12220,34 +12220,38 @@ class Hr_documents_management extends Public_Controller
         $encryptedKey = $this->encrypt->encode($post['assignedDocumentSid'] . '/' . $document['user_sid'] . '/' . $document['user_type'] . '/' . $time);
         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
         //
-        $user_info = $this->hr_documents_management_model->getUserData(
-            $document['user_sid'],
-            $document['user_type'],
-            $data['company_detail']['sid']
-        );
-        //
-        $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="' . (base_url('document/' . ($encryptedKey) . '')) . '">' . ($document['document_title']) . '</a>';
-        //
-        $subject = convert_email_template($template['subject'], $user_info);
-        $message = convert_email_template($template['text'], $user_info);
-        //
-        $body = $hf['header'];
-        $body .= $message;
-        $body .= $hf['footer'];
-        //
-        $this->hr_documents_management_model
-            ->updateAssignedDocumentLinkTime(
-                $time,
-                $post['assignedDocumentSid']
+        $this->load->model('Hr_documents_management_model', 'HRDMM');
+        if($this->HRDMM->isActiveUser($document['user_sid'], $document['user_type'])){
+            //
+            $user_info = $this->hr_documents_management_model->getUserData(
+                $document['user_sid'],
+                $document['user_type'],
+                $data['company_detail']['sid']
             );
-        //
-        log_and_sendEmail(
-            FROM_EMAIL_NOTIFICATIONS,
-            $document['user']['email'],
-            $subject,
-            $body,
-            $data['company_detail']['CompanyName']
-        );
+            //
+            $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="' . (base_url('document/' . ($encryptedKey) . '')) . '">' . ($document['document_title']) . '</a>';
+            //
+            $subject = convert_email_template($template['subject'], $user_info);
+            $message = convert_email_template($template['text'], $user_info);
+            //
+            $body = $hf['header'];
+            $body .= $message;
+            $body .= $hf['footer'];
+            //
+            $this->hr_documents_management_model
+                ->updateAssignedDocumentLinkTime(
+                    $time,
+                    $post['assignedDocumentSid']
+                );
+            //
+            log_and_sendEmail(
+                FROM_EMAIL_NOTIFICATIONS,
+                $document['user']['email'],
+                $subject,
+                $body,
+                $data['company_detail']['CompanyName']
+            );
+        }
         //
         $resp['Status'] = TRUE;
         $resp['Response'] = 'The document has been sent successfully.';
@@ -13038,30 +13042,33 @@ class Hr_documents_management extends Public_Controller
             echo 'The employee is inactive.<br> Please activate the employee to send an email notification.';
             exit(0);
         }
-        //
-        $hf = message_header_footer(
-            $this->session->userdata('logged_in')['company_detail']['sid'],
-            $this->session->userdata('logged_in')['company_detail']['CompanyName']
-        );
-        //
-        $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
-        //
-        $info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="' . (base_url('eeoc_form/' . ($token) . '')) . '">EEOC Form</a>';
-        //
-        $subject = convert_email_template($template['subject'], $info);
-        $message = convert_email_template($template['text'], $info);
-        //
-        $body = $hf['header'];
-        $body .= $message;
-        $body .= $hf['footer'];
-        //
-        log_and_sendEmail(
-            FROM_EMAIL_NOTIFICATIONS,
-            $info['email'],
-            $subject,
-            $body,
-            $this->session->userdata('logged_in')['company_detail']['CompanyName']
-        );
+        $this->load->model('Hr_documents_management_model', 'HRDMM');
+        if($this->HRDMM->isActiveUser($post['userId'], $post['userType'])){
+            //
+            $hf = message_header_footer(
+                $this->session->userdata('logged_in')['company_detail']['sid'],
+                $this->session->userdata('logged_in')['company_detail']['CompanyName']
+            );
+            //
+            $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
+            //
+            $info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="' . (base_url('eeoc_form/' . ($token) . '')) . '">EEOC Form</a>';
+            //
+            $subject = convert_email_template($template['subject'], $info);
+            $message = convert_email_template($template['text'], $info);
+            //
+            $body = $hf['header'];
+            $body .= $message;
+            $body .= $hf['footer'];
+            //
+            log_and_sendEmail(
+                FROM_EMAIL_NOTIFICATIONS,
+                $info['email'],
+                $subject,
+                $body,
+                $this->session->userdata('logged_in')['company_detail']['CompanyName']
+            );
+        }
         //
         echo 'success';
         exit(0);
