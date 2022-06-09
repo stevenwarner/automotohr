@@ -12,9 +12,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 
-$hooks['pre_controller'][] = array(
+$hook['pre_controller'][] = array(
     'filepath' => 'hooks',
-    'filename' => 'IpVerify.php',
-    'function' => 'ipCheck',
-    'class' => 'IpVerify'
+    'filename' => 'security.php',
+    'function' => 'checkBlockedIps',
+    'class' => 'Security'
 );
