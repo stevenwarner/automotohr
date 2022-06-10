@@ -2817,6 +2817,30 @@ class Reports extends Public_Controller {
                 }
                 $this->resp();
             break;
+
+            case 'get_employee_status':
+                // Fetch licenses
+               // print_r($formpost);
+              //  die();
+                $licenses = $this->reports_model->getEmployeeStatus( $formpost );
+                //
+                if(!sizeof($licenses)){
+                    $this->res['Response'] = 'No Employees found.';
+                    $this->resp();
+                }
+                $this->res['Status'] = true;
+                $this->res['Limit'] = $formpost['limit'];
+                $this->res['Response'] = 'Proceed';
+                $this->res['Data'] = $licenses['Data'];
+                //
+                if($formpost['page'] == 1){
+                    $this->res['TotalRecords'] = $licenses['Count'];
+                    $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
+                }
+                $this->resp();
+            break;
+
+
         }
         //
         $this->resp();
@@ -2963,5 +2987,65 @@ class Reports extends Public_Controller {
         //  
         echo "error repoted and send email"; 
     }
+
+
+    function employee_status(){
+        if (!$this->session->userdata('logged_in')) redirect('login', "refresh");
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
+        check_access_permissions($data['security_details'], 'my_settings', 'reports');
+        //
+        $company_sid   = $data['session']['company_detail']['sid'];
+        //
+        $data['title'] = 'Employee Status Report';
+
+        if(sizeof($this->input->post(NULL, TRUE))){
+            $post = $this->input->post(NULL, TRUE);
+            $post['companySid'] = $company_sid;
+
+            $post['dd-license-type'] = strtolower($post['dd-license-type']);
+            $post['dd-license-class'] = strtolower($post['dd-license-class']);
+
+            if($post['txt-license-number'] == '') $post['txt-license-number'] = 'all';
+            if($post['txt-issue-date'] == '') $post['txt-issue-date'] = 'all';
+            if($post['txt-expiration-date'] == '') $post['txt-expiration-date'] = 'all';
+            // Fetch licenses
+            $licenses = $this->reports_model->getDriverLicensesForExport( $post );
+            if(sizeof($licenses)){
+
+                header('Content-Type: text/csv; charset=utf-8');
+                header("Content-Disposition: attachment; filename=Driving_report_".(date('YmdHis')).".csv");
+                $output = fopen('php://output', 'w');
+                fputcsv($output, array('Employee', 'Job Title', 'Licence Type', 'Licence Class', 'License Authority', 'License Number', 'Date Of Birth', 'Issue Date', 'Expiration Date'));
+
+                foreach($licenses as $license){
+                    $a = array();
+                    $a[] = remakeEmployeeName( $license );
+                    $a[] = $license['job_title'];
+                    $a[] = $license['license_type'] != '' ? $license['license_type'] : 'N/A';
+                    $a[] = $license['license_class'] != '' ? $license['license_class'] : 'N/A';
+                    $a[] = $license['license_authority'] != '' ? $license['license_authority'] : 'N/A';
+                    $a[] = $license['license_number'] != '' ? $license['license_number'] : 'N/A';
+                    $a[] = $license['dob'] != '' ? $license['dob'] : 'N/A';
+                    $a[] = $license['license_issue_date'] != '' ? $license['license_issue_date'] : 'N/A';
+                    $a[] = $license['license_expiration_date'] != '' ? $license['license_expiration_date'] : 'N/A';
+                    fputcsv($output, $a);
+                }
+
+                fclose($output);
+
+                exit;
+
+            }
+        }
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('reports/employee_status');
+        $this->load->view('main/footer');
+    }
+
+
+
 
 }

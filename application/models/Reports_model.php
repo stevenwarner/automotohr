@@ -2017,4 +2017,163 @@ class Reports_model extends CI_Model {
         }
 
     }
+
+
+
+
+
+    function getEmployeeStatus($post){
+
+      print_r($post['employeeSid']);
+     die();
+
+        $offSet = $post['limit'];
+        $inSet =  $post['page'] == 1 ? 0 : ( ( $post['page'] - 1 ) * $post['limit']);
+        $r = array(
+            'Count' => 0,
+            'Data' => array()
+        );
+
+     
+
+
+        $this->db
+        ->select('terminated_employees.termination_date,terminated_employees.status_change_date,terminated_employees.details,terminated_employees.employee_status, CONCAT(users.first_name," ", users.last_name) as full_name')
+        ->join('terminated_employees', 'terminated_employees.employee_sid=users.sid', 'LEFT')
+        ->where('users.parent_sid', $post['companySid'])
+         ->limit($offSet, $inSet)
+        //->group_by('terminated_employees.employee_sid')
+        ->group_by("CASE WHEN terminated_employees.employee_sid IS NOT NULL THEN terminated_employees.employee_sid END",FALSE)
+        ->order_by('full_name', 'ASC');
+        // Filter
+        if($post['employeeSid'][0] != 'all') $this->db->where_in('users.sid', $post['employeeSid']);
+        //
+        $a = $this->db->get('users');
+        $b = $a->result_array();
+        $a->free_result();
+
+
+
+        $sql = $this->db->last_query();
+        die($sql);
+
+       // print_r($b);
+       //die();
+        //
+        if(!sizeof($b)) return $r;
+        //
+        $t = array();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //
+        foreach ($b as $k => $v) {
+            $o = $v;
+            $e = $v['full_name'];
+            $j = $v['job_title'] == null ? '' : $v['job_title'];
+            $v = @unserialize($v['license_details']);
+            // Make sure all fields exists
+            if(!isset($v['dob'])) $v['dob'] = '';
+            if(!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
+            if(!isset($v['license_type'])) $v['license_type'] = '';
+            if(!isset($v['license_class'])) $v['license_class'] = '';
+            if(!isset($v['license_issue_date'])) $v['license_issue_date'] = '';
+            if(!isset($v['license_expiration_date'])) $v['license_expiration_date'] = '';
+            if(!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
+            if(!isset($v['license_authority'])) $v['license_authority'] = '';
+            if(!isset($v['license_number'])) $v['license_number'] = '';
+            // Reset fields
+            $v['license_type'] = strtolower(trim($v['license_type']));
+            $v['license_class'] = strtolower(trim($v['license_class']));
+            $v['license_number'] = strtolower(trim($v['license_number']));
+            $v['license_authority'] = strtolower(trim($v['license_authority']));
+            $v['license_issue_date'] = trim($v['license_issue_date']);
+            $v['license_indefinite'] = trim($v['license_indefinite']);
+            $v['license_expiration_date'] = trim($v['license_expiration_date']);
+            // Add Filter
+            if(($post['licenseType'] != $v['license_type']) && $post['licenseType'] != 'all') continue;
+            if(($post['licenseClass'] != $v['license_class']) && $post['licenseClass'] != 'all') continue;
+            if(($post['licenseNumber'] != $v['license_number']) && $post['licenseNumber'] != 'all') continue;
+            if(($post['issueDate'] != $v['license_issue_date']) && $post['issueDate'] != 'all') continue;
+            if(($post['expirationDate'] != $v['license_expiration_date']) && $post['expirationDate'] != 'all') continue;
+            //
+            $v['full_name'] = $e;
+            $v['job_title'] = $j;
+            $v['first_name'] = $o['first_name'];
+            $v['last_name'] = $o['last_name'];
+            $v['access_level'] = $o['access_level'];
+            $v['access_level_plus'] = $o['access_level_plus'];
+            $v['pay_plan_flag'] = $o['pay_plan_flag'];
+            $v['is_executive_admin'] = $o['is_executive_admin'];
+            $t[] = $v;
+        }
+        //
+        $r['Data'] = $t;
+        if($post['page'] != 1) return $r;
+
+        $this->db
+        ->select('license_information.sid')
+        ->join('users', 'users.sid = license_information.users_sid', 'inner')
+        ->where('users.parent_sid', $post['companySid'])
+        ->where('license_information.users_type', 'employee');
+        // Filter
+        if($post['employeeSid'] != 'all') $this->db->where('license_information.users_sid', $post['employeeSid']);
+        //
+        $a = $this->db->get('license_information');
+        $b = $a->result_array();
+        $a->free_result();
+        //
+        if(!sizeof($b)) return $r;
+        //
+        $t = 0;
+        //
+        foreach ($b as $k => $v) {
+            $v = @unserialize($v['license_details']);
+            // Make sure all fields exists
+            if(!isset($v['license_type'])) $v['license_type'] = '';
+            if(!isset($v['license_class'])) $v['license_class'] = '';
+            if(!isset($v['license_issue_date'])) $v['license_issue_date'] = '';
+            if(!isset($v['license_expiration_date'])) $v['license_expiration_date'] = '';
+            if(!isset($v['license_indefinite'])) $v['license_indefinite'] = '';
+            if(!isset($v['license_authority'])) $v['license_authority'] = '';
+            if(!isset($v['license_number'])) $v['license_number'] = '';
+            // Reset fields
+            $v['license_type'] = strtolower(trim($v['license_type']));
+            $v['license_class'] = strtolower(trim($v['license_class']));
+            $v['license_number'] = strtolower(trim($v['license_number']));
+            $v['license_authority'] = strtolower(trim($v['license_authority']));
+            $v['license_issue_date'] = trim($v['license_issue_date']);
+            $v['license_indefinite'] = trim($v['license_indefinite']);
+            $v['license_expiration_date'] = trim($v['license_expiration_date']);
+            // Add Filter
+            if(($post['licenseType'] != $v['license_type']) && $post['licenseType'] != 'all') continue;
+            if(($post['licenseClass'] != $v['license_class']) && $post['licenseClass'] != 'all') continue;
+            if(($post['licenseNumber'] != $v['license_number']) && $post['licenseNumber'] != 'all') continue;
+            if(($post['issueDate'] != $v['license_issue_date']) && $post['issueDate'] != 'all') continue;
+            if(($post['expirationDate'] != $v['license_expiration_date']) && $post['expirationDate'] != 'all') continue;
+            //
+            $t++;
+        }
+        $r['Count'] = $t;
+
+        return $r;
+    }
+
+
+
+
 }
