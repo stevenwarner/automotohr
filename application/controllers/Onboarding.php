@@ -5277,7 +5277,7 @@ class Onboarding extends CI_Controller
                     $onboarding_data['onboarding_start_date'] = date('Y-m-d H:i:s');
                     $onboarding_data['onboarding_status'] = 'in_process';
                     $onboarding_data['job_list_sid'] = $job_list_sid;
-                    $onboarding_data['job_sid'] = $job_list_info['job_sid'];
+                    $onboarding_data['job_sid'] = isset($job_list_info['job_sid']) ? $job_list_info['job_sid'] : 0;
                     $this->onboarding_model->mark_applicant_for_onboarding($user_sid);
                     $this->onboarding_model->update_applicant_status_type($user_sid, array('employee_status' => $employee_status, 'employee_type' => $employee_type));
                     $this->onboarding_model->save_onboarding_applicant($company_sid, $user_sid, $onboarding_data);

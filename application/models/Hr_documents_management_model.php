@@ -5423,6 +5423,9 @@ class Hr_documents_management_model extends CI_Model
         $note = '',
         $is_required = 0
     ) {
+        //
+        $is_required = !$is_required ? 0 : $is_required;
+        //
         if ($sid == 0) {
             //
             $this->db
@@ -6505,6 +6508,10 @@ class Hr_documents_management_model extends CI_Model
     function getMyDepartTeams(
         $sid
     ) {
+        //
+        if(!$sid){
+            return ['departments' => [], 'teams' => []];
+        }
         //
         $departments = $this->db
             ->select('sid')

@@ -549,7 +549,7 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['acknowledgment_required'] = $this->input->post('acknowledgment_required');
                         $data_to_insert['download_required'] = $this->input->post('download_required');
                         $data_to_insert['signature_required'] = $this->input->post('signature_required');
-                        $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+                        $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
                         $data_to_insert['visible_to_document_center'] = 0;
 
 
@@ -794,7 +794,7 @@ class Hr_documents_management extends Public_Controller
                         $data_to_insert['employer_sid'] = $employer_sid;
                         $data_to_insert['document_title'] = $document_title;
                         $data_to_insert['document_description'] = $document_description;
-                        $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+                        $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
                         $data_to_insert['visible_to_document_center'] = 0;
                         $data_to_insert['document_type'] = 'generated';
                         if (!empty($this->input->post('sort_order')))
@@ -1285,7 +1285,7 @@ class Hr_documents_management extends Public_Controller
                         $document_description = htmlentities($document_description);
                         // $action_required = $this->input->post('action_required');
                         $data_to_update = array();
-                        $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+                        $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
                         $data_to_update['visible_to_document_center'] = 0;
                         
                         if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
@@ -9062,7 +9062,7 @@ class Hr_documents_management extends Public_Controller
             $file_info = pathinfo($uploaded_document_original_name);
             $data_to_insert = array();
 
-            $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+            $data_to_insert['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
             $data_to_insert['visible_to_document_center'] = 0;
 
             if (isset($file_info['extension'])) {
@@ -9273,7 +9273,7 @@ class Hr_documents_management extends Public_Controller
             $sid = $id;
             // $action_required = $this->input->post('action_required');
             $data_to_update = array();
-            $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary');
+            $data_to_update['isdoctolibrary'] = $this->input->post('isdoctolibrary') ? $this->input->post('isdoctolibrary') : 0;
             $data_to_update['visible_to_document_center'] = 0;
 
             if (isset($_FILES['document']['name']) && !empty($_FILES['document']['name'])) {
