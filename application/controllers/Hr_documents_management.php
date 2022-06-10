@@ -11310,27 +11310,27 @@ class Hr_documents_management extends Public_Controller {
         else
             $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
         //
-        if (isset($post["assigner"]) || $post["hasApprovalFlow"] == 1) {
-            //
-            $managersList = '';
-            //
-            if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
-                $managersList = implode(',', $post['managerList']);
-            }
-            //
-            $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
-            $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : $is_approval_document["document_approval_note"];
-            //
-            // When approval employees are selected
-            $this->HandleApprovalFlow(
-                $assignInsertId,
-                $approvers_note,
-                $approvers_list,
-                $post['sendEmail'],
-                $managersList
-            );
+        // if (isset($post["assigner"]) || $post["hasApprovalFlow"] == 1) {
+        //     //
+        //     $managersList = '';
+        //     //
+        //     if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
+        //         $managersList = implode(',', $post['managerList']);
+        //     }
+        //     //
+        //     $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
+        //     $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : $is_approval_document["document_approval_note"];
+        //     //
+        //     // When approval employees are selected
+        //     $this->HandleApprovalFlow(
+        //         $assignInsertId,
+        //         $approvers_note,
+        //         $approvers_list,
+        //         $post['sendEmail'],
+        //         $managersList
+        //     );
 
-        } else {
+        // } else {
             //
             // Check if it's Authorize document
             if($post['sendEmail'] == 'yes'){
@@ -11379,7 +11379,7 @@ class Hr_documents_management extends Public_Controller {
                     }
                 }
             }    
-        }
+        // }
         //
         echo 'success';        
     }

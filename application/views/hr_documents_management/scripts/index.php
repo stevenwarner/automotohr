@@ -319,13 +319,16 @@
 					$('.js-modify-assign-document-required[value="'+( selectedTemplate.is_required)+'"]').prop('checked', true);
 					$('.js-modify-assign-document-signature-required[value="'+( selectedTemplate.is_signature_required )+'"]').prop('checked', true);
 					//
-					if (d.has_approval_flow && d.has_approval_flow == 1) {
+					if (d.has_approval_flow && d.has_approval_flow == 1 && d.document_type != "offer_letter") {
 						$('#jsHasApprovalFlow').prop('checked', true);
 						$('.jsApproverFlowContainer').show();
 
 						DocumentApproverPrefill(d.document_approval_employees, d.sid);
 						DocumentExternalApproverPrefill(d.sid);
 						$("#assigner_note").val(d.document_approval_note);
+					} else {
+						$('#jsHasApprovalFlow').prop('checked', false);
+						$('#jsApprovalSection').hide();
 					}
 					
 					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
@@ -534,7 +537,7 @@
 			if(do_descpt) rows += getSigners('js-modify-assign-offer-letter-signers');
 			rows+= getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section',true); ?>`;
+			//rows += `<?php //echo $this->load->view('hr_documents_management/partials/approvers_section',true); ?>`;
 			rows+= getEmailContent();
 			if(do_descpt) rows += getTags();
 			//
@@ -822,8 +825,10 @@
 			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
 			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			// Visibility
+			if (selectedTemplate.document_type != "offer_letter") {
+				obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
+			}
 			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
-			obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
 			obj.selected_roles = $('#jsRoles').val() || '';
 			obj.selected_departments = $('#jsDepartments').val() || '';
 			obj.selected_teams = $('#jsTeams').val() || '';
@@ -969,7 +974,7 @@
 				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
 			}
 			// Visibility
-			obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
+			//obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
 			obj.roles = $('#jsRoles').val() || '';
 			obj.departments = $('#jsDepartments').val() || '';
 			obj.teams = $('#jsTeams').val() || '';
