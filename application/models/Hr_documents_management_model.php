@@ -8512,7 +8512,7 @@ class Hr_documents_management_model extends CI_Model
             $fullForm = $this->getData('applicant_w9form', $whereArray, [
                 '*'
             ], true);
-            $fullForm['i9form_ref_sid'] = $fullForm['sid'];
+            $fullForm['w9form_ref_sid'] = $fullForm['sid'];
             //
             unset($fullForm['sid']);
             //
@@ -8535,7 +8535,7 @@ class Hr_documents_management_model extends CI_Model
         $upd['signature_ip_address'] = NULL;
         $upd['signature_user_agent'] = NULL;
         //
-        $this->db->where($whereArray)->update('applicant_i9form', $upd);
+        $this->db->where($whereArray)->update('applicant_w9form', $upd);
         //
         return $form['sid'];
     }
