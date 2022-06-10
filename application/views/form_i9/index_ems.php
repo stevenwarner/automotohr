@@ -12,6 +12,12 @@
                     <a href="<?php echo base_url('hr_documents_management/my_documents'); ?>"
                         class="btn btn-block blue-button"><i class="fa fa-angle-left"></i> Documents</a>
                 </div>
+                <?php if(checkIfAppIsEnabled('documentlibrary')): ?>
+                <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                    <a href="<?php echo base_url('library_document'); ?>"
+                        class="btn btn-block blue-button"><i class="fa fa-angle-left"></i> Document Library</a>
+                </div>
+                <?php endif; ?>
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <div class="page-header"><span class="section-ttile"><?php echo $title; ?></span></div>
