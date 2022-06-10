@@ -58,9 +58,9 @@
                 <br />
 
                 <div class="row">
-                    <div class="col-sm-3 col-xs-3">
+                    <div class="col-sm-6 col-xs-6">
                         <label>License Image</label> <br />
-                        <?=!empty($v['license_file']) ? '<img src="'.('data:image/png;base64, '.base64_encode(getFileData(AWS_S3_BUCKET_URL.$v['license_file']))).'" style="display: block; max-with: 100%; margin: auto;" />' : 'N/A'; ?>
+                        <?=!empty($v['license_file']) ? '<img src="'.('data:image/png;base64, '.base64_encode(getFileData(AWS_S3_BUCKET_URL.$v['license_file']))).'" style="display: block; max-width: 100%; margin: auto;" />' : 'N/A'; ?>
                     </div>
                 </div>
 
