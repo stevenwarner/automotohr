@@ -12,7 +12,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 /**
- * Stop the unallowed traffic
+ * Stop the not allowed traffic
  */
 $hook['pre_controller'][] = array(
     'filepath' => 'hooks',

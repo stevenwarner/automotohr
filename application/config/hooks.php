@@ -19,7 +19,7 @@ $hook['post_controller'][] = array(
 );
 
 /**
- * Stop the unallowed traffic
+ * Stop the not allowed traffic
  */
 $hook['pre_controller'][] = array(
     'filepath' => 'hooks',
