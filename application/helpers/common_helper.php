@@ -11201,7 +11201,7 @@ if (!function_exists('remakeEmployeeName')) {
         //
         if (isset($o['job_title']) && $o['job_title'] != '' && $o['job_title'] != null) $r .= ' (' . ($o['job_title']) . ')';
         //
-        $r .= ' [' . remakeAccessLevel($o) . ']';
+        $r .= ' [' . remakeAccessLevel($o) . 'ffh]';
         //
         if (isset($o['timezone'])) {
             //

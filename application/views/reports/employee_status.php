@@ -25,7 +25,7 @@
                                             <div class="hr-innerpadding">
                                                 <div class="row">
                                                     <div class="col-xs-12">
-                                                        <form action="<?= base_url('reports/driving_license'); ?>" method="POST">
+                                                        <form action="<?= base_url('reports/employee_status'); ?>" method="POST">
                                                             <input type="hidden" id="perform_action" name="perform_action" value="export_csv" />
                                                             <!-- Filter first row -->
                                                             <div class="row">
@@ -38,8 +38,8 @@
                                                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                                                     <div class="field-row">
                                                                         <label>Status</label>
-                                                                        <select id="js-status" name="dd-status" >
-                                                                            <option value="">Please Select</option>
+                                                                        <select id="js-status-emp" name="dd-status-emp[]" multiple="true">
+                                                                            <option value="all">All</option>
                                                                             <option value="5">Active</option>
                                                                             <option value="7">Leave</option>
                                                                             <option value="4">Suspended</option>
@@ -84,14 +84,10 @@
                                                                 <thead>
                                                                     <tr>
                                                                         <th>Employee</th>
-                                                                        <th>Job Title</th>
-                                                                        <th>License Type</th>
-                                                                        <th>License Class</th>
-                                                                        <th>License Authority</th>
-                                                                        <th>Number</th>
-                                                                        <th>Date Of Birth</th>
-                                                                        <th>Issue Date</th>
-                                                                        <th>Expiration Date</th>
+                                                                        <th>Status</th>
+                                                                        <th>Termination Date</th>
+                                                                        <th>Status Change Date</th>
+                                                                        <th>Note</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody id="js-data-area"></tbody>
@@ -131,6 +127,7 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/moment.js"></script>
 <script>
     $(function() {
+
         var intse = [];
         // Defaults
         var
@@ -144,7 +141,7 @@
                 action: 'get_employee_status',
                 employeeSid: 'all',
                 employeeStatus: 'all',
-                 page: 1
+                page: 1
             },
             pOBJ = {
                 'fetchReport': {
@@ -169,7 +166,7 @@
         });
 
         // Filter Start
-      
+
         $('#js-apply-filter').click(applyFilter);
         $('#js-reset-filter').click(resetFilter);
 
@@ -177,18 +174,18 @@
             e.preventDefault();
             is_filter = false;
             $('#js-employee').select2('val', 'all');
-            $('#js-status').select2('val', 'all');
+            $('#js-status-emp').select2('val', 'all');
 
 
             pOBJ['fetchReport']['records'] = [];
             pOBJ['fetchReport']['totalPages'] =
-            pOBJ['fetchReport']['totalRecords'] =
-            pOBJ['fetchReport']['limit'] = 0;
+                pOBJ['fetchReport']['totalRecords'] =
+                pOBJ['fetchReport']['limit'] = 0;
             pOBJ['fetchReport']['page'] = 1;
 
             filterOBJ.employeeSid = 'all';
             filterOBJ.employeeStatus = 'all';
-         
+
             $('.js-ip-pagination').html('');
             dataTarget.html('');
 
@@ -206,8 +203,8 @@
             pOBJ['fetchReport']['page'] = 1;
 
             filterOBJ.employeeSid = $('#js-employee').val();
-            filterOBJ.employeeStatus = $('#js-status').val().toLowerCase();
-          
+            filterOBJ.employeeStatus = $('#js-status-emp').val();
+
             $('.js-ip-pagination').html('');
             dataTarget.html('');
 
@@ -216,7 +213,7 @@
         //
         function fetchFilter() {
             $.post(baseHandlerURI, {
-                action: 'get_driving_license_filter'
+                action: 'get_employee_status_filter'
             }, function(resp) {
                 //
                 if (resp.Status === false) {
@@ -237,8 +234,8 @@
                 }
                 $('#js-employee').html(rows);
                 $('#js-employee').select2();
-                $('#js-status-class').select2();
-                $('#js-status').select2();
+                //  $('#js-status-class').select2();
+                $('#js-status-emp').select2();
             })
         }
 
@@ -280,7 +277,7 @@
             loader(true);
             if (intse !== undefined) clearInterval(intse);
             filterOBJ.page = pOBJ['fetchReport']['page'];
-            
+
             //
             $.post(baseHandlerURI, filterOBJ, function(resp) {
                 //
@@ -323,14 +320,10 @@
             pOBJ.fetchReport.records.map(function(record) {
                 rows += '<tr>';
                 rows += '   <td>' + (remakeEmployeeName(record)) + '</td>';
-                rows += '   <td>' + (record.job_title == '' ? 'N/A' : record.job_title) + '</td>';
-                rows += '   <td>' + (record.license_type == '' ? 'N/A' : record.license_type) + '</td>';
-                rows += '   <td>' + (record.license_class == '' ? 'N/A' : record.license_class) + '</td>';
-                rows += '   <td>' + (record.license_authority == '' ? 'N/A' : record.license_authority) + '</td>';
-                rows += '   <td>' + (record.license_number == '' ? 'N/A' : record.license_number) + '</td>';
-                rows += '   <td>' + (record.dob == '' ? 'N/A' : record.dob) + '</td>';
-                rows += '   <td>' + (record.license_issue_date == '' ? 'N/A' : record.license_issue_date) + '</td>';
-                rows += '   <td>' + (record.license_indefinite == 'on' ? 'Indifnite' : (record.license_expiration_date == '' ? 'N/A' : record.license_expiration_date)) + '</td>';
+                rows += '   <td>' + (record.employee_status == '' ? 'N/A' : record.employee_status) + '</td>';
+                rows += '   <td>' + (record.termination_date == '' ? 'N/A' : record.termination_date) + '</td>';
+                rows += '   <td>' + (record.status_change_date == '' ? 'N/A' : record.status_change_date) + '</td>';
+                rows += '   <td>' + (record.details == '' ? 'N/A' : record.details) + '</td>';
                 rows += '</tr>';
             });
             //
@@ -488,19 +481,7 @@
         }
     })
 
-    $(document).ready(function() {
-        // $('#btn_apply_filters').on('click', function(e){
-        //     e.preventDefault();
-        //     generate_search_url();
-        //     window.location = $(this).attr('href').toString();
-        // // });
-        //
-        // $('.collapse').on('shown.bs.collapse', function () {
-        //     $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        // }).on('hidden.bs.collapse', function () {
-        //     $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
-        // });
-    });
+
 
     function print_page(elem) {
 
