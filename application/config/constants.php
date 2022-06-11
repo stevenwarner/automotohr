@@ -634,6 +634,7 @@ define('OFFER_LETTER', 'The selected contacts will be notified by email when an 
 define('DOCUMENT_ASSIGN', 'The selected contacts will be notified by email when a document is assigned to the employees/applicants.');
 define('GENERAL_DOCUMENT', 'The selected contacts will be notified by email when a general information document is assigned to the employees/applicants.');
 define('EMPLOYEE_PROFILE', 'The selected contacts will be notified by email when an employee changes their profile info.');
+define('DEFAULT_APPROVERS', 'The selected contacts will be notified by email when a document is assign for an approval.');
 
 define('I9_EXPIRES', '10/31/2022');
 define('W4_YEAR', '2022');

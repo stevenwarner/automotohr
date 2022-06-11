@@ -148,6 +148,7 @@
     }
 
     function update_notifications_configuration_record($company_sid, $data) {
+
         $this->db->where('company_sid', $company_sid);
         $this->db->update('notifications_emails_configuration', $data);
     }
@@ -189,5 +190,61 @@
         $this->db->where('sid',$employee_sid);
         $sms_module = $this->db->get('users')->result_array();
         return $sms_module[0];
+    }
+
+    function get_active_default_approver($company_id) {
+        $this->db->select('default_approvers');
+        $this->db->where('company_sid', $company_id);
+        $record_obj = $this->db->get('notifications_emails_configuration');
+        $configuration_data = $record_obj->row_array();
+        $record_obj->free_result();
+        
+        //
+        if (!empty($configuration_data) && $configuration_data["default_approvers"] == 1) {
+            $this->db->select('employer_sid, email');
+            $this->db->where('company_sid', $company_id);
+            $this->db->where('notifications_type', "default_approvers");
+            $this->db->where('status', "active");
+            $record_obj = $this->db->get('notifications_emails_management');
+            $default_approvers = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($default_approvers)) {
+                return $default_approvers;
+            } else {
+                return array();
+            }
+        } else{
+            return array();
+        }    
+    }
+
+    function get_all_documents_without_approvers($company_id) {
+        $this->db->select('sid, approval_flow_sid');
+        $this->db->where('company_sid', $company_id);
+        $this->db->where('has_approval_flow', 1);
+        $this->db->where('status', 1);
+        $records_obj = $this->db->get('documents_assigned');
+        $approver_documents = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if (!empty($approver_documents)) {
+            foreach ($approver_documents as $dkey => $document) {
+                $this->db->select('sid');
+                $this->db->where('portal_document_assign_sid', $document["approval_flow_sid"]);
+                $this->db->where('status', 1);
+                $records_obj = $this->db->get('portal_document_assign_flow_employees');
+                $approvers = $records_obj->result_array();
+                $records_obj->free_result();
+                //
+                if (!empty($approvers)) {
+                    unset($approver_documents[$dkey]);
+                } 
+            }
+            //
+            return $approver_documents;
+        } else {
+            return array();
+        }
     }
 }

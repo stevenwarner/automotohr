@@ -355,11 +355,15 @@
                                         <div class="col-xs-12">
 
                                             <br />
+
                                             <?php $this->load->view('hr_documents_management/partials/settings', [
                                                 'is_confidential' =>  $document_info['is_confidential']
                                             ]); ?>
                                         </div>    
                                     </div>
+
+                                    <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
+                                    <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
 
                                     <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
                                         <div class="row">
@@ -992,4 +996,4 @@
     }
 </style>
 
-<?php $this->load->view('hr_documents_management/scripts/assigner'); ?>
+<?php $this->load->view('hr_documents_management/scripts/approvers'); ?>

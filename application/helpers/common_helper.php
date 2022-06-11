@@ -66,6 +66,30 @@ if (!function_exists('getCompanyNameBySid')) {
     }
 }
 
+if (!function_exists('getDefaultApproverName')) {
+    function getDefaultApproverName($company_sid, $email)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db->select('contact_name');
+        $CI->db->where('company_sid', $company_sid);
+        $CI->db->where('email', $email);
+        $CI->db->where('notifications_type', "default_approvers");
+        $CI->db->where('status', "active");
+        $record_obj = $CI->db->get('notifications_emails_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = ucwords($record_arr["contact_name"]);
+        } 
+
+        return $return_data;
+    }
+}
+
 if (!function_exists('getCompanyLogoBySid')) {
     function getCompanyLogoBySid($company_sid)
     {
@@ -15659,5 +15683,24 @@ if(!function_exists('generateEmailButton')){
         $color = '#ffffff'
     ){
         return '<a style="color: '.($color).'; background-color: '.($bgColor).'; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url($link) . '">'.($text).'</a>';
+    }
+}        
+
+if(!function_exists('get_encryption_initialize_array')) {
+    /**
+     * CReturn encryption initialize array
+     *
+     * @return
+     * 
+     */
+    function get_encryption_initialize_array () {
+        $CI = &get_instance();
+        //
+        return array(
+            'cipher' => 'aes-256',
+            'mode' => 'ctr',
+            'key' => $CI->config->item('encryption_key'),
+            'driver' => 'openssl'
+        );
     }
 }

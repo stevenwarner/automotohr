@@ -1428,6 +1428,13 @@ if ($user_type == 'applicant') {
                                                                                 <td>
                                                                                     <?php if (in_array($document['sid'], $approval_documents)) { ?>
                                                                                         <button data-approval_document_sid="<?=$document['sid'];?>" class="btn btn-danger btn-block btn-sm jsRevokeApprovalDocument">Revoke Approval</button>
+                                                                                        <button 
+                                                                                            data-document_sid="<?=$document['sid'];?>" 
+                                                                                            data-user_type="<?=$user_type;?>"
+                                                                                            data-user_sid="<?=$user_sid;?>"
+                                                                                            class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                            View Approver(s)
+                                                                                        </button>
                                                                                     <?php } else { ?>
                                                                                         <?php if(in_array($document['sid'], $all_assigned_sids)) {  // revoke here ?>
                                                                                             <button
