@@ -14221,4 +14221,61 @@ class Hr_documents_management extends Public_Controller
         ]);
     }
 
+    function move_approver_document ($company_sid) {
+        $documents = $this->hr_documents_management_model->getPendingApproversDocument($company_sid);
+        //
+        if (!empty($documents)) {
+            foreach ($documents as $key => $document) {
+                $is_document_assign = $this->hr_documents_management_model->check_document_already_assigned(
+                    $company_sid, 
+                    $document['user_type'], 
+                    $document['user_sid'], 
+                    $document['document_sid']
+                );
+
+                if ($is_document_assign == 0 && $document['document_sid'] > 0) {
+                    //
+                    $company_document = $this->hr_documents_management_model->get_hr_document_details(
+                        $company_sid, 
+                        $document['document_sid']
+                    );
+                    //
+                    if (!sizeof($company_document)) continue;
+                    //
+                    $approver_list = $this->hr_documents_management_model->getAllDocumentAssigners($document['sid']);
+                    $approver_sids = array_column($approver_list, "assigner_sid");
+                    //
+                    $data_to_insert = array();
+                    $data_to_insert['company_sid'] = $company_sid;
+                    $data_to_insert['assigned_date'] = $document['assigned_date'];
+                    $data_to_insert['assigned_by'] = $document['assigned_by'];
+                    $data_to_insert['user_type'] = $document['user_type'];
+                    $data_to_insert['user_sid'] = $document['user_sid'];
+                    $data_to_insert['document_type'] = $company_document['document_type'];
+                    $data_to_insert['document_sid'] = $document['document_sid'];
+                    $data_to_insert['status'] = 1;
+                    $data_to_insert['document_original_name'] = $company_document['uploaded_document_original_name'];
+                    $data_to_insert['document_extension'] = $company_document['uploaded_document_extension'];
+                    $data_to_insert['document_s3_name'] = $company_document['uploaded_document_s3_name'];
+                    $data_to_insert['document_title'] = $company_document['document_title'];
+                    $data_to_insert['document_description'] = $company_document['document_description'];
+                    $data_to_insert['acknowledgment_required'] = $company_document['acknowledgment_required'];
+                    $data_to_insert['signature_required'] = $company_document['signature_required'];
+                    $data_to_insert['download_required'] = $company_document['download_required'];
+                    $data_to_insert['is_confidential'] = $company_document['is_confidential'];
+                    $data_to_insert['managersList'] = $company_document['managers_list'];
+                    $data_to_insert['managersList'] = $company_document['managers_list'];
+                    $data_to_insert['approval_flow_sid'] = $document['sid'];
+                    $data_to_insert['approval_process'] = 1;
+                    $data_to_insert['has_approval_flow'] = 1;
+                    $data_to_insert['document_approval_note'] = $document['assigner_note'];
+                    $data_to_insert['document_approval_employees'] = implode(",", $approver_sids);
+                    //
+                    $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
+                    //
+                }
+            }die("stop"); 
+        }
+    }
+
 }
