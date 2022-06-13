@@ -149,6 +149,41 @@
                                                         </div>
                                                     </div>
 
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                        <label>Gender:</label>
+                                                    <select class="invoice-fields" name="gender">
+                                                        <option value="">Please Select Gender</option>
+                                                        <option <?= $user_information["gender"] == 'male' ? 'selected' : ''; ?> value="male">Male</option>
+                                                        <option <?= $user_information["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
+                                                        <option <?= $user_information["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
+                                                    </select>   
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                        <div class="row js-timezone-row">
+                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                            <div class=" input-grey ">
+                                                                <?php $field_id = 'timezone'; ?>
+                                                                <?php echo form_label('Timezone:', $field_id); ?>
+                                                                <?= timezone_dropdown(
+                                                                    '',
+                                                                    array(
+                                                                        'class' => 'invoice-fields js-timezone ',
+                                                                        'id' => 'timezone',
+                                                                        'name' => 'timezone'
+                                                                    )
+                                                                ); ?>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                                        </div>
+                                                                        </div>
+
+
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <div class="field-row">
                                                             <input name="action" type="hidden" id="submit_action" value="" >
