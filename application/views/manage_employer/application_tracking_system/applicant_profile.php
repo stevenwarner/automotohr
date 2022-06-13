@@ -462,6 +462,9 @@
                                                 <div class="hr-select-dropdown">
                                                     <select class="invoice-fields" name="country" id="country"
                                                             onchange="getStates(this.value, <?php echo $states; ?>)">
+                                                            <?php if (empty($country_id)) { ?>
+                                                                    <option value="">Select Country</option>
+                                                        <?php } ?>
                                                                 <?php foreach ($active_countries as $active_country) { ?>
                                                             <option value="<?= $active_country["sid"]; ?>"
                                                             <?php if ($applicant_info['country'] == $active_country["sid"]) { ?>
@@ -470,11 +473,12 @@
                                                                         <?= $active_country["country_name"]; ?>
                                                             </option>
                                                         <?php } ?>
+                                                        
                                                     </select>
                                                 </div>
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>state:</label>
+                                                <label>state: </label>
                                                 <p style="display: none;" id="state_id"><?php echo $applicant_info['state']; ?></p>
                                                 <div class="hr-select-dropdown">
                                                     <select class="invoice-fields" name="state" id="state">
