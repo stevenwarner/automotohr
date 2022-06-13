@@ -8652,7 +8652,7 @@ class Hr_documents_management_model extends CI_Model
     }
 
     function getPendingApproversDocument($company_sid){
-        $this->db->select('sid, assigned_date, assigned_by, user_type, user_sid, document_sid, assign_status, assigner_note');
+        $this->db->select('sid, assigned_date, assigned_by, user_type, user_sid, document_sid, assign_status, assigner_note, flow_json');
         $this->db->where('assign_status <>', 2);
         $this->db->where('company_sid', $company_sid);
         $this->db->from('portal_document_assign_flow');
