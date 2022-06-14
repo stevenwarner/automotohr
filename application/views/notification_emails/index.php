@@ -293,6 +293,28 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-lg-4 col-md-6 col-xs-12 dash-box-main col-sm-12">
+                                            <div class="dash-box">
+                                                <div class="dashboard-widget-box">
+                                                    <figure><i class="fa fa-envelope"></i></figure>
+                                                    <h2 class="post-title">
+                                                        <a href="<?php echo base_url('notification_emails/employee_profile'); ?>">Default Document Approvers</a>
+                                                    </h2>
+                                                    <div class="count-box">
+                                                        <small>View Default Document Approvers</small>
+                                                        <br>
+                                                        <p>
+                                                            <strong class="notification_Info">
+                                                                <?php echo DEFAULT_APPROVERS; ?>
+                                                            </strong>
+                                                        </p>
+                                                    </div>
+                                                    <div class="button-panel">
+                                                        <a class="site-btn" href="<?php echo base_url('notification_emails/default_approvers'); ?>">View</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

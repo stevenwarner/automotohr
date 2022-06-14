@@ -297,7 +297,7 @@
                                         <br />
                                     <?php } ?>
                                     <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
-                                    <?php $this->load->view('hr_documents_management/partials/assigner'); ?>
+                                    <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <div class="hr-box">
@@ -992,4 +992,4 @@
     }
 </style>
 
-<?php $this->load->view('hr_documents_management/scripts/assigner'); ?>
+<?php $this->load->view('hr_documents_management/scripts/approvers'); ?>

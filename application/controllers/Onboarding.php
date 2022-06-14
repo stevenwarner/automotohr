@@ -196,7 +196,18 @@ class Onboarding extends CI_Controller
                                 }
                             }
                             //
-                            $sendGroupEmail = 1;
+                            if ($document['has_approval_flow'] == 1) {
+                                $this->HandleApprovalFlow(
+                                    $assignment_sid,
+                                    $document['document_approval_note'],
+                                    $document["document_approval_employees"],
+                                    0,
+                                    $document['managers_list']
+                                );
+                            } else {
+                                //
+                                $sendGroupEmail = 1;
+                            }
                         }
                     }
                 }
@@ -4593,7 +4604,26 @@ class Onboarding extends CI_Controller
                                 }
                             }
                             //
-                            $sendGroupEmail = 1;
+                            if ($document['has_approval_flow'] == 1) {
+                                $this->HandleApprovalFlow(
+                                    $assignment_sid,
+                                    $document['document_approval_note'],
+                                    $document["document_approval_employees"],
+                                    0,
+                                    $document['managers_list']
+                                );
+                            } else {
+                                // Managers handling
+                                $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                    $document['managers_list'],
+                                    $assignment_sid,
+                                    $company_sid,
+                                    $employer_sid
+                                );
+                                //
+                                $sendGroupEmail = 1;
+                            }
+                            
                         }
                     }
                 }

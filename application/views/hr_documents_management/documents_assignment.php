@@ -1536,6 +1536,13 @@
                                                                                         <?php if ($document_all_permission) { ?>
                                                                                             <?php if (in_array($offer_letter['sid'], $approval_offer_letters)) { ?>
                                                                                                 <button data-document_sid="<?=$offer_letter['sid'];?>"  class="btn btn-danger btn-block btn-sm jsRevokeApprovalDocument">Revoke Approval</button>
+                                                                                                <button 
+                                                                                                    data-document_sid="<?=$offer_letter['sid'];?>" 
+                                                                                                    data-user_type="<?=$user_type;?>"
+                                                                                                    data-user_sid="<?=$user_sid;?>"
+                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                    View Approver(s)
+                                                                                                </button>
                                                                                             <?php } else { ?>    
                                                                                                 <?php if ($assigned_offer_letter_sid == $offer_letter['sid']) { ?>
                                                                                                     <?php if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 0) { ?>
@@ -1672,6 +1679,13 @@
                                                                                                     <td>
                                                                                                         <?php if (in_array($document['sid'], $approval_documents)) { ?>
                                                                                                             <button data-document_sid="<?=$document['sid'];?>" class="btn btn-danger btn-block btn-sm jsRevokeApprovalDocument">Revoke Approval</button>
+                                                                                                            <button 
+                                                                                                                data-document_sid="<?=$document['sid'];?>" 
+                                                                                                                data-user_type="<?=$user_type;?>"
+                                                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                                View Approver(s)
+                                                                                                            </button>
                                                                                                         <?php } else { ?>
                                                                                                             <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids) || in_array($document['sid'], $approval_documents)) { ?>
                                                                                                                 <?php if(in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $approval_documents)) { ?> <!-- assign doc revoke here -->
