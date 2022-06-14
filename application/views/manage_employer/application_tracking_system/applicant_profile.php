@@ -406,7 +406,7 @@ if ($_ssv) {
                                                     <?php echo form_error('middle_name'); ?>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
-                                                    <label>last name:<samp class="red"> * </samp></label>
+                                                    <label>last name:</label>
                                                     <input class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>" value="<?php echo set_value('last_name', $applicant_info["last_name"]); ?>" type="text" name="last_name">
                                                     <?php echo form_error('last_name'); ?>
                                                 </div>

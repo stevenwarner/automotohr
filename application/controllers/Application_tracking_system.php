@@ -602,7 +602,7 @@ class Application_tracking_system extends Public_Controller {
                             array(
                                     'field' => 'last_name',
                                     'label' => 'Last Name',
-                                    'rules' => 'trim|required|xss_clean'
+                                    'rules' => 'trim|xss_clean'
                             ),
                             array(
                                     'field' => 'email',

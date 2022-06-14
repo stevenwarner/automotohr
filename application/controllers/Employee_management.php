@@ -1265,7 +1265,7 @@ class Employee_management extends Public_Controller {
                 }
 
                 $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
+                $this->form_validation->set_rules('last_name', 'Last Name', 'trim|xss_clean');
                 $this->form_validation->set_rules('Location_Country', 'Country', 'trim|xss_clean');
                 $this->form_validation->set_rules('Location_State', 'State', 'trim|xss_clean');
                 $this->form_validation->set_rules('Location_City ', 'City', 'trim|xss_clean');
