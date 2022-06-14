@@ -155,7 +155,11 @@
             };
 
         fetchFilter();
+        // loader(false);
+
         fetchReport();
+
+
 
         // Capture enter
         $(document).keypress(function(e) {
@@ -189,7 +193,7 @@
             $('.js-ip-pagination').html('');
             dataTarget.html('');
 
-            fetchReport();
+            // fetchReport();
         }
         //
         function applyFilter(e) {
@@ -233,9 +237,15 @@
                     });
                 }
                 $('#js-employee').html(rows);
-                $('#js-employee').select2();
+                $('#js-employee').select2({
+                    closeOnSelect: false
+                });
                 //  $('#js-status-class').select2();
-                $('#js-status-emp').select2();
+                $('#js-status-emp').select2({
+                    closeOnSelect: false
+                });
+                $('#js-employee').select2('val', 'all');
+                $('#js-status-emp').select2('val', 'all');
             })
         }
 
@@ -305,11 +315,13 @@
                 //
                 load_pagination(
                     pOBJ['fetchReport']['limit'],
-                    5,
+                    50,
                     $('.js-ip-pagination'),
                     'fetchReport'
                 );
             });
+
+
         }
         //
         function setTable() {
@@ -318,9 +330,17 @@
             var rows = '';
             //
             pOBJ.fetchReport.records.map(function(record) {
+
+                //
+                var cl = 'danger';
+                if (record.status === 'Active' || record.status === 'Rehired') {
+                    cl = 'success';
+                } else if (record.status === 'Leave' || record.status === 'Rehired') {
+                    cl = 'warning'
+                }
                 rows += '<tr>';
                 rows += '   <td>' + (remakeEmployeeName(record)) + '</td>';
-                rows += '   <td>' + (record.employee_status == '' ? 'N/A' : record.employee_status) + '</td>';
+                rows += '   <td class="csB7 text-' + (cl) + '">' + (record.status == '' ? 'N/A' : record.status.toUpperCase()) + '</td>';
                 rows += '   <td>' + (record.termination_date == '' ? 'N/A' : record.termination_date) + '</td>';
                 rows += '   <td>' + (record.status_change_date == '' ? 'N/A' : record.status_change_date) + '</td>';
                 rows += '   <td>' + (record.details == '' ? 'N/A' : record.details) + '</td>';
@@ -480,6 +500,7 @@
             else loaderTarget.fadeOut(500);
         }
     })
+
 
 
 

@@ -12547,7 +12547,7 @@ if (!function_exists('formatDateToDB')) {
         $fromFormat = 'm/d/Y',
         $toFormat = 'Y-m-d'
     ) {
-        if (empty($date)) return $date;
+        if (empty($date) || $date == '0000-00-00' || $date == '0000-00-00 00:00:00') return $date;
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }

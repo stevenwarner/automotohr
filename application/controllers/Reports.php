@@ -2858,19 +2858,19 @@ class Reports extends Public_Controller
 
                 //  print_r($formpost);
                 //   die();
-                $licenses = $this->reports_model->getEmployeeStatus($formpost);
+                $employeestatus = $this->reports_model->getEmployeeStatus($formpost);
                 //
-                if (!sizeof($licenses)) {
+                if (!sizeof($employeestatus)) {
                     $this->res['Response'] = 'No Employees found.';
                     $this->resp();
                 }
                 $this->res['Status'] = true;
                 $this->res['Limit'] = $formpost['limit'];
                 $this->res['Response'] = 'Proceed';
-                $this->res['Data'] = $licenses['Data'];
+                $this->res['Data'] = $employeestatus['Data'];
                 //
                 if ($formpost['page'] == 1) {
-                    $this->res['TotalRecords'] = $licenses['Count'];
+                    $this->res['TotalRecords'] = $employeestatus['Count'];
                     $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
                 }
                 $this->resp();
@@ -3030,6 +3030,9 @@ class Reports extends Public_Controller
         $data['session'] = $this->session->userdata('logged_in');
         $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
         check_access_permissions($data['security_details'], 'my_settings', 'reports');
+
+        // print_r( $data['session']);
+
         //
         $company_sid   = $data['session']['company_detail']['sid'];
         //
@@ -3049,12 +3052,14 @@ class Reports extends Public_Controller
                 header('Content-Type: text/csv; charset=utf-8');
                 header("Content-Disposition: attachment; filename=Employee_status_report_" . (date('YmdHis')) . ".csv");
                 $output = fopen('php://output', 'w');
+                fputcsv($output, array("Exported By: " . $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name'] . "\n" . " Export Date: " . date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR));
+
                 fputcsv($output, array('Employee', 'Status', 'Termination Date', 'Status Change Date', 'Note'));
 
                 foreach ($employeestatus['Data'] as $row_status) {
                     $a = array();
                     $a[] = remakeEmployeeName($row_status);
-                    $a[] = $row_status['employee_status'];
+                    $a[] = $row_status['status'];
                     $a[] = $row_status['termination_date'] != '' ? $row_status['termination_date'] : 'N/A';
                     $a[] = $row_status['status_change_date'] != '' ? $row_status['status_change_date'] : 'N/A';
                     $a[] = $row_status['details'] != '' ? $row_status['details'] : 'N/A';

@@ -2062,10 +2062,6 @@ class Reports_model extends CI_Model
         }
     }
 
-
-
-
-
     function getEmployeeStatus($post, $csv = false)
     {
         $offSet = $post['limit'];
@@ -2074,139 +2070,89 @@ class Reports_model extends CI_Model
             'Count' => 0,
             'Data' => array()
         );
-
         //
         $employees = $post['employeeSid'];
         $companyid = $post['companySid'];
-        if ($post['employeeStatus'][0] == 'all') {
-            $status = array('1', '2', '3', '4', '5', '6', '7');
-        } else {
-            $status = $post['employeeStatus'];
-        }
+        //
+        $status = !is_array($post['employeeStatus']) || $post['employeeStatus'][0] == 'all' ? [1, 2, 3, 4, 5, 6, 7] : $post['employeeStatus'];
 
-        // Get the data from terminated employees table
-        $this->db->select('te.employee_sid, te.employee_status, users.first_name, users.last_name, users.job_title,users.timezone, users.is_executive_admin, users.access_level_plus, users.access_level, te.termination_date, te.status_change_date, te.details');
-        $this->db->from('terminated_employees as te');
-        $this->db->join('users', 'users.sid = te.employee_sid', 'inner');
-        if ($employees[0] != 'all') $this->db->where_in('te.employee_sid', $employees);
-        $this->db->where_in('te.employee_status', $status);
+        //
+        if ($post['page'] == 1) {
+            //
+            $this->db->select('users.sid as employee_sid, users.general_status, users.first_name, users.last_name, users.job_title,users.timezone, users.is_executive_admin, users.access_level_plus, users.access_level');
+            $this->db->from('users');
+            $this->db->where('users.parent_sid', $companyid);
+            // for status
+            $this->db->group_start();
+            foreach ($status as $vs) {
+                $this->db->or_where('users.general_status', strtolower(GetEmployeeStatusText($vs)));
+            }
+            $this->db->group_end();
+            // for employees
+            if (is_array($employees) && $employees[0] != 'all') {
+                $this->db->where_in('users.sid', $employees);
+            }
+            $r['Count'] = $this->db->count_all_results();
+        }
+        //
+        $this->db->select('users.sid as employee_sid, users.general_status, users.first_name, users.last_name, users.job_title,users.timezone, users.is_executive_admin, users.access_level_plus, users.access_level');
+        $this->db->from('users');
         $this->db->where('users.parent_sid', $companyid);
-        if ($csv == false) $this->db->limit($offSet, $inSet);
-        $this->db->order_by('te.sid', 'DESC');
-        $data = $this->db->get()->result_array();
-        //
-        $holderArray = [];
-        //
-
-        if (!empty($data)) {
-            //
-            foreach ($data as $v) {
-                //
-                if (isset($holderArray[$v['employee_sid']])) {
-                    continue;
-                }
-                //
-                $holderArray[$v['employee_sid']] = $v;
-            }
+        // for status
+        $this->db->group_start();
+        foreach ($status as $vs) {
+            $this->db->or_where('users.general_status', strtolower(GetEmployeeStatusText($vs)));
         }
-
-
-        // active
-        if (array_intersect([5], $status)) {
-            //
-            $this->db->select('sid as employee_sid, "5" as employee_status, users.first_name, "" as termination_date, "" as status_change_date, "" as details, users.last_name, users.job_title,users.timezone, users.is_executive_admin, users.access_level_plus, users.access_level');
-            $this->db->from('users');
-            $this->db->where('active', 1);
-            if ($employees[0] != 'all')  $this->db->where_in('sid', $employees);
-            $this->db->where('parent_sid', $companyid);
-            $data = $this->db->get()->result_array();
-            //
-            if (!empty($data)) {
-                //
-                foreach ($data as $v) {
-                    //
-                    if (!isset($holderArray[$v['employee_sid']])) {
-                        $holderArray[$v['employee_sid']] = $v;
-                    }
-                }
-            }
+        $this->db->group_end();
+        // for employees
+        if (is_array($employees) && $employees[0] != 'all') {
+            $this->db->where_in('users.sid', $employees);
         }
-        //  in active
-        if (array_intersect([6], $status)) {
-            //
-            $this->db->select('sid as employee_sid, "6" as employee_status, users.first_name, "" as termination_date, "" as status_change_date, "" as details , users.last_name, users.job_title, users.timezone, users.is_executive_admin, users.access_level_plus, users.access_level');
-            $this->db->from('users');
-            $this->db->where('active', 0);
-            if ($employees[0] != 'all')  $this->db->where_in('sid', $employees);
-            $this->db->where('parent_sid', $companyid);
-            $data = $this->db->get()->result_array();
-            //
-            if (!empty($data)) {
-                //
-                foreach ($data as $v) {
-                    //
-                    if (isset($holderArray[$v['employee_sid']])) {
-                        $holderArray[$v['employee_sid']] = $v;
-                    }
-                }
-            }
+        // pagination
+        if (!$csv) {
+            $this->db->limit($offSet, $inSet);
         }
-
-
-        if (!sizeof($holderArray)) return $r;
+        $this->db->order_by('first_name', 'ASC');
         //
-        $t2 = 0;
+        $holderArray = $this->db->get()->result_array();
+        //
+        if (!$holderArray) {
+            return $r;
+        }
+        //
         foreach ($holderArray as $k => $v) {
-            $status = "";
-            $o = $v;
-
-            $v = @unserialize($v['license_details']);
-            if ($o['employee_status'] == 1) {
-                $status = 'Terminated';
+            //
+            $row = $this->db->select('termination_date, status_change_date, details')
+                ->where('employee_sid', $v['employee_sid'])
+                ->order_by('sid', 'DESC')
+                ->get('terminated_employees')
+                ->row_array();
+            //
+            $holderArray[$k]['status'] = ucwords($v['general_status']);
+            $holderArray[$k]['termination_date'] =
+                $holderArray[$k]['status_change_date'] =
+                $holderArray[$k]['details'] = '';
+            //
+            if ($row) {
+                //
+                $holderArray[$k]['termination_date'] = !empty($row['termination_date']) ? formatDateToDB(
+                    $row['termination_date'],
+                    DB_DATE,
+                    DATE
+                ) : '';
+                //
+                $holderArray[$k]['status_change_date'] = !empty($row['status_change_date']) ? formatDateToDB(
+                    $row['status_change_date'],
+                    DB_DATE,
+                    DATE
+                ) : '';
+                //
+                $holderArray[$k]['details'] = html_entity_decode($row['details']);
             }
-            if ($o['employee_status'] == 2) {
-                $status = 'Retired';
-            }
-            if ($o['employee_status'] == 3) {
-                $status = 'Deceased';
-            }
-            if ($o['employee_status'] == 4) {
-                $status = 'Suspended';
-            }
-            if ($o['employee_status'] == 5) {
-                $status = 'Active';
-            }
-            if ($o['employee_status'] == 6) {
-                $status = 'Inactive';
-            }
-            if ($o['employee_status'] == 7) {
-                $status = 'Leave';
-            }
-            if ($o['employee_status'] == 8) {
-                $status = 'Rehired';
-            }
-            // Make sure all fields exists
-
-            //  $v['full_name'] = $e;
-            $v['first_name'] = $o['first_name'];
-            $v['last_name'] = $o['last_name'];
-            $v['job_title'] = $o['job_title'];
-            $v['timezone'] = $o['timezone'];
-            $v['employee_status'] = $status;
-            $v['is_executive_admin'] = $o['is_executive_admin'];
-            $v['access_level_plus'] = $o['access_level_plus'];
-            $v['access_level'] = $o['access_level'];
-
-
-            $v['termination_date'] = $o['termination_date'] ? date('m/d/Y', strtotime($o['termination_date'])) : '';
-            $v['status_change_date'] = $o['status_change_date'] ? date('m/d/Y', strtotime($o['status_change_date'])) : '';
-            $v['details'] = html_entity_decode($o['details']);
-            $t[] = $v;
-            $t2++;
         }
         //
-        $r['Data'] = $t;
-        $r['Count'] = $t2;
+        $r['Data'] = array_values($holderArray);
+        //
         return $r;
     }
 
