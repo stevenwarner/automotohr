@@ -1,9 +1,11 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Employee_management extends Public_Controller {
+class Employee_management extends Public_Controller
+{
 
-    private $limit = 100; 
-    public function __construct() {
+    private $limit = 100;
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('employee_model');
         $this->load->model('dashboard_model');
@@ -13,7 +15,8 @@ class Employee_management extends Public_Controller {
         $this->load->library("pagination");
     }
 
-    public function archived_employee() {
+    public function archived_employee()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -72,7 +75,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function terminated_employee() {
+    public function terminated_employee()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -113,21 +117,21 @@ class Employee_management extends Public_Controller {
             if (isset($_GET['order'])) {
                 $order = $_GET['order'];
             }
-            if(empty($order_by)){
+            if (empty($order_by)) {
                 $order_by = 'sid';
             }
-            if(empty($order)){
+            if (empty($order)) {
                 $order = 'desc';
             }
             $data['order_by'] = $order_by;
             $data['order'] = $order;
             //
-            if($order_by == 'termination_date'){
+            if ($order_by == 'termination_date') {
                 $order_by = 'terminated_employees.termination_date';
             }
 
             $data['archived'] = 0;
-            if(empty($order_by)){
+            if (empty($order_by)) {
                 $order_by = 'users.sid';
             }
 
@@ -170,7 +174,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function employee_management() {
+    public function employee_management()
+    {
         if ($this->session->userdata('logged_in')) {
             //
             $data['session'] = $this->session->userdata('logged_in');
@@ -217,10 +222,10 @@ class Employee_management extends Public_Controller {
             $data['order_by'] = $order_by;
             $data['order'] = $order;
             //
-            if(empty($order_by)){
+            if (empty($order_by)) {
                 $order_by = 'sid';
             }
-            if(empty($order)){
+            if (empty($order)) {
                 $order = 'desc';
             }
 
@@ -232,7 +237,7 @@ class Employee_management extends Public_Controller {
                 $department_supervisor = $this->employee_model->get_all_department_supervisor($department_sid);
                 if (!empty($department_supervisor)) {
                     // if ($department_supervisor != $employer_id) {
-                        array_push($employees_list, $department_supervisor);
+                    array_push($employees_list, $department_supervisor);
                     // }
                 }
 
@@ -240,7 +245,7 @@ class Employee_management extends Public_Controller {
                 if (!empty($department_teamleads)) {
                     foreach ($department_teamleads as $teamlead) {
                         // if ($teamlead['team_lead'] != $employer_id) {
-                            array_push($employees_list, $teamlead['team_lead']);
+                        array_push($employees_list, $teamlead['team_lead']);
                         // }
                     }
                 }
@@ -249,7 +254,7 @@ class Employee_management extends Public_Controller {
                 if (!empty($department_employees)) {
                     foreach ($department_employees as $department_employee) {
                         // if ($department_employee['employee_sid'] != $employer_id) {
-                            array_push($employees_list, $department_employee['employee_sid']);
+                        array_push($employees_list, $department_employee['employee_sid']);
                         // }
                     }
                 }
@@ -259,13 +264,13 @@ class Employee_management extends Public_Controller {
                 $searchList = $employees_list;
                 $data['department_sid'] = $department_sid;
             }
-            $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order, $searchList );
+            $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
 
-            $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order, $searchList);
-            $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order, $searchList);
-            $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword,0 , $order_by, $order, $searchList);
+            $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+            $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+            $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
             //
-            $data['executive_admins'] = $this->employee_model->get_all_executive_admins($company_id, $employer_id, $keyword,0 , $order_by, $order);
+            $data['executive_admins'] = $this->employee_model->get_all_executive_admins($company_id, $employer_id, $keyword, 0, $order_by, $order);
             $data['employees'] = array_merge($data['employees'], $data['executive_admins']);
             $data['all_company_employees'] = array_merge($data['all_company_employees'], $data['executive_admins']);
             //
@@ -299,7 +304,7 @@ class Employee_management extends Public_Controller {
             $this->load->model('timeoff_model');
             //
             $data['teamMemberIds'] = [];
-            if($data['session']['employer_detail']['access_level_plus'] != 1 && $data['session']['employer_detail']['pay_plan_flag'] != 1){
+            if ($data['session']['employer_detail']['access_level_plus'] != 1 && $data['session']['employer_detail']['pay_plan_flag'] != 1) {
                 $data['teamMemberIds'] = $this->timeoff_model->getEmployeeTeamMemberIds($data['session']['employer_detail']['sid']);
             }
             //
@@ -311,7 +316,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function invite_colleagues() { 
+    public function invite_colleagues()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -381,13 +387,16 @@ class Employee_management extends Public_Controller {
                 $company_description = $this->input->post('CompanyDescription');
                 $send_welcome_email = $this->input->post('send_welcome_email');
                 $employment_status = $this->input->post('employee-status');
-                $employment_type = $this->input->post('employee-type');
+                $gender = $this->input->post('gender');
+                $timezone = $this->input->post('timezone');
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 $start_date = reset_datetime(array('datetime' => $registration_date, '_this' => $this, 'from_format' => 'm-d-Y', 'format' => 'Y-m-d H:i:s'));
                 $verification_key = random_key() . "_csvImport";
                 $salt = generateRandomString(48);
                 $user_information = array();
+                $user_information['gender'] =  $gender;
+                $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
                 $user_information['last_name'] = $last_name;
                 $user_information['email'] = $email;
@@ -441,7 +450,7 @@ class Employee_management extends Public_Controller {
                 if ($send_welcome_email == 1) {
                     log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array);
                 }
-                
+
                 $this->session->set_flashdata('message', '<b>Success: </b>New Employee team member has been added successfully. ');
                 redirect(base_url('employee_management'));
             }
@@ -450,8 +459,9 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function send_offer_letter_documents($sid = NULL) {
-        if($this->session->userdata('logged_in')['company_detail']['ems_status'] == 1)
+    public function send_offer_letter_documents($sid = NULL)
+    {
+        if ($this->session->userdata('logged_in')['company_detail']['ems_status'] == 1)
             redirect('dashboard');
         if ($sid != NULL) {
             if ($this->session->userdata('logged_in')) {
@@ -594,7 +604,7 @@ class Employee_management extends Public_Controller {
                                 $subject = $emailTemplateData['subject'];
                                 $from_name = $emailTemplateData['from_name'];
                                 $body = $emailTemplateBody;
-                            } else {// send offer letter details to user
+                            } else { // send offer letter details to user
                                 $offerLetterId = $this->input->post('offer_letter_id');
                                 $offerLetterObj = $this->employee_model->get_offer_detail($offerLetterId);
 
@@ -622,22 +632,20 @@ class Employee_management extends Public_Controller {
 
                                     if (empty($userData['username']) && empty($userData['password']) && $userData['active'] == 0) {
                                         $body = $message_hf['header']
-                                                . '<h2 style="width:100%; margin:10px 0;">Dear ' . ucfirst($userData['first_name']) . ' ' . $userData['last_name'] . ',</h2>'
-                                                . '<br><br><b>You have received this email from' . ucfirst($companyname) . '. we are here to help you with this process'
-                                                . '<br><br>Your Company HR Administrator has requested that we collect the following:'
-                                                . '<ul>'
-                                                . '<li>Offer Letter Acknowledgement</li>'
-                                                . '<li>Information of Employee</li>'
-                                                . '<li>Additional HR Documents</li>'
-                                                . '</ul>'
-                                                . '<br>To accept the offer letter please '
-                                                . '<a href="' . base_url('employee_registration') . '/' . $dataToSave['verification_key'] . '">Click here</a>.<br><br>'
-                                                . $message_hf['footer'];
+                                            . '<h2 style="width:100%; margin:10px 0;">Dear ' . ucfirst($userData['first_name']) . ' ' . $userData['last_name'] . ',</h2>'
+                                            . '<br><br><b>You have received this email from' . ucfirst($companyname) . '. we are here to help you with this process'
+                                            . '<br><br>Your Company HR Administrator has requested that we collect the following:'
+                                            . '<ul>'
+                                            . '<li>Offer Letter Acknowledgement</li>'
+                                            . '<li>Information of Employee</li>'
+                                            . '<li>Additional HR Documents</li>'
+                                            . '</ul>'
+                                            . '<br>To accept the offer letter please '
+                                            . '<a href="' . base_url('employee_registration') . '/' . $dataToSave['verification_key'] . '">Click here</a>.<br><br>'
+                                            . $message_hf['footer'];
                                     } else {
                                         $offerLetterBody = str_replace('{{username}}', $userData['username'], $offerLetterBody);
                                         $offerLetterBody = str_replace('{{password}}', $decodedPassword, $offerLetterBody);
-
-
                                         $emailTemplateData = get_email_template(HR_DOCUMENTS_NOTIFICATION_WITHOUT_USERNAME);
                                         $hrDocumentsNotificationBody = $emailTemplateData['text'];
                                         $hrDocumentsNotificationBody = str_replace('{{username}}', ucwords($userData['first_name'] . ' ' . $userData['last_name']), $hrDocumentsNotificationBody);
@@ -703,7 +711,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function send_hr_documents($sid = NULL) {
+    public function send_hr_documents($sid = NULL)
+    {
         if ($sid != NULL) {
             if ($this->session->userdata('logged_in')) {
                 $data['session'] = $this->session->userdata('logged_in');
@@ -844,7 +853,7 @@ class Employee_management extends Public_Controller {
                                 $subject = $emailTemplateData['subject'];
                                 $from_name = $emailTemplateData['from_name'];
                                 $body = $emailTemplateBody;
-                            } else {// send offer letter details to user
+                            } else { // send offer letter details to user
                                 $offerLetterId = $this->input->post('offer_letter_id');
                                 $offerLetterObj = $this->employee_model->get_offer_detail($offerLetterId);
 
@@ -860,17 +869,17 @@ class Employee_management extends Public_Controller {
                                     replace_magic_quotes($offerLetterBody);
                                     if (empty($userData['username']) && empty($userData['password']) && $userData['active'] == 0) {
                                         $body = $message_hf['header']
-                                                . '<h2 style="width:100%; margin:10px 0;">Dear ' . ucfirst($userData['first_name']) . ' ' . $userData['last_name'] . ',</h2>'
-                                                . '<br><br><b>You have received this email from' . ucfirst($companyname) . '. we are here to help you with this process'
-                                                . '<br><br>Your Company HR Administrator has requested that we collect the following:'
-                                                . '<ul>'
-                                                . '<li>Offer Letter Acknowledgement</li>'
-                                                . '<li>Information of Employee</li>'
-                                                . '<li>Additional HR Documents</li>'
-                                                . '</ul>'
-                                                . '<br>To accept the offer letter please '
-                                                . '<a href="' . base_url('employee_registration') . '/' . $dataToSave['verification_key'] . '">Click here</a>.<br><br>'
-                                                . $message_hf['footer'];
+                                            . '<h2 style="width:100%; margin:10px 0;">Dear ' . ucfirst($userData['first_name']) . ' ' . $userData['last_name'] . ',</h2>'
+                                            . '<br><br><b>You have received this email from' . ucfirst($companyname) . '. we are here to help you with this process'
+                                            . '<br><br>Your Company HR Administrator has requested that we collect the following:'
+                                            . '<ul>'
+                                            . '<li>Offer Letter Acknowledgement</li>'
+                                            . '<li>Information of Employee</li>'
+                                            . '<li>Additional HR Documents</li>'
+                                            . '</ul>'
+                                            . '<br>To accept the offer letter please '
+                                            . '<a href="' . base_url('employee_registration') . '/' . $dataToSave['verification_key'] . '">Click here</a>.<br><br>'
+                                            . $message_hf['footer'];
                                     } else {
                                         $offerLetterBody = str_replace('{{username}}', $userData['username'], $offerLetterBody);
                                         $offerLetterBody = str_replace('{{password}}', $decodedPassword, $offerLetterBody);
@@ -900,7 +909,6 @@ class Employee_management extends Public_Controller {
 
                         if (isset($formpost['document']) && !empty($formpost['document'])) { //To attach multiple DOCS in an email
                             $files = $this->employee_model->getDocuments($formpost['document']);
-
                             foreach ($formpost['document'] as $documentId) {
                                 $dataToSave['document_sid'] = $documentId;
                                 $dataToSave['document_type'] = 'document';
@@ -939,7 +947,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    function alpha_dash_space($str) {
+    function alpha_dash_space($str)
+    {
         if ($str != "") {
             if (!preg_match("/^([-0-9])+$/i", $str)) {
                 $this->form_validation->set_message('alpha_dash_space', 'The %s field may only contain numeric characters and dashes.');
@@ -951,7 +960,8 @@ class Employee_management extends Public_Controller {
             return TRUE;
     }
 
-    function deactivate_single_employee() {
+    function deactivate_single_employee()
+    {
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'deactivate_single_employee') {
             $sid = $_REQUEST['del_id'];
             $data = $this->employee_model->deactivate_employee_by_id($sid);
@@ -960,7 +970,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    function delete_single_employee() {
+    function delete_single_employee()
+    {
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete_single_employee') {
             $sid = $_REQUEST['del_id'];
             $data = $this->employee_model->delete_employee_by_id($sid);
@@ -969,7 +980,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    function archive_single_employee() {
+    function archive_single_employee()
+    {
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'archive_single_employee') {
             $sid = $_REQUEST['archive_id'];
             $data_array = array('archived' => 1);
@@ -979,7 +991,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    function reactivate_single_employee() {
+    function reactivate_single_employee()
+    {
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'restore_employee') {
             $sid = $_REQUEST['id'];
             $data_array = array('archived' => 0);
@@ -989,25 +1002,27 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    function revert_termination_single_employee() {
+    function revert_termination_single_employee()
+    {
         if ($this->input->is_ajax_request()) {
-            if($this->input->post('action') == 'restore_employee'){
+            if ($this->input->post('action') == 'restore_employee') {
                 $sid = $this->input->post('id');
                 $data_array = array('archived' => 0, 'active' => 1, 'terminated_status' => 0);
                 $data = $this->employee_model->archive_employee_by_id($sid, $data_array);
                 echo $data;
                 exit;
-            } else{
+            } else {
                 echo 'Error, Please try Again!';
                 exit;
             }
-        } else{
+        } else {
             echo 'Error, Please try Again!';
             exit;
         }
     }
 
-    function revert_employee_back_to_applicant() {
+    function revert_employee_back_to_applicant()
+    {
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'revert_applicant') {
             $applicant_sid = $_REQUEST['revert_id'];
             $user_sid = $_REQUEST['id'];
@@ -1017,7 +1032,7 @@ class Employee_management extends Public_Controller {
             // $data = 'success';
             if ($data == 'success') { // custom function to revert employee to applicant
                 //Revert table is maintaining for the record of employees who got reverted
-                $data = $this->employee_model->revert_employee_back_to_applicant($user_sid,$applicant_sid);
+                $data = $this->employee_model->revert_employee_back_to_applicant($user_sid, $applicant_sid);
                 $this->session->set_flashdata('message', '<strong>Success:</strong> You have moved this person back to the Applicant Tracking system');
                 echo 'success';
                 exit;
@@ -1028,7 +1043,9 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function employee_profile($sid = NULL) {        if ($sid == NULL) {
+    public function employee_profile($sid = NULL)
+    {
+        if ($sid == NULL) {
             $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
             redirect('employee_management', 'refresh');
         } else {
@@ -1049,23 +1066,23 @@ class Employee_management extends Public_Controller {
                 $data['main_employer_id'] = $security_sid;
                 $data['employer'] = $this->dashboard_model->get_company_detail($employer_id);
                 //
-                if(!empty($data['employer']['full_employment_application'])){
+                if (!empty($data['employer']['full_employment_application'])) {
                     //
                     $updateArray = [];
                     //
                     $fullEmploymentForm = unserialize($data['employer']['full_employment_application']);
                     // Check for DOB
-                    if(!empty($fullEmploymentForm['TextBoxDOB']) && empty($data['employer']['dob'])){
-                        $data['employer']['dob'] = $updateArray['dob'] = DateTime::createfromformat('m-d-Y',$fullEmploymentForm['TextBoxDOB'])->format('Y-m-d');
+                    if (!empty($fullEmploymentForm['TextBoxDOB']) && empty($data['employer']['dob'])) {
+                        $data['employer']['dob'] = $updateArray['dob'] = DateTime::createfromformat('m-d-Y', $fullEmploymentForm['TextBoxDOB'])->format('Y-m-d');
                     }
                     // Check for SSN
-                    if(!empty($fullEmploymentForm['TextBoxSSN']) && empty($data['employer']['ssn'])){
+                    if (!empty($fullEmploymentForm['TextBoxSSN']) && empty($data['employer']['ssn'])) {
                         $data['employer']['ssn'] = $updateArray['ssn'] = $fullEmploymentForm['TextBoxSSN'];
                     }
                     //
-                    if($updateArray){
+                    if ($updateArray) {
                         $this->db->where('sid', $data['employer']['sid'])
-                        ->update('users', $updateArray);
+                            ->update('users', $updateArray);
                     }
                 }
                 $employee_detail = $data['employer'];
@@ -1080,7 +1097,7 @@ class Employee_management extends Public_Controller {
                 );
 
                 if ($data['employer']['department_sid'] > 0) {
-                    $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);                   
+                    $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);
                     $data['department_name'] = $department_name;
                 }
 
@@ -1089,10 +1106,10 @@ class Employee_management extends Public_Controller {
                     $data['team_name'] = $team_name;
                 }
 
-                if(isset($data['team_name']) && $data['team_name'] == ''){
+                if (isset($data['team_name']) && $data['team_name'] == '') {
                     // Fetch employee team and department
                     $t = $this->employee_model->fetch_department_teams($employer_id);
-                    if(sizeof($t)){
+                    if (sizeof($t)) {
                         $data['employer']['department_sid'] = $t['department_sid'];
                         $data['employer']['team_sid'] = $t['team_sid'];
                         //
@@ -1101,10 +1118,10 @@ class Employee_management extends Public_Controller {
                         $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
                         $data['team_name'] = $team_name;
                     }
-                } 
+                }
 
                 if (empty($data['employer']['employee_number']) || $data['employer']['employee_number'] == '') {
-                    $data['employer']['employee_number'] = $sid; 
+                    $data['employer']['employee_number'] = $sid;
                 }
 
                 $employee_assign_team = $this->employee_model->fetch_employee_assign_teams($employer_id);
@@ -1162,15 +1179,15 @@ class Employee_management extends Public_Controller {
 
                 $company_accounts = $this->application_tracking_system_model->getCompanyAccounts($company_id); //fetching list of all sub-accounts
                 $data['company_timezone'] = $company_timezone = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
-                foreach($company_accounts as $key => $company_account){
+                foreach ($company_accounts as $key => $company_account) {
                     $company_accounts[$key]['timezone'] = !empty($company_account['timezone']) ? $company_account['timezone'] : $company_timezone;
                 }
                 $data['company_accounts'] = $company_accounts;
-                if(!empty($data['session']['employer_detail']['timezone']))
-                    $data['employer_timezone'] =   $data['session']['employer_detail']['timezone']; 
+                if (!empty($data['session']['employer_detail']['timezone']))
+                    $data['employer_timezone'] =   $data['session']['employer_detail']['timezone'];
                 else
                     $data['employer_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
-            
+
                 $data['upcoming_events'] = $this->employee_model->get_employee_events($company_id, $sid, 'upcoming'); //Getting Events
                 $to_id = $data['id'];
                 $rawMessages = $this->application_tracking_system_model->get_sent_messages($to_id, NULL);
@@ -1190,22 +1207,20 @@ class Employee_management extends Public_Controller {
                                 $message['sender_name'] = getCompanyNameBySid($company_id);
                                 $logo = getCompanyLogoBySid($company_id);
                                 if (empty($logo)) {
-                                    $message['sender_logo'] = base_url("assets/images/img-applicant.jpg"); 
+                                    $message['sender_logo'] = base_url("assets/images/img-applicant.jpg");
                                 } else {
                                     $message['sender_profile_picture'] = getCompanyLogoBySid($company_id);
                                 }
-                                
                             } else {
                                 $message['sender_name'] = getUserNameBySID($message['from_id']);
-                                $message['sender_profile_picture'] = get_employee_profile_info($message['from_id'])['profile_picture']; 
+                                $message['sender_profile_picture'] = get_employee_profile_info($message['from_id'])['profile_picture'];
                             }
-                            
                         } else {
                             $message['profile_picture'] = $data['employer']['profile_picture'];
                             $message['first_name'] = $data['employer']['first_name'];
                             $message['last_name'] = $data['employer']['last_name'];
                             $message['username'] = "";
-                            $message['sender_name'] = $data['applicant_info']['first_name']." ".$data['applicant_info']['last_name'];
+                            $message['sender_name'] = $data['applicant_info']['first_name'] . " " . $data['applicant_info']['last_name'];
                             $message['sender_profile_picture'] = $data['applicant_info']['pictures'];
                         }
 
@@ -1282,16 +1297,16 @@ class Employee_management extends Public_Controller {
                 $data['ssn_required'] = 0;
                 $data['dob_required'] = 0;
                 //
-                if($data['ssn_required'] == 1){
+                if ($data['ssn_required'] == 1) {
                     //
                     $this->form_validation->set_rules('SSN', 'SSN', 'required|trim|xss_clean');
                 }
                 //
-                if($data['dob_required'] == 1){
+                if ($data['dob_required'] == 1) {
                     //
                     $this->form_validation->set_rules('DOB', 'DOB', 'required|trim|xss_clean');
                 }
-                
+
                 if ($this->form_validation->run() === FALSE) { //checking if the form is submitted so i can open the form screen again
                     $this->load->model('portal_email_templates_model');
                     $data['edit_form'] = false;
@@ -1333,9 +1348,9 @@ class Employee_management extends Public_Controller {
                     if (empty($data['employer']['resume'])) { // check if reseme is uploaded
                         $data['employer']['resume_link'] = "javascript:void(0);";
                         $data['resume_link_title'] = "No Resume found!";
-                        if(!empty($data['employer']['applicant_sid']) && $data['employer']['applicant_sid'] != NULL){
+                        if (!empty($data['employer']['applicant_sid']) && $data['employer']['applicant_sid'] != NULL) {
                             $resume = $this->employee_model->check_for_resume($data['employer']['applicant_sid']);
-                            if($resume != 0){
+                            if ($resume != 0) {
                                 $data['employer']['resume_link'] = AWS_S3_BUCKET_URL . $resume;
                                 $data['resume_link_title'] = $resume;
                             }
@@ -1364,7 +1379,7 @@ class Employee_management extends Public_Controller {
                     $this->load->model('timeoff_model');
                     $this->load->helper('timeoff');
                     //
-                    if (checkIfAppIsEnabled('timeoff')) { 
+                    if (checkIfAppIsEnabled('timeoff')) {
                         $data['policies'] = $this->timeoff_model->getEmployeePoliciesByEmployeeId($company_id, $employer_id);
                     }
                     // Check if the employees has merges
@@ -1403,10 +1418,10 @@ class Employee_management extends Public_Controller {
                     $extra_info_arr['office_location'] = $this->input->post('office_location');
                     $extra_info_arr['interests'] = $this->input->post('interests');
                     $extra_info_arr['short_bio'] = $this->input->post('short_bio');
-                    
+
 
                     $full_emp_app = array();
-                   
+
 
                     $video_source = $this->input->post('video_source');
                     $video_id = '';
@@ -1466,9 +1481,9 @@ class Employee_management extends Public_Controller {
                     }
 
                     $notified_by = $this->input->post('notified_by', true);
-                    if($notified_by == '' || !sizeof($notified_by)) $notified_by = 'email';
+                    if ($notified_by == '' || !sizeof($notified_by)) $notified_by = 'email';
                     else $notified_by = implode(',', $notified_by);
-   
+
                     $data_to_insert = array(
                         'first_name' => $this->input->post('first_name'),
                         'last_name' => $this->input->post('last_name'),
@@ -1509,33 +1524,33 @@ class Employee_management extends Public_Controller {
                         $data_to_insert['break_mins'] = $this->input->post('break_mins');
                         $data_to_insert['weekly_hours'] = $this->input->post('weekly_hours');
                         $data_to_insert['offdays'] = isset($_POST['offdays']) ? implode(",", $this->input->post('offdays')) : NULL;
-                    }    
+                    }
                     //
-                    if(!empty($this->input->post('secondary_email', true))){
+                    if (!empty($this->input->post('secondary_email', true))) {
                         $data_to_insert['alternative_email'] = $this->input->post('secondary_email', true);
                     }
                     //
-                    if(!empty($this->input->post('hourly_rate', true))){
+                    if (!empty($this->input->post('hourly_rate', true))) {
                         $data_to_insert['hourly_rate'] = $this->input->post('hourly_rate', true);
                     }
                     //
-                    if(!empty($this->input->post('hourly_technician', true))){
+                    if (!empty($this->input->post('hourly_technician', true))) {
                         $data_to_insert['hourly_technician'] = $this->input->post('hourly_technician', true);
                     }
                     //
-                    if(!empty($this->input->post('flat_rate_technician', true))){
+                    if (!empty($this->input->post('flat_rate_technician', true))) {
                         $data_to_insert['flat_rate_technician'] = $this->input->post('flat_rate_technician', true);
                     }
                     //
-                    if(!empty($this->input->post('semi_monthly_salary', true))){
+                    if (!empty($this->input->post('semi_monthly_salary', true))) {
                         $data_to_insert['semi_monthly_salary'] = $this->input->post('semi_monthly_salary', true);
                     }
                     //
-                    if(!empty($this->input->post('semi_monthly_draw', true))){
+                    if (!empty($this->input->post('semi_monthly_draw', true))) {
                         $data_to_insert['semi_monthly_draw'] = $this->input->post('semi_monthly_draw', true);
                     }
                     //
-                    if(preg_match(XSYM_PREG, $data_to_insert['ssn'])) unset($data_to_insert);
+                    if (preg_match(XSYM_PREG, $data_to_insert['ssn'])) unset($data_to_insert);
 
                     // Update dept/team table
                     $department = $this->input->post('department');
@@ -1545,18 +1560,18 @@ class Employee_management extends Public_Controller {
                         $old_ssign_teams = $this->employee_model->getAllAssignedTeams($employer_id);
                         $add_team_sids = array();
                         $delete_team_sids = array();
-                        
+
                         foreach ($teams as $team) {
                             if (!in_array($team, $old_ssign_teams)) {
                                 array_push($add_team_sids, $team);
-                            } 
+                            }
                         }
 
                         if ($old_ssign_teams) {
                             foreach ($old_ssign_teams as $old_team) {
                                 if (!in_array($old_team, $teams)) {
                                     array_push($delete_team_sids, $old_team);
-                                } 
+                                }
                             }
                         }
 
@@ -1591,17 +1606,17 @@ class Employee_management extends Public_Controller {
                         $this->employee_model->manageEmployeeTeamHistory($maintain_employee_team_history);
                     }
                     //
-                    if($DOB != '' && !preg_match(XSYM_PREG, $DOB)) $data_to_insert['dob'] = $DOB;
+                    if ($DOB != '' && !preg_match(XSYM_PREG, $DOB)) $data_to_insert['dob'] = $DOB;
 
-                    if(IS_NOTIFICATION_ENABLED == 1 && $this->input->post('notified_by', true) && $data['phone_sid'] != '') $data_to_insert['notified_by'] = $notified_by;
+                    if (IS_NOTIFICATION_ENABLED == 1 && $this->input->post('notified_by', true) && $data['phone_sid'] != '') $data_to_insert['notified_by'] = $notified_by;
 
                     // Check if joining date is set
-                    if($this->input->post('joining_date')){
+                    if ($this->input->post('joining_date')) {
                         $data_to_insert['joined_at'] = DateTime::createFromFormat('m-d-Y', $this->input->post('joining_date', true))->format('Y-m-d');
                     }
                     //
                     // Added on: 21-12-2021
-                    if(!empty($this->input->post('rehireDate', true))){
+                    if (!empty($this->input->post('rehireDate', true))) {
                         $rehireDate = DateTime::createFromFormat('m-d-Y', $this->input->post('rehireDate', true))->format('Y-m-d');
                         //
                         $this->employee_model->updateEmployeeRehireDate(
@@ -1615,9 +1630,9 @@ class Employee_management extends Public_Controller {
                         $data_to_insert['active'] = 0;
                     }
                     // Added on: 25-06-2019
-                    if(IS_TIMEZONE_ACTIVE){
+                    if (IS_TIMEZONE_ACTIVE) {
                         $new_timezone = $this->input->post('timezone', true);
-                        if($new_timezone != '') $data_to_insert['timezone'] = $new_timezone;
+                        if ($new_timezone != '') $data_to_insert['timezone'] = $new_timezone;
                     }
                     //Ful Employment Application Form Update data
                     $full_emp_app = isset($employee_detail['full_employment_application']) && !empty($employee_detail['full_employment_application']) ? unserialize($employee_detail['full_employment_application']) : array();
@@ -1651,7 +1666,7 @@ class Employee_management extends Public_Controller {
                             $employer_id,
                             $this->input->post('policies')
                         );
-                    }    
+                    }
                     //
                     $this->session->set_flashdata('message', '<b>Success:</b> Employee / Team Member Profile is updated successfully');
                     redirect("employee_profile/" . $sid, "location");
@@ -1662,14 +1677,15 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function upload_attachment($user_sid) {
+    public function upload_attachment($user_sid)
+    {
         if (isset($_FILES['resume']) && $_FILES['resume']['name'] != '') { //uploading Resume to AWS if any
             $file = explode(".", $_FILES['resume']['name']);
             $file_name = str_replace(" ", "-", $file[0]);
             $resume = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
 
             if ($_FILES['resume']['size'] == 0) {
-            // if ($_FILES['cover_letter']['size'] == 0) {
+                // if ($_FILES['cover_letter']['size'] == 0) {
                 $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                 redirect("employee_profile/" . $user_sid, 'location');
             }
@@ -1700,7 +1716,8 @@ class Employee_management extends Public_Controller {
         redirect('employee_profile/' . $user_sid, 'location');
     }
 
-    public function check_employee_email($email) {
+    public function check_employee_email($email)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data['session']['company_detail']['sid'];
         $result = $this->dashboard_model->validate_employee_email($company_sid, $email);
@@ -1712,7 +1729,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function insert_notes() {
+    public function insert_notes()
+    {
         if ($this->input->post()) { //check if insert notes
             $formpost = $_POST;
             $_SESSION['show_notes'] = 'true';
@@ -1737,7 +1755,8 @@ class Employee_management extends Public_Controller {
             redirect('application_tracking_system/active/all/all/all/all', 'refresh');
     }
 
-    public function employee_login_credentials($sid = NULL) {
+    public function employee_login_credentials($sid = NULL)
+    {
         if ($sid == NULL) {
             $this->session->set_flashdata('message', '<b>Error:</b> No Employee found!');
             redirect('employee_management', 'refresh');
@@ -1806,12 +1825,16 @@ class Employee_management extends Public_Controller {
                     $password = $this->input->post('password');
 
                     if (empty($password)) {
-                        $data = array('username' => $this->input->post('username'),
-                            'email' => $this->input->post('email'));
+                        $data = array(
+                            'username' => $this->input->post('username'),
+                            'email' => $this->input->post('email')
+                        );
                     } else {
-                        $data = array('username' => $this->input->post('username'),
+                        $data = array(
+                            'username' => $this->input->post('username'),
                             'password' => do_hash($this->input->post('password'), 'md5'),
-                            'email' => $this->input->post('email'));
+                            'email' => $this->input->post('email')
+                        );
                     }
 
                     $this->dashboard_model->update_user($sid, $data);
@@ -1824,7 +1847,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function login_password() {
+    public function login_password()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_detail = $data['session']['company_detail'];
@@ -1879,9 +1903,11 @@ class Employee_management extends Public_Controller {
                         'email' => $this->input->post('email')
                     );
                 } else {
-                    $data = array('username' => $this->input->post('username'),
+                    $data = array(
+                        'username' => $this->input->post('username'),
                         'password' => do_hash($this->input->post('password'), 'md5'),
-                        'email' => $this->input->post('email'));
+                        'email' => $this->input->post('email')
+                    );
                 }
 
                 //$data = array('password' => do_hash($this->input->post('password'), 'md5'));
@@ -1898,12 +1924,13 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function my_profile() {
+    public function my_profile()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             //
             if ($data['session']['employer_detail']['is_executive_admin'] == 1) {
-                  redirect('dashboard', 'location');
+                redirect('dashboard', 'location');
             }
             //
             $company_detail = $data['session']['company_detail'];
@@ -2068,7 +2095,7 @@ class Employee_management extends Public_Controller {
                 } else {
                     $pictures = '';
                 }
-                 $notified_by=$this->input->post("notified_by");
+                $notified_by = $this->input->post("notified_by");
                 $extra_info_arr = array();
                 $extra_info_arr['secondary_email'] = $this->input->post('secondary_email');
                 $extra_info_arr['secondary_PhoneNumber'] = $this->input->post('txt_secondary_phonenumber') ? $this->input->post('txt_secondary_phonenumber') : $this->input->post('secondary_PhoneNumber');
@@ -2146,7 +2173,8 @@ class Employee_management extends Public_Controller {
                     $DOB = '';
                 }
 
-                $data = array('first_name' => $this->input->post('first_name'),
+                $data = array(
+                    'first_name' => $this->input->post('first_name'),
                     'last_name' => $this->input->post('last_name'),
                     'email' => $this->input->post('email'),
                     'Location_Country' => $this->input->post('Location_Country'),
@@ -2174,11 +2202,11 @@ class Employee_management extends Public_Controller {
                     $this->employee_model->update_gender_in_eeoc_form($sid, 'employee', $updateGender);
                 }
                 //
-                if(!empty($this->input->post('secondary_email', true))){
+                if (!empty($this->input->post('secondary_email', true))) {
                     $data['alternative_email'] = $this->input->post('secondary_email', true);
                 }
 
-                if(IS_TIMEZONE_ACTIVE){
+                if (IS_TIMEZONE_ACTIVE) {
                     $data['timezone'] = $this->input->post('timezone', true);
                 }
 
@@ -2187,13 +2215,13 @@ class Employee_management extends Public_Controller {
                 }
 
                 // Added on: 26-06-2019
-                if(IS_TIMEZONE_ACTIVE){
+                if (IS_TIMEZONE_ACTIVE) {
                     $new_timezone = $this->input->post('timezone', true);
-                    if($new_timezone != '') $data['timezone'] = $new_timezone;
+                    if ($new_timezone != '') $data['timezone'] = $new_timezone;
                 }
 
-                if(IS_NOTIFICATION_ENABLED == 1 && $comp['phone_sid'] != '' && $this->input->post('notified_by', true)){
-                    if(!sizeof($this->input->post('notified_by', true))) $data['notified_by'] = 'email';
+                if (IS_NOTIFICATION_ENABLED == 1 && $comp['phone_sid'] != '' && $this->input->post('notified_by', true)) {
+                    if (!sizeof($this->input->post('notified_by', true))) $data['notified_by'] = 'email';
                     else $data['notified_by'] = implode(',', $this->input->post('notified_by', true));
                 }
 
@@ -2249,27 +2277,27 @@ class Employee_management extends Public_Controller {
                     $changedData .= '        </tr>';
                     $changedData .= '    </thead>';
                     $changedData .= '    <tbody>';
-                    foreach($difference['data'] as $k => $v):
+                    foreach ($difference['data'] as $k => $v) :
                         if ($k != "ssn") {
                             $changedData .= '        <tr>';
-                            $changedData .= '            <th>'.(ucwords(str_replace('_', ' ', $k))).'</th>';
-                            if($k == "dob") {
-                                if(isset($v['old']) && $v['old'] != '' && $v['old'] != '0000-00-00') $old_dob = DateTime::createFromFormat('Y-m-d', $v['old'])->format('m-d-Y');
+                            $changedData .= '            <th>' . (ucwords(str_replace('_', ' ', $k))) . '</th>';
+                            if ($k == "dob") {
+                                if (isset($v['old']) && $v['old'] != '' && $v['old'] != '0000-00-00') $old_dob = DateTime::createFromFormat('Y-m-d', $v['old'])->format('m-d-Y');
                                 else $old_dob = '';
-                                if($old_dob != '') $old_dob = DateTime::createFromFormat('m-d-Y', $old_dob)->format('M d Y, D');
+                                if ($old_dob != '') $old_dob = DateTime::createFromFormat('m-d-Y', $old_dob)->format('M d Y, D');
                                 //
-                                if(isset($v['new']) && $v['new'] != '' && $v['new'] != '0000-00-00') $new_dob = DateTime::createFromFormat('Y-m-d', $v['new'])->format('m-d-Y');
+                                if (isset($v['new']) && $v['new'] != '' && $v['new'] != '0000-00-00') $new_dob = DateTime::createFromFormat('Y-m-d', $v['new'])->format('m-d-Y');
                                 else $new_dob = '';
-                                if($new_dob != '') $new_dob = DateTime::createFromFormat('m-d-Y', $new_dob)->format('M d Y, D');
+                                if ($new_dob != '') $new_dob = DateTime::createFromFormat('m-d-Y', $new_dob)->format('M d Y, D');
                                 //
-                                $changedData .= '            <td style="color: red;">'.($old_dob).'</td>';
-                                $changedData .= '            <td style="color: green;">'.($new_dob).'</td>';
+                                $changedData .= '            <td style="color: red;">' . ($old_dob) . '</td>';
+                                $changedData .= '            <td style="color: green;">' . ($new_dob) . '</td>';
                             } else {
-                                $changedData .= '            <td style="color: red;">'.($v['old']).'</td>';
-                                $changedData .= '            <td style="color: green;">'.($v['new']).'</td>';
+                                $changedData .= '            <td style="color: red;">' . ($v['old']) . '</td>';
+                                $changedData .= '            <td style="color: green;">' . ($v['new']) . '</td>';
                             }
-                        }    
-                        
+                        }
+
                         $changedData .= '        </tr>';
                     endforeach;
                     $changedData .= '    </tbody>';
@@ -2299,13 +2327,14 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    public function vimeo_get_id($str) {
+    public function vimeo_get_id($str)
+    {
         if ($str != "") {
-            if($_SERVER['HTTP_HOST']=='localhost'){
+            if ($_SERVER['HTTP_HOST'] == 'localhost') {
                 $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
                 $response = @file_get_contents($api_url);
 
-                if(!empty($response)){
+                if (!empty($response)) {
                     $response = json_decode($response, true);
 
                     if (isset($response['video_id'])) {
@@ -2337,7 +2366,8 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    function if_user_exists_ci_validation($str) {
+    function if_user_exists_ci_validation($str)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_id = $data['session']['company_detail']['sid'];
         $this->db->where('email', $str);
@@ -2355,8 +2385,9 @@ class Employee_management extends Public_Controller {
         return $return;
     }
 
-    public function generate_password($key = NULL) {
-        if($key != NULL) {
+    public function generate_password($key = NULL)
+    {
+        if ($key != NULL) {
             $this->load->model('users_model');
             $check_exist = $this->users_model->check_key($key);
 
@@ -2393,12 +2424,13 @@ class Employee_management extends Public_Controller {
         }
     }
 
-    function send_login_credentials() {
+    function send_login_credentials()
+    {
         $action = $this->input->post('action');
         $sid = $this->input->post('sid');
         $employee_details = $this->employee_model->get_employee_details($sid);
 
-        if(!empty($employee_details)) {
+        if (!empty($employee_details)) {
             $first_name = $employee_details[0]['first_name'];
             $last_name = $employee_details[0]['last_name'];
             $username = $employee_details[0]['username'];
@@ -2406,7 +2438,7 @@ class Employee_management extends Public_Controller {
             $email = $employee_details[0]['email'];
             $salt = $employee_details[0]['salt'];
 
-            if($salt == NULL || $salt == '') {
+            if ($salt == NULL || $salt == '') {
                 $salt = generateRandomString(48);
 
                 $data = array('salt' => $salt);
@@ -2441,33 +2473,37 @@ class Employee_management extends Public_Controller {
      *
      * @return Bool
      */
-    private function call_old_event(){
+    private function call_old_event()
+    {
         $this->load->config('calendar_config');
         $calendar_opt = $this->config->item('calendar_opt');
-        if($calendar_opt['show_new_calendar_to_all'])
+        if ($calendar_opt['show_new_calendar_to_all'])
             return true;
-        if(
+        if (
             ($calendar_opt['old_event_check'] && !$calendar_opt['ids_check'] && in_array($this->input->ip_address(), $calendar_opt['remote_ips'])) ||
             ($calendar_opt['old_event_check'] && $calendar_opt['ids_check'] && in_array($this->session->userdata('logged_in')['company_detail']['sid'], $calendar_opt['allowed_ids']))
-        ){ return true; }
+        ) {
+            return true;
+        }
 
         return false;
     }
 
-    public function change_complynet_status(){
+    public function change_complynet_status()
+    {
         $sid = $this->input->post("sid");
         $status = $this->input->post("status");
-        if($status){
-            $data = array('complynet_status'=>1);
+        if ($status) {
+            $data = array('complynet_status' => 1);
+        } else {
+            $data = array('complynet_status' => 0);
         }
-        else{
-            $data = array('complynet_status'=>0);
-        }
-        $this->dashboard_model->update_user($sid,$data);
+        $this->dashboard_model->update_user($sid, $data);
         echo 'updated';
     }
 
-    function get_all_department_teams ($department_sid) {
+    function get_all_department_teams($department_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data['session']['company_detail']['sid'];
@@ -2476,7 +2512,7 @@ class Employee_management extends Public_Controller {
             if (!empty($department_teams)) {
                 echo json_encode($department_teams);
             } else {
-               echo 0;
+                echo 0;
             }
         } else {
             redirect('login', 'refresh');
@@ -2491,12 +2527,13 @@ class Employee_management extends Public_Controller {
      *
      * @return JSON
      */
-    function handler(){
+    function handler()
+    {
         // Set default aray
         $resp['Status'] = false;
         $resp['Response'] = 'Invalid request.';
         //
-        if(!sizeof($this->input->post()) || $this->input->method(TRUE) != 'POST') $this->resp($resp);
+        if (!sizeof($this->input->post()) || $this->input->method(TRUE) != 'POST') $this->resp($resp);
         //
         $form_data = $this->input->post(NULL, TRUE);
         // Load the twilio library
@@ -2515,7 +2552,7 @@ class Employee_management extends Public_Controller {
             case 'send_sms':
                 // Double check - If SMS module is not active
                 // then through an error
-                if($session['company_detail']['sms_module_status'] == 0){
+                if ($session['company_detail']['sms_module_status'] == 0) {
                     $resp['Response'] = 'SMS module is not active for this company.';
                     $this->resp($resp);
                 }
@@ -2524,22 +2561,22 @@ class Employee_management extends Public_Controller {
                 $message_body = $form_data['message'];
                 // Set & Send Request
                 $this
-                ->twilio
-                ->setMode(IS_SANDBOX === 1 ? 'sandbox' : 'production')
-                ->setMessage($message_body);
+                    ->twilio
+                    ->setMode(IS_SANDBOX === 1 ? 'sandbox' : 'production')
+                    ->setMessage($message_body);
 
-                if(IS_SANDBOX != 1){
+                if (IS_SANDBOX != 1) {
                     $this->twilio->setReceiverPhone($form_data['phone_e16']);
                     $this->twilio->setMessageServiceSID(get_company_sms_phonenumber($company_sid, $this)['message_service_sid']);
                 }
                 //
                 $resp2 = $this->twilio->sendMessage();
                 // Check & Handling Errors
-                if(!is_array($resp2)){
+                if (!is_array($resp2)) {
                     $resp['Response'] = 'Failed to send SMS.';
                     $this->resp($resp);
                 }
-                if(isset($resp2['Error'])){
+                if (isset($resp2['Error'])) {
                     $resp['Response'] = 'Failed to send SMS.';
                     $this->resp($resp);
                 }
@@ -2552,34 +2589,35 @@ class Employee_management extends Public_Controller {
                 $insert_array['receiver_user_id'] = isset($form_data['applicant_id']) ? $form_data['applicant_id'] : $form_data['id'];
                 $insert_array['receiver_user_type'] = 'employee';
                 //
-                if(IS_SANDBOX === 1){
+                if (IS_SANDBOX === 1) {
                     $insert_array['receiver_phone_number'] = $form_data['phone_e16'];
                 }
                 // Add data in database
                 $insert_id = $this
-                ->employee_model
-                ->save_sent_message($insert_array);
+                    ->employee_model
+                    ->save_sent_message($insert_array);
 
                 $resp['Status'] = TRUE;
                 $resp['Response'] = 'SMS sent.';
 
                 $this->resp($resp);
-            break;
+                break;
 
             case 'fetch_sms_employee':
                 $records = $this
-                ->employee_model
-                ->fetch_sms(
-                    $form_data['type'],
-                    isset($form_data['applicant_id']) ? $form_data['applicant_id'] : $form_data['id'],
-                    $company_sid,
-                    $form_data['last_fetched_id'],
-                    isset($form_data['module']) ? $form_data['module'] : '',
-                    $this->limit
-                );
+                    ->employee_model
+                    ->fetch_sms(
+                        $form_data['type'],
+                        isset($form_data['applicant_id']) ? $form_data['applicant_id'] : $form_data['id'],
+                        $company_sid,
+                        $form_data['last_fetched_id'],
+                        isset($form_data['module']) ? $form_data['module'] : '',
+                        $this->limit
+                    );
 
-                if(!$records){
-                    $resp['Response'] = 'No record found.'; $this->resp($resp);
+                if (!$records) {
+                    $resp['Response'] = 'No record found.';
+                    $this->resp($resp);
                 }
                 //
                 $resp['Status'] = TRUE;
@@ -2588,21 +2626,21 @@ class Employee_management extends Public_Controller {
                 $resp['LastId'] = $records['LastId'];
                 $resp['Unread'] = $records['Unread'];
                 $this->resp($resp);
-            break;
+                break;
 
             case 'update_phone_number':
                 // Update applicant phonenumber
                 $this
-                ->employee_model
-                ->employee_phone_number(
-                    $form_data['phone_e16'],
-                    $form_data['applicant_id']
-                );
+                    ->employee_model
+                    ->employee_phone_number(
+                        $form_data['phone_e16'],
+                        $form_data['applicant_id']
+                    );
                 //
                 $resp['Status'] = TRUE;
                 $resp['Response'] = 'Phone number updated.';
                 $resp['Phone'] = phonenumber_format($form_data['phone_e16']);
-            break;
+                break;
         }
 
         $this->resp($resp);
@@ -2617,7 +2655,8 @@ class Employee_management extends Public_Controller {
      *
      * @return JSON
      */
-    private function resp($resp){
+    private function resp($resp)
+    {
         header('Content-Type: application/json');
         echo @json_encode($resp);
         exit(0);
@@ -2627,15 +2666,17 @@ class Employee_management extends Public_Controller {
      * Delete file
      *
      */
-    function delete_file() {
+    function delete_file()
+    {
         $type = $this->input->post('type', true);
 
-        $this->employee_model->delete_file($this->input->post('id', true), strtolower(preg_replace('/\s+/','_', $type)));
+        $this->employee_model->delete_file($this->input->post('id', true), strtolower(preg_replace('/\s+/', '_', $type)));
 
         $this->session->set_flashdata('message', '<b>Success:</b> ' . $type . ' removed successfully');
     }
 
-    public function employee_goals($sid) {
+    public function employee_goals($sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data = employee_right_nav($sid);
             // Added on: 04-07-2019
@@ -2664,7 +2705,7 @@ class Employee_management extends Public_Controller {
             );
 
             if ($data['employer']['department_sid'] > 0) {
-                $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);                   
+                $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);
                 $data['department_name'] = $department_name;
             }
 
@@ -2673,10 +2714,10 @@ class Employee_management extends Public_Controller {
                 $data['team_name'] = $team_name;
             }
 
-            if(isset($data['team_name']) && $data['team_name'] == ''){
+            if (isset($data['team_name']) && $data['team_name'] == '') {
                 // Fetch employee team and department
                 $t = $this->employee_model->fetch_department_teams($employer_id);
-                if(sizeof($t)){
+                if (sizeof($t)) {
                     $data['employer']['department_sid'] = $t['department_sid'];
                     $data['employer']['team_sid'] = $t['team_sid'];
                     //
@@ -2685,10 +2726,10 @@ class Employee_management extends Public_Controller {
                     $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
                     $data['team_name'] = $team_name;
                 }
-            } 
+            }
 
             if (empty($data['employer']['employee_number']) || $data['employer']['employee_number'] == '') {
-                $data['employer']['employee_number'] = $sid; 
+                $data['employer']['employee_number'] = $sid;
             }
 
             $employee_assign_team = $this->employee_model->fetch_employee_assign_teams($employer_id);
@@ -2746,15 +2787,15 @@ class Employee_management extends Public_Controller {
 
             $company_accounts = $this->application_tracking_system_model->getCompanyAccounts($company_id); //fetching list of all sub-accounts
             $data['company_timezone'] = $company_timezone = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
-            foreach($company_accounts as $key => $company_account){
+            foreach ($company_accounts as $key => $company_account) {
                 $company_accounts[$key]['timezone'] = !empty($company_account['timezone']) ? $company_account['timezone'] : $company_timezone;
             }
             $data['company_accounts'] = $company_accounts;
-            if(!empty($data['session']['employer_detail']['timezone']))
-                $data['employer_timezone'] =   $data['session']['employer_detail']['timezone']; 
+            if (!empty($data['session']['employer_detail']['timezone']))
+                $data['employer_timezone'] =   $data['session']['employer_detail']['timezone'];
             else
                 $data['employer_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
-        
+
             $data['upcoming_events'] = $this->employee_model->get_employee_events($company_id, $sid, 'upcoming'); //Getting Events
             $to_id = $data['id'];
             $rawMessages = $this->application_tracking_system_model->get_sent_messages($to_id, NULL);
@@ -2822,7 +2863,7 @@ class Employee_management extends Public_Controller {
             $data['employee_notes'] = $this->employee_model->getEmployeeNotes($employer_id, $registration_date); //Getting Notes - table: portal_misc_notes, employers_sid=company id, applicant_job_sid= employee_sid - start here
             //
             $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
-            
+
             //checking if the form is submitted so i can open the form screen again
             $this->load->model('portal_email_templates_model');
             $data['edit_form'] = false;
@@ -2864,9 +2905,9 @@ class Employee_management extends Public_Controller {
             if (empty($data['employer']['resume'])) { // check if reseme is uploaded
                 $data['employer']['resume_link'] = "javascript:void(0);";
                 $data['resume_link_title'] = "No Resume found!";
-                if(!empty($data['employer']['applicant_sid']) && $data['employer']['applicant_sid'] != NULL){
+                if (!empty($data['employer']['applicant_sid']) && $data['employer']['applicant_sid'] != NULL) {
                     $resume = $this->employee_model->check_for_resume($data['employer']['applicant_sid']);
-                    if($resume != 0){
+                    if ($resume != 0) {
                         $data['employer']['resume_link'] = AWS_S3_BUCKET_URL . $resume;
                         $data['resume_link_title'] = $resume;
                     }
@@ -2907,27 +2948,27 @@ class Employee_management extends Public_Controller {
             $start_date = '';
             $end_date = '';
             //
-            if(!empty($data['filter']['start_date'])){
+            if (!empty($data['filter']['start_date'])) {
                 $start_date = formatDateToDB($data['filter']['start_date']);
             }
             //
-            if(!empty($data['filter']['end_date'])){
+            if (!empty($data['filter']['end_date'])) {
                 $end_date = formatDateToDB($data['filter']['end_date']);
             }
             //
-            foreach($gd as $g){
+            foreach ($gd as $g) {
                 //
-                if($g['employee_sid'] == $employee_detail['sid']){
+                if ($g['employee_sid'] == $employee_detail['sid']) {
                     //
-                    if(!empty($data['filter']['Types']) && !in_array($g['status'],$data['filter']['Types'])){
+                    if (!empty($data['filter']['Types']) && !in_array($g['status'], $data['filter']['Types'])) {
                         continue;
                     }
                     //
-                    if(!empty($start_date) && $g['start_date'] < $data['filter']['start_date'] ){
+                    if (!empty($start_date) && $g['start_date'] < $data['filter']['start_date']) {
                         continue;
                     }
                     //
-                    if(!empty($end_date) && $g['end_date'] > $data['filter']['end_date'] ){
+                    if (!empty($end_date) && $g['end_date'] > $data['filter']['end_date']) {
                         continue;
                     }
                     $data['MyGoals'][] = $g;
@@ -2943,12 +2984,12 @@ class Employee_management extends Public_Controller {
             $data['employerName'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
             $data['isSuperAdmin'] = $data['session']['employer_detail']['access_level_plus'];
             $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 ? 1 : 0;
-            $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
+            $data['employerRole'] = $data['session']['employer_detail']['access_level'];
 
             //
-            $data['ne']= [];
+            $data['ne'] = [];
             $data['ne'][$employee_detail['sid']] = $employee_detail;
-    
+
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/employee_management/dts');
             //$this->load->view('manage_employer/employee_profile_view');
@@ -2959,7 +3000,8 @@ class Employee_management extends Public_Controller {
     }
 
 
-    public function employee_reviews($sid) {
+    public function employee_reviews($sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data = employee_right_nav($sid);
             // Added on: 04-07-2019
@@ -2988,7 +3030,7 @@ class Employee_management extends Public_Controller {
             );
 
             if ($data['employer']['department_sid'] > 0) {
-                $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);                   
+                $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);
                 $data['department_name'] = $department_name;
             }
 
@@ -2997,10 +3039,10 @@ class Employee_management extends Public_Controller {
                 $data['team_name'] = $team_name;
             }
 
-            if(isset($data['team_name']) && $data['team_name'] == ''){
+            if (isset($data['team_name']) && $data['team_name'] == '') {
                 // Fetch employee team and department
                 $t = $this->employee_model->fetch_department_teams($employer_id);
-                if(sizeof($t)){
+                if (sizeof($t)) {
                     $data['employer']['department_sid'] = $t['department_sid'];
                     $data['employer']['team_sid'] = $t['team_sid'];
                     //
@@ -3009,10 +3051,10 @@ class Employee_management extends Public_Controller {
                     $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
                     $data['team_name'] = $team_name;
                 }
-            } 
+            }
 
             if (empty($data['employer']['employee_number']) || $data['employer']['employee_number'] == '') {
-                $data['employer']['employee_number'] = $sid; 
+                $data['employer']['employee_number'] = $sid;
             }
 
             $employee_assign_team = $this->employee_model->fetch_employee_assign_teams($employer_id);
@@ -3070,15 +3112,15 @@ class Employee_management extends Public_Controller {
 
             $company_accounts = $this->application_tracking_system_model->getCompanyAccounts($company_id); //fetching list of all sub-accounts
             $data['company_timezone'] = $company_timezone = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
-            foreach($company_accounts as $key => $company_account){
+            foreach ($company_accounts as $key => $company_account) {
                 $company_accounts[$key]['timezone'] = !empty($company_account['timezone']) ? $company_account['timezone'] : $company_timezone;
             }
             $data['company_accounts'] = $company_accounts;
-            if(!empty($data['session']['employer_detail']['timezone']))
-                $data['employer_timezone'] =   $data['session']['employer_detail']['timezone']; 
+            if (!empty($data['session']['employer_detail']['timezone']))
+                $data['employer_timezone'] =   $data['session']['employer_detail']['timezone'];
             else
                 $data['employer_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
-        
+
             $data['upcoming_events'] = $this->employee_model->get_employee_events($company_id, $sid, 'upcoming'); //Getting Events
             $to_id = $data['id'];
             $rawMessages = $this->application_tracking_system_model->get_sent_messages($to_id, NULL);
@@ -3146,7 +3188,7 @@ class Employee_management extends Public_Controller {
             $data['employee_notes'] = $this->employee_model->getEmployeeNotes($employer_id, $registration_date); //Getting Notes - table: portal_misc_notes, employers_sid=company id, applicant_job_sid= employee_sid - start here
             //
             $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
-            
+
             //checking if the form is submitted so i can open the form screen again
             $this->load->model('portal_email_templates_model');
             $data['edit_form'] = false;
@@ -3188,9 +3230,9 @@ class Employee_management extends Public_Controller {
             if (empty($data['employer']['resume'])) { // check if reseme is uploaded
                 $data['employer']['resume_link'] = "javascript:void(0);";
                 $data['resume_link_title'] = "No Resume found!";
-                if(!empty($data['employer']['applicant_sid']) && $data['employer']['applicant_sid'] != NULL){
+                if (!empty($data['employer']['applicant_sid']) && $data['employer']['applicant_sid'] != NULL) {
                     $resume = $this->employee_model->check_for_resume($data['employer']['applicant_sid']);
-                    if($resume != 0){
+                    if ($resume != 0) {
                         $data['employer']['resume_link'] = AWS_S3_BUCKET_URL . $resume;
                         $data['resume_link_title'] = $resume;
                     }
@@ -3235,19 +3277,19 @@ class Employee_management extends Public_Controller {
             $status = 'all';
             $reviewers = [];
             //
-            if(!empty($data['filter']['start_date'])){
+            if (!empty($data['filter']['start_date'])) {
                 $start_date = formatDateToDB($data['filter']['start_date']);
             }
             //
-            if(!empty($data['filter']['end_date'])){
+            if (!empty($data['filter']['end_date'])) {
                 $end_date = formatDateToDB($data['filter']['end_date']);
             }
             //
-            if(!empty($data['filter']['Types'])){
+            if (!empty($data['filter']['Types'])) {
                 $status = $data['filter']['Types'];
             }
             //
-            if(!empty($data['filter']['Reviewers'])){
+            if (!empty($data['filter']['Reviewers'])) {
                 $reviewers = $data['filter']['Reviewers'];
             }
             $data['filter']['Id'] = $sid;
@@ -3267,12 +3309,12 @@ class Employee_management extends Public_Controller {
             $data['employerName'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
             $data['isSuperAdmin'] = $data['session']['employer_detail']['access_level_plus'];
             $data['level'] = $data['session']['employer_detail']['access_level_plus'] == 1 ? 1 : 0;
-            $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
+            $data['employerRole'] = $data['session']['employer_detail']['access_level'];
 
             //
-            $data['ne']= [];
+            $data['ne'] = [];
             $data['ne'][$employee_detail['sid']] = $employee_detail;
-    
+
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/employee_management/reviews');
             $this->load->view('main/footer');
@@ -3282,7 +3324,8 @@ class Employee_management extends Public_Controller {
     }
 
     //
-    function GetEmployeeProfile($employeeId){
+    function GetEmployeeProfile($employeeId)
+    {
         //
         $resp = [
             'Status' => false,
@@ -3308,15 +3351,15 @@ class Employee_management extends Public_Controller {
             //
             $companyId = $this->session->userdata('logged_in')['company_detail']['sid'];
         }
-        
+
         //
-        
+
         // Fetch employees profile
         $record = $this->employee_model->GetEmployeeProfile($employeeId, $companyId);
         //
-        if(empty($record)){
+        if (empty($record)) {
             $resp['Msg'] = 'Employee not found';
-        } else{
+        } else {
             $assigned_auth_documents = $this->employee_model->GetEmployeeAssignAuthDocument($employeeId, $companyId);
             $record["assigned_auth_documents"] = $assigned_auth_documents;
             //
@@ -3327,10 +3370,11 @@ class Employee_management extends Public_Controller {
         //
         res($resp);
     }
-    
-    
+
+
     //
-    function GetAllEmployees(){
+    function GetAllEmployees()
+    {
         //
         $resp = [
             'Status' => false,
@@ -3353,9 +3397,9 @@ class Employee_management extends Public_Controller {
         // Fetch employees profile
         $records = $this->employee_model->GetAllEmployees($companyId);
         //
-        if(empty($records)){
+        if (empty($records)) {
             $resp['Msg'] = 'Employees not found';
-        } else{
+        } else {
             $resp['Status'] = true;
             $resp['Msg'] = 'Proceed.';
             $resp['Data'] = $records;
@@ -3367,7 +3411,8 @@ class Employee_management extends Public_Controller {
     /**
      * 
      */
-    function findDifference ($previous_data, $form_data) {
+    function findDifference($previous_data, $form_data)
+    {
         // 
         $profile_changed = 0;
         //
@@ -3376,7 +3421,7 @@ class Employee_management extends Public_Controller {
         if (!empty($previous_data)) {
             foreach ($previous_data as $key => $data) {
                 //
-                if(!isset($form_data[$key])){
+                if (!isset($form_data[$key])) {
                     continue;
                 }
                 //   
@@ -3390,65 +3435,66 @@ class Employee_management extends Public_Controller {
                     $profile_changed = 1;
                 }
             }
-        } 
+        }
         //
         return ['profile_changed' => $profile_changed, 'data' => $dt];
     }
 
-    function is_serialized( $data, $strict = true ) {
+    function is_serialized($data, $strict = true)
+    {
         // If it isn't a string, it isn't serialized.
-        if ( ! is_string( $data ) ) {
+        if (!is_string($data)) {
             return false;
         }
-        $data = trim( $data );
-        if ( 'N;' === $data ) {
+        $data = trim($data);
+        if ('N;' === $data) {
             return true;
         }
-        if ( strlen( $data ) < 4 ) {
+        if (strlen($data) < 4) {
             return false;
         }
-        if ( ':' !== $data[1] ) {
+        if (':' !== $data[1]) {
             return false;
         }
-        if ( $strict ) {
-            $lastc = substr( $data, -1 );
-            if ( ';' !== $lastc && '}' !== $lastc ) {
+        if ($strict) {
+            $lastc = substr($data, -1);
+            if (';' !== $lastc && '}' !== $lastc) {
                 return false;
             }
         } else {
-            $semicolon = strpos( $data, ';' );
-            $brace     = strpos( $data, '}' );
+            $semicolon = strpos($data, ';');
+            $brace     = strpos($data, '}');
             // Either ; or } must exist.
-            if ( false === $semicolon && false === $brace ) {
+            if (false === $semicolon && false === $brace) {
                 return false;
             }
             // But neither must be in the first X characters.
-            if ( false !== $semicolon && $semicolon < 3 ) {
+            if (false !== $semicolon && $semicolon < 3) {
                 return false;
             }
-            if ( false !== $brace && $brace < 4 ) {
+            if (false !== $brace && $brace < 4) {
                 return false;
             }
         }
         $token = $data[0];
-        switch ( $token ) {
+        switch ($token) {
             case 's':
-                if ( $strict ) {
-                    if ( '"' !== substr( $data, -2, 1 ) ) {
+                if ($strict) {
+                    if ('"' !== substr($data, -2, 1)) {
                         return false;
                     }
-                } elseif ( false === strpos( $data, '"' ) ) {
+                } elseif (false === strpos($data, '"')) {
                     return false;
                 }
                 // Or else fall through.
             case 'a':
             case 'O':
-                return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
+                return (bool) preg_match("/^{$token}:[0-9]+:/s", $data);
             case 'b':
             case 'i':
             case 'd':
                 $end = $strict ? '$' : '';
-                return (bool) preg_match( "/^{$token}:[0-9.E+-]+;$end/", $data );
+                return (bool) preg_match("/^{$token}:[0-9.E+-]+;$end/", $data);
         }
         return false;
     }
