@@ -343,8 +343,8 @@
 						if(d.allowed_departments != '0' && d.allowed_departments != null) $('#jsDepartments').select2('val', d.allowed_departments.split(',') );
 						if(d.allowed_teams != '0' && d.allowed_teams != null) $('#jsTeams').select2('val', d.allowed_teams.split(',') );
 						//
-						if (d.is_document_authorized == 1 && d.assign_managers != undefined ) {
-							$('#js-modify-assigned-document-signers').select2('val', d.assign_managers.split(',') );
+						if (d.is_document_authorized == 1 && d.managersList != undefined ) {
+							$('#js-modify-assigned-document-signers').select2('val', d.managersList.split(',') );
 						}
 						//
 						if (d.approver_document == 1)
@@ -412,7 +412,6 @@
 			<?php } ?>
 			if(do_descpt) rows += getSigners();
 			rows += getVisibilty(do_descpt);
-			console.log(d.managers_list);
 			//
 			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section',true); ?>`;
 			//
@@ -458,12 +457,12 @@
 					$('#js-modify-assign-document-download option[value="'+( d.download_required )+'"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="'+( d.acknowledgment_required )+'"]').prop('selected', true);
 					//
+					
 					if (d.signers != null && d.signers != '') {
 						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.signers.split(',')) : '';
 					} else if (d.managers_list != null && d.managers_list != '') {
 						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.managers_list.split(',')) : '';
 					}
-					do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.signers != null && d.signers != ''  ? d.signers.split(',') : null) : '';
 					//
 					if (d.has_approval_flow && d.has_approval_flow == 1) {
 						$('#jsHasApprovalFlow').prop('checked', true);

@@ -5222,7 +5222,7 @@ class Hr_documents_management extends Public_Controller
                 }
             }
 
-            $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employer_sid, 0, 1, 0, 0, 1);
+            $assigned_documents = $this->hr_documents_management_model->get_assigned_documents($company_sid, 'employee', $employer_sid, 0, 1, 0, 0, 1, 1);
             //
             $history_doc_sids = array();
             //
@@ -11197,7 +11197,7 @@ class Hr_documents_management extends Public_Controller
             }
         }
         //
-
+        
         if ($assignInsertId == null)
             $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
         else
@@ -11210,7 +11210,7 @@ class Hr_documents_management extends Public_Controller
             $managersList = '';
             //
             if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc) {
-                $managersList = implode(',', $post['managerList']);
+                $managersList = $post['managerList'];
             }
             //
             $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
@@ -11498,7 +11498,7 @@ class Hr_documents_management extends Public_Controller
         //     $managersList = '';
         //     //
         //     if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
-        //         $managersList = implode(',', $post['managerList']);
+        //         $managersList = $post['managerList'];
         //     }
         //     //
         //     $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
@@ -11643,16 +11643,16 @@ class Hr_documents_management extends Public_Controller
         // ], $post['mainDocumentId']);
 
         //
+
         $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
         $document_info = $this->hr_documents_management_model->get_approval_document_detail($assignInsertId, false);
-
         if (isset($post["assigner"]) || $post["hasApprovalFlow"] == 1) {
 
             //
             $managersList = "";
             //
             if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc) {
-                $managersList = implode(',', $post['managerList']);
+                $managersList = $post['managerList'];
             }
             //
             $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
@@ -14055,7 +14055,7 @@ class Hr_documents_management extends Public_Controller
         $send_email,
         $managers_list
     ) {
-
+   
         $session = $this->session->userdata('logged_in');
         $company_sid = $session['company_detail']['sid'];
         $employer_sid = $session['employer_detail']['sid'];
@@ -14289,6 +14289,7 @@ class Hr_documents_management extends Public_Controller
         //
         // Send email notification to approver with a private link
         log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
+
     }
 
     /**

@@ -181,15 +181,7 @@
                                                                                     <button class="btn btn-warning  btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
                                                                                 <?php } ?>
                                                                             <?php } ?>
-                                                                            <?php if ($document['approval_process'] == 1) { ?>
-                                                                                <button 
-                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                    data-user_type="<?=$user_type;?>"
-                                                                                    data-user_sid="<?=$user_sid;?>"
-                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                    View Approver(s)
-                                                                                </button>
-                                                                            <?php } ?>
+                                                                            
                                                                         <?php } ?>
                                                                         <?=getSendDocumentEmailButton($document, $session['employer_detail'], $user_type);?>
                                                                         <?php if ($document['approval_process'] == 1) { ?>

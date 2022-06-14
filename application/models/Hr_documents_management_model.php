@@ -554,7 +554,7 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
-    function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0, $ems = 0)
+    function get_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0, $ems = 0, $adf = 0)
     {
 
         $payroll_sids = $this->get_payroll_documents_sids();
@@ -567,6 +567,10 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.archive', $archive);
+        //
+        if ($adf == 1) {
+            $this->db->where('approval_process', 0);
+        }
         //
         if ($ems == 1) {
             $this->db->where('documents_assigned.is_confidential', 0);
@@ -610,69 +614,6 @@ class Hr_documents_management_model extends CI_Model
                     ->select('letter_type')
                     ->where('sid', $v['document_sid'])
                     ->get('offer_letter');
-                //
-                $b = $a->row_array();
-                $a = $a->free_result();
-                //
-                $record_arr[$k]['letter_type'] = $b['letter_type'];
-            }
-        }
-
-        return $record_arr;
-    }
-
-    function get_my_assigned_documents($company_sid, $user_type, $user_sid = null, $status = 1, $fetch_offer_letter = 1, $archive = 0, $pp_flag = 0) {
-
-        $payroll_sids = $this->get_payroll_documents_sids();
-        $documents_management_sids = $payroll_sids['documents_management_sids'];
-        $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
-
-        $this->db->select('documents_assigned.*,documents_management.acknowledgment_required,documents_management.download_required,documents_management.signature_required,documents_management.archive,documents_management.visible_to_payroll, documents_management.is_available_for_na,  documents_management.is_specific');
-        if(ASSIGNEDOCIMPL) $this->db->select('documents_assigned.acknowledgment_required,documents_assigned.download_required,documents_assigned.signature_required, documents_management.is_available_for_na');
-        $this->db->where('documents_assigned.company_sid', $company_sid);
-        $this->db->where('user_type', $user_type);
-        $this->db->where('user_sid', $user_sid);
-        $this->db->where('approval_process', 0);
-        $this->db->where('documents_assigned.archive', $archive);
-
-        if($fetch_offer_letter){
-            $this->db->where('documents_assigned.document_type <>', 'offer_letter');
-        }
-
-        if ($status) {
-            $this->db->where('status', $status);
-        }
-
-        if($pp_flag) {
-            $this->db->group_start();
-            $this->db->where('documents_management.visible_to_payroll',1);
-            $this->db->or_where('documents_assigned.visible_to_payroll',1);
-
-            if (!empty($documents_management_sids)) {
-                $this->db->or_where_in('documents_management.sid',$documents_management_sids);
-            }
-
-            if (!empty($documents_assigned_sids)) {
-                $this->db->or_where_in('documents_assigned.sid',$documents_assigned_sids);
-            }
-            $this->db->group_end();
-        }
-        
-        $this->db->join('documents_management','documents_management.sid = documents_assigned.document_sid','left');
-        //$this->db->order_by('documents_assigned.assigned_date', 'desc');
-        $record_obj = $this->db->get('documents_assigned');
-        $record_arr = $record_obj->result_array();
-        $record_obj->free_result();
-
-        if(sizeof($record_arr)){
-            foreach ($record_arr as $k => $v) {
-                $record_arr[$k]['letter_type'] = '';
-                if($v['document_type'] != 'offer_letter') continue;
-                //
-                $a = $this->db
-                ->select('letter_type')
-                ->where('sid', $v['document_sid'])
-                ->get('offer_letter');
                 //
                 $b = $a->row_array();
                 $a = $a->free_result();
