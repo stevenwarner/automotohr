@@ -13852,6 +13852,12 @@ label.control {
     border-color: #ee7600 !important;
 }
 
+.btn-primary:hover {
+    background-color: #ee7600 !important;
+    border-color: #ee7600 !important;
+}
+
+
 .btn-secondary,
 .btn-secondary:hover {
     background-color: #d6d6d6 !important;
@@ -17855,4 +17861,8 @@ input[type='checkbox'].user_checkbox:checked:after {
     float: left;
     line-height: 34px;
     margin-left: 6px;
+}
+
+.email-notification-dropdown li a.btn-primary:hover {
+    background-color: #0000FF !important;
 }
