@@ -119,7 +119,7 @@
                                                     <?php echo form_error('middle_name'); ?>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
-                                                    <label>last name:<samp class="red"> * </samp></label>
+                                                    <label>last name:</label>
                                                     <input
                                                         class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>"
                                                         value="<?php echo set_value('last_name', $employer["last_name"]); ?>"
@@ -1654,10 +1654,6 @@ function validate_employers_form() {
             middle_name: {
                 pattern: /^[a-zA-Z\-,' ]+$/
             },
-            last_name: {
-                required: true,
-                pattern: /^[a-zA-Z\-,' ]+$/
-            },
             Location_Address: {
                 pattern: /^[a-zA-Z0-9/\-#,':;. ]+$/
             },
@@ -1713,10 +1709,6 @@ function validate_employers_form() {
                 pattern: 'Letters, numbers, and dashes only please'
             },
             first_name: {
-                pattern: 'Letters, numbers, and dashes only please'
-            },
-            last_name: {
-                required: 'Last Name is required',
                 pattern: 'Letters, numbers, and dashes only please'
             },
             email: {

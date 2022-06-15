@@ -480,6 +480,8 @@ class employers extends Admin_Controller {
                 $access_level = $this->input->post('security_access_level');
                 $registration_date = $this->input->post('registration_date');
                 $action = $this->input->post('action');
+                $gender = $this->input->post('gender');
+                $timezone =$this->input->post('timezone');
                 $salt = generateRandomString(48);
 
                 if($registration_date !=NULL) {
@@ -505,6 +507,8 @@ class employers extends Admin_Controller {
                 $insert_data['alternative_email'] = $alternative_email;
                 $insert_data['access_level'] = $access_level;
                 $insert_data['salt'] = $salt;
+                $insert_data['gender'] = $gender;
+                $insert_data['timezone'] = $timezone;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
