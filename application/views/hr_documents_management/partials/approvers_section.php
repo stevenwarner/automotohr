@@ -10,7 +10,7 @@
                 <!--  -->
                 <div class="row">
                     <div class="col-sm-12">
-                        <p class="text-danger"><strong><i aria-hidden="true">Note: On assignment the document will be sent to the selected approvals for approval. The employee/applicant will not have the visibility to document unless the document is approved.</i></strong></p>
+                        <p class="text-danger"><strong><i aria-hidden="true">Note: When assigned this document will be sent to each of the selected approvers for their approval. The employee/applicant will not have visibility to this document until the document has been approved by all Approvers first.</i></strong></p>
                     </div>
                 </div>
                 <!--  -->
