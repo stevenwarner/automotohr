@@ -10566,7 +10566,7 @@ class Hr_documents_management extends Public_Controller
             $do_upload = $post['perform_action'] == 'uploaded' || $post['perform_action'] == 'hybrid_document' ? true : false;
             $do_descpt = $post['perform_action'] == 'generated' || $post['perform_action'] == 'hybrid_document' ? true : false;
 
-            $data_to_insert['isdoctolibrary'] = $post['isdoctolibrary'];
+            $data_to_insert['isdoctolibrary'] = isset($post['isdoctolibrary']) ? $post['isdoctolibrary']: 0;
             $data_to_insert['visible_to_document_center'] = 0;
 
             // Fo uploaded file
@@ -10794,7 +10794,7 @@ class Hr_documents_management extends Public_Controller
                 $a['acknowledgment_required'] = $post['acknowledgment_required'];
                 $a['signature_required'] = $post['signature_required'];
                 $a['is_required'] = $post['isRequired'];
-                $a['isdoctolibrary'] = $post['isdoctolibrary'];
+                $a['isdoctolibrary'] = isset($post['isdoctolibrary']) ? $post['isdoctolibrary'] : 0;
 
                 $a['is_signature_required'] = $post['isSignatureRequired'];
                 $a['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
