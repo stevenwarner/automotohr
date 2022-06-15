@@ -1078,6 +1078,7 @@
             'BasicRole' => $v['access_level'],
             'Role' => trim(remakeEmployeeName($v, false)),
             'Image' => AWS_S3_BUCKET_URL. (empty($v['profile_picture']) ? 'test.png' : $v['profile_picture']),
+            'Image2' => $v['profile_picture'],
             'Email' => strtolower($v['email']),
             'EmploymentType' => strtolower($v['employee_type']),
             'JobTitle' => ucwords(strtolower($v['job_title'])),

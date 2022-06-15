@@ -56,7 +56,7 @@
         </table>
     </div>
     <div class="col-sm-3 col-xs-12" style="padding-top: 30px;">
-        <figure><img style="display: block; max-width: 100%; margin: auto;" src="<?= getImageURL($Image); ?>" alt="Employee" />
+        <figure><img style="display: block; max-width: 100%; margin: auto;" src="<?= getImageURL($Image2); ?>" alt="Employee" />
         </figure>
     </div>
 
