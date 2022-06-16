@@ -1,3 +1,6 @@
+<?php
+$id_checkbox = isset($id_checkbox) ? $id_checkbox : 'setting_is_confidential';
+?>
 <!-- Document Settings -->
 <div class="panel <?= isset($cl) ? $cl : 'panel-default'; ?>">
     <div class="panel-heading"><strong>Document Settings</strong></div>
@@ -7,13 +10,14 @@
             <div class="col-sm-12">
                 <label class="control control--checkbox">
                     Confidential Document <span class="text-danger">(The document will not be visible to the employee/applicant)</span>
-                    <input type="checkbox" name="setting_is_confidential" <?= $is_confidential == 1 ? 'checked' : ''; ?> id="setting_is_confidential" />
+                    <input type="checkbox" name="setting_is_confidential" <?= $is_confidential == 1 ? 'checked' : ''; ?> id="<?= $id_checkbox ?>" />
                     <div class="control__indicator"></div>
                 </label>
             </div>
 
-            <div class="col-sm-12" style="margin-top: 20px;" id="confidentialSelectedEmployeesdiv">
-                <label>Employee(s) <span class="text-danger"><strong>Selected employees will have visibility to this document.</strong></span>
+            <div class="col-sm-12 confidentialSelectedEmployeesdiv" style="margin-top: 20px;" id="confidentialSelectedEmployeesdiv">
+            <hr> <p class="text-danger"><strong><em>Selected employees will have visibility to this document.<em></strong></p>    
+            <label>Employee(s) 
                 </label>
 
                 <?php
