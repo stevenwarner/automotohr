@@ -7309,6 +7309,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $this->db->select('*');
         $this->db->where('portal_document_assign_sid', $document_sid);
+        // $this->db->where('status', 1);
         $this->db->order_by('sid', 'desc');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->result_array();
@@ -8140,6 +8141,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $this->db->select('sid, assigner_sid, assigner_turn, assign_on, note as approval_note, approval_status, action_date, approver_email');
         $this->db->where('portal_document_assign_sid', $flow_sid);
+        $this->db->order_by('sid', 'desc');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
