@@ -65,11 +65,21 @@
 			
 			<div class="main">
 			    <div class="container">
+			    	<!--  -->
+			    	<?php if ($request_type == "view") { ?>
+				        <div class="row">
+				            <br>
+				            <div class="col-sm-12">
+				                <!--  -->
+				                <?php $this->load->view('document_view'); ?>
+				            </div>
+				        </div>
+				    <?php } ?>
 			        <!--  -->
 					<div class="row">
 					    <div class="col-sm-12">
 					        <table class="table table-striped table-bordered">
-					            <caption class="csF18 csB7">Document Details.</caption>
+					            <caption class="csF18 csB7">Document Details</caption>
 					            <tbody>
 					                <tr>
 					                    <td class="col-sm-3"><strong>Document Title</strong></td>
@@ -81,19 +91,19 @@
 					                </tr>
 					                <tr>
 					                    <td class="col-sm-3"><strong>Acknowledgment Required</strong></td>
-					                    <td class="col-sm-9"><?php echo $document_detail['acknowledgment_required'] ? 'Yes' : 'No'; ?></td>
+					                    <td class="col-sm-9"><?php echo $document_info['acknowledgment_required'] ? 'Yes' : 'No'; ?></td>
 					                </tr>
 					                <tr>
 					                    <td class="col-sm-3"><strong>Download Required</strong></td>
-					                    <td class="col-sm-9"><?php echo $document_detail['download_required'] ? 'Yes' : 'No'; ?></td>
+					                    <td class="col-sm-9"><?php echo $document_info['download_required'] ? 'Yes' : 'No'; ?></td>
 					                </tr>
 					                <tr>
 					                    <td class="col-sm-3"><strong>Signature Required</strong></td>
-					                    <td class="col-sm-9"><?php echo $document_detail['signature_required'] ? 'Yes' : 'No'; ?></td>
+					                    <td class="col-sm-9"><?php echo $document_info['signature_required'] ? 'Yes' : 'No'; ?></td>
 					                </tr>
 					                <tr>
 					                    <td class="col-sm-3"><strong>Document Required</strong></td>
-					                    <td class="col-sm-9"><?php echo $document_detail['is_required'] ? 'Yes' : 'No'; ?></td>
+					                    <td class="col-sm-9"><?php echo $document_info['is_required'] ? 'Yes' : 'No'; ?></td>
 					                </tr>
 					            </tbody>
 					        </table>
@@ -113,7 +123,7 @@
 					                </tr>
 					                <tr>
 					                    <td class="col-sm-3"><strong>Assigned To Type</strong></td>
-					                    <td class="col-sm-9"><?=ucfirst($document_user_type);?></td>
+					                    <td class="col-sm-9"><?=ucfirst($user_type);?></td>
 					                </tr>
 					            </tbody>
 					        </table>
@@ -165,42 +175,101 @@
 					<!--  -->
 
 					<!--  -->
-					<div class="row">
-					    <div class="col-sm-12">
-					        <table class="table table-striped table-bordered">
-					            <caption class="csF18 csB7">Action</caption>
-					            <tbody>
-					                <tr>
-					                    <td class="col-sm-12">
-					                        <div class="field-row">
-					                            <select id="approver_action_status" class="form-control" >
-					                                <option value="0" >Please Select an Action</option>
-					                                <option value="Approve" <?php echo $action == "accept" ? 'selected' : '' ?>>Approve</option>
-					                                <option value="Reject" <?php echo $action == "reject" ? 'selected' : '' ?>>Reject</option>
-					                            </select>
-					                        </div>
-					                    </td>
-					                </tr>
-					                <tr>    
-					                    <td class="col-sm-12">
-					                        <div class="field-row">
-					                            <textarea class="ckeditor" name="note" id="approver_action_note" cols="60" rows="10">
-			                                            
-			                                    </textarea>
-					                        </div>
-					                    </td>
-					                </tr>
-					                <tr>    
-					                    <td class="col-sm-12">
-					                        <div class="field-row">
-					                            <button class="btn btn-success btn-block" id="jsSaveActionBtn">Save Action</button>
-					                        </div>
-					                    </td>
-					                </tr>
-					            </tbody>
-					        </table>
-					    </div>
-					</div>
+					<?php if ($approver_reference == $current_approver_reference && $request_type != "view") { ?>
+						<div class="row">
+						    <div class="col-sm-12">
+						        <table class="table table-striped table-bordered">
+						            <caption class="csF18 csB7">Action</caption>
+						            <tbody>
+						                <tr>
+						                    <td class="col-sm-12">
+						                        <div class="field-row">
+						                            <select id="approver_action_status" class="form-control" >
+						                                <option value="0" >Please Select an Action</option>
+						                                <option value="Approve" <?php echo $action == "accept" ? 'selected' : '' ?>>Approve</option>
+						                                <option value="Reject" <?php echo $action == "reject" ? 'selected' : '' ?>>Reject</option>
+						                            </select>
+						                        </div>
+						                    </td>
+						                </tr>
+						                <tr>    
+						                    <td class="col-sm-12">
+						                        <div class="field-row">
+						                            <textarea class="ckeditor" name="note" id="approver_action_note" cols="60" rows="10">
+				                                            
+				                                    </textarea>
+						                        </div>
+						                    </td>
+						                </tr>
+						                <tr>    
+						                    <td class="col-sm-12">
+						                        <div class="field-row">
+						                            <button class="btn btn-success btn-block" id="jsSaveActionBtn">Save Action</button>
+						                        </div>
+						                    </td>
+						                </tr>
+						            </tbody>
+						        </table>
+						    </div>
+						</div>
+					<?php } ?>
+					<!--  -->
+
+					<!--  -->
+					<?php if (!empty($approvers_list)) { ?>
+						<div class="row">
+						    <div class="col-sm-12">
+						        <table class="table table-striped table-bordered">
+						            <caption class="csF18 csB7">Approvers Details</caption>
+						            <thead>
+						                <tr>
+						                    <td class="csB6">Name</td>
+						                    <td class="csB6">Note</td>
+						                    <td class="csB6">Status</td>
+						                    <td class="csB6">Action Date</td>
+						                </tr>
+						            </thead>
+						            <tbody>
+					                    <?php foreach ($approvers_list as $approver) { ?>
+					                        <tr>
+					                            <td class="col-sm-3 csB6">
+					                                <?php 
+					                                    if(is_numeric($approver['assigner_sid']) && $approver['assigner_sid'] > 0){
+					                                        echo getUserNameBySID($approver['assigner_sid']);
+					                                    } else {
+					                                        echo getDefaultApproverName($company_sid, $approver['approver_email']);
+					                                    }
+					                                ?>
+					                                    
+					                            </td>
+					                            <td class="col-sm-3"><?php echo !empty($approver['approval_note']) ? $approver['approval_note'] : "N/A"; ?></td>
+					                            <?php 
+					                                $status_color = "";
+					                                $status_text = "";
+					                                if ($approver['approval_status'] == "Approve") {
+					                                    $status_color = "text-success";
+					                                    $status_text = "APPROVED";
+					                                } else if ($approver['approval_status'] == "Reject") {
+					                                    $status_color = "text-danger";
+					                                    $status_text = "REJECTED";
+					                                } else {
+					                                    $status_color = "text-warning";
+					                                    $status_text = "PENDING";
+					                                }
+					                            ?>
+					                            <td class="col-sm-2 csB6 <?php echo $status_color; ?>">
+					                                <?php echo $status_text; ?>
+					                            </td>
+					                            <td class="col-sm-2">
+					                            	<?php echo !empty($approver['action_date']) ? $approver['action_date'] : "N/A"; ?>
+					                            </td>
+					                        </tr>
+					                    <?php } ?>
+						            </tbody>
+						        </table>
+						    </div>
+						</div>
+					<?php } ?>
 					<!--  -->
 			    </div>
 			</div>

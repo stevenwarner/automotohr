@@ -695,6 +695,17 @@
 
 /* Theme */
 
+.csPageWrap a.btn-danger {
+    border-radius: 5px !important;
+    border: 1px solid #d14040;
+}
+
+.csPageWrap a.btn-danger:hover,
+.csPageWrap button.btn-danger:hover {
+    background-color: #ffffff !important;
+    color: #d14040;
+}
+
 .csPageWrap a.btn-orange,
 .csPageWrap button.btn-orange {
     background-color: #fd7a2a;
@@ -709,7 +720,7 @@
 
 .csPageWrap a.btn-orange:hover,
 .csPageWrap button.btn-orange:hover {
-    background-color: #ffffff;
+    background-color: #ffffff !important;
     color: #fd7b5b;
     border: 1px solid #fd7b5b;
 }
@@ -748,8 +759,10 @@
 }
 
 .csPageWrap a.btn-orange i,
+.csPageWrap a.btn-danger i,
 .csPageWrap button.btn-orange i,
 .csPageWrap button.btn-black i,
+.csPageWrap button.btn-danger i,
 .csPageWrap a.btn-black i {
     font-size: 14px;
 }

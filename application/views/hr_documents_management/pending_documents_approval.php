@@ -90,10 +90,10 @@
                                             </td>
                                             <td class="text-center vam">
                                                 <?php if(!isset($document['approval_note'])): ?>
-                                                <a href="javascript:;" data-action="Approve" data-sid="<?php echo $document['approver_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-orange"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
-                                                <a href="javascript:;" data-action="Reject" data-sid="<?php echo $document['approver_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-danger"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
+                                                <a href="javascript:;" data-action="Approve" data-sid="<?php echo $document['approver_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-orange btn-block"><i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;Approve</a>
+                                                <a href="javascript:;" data-action="Reject" data-sid="<?php echo $document['approver_sid'];?>" data-doc_sid="<?php echo $document['document_sid'] ?>" class="jsPerformAction btn btn-danger btn-block"><i class="fa fa-times-circle" aria-hidden="true"></i>&nbsp;Reject</a>
                                                 <?php endif; ?>
-                                                <a target="_blank" href="<?php echo $document_d_base . '/' . $document['document_sid']; ?>" class="btn btn-info csRadius5"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Document</a> 
+                                                <a href="<?php echo $document_d_base . '/' . $document['document_sid']; ?>" class="btn btn-info csRadius5 btn-block"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View Document</a> 
                                             </td>
                                         </tr>           
                                     <?php } ?>    
