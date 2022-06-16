@@ -117,6 +117,17 @@
                                                     </select>
 
                                                 </li>
+                                            
+                                            
+                                                <li class="form-col-100 autoheight">  
+                                                    <label>Employee Type:</label>
+                                                    <select class="invoice-fields" name="employee_type">
+                                                        <option  value="permanent">Permanent </option>
+                                                        <option  value="contractual"> Contractual</option>
+                                                    </select>
+                                                </li>
+
+
                                                 <li class="form-col-100 autoheight">
 
                                                     <div class="row js-timezone-row">

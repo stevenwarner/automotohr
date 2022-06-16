@@ -345,7 +345,8 @@ class employers extends Admin_Controller {
             $data['complynet_status'] = $this->input->post('complynet_status');
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
-            //
+            $data['employee_status'] = $this->input->post('employee_type');
+                //
             if ($data['gender'] != "other") {
                 $updateGender = array();
                 $updateGender['gender'] = ucfirst($data['gender']);
@@ -482,6 +483,7 @@ class employers extends Admin_Controller {
                 $action = $this->input->post('action');
                 $gender = $this->input->post('gender');
                 $timezone =$this->input->post('timezone');
+                $employee_status = $this->input->post('employee_type');
                 $salt = generateRandomString(48);
 
                 if($registration_date !=NULL) {
@@ -493,6 +495,7 @@ class employers extends Admin_Controller {
                 }
 
                 $insert_data = array();
+                $insert_data['employee_status'] = $employee_status;
                 $insert_data['ip_address'] = $ip_address;
                 $insert_data['username'] = $username;
                 $insert_data['email'] = $email;

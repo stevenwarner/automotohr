@@ -163,6 +163,17 @@
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
+                                                        <label>Employee Type:</label>
+                                                        <select class="invoice-fields" name="employee_type">
+                                                        <option  value="permanent">Permanent </option>
+                                                        <option  value="contractual"> Contractual</option>
+                                                    </select> 
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
                                                         <div class="row js-timezone-row">
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                             <div class=" input-grey ">

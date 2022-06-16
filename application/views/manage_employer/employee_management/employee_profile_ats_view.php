@@ -275,6 +275,50 @@
                                                 </div>
                                                 <!--  -->
                                             </div>
+
+                                            <div class="row">        
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Marital Status:</label>
+                                                    <select class="invoice-fields <?php if (form_error('marital_status') !== "") { ?> error <?php } ?>" name="marital_status">
+                                                        <option <?=$employer["marital_status"] == 'not_specified' ? 'selected' : '';?> value="not_specified">
+                                                            Please select marital status
+                                                        </option>
+                                                        <option <?=$employer["marital_status"] == 'Single' ? 'selected' : '';?> value="Single">
+                                                            Single
+                                                        </option>
+                                                        <option <?=$employer["marital_status"] == 'Married' ? 'selected' : '';?> value="Married">
+                                                            Married
+                                                        </option>
+                                                        <option <?=$employer["marital_status"] == 'Other' ? 'selected' : '';?> value="Other">
+                                                            Other
+                                                        </option>
+                                                    </select>
+                                                    <?php echo form_error('marital_status'); ?>
+                                                </div>
+
+
+
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Employee Type:</label>
+                                                    <select class="invoice-fields" name="employee_type">
+                                                        <option <?=$employer["employee_status"] == 'permanent' ? 'selected' : '';?> value="permanent">
+                                                        Permanent
+                                                        </option>
+                                                        <option <?=$employer["employee_status"] == 'contractual' ? 'selected' : '';?> value="contractual">
+                                                        Contractual
+                                                        </option>
+                                                       
+                                                    </select>
+                                                   
+                                                </div>
+
+
+                                            </div> 
+
+
+
+
+
                                             <?php if(IS_TIMEZONE_ACTIVE && $show_timezone != '') { ?>
                                                 <div class="row">
                                                     <!--  -->
@@ -408,26 +452,7 @@
                                                 </div>
                                                 <!--  -->
                                             </div>
-                                             <div class="row">        
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Marital Status:</label>
-                                                    <select class="invoice-fields <?php if (form_error('marital_status') !== "") { ?> error <?php } ?>" name="marital_status">
-                                                        <option <?=$employer["marital_status"] == 'not_specified' ? 'selected' : '';?> value="not_specified">
-                                                            Please select marital status
-                                                        </option>
-                                                        <option <?=$employer["marital_status"] == 'Single' ? 'selected' : '';?> value="Single">
-                                                            Single
-                                                        </option>
-                                                        <option <?=$employer["marital_status"] == 'Married' ? 'selected' : '';?> value="Married">
-                                                            Married
-                                                        </option>
-                                                        <option <?=$employer["marital_status"] == 'Other' ? 'selected' : '';?> value="Other">
-                                                            Other
-                                                        </option>
-                                                    </select>
-                                                    <?php echo form_error('marital_status'); ?>
-                                                </div>
-                                            </div>    
+                                               
                                             <div class="row">
                                                 <!--  -->
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">

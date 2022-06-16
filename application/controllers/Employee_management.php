@@ -389,12 +389,15 @@ class Employee_management extends Public_Controller
                 $employment_status = $this->input->post('employee-status');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+             // die($this->input->post('employee_type'));
+            
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 $start_date = reset_datetime(array('datetime' => $registration_date, '_this' => $this, 'from_format' => 'm-d-Y', 'format' => 'Y-m-d H:i:s'));
                 $verification_key = random_key() . "_csvImport";
                 $salt = generateRandomString(48);
                 $user_information = array();
+                $user_information['employee_status'] = $this->input->post('employee_type');
                 $user_information['gender'] =  $gender;
                 $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
@@ -415,8 +418,7 @@ class Employee_management extends Public_Controller
                 $user_information['PhoneNumber'] = $phonenumber;
                 $user_information['CompanyDescription'] = $company_description;
                 $user_information['salt'] = $salt;
-                $user_information['employee_status'] = $employment_status;
-                $user_information['employee_type'] = $employment_type;
+               $user_information['employee_type'] = $employment_type;
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
                 if (!empty($pictures) && $pictures != 'error') {
@@ -1388,6 +1390,7 @@ class Employee_management extends Public_Controller
                     $this->load->view('manage_employer/employee_management/employee_profile_ats_view');
                     $this->load->view('main/footer');
                 } else {
+                    
                     $shf_hr = $this->input->post('shift_hours');
                     $br_hr = $this->input->post('break_hours');
                     $br_min = $this->input->post('break_mins');
@@ -1506,7 +1509,8 @@ class Employee_management extends Public_Controller
                         'employee_number' => $this->input->post('employee_number'),
                         'department_sid' => $this->input->post('department'),
                         'gender' => $gender,
-                        'marital_status' => $this->input->post('marital_status')
+                        'marital_status' => $this->input->post('marital_status'),
+                        'employee_status' => $this->input->post('employee_type')
                     );
                     //
                     if ($gender != "other") {
@@ -2086,6 +2090,7 @@ class Employee_management extends Public_Controller
                 $this->load->view('manage_employer/my_profile_new');
                 $this->load->view('main/footer');
             } else {
+                
                 $sid = $this->input->post('id');
                 $pictures = $this->input->post('old_profile_picture');
                 $profile_picture = upload_file_to_aws('profile_picture', $company_id, 'profile_picture', $sid);
@@ -2193,8 +2198,10 @@ class Employee_management extends Public_Controller
                     'ssn' => $this->input->post('ssn'),
                     'dob' => $DOB,
                     'marital_status' => $this->input->post('marital_status'),
-                    'gender' => $gender
+                    'gender' => $gender,
+                    'employee_status' => $this->input->post('employee_type')
                 );
+              
                 //
                 if ($gender != "other") {
                     $updateGender = array();
