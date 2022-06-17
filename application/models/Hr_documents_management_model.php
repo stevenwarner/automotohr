@@ -7162,7 +7162,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->select('documents_assigned.document_type');
         $this->db->select('documents_assigned.user_sid');
         $this->db->select('documents_assigned.user_type');
-        $this->db->select('assigner_note.assigner_note');
+        $this->db->select('portal_document_assign_flow.assigner_note');
 
         $this->db->where('portal_document_assign_flow_employees.assigner_sid', $employee_sid);
         $this->db->where('portal_document_assign_flow_employees.status', 1);
