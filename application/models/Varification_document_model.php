@@ -270,6 +270,7 @@ class Varification_document_model extends CI_Model {
         $this->db->where('portal_document_assign_flow_employees.status', 1);
         $this->db->where('portal_document_assign_flow_employees.assigner_turn', 1);
         $this->db->where('portal_document_assign_flow.assign_status', 1);
+        $this->db->where('documents_assigned.approval_process', 1);
         $this->db->join('portal_document_assign_flow', 'portal_document_assign_flow.sid = portal_document_assign_flow_employees.portal_document_assign_sid', 'inner');
         $this->db->join('documents_assigned', 'documents_assigned.approval_flow_sid = portal_document_assign_flow.sid', 'inner');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
