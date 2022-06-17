@@ -7153,12 +7153,26 @@ class Hr_documents_management_model extends CI_Model
     public function getMyAssignApprovalInfo($employee_sid)
     {
 
-        $this->db->select('portal_document_assign_flow_employees.sid, portal_document_assign_flow_employees.portal_document_assign_sid, portal_document_assign_flow_employees.assign_on');
+        $this->db->select('portal_document_assign_flow_employees.sid');
+        $this->db->select('portal_document_assign_flow_employees.portal_document_assign_sid');
+        $this->db->select('portal_document_assign_flow_employees.assign_on');
+        $this->db->select('portal_document_assign_flow_employees.assigner_sid as approver_sid');
+        $this->db->select('documents_assigned.sid as document_sid');
+        $this->db->select('documents_assigned.document_title');
+        $this->db->select('documents_assigned.document_type');
+        $this->db->select('documents_assigned.user_sid');
+        $this->db->select('documents_assigned.user_type');
+        $this->db->select('assigner_note.assigner_note');
+
         $this->db->where('portal_document_assign_flow_employees.assigner_sid', $employee_sid);
         $this->db->where('portal_document_assign_flow_employees.status', 1);
         $this->db->where('portal_document_assign_flow_employees.assigner_turn', 1);
         $this->db->where('portal_document_assign_flow.assign_status', 1);
+        $this->db->where('documents_assigned.approval_process', 1);
+
+        $this->db->join('documents_assigned', 'documents_assigned.approval_flow_sid = assigner_note.sid', 'inner');
         $this->db->join('portal_document_assign_flow', 'portal_document_assign_flow.sid = portal_document_assign_flow_employees.portal_document_assign_sid', 'inner');
+        
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
