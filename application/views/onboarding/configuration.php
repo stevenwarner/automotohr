@@ -3,8 +3,10 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-12">
-                    <!-- <?php //$this->load->view('main/employer_column_left_view'); ?> -->
-<!--                    --><?php //$this->load->view('manage_employer/settings_left_menu_administration'); ?>
+                    <!-- <?php //$this->load->view('main/employer_column_left_view'); 
+                            ?> -->
+                    <!--                    --><?php //$this->load->view('manage_employer/settings_left_menu_administration'); 
+                                                ?>
                     <?php $this->load->view('main/manage_ems_left_view'); ?>
                 </div>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
@@ -20,7 +22,7 @@
                         </div>
                         <div class="accordion-colored-header header-bg-gray">
                             <div class="panel-group" id="onboarding-configuration-accordion">
-<!--                                <div class="panel panel-default">
+                                <!--                                <div class="panel panel-default">
                                     <div class="panel-heading">                                        
                                         <h4 class="panel-title">
                                             <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion"
@@ -33,14 +35,15 @@
                                                     <div class="btn btn-xs btn-success pull-right">
                                                         <i class="fa fa-check-circle"></i>&nbsp;Configured
                                                     </div>
-                                                <?php } */?>
+                                                <?php } */ ?>
                                                 Getting Started
                                             </a>
                                         </h4>
                                     </div>
                                     <div id="getting-started" class="panel-collapse collapse">
                                         <div class="panel-body">
-                                            <?php //$this->load->view('onboarding/configuration_getting_started'); ?>
+                                            <?php //$this->load->view('onboarding/configuration_getting_started'); 
+                                            ?>
                                         </div>
                                     </div>
                                 </div>-->
@@ -102,8 +105,7 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
-                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion"
-                                                   href="#office-locations"><span class="glyphicon glyphicon-plus"></span>
+                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion" href="#office-locations"><span class="glyphicon glyphicon-plus"></span>
                                                     <?php if (empty($office_locations)) { ?>
                                                         <div class="btn btn-xs btn-danger pull-right">
                                                             <i class="fa fa-arrow-circle-left"></i>&nbsp;Please Configure This Section
@@ -129,9 +131,8 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
-                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion"
-                                                   href="#office-timings"><span class="glyphicon glyphicon-plus"></span>
-                                                       <?php if (empty($office_timings)) { ?>
+                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion" href="#office-timings"><span class="glyphicon glyphicon-plus"></span>
+                                                    <?php if (empty($office_timings)) { ?>
                                                         <div class="btn btn-xs btn-danger pull-right">
                                                             <i class="fa fa-arrow-circle-left"></i>&nbsp;Please Configure This Section
                                                         </div>
@@ -156,9 +157,8 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
-                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion"
-                                                   href="#people-to-meet"><span class="glyphicon glyphicon-plus"></span>
-                                                       <?php if (empty($people)) { ?>
+                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion" href="#people-to-meet"><span class="glyphicon glyphicon-plus"></span>
+                                                    <?php if (empty($people)) { ?>
                                                         <div class="btn btn-xs btn-danger pull-right">
                                                             <i class="fa fa-arrow-circle-left"></i>&nbsp;Please Configure This Section
                                                         </div>
@@ -183,9 +183,8 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
-                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion"
-                                                   href="#what-to-bring"><span class="glyphicon glyphicon-plus"></span>
-                                                       <?php if (empty($what_to_bring_items)) { ?>
+                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion" href="#what-to-bring"><span class="glyphicon glyphicon-plus"></span>
+                                                    <?php if (empty($what_to_bring_items)) { ?>
                                                         <div class="btn btn-xs btn-danger pull-right">
                                                             <i class="fa fa-arrow-circle-left"></i>&nbsp;Please Configure This Section
                                                         </div>
@@ -210,9 +209,8 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading">
                                             <h4 class="panel-title">
-                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion"
-                                                   href="#useful-link"><span class="glyphicon glyphicon-plus"></span>
-                                                       <?php if (empty($useful_links)) { ?>
+                                                <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion" href="#useful-link"><span class="glyphicon glyphicon-plus"></span>
+                                                    <?php if (empty($useful_links)) { ?>
                                                         <div class="btn btn-xs btn-danger pull-right">
                                                             <i class="fa fa-arrow-circle-left"></i>&nbsp;Please Configure This Section
                                                         </div>
@@ -233,32 +231,73 @@
                                     </div>
                                 <?php } ?>
 
-<!--                                <div class="panel panel-default">-->
-<!--                                    <div class="panel-heading">-->
-<!--                                        <h4 class="panel-title">-->
-<!--                                            <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion"-->
-<!--                                               href="#dash-noti-link"><span class="glyphicon glyphicon-plus"></span>-->
-<!--                                                   --><?php //if (empty($useful_links)) { ?>
-<!--                                                    <div class="btn btn-xs btn-danger pull-right">-->
-<!--                                                        <i class="fa fa-arrow-circle-left"></i>&nbsp;Please Configure This Section-->
-<!--                                                    </div>-->
-<!--                                                --><?php //} else { ?>
-<!--                                                    <div class="btn btn-xs btn-success pull-right">-->
-<!--                                                        <i class="fa fa-check-circle"></i>&nbsp;Configured-->
-<!--                                                    </div>-->
-<!--                                                --><?php //} ?>
-<!--                                                Employee EMS Notification-->
-<!--                                            </a>-->
-<!--                                        </h4>-->
-<!--                                    </div>-->
-<!--                                    <div id="dash-noti-link" class="panel-collapse collapse">-->
-<!--                                        <div class="panel-body">-->
-<!--                                            --><?php //$this->load->view('onboarding/configuration_dashboard_notification'); ?>
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion" href="#getting-started-disclosure">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                <?php if (empty($onboarding_instructions_data)) { ?>
+                                                    <div class="btn btn-xs btn-danger pull-right">
+                                                        <i class="fa fa-arrow-circle-left"></i>&nbsp;Please Configure This Section
+                                                    </div>
+                                                <?php } else { ?>
+                                                    <div class="btn btn-xs btn-success pull-right">
+                                                        <i class="fa fa-check-circle"></i>&nbsp;Configured
+                                                    </div>
+                                                <?php } ?>
+                                                On-boarding Disclosure
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="getting-started-disclosure" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <?php $this->load->view('onboarding/configuration_onboarding_disclosure'); ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                <!--                                <div class="panel panel-default">-->
+                                <!--                                    <div class="panel-heading">-->
+                                <!--                                        <h4 class="panel-title">-->
+                                <!--                                            <a data-toggle="collapse" data-parent="#onboarding-configuration-accordion"-->
+                                <!--                                               href="#dash-noti-link"><span class="glyphicon glyphicon-plus"></span>-->
+                                <!--                                                   --><?php //if (empty($useful_links)) { 
+                                                                                            ?>
+                                <!--                                                    <div class="btn btn-xs btn-danger pull-right">-->
+                                <!--                                                        <i class="fa fa-arrow-circle-left"></i>&nbsp;Please Configure This Section-->
+                                <!--                                                    </div>-->
+                                <!--                                                --><?php //} else { 
+                                                                                        ?>
+                                <!--                                                    <div class="btn btn-xs btn-success pull-right">-->
+                                <!--                                                        <i class="fa fa-check-circle"></i>&nbsp;Configured-->
+                                <!--                                                    </div>-->
+                                <!--                                                --><?php //} 
+                                                                                        ?>
+                                <!--                                                Employee EMS Notification-->
+                                <!--                                            </a>-->
+                                <!--                                        </h4>-->
+                                <!--                                    </div>-->
+                                <!--                                    <div id="dash-noti-link" class="panel-collapse collapse">-->
+                                <!--                                        <div class="panel-body">-->
+                                <!--                                            --><?php //$this->load->view('onboarding/configuration_dashboard_notification'); 
+                                                                                    ?>
+                                <!--                                        </div>-->
+                                <!--                                    </div>-->
+                                <!--                                </div>-->
                             </div>
-                        </div> 
+                        </div>
                     </div>
                 </div>
             </div>
@@ -266,10 +305,10 @@
     </div>
 </div>
 <script>
-    $(document).ready(function () {
-        $('.collapse').on('shown.bs.collapse', function () {
+    $(document).ready(function() {
+        $('.collapse').on('shown.bs.collapse', function() {
             $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function () {
+        }).on('hidden.bs.collapse', function() {
             $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
     });
