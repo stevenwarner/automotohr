@@ -271,6 +271,7 @@ class Varification_document_model extends CI_Model {
 
         $this->db->select('documents_assigned.has_approval_flow');
         $this->db->select('documents_assigned.approval_process');
+        $this->db->select('documents_assigned.sid');
         $this->db->where('portal_document_assign_flow_employees.assigner_sid', $employee_sid);
         $this->db->where('portal_document_assign_flow_employees.status', 1);
         $this->db->where('portal_document_assign_flow_employees.assigner_turn', 1);
