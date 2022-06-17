@@ -265,17 +265,42 @@ class Varification_document_model extends CI_Model {
     //
     public function getMyApprovalDocuments ($employee_sid) {
         //
-        $this->db->select('sid');
+        $this->db->select('portal_document_assign_sid');
         $this->db->where('assigner_sid', $employee_sid);
         $this->db->where('status', 1);
         $this->db->where('assigner_turn', 1);
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
-        $records_arr = $records_obj->result_array();
+        $my_documents = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();
 
-        if (!empty($records_arr)) {
-            $return_data = $records_arr;
+        if (!empty($my_documents)) {
+            foreach ($my_documents as $mkey => $document) {
+                $is_active = $this->checkFlowIsActive($document["portal_document_assign_sid"]);
+                //
+                if ($is_active == 0) {
+                    unset($my_documents[$mkey]);
+                }
+            }
+            //
+            $return_data = $my_documents;
+        }
+
+        return $return_data;
+    }
+
+    public function checkFlowIsActive ($flow_sid) {
+        //
+        $this->db->select('sid');
+        $this->db->where('sid', $flow_sid);
+        $this->db->where('assign_status', 1);
+        $records_obj = $this->db->get('portal_document_assign_flow');
+        $is_active = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = 0;
+
+        if (!empty($is_active)) {
+            $return_data = 1;
         }
 
         return $return_data;

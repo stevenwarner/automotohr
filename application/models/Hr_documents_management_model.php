@@ -7309,7 +7309,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $this->db->select('*');
         $this->db->where('portal_document_assign_sid', $document_sid);
-        // $this->db->where('status', 1);
+        $this->db->order_by('sid', 'desc');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
@@ -8136,10 +8136,10 @@ class Hr_documents_management_model extends CI_Model
         return $return_data;
     }
 
-    public function get_document_approvers ($document_sid) {
+    public function get_document_approvers ($flow_sid) {
         //
         $this->db->select('sid, assigner_sid, assigner_turn, assign_on, note as approval_note, approval_status, action_date, approver_email');
-        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('portal_document_assign_sid', $flow_sid);
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
@@ -8789,7 +8789,7 @@ class Hr_documents_management_model extends CI_Model
     }
     public function get_approval_document_detail($document_sid, $status = true) {
         //
-        $this->db->select('company_sid, user_sid, user_type, approval_flow_sid, document_title, document_type, document_sid, acknowledgment_required, download_required, signature_required, is_required, assigned_by, document_approval_employees, has_approval_flow');
+        $this->db->select('company_sid, user_sid, user_type, approval_flow_sid, document_title, document_type, document_description, document_s3_name, document_sid, acknowledgment_required, download_required, signature_required, is_required, assigned_by, document_approval_employees, has_approval_flow');
         $this->db->where('sid', $document_sid);
         //
         if ($status) {

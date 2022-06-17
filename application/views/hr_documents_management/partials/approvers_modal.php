@@ -69,15 +69,21 @@
                             </td>
                             <td class="col-sm-3"><?php echo !empty($approver['approval_note']) ? $approver['approval_note'] : "N/A"; ?></td>
                             <?php 
-                                $color = "text-warning";
+                                $status_color = "";
+                                $status_text = "";
                                 if ($approver['approval_status'] == "Approve") {
-                                    $color = "text-success";
+                                    $status_color = "text-success";
+                                    $status_text = "APPROVED";
                                 } else if ($approver['approval_status'] == "Reject") {
-                                    $color = "text-danger";
+                                    $status_color = "text-danger";
+                                    $status_text = "REJECTED";
+                                } else {
+                                    $status_color = "text-warning";
+                                    $status_text = "PENDING";
                                 }
                             ?>
-                            <td class="col-sm-2 csB6 <?php echo $color; ?>">
-                                <?php echo !empty($approver['approval_status']) ? $approver['approval_status'] : "Pending"; ?>
+                            <td class="col-sm-2 csB6 <?php echo $status_color; ?>">
+                                <?php echo $status_text; ?>
                             </td>
                             <td class="col-sm-2"><?php echo !empty($approver['action_date']) ? $approver['action_date'] : "N/A"; ?></td>
                             <td class="col-sm-2">

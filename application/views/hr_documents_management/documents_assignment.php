@@ -6401,11 +6401,9 @@
 <?php $this->load->view('iframeLoader'); ?>
 <?php $this->load->view('hr_documents_management/hybrid/scripts'); ?>
 <?php 
-    if ($action_btn_flag || $session['employer_detail']['pay_plan_flag'] == 0){ 
-        $this->load->view('hr_documents_management/scripts/index', [
-            'offerLetters' => $company_offer_letters
-        ]); 
-    }
+    $this->load->view('hr_documents_management/scripts/index', [
+        'offerLetters' => $company_offer_letters
+    ]);
 ?> 
 
 <?php $this->load->view('hr_documents_management/category_manager'); ?>

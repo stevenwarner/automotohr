@@ -14468,8 +14468,15 @@ class Hr_documents_management extends Public_Controller
             $document_sid = $decrypt_keys[0];
             $approver_reference = $decrypt_keys[1];
             $type = $decrypt_keys[2];
+            $approvers_list = array();
             //
-            $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
+            if ($type == "view") {
+                $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid, false);
+                $approvers_list = $this->hr_documents_management_model->get_document_approvers($document_info["approval_flow_sid"]);
+            } else {
+                $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
+            }
+            
             //
             if (!empty($document_info)) {
                 $current_approver_info = $this->hr_documents_management_model->get_document_current_approver_sid($document_info['approval_flow_sid']);
@@ -14482,40 +14489,36 @@ class Hr_documents_management extends Public_Controller
                     $current_approver_reference = $current_approver_info["assigner_sid"];
                 }
                 //
-                if (!empty($document_info) && $current_approver_reference == $approver_reference) {
-
-                    $company_detail = $this->hr_documents_management_model->get_company_detail($document_info['company_sid']);
-                    $company_domain = $this->hr_documents_management_model->get_company_domain_by_sid($document_info['company_sid']);
-                    $approvers_flow_info = $this->hr_documents_management_model->get_approval_document_bySID($document_info['approval_flow_sid']);
-                    //
-                    $data = array();
-                    $data['company_detail'] = $company_detail;
-                    $data["approvers_note"] = $approvers_flow_info['assigner_note'];
-                    $data["document_title"] = $document_info['document_title'];
-                    $data["document_type"] = $document_info['document_type'];
-                    $data["assigned_by"] = $approvers_flow_info['assigned_by'];
-                    $data["assigned_date"] = $approvers_flow_info['assigned_date'];
-                    $data["document_user_type"] = $document_info["user_type"];
-                    $data["document_user_sid"] = $document_info["user_sid"];
-                    $data["document_detail"] = $document_info;
-                    $data["action"] = $type;
-                    $data["company_domain"] = $company_domain;
-                    $data["document_sid"] = $document_sid;
-                    $data["approver_reference"] = $approver_reference;
-                    //
-                    if ($document_info["user_type"] == "employee") {
-                        $data["document_user_name"] = getUserNameBySID($document_info["user_sid"]);
-                    } else {
-                        $data["document_user_name"] = getApplicantNameBySID($document_info["user_sid"]);
-                    }
-                    //
-                    // $this->load->view('main/public_header', $data);
-                    $this->load->view('hr_documents_management/public_approval_document', $data);
-                    // $this->load->view('main/public_footer');
-
+                $company_detail = $this->hr_documents_management_model->get_company_detail($document_info['company_sid']);
+                $company_domain = $this->hr_documents_management_model->get_company_domain_by_sid($document_info['company_sid']);
+                $approvers_flow_info = $this->hr_documents_management_model->get_approval_document_bySID($document_info['approval_flow_sid']);
+                //
+                $data = array();
+                $data['company_detail'] = $company_detail;
+                $data["approvers_note"] = $approvers_flow_info['assigner_note'];
+                $data["document_title"] = $document_info['document_title'];
+                $data["document_type"] = $document_info['document_type'];
+                $data["assigned_by"] = $approvers_flow_info['assigned_by'];
+                $data["assigned_date"] = $approvers_flow_info['assigned_date'];
+                $data["user_type"] = $document_info["user_type"];
+                $data["user_sid"] = $document_info["user_sid"];
+                $data["document_info"] = $document_info;
+                $data["action"] = $type;
+                $data["company_domain"] = $company_domain;
+                $data["document_sid"] = $document_sid;
+                $data["approver_reference"] = $approver_reference;
+                $data["current_approver_reference"] = $current_approver_reference;
+                $data["approvers_list"] = $approvers_list;
+                $data["request_type"] = $type;
+                //
+                if ($document_info["user_type"] == "employee") {
+                    $data["document_user_name"] = getUserNameBySID($document_info["user_sid"]);
                 } else {
-                    $this->load->view('onboarding/thank_you');
+                    $data["document_user_name"] = getApplicantNameBySID($document_info["user_sid"]);
                 }
+                //
+                $this->load->view('hr_documents_management/public_approval_document', $data);
+                //
             } else {
                 $this->load->view('onboarding/thank_you');
             }
@@ -14604,12 +14607,6 @@ class Hr_documents_management extends Public_Controller
         if (!$this->session->userdata('logged_in')) {
             //
             $resp['Msg'] = 'Your session has expired';
-            res($resp);
-        }
-        //
-        if (!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {
-            //
-            $resp['Msg'] = 'You don\'t permission to the employee profile.';
             res($resp);
         }
         //
