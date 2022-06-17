@@ -573,15 +573,18 @@ class Notification_model extends CI_Model {
 
     public function getMyApprovalDocuments ($employee_sid) {
         //
-        $this->db->select('portal_document_assign_flow_employees.sid, portal_document_assign_flow_employees.portal_document_assign_sid, portal_document_assign_flow_employees.assign_on');
+        $this->db->select('portal_document_assign_flow_employees.sid');
+
         $this->db->where('portal_document_assign_flow_employees.assigner_sid', $employee_sid);
         $this->db->where('portal_document_assign_flow_employees.status', 1);
         $this->db->where('portal_document_assign_flow_employees.assigner_turn', 1);
         $this->db->where('portal_document_assign_flow.assign_status', 1);
         $this->db->where('documents_assigned.approval_process', 1);
+
         $this->db->join('portal_document_assign_flow', 'portal_document_assign_flow.sid = portal_document_assign_flow_employees.portal_document_assign_sid', 'inner');
         $this->db->join('documents_assigned', 'documents_assigned.approval_flow_sid = portal_document_assign_flow.sid', 'inner');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
+
         $my_documents = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();

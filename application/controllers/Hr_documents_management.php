@@ -13621,36 +13621,6 @@ class Hr_documents_management extends Public_Controller
         //
         $assign_approvals = $this->hr_documents_management_model->getMyAssignApprovalInfo($employer_sid);
         //
-        $ar = $this->hr_documents_management_model->GetMyAcceptedAndRejected($employer_sid);
-        //
-        $assign_approvals = array_merge($assign_approvals, $ar);
-        //
-        if (!empty($assign_approvals)) {
-            foreach ($assign_approvals as $a_key => $approval) {
-                //
-                $document_flow_info = $this->hr_documents_management_model->getAssignApprovalDocumentInfo($approval['portal_document_assign_sid']);
-                //
-                if (!empty($document_flow_info)) {
-                    //
-                    $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_flow_info['document_sid']);
-                    //
-                    if(!empty($document_info)) {
-                        $assign_approvals[$a_key]['approver_sid'] = $employer_sid;
-                        $assign_approvals[$a_key]['document_sid'] = $document_flow_info['document_sid'];
-                        $assign_approvals[$a_key]['document_title'] = $document_info['document_title'];
-                        $assign_approvals[$a_key]['document_type'] = $document_info['document_type'];
-                        $assign_approvals[$a_key]['user_sid'] = $document_info['user_sid'];
-                        $assign_approvals[$a_key]['user_type'] = $document_info['user_type'];
-                        $assign_approvals[$a_key]['assigner_note'] = $document_flow_info['assigner_note'];
-                    } else {
-                        unset($assign_approvals[$a_key]);
-                    }
-                } else {
-                    unset($assign_approvals[$a_key]);
-                }
-            }
-        }
-        //
         $data["assign_approvals"] = $assign_approvals;
         //
         $data['employee'] = $employer_detail;
