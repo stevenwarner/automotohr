@@ -1176,6 +1176,17 @@ class Onboarding extends CI_Controller
 
                 $onboarding_instructions = str_replace('{{company_name}}', ucwords($data['session']['company_detail']['CompanyName']), $onboarding_instructions);
                 $data['onboarding_instructions'] = $onboarding_instructions;
+
+                $onboarding_disclosure_data = $this->onboarding_model->get_company_disclosure($company_info['sid'], 0, $applicant_sid);
+
+                if (empty($onboarding_disclosure_data)) {
+                    $onboarding_disclosure = "<b>Company Disclosure</b>";
+                } else {
+                    $onboarding_disclosure = $onboarding_disclosure_data[0]['disclosure'];
+                }
+
+                $data['onboarding_disclosure'] = $onboarding_disclosure;
+               
                 $assign_links = $this->onboarding_model->onboarding_assign_useful_links($applicant_sid, $company_sid);
                 $data['locations'] = array_merge($locations, $custom_office_locations);
                 $data['timings'] = $timings;
@@ -3011,6 +3022,18 @@ class Onboarding extends CI_Controller
                 $onboarding_instructions = $onboarding_instructions_data[0]['instructions'];
             }
 
+
+            $onboarding_disclosure_data = $this->onboarding_model->get_company_disclosure($company_sid);
+            $onboarding_disclosure_sid = 0;
+            $data['onboarding_disclosure_data'] = $onboarding_disclosure_data;
+            if (empty($onboarding_disclosure_data)) {
+                $onboarding_disclosure = "<b>Company Disclosure</b>";
+            } else {
+                $onboarding_disclosure_sid = $onboarding_disclosure_data[0]['sid'];
+                $onboarding_disclosure = $onboarding_disclosure_data[0]['disclosure'];
+            }
+
+
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|xss_clean|trim');
 
             if ($this->form_validation->run() == false) {
@@ -3030,8 +3053,12 @@ class Onboarding extends CI_Controller
                 $data['useful_links'] = $useful_links;
                 $ems_notification = $this->onboarding_model->get_all_ems_notification($company_sid); //Useful Links
                 $data['ems_notification'] = $ems_notification;
+                
+                $data['onboarding_disclosure'] = $onboarding_disclosure;
+
                 $employees = $this->onboarding_model->get_all_employees($company_sid); //Employees
                 $employees_for_select = array();
+
 
                 foreach ($employees as $employee) {
                     $employees_for_select[$employee['sid']] = ucwords($employee['first_name'] . ' ' . $employee['last_name']);
@@ -3499,6 +3526,16 @@ class Onboarding extends CI_Controller
                         }
 
                         $this->session->set_flashdata('message', '<strong>Success: </strong> New Notification Added Successfully!');
+                        redirect('onboarding/configuration', 'refresh');
+                        break;
+
+                    case 'onboarding_disclosure':
+                        $disclosure = $this->input->post('disclosure');
+                        $data_to_insert['company_sid'] = $company_sid;
+                        $data_to_insert['disclosure'] = $disclosure;
+                        $data_to_insert['modified_by_sid'] = $employer_sid;
+                        $this->onboarding_model->insert_update_onboarding_disclosure($data_to_insert, $onboarding_disclosure_sid);
+                        $this->session->set_flashdata('message', '<strong>Success: </strong> Disclosure updated successfully!');
                         redirect('onboarding/configuration', 'refresh');
                         break;
                 }
@@ -4463,6 +4500,19 @@ class Onboarding extends CI_Controller
                     $sessions = $this->learning_center_model->get_all_training_sessions_new($company_sid);
                     $data['sessions'] = $sessions;
                     $sessions = $this->learning_center_model->get_assigned_online_videos('employee', $user_sid);
+
+                    // disclosure
+                    $onboarding_disclosure_data = $this->onboarding_model->get_company_disclosure($company_sid, $user_sid);
+
+                    if (empty($onboarding_disclosure_data)) {
+                        $onboarding_disclosure = "<b>Company Disclosure</b>";
+                    } else {
+                        $onboarding_disclosure = $onboarding_disclosure_data[0]['disclosure'];
+                    }
+
+                    
+                    $data['onboarding_disclosure'] = $onboarding_disclosure;
+
                     $video_session = array();
 
                     if (sizeof($sessions) > 0) {
@@ -4492,8 +4542,10 @@ class Onboarding extends CI_Controller
 
                     $onboarding_instructions = str_replace('{{company_name}}', ucwords($data['session']['company_detail']['CompanyName']), $onboarding_instructions);
                     $data['onboarding_instructions'] = $onboarding_instructions;
+
                     break;
                 case 'applicant':
+                  
                     $ats_params = $this->session->userdata('ats_params');
                     $data = applicant_right_nav($user_sid, $job_list_sid, $ats_params);
                     $data['job_list_sid'] = $job_list_sid;
@@ -4523,6 +4575,18 @@ class Onboarding extends CI_Controller
                     $sessions = $this->learning_center_model->get_all_training_sessions_new($company_sid); // Training Session
                     $data['sessions'] = $sessions;
                     $sessions = $this->learning_center_model->get_assigned_online_videos('applicant', $user_sid); // Assigned Video Session
+
+                    // disclosure
+                    $onboarding_disclosure_data = $this->onboarding_model->get_company_disclosure($company_sid, 0, $user_sid);
+
+                    if (empty($onboarding_disclosure_data)) {
+                        $onboarding_disclosure = "<b>Company Disclosure</b>";
+                    } else {
+                        $onboarding_disclosure = $onboarding_disclosure_data[0]['disclosure'];
+                    }
+              
+                    $data['onboarding_disclosure'] = $onboarding_disclosure;
+                   
                     $video_session = array();
 
                     if (sizeof($sessions) > 0) {
@@ -4552,7 +4616,9 @@ class Onboarding extends CI_Controller
 
                     $onboarding_instructions = str_replace('{{company_name}}', ucwords($data['session']['company_detail']['CompanyName']), $onboarding_instructions);
                     $data['onboarding_instructions'] = $onboarding_instructions;
+
                     break;
+
                 default:
                     $this->session->set_flashdata('message', '<strong>Error: </strong> You must specify!');
                     redirect('dashboard', 'refresh');
@@ -4623,7 +4689,6 @@ class Onboarding extends CI_Controller
                                 //
                                 $sendGroupEmail = 1;
                             }
-                            
                         }
                     }
                 }
@@ -4653,7 +4718,7 @@ class Onboarding extends CI_Controller
                 $extra_user_info["user_type"] = $user_type;
                 $extra_user_info["user_sid"] = $user_sid;
                 $this->load->model('hr_documents_management_model');
-                if($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS19")){
+                if ($this->hr_documents_management_model->doSendEmail($user_sid, $user_type, "HREMS19")) {
                     //
                     log_and_send_templated_email(HR_DOCUMENTS_NOTIFICATION_EMS,  $user_info['email'], $replacement_array, $hf, 1, $extra_user_info);
                 }
@@ -5243,6 +5308,8 @@ class Onboarding extends CI_Controller
                 $credentials_instructions = $this->input->post('credentials_instructions');
                 $credentials_access_level = $this->input->post('credentials_access_level');
                 $credentials_joining_date = $this->input->post('credentials_joining_date');
+                $disclosure = $this->input->post('onboarding_disclosure');
+
                 $job_list_info = $this->onboarding_model->get_job_list_data($job_list_sid);
 
                 if (empty($unique_sid)) {
@@ -5273,7 +5340,11 @@ class Onboarding extends CI_Controller
                 }
 
                 $this->onboarding_model->save_update_setup_onboarding_instructions($instructions, $user_type, $user_sid, $data['session']['company_detail']['sid'], $data['session']['employer_detail']['sid']);
+                
+                $this->onboarding_model->save_update_setup_onboarding_disclosure($disclosure, $user_type, $user_sid, $data['session']['company_detail']['sid'], $data['session']['employer_detail']['sid']);
 
+
+                
                 if (!empty($tsession)) {
                     $this->onboarding_model->update_specific_training_session($user_sid, $user_type, array('status' => 0));
 
@@ -7402,7 +7473,6 @@ class Onboarding extends CI_Controller
         header('Content-Type: application/json');
         echo json_encode($response);
         exit(0);
-        
     }
 
     public function documents($unique_sid)
@@ -10188,5 +10258,4 @@ class Onboarding extends CI_Controller
             redirect('login', 'refresh');
         }
     }
-  
 }
