@@ -36,10 +36,10 @@
                     <h1 class="text-blue"><?php echo ucwords($applicant['first_name']); ?>, You're All Ready to Go.</h1>
                     <!--                    <p>We're looking forward to having you here at <br><b><?php echo $company_info['CompanyName']; ?></b>.</p>-->
                     <p><?php echo $onboarding_instructions; ?></p>
-
-                    <hr>
-
-                    <p><?php echo $onboarding_disclosure; ?></p>
+                    <?php if (!empty($onboarding_disclosure)) { ?>
+                        <hr>
+                        <p><?php echo $onboarding_disclosure; ?></p>
+                    <?php } ?>    
                     <!--                    <p>--><?php //echo '<pre>';print_r($company_info);die(); 
                                                     ?>
                     <!--</p>-->
