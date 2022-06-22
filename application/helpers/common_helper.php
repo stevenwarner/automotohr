@@ -15569,9 +15569,16 @@ if(!function_exists('hasPermissionToDocument')){
     ){
         // Check the confidential as priority
         if($isConfidential == '1'){
+            //
+            if(!$confidentialEmployees){
+                return true;
+            }
+            //
             if($confidentialEmployees == "-1" || in_array($employeeId, explode(',', $confidentialEmployees))){
                 return true;
             }
+            //
+            return false;
         }
         // Check for plus
         if($isAdminPlus || $isPayPlan){
