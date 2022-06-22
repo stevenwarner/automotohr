@@ -693,16 +693,6 @@
                 var flag = 1;
                 var video_source = $('input[name="video_source"]:checked').val();
              
-             if ($("#setting_is_confidential").is(":checked")) {
-              var call=$("#confidentialSelectedEmployees").select2("val");
-              if($("#confidentialSelectedEmployees").select2("val")==null){
-                alertify.error('Please Select employee for confidential document');
-                return false;
-              }
-            } 
-
-              
-                 
                 if (video_source != 'not_required') {
 
                     if (video_source == 'youtube') {

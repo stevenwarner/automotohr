@@ -18,7 +18,7 @@
     <div class="dashboard-wrp">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -492,6 +492,9 @@
                                                     </div>
                                                 </div>
 
+                                                <br>
+                                                <?php $this->load->view('hr_documents_management/partials/settings'); ?>
+
                                                 <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
                                                     <div class="row">
                                                         <div class="col-xs-12">
@@ -584,9 +587,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <br>
-                                                <?php $this->load->view('hr_documents_management/partials/settings'); ?>
 
                                                 <div class="row">
                                                     <div class="col-xs-12">
@@ -703,11 +703,7 @@
     $(document).ready(function() {
 
 
-        if ($("#setting_is_confidential").is(":checked")) {
-            $("#confidentialSelectedEmployeesdiv").show();
-        } else {
-            $("#confidentialSelectedEmployeesdiv").hide();
-        }
+        $("#confidentialSelectedEmployeesdiv").hide();
 
         $("#setting_is_confidential").click(function() {
             if ($(this).is(":checked")) {
@@ -814,6 +810,20 @@
             //
             if (d.categories != null) {
                 $('#createcategories').select2('val', d.categories);
+            }
+            //
+            $("#setting_is_confidential").prop('checked', false);
+            $("#confidentialSelectedEmployeesdiv").hide();
+            $("#confidentialSelectedEmployees").select2("val", null);
+            //
+            if(d.is_confidential == 1){
+                $("#setting_is_confidential").prop('checked', true);
+                $("#confidentialSelectedEmployeesdiv").show();
+                $("#confidentialSelectedEmployees").select2("val", null);
+                //
+                if(d.confidential_employees){
+                    $("#confidentialSelectedEmployees").select2("val", d.confidential_employees.split(','));
+                }
             }
             //
             $('#js_perform_action').val(d.document_type);
