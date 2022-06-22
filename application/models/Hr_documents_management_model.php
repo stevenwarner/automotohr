@@ -573,7 +573,7 @@ class Hr_documents_management_model extends CI_Model
         }
         //
         if ($ems == 1) {
-            $this->db->where('documents_assigned.is_confidential', 0);
+            // $this->db->where('documents_assigned.is_confidential', 0);
         }
 
         if ($fetch_offer_letter) {
@@ -6584,34 +6584,71 @@ class Hr_documents_management_model extends CI_Model
         $sid,
         $ses
     ) {
+        // Check for confidential as priority
+        // on both main and assigned table
+        if(
+            $this->hasAccessToDocument($companyId, $sid, $ses['departments'], $ses['teams'], $role) ||
+            $this->hasAccessToDocument($companyId, $sid, $ses['departments'], $ses['teams'], $role, 'documents_assigned')
+        ){
+            return true;
+        }
         //
-        $this->db->from('documents_management');
-        //
-        $this->db->where('company_sid', $companyId);
-        $this->db->where('archive', 0);
-        $this->db->where('is_specific', 0);
-        $this->db->group_start();
-        // Role clause
-        $this->db->or_where('FIND_IN_SET("' . ($role) . '", is_available_for_na) > 0', NULL, FALSE);
-        // Allowed employees clause
-        $this->db->or_where('FIND_IN_SET("' . ($sid) . '", allowed_employees) > 0', NULL, FALSE);
-        // Department clause
-        $this->db->or_where('FIND_IN_SET("-1", allowed_departments) > 0', NULL, FALSE);
-        if (!empty($ses['departments'])) {
-            foreach ($ses['departments'] as $department) {
+        return false;
+    }
+
+    /**
+     * 
+     */
+    public function hasAccessToDocument(
+        $companyId,
+        $employeeId,
+        $departments,
+        $teams,
+        $role,
+        $tbl = 'documents_management'
+    ){
+        // In case of confidential
+        if(
+            $this->db
+            ->where('company_sid', $companyId)
+            ->where('is_confidential', 1)
+            ->where('archive', 0)
+            ->group_start()
+            ->where('confidential_employees', '-1')
+            ->or_where('confidential_employees', NULL)
+            ->or_where('confidential_employees', '')
+            ->or_where('FIND_IN_SET("'.($employeeId).'", confidential_employees) > 0', NULL, FALSE)
+            ->group_end()
+            ->count_all_results($tbl)
+        ){
+            return true;
+        }
+        // In case of visibility
+        $this->db
+        ->where('company_sid', $companyId)
+        ->where('archive', 0)
+        ->where('is_confidential', 0)
+        ->group_start()
+        ->or_where('FIND_IN_SET("' . ($role) . '", is_available_for_na) > 0', NULL, FALSE)
+        ->or_where('FIND_IN_SET("' . ($employeeId) . '", allowed_employees) > 0', NULL, FALSE)
+        ->or_where('FIND_IN_SET("-1", allowed_departments) > 0', NULL, FALSE)
+        ->or_where('FIND_IN_SET("-1", allowed_teams) > 0', NULL, FALSE);
+        // For departments
+        if (!$departments) {
+            foreach ($departments as $department) {
                 $this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
             }
-        }
-        // Team clause
-        $this->db->or_where('FIND_IN_SET("-1", allowed_teams) > 0', NULL, FALSE);
-        if (!empty($ses['teams'])) {
-            foreach ($ses['teams'] as $team) {
+        }  
+        // For teams
+        if ($teams) {
+            foreach ($teams as $team) {
                 $this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
             }
         }
-        $this->db->group_end();
         //
-        return $this->db->count_all_results();
+        return $this->db
+        ->group_end()
+        ->count_all_results($tbl);
     }
 
     //

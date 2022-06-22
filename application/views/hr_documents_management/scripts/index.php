@@ -271,6 +271,14 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				do_upload,
 				do_descpt;
 			//
+			if(!Object.keys(d).length){
+				return alertify.alert(
+					"Error!",
+					"You don't have permission to this document.",
+					function(){}
+				)
+			}
+			//
 			selectedTemplate = d;
 			//
 			do_upload = d.document_type == 'uploaded' || d.document_type == 'hybrid_document' || d.offer_letter_type == 'uploaded' || d.offer_letter_type == 'hybrid_document' ? true : false;
@@ -420,6 +428,26 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			});
 		}
 
+		$(document).on('click', '#modify-assigned-document-modal [name="setting_is_confidential"]', function(){
+			//
+			if(!$(this).prop('checked')){
+				$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').hide();
+				$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2('val', null);
+			} else{
+				$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').show();
+			}
+		});
+		
+		$(document).on('click', '#modify-assign-document-modal [name="setting_is_confidential"]', function(){
+			//
+			if(!$(this).prop('checked')){
+				$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').hide();
+				$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', null);
+			} else{
+				$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').show();
+			}
+		});
+
 
 		// Modify and Assign
 		function StartModifyAndAssignProcess(
@@ -551,40 +579,19 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					if (d.allowed_employees) {
 						$('#jsEmployees').select2('val', d.allowed_employees.split(','));
 					}
-					// }
-
+					//
 					$('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == '1' ? true : false);
-
 					//
 					$('#modify-assign-document-modal .confidentialSelectedEmployeesdiv').hide();
-					$('#modify-assign-document-modal #confidentialSelectedEmployees').select2();
+					$('#modify-assign-document-modal #confidentialSelectedEmployees').select2({ closeOnSelect: false });
 					//
 					if (d.is_confidential == "1") {
 						$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').show();
 						//
-						var employeeList = '';
-						if (d.confidential_employees == '-1') {
-							employeeList = -1;
-						} else {
-							employeeList = d.confidential_employees.split(',') || ''
+						if(d.confidential_employees){
+							$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 						}
-
-						$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', employeeList);
 					}
-
-					$('#modify-assign-document-modal [name="setting_is_confidential"]').on('click', function() {
-
-						if ($(this).is(":checked")) {
-
-							$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').show();
-							$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', employeeList);
-
-						} else {
-							$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').hide();
-							$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', "");
-						}
-
-					});
 
 					$('.jsModifyModalLoader').fadeOut(300);
 
@@ -938,7 +945,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.selected_teams = $('#jsTeams').val() || '';
 			obj.selected_employees = $('#jsEmployees').val() || '';
 			obj.is_confidential = $('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
-			obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
+			obj.confidentialSelectedEmployees = $('#modify-assigned-document-modal #confidentialSelectedEmployees').val() || '';
 
 			//
 			var assigners = new Array();
@@ -1020,7 +1027,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.teams = $('#jsTeams').val() || '';
 			obj.employees = $('#jsEmployees').val() || '';
 			obj.setting_is_confidential = $('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
-			obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
+			obj.confidentialSelectedEmployees = '';
+			//
+			if(obj.setting_is_confidential == 'on'){
+				obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
+			}
           	//
 			
 			var assigners = new Array();

@@ -3813,14 +3813,12 @@ class Hr_documents_management extends Public_Controller
             // Filter assigned documents
             // 01/08/2021
 
-            // _e($data['assigned_documents']);
             $data['assigned_documents'] =
-                cleanAssignedDocumentsByPermission(
-                    $data['assigned_documents'],
-                    $data['session']['employer_detail'],
-                    $employeeDepartments
-                );
-            // _e($data['assigned_documents'], true, true);
+            cleanAssignedDocumentsByPermission(
+                $data['assigned_documents'],
+                $data['session']['employer_detail'],
+                $employeeDepartments
+            );
 
             $data['uncompleted_payroll_documents'] =
                 cleanAssignedDocumentsByPermission(
@@ -11253,7 +11251,7 @@ class Hr_documents_management extends Public_Controller
             $a['confidential_employees'] = NULL;
             //
             if ($post['confidentialSelectedEmployees']) {
-                $a['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
+                $a['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : $post['confidentialSelectedEmployees'];
             }
 
             if (sizeof($_FILES)) {
@@ -11669,8 +11667,6 @@ class Hr_documents_management extends Public_Controller
         $assignInsertId = $post['documentSid'];
         //
         if (isset($post['desc'])) $a['document_description'] = $desc;
-
-        // $a['document_sid'] = $post['documentSid'];
         //
         $a['signature_required'] = $post['isSignature'];
         $a['download_required'] = $post['isDownload'];
@@ -11683,7 +11679,11 @@ class Hr_documents_management extends Public_Controller
         $a['allowed_departments'] = $post['selected_departments'];
         $a['allowed_teams'] = $post['selected_teams'];
         $a['is_confidential'] = $post['is_confidential'] == 'on' ? 1 : 0;
-        $a['confidential_employees'] = isset($post['confidential_employees']) && $post['confidential_employees'] ? implode(',', $post['confidential_employees']) : null;
+        $a['confidential_employees'] = null;
+        //
+        if($a['is_confidential'] == 1){
+            $a['confidential_employees'] = $post['confidentialSelectedEmployees'];
+        }
         //
         $session = $this->session->userdata('logged_in');
         $employer_sid = $session["employer_detail"]["sid"];
