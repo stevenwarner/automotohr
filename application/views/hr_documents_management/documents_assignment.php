@@ -34,7 +34,7 @@
     <div class="dashboard-wrp">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -3912,6 +3912,8 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/mFileUploader/index.js"></script>
 <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
 <script>
+
+//
 
     $('.modalShow').click(function(event){
 

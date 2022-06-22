@@ -562,6 +562,24 @@
 <script src="<?=base_url('assets/mFileUploader/index.js');?>"></script>
 <script>
     $(document).ready(function () {
+
+        if ($("#setting_is_confidential").is(":checked")) {
+            $("#confidentialSelectedEmployeesdiv").show();
+        } else {
+            $("#confidentialSelectedEmployeesdiv").hide();
+        }
+
+        $("#setting_is_confidential").click(function() {
+            if ($(this).is(":checked")) {
+                $("#confidentialSelectedEmployeesdiv").show();
+
+            } else {
+                $("#confidentialSelectedEmployeesdiv").hide();
+                $("#confidentialSelectedEmployees").select2("val", "");
+            }
+        });
+
+
         var pre_selected = '<?php echo !empty($document_info['video_url']) ? $document_info['video_source'] : ''; ?>';
 
         $('input[name="assign-in-days"]').val(0);
