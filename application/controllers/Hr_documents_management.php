@@ -238,6 +238,8 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update['download_required'] = $document['download_required'];
                                 $data_to_update['signature_required'] = $document['signature_required'];
                                 $data_to_update['acknowledgment_required'] = $document['acknowledgment_required'];
+                                //
+                                addColumnsForDocumentAssigned($data_to_update, $document);
                                 $this->hr_documents_management_model->update_documents($assignment_sid, $data_to_update, 'documents_assigned');
                             } else {
                                 $document = $this->hr_documents_management_model->get_hr_document_details($company_sid, $document_sid);
@@ -258,6 +260,8 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_insert['download_required'] = $document['download_required'];
                                 $data_to_insert['signature_required'] = $document['signature_required'];
                                 $data_to_insert['acknowledgment_required'] = $document['acknowledgment_required'];
+                                //
+                                addColumnsForDocumentAssigned($data_to_insert, $document);
 
                                 $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             }
