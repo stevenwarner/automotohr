@@ -148,7 +148,14 @@
 				</div>
 			</div>
 			<!-- 9 -->
+			
 			<?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+
+			<!--  Document Settings - Confidenti -->
+			<?php $this->load->view('hr_documents_management/partials/settings', [
+                                            'is_confidential' =>  $document_info['is_confidential']
+                                        ]); ?>
+
 			<!-- 7 -->
 			<div class="form-group js-for-generated">
 				<label>Authorized Management Signers</label>

@@ -470,7 +470,11 @@
                                              <?php   if(!empty($offer_letters)) {
                                                             foreach ($offer_letters as $offer_letter) { ?>
                                                                     <tr>
-                                                                        <td class="col-xs-9"><?php echo $offer_letter['letter_name']; ?></td>
+                                                                        <td class="col-xs-9"><?php echo $offer_letter['letter_name']; ?>
+                                                                        <?php if($offer_letter['is_confidential']==1){ echo "<br><strong>(Confidential)</strong>";}?>
+                                                                           
+                                                                        
+                                                                    </td>
                                                                         <td class="col-xs-1">
                                                                         <?php if($offer_letter['letter_type'] != 'hybrid_document') { ?>
                                                                         <?php if (check_access_permissions_for_view($security_details, 'add_edit_offer_letter')) { ?>

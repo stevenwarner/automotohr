@@ -228,7 +228,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <hr />
+                                        <br>
+                                        <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                       <br>
+
+                                        <?php $this->load->view('hr_documents_management/partials/settings', [
+                                            'is_confidential' =>  $document_info['is_confidential']
+                                        ]); ?>
+ <hr />
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <button type="submit" class="btn btn-success" onclick="validate_form();">Save</button>
@@ -351,3 +358,4 @@
         $('#jsManagers').select2(config);
     });
 </script>
+<?php $this->load->view('hr_documents_management/scripts/approvers'); ?>

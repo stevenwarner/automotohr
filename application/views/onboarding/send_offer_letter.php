@@ -267,7 +267,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                                
+                                            <br>
+                                            <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                       <br>
+                                             
+                                            <?php $this->load->view('hr_documents_management/partials/settings', ['is_confidential' =>  $document_info['is_confidential']]); ?>
+
                                             <div class="generated_offer_letter" style="display: none">
 
                                                 <div class="row">
@@ -493,8 +498,10 @@
             for (i; i < il; i++) {
                 if(offerLetters[i]['sid'] == sid) l = offerLetters[i];
             }
+            
             //
             if( l.length === 0 ) return;
+            
             //
             if(sid == assignedSid){
                 l = assignedOfferLetter;
@@ -503,7 +510,7 @@
                 l.uploaded_document_s3_name = l.document_s3_name;
                 l.uploaded_document_original_name = l.document_original_name;
             }
-            console.log(l);
+            //console.log(l);
             //
             $('.jsVisibleToPayroll').prop('checked', l.visible_to_payroll);
             $('#jsRoles').select2('val', l.allowed_roles && l.allowed_roles != 'null' ? l.allowed_roles.split(',') :  null);
@@ -511,6 +518,28 @@
             $('#jsTeams').select2('val', l.allowed_teams && l.allowed_teams != 'null' ? l.allowed_teams.split(',') :  null);
             $('#jsEmployees').select2('val', l.allowed_employees && l.allowed_employees != 'null' ? l.allowed_employees.split(',') :  null);
             //
+            $('[name="setting_is_confidential"]').prop('checked', l.is_confidential == 1 ? true : false)
+
+
+           	 // Approval flow 
+		  if(l.has_approval_flow == 1){
+           
+           $('.jsEmployeesadditionalBox').html('');
+		   $('#js-popup [name="has_approval_flow"]').prop('checked', l.has_approval_flow == 1 ? true : false);
+           $('.jsApproverFlowContainer').show();
+		   $('#js-popup [name="assigner_note"]').val(l.document_approval_note);
+		   DocumentApproverPrefill(l.document_approval_employees, 0);
+		   
+		   }else{
+			$('#js-popup [name="has_approval_flow"]').prop('checked',false);
+            $('.jsApproverFlowContainer').hide();
+		    $('#js-popup [name="assigner_note"]').val();
+          
+		   }
+
+
+
+
             $('#js-signers').select2({
                 closeOnSelect: false
             });
@@ -551,6 +580,8 @@
                 $("#uploaded_offer_letter_iframe").html( f.getHTML() );
                 $('#selected_document_s3_name').val(l.uploaded_document_s3_name);
                 $('#selected_document_original_name').val(l.uploaded_document_original_name);
+
+                
                 loadIframe(
                     f.URL,
                     f.Target
@@ -562,6 +593,8 @@
 
 
         $('#offer_letter_select').on('change', function () {
+        
+        
             loadOfferLetterView( $(this).val() );
             return;
             var selected_offer_letter_type      = $(this).find(':selected').attr('data-olt');
