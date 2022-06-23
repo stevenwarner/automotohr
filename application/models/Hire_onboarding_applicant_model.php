@@ -1127,7 +1127,7 @@ class Hire_onboarding_applicant_model extends CI_Model
             }
         }
         //
-        return $return_array
+        return $return_array;
     }
 
     function set_onboarding_as_completed($company_sid, $applicant_sid)
