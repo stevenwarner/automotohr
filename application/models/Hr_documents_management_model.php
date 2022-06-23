@@ -6629,7 +6629,7 @@ class Hr_documents_management_model extends CI_Model
         ->where('archive', 0)
         ->where('is_confidential', 0)
         ->group_start()
-        ->or_where('FIND_IN_SET("' . ($role) . '", is_available_for_na) > 0', NULL, FALSE)
+        ->or_where('FIND_IN_SET("' . ($role) . '", '.($tbl == 'documents_assigned' ? 'allowed_roles' : 'is_available_for_na').') > 0', NULL, FALSE)
         ->or_where('FIND_IN_SET("' . ($employeeId) . '", allowed_employees) > 0', NULL, FALSE)
         ->or_where('FIND_IN_SET("-1", allowed_departments) > 0', NULL, FALSE)
         ->or_where('FIND_IN_SET("-1", allowed_teams) > 0', NULL, FALSE);
