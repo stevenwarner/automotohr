@@ -11,7 +11,14 @@
 <?php foreach($MergeData as $md): ?>
     <?php 
         //
-        $me = unserialize($md['secondary_employee_profile_data']);
+        $me = "";
+        $secondary_data = unserialize($md['secondary_employee_profile_data']);
+        //
+        if (isset($secondary_data["user_profile"])) {
+            $me = $secondary_data["user_profile"];
+        } else {
+            $me = $secondary_data;
+        }
         //
         $extra_info = unserialize($me['extra_info']);
         $field_phone = 'PhoneNumber';

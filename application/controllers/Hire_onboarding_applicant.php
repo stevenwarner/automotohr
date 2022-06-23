@@ -462,6 +462,9 @@ class Hire_onboarding_applicant extends CI_Controller
         if ((empty($employee_profile_info['full_employment_application']) || $employee_profile_info['full_employment_application'] == NULL) && !empty($applicant_profile_info['full_employment_application'])) {
             $employer_data['full_employment_application'] = $applicant_profile_info['full_employment_application'];
             $update_flag = 1;
+            //
+            $this->hire_onboarding_applicant_model->form_full_employment_application($applicant_sid, $employee_sid);
+            //
         } else if (!empty($employee_profile_info['full_employment_application']) && !empty($applicant_profile_info['full_employment_application'])) {
             //
             $fef = unserialize($employee_profile_info['full_employment_application']);
@@ -477,8 +480,6 @@ class Hire_onboarding_applicant extends CI_Controller
             $employer_data['full_employment_application'] = serialize($fef);
             //
             $update_flag = 1;
-
-            $this->hire_onboarding_applicant_model->form_full_employment_application($applicant_sid, $employee_sid);
         }
 
         //
@@ -596,7 +597,8 @@ class Hire_onboarding_applicant extends CI_Controller
         $onboarding_configuration = $this->hire_onboarding_applicant_model->update_onboarding_configuration($applicant_sid, $employee_sid);
 
         // Groups
-        $this->hire_onboarding_applicant_model->update_groups($applicant_sid, $employee_sid);
+        $applicant_groups = $this->hire_onboarding_applicant_model->update_groups($applicant_sid, $employee_sid);
+
         // 14) Documents
         $documents = $this->hire_onboarding_applicant_model->update_documents($applicant_sid, $employee_sid);
 
@@ -613,6 +615,23 @@ class Hire_onboarding_applicant extends CI_Controller
 
         // 19) EEOC Form
         $eeoc = $this->hire_onboarding_applicant_model->update_employee_copy_eeoc_as_user($applicant_sid, $employee_sid);
+        //
+        $merge_applicant_data = [
+            'user_profile' => $applicant_profile_info,
+            'old_data_update' => $employer_data,
+            'emergency_contacts' => $applicant_emergency_contacts,
+            'equipment_information' => $applicant_equipment_information,
+            'dependant_information' => $applicant_dependant_information,
+            'license_information' => $applicant_license_information,
+            'direct_deposit_information' => $bank_details,
+            'e_signature' => $e_signature_data,
+            'eeoc' => $eeoc,
+            'group' => $applicant_groups,
+            'documents' => $documents
+        ];
+        //
+        $this->hire_onboarding_applicant_model->save_merge_applicant_info($merge_applicant_data, $applicant_sid, $employee_sid);
+        //
         $array['status'] = "success";
         $array['message'] = "Success! Applicant is successfully merged!";
         $this->session->set_flashdata('message', '<b>Success:</b> Applicant Merged Successfully!');

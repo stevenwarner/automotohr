@@ -172,7 +172,7 @@ class Hire_onboarding_applicant_model extends CI_Model
             }
             return $result;
         } else {
-            return 0;
+            return array();
         }
         //        }
     }
@@ -227,7 +227,7 @@ class Hire_onboarding_applicant_model extends CI_Model
             }
             return $result;
         } else {
-            return 0;
+            return array();
         }
         //        }
     }
@@ -279,7 +279,7 @@ class Hire_onboarding_applicant_model extends CI_Model
             }
             return $result;
         } else {
-            return 0;
+            return array();
         }
         //        }
     }
@@ -331,7 +331,7 @@ class Hire_onboarding_applicant_model extends CI_Model
             }
             return $result;
         } else {
-            return 0;
+            return array();
         }
         //        }
     }
@@ -999,12 +999,19 @@ class Hire_onboarding_applicant_model extends CI_Model
 
     function update_documents($sid, $hired_sid)
     {
+        $return_array = [
+            'W4' => '',
+            'W9' => '',
+            'I9' => '',
+            'documents' => "",
+        ];
         //Fillable Forms
         //W4
         $this->db->select('sid');
         $this->db->where('employer_sid', $hired_sid);
         $this->db->where('user_type', 'employee');
         $records_obj = $this->db->get('form_w4_original')->result_array();
+        //
         if (sizeof($records_obj) == 0) {
             $this->db->select('*');
             $this->db->where('employer_sid', $sid);
@@ -1017,6 +1024,8 @@ class Hire_onboarding_applicant_model extends CI_Model
                 $forms[0]['employer_sid'] = $hired_sid;
                 $forms[0]['user_type'] = 'employee';
                 $this->db->insert('form_w4_original', $forms[0]);
+                //
+                $return_array['W4'] = $forms[0];
             }
         }
         //W9
@@ -1024,6 +1033,7 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->where('user_sid', $hired_sid);
         $this->db->where('user_type', 'employee');
         $records_obj = $this->db->get('applicant_w9form')->result_array();
+        //
         if (sizeof($records_obj) == 0) {
             $this->db->select('*');
             $this->db->where('user_sid', $sid);
@@ -1036,6 +1046,8 @@ class Hire_onboarding_applicant_model extends CI_Model
                 $forms[0]['user_sid'] = $hired_sid;
                 $forms[0]['user_type'] = 'employee';
                 $this->db->insert('applicant_w9form', $forms[0]);
+                //
+                $return_array['W9'] = $forms[0];
             }
         }
         //I9
@@ -1043,6 +1055,7 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->where('user_sid', $hired_sid);
         $this->db->where('user_type', 'employee');
         $records_obj = $this->db->get('applicant_i9form')->result_array();
+        //
         if (sizeof($records_obj) == 0) {
             $this->db->select('*');
             $this->db->where('user_sid', $sid);
@@ -1055,6 +1068,8 @@ class Hire_onboarding_applicant_model extends CI_Model
                 $forms[0]['user_sid'] = $hired_sid;
                 $forms[0]['user_type'] = 'employee';
                 $this->db->insert('applicant_i9form', $forms[0]);
+                //
+                $return_array['I9'] = $forms[0];
             }
         }
 
@@ -1082,10 +1097,8 @@ class Hire_onboarding_applicant_model extends CI_Model
                     //                $this->db->insert('documents_assignment', $record);
                     $this->db->insert('documents_assigned', $record);
                 }
-
-                return $records_arr;
-            } else {
-                return 0;
+                //
+                $return_array['documents'] = $records_arr;
             }
         } else {
             $already_sid = array();
@@ -1109,11 +1122,12 @@ class Hire_onboarding_applicant_model extends CI_Model
                     }
                 }
 
-                return $records_arr;
-            } else {
-                return 0;
+                //
+                $return_array['documents'] = $records_arr;
             }
         }
+        //
+        return $return_array
     }
 
     function set_onboarding_as_completed($company_sid, $applicant_sid)
@@ -1177,7 +1191,7 @@ class Hire_onboarding_applicant_model extends CI_Model
 
             return $records_arr;
         } else {
-            return 0;
+            return array();
         }
         //        }
     }
@@ -1240,7 +1254,7 @@ class Hire_onboarding_applicant_model extends CI_Model
             }
             return $result;
         } else {
-            return 0;
+            return array();
         }
         //        }
     }
@@ -1372,6 +1386,10 @@ class Hire_onboarding_applicant_model extends CI_Model
             $record_arr[0]['application_sid'] = $new_employee_id;
             $record_arr[0]['is_latest'] = 1;
             $this->db->insert('portal_eeo_form', $record_arr[0]);
+
+            return $record_arr[0];
+        } else {
+            return array();
         }
     }
 
@@ -1449,23 +1467,27 @@ class Hire_onboarding_applicant_model extends CI_Model
             'hired_job_sid' => $hired_job_sid,
             'is_onboarding' => 0
         );
+        //
         $this->db->update('portal_job_applications', $data_applicant);
+        //
+        //update user if changed
+        //        if($update_flag){
+        $this->db->where('sid', $employee_sid);
+        $this->db->update('users', $employer_data);
+        //        }
+    }
 
+    function save_merge_applicant_info ($applicant_data, $applicant_sid, $employee_sid) {
         // insert merge table record
         $merge_record = array(
             'portal_job_applications_sid' => $applicant_sid,
             'employee_sid' => $employee_sid,
             'created_date' => date('Y-m-d H:i:s'),
             'is_revert' => 0,
-            'data_update' => serialize($employer_data)
+            'data_update' => serialize($applicant_data)
         );
+        //
         $this->db->insert('applicant_merge_employee_record', $merge_record);
-
-        //update user if changed
-        //        if($update_flag){
-        $this->db->where('sid', $employee_sid);
-        $this->db->update('users', $employer_data);
-        //        }
     }
 
 
@@ -1532,7 +1554,7 @@ class Hire_onboarding_applicant_model extends CI_Model
 
             return $result;
         } else {
-            return 0;
+            return array();
         }
     }
 
