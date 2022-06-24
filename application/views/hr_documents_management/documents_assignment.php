@@ -30,7 +30,6 @@
         title="Modify assigned document"
     >Modify</button>' ;
     //
-    $categories_no_action_documents
     $assigned_documents_sid = sizeof($assigned_documents) ? array_flip(array_column($assigned_documents, "document_sid")) : array();
     $no_action_sid = sizeof($categories_no_action_documents) ? array_flip(array_column($categories_no_action_documents, "document_sid")) : array();
     $assignIdObj = array_merge($assigned_documents_sid, $no_action_sid);
