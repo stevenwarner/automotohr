@@ -2599,7 +2599,6 @@ if(!function_exists('hasDocumentsAssigned')){
         // Load HR model
         $_this->load->model('hr_documents_management_model', 'hrm');
         //
-        // if(!isset($_SESSION['mydepts'])) 
         $_SESSION['mydepts'] = $_this->hrm->getMyDepartTeams($employerArray['sid']);
         // Fetch the documents 
         return $_this->hrm->hasAssignedDocuments(

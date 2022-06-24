@@ -97,6 +97,7 @@ else $sideBar = onboardingHelpWidget($company_info['sid']);
                                     <?php $field_name = 'username'; ?>
                                     <?php echo form_label('Username <span class="required">*</span>', $field_name); ?> <br /> Username should consist of a minimum of 5 characters.
                                     <?php echo form_input($field_name, '', 'class="form-control" id="' . $field_name . '"'); ?>
+                                    <p><strong>Note: </strong>Please create a Username for your Employee / Team member using their first and last name all one word all lower case. Example: johnsmith</p>
                                     <?php echo form_error($field_name); ?>
                                 </div>
                             </div>

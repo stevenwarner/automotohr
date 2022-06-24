@@ -502,6 +502,26 @@
 <script>
     $(document).ready(function() {
         //
+
+
+        if ($("#setting_is_confidential").is(":checked")) {
+            $("#confidentialSelectedEmployeesdiv").show();
+        } else {
+            $("#confidentialSelectedEmployeesdiv").hide();
+        }
+
+        $("#setting_is_confidential").click(function() {
+            if ($(this).is(":checked")) {
+                $("#confidentialSelectedEmployeesdiv").show();
+
+            } else {
+                $("#confidentialSelectedEmployeesdiv").hide();
+                $("#confidentialSelectedEmployees").select2("val", "");
+            }
+        });
+
+
+
         $('#jsFileUpload').mFileUploader({
             fileLimit: -1,
             allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv'],
@@ -590,6 +610,7 @@
             submitHandler: function(form) {
                 var flag = 1;
                 var video_source = $('input[name="video_source"]:checked').val();
+
 
                 if (video_source != 'not_required') {
                     if (video_source == 'youtube') {

@@ -573,7 +573,7 @@ class Hr_documents_management_model extends CI_Model
         }
         //
         if ($ems == 1) {
-            $this->db->where('documents_assigned.is_confidential', 0);
+            // $this->db->where('documents_assigned.is_confidential', 0);
         }
 
         if ($fetch_offer_letter) {
@@ -6584,34 +6584,71 @@ class Hr_documents_management_model extends CI_Model
         $sid,
         $ses
     ) {
+        // Check for confidential as priority
+        // on both main and assigned table
+        if(
+            $this->hasAccessToDocument($companyId, $sid, $ses['departments'], $ses['teams'], $role) ||
+            $this->hasAccessToDocument($companyId, $sid, $ses['departments'], $ses['teams'], $role, 'documents_assigned')
+        ){
+            return true;
+        }
         //
-        $this->db->from('documents_management');
-        //
-        $this->db->where('company_sid', $companyId);
-        $this->db->where('archive', 0);
-        $this->db->where('is_specific', 0);
-        $this->db->group_start();
-        // Role clause
-        $this->db->or_where('FIND_IN_SET("' . ($role) . '", is_available_for_na) > 0', NULL, FALSE);
-        // Allowed employees clause
-        $this->db->or_where('FIND_IN_SET("' . ($sid) . '", allowed_employees) > 0', NULL, FALSE);
-        // Department clause
-        $this->db->or_where('FIND_IN_SET("-1", allowed_departments) > 0', NULL, FALSE);
-        if (!empty($ses['departments'])) {
-            foreach ($ses['departments'] as $department) {
+        return false;
+    }
+
+    /**
+     * 
+     */
+    public function hasAccessToDocument(
+        $companyId,
+        $employeeId,
+        $departments,
+        $teams,
+        $role,
+        $tbl = 'documents_management'
+    ){
+        // In case of confidential
+        if(
+            $this->db
+            ->where('company_sid', $companyId)
+            ->where('is_confidential', 1)
+            ->where('archive', 0)
+            ->group_start()
+            ->where('confidential_employees', '-1')
+            ->or_where('confidential_employees', NULL)
+            ->or_where('confidential_employees', '')
+            ->or_where('FIND_IN_SET("'.($employeeId).'", confidential_employees) > 0', NULL, FALSE)
+            ->group_end()
+            ->count_all_results($tbl)
+        ){
+            return true;
+        }
+        // In case of visibility
+        $this->db
+        ->where('company_sid', $companyId)
+        ->where('archive', 0)
+        ->where('is_confidential', 0)
+        ->group_start()
+        ->or_where('FIND_IN_SET("' . ($role) . '", '.($tbl == 'documents_assigned' ? 'allowed_roles' : 'is_available_for_na').') > 0', NULL, FALSE)
+        ->or_where('FIND_IN_SET("' . ($employeeId) . '", allowed_employees) > 0', NULL, FALSE)
+        ->or_where('FIND_IN_SET("-1", allowed_departments) > 0', NULL, FALSE)
+        ->or_where('FIND_IN_SET("-1", allowed_teams) > 0', NULL, FALSE);
+        // For departments
+        if (!$departments) {
+            foreach ($departments as $department) {
                 $this->db->or_where('FIND_IN_SET("' . ($department) . '", allowed_departments) > 0', NULL, FALSE);
             }
-        }
-        // Team clause
-        $this->db->or_where('FIND_IN_SET("-1", allowed_teams) > 0', NULL, FALSE);
-        if (!empty($ses['teams'])) {
-            foreach ($ses['teams'] as $team) {
+        }  
+        // For teams
+        if ($teams) {
+            foreach ($teams as $team) {
                 $this->db->or_where('FIND_IN_SET("' . ($team) . '", allowed_teams) > 0', NULL, FALSE);
             }
         }
-        $this->db->group_end();
         //
-        return $this->db->count_all_results();
+        return $this->db
+        ->group_end()
+        ->count_all_results($tbl);
     }
 
     //
@@ -7152,12 +7189,28 @@ class Hr_documents_management_model extends CI_Model
 
     public function getMyAssignApprovalInfo($employee_sid)
     {
-        //
-        $this->db->select('sid, portal_document_assign_sid, assign_on');
-        $this->db->where('assigner_sid', $employee_sid);
-        $this->db->where('status', 1);
-        $this->db->where('assigner_turn', 1);
+
+        $this->db->select('portal_document_assign_flow_employees.sid');
+        $this->db->select('portal_document_assign_flow_employees.portal_document_assign_sid');
+        $this->db->select('portal_document_assign_flow_employees.assign_on');
+        $this->db->select('portal_document_assign_flow_employees.assigner_sid as approver_sid');
+        $this->db->select('documents_assigned.sid as document_sid');
+        $this->db->select('documents_assigned.document_title');
+        $this->db->select('documents_assigned.document_type');
+        $this->db->select('documents_assigned.user_sid');
+        $this->db->select('documents_assigned.user_type');
+        $this->db->select('portal_document_assign_flow.assigner_note');
+
+        $this->db->where('portal_document_assign_flow_employees.assigner_sid', $employee_sid);
+        $this->db->where('portal_document_assign_flow_employees.status', 1);
+        $this->db->where('portal_document_assign_flow_employees.assigner_turn', 1);
+        $this->db->where('portal_document_assign_flow.assign_status', 1);
+        $this->db->where('documents_assigned.approval_process', 1);
+
+        $this->db->join('portal_document_assign_flow', 'portal_document_assign_flow.sid = portal_document_assign_flow_employees.portal_document_assign_sid', 'inner');
+        $this->db->join('documents_assigned', 'documents_assigned.approval_flow_sid = portal_document_assign_flow.sid', 'inner');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
+        
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();
@@ -7309,6 +7362,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $this->db->select('*');
         $this->db->where('portal_document_assign_sid', $document_sid);
+        // $this->db->where('status', 1);
         $this->db->order_by('sid', 'desc');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->result_array();
@@ -8140,6 +8194,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $this->db->select('sid, assigner_sid, assigner_turn, assign_on, note as approval_note, approval_status, action_date, approver_email');
         $this->db->where('portal_document_assign_sid', $flow_sid);
+        $this->db->order_by('sid', 'desc');
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();

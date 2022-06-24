@@ -495,7 +495,7 @@ class Dashboard extends Public_Controller {
             //
             // For verification documents
             //
-            if($employer_detail['access_level_plus'] || $employer_detail['pay_plan_plus']){
+            if($employer_detail['access_level_plus'] || $employer_detail['pay_plan_flag']){
                 // Pending Employer Sections
                 $data['PendingEmployerSection'] = [];
                 $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
