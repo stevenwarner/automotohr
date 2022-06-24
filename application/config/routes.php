@@ -1499,6 +1499,7 @@ $route['get_payroll_page/(:any)'] = 'payroll/Payroll_ajax/GetPage/$1';
 $route['get_payroll_page/(:any)/(:num)'] = 'payroll/Payroll_ajax/GetPage/$1/$2';
 //
 $route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
+$route['payroll_sync']['post'] = 'payroll/Payroll_ajax/Sync';
 
 /**
  * 

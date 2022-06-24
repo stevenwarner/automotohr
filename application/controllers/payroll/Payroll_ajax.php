@@ -104,8 +104,7 @@ class Payroll_ajax extends CI_Controller
                 'name' => $companyDetails['CompanyName'],
                 'onboarding_status' => $status,
                 'onbording_level' => $level,
-                'onbording_level_id' => $level_id,
-
+                'onbording_level_id' => $level_id
             ]);
         }
         //
@@ -122,13 +121,44 @@ class Payroll_ajax extends CI_Controller
                 "users.sid",
                 "users.first_name",
                 "users.last_name",
+                "users.dob",
+                "users.ssn",
+                "users.email",
                 "users.access_level",
                 "users.access_level_plus",
                 "users.is_executive_admin",
                 "users.job_title",
-                "users.pay_plan_flag",
-                "users.on_payroll"
+                "users.pay_plan_flag"
             ]);
+            //
+            if(!empty($data['employees'])){
+                //
+                foreach($data['employees'] as $k => $employee){
+                    //
+                    $data['employees'][$k]['can_onboard'] = 1;
+                    $data['employees'][$k]['missing_info'] = [];
+                    //
+                    if ($employee['first_name'] == null || empty($employee['first_name'])) {
+                        array_push($data['employees'][$k]['missing_info'], "First name is missing");
+                    }
+                    if ($employee['last_name'] == null || empty($employee['last_name'])) {
+                        array_push($data['employees'][$k]['missing_info'], "Last name is missing");
+                    }
+                    if ($employee['email'] == null || empty($employee['email'])) {
+                        array_push($data['employees'][$k]['missing_info'], "Email is missing");
+                    }
+                    if ($employee['dob'] == null || empty($employee['dob'])) {
+                        array_push($data['employees'][$k]['missing_info'], "Date of birth is missing");
+                    }
+                    if ($employee['ssn'] == null || empty($employee['ssn'])) {
+                        array_push($data['employees'][$k]['missing_info'], "SSN is missing");
+                    }
+                    //
+                    if ($data['employees'][$k]['missing_info']) {
+                        $data['employees'][$k]['can_onboard'] = 0;
+                    }
+                }
+            }
         }
         //
         if($page === 'onboard'){
@@ -1321,5 +1351,15 @@ class Payroll_ajax extends CI_Controller
         $ia['sid'] = $this->pm->InsertPayroll('payroll_employee_payment_method', $ia);
         //
         return $ia;
+    }
+
+    /**
+     * 
+     */
+    public function Sync(){
+        // 
+        $companyId = $this->input->post('id', true);
+
+        _e($companyId, true);
     }
 }

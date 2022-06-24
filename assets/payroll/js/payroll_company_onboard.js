@@ -90,9 +90,18 @@ $(function PayrollCompanyOnboard() {
             xhr = null;
             //
             $('#' + modalId).find('.jsModalCancel').click();
-
         }).setHeader('Confirm!');
     });
+    
+    $(document).on('click', '#' + modalId +' .jsModalCancel', function(){
+        //
+        RemoveItem(
+            'PayrollEmployees' + companyId
+        );
+    });
+    
+    //
+    $(document).on('click', '.jsPayrollBackAdmin', OnboardPage);
 
     $('.jsSyncWithGusto').click(function(event) {
         var company_sid = $(this).data("company_sid");
@@ -563,6 +572,15 @@ $(function PayrollCompanyOnboard() {
     function GetItem(slug) {
         //
         return JSON.parse(localStorage.getItem(slug));
+    }
+    
+    /**
+     * Remove data from local storage
+     * @param {string} slug 
+     */
+    function RemoveItem(slug) {
+        //
+        return JSON.parse(localStorage.removeItem(slug));
     }
 
     /**

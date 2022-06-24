@@ -26,6 +26,34 @@
             'icon' => 'bank',
             'segment' => 'run'
         ];
+        $navpills[] = [
+            'title' => 'Manage Admins',
+            'url' => '/manage-admin',
+            'slug' => '',
+            'icon' => 'users',
+            'segment' => 'manage'
+        ];
+        $navpills[] = [
+            'title' => 'Manage Contractors',
+            'url' => '/contractors',
+            'slug' => '',
+            'icon' => 'users',
+            'segment' => 'contractors'
+        ];
+        $navpills[] = [
+            'title' => 'Service Terms',
+            'url' => '/service-terms',
+            'slug' => '',
+            'icon' => 'file-pdf-o',
+            'segment' => 'service'
+        ];
+        $navpills[] = [
+            'title' => 'Settings',
+            'url' => '/settings',
+            'slug' => '',
+            'icon' => 'cogs',
+            'segment' => 'settings'
+        ];
     }
     $navpills[] = [
         'title' => 'My Pay Stubs',
