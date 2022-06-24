@@ -4,8 +4,8 @@
         <!-- Body -->
         <div class="row">
             <div class="col-sm-12">
-                <p class="csF16">
-                    Welcome to Payroll. Which of your existing users do you want to run payroll for?
+                <p class="csF28 csB7">
+                Which of your existing employees do you want to run payroll for?
                 </p>
             </div>
         </div>
@@ -15,13 +15,25 @@
             if(!empty($employees)):
                 foreach($employees as $employee):
                 ?>
-                <div class="col-md-4 col-xs-12">
+                <div class="col-md-6 col-xs-12">
                     <label class="control control--checkbox csF16">
-                        <input type="checkbox" class="jsPayrollEmployees" value="<?=$employee['sid'];?>" name="employees[]" /> <?=remakeEmployeeName($employee);?> 
+                        <input type="checkbox" class="jsPayrollEmployees" <?=$employee['can_onboard'] == 0 ? 'disabled' : '';?> value="<?=$employee['sid'];?>" name="employees[]" /> <?=remakeEmployeeName($employee);?> 
+                        <?php if($employee['missing_info']): ?>
+                            <span class="text-danger"><i aria-hidden="true"> (<?=implode(', ',$employee['missing_info']);?></i>)</span>
+                        <?php endif; ?>
                         <div class="control__indicator"></div>
                     </label>
+                    
                 </div>
             <?php endforeach;
+            else:
+                ?>
+                <div class="col-sm-12">
+                    <p class="alert alert-info csF20 text-center">
+                        <strong>No employees found!</strong>
+                    </p>
+                </div>
+                <?php
             endif;
             ?>
         </div>

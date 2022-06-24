@@ -4,7 +4,7 @@
         <!-- Heading -->
         <div class="row">
             <div class="col-sm-12">
-                <h1 class="csF18 csB7">
+                <h1 class="csF28 csB7">
                     We are excited to help you pay your team.
                 </h1>
             </div>
@@ -12,7 +12,7 @@
         <!-- Body -->
         <div class="row">
             <div class="col-sm-12">
-                <p class="csF16">
+                <p class="csF22">
                     Start with a few questions about your business. Then we'll get into the payroll details.
                     Your information will be shared as you go. Let's get started!
                 </p>
@@ -20,7 +20,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <p class="csF14">
+                <p class="csF18">
                     By continuing you are accepting Gusto's Terms & Service and Privacy Policy.
                 </p>
             </div>

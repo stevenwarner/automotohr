@@ -4,14 +4,14 @@
         <!-- Heading -->
         <div class="row">
             <div class="col-sm-12">
-                <h1 class="csF18 csB7">
+                <h1 class="csF28 csB7">
                     Payroll Admin
                 </h1>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
-                <h1 class="csF16">
+                <h1 class="csF22">
                     The person who will manage and run the payroll for this store.
                 </h1>
             </div>
@@ -20,37 +20,37 @@
         <br>
         <div class="row">
             <div class="col-md-6 col-xs-12">
-                <label class="csF16 csB7">
+                <label class="csF18 csB7">
                     First name
                 </label>
-                <p class="csF16"><?=$primaryAdmin['first_name'];?></p>
+                <p class="csF18"><?=$primaryAdmin['first_name'];?></p>
             </div>
         </div>
         <br>
         <div class="row">
             <div class="col-md-6 col-xs-12">
-                <label class="csF16 csB7">
+                <label class="csF18 csB7">
                     Last name
                 </label>
-                <p class="csF16"><?=$primaryAdmin['last_name'];?></p>
+                <p class="csF18"><?=$primaryAdmin['last_name'];?></p>
             </div>
         </div>
         <br>
         <div class="row">
             <div class="col-md-6 col-xs-12">
-                <label class="csF16 csB7">
+                <label class="csF18 csB7">
                     Email
                 </label>
-                <p class="csF16"><?=$primaryAdmin['email_address'];?></p>
+                <p class="csF18"><?=$primaryAdmin['email_address'];?></p>
             </div>
         </div>
         <br>
         <div class="row">
             <div class="col-md-6 col-xs-12">
-                <label class="csF16 csB7">
+                <label class="csF18 csB7">
                     Phone number
                 </label>
-                <p class="csF16"><?=$primaryAdmin['phone_number'];?></p>
+                <p class="csF18"><?=$primaryAdmin['phone_number'];?></p>
             </div>
         </div>
         

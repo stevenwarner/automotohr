@@ -34,6 +34,13 @@
             'segment' => 'manage'
         ];
         $navpills[] = [
+            'title' => 'Manage Contractors',
+            'url' => '/contractors',
+            'slug' => '',
+            'icon' => 'users',
+            'segment' => 'contractors'
+        ];
+        $navpills[] = [
             'title' => 'Service Terms',
             'url' => '/service-terms',
             'slug' => '',
