@@ -62,6 +62,12 @@
         }
     }
     
+    var googleCaptchaToken = null;
+    
+    function googleCaptchaChecker(don) {
+        googleCaptchaToken = don;
+    }  
+
     function validate_form() {
         youtube_check()
         $("#register-form").validate({
@@ -133,6 +139,12 @@
                 gender: "Please Select Your Gender."
             },
             submitHandler: function (form, event) {
+
+                if(googleCaptchaToken === null){
+                    
+                    $("#captchaerror").show();
+                        return;
+                    }
 
                 $('.spinner').show();
                 $('#mySubmitBtn').prop('disabled', true);
@@ -646,6 +658,12 @@
                                 <label for="squared" class="hint-label">I have Read and Understand the <a href="javascript:;" data-toggle="modal" data-target="#terms_and_conditions_apply_now">Terms & Conditions</a> and <a href="javascript:;" data-toggle="modal" data-target="#privay_policy_apply_now">Privacy Policy</a><span class="staric">*</span></label>
                                 <input type="checkbox" required="required" name="check_box" value="1" id="squared">
                             </li>
+
+                            <li>
+                                <div class="g-recaptcha" data-callback="googleCaptchaChecker" data-sitekey="<?= getCreds('AHR')->GOOGLE_CAPTCHA_API_KEY_V2; ?>"></div>
+                                <label id='captchaerror'  style="display: none; float: none !important;color: #CC0000 !important;font-weight: 400;margin: 0 !important;">Empty/Invalid Captcha </label>
+                            </li>
+
                             <li>
                                 <input type="hidden" name='job_sid' id="job_sid" value="<?php echo $job_details['sid']; ?>">
                                 <input type="hidden" name="questionnaire_sid" id="questionnaire_sid" value="<?php echo $job_details['questionnaire_sid']; ?>">

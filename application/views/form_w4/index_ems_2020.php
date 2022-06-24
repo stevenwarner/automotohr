@@ -9,6 +9,12 @@
                 <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4 cs-btn-setting">
                     <a href="<?php echo base_url('hr_documents_management/my_documents'); ?>" class="btn blue-button btn-block"><i class="fa fa-angle-left"></i>  Documents</a>
                 </div>
+                <?php if(checkIfAppIsEnabled('documentlibrary')): ?>
+                    <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                        <a href="<?php echo base_url('library_document'); ?>"
+                            class="btn btn-block blue-button"><i class="fa fa-angle-left"></i> Document Library</a>
+                    </div>
+                <?php endif; ?>
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">
                 <div class="page-header">
@@ -16,14 +22,6 @@
                     <div class="row mb-2">
                         <?php if ($pre_form['uploaded_file'] != NULL) { ?>
                             <div class="col-lg-7 cs-btn-setting"></div>
-<!--                            <div class="col-lg-2 cs-btn-setting">-->
-<!--                                <a data-toggle="modal" data-target="#w4_modal" href="javascript:void(0);" class="btn blue-button btn-block">Preview</a>-->
-<!--                            </div>-->
-<!--                            <div class="col-lg-2 cs-btn-setting">-->
-<!--                                <a target="_blank" href="--><?php //echo base_url('form_w4/print_w4_form_2020'.'/'. $pre_form['user_type'] . '/' . $pre_form['employer_sid']); ?><!--" class="btn blue-button btn-block ">-->
-<!--                                    Print PDF-->
-<!--                                </a>-->
-<!--                            </div>-->
                             <?php
                             $document_filename = $pre_form['uploaded_file'];
                             $document_file = pathinfo($document_filename);

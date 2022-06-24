@@ -34,7 +34,7 @@
     <div class="dashboard-wrp">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
+                <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -1536,6 +1536,13 @@
                                                                                         <?php if ($document_all_permission) { ?>
                                                                                             <?php if (in_array($offer_letter['sid'], $approval_offer_letters)) { ?>
                                                                                                 <button data-document_sid="<?=$offer_letter['sid'];?>"  class="btn btn-danger btn-block btn-sm jsRevokeApprovalDocument">Revoke Approval</button>
+                                                                                                <button 
+                                                                                                    data-document_sid="<?=$offer_letter['sid'];?>" 
+                                                                                                    data-user_type="<?=$user_type;?>"
+                                                                                                    data-user_sid="<?=$user_sid;?>"
+                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                    View Approver(s)
+                                                                                                </button>
                                                                                             <?php } else { ?>    
                                                                                                 <?php if ($assigned_offer_letter_sid == $offer_letter['sid']) { ?>
                                                                                                     <?php if ($assigned_offer_letter_status == 1 && $assigned_offer_letter_archive == 0) { ?>
@@ -1672,6 +1679,13 @@
                                                                                                     <td>
                                                                                                         <?php if (in_array($document['sid'], $approval_documents)) { ?>
                                                                                                             <button data-document_sid="<?=$document['sid'];?>" class="btn btn-danger btn-block btn-sm jsRevokeApprovalDocument">Revoke Approval</button>
+                                                                                                            <button 
+                                                                                                                data-document_sid="<?=$document['sid'];?>" 
+                                                                                                                data-user_type="<?=$user_type;?>"
+                                                                                                                data-user_sid="<?=$user_sid;?>"
+                                                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                                                                                                                View Approver(s)
+                                                                                                            </button>
                                                                                                         <?php } else { ?>
                                                                                                             <?php if (in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $revoked_sids) || in_array($document['sid'], $completed_sids) || in_array($document['sid'], $signed_document_sids) || in_array($document['sid'], $approval_documents)) { ?>
                                                                                                                 <?php if(in_array($document['sid'], $assigned_sids) || in_array($document['sid'], $approval_documents)) { ?> <!-- assign doc revoke here -->
@@ -3898,6 +3912,8 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/mFileUploader/index.js"></script>
 <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
 <script>
+
+//
 
     $('.modalShow').click(function(event){
 
@@ -6387,11 +6403,9 @@
 <?php $this->load->view('iframeLoader'); ?>
 <?php $this->load->view('hr_documents_management/hybrid/scripts'); ?>
 <?php 
-    if ($action_btn_flag || $session['employer_detail']['pay_plan_flag'] == 0){ 
-        $this->load->view('hr_documents_management/scripts/index', [
-            'offerLetters' => $company_offer_letters
-        ]); 
-    }
+    $this->load->view('hr_documents_management/scripts/index', [
+        'offerLetters' => $company_offer_letters
+    ]);
 ?> 
 
 <?php $this->load->view('hr_documents_management/category_manager'); ?>

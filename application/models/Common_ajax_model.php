@@ -20,13 +20,11 @@ class Common_ajax_model extends CI_Model{
     //
     function get_user_detail($userId, $userType){
         //
-        $this->db->select('first_name, last_name, email,');
-        //
         if($userType == 'applicant'){
-            $this->db->select('first_name, last_name, email, employer_sid AS parent_sid, desired_job_title AS job_title');
+            $this->db->select('sid, first_name, last_name, email, employer_sid AS parent_sid, desired_job_title AS job_title, "applicant" as user_type');
             $this->db->from('portal_job_applications');
         } else{
-            $this->db->select('first_name, last_name, email, parent_sid, job_title');
+            $this->db->select('sid, first_name, last_name, email, parent_sid, job_title, "employee" as user_type');
             $this->db->from('users');
         }
         //

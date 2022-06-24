@@ -355,7 +355,12 @@ class Send_manual_email extends Public_Controller {
         $post_body                                                          = str_replace('{{block_start}}','',$post_body);
         $post_body                                                          = str_replace('{{block_end}}','',$post_body);
 
+        $this->load->model('Hr_documents_management_model', 'HRDMM');
         foreach ($employee_ids as $employee_id) {
+            //
+            if(!$this->HRDMM->isActiveUser($employee_id)){
+                continue;
+            }
             $applicant_data                                                 = $this->portal_email_templates_model->get_applicant_data($applicant_id, $company_sid);
             $applicant_fname                                                = $applicant_data['first_name'];
             $applicant_lname                                                = $applicant_data['last_name'];

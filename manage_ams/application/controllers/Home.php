@@ -1,6 +1,8 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
-class Home extends CI_Controller {
-    public function __construct() {
+<?php defined('BASEPATH') or exit('No direct script access allowed');
+class Home extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->helper('url');
         $this->load->model('common/check_domain');
@@ -17,7 +19,7 @@ class Home extends CI_Controller {
             $referral = $_SERVER['HTTP_REFERER'];
             $clean_referral = clean_domain($referral);
 
-            if(!$this->session->userdata('last_referral')) {
+            if (!$this->session->userdata('last_referral')) {
                 $this->session->set_userdata('last_referral', $referral);
             }
 
@@ -29,7 +31,8 @@ class Home extends CI_Controller {
         }
     }
 
-    public function index() {
+    public function index()
+    {
         $server_name                                                            = clean_domain($_SERVER['SERVER_NAME']);
         $data                                                                   = $this->check_domain->check_portal_status($server_name);
 
@@ -63,7 +66,7 @@ class Home extends CI_Controller {
             $filter['value'] = '';
 
             if (!empty($segment1)) {
-                if(preg_match('/jobs-at/', $segment1)){
+                if (preg_match('/jobs-at/', $segment1)) {
                     //
                     $pageName = 'JOBS';
                     $filter['key'] = 'users.CompanyName';
@@ -76,7 +79,7 @@ class Home extends CI_Controller {
                             )
                         )
                     );
-                } else{
+                } else {
                     $pageName                                                       = urldecode($segment1);
                 }
             }
@@ -144,7 +147,7 @@ class Home extends CI_Controller {
                 $jobs_page_title                                                = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
                 $data['jobs_page_title']                                        = $jobs_page_title;
 
-                if($pageName == strtolower(str_replace(' ', '_', $jobs_page_title))) {
+                if ($pageName == strtolower(str_replace(' ', '_', $jobs_page_title))) {
                     $pageName                                                   = 'jobs';
                 }
 
@@ -209,8 +212,8 @@ class Home extends CI_Controller {
                         $career_site_only_companies                             = $this->job_details->get_career_site_only_companies(); // get the career site status for companies
                         $career_site_company_sid                                = array();
 
-                        if(!empty($career_site_only_companies)) {
-                            foreach($career_site_only_companies as $csoc) {
+                        if (!empty($career_site_only_companies)) {
+                            foreach ($career_site_only_companies as $csoc) {
                                 $career_site_company_sid[]                      = $csoc['sid'];
                             }
                         }
@@ -221,8 +224,8 @@ class Home extends CI_Controller {
                         $featured_jobs_count                                    = 0;
                         $list_count                                             = 0;
 
-                        if(!empty($all_paid_jobs)) {
-                            foreach($all_paid_jobs as $apj) {
+                        if (!empty($all_paid_jobs)) {
+                            foreach ($all_paid_jobs as $apj) {
                                 $paid_jobs[]                                    = $apj['jobId'];
                             }
                         }
@@ -231,7 +234,7 @@ class Home extends CI_Controller {
                             $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, $per_page, $offset, false, $filter);
                             $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, $per_page, $offset, true, $filter);
 
-                            if(!empty($paid_jobs)) {
+                            if (!empty($paid_jobs)) {
                                 $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, $per_page, $offset, false, $filter);
                                 $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, $per_page, $offset, true, $filter);
                             }
@@ -239,7 +242,7 @@ class Home extends CI_Controller {
                             $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, $per_page, $offset, false, $filter);
                             $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, $per_page, $offset, true, $filter);
 
-                            if(!empty($paid_jobs)) {
+                            if (!empty($paid_jobs)) {
                                 $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, $per_page, $offset, false, $filter);
                                 $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, $per_page, $offset, true, $filter);
                             }
@@ -248,21 +251,21 @@ class Home extends CI_Controller {
                         $all_active_jobs                                        = $this->job_details->filters_of_active_jobs($career_site_company_sid, $filter);
 
                         if (!empty($all_active_jobs)) { // we need it for search filters as we only need to show filters as per active jobs only
-                            for($i=0; $i<count($all_active_jobs); $i++) {
+                            for ($i = 0; $i < count($all_active_jobs); $i++) {
                                 $country_id = $all_active_jobs[$i]['Location_Country'];
 
-                                if($country_id == 38) {
-                                    $countries_array[38] = array(   'sid' => 38, 'country_code' => 'CA', 'country_name' => 'Canada');
+                                if ($country_id == 38) {
+                                    $countries_array[38] = array('sid' => 38, 'country_code' => 'CA', 'country_name' => 'Canada');
                                 }
 
-                                if($country_id == 227) {
-                                    $countries_array[227] = array(  'sid' => 227, 'country_code' => 'US', 'country_name' => 'United States');
+                                if ($country_id == 227) {
+                                    $countries_array[227] = array('sid' => 227, 'country_code' => 'US', 'country_name' => 'United States');
                                 }
 
                                 $state_id = $all_active_jobs[$i]['Location_State'];
 
                                 if (!empty($state_id) && $state_id != 'undefined') {
-                                    if(!array_key_exists($state_id, $states_array)) {
+                                    if (!array_key_exists($state_id, $states_array)) {
                                         $state_name = $this->job_details->get_statename_by_id($state_id); // get state name
                                         $states_array[$state_id] = $state_name[0]['state_name'];
                                         $counntry_states_array[$country_id][] = array('sid' => $state_id, 'state_name' => $state_name[0]['state_name']);
@@ -276,7 +279,7 @@ class Home extends CI_Controller {
 
                                     foreach ($cat_id as $id) {
                                         $job_cat_name = $this->job_details->get_job_category_name_by_id($id);
-                                        if(sizeof($job_cat_name)) $categories_in_active_jobs[$id] = $job_cat_name[0]['value'];
+                                        if (sizeof($job_cat_name)) $categories_in_active_jobs[$id] = $job_cat_name[0]['value'];
                                     }
                                 }
                             }
@@ -287,10 +290,10 @@ class Home extends CI_Controller {
                                 $list[$key]['TitleOnly'] = $list[$key]['Title'];
                                 $has_job_approval_rights                        = $value['has_job_approval_rights'];
 
-                                if($has_job_approval_rights ==  1) {
+                                if ($has_job_approval_rights ==  1) {
                                     $approval_right_status                      = $value['approval_status'];
 
-                                    if($approval_right_status                   != 'approved') {
+                                    if ($approval_right_status                   != 'approved') {
                                         unset($list[$key]);
                                         continue;
                                     }
@@ -299,16 +302,16 @@ class Home extends CI_Controller {
                                 $country_id                                     = $value['Location_Country'];
 
                                 if (!empty($country_id)) { // get country name
-                                    switch($country_id) {
+                                    switch ($country_id) {
                                         case 227:
-                                        $country_name                           = 'United States';
-                                        break;
+                                            $country_name                           = 'United States';
+                                            break;
                                         case 38:
-                                        $country_name                           = 'Canada';
-                                        break;
+                                            $country_name                           = 'Canada';
+                                            break;
                                         default:
-                                        $country_name                           = '';
-                                        break;
+                                            $country_name                           = '';
+                                            break;
                                     }
 
                                     $list[$key]['Location_Country']             = $country_name;
@@ -339,13 +342,13 @@ class Home extends CI_Controller {
                                 if ($questionnaire_sid > 0) {
                                     $portal_screening_questionnaires            = $this->job_details->get_screening_questionnaire_by_id($questionnaire_sid);
 
-                                    if(!empty($portal_screening_questionnaires)){
+                                    if (!empty($portal_screening_questionnaires)) {
                                         $list[$key]['q_name']                   = $portal_screening_questionnaires[0]['name'];
                                         $list[$key]['q_passing']                = $portal_screening_questionnaires[0]['passing_score'];
                                         $list[$key]['q_send_pass']              = $portal_screening_questionnaires[0]['auto_reply_pass'];
                                         $list[$key]['q_send_fail']              = $portal_screening_questionnaires[0]['auto_reply_fail'];
-                                        $list[$key]['q_pass_text']              = '';//$portal_screening_questionnaires[0]['email_text_pass'];
-                                        $list[$key]['q_fail_text']              = '';//$portal_screening_questionnaires[0]['email_text_fail'];
+                                        $list[$key]['q_pass_text']              = ''; //$portal_screening_questionnaires[0]['email_text_pass'];
+                                        $list[$key]['q_fail_text']              = ''; //$portal_screening_questionnaires[0]['email_text_fail'];
                                         $list[$key]['my_id']                    = 'q_question_' . $questionnaire_sid;
                                     } else {
                                         $list[$key]['q_name']                   = 'Not Found';
@@ -382,13 +385,13 @@ class Home extends CI_Controller {
                                 $job_title_location                             = $value['job_title_location'];
                                 $sub_domain                                     = $value['sub_domain'];
 
-                                if($job_title_location == 1) {
-                                    $list[$key]['Title']                        = $list[$key]['Title'] . '  - ' . ucfirst($list[$key]['Location_City']) . ', ' . $list[$key]['Location_State'] . ', ' . $list[$key]['Location_Country'] ;
+                                if ($job_title_location == 1) {
+                                    $list[$key]['Title']                        = $list[$key]['Title'] . '  - ' . ucfirst($list[$key]['Location_City']) . ', ' . $list[$key]['Location_State'] . ', ' . $list[$key]['Location_Country'];
                                 }
 
                                 $company_subdomain_url                          = STORE_PROTOCOL_SSL . $sub_domain;
                                 $portal_job_url                                 = $company_subdomain_url . '/job_details/' . $list[$key]['sid'];
-                                $fb_google_share_url                            = str_replace(':','%3A',$portal_job_url);
+                                $fb_google_share_url                            = str_replace(':', '%3A', $portal_job_url);
                                 $btn_facebook                                   = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . $fb_google_share_url . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-2.png"></a>';
                                 $btn_twitter                                    = '<a target="_blank" href="https://twitter.com/intent/tweet?text=' . urlencode($list[$key]['Title']) . '&amp;url=' . urlencode($portal_job_url) . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-3.png"></a>';
                                 // $btn_google                                     = '<a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=' . $fb_google_share_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-1.png"></a>';
@@ -411,15 +414,15 @@ class Home extends CI_Controller {
                             }
                         }
 
-                        if(!empty($featured_jobs)) {
+                        if (!empty($featured_jobs)) {
                             foreach ($featured_jobs as $key => $value) {
                                 $featured_jobs[$key]['TitleOnly'] = $featured_jobs[$key]['Title'];
                                 $has_job_approval_rights                        = $value['has_job_approval_rights'];
 
-                                if($has_job_approval_rights ==  1) {
+                                if ($has_job_approval_rights ==  1) {
                                     $approval_right_status                      = $value['approval_status'];
 
-                                    if($approval_right_status                   != 'approved') {
+                                    if ($approval_right_status                   != 'approved') {
                                         continue;
                                     }
                                 }
@@ -427,16 +430,16 @@ class Home extends CI_Controller {
                                 $country_id                                     = $value['Location_Country'];
 
                                 if (!empty($country_id)) { // get country name
-                                    switch($country_id) {
+                                    switch ($country_id) {
                                         case 227:
-                                        $country_name                           = 'United States';
-                                        break;
+                                            $country_name                           = 'United States';
+                                            break;
                                         case 38:
-                                        $country_name                           = 'Canada';
-                                        break;
+                                            $country_name                           = 'Canada';
+                                            break;
                                         default:
-                                        $country_name                           = '';
-                                        break;
+                                            $country_name                           = '';
+                                            break;
                                     }
 
                                     $featured_jobs[$key]['Location_Country']    = $country_name;
@@ -457,8 +460,8 @@ class Home extends CI_Controller {
 
                                     foreach ($cat_id as $id) {
                                         $job_cat_name                           = $this->job_details->get_job_category_name_by_id($id);
-                                        if(!empty($job_cat_name)) {
-                                           $job_category_array[]                = $job_cat_name[0]['value'];
+                                        if (!empty($job_cat_name)) {
+                                            $job_category_array[]                = $job_cat_name[0]['value'];
                                         }
                                     }
 
@@ -471,13 +474,13 @@ class Home extends CI_Controller {
                                 if ($questionnaire_sid > 0) {
                                     $portal_screening_questionnaires            = $this->job_details->get_screening_questionnaire_by_id($questionnaire_sid);
 
-                                    if(!empty($portal_screening_questionnaires)){
+                                    if (!empty($portal_screening_questionnaires)) {
                                         $featured_jobs[$key]['q_name']          = $portal_screening_questionnaires[0]['name'];
                                         $featured_jobs[$key]['q_passing']       = $portal_screening_questionnaires[0]['passing_score'];
                                         $featured_jobs[$key]['q_send_pass']     = $portal_screening_questionnaires[0]['auto_reply_pass'];
                                         $featured_jobs[$key]['q_send_fail']     = $portal_screening_questionnaires[0]['auto_reply_fail'];
-                                        $featured_jobs[$key]['q_pass_text']     = '';//$portal_screening_questionnaires[0]['email_text_pass'];
-                                        $featured_jobs[$key]['q_fail_text']     = '';//$portal_screening_questionnaires[0]['email_text_fail'];
+                                        $featured_jobs[$key]['q_pass_text']     = ''; //$portal_screening_questionnaires[0]['email_text_pass'];
+                                        $featured_jobs[$key]['q_fail_text']     = ''; //$portal_screening_questionnaires[0]['email_text_fail'];
                                         $featured_jobs[$key]['my_id']           = 'q_question_' . $questionnaire_sid;
                                     } else {
                                         $featured_jobs[$key]['q_name']          = 'Not Found';
@@ -514,14 +517,14 @@ class Home extends CI_Controller {
                                 $job_title_location                             = $value['job_title_location'];
                                 $sub_domain                                     = $value['sub_domain'];
 
-                                if($job_title_location == 1) {
-                                    $featured_jobs[$key]['Title']               = $featured_jobs[$key]['Title'] . '  - ' . ucfirst($featured_jobs[$key]['Location_City']) . ', ' . $featured_jobs[$key]['Location_State'] . ', ' . $featured_jobs[$key]['Location_Country'] ;
+                                if ($job_title_location == 1) {
+                                    $featured_jobs[$key]['Title']               = $featured_jobs[$key]['Title'] . '  - ' . ucfirst($featured_jobs[$key]['Location_City']) . ', ' . $featured_jobs[$key]['Location_State'] . ', ' . $featured_jobs[$key]['Location_Country'];
                                 }
 
                                 //Generate Share Links - start
                                 $company_subdomain_url                          = STORE_PROTOCOL_SSL . $sub_domain;
                                 $portal_job_url                                 = $company_subdomain_url . '/job_details/' . $featured_jobs[$key]['sid'];
-                                $fb_google_share_url                            = str_replace(':','%3A',$portal_job_url);
+                                $fb_google_share_url                            = str_replace(':', '%3A', $portal_job_url);
                                 $btn_facebook                                   = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . $fb_google_share_url . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-2.png"></a>';
                                 $btn_twitter                                    = '<a target="_blank" href="https://twitter.com/intent/tweet?text=' . urlencode($featured_jobs[$key]['Title']) . '&amp;url=' . urlencode($portal_job_url) . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-3.png"></a>';
                                 // $btn_google = '<a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=' . $fb_google_share_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-1.png"></a>';
@@ -548,28 +551,29 @@ class Home extends CI_Controller {
                         $data['job_listings']                                   = $list;
                         $data['featured_jobs_count']                            = $featured_jobs_count;
                         $data['job_listings_count']                             = $list_count;
-                        $data['total_calls']                                    = ceil($list_count+$featured_jobs_count)/$per_page;
-                        if(!empty($ajax_flag) && $ajax_flag){
+                        $data['total_calls']                                    = ceil($list_count + $featured_jobs_count) / $per_page;
+                        if (!empty($ajax_flag) && $ajax_flag) {
                             print_r(json_encode($data['job_listings']));
                             die();
                         }
-                        function array_sort_state_name($a, $b) {
+                        function array_sort_state_name($a, $b)
+                        {
                             return strnatcmp($a['state_name'], $b['state_name']);
-                          }
+                        }
 
-                          if(isset($counntry_states_array['227'])){
-                              $us_states = $counntry_states_array['227'];
-                              usort($us_states, 'array_sort_state_name'); // sort alphabetically by name
-                              $counntry_states_array['227'] = $us_states;
-                          }
+                        if (isset($counntry_states_array['227'])) {
+                            $us_states = $counntry_states_array['227'];
+                            usort($us_states, 'array_sort_state_name'); // sort alphabetically by name
+                            $counntry_states_array['227'] = $us_states;
+                        }
 
-                          if(isset($counntry_states_array['38'])){
-                              $ca_states = $counntry_states_array['38'];
-                              usort($ca_states, 'array_sort_state_name'); // sort alphabetically by name
-                              $counntry_states_array['38'] = $ca_states;
-                          }
+                        if (isset($counntry_states_array['38'])) {
+                            $ca_states = $counntry_states_array['38'];
+                            usort($ca_states, 'array_sort_state_name'); // sort alphabetically by name
+                            $counntry_states_array['38'] = $ca_states;
+                        }
                         $data['job_categories']                                 = array();
-                        if(!empty($categories_in_active_jobs)) {
+                        if (!empty($categories_in_active_jobs)) {
                             asort($categories_in_active_jobs);
                         }
                         $data['categories_in_active_jobs']                      = $categories_in_active_jobs;
@@ -587,9 +591,9 @@ class Home extends CI_Controller {
                         $footer_content['content']                              = str_replace("{{company_name}}", $company_name, $footer_content['content']);
                         $data['footer_content']                                 = $footer_content;
                         //
-                        if($filter['key'] == 'users.CompanyName'){
-                            $data['meta_title'] = 'Jobs at '.ucwords($filter['value']).', Automotosocial';
-                        } else{
+                        if ($filter['key'] == 'users.CompanyName') {
+                            $data['meta_title'] = 'Jobs at ' . ucwords($filter['value']) . ', Automotosocial';
+                        } else {
                             $data['meta_title'] = 'Jobs in USA, Canada at Automotosocial';
                         }
 
@@ -646,12 +650,13 @@ class Home extends CI_Controller {
         }
     }
 
-    public function get_jobs($page_no = 1){
-
+    public function get_jobs($page_no = 1)
+    {
     }
 
 
-    public function contact_us() {
+    public function contact_us()
+    {
         $server_name                                                            = clean_domain($_SERVER['SERVER_NAME']);
         $data                                                                   = $this->check_domain->check_portal_status($server_name);
         $theme_name                                                             = $data['theme_name'];
@@ -701,7 +706,7 @@ class Home extends CI_Controller {
                     $contact_email                                              = $this->input->post('email');
                     $is_blocked                                                 = $this->check_domain->check_if_blocked($contact_email);
 
-                    if($is_blocked) {
+                    if ($is_blocked) {
                         $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your enquiry. We will get back to you!');
                         redirect('/contact_us', 'refresh');
                     } else {
@@ -721,7 +726,8 @@ class Home extends CI_Controller {
         }
     }
 
-    function custom_file_to_AWS($fileName, $fileData) {
+    function custom_file_to_AWS($fileName, $fileData)
+    {
         $filePath = FCPATH . "assets/temp_files/";
 
         if (!file_exists($filePath)) { //make dir
@@ -735,17 +741,18 @@ class Home extends CI_Controller {
         return $cover_letter;
     }
 
-    public function print_ad() {
+    public function print_ad()
+    {
         $sid                                                                    = $this->uri->segment(2);
         $list                                                                   = array();
 
-        if($sid != null && $sid > 0) {
-            if(!is_numeric($sid)){
+        if ($sid != null && $sid > 0) {
+            if (!is_numeric($sid)) {
                 $sid                                                            = $this->job_details->fetch_job_id_from_random_key($sid);
             }
         }
 
-        if($sid != null && $sid > 0) {
+        if ($sid != null && $sid > 0) {
             $list                                                               = $this->job_details->fetch_jobs_details($sid);
         }
 
@@ -790,7 +797,8 @@ class Home extends CI_Controller {
         }
     }
 
-    public function job_details($sid = null) {
+    public function job_details($sid = null)
+    {
         $sid                                                                    = $this->input->post('sid') ? $this->input->post('sid') : $sid;
         if (strpos($sid, "-") !== FALSE) {
             $sid = @end((explode('-', $sid)));
@@ -806,7 +814,7 @@ class Home extends CI_Controller {
         $company_sid = $data['company_details']['sid'];
         company_phone_regex_module_check($company_sid, $data, $this);
 
-        if(!is_numeric($sid)){
+        if (!is_numeric($sid)) {
             $sid                                                                = $this->job_details->fetch_job_id_from_random_key($sid);
         }
 
@@ -870,16 +878,16 @@ class Home extends CI_Controller {
                     $country_id                                                 = $list['Location_Country'];
 
                     if (!empty($country_id)) {
-                        switch($country_id) {
+                        switch ($country_id) {
                             case 227:
-                            $country_name                                       = 'United States';
-                            break;
+                                $country_name                                       = 'United States';
+                                break;
                             case 38:
-                            $country_name                                       = 'Canada';
-                            break;
+                                $country_name                                       = 'Canada';
+                                break;
                             default:
-                            $country_name                                       = '';
-                            break;
+                                $country_name                                       = '';
+                                break;
                         }
                         $list['Location_Country']                               = $country_name;
                     }
@@ -901,7 +909,7 @@ class Home extends CI_Controller {
                         foreach ($cat_id as $id) {
                             $job_cat_name                                       = $this->job_details->get_job_category_name_by_id($id);
 
-                            if(!empty($job_cat_name)){
+                            if (!empty($job_cat_name)) {
                                 $job_category_array[]                           = $job_cat_name[0]['value'];
                             }
                         }
@@ -917,7 +925,7 @@ class Home extends CI_Controller {
 
                     if ($questionnaire_sid > 0) {
                         $portal_screening_questionnaires                        = $this->job_details->get_screening_questionnaire_by_id($questionnaire_sid);
-                        if(!empty($portal_screening_questionnaires)) {
+                        if (!empty($portal_screening_questionnaires)) {
                             $questionnaire_name                                 = $portal_screening_questionnaires[0]['name'];
                             $list['q_name']                                     = $portal_screening_questionnaires[0]['name'];
                             $list['q_passing']                                  = $portal_screening_questionnaires[0]['passing_score'];
@@ -940,7 +948,7 @@ class Home extends CI_Controller {
                                         $screening_answers                      = $this->job_details->get_screening_answers_by_id($questions_sid);
 
                                         foreach ($screening_answers as $akey => $avalue) {
-                                           $list['q_answer_' . $questions_sid][]= array('value' => $avalue['value'], 'score' => $avalue['sid']);
+                                            $list['q_answer_' . $questions_sid][] = array('value' => $avalue['value'], 'score' => $avalue['sid']);
                                         }
                                     }
                                 }
@@ -977,7 +985,7 @@ class Home extends CI_Controller {
 
                     $company_subdomain_url                                      = STORE_PROTOCOL_SSL . db_get_sub_domain($company_sid); //Generate Share Links - start
                     $portal_job_url                                             = $company_subdomain_url . '/job_details/' . $list['sid'];
-                    $fb_google_share_url                                        = str_replace(':','%3A',$portal_job_url);
+                    $fb_google_share_url                                        = str_replace(':', '%3A', $portal_job_url);
                     $btn_facebook                                               = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . $fb_google_share_url . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-2.png"></a>';
                     $btn_twitter                                                = '<a target="_blank" href="https://twitter.com/intent/tweet?text=' . urlencode($list['Title']) . '&amp;url=' . urlencode($portal_job_url) . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-3.png"></a>';
                     $btn_linkedin                                               = '<a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=' . urlencode($portal_job_url) . '&amp;title=' . urlencode($list['Title']) . '&amp;summary=' . urlencode($list['Title']) . '&amp;source=' . $portal_job_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/theme-1/images/social-4.png"></a>';
@@ -1043,11 +1051,11 @@ class Home extends CI_Controller {
                     $more_career_oppurtunatity                                  = db_get_sub_domain($job_company_sid);
                     $job_company_career_title                                   = $this->theme_meta_model->fGetThemeMetaData($job_company_sid, $theme_name, 'jobs', 'jobs_page_title');
 
-                    if(empty($job_company_career_title)) {
+                    if (empty($job_company_career_title)) {
                         $job_company_career_title                               = 'jobs';
                     }
 
-                    $data['more_career_oppurtunatity']                          = 'https://'.$more_career_oppurtunatity.'/'.$job_company_career_title;
+                    $data['more_career_oppurtunatity']                          = 'https://' . $more_career_oppurtunatity . '/' . $job_company_career_title;
 
                     if ($this->form_validation->run() == false) {
                         if ($data['is_paid']) {
@@ -1060,7 +1068,7 @@ class Home extends CI_Controller {
                             $this->load->view($theme_name . '/job_detail_view');
                             $this->load->view($theme_name . '/_parts/footer_view');
                         }
-                    } else {//Handle Post
+                    } else { //Handle Post
                         $action = '';
                         if (isset($_POST['action'])) {
                             $action                                             = $this->input->post('action');
@@ -1071,12 +1079,12 @@ class Home extends CI_Controller {
                         // Added on: 11-07-2019
                         // Reset phone numbers
                         $txt_phone_number = $this->input->post('phone_number', true);
-                        if($this->input->post('txt_phonenumber', true))
-                        $txt_phone_number = $this->input->post('txt_phonenumber', true);
+                        if ($this->input->post('txt_phonenumber', true))
+                            $txt_phone_number = $this->input->post('txt_phonenumber', true);
 
                         switch ($action) {
                             case 'job_applicant':
-                                
+
                                 // $recaptcha_response = $this->input->post('g-recaptcha-response');
                                 // $google_secret = $this->config->item('google_secret');
 
@@ -1093,11 +1101,49 @@ class Home extends CI_Controller {
                                 //     } else {
                                 //         redirect('/', 'refresh');
                                 //     }
-                                    
+
                                 //     break;
                                 // } 
-                                
-                                $my_ip = getUserIP();
+                                 
+                                 $redirecturl = "";
+                                 $applied_from   = $this->input->post('applied_from');
+                                 
+                                 if($this->input->post('dr',true)){
+                                    echo "Applied job form";
+                                    exit();
+                                }
+
+                                 if ($applied_from == 'job') {
+                                    $redirecturl ='/job_details/' . $sid;
+                                    } else if ($applied_from == 'jobs_list_view') {
+                                        $redirecturl ='/jobs/';
+                                       } else {
+                                        $redirecturl ='/';
+                                         }
+
+                                $formpost = $this->input->post(NULL, TRUE);
+                                //
+                                if (!isset($formpost['g-recaptcha-response']) || empty($formpost['g-recaptcha-response'])) {
+                                    $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                                    if($this->input->post('dr',true)){
+                                        echo "Google captcha not set";
+                                        exit();
+                                    }
+                                    return redirect( $redirecturl, 'refresh');
+                                }
+                                //
+                                $gr = verifyCaptcha($formpost['g-recaptcha-response']);
+                                //
+                                if (!$gr['success']) {
+                                    $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                                    if($this->input->post('dr',true)){
+                                        echo "Google captcha not set";
+                                        exit();
+                                    }
+                                    return redirect( $redirecturl, 'refresh');
+                                }
+
+                              $my_ip = getUserIP();
 
                                 // if (in_array($company_sid, array("7", "51")) || $my_ip == '72.255.38.246') {
                                 if (!in_array($company_sid, array("0"))) {
@@ -1109,10 +1155,13 @@ class Home extends CI_Controller {
                                     $email                                          = $this->input->post('email');
                                     $is_blocked_email                               = $this->check_domain->check_if_blocked($email);
 
-                                    if($is_blocked_email == 'blocked') {
+                                    if ($is_blocked_email == 'blocked') {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Blocked email";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1146,7 +1195,10 @@ class Home extends CI_Controller {
 
                                     if (check_company_status($company_sid) == 0) {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Applied job";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1161,7 +1213,10 @@ class Home extends CI_Controller {
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
                                         $this->session->set_flashdata('message', "<b>Error!</b> You have already applied for this Job '" . $data['job_details']['Title'] . "'");
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Already applied job";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1174,29 +1229,29 @@ class Home extends CI_Controller {
                                         if (!empty($YouTube_Video)) {
                                             $YouTube_code   = substr($YouTube_Video, strpos($YouTube_Video, '=') + 1, strlen($YouTube_Video));
                                             $vType          = 'youtube';
-                                        }elseif(!empty($_FILES) && isset($_FILES['uploaded_file']) && !empty($_FILES['uploaded_file']['name'])){
+                                        } elseif (!empty($_FILES) && isset($_FILES['uploaded_file']) && !empty($_FILES['uploaded_file']['name'])) {
                                             $document = $_FILES['uploaded_file']['name'];
                                             $ext = strtolower(pathinfo($document, PATHINFO_EXTENSION));
 
-                                            if($_FILES['uploaded_file']['size'] > 0){
-                                                if($ext == "mp4" || $ext == "m4a" || $ext == "m4v" || $ext == "f4v" || $ext == "f4a" || $ext == "m4b" || $ext == "m4r" || $ext == "f4b" || $ext == "mov" || $ext == 'mp3'){
+                                            if ($_FILES['uploaded_file']['size'] > 0) {
+                                                if ($ext == "mp4" || $ext == "m4a" || $ext == "m4v" || $ext == "f4v" || $ext == "f4a" || $ext == "m4b" || $ext == "m4r" || $ext == "f4b" || $ext == "mov" || $ext == 'mp3') {
                                                     error_reporting(E_ALL);
                                                     ini_set('display_errors', '1');
                                                     $random = generateRandomString(5);
                                                     // $company_id = $company_id;
                                                     $target_file_name = basename($_FILES["uploaded_file"]["name"]);
-                                                    $file_name = strtolower($company_sid.DIRECTORY_SEPARATOR.$random.'_'.$target_file_name);
-                                                    $e = dirname(__FILE__).DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'uploaded_videos'.DIRECTORY_SEPARATOR;
-                                                    $e2 = str_replace('manage_ams'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR, '', $e);
+                                                    $file_name = strtolower($company_sid . DIRECTORY_SEPARATOR . $random . '_' . $target_file_name);
+                                                    $e = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'uploaded_videos' . DIRECTORY_SEPARATOR;
+                                                    $e2 = str_replace('manage_ams' . DIRECTORY_SEPARATOR . 'application' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR, '', $e);
                                                     $target_file = $e2 . $file_name;
-                                                    $filename = $e2.$company_sid;
-                                                    if (!file_exists($e2)){
+                                                    $filename = $e2 . $company_sid;
+                                                    if (!file_exists($e2)) {
                                                         mkdir($e2);
                                                     }
-                                                    if (!file_exists($filename)){
+                                                    if (!file_exists($filename)) {
                                                         mkdir($filename);
                                                     }
-                                                    if(!copy($_FILES["uploaded_file"]["tmp_name"], $target_file)){
+                                                    if (!copy($_FILES["uploaded_file"]["tmp_name"], $target_file)) {
                                                         $file_name = '';
                                                     }
                                                     $YouTube_code = $file_name;
@@ -1259,14 +1314,17 @@ class Home extends CI_Controller {
                                         //
                                         if (check_company_status($employer_sid) == 0) {
                                             $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-
+                                            if($this->input->post('dr',true)){
+                                                echo "Application for job";
+                                                exit();
+                                            }
                                             if ($applied_from == 'job') {
                                                 redirect('/job-feed-details/' . $sid, 'refresh');
                                             } else if ($applied_from == 'jobs_list_view') {
                                                 redirect('/job-feed/');
                                             } else {
                                                 redirect('/', 'refresh');
-                                            }   
+                                            }
 
                                             break;
                                         }
@@ -1294,7 +1352,8 @@ class Home extends CI_Controller {
                                                 'cover_letter'                      => $cover_letter,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email);
+                                                'referred_by_email'                 => $referred_by_email
+                                            );
 
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
 
@@ -1341,22 +1400,22 @@ class Home extends CI_Controller {
                                                 'referred_by_email'                 => $referred_by_email
                                             );
 
-                                            if($YouTube_code != '') { // check if youtube link is updated
+                                            if ($YouTube_code != '') { // check if youtube link is updated
                                                 $update_data_primary_youtube        = array('YouTube_Video' => $YouTube_code, 'video_type' => $vType);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_youtube);
                                             }
 
-                                            if($resume != '') { // check if resume is updated
+                                            if ($resume != '') { // check if resume is updated
                                                 $update_data_primary_resume         = array('resume' => $resume);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_resume);
                                             }
 
-                                            if($pictures != '') { // check if profile picture is updated
+                                            if ($pictures != '') { // check if profile picture is updated
                                                 $update_data_primary_pictures       = array('pictures' => $pictures);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_pictures);
                                             }
 
-                                            if($cover_letter != '') { // check if cover letter is updated
+                                            if ($cover_letter != '') { // check if cover letter is updated
                                                 $update_data_primary_cover_letter   = array('cover_letter' => $cover_letter);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_cover_letter);
                                             }
@@ -1430,9 +1489,9 @@ class Home extends CI_Controller {
                                             $company_email                          = TO_EMAIL_INFO; //$data['company_details']['email'];
                                             $resume_url                             = '';
                                             $resume_anchor                          = '';
-                                            $profile_anchor                         = '<a href="https://www.automotohr.com/applicant_profile/'.$job_applications_sid.'/'.$portal_applicant_jobs_list_sid.'" style="'.DEF_EMAIL_BTN_STYLE_DANGER.'"  download="resume" >View Profile</a>';
+                                            $profile_anchor                         = '<a href="https://www.automotohr.com/applicant_profile/' . $job_applications_sid . '/' . $portal_applicant_jobs_list_sid . '" style="' . DEF_EMAIL_BTN_STYLE_DANGER . '"  download="resume" >View Profile</a>';
 
-                                            if(!empty($resume)) { // resume check here - change to button
+                                            if (!empty($resume)) { // resume check here - change to button
                                                 $resume_url                         = AWS_S3_BUCKET_URL . urlencode($resume);
                                                 $resume_anchor                      = '<a  style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . $resume_url . '" target="_blank">Download Resume</a>';
                                             }
@@ -1442,7 +1501,7 @@ class Home extends CI_Controller {
                                             $replacement_array['site_url']          = base_url();
                                             $replacement_array['date']              = month_date_year(date('Y-m-d'));
                                             $replacement_array['job_title']         = $title;
-                                            $replacement_array['original_job_title']= $original_job_title;
+                                            $replacement_array['original_job_title'] = $original_job_title;
                                             $replacement_array['phone_number']      = $phone_number;
                                             $replacement_array['city']              = $city;
                                             $replacement_array['company_name']      = $company_name;
@@ -1463,7 +1522,7 @@ class Home extends CI_Controller {
                                                 $applicant_notification_contacts    = get_notification_email_contacts($company_sid, 'new_applicant', $sid);
 
                                                 if (!empty($applicant_notification_contacts)) {
-                                                    foreach($applicant_notification_contacts as $contact) {
+                                                    foreach ($applicant_notification_contacts as $contact) {
                                                         $replacement_array['firstname']     = $first_name;
                                                         $replacement_array['lastname']      = $last_name;
                                                         $replacement_array['email']         = $email;
@@ -1509,11 +1568,11 @@ class Home extends CI_Controller {
                                                 $message_hf                         = message_header_footer_domain($company_id, $company_name);
                                                 $secret_key                         = $message_data['identity_key'] . "__";
                                                 $autoemailbody = $message_hf['header']
-                                                                . '<p>Subject: ' . $subject . '</p>'
-                                                                . $body
-                                                                . $message_hf['footer']
-                                                                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                                                . $secret_key . '</div>';
+                                                    . '<p>Subject: ' . $subject . '</p>'
+                                                    . $body
+                                                    . $message_hf['footer']
+                                                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                                    . $secret_key . '</div>';
 
                                                 sendMail(REPLY_TO, $email, $subject, $autoemailbody, $from_name, REPLY_TO);
                                                 $sent_to_pm                                     = $this->contact_model->save_message($message_data);
@@ -1544,112 +1603,114 @@ class Home extends CI_Controller {
                                                 $all_questions_ids                  = $_POST['all_questions_ids'];
 
                                                 foreach ($all_questions_ids as $key => $value) {
-                                                        $q_passing                  = 0;
-                                                        $post_questions_sid         = $value;
-                                                        $caption                    = 'caption' . $value;
-                                                        $type                       = 'type' . $value;
-                                                        $answer                     = $_POST[$type] . $value;
-                                                        $questions_type             = $_POST[$type];
-                                                        $my_question                = '';
-                                                        $individual_score           = 0;
-                                                        $individual_passing_score   = 0;
-                                                        $individual_status          = 'Pass';
-                                                        $result_status              = array();
+                                                    $q_passing                  = 0;
+                                                    $post_questions_sid         = $value;
+                                                    $caption                    = 'caption' . $value;
+                                                    $type                       = 'type' . $value;
+                                                    $answer                     = $_POST[$type] . $value;
+                                                    $questions_type             = $_POST[$type];
+                                                    $my_question                = '';
+                                                    $individual_score           = 0;
+                                                    $individual_passing_score   = 0;
+                                                    $individual_status          = 'Pass';
+                                                    $result_status              = array();
 
-                                                        if (isset($_POST[$caption])) {
-                                                            $my_question            = $_POST[$caption];
-                                                        }
+                                                    if (isset($_POST[$caption])) {
+                                                        $my_question            = $_POST[$caption];
+                                                    }
 
-                                                        $my_answer                  = NULL;
+                                                    $my_answer                  = NULL;
 
-                                                        if (isset($_POST[$answer])) {
-                                                            $my_answer              = $_POST[$answer];
-                                                        }
+                                                    if (isset($_POST[$answer])) {
+                                                        $my_answer              = $_POST[$answer];
+                                                    }
 
-                                                        if($questions_type != 'string') { // get the question possible score
-                                                            $q_passing              = $this->job_details->get_possible_score_of_questions($post_questions_sid, $questions_type);
-                                                        }
+                                                    if ($questions_type != 'string') { // get the question possible score
+                                                        $q_passing              = $this->job_details->get_possible_score_of_questions($post_questions_sid, $questions_type);
+                                                    }
 
-                                                        if($my_answer != NULL) { // It is required question
-                                                            if (is_array($my_answer)) {
-                                                                $answered                   = array();
-                                                                $answered_result_status     = array();
-                                                                $answered_question_score    = array();
-                                                                $total_questionnaire_score  += $q_passing;
-                                                                $is_string                  = 1;
+                                                    if ($my_answer != NULL) { // It is required question
+                                                        if (is_array($my_answer)) {
+                                                            $answered                   = array();
+                                                            $answered_result_status     = array();
+                                                            $answered_question_score    = array();
+                                                            $total_questionnaire_score  += $q_passing;
+                                                            $is_string                  = 1;
 
-                                                                foreach ($my_answer as $answers) {
-                                                                        $result                 = explode('@#$', $answers);
-                                                                        $a                      = $result[0];
-                                                                        $answered_question_sid  = $result[1];
-                                                                        $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
+                                                            foreach ($my_answer as $answers) {
+                                                                $result                 = explode('@#$', $answers);
+                                                                $a                      = $result[0];
+                                                                $answered_question_sid  = $result[1];
+                                                                $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
 
-                                                                        if(!empty($question_details)) {
-                                                                            $questions_score            = $question_details['score'];
-                                                                            $questions_result_status    = $question_details['result_status'];
-                                                                            $questions_result_value     = $question_details['value'];
-                                                                        }
-
-                                                                        $score                      = $questions_score;
-                                                                        $total_score                += $questions_score;
-                                                                        $individual_score           += $questions_score;
-                                                                        $individual_passing_score   = $q_passing;
-                                                                        $answered[]                 = $a;
-                                                                        $result_status[]            = $questions_result_status;
-                                                                        $answered_result_status[]   = $questions_result_status;
-                                                                        $answered_question_score[]  = $questions_score;
+                                                                if (!empty($question_details)) {
+                                                                    $questions_score            = $question_details['score'];
+                                                                    $questions_result_status    = $question_details['result_status'];
+                                                                    $questions_result_value     = $question_details['value'];
                                                                 }
-                                                            } else { // hassan WORKING area
-                                                                $result                     = explode('@#$', $my_answer);
-                                                                $total_questionnaire_score  += $q_passing;
-                                                                $a                          = $result[0];
-                                                                $answered                   = $a;
-                                                                $answered_result_status     = '';
-                                                                $answered_question_score    = 0;
 
-                                                                if (isset($result[1])) {
-                                                                    $answered_question_sid  = $result[1];
-                                                                    $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
-
-                                                                    if(!empty($question_details)) {
-                                                                        $questions_score = $question_details['score'];
-                                                                        $questions_result_status    = $question_details['result_status'];
-                                                                        $questions_result_value     = $question_details['value'];
-                                                                    }
-
-                                                                    $is_string                  = 1;
-                                                                    $score                      = $questions_score;
-                                                                    $total_score                += $questions_score;
-                                                                    $individual_score           += $questions_score;
-                                                                    $individual_passing_score   = $q_passing;
-                                                                    $result_status[]            = $questions_result_status;
-                                                                    $answered_result_status     = $questions_result_status;
-                                                                    $answered_question_score    = $questions_score;
-                                                                }
+                                                                $score                      = $questions_score;
+                                                                $total_score                += $questions_score;
+                                                                $individual_score           += $questions_score;
+                                                                $individual_passing_score   = $q_passing;
+                                                                $answered[]                 = $a;
+                                                                $result_status[]            = $questions_result_status;
+                                                                $answered_result_status[]   = $questions_result_status;
+                                                                $answered_question_score[]  = $questions_score;
                                                             }
-
-                                                            if(!empty($result_status)) {
-                                                                if(in_array('Fail', $result_status)) {
-                                                                    $individual_status  = 'Fail';
-                                                                    $overall_status     = 'Fail';
-                                                                }
-                                                            }
-                                                        } else { // it is optional question
-                                                            $answered                   = '';
-                                                            $individual_passing_score   = $q_passing;
-                                                            $individual_score           = 0;
-                                                            $individual_status          = 'Candidate did not answer the question';
+                                                        } else { // hassan WORKING area
+                                                            $result                     = explode('@#$', $my_answer);
+                                                            $total_questionnaire_score  += $q_passing;
+                                                            $a                          = $result[0];
+                                                            $answered                   = $a;
                                                             $answered_result_status     = '';
                                                             $answered_question_score    = 0;
+
+                                                            if (isset($result[1])) {
+                                                                $answered_question_sid  = $result[1];
+                                                                $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
+
+                                                                if (!empty($question_details)) {
+                                                                    $questions_score = $question_details['score'];
+                                                                    $questions_result_status    = $question_details['result_status'];
+                                                                    $questions_result_value     = $question_details['value'];
+                                                                }
+
+                                                                $is_string                  = 1;
+                                                                $score                      = $questions_score;
+                                                                $total_score                += $questions_score;
+                                                                $individual_score           += $questions_score;
+                                                                $individual_passing_score   = $q_passing;
+                                                                $result_status[]            = $questions_result_status;
+                                                                $answered_result_status     = $questions_result_status;
+                                                                $answered_question_score    = $questions_score;
+                                                            }
                                                         }
 
-                                                        $array_questionnaire[$my_question] = array( 'answer'                    => $answered,
-                                                                                                    'passing_score'             => $individual_passing_score,
-                                                                                                    'score'                     => $individual_score,
-                                                                                                    'status'                    => $individual_status,
-                                                                                                    'answered_result_status'    => $answered_result_status,
-                                                                                                    'answered_question_score'   => $answered_question_score);
-                                                        //echo '<pre>'; print_r($array_questionnaire); echo '</pre><hr>';
+                                                        if (!empty($result_status)) {
+                                                            if (in_array('Fail', $result_status)) {
+                                                                $individual_status  = 'Fail';
+                                                                $overall_status     = 'Fail';
+                                                            }
+                                                        }
+                                                    } else { // it is optional question
+                                                        $answered                   = '';
+                                                        $individual_passing_score   = $q_passing;
+                                                        $individual_score           = 0;
+                                                        $individual_status          = 'Candidate did not answer the question';
+                                                        $answered_result_status     = '';
+                                                        $answered_question_score    = 0;
+                                                    }
+
+                                                    $array_questionnaire[$my_question] = array(
+                                                        'answer'                    => $answered,
+                                                        'passing_score'             => $individual_passing_score,
+                                                        'score'                     => $individual_score,
+                                                        'status'                    => $individual_status,
+                                                        'answered_result_status'    => $answered_result_status,
+                                                        'answered_question_score'   => $answered_question_score
+                                                    );
+                                                    //echo '<pre>'; print_r($array_questionnaire); echo '</pre><hr>';
                                                 } // here
 
                                                 $questionnaire_result               = $overall_status;
@@ -1657,34 +1718,38 @@ class Home extends CI_Controller {
                                                 $remote_addr                        = getUserIP();
                                                 $user_agent                         = $_SERVER['HTTP_USER_AGENT'];
 
-                                                $questionnaire_data = array('applicant_sid'             => $job_applications_sid,
-                                                                            'applicant_jobs_list_sid'   => $portal_applicant_jobs_list_sid,
-                                                                            'job_sid'                   => $job_sid,
-                                                                            'job_title'                 => $title,
-                                                                            'job_type'                  => $job_type,
-                                                                            'company_sid'               => $company_sid,
-                                                                            'questionnaire_name'        => $questionnaire_name,
-                                                                            'questionnaire'             => $array_questionnaire,
-                                                                            'questionnaire_result'      => $questionnaire_result,
-                                                                            'attend_timestamp'          => $datetime,
-                                                                            'questionnaire_ip_address'  => $remote_addr,
-                                                                            'questionnaire_user_agent'  => $user_agent);
+                                                $questionnaire_data = array(
+                                                    'applicant_sid'             => $job_applications_sid,
+                                                    'applicant_jobs_list_sid'   => $portal_applicant_jobs_list_sid,
+                                                    'job_sid'                   => $job_sid,
+                                                    'job_title'                 => $title,
+                                                    'job_type'                  => $job_type,
+                                                    'company_sid'               => $company_sid,
+                                                    'questionnaire_name'        => $questionnaire_name,
+                                                    'questionnaire'             => $array_questionnaire,
+                                                    'questionnaire_result'      => $questionnaire_result,
+                                                    'attend_timestamp'          => $datetime,
+                                                    'questionnaire_ip_address'  => $remote_addr,
+                                                    'questionnaire_user_agent'  => $user_agent
+                                                );
 
                                                 $questionnaire_serialize            = serialize($questionnaire_data);
                                                 $array_questionnaire_serialize      = serialize($array_questionnaire);
                                                 //echo '<pre>'; print_r($questionnaire_data); echo '</pre><hr>';
-                                                $screening_questionnaire_results = array('applicant_sid'                => $job_applications_sid,
-                                                                                        'applicant_jobs_list_sid'       => $portal_applicant_jobs_list_sid,
-                                                                                        'job_sid'                       => $job_sid,
-                                                                                        'job_title'                     => $title,
-                                                                                        'job_type'                      => $job_type,
-                                                                                        'company_sid'                   => $company_sid,
-                                                                                        'questionnaire_name'            => $questionnaire_name,
-                                                                                        'questionnaire'                 => $array_questionnaire_serialize,
-                                                                                        'questionnaire_result'          => $questionnaire_result,
-                                                                                        'attend_timestamp'              => $datetime,
-                                                                                        'questionnaire_ip_address'      => $remote_addr,
-                                                                                        'questionnaire_user_agent'      => $user_agent);
+                                                $screening_questionnaire_results = array(
+                                                    'applicant_sid'                => $job_applications_sid,
+                                                    'applicant_jobs_list_sid'       => $portal_applicant_jobs_list_sid,
+                                                    'job_sid'                       => $job_sid,
+                                                    'job_title'                     => $title,
+                                                    'job_type'                      => $job_type,
+                                                    'company_sid'                   => $company_sid,
+                                                    'questionnaire_name'            => $questionnaire_name,
+                                                    'questionnaire'                 => $array_questionnaire_serialize,
+                                                    'questionnaire_result'          => $questionnaire_result,
+                                                    'attend_timestamp'              => $datetime,
+                                                    'questionnaire_ip_address'      => $remote_addr,
+                                                    'questionnaire_user_agent'      => $user_agent
+                                                );
 
                                                 $this->job_details->update_questionnaire_result($portal_applicant_jobs_list_sid, $questionnaire_serialize, $total_questionnaire_score, $total_score, $questionnaire_result);
                                                 $this->job_details->insert_questionnaire_result($screening_questionnaire_results);
@@ -1722,16 +1787,18 @@ class Home extends CI_Controller {
                                             }
 
                                             if ($eeo_form == 'Yes') { //Getting data for EEO Form Starts
-                                                $eeo_data = array(  'application_sid'                   => $job_applications_sid,
-                                                                    'users_type'                        => "applicant",
-                                                                    'portal_applicant_jobs_list_sid'    => $portal_applicant_jobs_list_sid,
-                                                                    'us_citizen'                        => $this->input->post('us_citizen'),
-                                                                    'visa_status '                      => $this->input->post('visa_status'),
-                                                                    'group_status'                      => $this->input->post('group_status'),
-                                                                    'veteran'                           => $this->input->post('veteran'),
-                                                                    'disability'                        => $this->input->post('disability'),
-                                                                    'gender'                            => $this->input->post('gender'),
-                                                                    'is_expired'                            => 1);
+                                                $eeo_data = array(
+                                                    'application_sid'                   => $job_applications_sid,
+                                                    'users_type'                        => "applicant",
+                                                    'portal_applicant_jobs_list_sid'    => $portal_applicant_jobs_list_sid,
+                                                    'us_citizen'                        => $this->input->post('us_citizen'),
+                                                    'visa_status '                      => $this->input->post('visa_status'),
+                                                    'group_status'                      => $this->input->post('group_status'),
+                                                    'veteran'                           => $this->input->post('veteran'),
+                                                    'disability'                        => $this->input->post('disability'),
+                                                    'gender'                            => $this->input->post('gender'),
+                                                    'is_expired'                            => 1
+                                                );
 
                                                 $this->job_details->save_eeo_form($eeo_data);
                                             } //Getting data for EEO Form Ends
@@ -1740,11 +1807,14 @@ class Home extends CI_Controller {
                                         }
 
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Job Applied Form";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
-                                            redirect('/job_details/' . $sid."?applied_by=".$portal_applicant_jobs_list_sid, 'refresh');
+                                            redirect('/job_details/' . $sid . "?applied_by=" . $portal_applicant_jobs_list_sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
-                                            redirect('/jobs/'."?applied_by=".$portal_applicant_jobs_list_sid, 'refresh');
+                                            redirect('/jobs/' . "?applied_by=" . $portal_applicant_jobs_list_sid, 'refresh');
                                         } else {
                                             redirect('/', 'refresh');
                                         }
@@ -1757,10 +1827,13 @@ class Home extends CI_Controller {
                                     $email                                          = $this->input->post('email');
                                     $is_blocked_email                               = $this->check_domain->check_if_blocked($email);
 
-                                    if($is_blocked_email == 'blocked') {
+                                    if ($is_blocked_email == 'blocked') {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Job application success";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1794,30 +1867,30 @@ class Home extends CI_Controller {
                                     if (!empty($YouTube_Video)) {
                                         $YouTube_code                               = substr($YouTube_Video, strpos($YouTube_Video, '=') + 1, strlen($YouTube_Video));
                                         $vType = 'youtube';
-                                    }elseif(!empty($_FILES) && isset($_FILES['uploaded_file']) && !empty($_FILES['name'])){
+                                    } elseif (!empty($_FILES) && isset($_FILES['uploaded_file']) && !empty($_FILES['name'])) {
 
                                         $document = $_FILES['name'];
                                         $ext = strtolower(pathinfo($document, PATHINFO_EXTENSION));
 
-                                        if($_FILES['uploaded_file']['size'] > 0){
-                                            if($ext == "mp4" || $ext == "m4a" || $ext == "m4v" || $ext == "f4v" || $ext == "f4a" || $ext == "m4b" || $ext == "m4r" || $ext == "f4b" || $ext == "mov" || $ext == 'mp3'){
+                                        if ($_FILES['uploaded_file']['size'] > 0) {
+                                            if ($ext == "mp4" || $ext == "m4a" || $ext == "m4v" || $ext == "f4v" || $ext == "f4a" || $ext == "m4b" || $ext == "m4r" || $ext == "f4b" || $ext == "mov" || $ext == 'mp3') {
                                                 error_reporting(E_ALL);
                                                 ini_set('display_errors', '1');
                                                 $random = generateRandomString(5);
                                                 // $company_id = $company_id;
                                                 $target_file_name = basename($_FILES["uploaded_file"]["name"]);
-                                                $file_name = strtolower($company_sid."\\".$random.'_'.$target_file_name);
-                                                $e = dirname(__FILE__).'\\assets\uploaded_videos\\';
+                                                $file_name = strtolower($company_sid . "\\" . $random . '_' . $target_file_name);
+                                                $e = dirname(__FILE__) . '\\assets\uploaded_videos\\';
                                                 $e2 = str_replace('manage_ams\application\controllers\\', '', $e);
                                                 $target_file = $e2 . $file_name;
-                                                $filename = $e2.$company_sid;
-                                                if (!file_exists($e2)){
+                                                $filename = $e2 . $company_sid;
+                                                if (!file_exists($e2)) {
                                                     mkdir($e2);
                                                 }
-                                                if (!file_exists($filename)){
+                                                if (!file_exists($filename)) {
                                                     mkdir($filename);
                                                 }
-                                                if(!copy($_FILES["uploaded_file"]["tmp_name"], $target_file)){
+                                                if (!copy($_FILES["uploaded_file"]["tmp_name"], $target_file)) {
                                                     $file_name = '';
                                                 }
                                                 $YouTube_code = $file_name;
@@ -1829,7 +1902,10 @@ class Home extends CI_Controller {
                                     //
                                     if (check_company_status($company_sid) == 0) {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Job application success";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1844,7 +1920,10 @@ class Home extends CI_Controller {
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
                                         $this->session->set_flashdata('message', "<b>Error!</b> You have already applied for this Job '" . $data['job_details']['Title'] . "'");
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Already applied for job";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
                                             redirect('/job_details/' . $sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
@@ -1903,7 +1982,10 @@ class Home extends CI_Controller {
                                         //
                                         if (check_company_status($employer_sid) == 0) {
                                             $this->session->set_flashdata('message', '<b>Success: </b>Thank you for your application, we will contact you soon.');
-
+                                            if($this->input->post('dr',true)){
+                                                echo "Job application success";
+                                                exit();
+                                            }
                                             if ($applied_from == 'job') {
                                                 redirect('/job_details/' . $sid, 'refresh');
                                             } else if ($applied_from == 'jobs_list_view') {
@@ -1936,7 +2018,8 @@ class Home extends CI_Controller {
                                                 'cover_letter'                      => $cover_letter,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email);
+                                                'referred_by_email'                 => $referred_by_email
+                                            );
 
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
 
@@ -1959,7 +2042,8 @@ class Home extends CI_Controller {
                                                     'main_referral'                 => $this->session->userdata('last_referral') ? $this->session->userdata('last_referral') : STORE_FULL_URL_SSL,
                                                     'ip_address'                    => getUserIP(),
                                                     'user_agent'                    => $_SERVER['HTTP_USER_AGENT'],
-                                                    'eeo_form'                      => $eeo_form);
+                                                    'eeo_form'                      => $eeo_form
+                                                );
 
                                                 $jobs_list_result                   = $this->job_details->add_applicant_job_details($insert_job_list);
                                                 $portal_applicant_jobs_list_sid     = $jobs_list_result[0];
@@ -1977,24 +2061,25 @@ class Home extends CI_Controller {
                                                 'state'                             => $state,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email);
+                                                'referred_by_email'                 => $referred_by_email
+                                            );
 
-                                            if($YouTube_code != '') { // check if youtube link is updated
+                                            if ($YouTube_code != '') { // check if youtube link is updated
                                                 $update_data_primary_youtube        = array('YouTube_Video' => $YouTube_code, 'video_type' => $vType);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_youtube);
                                             }
 
-                                            if($resume != '') { // check if resume is updated
+                                            if ($resume != '') { // check if resume is updated
                                                 $update_data_primary_resume         = array('resume' => $resume);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_resume);
                                             }
 
-                                            if($pictures != '') { // check if profile picture is updated
+                                            if ($pictures != '') { // check if profile picture is updated
                                                 $update_data_primary_pictures       = array('pictures' => $pictures);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_pictures);
                                             }
 
-                                            if($cover_letter != '') { // check if cover letter is updated
+                                            if ($cover_letter != '') { // check if cover letter is updated
                                                 $update_data_primary_cover_letter   = array('cover_letter' => $cover_letter);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_cover_letter);
                                             }
@@ -2015,7 +2100,8 @@ class Home extends CI_Controller {
                                                 'main_referral'                     => $this->session->userdata('last_referral') ? $this->session->userdata('last_referral') : STORE_FULL_URL_SSL,
                                                 'ip_address'                        => getUserIP(),
                                                 'user_agent'                        => $_SERVER['HTTP_USER_AGENT'],
-                                                'eeo_form'                          => $eeo_form);
+                                                'eeo_form'                          => $eeo_form
+                                            );
 
                                             $jobs_list_result                       = $this->job_details->add_applicant_job_details($insert_job_list);
                                             $portal_applicant_jobs_list_sid         = $jobs_list_result[0];
@@ -2027,9 +2113,9 @@ class Home extends CI_Controller {
                                             $company_email                          = TO_EMAIL_INFO; //$data['company_details']['email'];
                                             $resume_url                             = '';
                                             $resume_anchor                          = '';
-                                            $profile_anchor                         = '<a href="https://www.automotohr.com/applicant_profile/'.$job_applications_sid.'/'.$portal_applicant_jobs_list_sid.'" style="'.DEF_EMAIL_BTN_STYLE_DANGER.'"  download="resume" >View Profile</a>';
+                                            $profile_anchor                         = '<a href="https://www.automotohr.com/applicant_profile/' . $job_applications_sid . '/' . $portal_applicant_jobs_list_sid . '" style="' . DEF_EMAIL_BTN_STYLE_DANGER . '"  download="resume" >View Profile</a>';
 
-                                            if(!empty($resume)) { // resume check here - change to button
+                                            if (!empty($resume)) { // resume check here - change to button
                                                 $resume_url                         = AWS_S3_BUCKET_URL . urlencode($resume);
                                                 $resume_anchor                      = '<a  style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . $resume_url . '" target="_blank">Download Resume</a>';
                                             }
@@ -2039,7 +2125,7 @@ class Home extends CI_Controller {
                                             $replacement_array['site_url']          = base_url();
                                             $replacement_array['date']              = month_date_year(date('Y-m-d'));
                                             $replacement_array['job_title']         = $title;
-                                            $replacement_array['original_job_title']= $original_job_title;
+                                            $replacement_array['original_job_title'] = $original_job_title;
                                             $replacement_array['phone_number']      = $phone_number;
                                             $replacement_array['city']              = $city;
                                             $replacement_array['company_name']      = $company_name;
@@ -2060,7 +2146,7 @@ class Home extends CI_Controller {
                                                 $applicant_notification_contacts    = get_notification_email_contacts($company_sid, 'new_applicant', $sid);
 
                                                 if (!empty($applicant_notification_contacts)) {
-                                                    foreach($applicant_notification_contacts as $contact) {
+                                                    foreach ($applicant_notification_contacts as $contact) {
                                                         $replacement_array['firstname']     = $first_name;
                                                         $replacement_array['lastname']      = $last_name;
                                                         $replacement_array['email']         = $email;
@@ -2106,11 +2192,11 @@ class Home extends CI_Controller {
                                                 $message_hf                         = message_header_footer_domain($company_id, $company_name);
                                                 $secret_key                         = $message_data['identity_key'] . "__";
                                                 $autoemailbody = $message_hf['header']
-                                                                . '<p>Subject: ' . $subject . '</p>'
-                                                                . $body
-                                                                . $message_hf['footer']
-                                                                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                                                . $secret_key . '</div>';
+                                                    . '<p>Subject: ' . $subject . '</p>'
+                                                    . $body
+                                                    . $message_hf['footer']
+                                                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                                    . $secret_key . '</div>';
 
                                                 sendMail(REPLY_TO, $email, $subject, $autoemailbody, $from_name, REPLY_TO);
                                                 $sent_to_pm                                     = $this->contact_model->save_message($message_data);
@@ -2141,112 +2227,114 @@ class Home extends CI_Controller {
                                                 $all_questions_ids                  = $_POST['all_questions_ids'];
 
                                                 foreach ($all_questions_ids as $key => $value) {
-                                                        $q_passing                  = 0;
-                                                        $post_questions_sid         = $value;
-                                                        $caption                    = 'caption' . $value;
-                                                        $type                       = 'type' . $value;
-                                                        $answer                     = $_POST[$type] . $value;
-                                                        $questions_type             = $_POST[$type];
-                                                        $my_question                = '';
-                                                        $individual_score           = 0;
-                                                        $individual_passing_score   = 0;
-                                                        $individual_status          = 'Pass';
-                                                        $result_status              = array();
+                                                    $q_passing                  = 0;
+                                                    $post_questions_sid         = $value;
+                                                    $caption                    = 'caption' . $value;
+                                                    $type                       = 'type' . $value;
+                                                    $answer                     = $_POST[$type] . $value;
+                                                    $questions_type             = $_POST[$type];
+                                                    $my_question                = '';
+                                                    $individual_score           = 0;
+                                                    $individual_passing_score   = 0;
+                                                    $individual_status          = 'Pass';
+                                                    $result_status              = array();
 
-                                                        if (isset($_POST[$caption])) {
-                                                            $my_question            = $_POST[$caption];
-                                                        }
+                                                    if (isset($_POST[$caption])) {
+                                                        $my_question            = $_POST[$caption];
+                                                    }
 
-                                                        $my_answer                  = NULL;
+                                                    $my_answer                  = NULL;
 
-                                                        if (isset($_POST[$answer])) {
-                                                            $my_answer              = $_POST[$answer];
-                                                        }
+                                                    if (isset($_POST[$answer])) {
+                                                        $my_answer              = $_POST[$answer];
+                                                    }
 
-                                                        if($questions_type != 'string') { // get the question possible score
-                                                            $q_passing              = $this->job_details->get_possible_score_of_questions($post_questions_sid, $questions_type);
-                                                        }
+                                                    if ($questions_type != 'string') { // get the question possible score
+                                                        $q_passing              = $this->job_details->get_possible_score_of_questions($post_questions_sid, $questions_type);
+                                                    }
 
-                                                        if($my_answer != NULL) { // It is required question
-                                                            if (is_array($my_answer)) {
-                                                                $answered                   = array();
-                                                                $answered_result_status     = array();
-                                                                $answered_question_score    = array();
-                                                                $total_questionnaire_score  += $q_passing;
-                                                                $is_string                  = 1;
+                                                    if ($my_answer != NULL) { // It is required question
+                                                        if (is_array($my_answer)) {
+                                                            $answered                   = array();
+                                                            $answered_result_status     = array();
+                                                            $answered_question_score    = array();
+                                                            $total_questionnaire_score  += $q_passing;
+                                                            $is_string                  = 1;
 
-                                                                foreach ($my_answer as $answers) {
-                                                                        $result                 = explode('@#$', $answers);
-                                                                        $a                      = $result[0];
-                                                                        $answered_question_sid  = $result[1];
-                                                                        $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
+                                                            foreach ($my_answer as $answers) {
+                                                                $result                 = explode('@#$', $answers);
+                                                                $a                      = $result[0];
+                                                                $answered_question_sid  = $result[1];
+                                                                $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
 
-                                                                        if(!empty($question_details)) {
-                                                                            $questions_score            = $question_details['score'];
-                                                                            $questions_result_status    = $question_details['result_status'];
-                                                                            $questions_result_value     = $question_details['value'];
-                                                                        }
-
-                                                                        $score                      = $questions_score;
-                                                                        $total_score                += $questions_score;
-                                                                        $individual_score           += $questions_score;
-                                                                        $individual_passing_score   = $q_passing;
-                                                                        $answered[]                 = $a;
-                                                                        $result_status[]            = $questions_result_status;
-                                                                        $answered_result_status[]   = $questions_result_status;
-                                                                        $answered_question_score[]  = $questions_score;
+                                                                if (!empty($question_details)) {
+                                                                    $questions_score            = $question_details['score'];
+                                                                    $questions_result_status    = $question_details['result_status'];
+                                                                    $questions_result_value     = $question_details['value'];
                                                                 }
-                                                            } else { // hassan WORKING area
-                                                                $result                     = explode('@#$', $my_answer);
-                                                                $total_questionnaire_score  += $q_passing;
-                                                                $a                          = $result[0];
-                                                                $answered                   = $a;
-                                                                $answered_result_status     = '';
-                                                                $answered_question_score    = 0;
 
-                                                                if (isset($result[1])) {
-                                                                    $answered_question_sid  = $result[1];
-                                                                    $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
-
-                                                                    if(!empty($question_details)) {
-                                                                        $questions_score = $question_details['score'];
-                                                                        $questions_result_status    = $question_details['result_status'];
-                                                                        $questions_result_value     = $question_details['value'];
-                                                                    }
-
-                                                                    $is_string                  = 1;
-                                                                    $score                      = $questions_score;
-                                                                    $total_score                += $questions_score;
-                                                                    $individual_score           += $questions_score;
-                                                                    $individual_passing_score   = $q_passing;
-                                                                    $result_status[]            = $questions_result_status;
-                                                                    $answered_result_status     = $questions_result_status;
-                                                                    $answered_question_score    = $questions_score;
-                                                                }
+                                                                $score                      = $questions_score;
+                                                                $total_score                += $questions_score;
+                                                                $individual_score           += $questions_score;
+                                                                $individual_passing_score   = $q_passing;
+                                                                $answered[]                 = $a;
+                                                                $result_status[]            = $questions_result_status;
+                                                                $answered_result_status[]   = $questions_result_status;
+                                                                $answered_question_score[]  = $questions_score;
                                                             }
-
-                                                            if(!empty($result_status)) {
-                                                                if(in_array('Fail', $result_status)) {
-                                                                    $individual_status  = 'Fail';
-                                                                    $overall_status     = 'Fail';
-                                                                }
-                                                            }
-                                                        } else { // it is optional question
-                                                            $answered                   = '';
-                                                            $individual_passing_score   = $q_passing;
-                                                            $individual_score           = 0;
-                                                            $individual_status          = 'Candidate did not answer the question';
+                                                        } else { // hassan WORKING area
+                                                            $result                     = explode('@#$', $my_answer);
+                                                            $total_questionnaire_score  += $q_passing;
+                                                            $a                          = $result[0];
+                                                            $answered                   = $a;
                                                             $answered_result_status     = '';
                                                             $answered_question_score    = 0;
+
+                                                            if (isset($result[1])) {
+                                                                $answered_question_sid  = $result[1];
+                                                                $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
+
+                                                                if (!empty($question_details)) {
+                                                                    $questions_score = $question_details['score'];
+                                                                    $questions_result_status    = $question_details['result_status'];
+                                                                    $questions_result_value     = $question_details['value'];
+                                                                }
+
+                                                                $is_string                  = 1;
+                                                                $score                      = $questions_score;
+                                                                $total_score                += $questions_score;
+                                                                $individual_score           += $questions_score;
+                                                                $individual_passing_score   = $q_passing;
+                                                                $result_status[]            = $questions_result_status;
+                                                                $answered_result_status     = $questions_result_status;
+                                                                $answered_question_score    = $questions_score;
+                                                            }
                                                         }
 
-                                                        $array_questionnaire[$my_question] = array( 'answer'                    => $answered,
-                                                                                                    'passing_score'             => $individual_passing_score,
-                                                                                                    'score'                     => $individual_score,
-                                                                                                    'status'                    => $individual_status,
-                                                                                                    'answered_result_status'    => $answered_result_status,
-                                                                                                    'answered_question_score'   => $answered_question_score);
-                                                        //echo '<pre>'; print_r($array_questionnaire); echo '</pre><hr>';
+                                                        if (!empty($result_status)) {
+                                                            if (in_array('Fail', $result_status)) {
+                                                                $individual_status  = 'Fail';
+                                                                $overall_status     = 'Fail';
+                                                            }
+                                                        }
+                                                    } else { // it is optional question
+                                                        $answered                   = '';
+                                                        $individual_passing_score   = $q_passing;
+                                                        $individual_score           = 0;
+                                                        $individual_status          = 'Candidate did not answer the question';
+                                                        $answered_result_status     = '';
+                                                        $answered_question_score    = 0;
+                                                    }
+
+                                                    $array_questionnaire[$my_question] = array(
+                                                        'answer'                    => $answered,
+                                                        'passing_score'             => $individual_passing_score,
+                                                        'score'                     => $individual_score,
+                                                        'status'                    => $individual_status,
+                                                        'answered_result_status'    => $answered_result_status,
+                                                        'answered_question_score'   => $answered_question_score
+                                                    );
+                                                    //echo '<pre>'; print_r($array_questionnaire); echo '</pre><hr>';
                                                 } // here
 
                                                 $questionnaire_result               = $overall_status;
@@ -2254,34 +2342,38 @@ class Home extends CI_Controller {
                                                 $remote_addr                        = getUserIP();
                                                 $user_agent                         = $_SERVER['HTTP_USER_AGENT'];
 
-                                                $questionnaire_data = array('applicant_sid'             => $job_applications_sid,
-                                                                            'applicant_jobs_list_sid'   => $portal_applicant_jobs_list_sid,
-                                                                            'job_sid'                   => $job_sid,
-                                                                            'job_title'                 => $title,
-                                                                            'job_type'                  => $job_type,
-                                                                            'company_sid'               => $company_sid,
-                                                                            'questionnaire_name'        => $questionnaire_name,
-                                                                            'questionnaire'             => $array_questionnaire,
-                                                                            'questionnaire_result'      => $questionnaire_result,
-                                                                            'attend_timestamp'          => $datetime,
-                                                                            'questionnaire_ip_address'  => $remote_addr,
-                                                                            'questionnaire_user_agent'  => $user_agent);
+                                                $questionnaire_data = array(
+                                                    'applicant_sid'             => $job_applications_sid,
+                                                    'applicant_jobs_list_sid'   => $portal_applicant_jobs_list_sid,
+                                                    'job_sid'                   => $job_sid,
+                                                    'job_title'                 => $title,
+                                                    'job_type'                  => $job_type,
+                                                    'company_sid'               => $company_sid,
+                                                    'questionnaire_name'        => $questionnaire_name,
+                                                    'questionnaire'             => $array_questionnaire,
+                                                    'questionnaire_result'      => $questionnaire_result,
+                                                    'attend_timestamp'          => $datetime,
+                                                    'questionnaire_ip_address'  => $remote_addr,
+                                                    'questionnaire_user_agent'  => $user_agent
+                                                );
 
                                                 $questionnaire_serialize            = serialize($questionnaire_data);
                                                 $array_questionnaire_serialize      = serialize($array_questionnaire);
                                                 //echo '<pre>'; print_r($questionnaire_data); echo '</pre><hr>';
-                                                $screening_questionnaire_results = array('applicant_sid'                => $job_applications_sid,
-                                                                                        'applicant_jobs_list_sid'       => $portal_applicant_jobs_list_sid,
-                                                                                        'job_sid'                       => $job_sid,
-                                                                                        'job_title'                     => $title,
-                                                                                        'job_type'                      => $job_type,
-                                                                                        'company_sid'                   => $company_sid,
-                                                                                        'questionnaire_name'            => $questionnaire_name,
-                                                                                        'questionnaire'                 => $array_questionnaire_serialize,
-                                                                                        'questionnaire_result'          => $questionnaire_result,
-                                                                                        'attend_timestamp'              => $datetime,
-                                                                                        'questionnaire_ip_address'      => $remote_addr,
-                                                                                        'questionnaire_user_agent'      => $user_agent);
+                                                $screening_questionnaire_results = array(
+                                                    'applicant_sid'                => $job_applications_sid,
+                                                    'applicant_jobs_list_sid'       => $portal_applicant_jobs_list_sid,
+                                                    'job_sid'                       => $job_sid,
+                                                    'job_title'                     => $title,
+                                                    'job_type'                      => $job_type,
+                                                    'company_sid'                   => $company_sid,
+                                                    'questionnaire_name'            => $questionnaire_name,
+                                                    'questionnaire'                 => $array_questionnaire_serialize,
+                                                    'questionnaire_result'          => $questionnaire_result,
+                                                    'attend_timestamp'              => $datetime,
+                                                    'questionnaire_ip_address'      => $remote_addr,
+                                                    'questionnaire_user_agent'      => $user_agent
+                                                );
 
                                                 $this->job_details->update_questionnaire_result($portal_applicant_jobs_list_sid, $questionnaire_serialize, $total_questionnaire_score, $total_score, $questionnaire_result);
                                                 $this->job_details->insert_questionnaire_result($screening_questionnaire_results);
@@ -2319,16 +2411,18 @@ class Home extends CI_Controller {
                                             }
 
                                             if ($eeo_form == 'Yes') { //Getting data for EEO Form Starts
-                                                $eeo_data = array(  'application_sid'                   => $job_applications_sid,
-                                                                    'users_type'                        => "applicant",
-                                                                    'portal_applicant_jobs_list_sid'    => $portal_applicant_jobs_list_sid,
-                                                                    'us_citizen'                        => $this->input->post('us_citizen'),
-                                                                    'visa_status '                      => $this->input->post('visa_status'),
-                                                                    'group_status'                      => $this->input->post('group_status'),
-                                                                    'veteran'                           => $this->input->post('veteran'),
-                                                                    'disability'                        => $this->input->post('disability'),
-                                                                    'gender'                            => $this->input->post('gender'),
-                                                                    'is_expired'                            => 1);
+                                                $eeo_data = array(
+                                                    'application_sid'                   => $job_applications_sid,
+                                                    'users_type'                        => "applicant",
+                                                    'portal_applicant_jobs_list_sid'    => $portal_applicant_jobs_list_sid,
+                                                    'us_citizen'                        => $this->input->post('us_citizen'),
+                                                    'visa_status '                      => $this->input->post('visa_status'),
+                                                    'group_status'                      => $this->input->post('group_status'),
+                                                    'veteran'                           => $this->input->post('veteran'),
+                                                    'disability'                        => $this->input->post('disability'),
+                                                    'gender'                            => $this->input->post('gender'),
+                                                    'is_expired'                            => 1
+                                                );
 
                                                 $this->job_details->save_eeo_form($eeo_data);
                                             } //Getting data for EEO Form Ends
@@ -2337,11 +2431,14 @@ class Home extends CI_Controller {
                                         }
 
                                         $applied_from                               = $this->input->post('applied_from');
-
+                                        if($this->input->post('dr',true)){
+                                            echo "Applied job form";
+                                            exit();
+                                        }
                                         if ($applied_from == 'job') {
-                                            redirect('/job_details/' . $sid."?applied_by=".$portal_applicant_jobs_list_sid, 'refresh');
+                                            redirect('/job_details/' . $sid . "?applied_by=" . $portal_applicant_jobs_list_sid, 'refresh');
                                         } else if ($applied_from == 'jobs_list_view') {
-                                            redirect('/jobs/'."?applied_by=".$portal_applicant_jobs_list_sid, 'refresh');
+                                            redirect('/jobs/' . "?applied_by=" . $portal_applicant_jobs_list_sid, 'refresh');
                                         } else {
                                             redirect('/', 'refresh');
                                         }
@@ -2358,7 +2455,7 @@ class Home extends CI_Controller {
                                 $is_sender_blocked                              = $this->check_domain->check_if_blocked($sender_email);
                                 $is_receiver_blocked                            = $this->check_domain->check_if_blocked($receiver_email);
 
-                                if($is_sender_blocked == 'blocked' || $is_receiver_blocked) {
+                                if ($is_sender_blocked == 'blocked' || $is_receiver_blocked) {
                                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you.');
                                     redirect('/job_details/' . $sid, 'refresh');
                                     break;
@@ -2366,16 +2463,16 @@ class Home extends CI_Controller {
 
                                 $check_already_request = $this->job_details->check_if_applied_already($sid);
 
-                                if(isset($_SERVER['HTTP_COOKIE']) && $check_already_request < 3){
-                                // if(isset($_POST['g-recaptcha-response']) && isset($_SERVER['HTTP_COOKIE']) && !empty($this->input->post('g-recaptcha-response'))  && $check_already_request < 3){
-                                    $this->job_details->save_friend_share_job_history($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $sid,'sent');
+                                if (isset($_SERVER['HTTP_COOKIE']) && $check_already_request < 3) {
+                                    // if(isset($_POST['g-recaptcha-response']) && isset($_SERVER['HTTP_COOKIE']) && !empty($this->input->post('g-recaptcha-response'))  && $check_already_request < 3){
+                                    $this->job_details->save_friend_share_job_history($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $sid, 'sent');
                                     $this->job_details->friend_share_job($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $data);
-                                    if($check_already_request != 0){
+                                    if ($check_already_request != 0) {
                                         //Send Email to Ali Bhai
                                         sendMail('info@automotohr.com', 'dev@automotohr.com', 'Spam Alert!', print_r($_POST, true) . print_r($_SERVER, true));
                                     }
-                                }else{
-                                    $this->job_details->save_friend_share_job_history($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $sid,'not-sent');
+                                } else {
+                                    $this->job_details->save_friend_share_job_history($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $sid, 'not-sent');
                                 }
                                 $post_data = $_POST;
                                 $server_data = $_SERVER;
@@ -2385,30 +2482,30 @@ class Home extends CI_Controller {
                                 break;
                             case 'send_tell_a_friend_email':
                                 sendMail('info@automotohr.com', 'dev@automotohr.com', 'send_tell_a_friend_email_ams!', print_r($_POST, true) . print_r($_SERVER, true));
-                               // $senderName                                     = $_POST['sender_name'];
-                               // $receiverName                                   = $_POST['receiver_name'];
-                               // $receiverEmail                                  = $_POST['receiver_email'];
-                               // $message                                        = $_POST['message'];
-                               // $subject                                        = ucwords($senderName) . ' Recommends ' . $list['Title'];
-                               // $message_body                                   = '';
-                               // $message_body                                   .= '<h1>' . 'Hi ' . $receiverName . '</h1>';
-                               // $message_body                                   .= '<h3>' . $senderName . '</h3>';
-                               // $message_body                                   .= '<p>' . 'Has Recommended The Following Job on our Website to You:' . '</p>';
-                               // $message_body                                   .= '<p>' . '</p>';
-                               // $message_body                                   .= '<p>' . '<a  style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" target="_blank" href="' . base_url('job_details') . '/' . $sid . '">' . $list['Title'] . '</a>' . '</p>';
-                               // $message_body                                   .= '<p>' . '</p>';
-                               // $message_body                                   .= '<p>' . '</p>';
-                               // $message_body                                   .= '<p>' . '<strong>' . 'Attached Personal Message' . '</strong>' . '</p>';
-                               // $message_body                                   .= '<p>' . $message . '</p>';
-                               // $message_body                                   .= '<p>' . '</p>';
-                               // $message_body                                   .= FROM_INFO_EMAIL_DISCLAIMER_MSG;
-                               //
-                               // if (base_url() == 'http://ams.example/') { //echo 'Local Working';
-                               //     save_email_log_common($senderName, $receiverEmail, $subject, $message_body);
-                               // } else { //echo 'LIVE';
-                               //     save_email_log_common($senderName, $receiverEmail, $subject, $message_body);
-                               //     sendMail(FROM_EMAIL_INFO, $receiverEmail, $subject, $message_body);
-                               // }
+                                // $senderName                                     = $_POST['sender_name'];
+                                // $receiverName                                   = $_POST['receiver_name'];
+                                // $receiverEmail                                  = $_POST['receiver_email'];
+                                // $message                                        = $_POST['message'];
+                                // $subject                                        = ucwords($senderName) . ' Recommends ' . $list['Title'];
+                                // $message_body                                   = '';
+                                // $message_body                                   .= '<h1>' . 'Hi ' . $receiverName . '</h1>';
+                                // $message_body                                   .= '<h3>' . $senderName . '</h3>';
+                                // $message_body                                   .= '<p>' . 'Has Recommended The Following Job on our Website to You:' . '</p>';
+                                // $message_body                                   .= '<p>' . '</p>';
+                                // $message_body                                   .= '<p>' . '<a  style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" target="_blank" href="' . base_url('job_details') . '/' . $sid . '">' . $list['Title'] . '</a>' . '</p>';
+                                // $message_body                                   .= '<p>' . '</p>';
+                                // $message_body                                   .= '<p>' . '</p>';
+                                // $message_body                                   .= '<p>' . '<strong>' . 'Attached Personal Message' . '</strong>' . '</p>';
+                                // $message_body                                   .= '<p>' . $message . '</p>';
+                                // $message_body                                   .= '<p>' . '</p>';
+                                // $message_body                                   .= FROM_INFO_EMAIL_DISCLAIMER_MSG;
+                                //
+                                // if (base_url() == 'http://ams.example/') { //echo 'Local Working';
+                                //     save_email_log_common($senderName, $receiverEmail, $subject, $message_body);
+                                // } else { //echo 'LIVE';
+                                //     save_email_log_common($senderName, $receiverEmail, $subject, $message_body);
+                                //     sendMail(FROM_EMAIL_INFO, $receiverEmail, $subject, $message_body);
+                                // }
                                 break;
                         }
                     }
@@ -2425,7 +2522,8 @@ class Home extends CI_Controller {
         }
     }
 
-    public function recaptcha($str) {
+    public function recaptcha($str)
+    {
         $google_url = "https://www.google.com/recaptcha/api/siteverify";
         $secret = '6Les2Q0TAAAAAPpmnngcC7RdzvAq1CuAVLqic_ei';
         $url = $google_url . "?secret=" . $secret . "&response=" . $str;
@@ -2446,7 +2544,8 @@ class Home extends CI_Controller {
         }
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         $server_name = clean_domain($_SERVER['SERVER_NAME']);
         $data = $this->check_domain->check_portal_status($server_name);
 
@@ -2464,8 +2563,10 @@ class Home extends CI_Controller {
                         $myToken = $_POST['token'];
                         $downloadUrl = $_POST['url'];
                         $fileId = $_POST['document'];
-                        $token = array( 'access_token' => $myToken,
-                                        'refresh_token' => $myToken);
+                        $token = array(
+                            'access_token' => $myToken,
+                            'refresh_token' => $myToken
+                        );
 
                         $json_token = json_encode($token);
                         $myClient = $this->google_auth->Authorize($json_token);
@@ -2505,11 +2606,18 @@ class Home extends CI_Controller {
         }
     }
 
-    public function listing_feeds() {
-        if(isset($_REQUEST['feedId']) && $_REQUEST['feedId'] == 6) {
+    public function listing_feeds()
+    {
+        if (isset($_REQUEST['feedId']) && $_REQUEST['feedId'] == 6) {
             $sid = $this->isActiveFeed();
             $list                                                               = $this->job_details->get_all_company_jobs_ams(
-                array(), NULL, NULL, NULL, NULL, NULL, array()
+                array(),
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                NULL,
+                array()
             );
             $this->addLastRead(1);
             // Filter jobs
@@ -2530,13 +2638,13 @@ class Home extends CI_Controller {
             if (!empty($list)) {
                 foreach ($list as $key => $value) {
                     //
-                    if(!in_array($value['user_sid'], $activeCompanies)) continue;
+                    if (!in_array($value['user_sid'], $activeCompanies)) continue;
                     $has_job_approval_rights                                    = $value['has_job_approval_rights'];
 
-                    if($has_job_approval_rights ==  1) {
+                    if ($has_job_approval_rights ==  1) {
                         $approval_right_status                                  = $value['approval_status'];
 
-                        if($approval_right_status                               != 'approved') {
+                        if ($approval_right_status                               != 'approved') {
                             continue;
                         }
                     }
@@ -2545,16 +2653,16 @@ class Home extends CI_Controller {
                     $country_id                                                 = $value['Location_Country'];
 
                     if (!empty($country_id)) { // get country name
-                        switch($country_id) {
+                        switch ($country_id) {
                             case 227:
-                            $country_name                                       = 'United States';
-                            break;
+                                $country_name                                       = 'United States';
+                                break;
                             case 38:
-                            $country_name                                       = 'Canada';
-                            break;
+                                $country_name                                       = 'Canada';
+                                break;
                             default:
-                            $country_name                                       = '';
-                            break;
+                                $country_name                                       = '';
+                                break;
                         }
                     }
 
@@ -2596,12 +2704,12 @@ class Home extends CI_Controller {
                         $jobDescription .= '<br><br>Job Requirements:<br>' . strip_tags($value['JobRequirements'], '<br>');
                     }
 
-                    if(!empty($feed_data)){
+                    if (!empty($feed_data)) {
                         $uid                                                    = $feed_data['uid'];
                         $publish_date                                           = $feed_data['publish_date'];
                     }
 
-                    if($job_title_location == 1) {
+                    if ($job_title_location == 1) {
                         $title                                                  = $list[$key]['Title'];
                     } else {
                         $title                                                  = $list[$key]['Title'];
@@ -2644,7 +2752,7 @@ class Home extends CI_Controller {
                         <title><![CDATA[" . $title . "]]></title>
                         <date><![CDATA[" . $this->date_with_time($publish_date) . " PST]]></date>
                         <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
-                        <url><![CDATA[" . $portal_job_url. "]]></url>
+                        <url><![CDATA[" . $portal_job_url . "]]></url>
                         <company><![CDATA[" . $companyName . "]]></company>
                         <city><![CDATA[" . $value['Location_City'] . "]]></city>
                         <state><![CDATA[" . $state . "]]></state>
@@ -2664,8 +2772,9 @@ class Home extends CI_Controller {
         }
     }
 
-    public function listing_feeds_sjb() {
-        if(isset($_REQUEST['feedId']) && $_REQUEST['feedId'] == 6) {
+    public function listing_feeds_sjb()
+    {
+        if (isset($_REQUEST['feedId']) && $_REQUEST['feedId'] == 6) {
             $list                                                               = $this->job_details->get_all_company_jobs_ams(array(), NULL, NULL, NULL, NULL, NULL, $career_site_company_sid = array());
             $sid = $this->isActiveFeed();
             $this->addLastRead(1);
@@ -2684,13 +2793,13 @@ class Home extends CI_Controller {
 
             if (!empty($list)) {
                 foreach ($list as $key => $value) {
-                    if(!in_array($value['user_sid'], $activeCompanies)) continue;
+                    if (!in_array($value['user_sid'], $activeCompanies)) continue;
                     $has_job_approval_rights                                    = $value['has_job_approval_rights'];
 
-                    if($has_job_approval_rights ==  1) {
+                    if ($has_job_approval_rights ==  1) {
                         $approval_right_status                                  = $value['approval_status'];
 
-                        if($approval_right_status                               != 'approved') {
+                        if ($approval_right_status                               != 'approved') {
                             continue;
                         }
                     }
@@ -2701,19 +2810,19 @@ class Home extends CI_Controller {
                     $country_full_name                                          = '';
 
                     if (!empty($country_id)) { // get country name
-                        switch($country_id) {
+                        switch ($country_id) {
                             case 227:
-                            $country_name                                       = 'US';
-                            $country_full_name                                  = 'United States';
-                            break;
+                                $country_name                                       = 'US';
+                                $country_full_name                                  = 'United States';
+                                break;
                             case 38:
-                            $country_name                                       = 'CA';
-                            $country_full_name                                  = 'Canada';
-                            break;
+                                $country_name                                       = 'CA';
+                                $country_full_name                                  = 'Canada';
+                                break;
                             default:
-                            $country_name                                       = '';
-                            $country_full_name                                  = '';
-                            break;
+                                $country_name                                       = '';
+                                $country_full_name                                  = '';
+                                break;
                         }
                     }
 
@@ -2755,7 +2864,7 @@ class Home extends CI_Controller {
                         $jobDescription .= '<br><br>Job Requirements:<br>' . strip_tags($value['JobRequirements'], '<br>');
                     }
 
-                    if($job_title_location == 1) {
+                    if ($job_title_location == 1) {
                         $title                                                  = $list[$key]['Title'];
                     } else {
                         $title                                                  = $list[$key]['Title'];
@@ -2773,7 +2882,7 @@ class Home extends CI_Controller {
                     }
 
                     $company_subdomain_url                                      = STORE_FULL_URL_SSL;
-                    $portal_job_url                                             = $company_subdomain_url . 'display-job/' . $uid.'/';
+                    $portal_job_url                                             = $company_subdomain_url . 'display-job/' . $uid . '/';
 
                     if (isset($value['SalaryType']) && $value['SalaryType'] != NULL) {
                         if ($value['SalaryType'] == 'per_hour') {
@@ -2798,7 +2907,7 @@ class Home extends CI_Controller {
                         <title><![CDATA[" . $title . "]]></title>
                         <date><![CDATA[" . $publish_date . "]]></date>
                         <referencenumber><![CDATA[" . $uid . "]]></referencenumber>
-                        <url><![CDATA[" . $portal_job_url. "]]></url>
+                        <url><![CDATA[" . $portal_job_url . "]]></url>
                         <company><![CDATA[" . $companyName . "]]></company>
                         <city><![CDATA[" . $value['Location_City'] . "]]></city>
                         <state><![CDATA[" . $state . "]]></state>
@@ -2820,32 +2929,35 @@ class Home extends CI_Controller {
     /**
      * 
      */
-    private function addLastRead($sid){
+    private function addLastRead($sid)
+    {
         $this->db
-        ->where('sid', $sid)
-        ->set([
-            'last_read' => date('Y-m-d H:i:s', strtotime('now')),
-            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
-        ])->update('job_feeds_management');
+            ->where('sid', $sid)
+            ->set([
+                'last_read' => date('Y-m-d H:i:s', strtotime('now')),
+                'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : ''
+            ])->update('job_feeds_management');
         //
         $this->db
-        ->insert('job_feeds_management_history', [
-            'feed_id' => $sid,
-            'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
-            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
-        ]);
+            ->insert('job_feeds_management_history', [
+                'feed_id' => $sid,
+                'referral' => !empty($_SERVER['HTTP_REFERER']) ?  $_SERVER['HTTP_REFERER'] : '',
+                'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+            ]);
     }
 
-    function date_with_time($date) {
+    function date_with_time($date)
+    {
         $with_time = date('M d Y, D H:i:s', strtotime($date));
 
-        if(strpos($with_time,'00:00:00')){
-            $with_time = date('M d Y, D',strtotime($date));
+        if (strpos($with_time, '00:00:00')) {
+            $with_time = date('M d Y, D', strtotime($date));
         }
         return $with_time;
     }
 
-    public function terms_of_use() {
+    public function terms_of_use()
+    {
         $server_name                                                            = clean_domain($_SERVER['SERVER_NAME']);
         $data                                                                   = $this->check_domain->check_portal_status($server_name);
         $theme_name                                                             = $data['theme_name'];
@@ -2885,7 +2997,8 @@ class Home extends CI_Controller {
         }
     }
 
-    public function sitemap() {
+    public function sitemap()
+    {
         $server_name                                                            = clean_domain($_SERVER['SERVER_NAME']);
         $data                                                                   = $this->check_domain->check_portal_status($server_name);
         $theme_name                                                             = $data['theme_name'];
@@ -2929,18 +3042,19 @@ class Home extends CI_Controller {
         }
     }
 
-    function ams_google_feed() {
+    function ams_google_feed()
+    {
         $all_paid_jobs                                                          = $this->job_details->get_all_paid_jobs();
         $paid_jobs                                                              = array();
         $featured_jobs                                                          = array();
         $google_xml                                                             = '';
 
-        if(!empty($all_paid_jobs)) {
-            foreach($all_paid_jobs as $apj) {
+        if (!empty($all_paid_jobs)) {
+            foreach ($all_paid_jobs as $apj) {
                 $paid_jobs[]                                                    = $apj['jobId'];
                 $google_xml .= '
                                 <url>
-                                    <loc>https://www.automotosocial.com/display-job/'.$apj['jobId'].'</loc>
+                                    <loc>https://www.automotosocial.com/display-job/' . $apj['jobId'] . '</loc>
                                     <changefreq>monthly</changefreq>
                                     <priority>0.80</priority>
                                 </url>';
@@ -2950,54 +3064,61 @@ class Home extends CI_Controller {
         $list                                                                   = $this->job_details->get_all_company_jobs_sids($paid_jobs);
 
         if (!empty($list)) {
-                foreach ($list as $key => $value) {
-                    $has_job_approval_rights                                    = $value['has_job_approval_rights'];
+            foreach ($list as $key => $value) {
+                $has_job_approval_rights                                    = $value['has_job_approval_rights'];
 
-                    if($has_job_approval_rights ==  1) {
-                        $approval_right_status                                  = $value['approval_status'];
+                if ($has_job_approval_rights ==  1) {
+                    $approval_right_status                                  = $value['approval_status'];
 
-                        if($approval_right_status                               != 'approved') {
-                            continue;
-                        }
+                    if ($approval_right_status                               != 'approved') {
+                        continue;
                     }
+                }
 
-                    $google_xml .= '
+                $google_xml .= '
                                 <url>
-                                    <loc>https://www.automotosocial.com/display-job/'.$value['sid'].'</loc>
+                                    <loc>https://www.automotosocial.com/display-job/' . $value['sid'] . '</loc>
                                     <changefreq>monthly</changefreq>
                                     <priority>0.80</priority>
                                 </url>';
-                }
+            }
         }
-        echo $google_xml; exit;
+        echo $google_xml;
+        exit;
     }
 
-    function organic_feed_test() {
+    function organic_feed_test()
+    {
         $paid_jobs = array();
         $list = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid);
 
-        echo $this->db->last_query().'<br><pre>'; print_r($list); exit;
-        foreach($list as $key => $value) {
+        echo $this->db->last_query() . '<br><pre>';
+        print_r($list);
+        exit;
+        foreach ($list as $key => $value) {
             $company_sid = $value['user_sid'];
             $has_job_approval_rights = $value['has_job_approval_rights'];
 
-            if($company_sid == 2948) {
-                echo '<pre>'; print_r($value); echo '</pre>';
+            if ($company_sid == 2948) {
+                echo '<pre>';
+                print_r($value);
+                echo '</pre>';
             }
         }
     }
 
 
     /**
-    * Check if user already applied for the job
-    * from the same IP address
-    * Created on: 05-08-2019
-    *
-    * @param $company_sid
-    *
-    * @return VOID
-    */
-    function checkUserAppliedForJob($company_sid, $isIframe = false){
+     * Check if user already applied for the job
+     * from the same IP address
+     * Created on: 05-08-2019
+     *
+     * @param $company_sid
+     *
+     * @return VOID
+     */
+    function checkUserAppliedForJob($company_sid, $isIframe = false)
+    {
         $ip = getUserIP();
         $job_sid = $this->input->post('job_sid', true);
         $email_address = $this->input->post('email', true);
@@ -3007,7 +3128,7 @@ class Home extends CI_Controller {
         $this->load->helper('url');
         //
         $sid = $this->job_details->checkUserAppliedForJobByIP($ip, $job_sid, $company_sid);
-        if((int)$sid === 0){
+        if ((int)$sid === 0) {
             // Add row
             $this->job_details->addJobRestrictionRow(array(
                 'ip_address' => $ip,
@@ -3018,28 +3139,29 @@ class Home extends CI_Controller {
                 'company_sid' => $company_sid,
                 'expire_at' => date('Y-m-d H:i:s', strtotime('+2 hours'))
             ));
-        }else{
+        } else {
             $this->job_details->updateJobRestrictionStatus($sid);
             $this->session->set_flashdata('message', '<b>Error: </b>You have already applied for this job.');
-            if ($applied_from == 'job') redirect('/'.( $isIframe ? 'job-feed-details' : 'job_details' ).'/' . $job_sid, 'refresh');
-            else if ($applied_from == 'jobs_list_view') redirect('/'.( $isIframe ? 'job-feed' : 'jobs' ).'/');
+            if ($applied_from == 'job') redirect('/' . ($isIframe ? 'job-feed-details' : 'job_details') . '/' . $job_sid, 'refresh');
+            else if ($applied_from == 'jobs_list_view') redirect('/' . ($isIframe ? 'job-feed' : 'jobs') . '/');
             else redirect('/', 'refresh');
         }
     }
 
 
     // Temporary
-    function cron($vf = NULL){
-        if($vf != 'ljfgdkuhgksadgfowetroyu2t352g5jhwegrwjkfgewkjgrk23gfhsdgfgdkjgfkjfg2373t4kwgfkhdsgfhd') return ;
+    function cron($vf = NULL)
+    {
+        if ($vf != 'ljfgdkuhgksadgfowetroyu2t352g5jhwegrwjkfgewkjgrk23gfhsdgfgdkjgfkjfg2373t4kwgfkhdsgfhd') return;
 
         $this->authorise();
-        if(!$this->access_token) exit(0);
+        if (!$this->access_token) exit(0);
 
         $career_site_only_companies                             = $this->job_details->get_career_site_only_companies(); // get the career site status for companies
         $career_site_company_sid                                = array();
 
-        if(!empty($career_site_only_companies)) {
-            foreach($career_site_only_companies as $csoc) {
+        if (!empty($career_site_only_companies)) {
+            foreach ($career_site_only_companies as $csoc) {
                 $career_site_company_sid[]                      = $csoc['sid'];
             }
         }
@@ -3050,8 +3172,8 @@ class Home extends CI_Controller {
         $featured_jobs_count                                    = 0;
         $list_count                                             = 0;
 
-        if(!empty($all_paid_jobs)) {
-            foreach($all_paid_jobs as $apj) {
+        if (!empty($all_paid_jobs)) {
+            foreach ($all_paid_jobs as $apj) {
                 $paid_jobs[]                                    = $apj['jobId'];
             }
         }
@@ -3060,7 +3182,7 @@ class Home extends CI_Controller {
             $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, 0, 0);
             $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, 0, 0, true);
 
-            if(!empty($paid_jobs)) {
+            if (!empty($paid_jobs)) {
                 $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, 0, 0);
                 $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, 0, 0, true);
             }
@@ -3068,7 +3190,7 @@ class Home extends CI_Controller {
             $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, 0, 0);
             $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, 0, 0, true);
 
-            if(!empty($paid_jobs)) {
+            if (!empty($paid_jobs)) {
                 $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, 0, 0);
                 $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, 0, 0, true);
             }
@@ -3077,21 +3199,21 @@ class Home extends CI_Controller {
         $all_active_jobs                                        = $this->job_details->filters_of_active_jobs($career_site_company_sid);
         $states_array = array();
         if (!empty($all_active_jobs)) { // we need it for search filters as we only need to show filters as per active jobs only
-            for($i=0; $i<count($all_active_jobs); $i++) {
+            for ($i = 0; $i < count($all_active_jobs); $i++) {
                 $country_id = $all_active_jobs[$i]['Location_Country'];
 
-                if($country_id == 38) {
-                    $countries_array[38] = array(   'sid' => 38, 'country_code' => 'CA', 'country_name' => 'Canada');
+                if ($country_id == 38) {
+                    $countries_array[38] = array('sid' => 38, 'country_code' => 'CA', 'country_name' => 'Canada');
                 }
 
-                if($country_id == 227) {
-                    $countries_array[227] = array(  'sid' => 227, 'country_code' => 'US', 'country_name' => 'United States');
+                if ($country_id == 227) {
+                    $countries_array[227] = array('sid' => 227, 'country_code' => 'US', 'country_name' => 'United States');
                 }
 
                 $state_id = $all_active_jobs[$i]['Location_State'];
 
                 if (!empty($state_id) && $state_id != 'undefined') {
-                    if(!array_key_exists($state_id, $states_array)) {
+                    if (!array_key_exists($state_id, $states_array)) {
                         $state_name = $this->job_details->get_statename_by_id($state_id); // get state name
                         $states_array[$state_id] = $state_name[0]['state_name'];
                         $counntry_states_array[$country_id][] = array('sid' => $state_id, 'state_name' => $state_name[0]['state_name']);
@@ -3123,10 +3245,10 @@ class Home extends CI_Controller {
             foreach ($list as $key => $value) {
                 $has_job_approval_rights                        = $value['has_job_approval_rights'];
 
-                if($has_job_approval_rights ==  1) {
+                if ($has_job_approval_rights ==  1) {
                     $approval_right_status                      = $value['approval_status'];
 
-                    if($approval_right_status                   != 'approved') {
+                    if ($approval_right_status                   != 'approved') {
                         unset($list[$key]);
                         continue;
                     }
@@ -3135,16 +3257,16 @@ class Home extends CI_Controller {
                 $country_id                                     = $value['Location_Country'];
 
                 if (!empty($country_id)) { // get country name
-                    switch($country_id) {
+                    switch ($country_id) {
                         case 227:
-                        $country_name                           = 'United States';
-                        break;
+                            $country_name                           = 'United States';
+                            break;
                         case 38:
-                        $country_name                           = 'Canada';
-                        break;
+                            $country_name                           = 'Canada';
+                            break;
                         default:
-                        $country_name                           = '';
-                        break;
+                            $country_name                           = '';
+                            break;
                     }
 
                     $list[$key]['Location_Country']             = $country_name;
@@ -3174,16 +3296,16 @@ class Home extends CI_Controller {
                 $job_title_location                             = $value['job_title_location'];
                 $sub_domain                                     = $value['sub_domain'];
                 $list[$key]['TitleOnly'] = $list[$key]['Title'];
-                if($job_title_location == 1) {
-                    $list[$key]['Title']                        = $list[$key]['Title'] . '  - ' . ucfirst($list[$key]['Location_City']) . ', ' . $list[$key]['Location_State'] . ', ' . $list[$key]['Location_Country'] ;
+                if ($job_title_location == 1) {
+                    $list[$key]['Title']                        = $list[$key]['Title'] . '  - ' . ucfirst($list[$key]['Location_City']) . ', ' . $list[$key]['Location_State'] . ', ' . $list[$key]['Location_Country'];
                 }
 
-                if(in_array($value['sid'], $ids)) continue;
-                if($cur_job >= $max_job) break;
+                if (in_array($value['sid'], $ids)) continue;
+                if ($cur_job >= $max_job) break;
                 //
                 $cur_job++;
 
-                $jobs[] = ['sid' => $value['sid'], 'title' => $list[$key]['Title'],'uri' => job_title_uri($list[$key])];
+                $jobs[] = ['sid' => $value['sid'], 'title' => $list[$key]['Title'], 'uri' => job_title_uri($list[$key])];
             }
         }
 
@@ -3195,68 +3317,69 @@ class Home extends CI_Controller {
     }
 
     //create sitemap for goole
-    function create_sitemap($vf){
-        if($vf != 'ljfgdkuhgksadgfowetroyu2t352g5jhwegrwjkfgewkjgrk23gfhsdgfgdkjgfkjfg2373t4kwgfkhdsgfhd') return ;
+    function create_sitemap($vf)
+    {
+        if ($vf != 'ljfgdkuhgksadgfowetroyu2t352g5jhwegrwjkfgewkjgrk23gfhsdgfgdkjgfkjfg2373t4kwgfkhdsgfhd') return;
 
         $newXml = '';
         $list = $this->job_details->get_all_company_jobs_ams_cron_2();
         //
-        foreach($list as $key => $value){
-                $list[$key]['TitleOnly'] = $list[$key]['Title'];
-                $has_job_approval_rights                        = $value['has_job_approval_rights'];
+        foreach ($list as $key => $value) {
+            $list[$key]['TitleOnly'] = $list[$key]['Title'];
+            $has_job_approval_rights                        = $value['has_job_approval_rights'];
 
-                if($has_job_approval_rights ==  1) {
-                    $approval_right_status                      = $value['approval_status'];
+            if ($has_job_approval_rights ==  1) {
+                $approval_right_status                      = $value['approval_status'];
 
-                    if($approval_right_status                   != 'approved') {
-                        unset($list[$key]);
-                        continue;
-                    }
+                if ($approval_right_status                   != 'approved') {
+                    unset($list[$key]);
+                    continue;
                 }
+            }
 
-                $country_id                                     = $value['Location_Country'];
+            $country_id                                     = $value['Location_Country'];
 
-                if (!empty($country_id)) { // get country name
-                    switch($country_id) {
-                        case 227:
+            if (!empty($country_id)) { // get country name
+                switch ($country_id) {
+                    case 227:
                         $country_name                           = 'United States';
                         break;
-                        case 38:
+                    case 38:
                         $country_name                           = 'Canada';
                         break;
-                        default:
+                    default:
                         $country_name                           = '';
                         break;
-                    }
-
-                    $list[$key]['Location_Country']             = $country_name;
                 }
 
-                $state_id                                       = $value['Location_State'];
+                $list[$key]['Location_Country']             = $country_name;
+            }
 
-                if (!empty($state_id) && $state_id != 'undefined') {
-                    $list[$key]['Location_State']           = $this->job_details->get_statename_by_id($state_id)[0]['state_name']; // get state name
-                    ;
+            $state_id                                       = $value['Location_State'];
+
+            if (!empty($state_id) && $state_id != 'undefined') {
+                $list[$key]['Location_State']           = $this->job_details->get_statename_by_id($state_id)[0]['state_name']; // get state name
+                ;
+            }
+
+            $JobCategorys                                   = $value['JobCategory'];
+
+            if ($JobCategorys != null) {
+                $cat_id                                     = explode(',', $JobCategorys);
+                $job_category_array                         = array();
+
+                foreach ($cat_id as $id) {
+                    $job_cat_name = $this->job_details->get_job_category_name_by_id($id);
+                    $job_category_array[]                               = $job_cat_name[0]['value'];
                 }
-
-                $JobCategorys                                   = $value['JobCategory'];
-
-                if ($JobCategorys != null) {
-                    $cat_id                                     = explode(',', $JobCategorys);
-                    $job_category_array                         = array();
-
-                    foreach ($cat_id as $id) {
-                        $job_cat_name = $this->job_details->get_job_category_name_by_id($id);
-                        $job_category_array[]                               = $job_cat_name[0]['value'];
-                    }
-                    $job_category                               = implode(', ', $job_category_array);
-                    $list[$key]['JobCategory']                  = $job_category;
-                }
-                //
-                $job_url = 'https://www.automotosocial.com'.job_title_uri($list[$key]);
-                $newXml .= "<url>";
-                $newXml .= '    <loc>'.$job_url."</loc>\n";
-                $newXml .= "</url>";
+                $job_category                               = implode(', ', $job_category_array);
+                $list[$key]['JobCategory']                  = $job_category;
+            }
+            //
+            $job_url = 'https://www.automotosocial.com' . job_title_uri($list[$key]);
+            $newXml .= "<url>";
+            $newXml .= '    <loc>' . $job_url . "</loc>\n";
+            $newXml .= "</url>";
         }
         //
         $xmlString = '<?xml version="1.0" encoding="utf-8"?>';
@@ -3264,15 +3387,15 @@ class Home extends CI_Controller {
         // Companies jobs
         $activeCompaniesWithJobs = $this->job_details->GetAllActiveCompaniesWithActiveJobs();
         //
-        if(!empty($activeCompaniesWithJobs)){
-            foreach($activeCompaniesWithJobs as $comp){
+        if (!empty($activeCompaniesWithJobs)) {
+            foreach ($activeCompaniesWithJobs as $comp) {
                 $xmlString .= "<url>";
-                $xmlString .= '     <loc>https://www.automotosocial.com/'.($comp['slug'])."</loc>";
+                $xmlString .= '     <loc>https://www.automotosocial.com/' . ($comp['slug']) . "</loc>";
                 $xmlString .= "</url>";
             }
         }
         //
-        if(!empty($newXml)){
+        if (!empty($newXml)) {
             $xmlString .= $newXml;
         }
         //
@@ -3281,8 +3404,7 @@ class Home extends CI_Controller {
         file_put_contents('sitemap.xml', $xmlString);
         $submit_to_google = getFileData("https://www.google.com/ping?sitemap=https://www.automotosocial.com/sitemap.xml");
         echo $submit_to_google;
-        mail(TO_EMAIL_DEV, 'Google Hire Cron Job at '.date('Y-m-d H:i:s').'', print_r($list, true));
-
+        mail(TO_EMAIL_DEV, 'Google Hire Cron Job at ' . date('Y-m-d H:i:s') . '', print_r($list, true));
     }
 
     private $is_test  = 1;
@@ -3305,7 +3427,8 @@ class Home extends CI_Controller {
      *
      * @return Resource
      */
-    private function authorise(){
+    private function authorise()
+    {
         // Set credenstials file name
         $cred_filename = 'google_hire_automotosocial.json';
 
@@ -3317,7 +3440,8 @@ class Home extends CI_Controller {
         // $jwt = new MJWT();
         $mjwt = $this->mjwt;
         //
-        $assertion = $mjwt::encode(array(
+        $assertion = $mjwt::encode(
+            array(
                 "iss" => $auth->client_email,
                 "scope" => "https://www.googleapis.com/auth/indexing",
                 "aud" => $this->auth_url,
@@ -3351,7 +3475,7 @@ class Home extends CI_Controller {
         $result = @json_decode($result, true);
 
         // _e($result, true);
-        if(!isset($result['access_token'])) exit(0);
+        if (!isset($result['access_token'])) exit(0);
         $this->access_token = $result['access_token'];
 
         // $curl2 = curl_init("https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={$this->access_token}");
@@ -3371,8 +3495,9 @@ class Home extends CI_Controller {
      *
      * @return Array
      */
-    private function google_hire_api($jobs, $type='add'){
-        if(!sizeof($jobs)) return false;
+    private function google_hire_api($jobs, $type = 'add')
+    {
+        if (!sizeof($jobs)) return false;
         $max = 1;
         foreach ($jobs as $k0 => $v0) {
             // if($k0 > $max) break;
@@ -3381,8 +3506,8 @@ class Home extends CI_Controller {
             // dns record verification
             // confirm subdomain links
             $response = $this->make_request(
-                "https://indexing.googleapis.com/v3/urlNotifications:".( $type == 'add' ? 'publish' : 'unpublish' )."",
-                array("url"=>'https://www.automotosocial.com'.$v0['uri'], "type" => ($type == 'add' ? 'URL_UPDATED' : 'URL_DELETED'))
+                "https://indexing.googleapis.com/v3/urlNotifications:" . ($type == 'add' ? 'publish' : 'unpublish') . "",
+                array("url" => 'https://www.automotosocial.com' . $v0['uri'], "type" => ($type == 'add' ? 'URL_UPDATED' : 'URL_DELETED'))
             );
             $this->job_details->addProccessedId($v0['sid']);
             sleep(2);
@@ -3399,7 +3524,8 @@ class Home extends CI_Controller {
      *
      * @return Array
      */
-    private function make_request($url, $post){
+    private function make_request($url, $post)
+    {
         $post = @json_encode($post);
         //
         $curl = curl_init();
@@ -3417,7 +3543,7 @@ class Home extends CI_Controller {
                 // CURLOPT_HEADER => 1,
                 CURLOPT_HTTPHEADER => array(
                     "content-type: application/json",
-                    "content-length: ".strlen($post)."",
+                    "content-length: " . strlen($post) . "",
                     "Authorization: Bearer {$this->access_token}",
                     "Host: indexing.googleapis.com"
                 )
@@ -3433,7 +3559,8 @@ class Home extends CI_Controller {
 
 
     // Iframe job feed
-    public function job_feed() {
+    public function job_feed()
+    {
         $server_name                                                            = clean_domain($_SERVER['SERVER_NAME']);
         $data                                                                   = $this->check_domain->check_portal_status($server_name);
 
@@ -3543,7 +3670,7 @@ class Home extends CI_Controller {
                 $jobs_page_title                                                = !empty($jobs_page_title) ? $jobs_page_title : 'Jobs';
                 $data['jobs_page_title']                                        = $jobs_page_title;
 
-                if($pageName == strtolower(str_replace(' ', '_', $jobs_page_title))) {
+                if ($pageName == strtolower(str_replace(' ', '_', $jobs_page_title))) {
                     $pageName                                                   = 'jobs';
                 }
 
@@ -3557,8 +3684,8 @@ class Home extends CI_Controller {
                 $career_site_only_companies                             = $this->job_details->get_career_site_only_companies(); // get the career site status for companies
                 $career_site_company_sid                                = array();
 
-                if(!empty($career_site_only_companies)) {
-                    foreach($career_site_only_companies as $csoc) {
+                if (!empty($career_site_only_companies)) {
+                    foreach ($career_site_only_companies as $csoc) {
                         $career_site_company_sid[]                      = $csoc['sid'];
                     }
                 }
@@ -3569,8 +3696,8 @@ class Home extends CI_Controller {
                 $featured_jobs_count                                    = 0;
                 $list_count                                             = 0;
 
-                if(!empty($all_paid_jobs)) {
-                    foreach($all_paid_jobs as $apj) {
+                if (!empty($all_paid_jobs)) {
+                    foreach ($all_paid_jobs as $apj) {
                         $paid_jobs[]                                    = $apj['jobId'];
                     }
                 }
@@ -3579,7 +3706,7 @@ class Home extends CI_Controller {
                     $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, $per_page, $offset);
                     $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, $country, $state, $city, $categoryId, $keyword, $career_site_company_sid, $per_page, $offset, true);
 
-                    if(!empty($paid_jobs)) {
+                    if (!empty($paid_jobs)) {
                         $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, $per_page, $offset);
                         $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, $country, $state, $city, $categoryId, $keyword, $per_page, $offset, true);
                     }
@@ -3587,14 +3714,14 @@ class Home extends CI_Controller {
                     $list                                               = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, $per_page, $offset);
                     $list_count                                         = $this->job_details->get_all_company_jobs_ams($paid_jobs, NULL, NULL, NULL, NULL, NULL, $career_site_company_sid, $per_page, $offset, true);
 
-                    if(!empty($paid_jobs)) {
+                    if (!empty($paid_jobs)) {
                         $featured_jobs                                  = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, $per_page, $offset);
                         $featured_jobs_count                            = $this->job_details->paid_job_details($paid_jobs, NULL, NULL, NULL, NULL, NULL, $per_page, $offset, true);
                     }
                 }
 
                 // TOBE deleted after testing
-                if(getUserIP() == '72.255.38.246' || getUserIP() == '::1' || getUserIP() == '127.0.0.1'){
+                if (getUserIP() == '72.255.38.246' || getUserIP() == '::1' || getUserIP() == '127.0.0.1') {
                     // Fetch
                     $testList = $this->job_details->getTestingCompanyJobs();
                     // _e(sizeof($list), true);
@@ -3605,21 +3732,21 @@ class Home extends CI_Controller {
                 $all_active_jobs                                        = $this->job_details->filters_of_active_jobs($career_site_company_sid);
 
                 if (!empty($all_active_jobs)) { // we need it for search filters as we only need to show filters as per active jobs only
-                    for($i=0; $i<count($all_active_jobs); $i++) {
+                    for ($i = 0; $i < count($all_active_jobs); $i++) {
                         $country_id = $all_active_jobs[$i]['Location_Country'];
 
-                        if($country_id == 38) {
-                            $countries_array[38] = array(   'sid' => 38, 'country_code' => 'CA', 'country_name' => 'Canada');
+                        if ($country_id == 38) {
+                            $countries_array[38] = array('sid' => 38, 'country_code' => 'CA', 'country_name' => 'Canada');
                         }
 
-                        if($country_id == 227) {
-                            $countries_array[227] = array(  'sid' => 227, 'country_code' => 'US', 'country_name' => 'United States');
+                        if ($country_id == 227) {
+                            $countries_array[227] = array('sid' => 227, 'country_code' => 'US', 'country_name' => 'United States');
                         }
 
                         $state_id = $all_active_jobs[$i]['Location_State'];
 
                         if (!empty($state_id) && $state_id != 'undefined') {
-                            if(!array_key_exists($state_id, $states_array)) {
+                            if (!array_key_exists($state_id, $states_array)) {
                                 $state_name = $this->job_details->get_statename_by_id($state_id); // get state name
                                 $states_array[$state_id] = $state_name[0]['state_name'];
                                 $counntry_states_array[$country_id][] = array('sid' => $state_id, 'state_name' => $state_name[0]['state_name']);
@@ -3644,10 +3771,10 @@ class Home extends CI_Controller {
                         $list[$key]['TitleOnly'] = $list[$key]['Title'];
                         $has_job_approval_rights                        = $value['has_job_approval_rights'];
 
-                        if($has_job_approval_rights ==  1) {
+                        if ($has_job_approval_rights ==  1) {
                             $approval_right_status                      = $value['approval_status'];
 
-                            if($approval_right_status                   != 'approved') {
+                            if ($approval_right_status                   != 'approved') {
                                 unset($list[$key]);
                                 continue;
                             }
@@ -3656,16 +3783,16 @@ class Home extends CI_Controller {
                         $country_id                                     = $value['Location_Country'];
 
                         if (!empty($country_id)) { // get country name
-                            switch($country_id) {
+                            switch ($country_id) {
                                 case 227:
-                                $country_name                           = 'United States';
-                                break;
+                                    $country_name                           = 'United States';
+                                    break;
                                 case 38:
-                                $country_name                           = 'Canada';
-                                break;
+                                    $country_name                           = 'Canada';
+                                    break;
                                 default:
-                                $country_name                           = '';
-                                break;
+                                    $country_name                           = '';
+                                    break;
                             }
 
                             $list[$key]['Location_Country']             = $country_name;
@@ -3696,13 +3823,13 @@ class Home extends CI_Controller {
                         if ($questionnaire_sid > 0) {
                             $portal_screening_questionnaires            = $this->job_details->get_screening_questionnaire_by_id($questionnaire_sid);
 
-                            if(!empty($portal_screening_questionnaires)){
+                            if (!empty($portal_screening_questionnaires)) {
                                 $list[$key]['q_name']                   = $portal_screening_questionnaires[0]['name'];
                                 $list[$key]['q_passing']                = $portal_screening_questionnaires[0]['passing_score'];
                                 $list[$key]['q_send_pass']              = $portal_screening_questionnaires[0]['auto_reply_pass'];
                                 $list[$key]['q_send_fail']              = $portal_screening_questionnaires[0]['auto_reply_fail'];
-                                $list[$key]['q_pass_text']              = '';//$portal_screening_questionnaires[0]['email_text_pass'];
-                                $list[$key]['q_fail_text']              = '';//$portal_screening_questionnaires[0]['email_text_fail'];
+                                $list[$key]['q_pass_text']              = ''; //$portal_screening_questionnaires[0]['email_text_pass'];
+                                $list[$key]['q_fail_text']              = ''; //$portal_screening_questionnaires[0]['email_text_fail'];
                                 $list[$key]['my_id']                    = 'q_question_' . $questionnaire_sid;
                             } else {
                                 $list[$key]['q_name']                   = 'Not Found';
@@ -3739,13 +3866,13 @@ class Home extends CI_Controller {
                         $job_title_location                             = $value['job_title_location'];
                         $sub_domain                                     = $value['sub_domain'];
 
-                        if($job_title_location == 1) {
-                            $list[$key]['Title']                        = $list[$key]['Title'] . '  - ' . ucfirst($list[$key]['Location_City']) . ', ' . $list[$key]['Location_State'] . ', ' . $list[$key]['Location_Country'] ;
+                        if ($job_title_location == 1) {
+                            $list[$key]['Title']                        = $list[$key]['Title'] . '  - ' . ucfirst($list[$key]['Location_City']) . ', ' . $list[$key]['Location_State'] . ', ' . $list[$key]['Location_Country'];
                         }
 
                         $company_subdomain_url                          = STORE_PROTOCOL_SSL . $sub_domain;
                         $portal_job_url                                 = $company_subdomain_url . '/job_details/' . $list[$key]['sid'];
-                        $fb_google_share_url                            = str_replace(':','%3A',$portal_job_url);
+                        $fb_google_share_url                            = str_replace(':', '%3A', $portal_job_url);
                         $btn_facebook                                   = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . $fb_google_share_url . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-2.png"></a>';
                         $btn_twitter                                    = '<a target="_blank" href="https://twitter.com/intent/tweet?text=' . urlencode($list[$key]['Title']) . '&amp;url=' . urlencode($portal_job_url) . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-3.png"></a>';
                         // $btn_google                                     = '<a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=' . $fb_google_share_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-1.png"></a>';
@@ -3768,15 +3895,15 @@ class Home extends CI_Controller {
                     }
                 }
 
-                if(!empty($featured_jobs)) {
+                if (!empty($featured_jobs)) {
                     foreach ($featured_jobs as $key => $value) {
                         $featured_jobs[$key]['TitleOnly'] = $featured_jobs[$key]['Title'];
                         $has_job_approval_rights                        = $value['has_job_approval_rights'];
 
-                        if($has_job_approval_rights ==  1) {
+                        if ($has_job_approval_rights ==  1) {
                             $approval_right_status                      = $value['approval_status'];
 
-                            if($approval_right_status                   != 'approved') {
+                            if ($approval_right_status                   != 'approved') {
                                 continue;
                             }
                         }
@@ -3784,16 +3911,16 @@ class Home extends CI_Controller {
                         $country_id                                     = $value['Location_Country'];
 
                         if (!empty($country_id)) { // get country name
-                            switch($country_id) {
+                            switch ($country_id) {
                                 case 227:
-                                $country_name                           = 'United States';
-                                break;
+                                    $country_name                           = 'United States';
+                                    break;
                                 case 38:
-                                $country_name                           = 'Canada';
-                                break;
+                                    $country_name                           = 'Canada';
+                                    break;
                                 default:
-                                $country_name                           = '';
-                                break;
+                                    $country_name                           = '';
+                                    break;
                             }
 
                             $featured_jobs[$key]['Location_Country']    = $country_name;
@@ -3814,8 +3941,8 @@ class Home extends CI_Controller {
 
                             foreach ($cat_id as $id) {
                                 $job_cat_name                           = $this->job_details->get_job_category_name_by_id($id);
-                                if(!empty($job_cat_name)) {
-                                   $job_category_array[]                = $job_cat_name[0]['value'];
+                                if (!empty($job_cat_name)) {
+                                    $job_category_array[]                = $job_cat_name[0]['value'];
                                 }
                             }
 
@@ -3828,13 +3955,13 @@ class Home extends CI_Controller {
                         if ($questionnaire_sid > 0) {
                             $portal_screening_questionnaires            = $this->job_details->get_screening_questionnaire_by_id($questionnaire_sid);
 
-                            if(!empty($portal_screening_questionnaires)){
+                            if (!empty($portal_screening_questionnaires)) {
                                 $featured_jobs[$key]['q_name']          = $portal_screening_questionnaires[0]['name'];
                                 $featured_jobs[$key]['q_passing']       = $portal_screening_questionnaires[0]['passing_score'];
                                 $featured_jobs[$key]['q_send_pass']     = $portal_screening_questionnaires[0]['auto_reply_pass'];
                                 $featured_jobs[$key]['q_send_fail']     = $portal_screening_questionnaires[0]['auto_reply_fail'];
-                                $featured_jobs[$key]['q_pass_text']     = '';//$portal_screening_questionnaires[0]['email_text_pass'];
-                                $featured_jobs[$key]['q_fail_text']     = '';//$portal_screening_questionnaires[0]['email_text_fail'];
+                                $featured_jobs[$key]['q_pass_text']     = ''; //$portal_screening_questionnaires[0]['email_text_pass'];
+                                $featured_jobs[$key]['q_fail_text']     = ''; //$portal_screening_questionnaires[0]['email_text_fail'];
                                 $featured_jobs[$key]['my_id']           = 'q_question_' . $questionnaire_sid;
                             } else {
                                 $featured_jobs[$key]['q_name']          = 'Not Found';
@@ -3871,14 +3998,14 @@ class Home extends CI_Controller {
                         $job_title_location                             = $value['job_title_location'];
                         $sub_domain                                     = $value['sub_domain'];
 
-                        if($job_title_location == 1) {
-                            $featured_jobs[$key]['Title']               = $featured_jobs[$key]['Title'] . '  - ' . ucfirst($featured_jobs[$key]['Location_City']) . ', ' . $featured_jobs[$key]['Location_State'] . ', ' . $featured_jobs[$key]['Location_Country'] ;
+                        if ($job_title_location == 1) {
+                            $featured_jobs[$key]['Title']               = $featured_jobs[$key]['Title'] . '  - ' . ucfirst($featured_jobs[$key]['Location_City']) . ', ' . $featured_jobs[$key]['Location_State'] . ', ' . $featured_jobs[$key]['Location_Country'];
                         }
 
                         //Generate Share Links - start
                         $company_subdomain_url                          = STORE_PROTOCOL_SSL . $sub_domain;
                         $portal_job_url                                 = $company_subdomain_url . '/job_details/' . $featured_jobs[$key]['sid'];
-                        $fb_google_share_url                            = str_replace(':','%3A',$portal_job_url);
+                        $fb_google_share_url                            = str_replace(':', '%3A', $portal_job_url);
                         $btn_facebook                                   = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . $fb_google_share_url . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-2.png"></a>';
                         $btn_twitter                                    = '<a target="_blank" href="https://twitter.com/intent/tweet?text=' . urlencode($featured_jobs[$key]['Title']) . '&amp;url=' . urlencode($portal_job_url) . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-3.png"></a>';
                         // $btn_google = '<a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=' . $fb_google_share_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-1.png"></a>';
@@ -3905,29 +4032,30 @@ class Home extends CI_Controller {
                 $data['job_listings']                                   = $list;
                 $data['featured_jobs_count']                            = $featured_jobs_count;
                 $data['job_listings_count']                             = $list_count;
-                $data['total_calls']                                    = ceil($list_count+$featured_jobs_count)/$per_page;
-                if(!empty($ajax_flag) && $ajax_flag){
+                $data['total_calls']                                    = ceil($list_count + $featured_jobs_count) / $per_page;
+                if (!empty($ajax_flag) && $ajax_flag) {
                     // print_r(json_encode($data['featured_jobs']));
                     print_r(json_encode($data['job_listings']));
                     die();
                 }
                 // $jobCategories                                          = db_get_job_category($company_id);
                 // $data['job_categories']                                 = $jobCategories;
-                function array_sort_state_name($a, $b) {
+                function array_sort_state_name($a, $b)
+                {
                     return strnatcmp($a['state_name'], $b['state_name']);
-                  }
+                }
 
-                  if(isset($counntry_states_array['227'])){
-                      $us_states = $counntry_states_array['227'];
-                      usort($us_states, 'array_sort_state_name'); // sort alphabetically by name
-                      $counntry_states_array['227'] = $us_states;
-                  }
+                if (isset($counntry_states_array['227'])) {
+                    $us_states = $counntry_states_array['227'];
+                    usort($us_states, 'array_sort_state_name'); // sort alphabetically by name
+                    $counntry_states_array['227'] = $us_states;
+                }
 
-                  if(isset($counntry_states_array['38'])){
-                      $ca_states = $counntry_states_array['38'];
-                      usort($ca_states, 'array_sort_state_name'); // sort alphabetically by name
-                      $counntry_states_array['38'] = $ca_states;
-                  }
+                if (isset($counntry_states_array['38'])) {
+                    $ca_states = $counntry_states_array['38'];
+                    usort($ca_states, 'array_sort_state_name'); // sort alphabetically by name
+                    $counntry_states_array['38'] = $ca_states;
+                }
 
                 $data['job_categories']                                 = array();
                 asort($categories_in_active_jobs);
@@ -3950,7 +4078,6 @@ class Home extends CI_Controller {
                 $this->load->view($theme_name . '/_parts/header_view_iframe', $data);
                 $this->load->view($theme_name . '/_parts/jobs_list_view_iframe');
                 $this->load->view($theme_name . '/_parts/footer_view_iframe');
-
             } else {
                 $this->load->view($theme_name . '/_parts/header_view_iframe', $data);
                 $this->load->view($theme_name . '/index_view_iframe');
@@ -3969,7 +4096,8 @@ class Home extends CI_Controller {
         }
     }
 
-    public function job_feed_details($sid = null) {
+    public function job_feed_details($sid = null)
+    {
 
         $sid                                                                    = $this->input->post('sid') ? $this->input->post('sid') : $sid;
         if (strpos($sid, "-") !== FALSE) {
@@ -3986,7 +4114,7 @@ class Home extends CI_Controller {
         $company_sid = $data['company_details']['sid'];
         company_phone_regex_module_check($company_sid, $data, $this);
 
-        if(!is_numeric($sid)){
+        if (!is_numeric($sid)) {
             $sid                                                                = $this->job_details->fetch_job_id_from_random_key($sid);
         }
 
@@ -4049,16 +4177,16 @@ class Home extends CI_Controller {
                     $country_id                                                 = $list['Location_Country'];
 
                     if (!empty($country_id)) {
-                        switch($country_id) {
+                        switch ($country_id) {
                             case 227:
-                            $country_name                                       = 'United States';
-                            break;
+                                $country_name                                       = 'United States';
+                                break;
                             case 38:
-                            $country_name                                       = 'Canada';
-                            break;
+                                $country_name                                       = 'Canada';
+                                break;
                             default:
-                            $country_name                                       = '';
-                            break;
+                                $country_name                                       = '';
+                                break;
                         }
                         $list['Location_Country']                               = $country_name;
                     }
@@ -4079,7 +4207,7 @@ class Home extends CI_Controller {
                         foreach ($cat_id as $id) {
                             $job_cat_name                                       = $this->job_details->get_job_category_name_by_id($id);
 
-                            if(!empty($job_cat_name)){
+                            if (!empty($job_cat_name)) {
                                 $job_category_array[]                           = $job_cat_name[0]['value'];
                             }
                         }
@@ -4095,14 +4223,14 @@ class Home extends CI_Controller {
 
                     if ($questionnaire_sid > 0) {
                         $portal_screening_questionnaires                        = $this->job_details->get_screening_questionnaire_by_id($questionnaire_sid);
-                        if(!empty($portal_screening_questionnaires)) {
+                        if (!empty($portal_screening_questionnaires)) {
                             $questionnaire_name                                 = $portal_screening_questionnaires[0]['name'];
                             $list['q_name']                                     = $portal_screening_questionnaires[0]['name'];
                             $list['q_passing']                                  = $portal_screening_questionnaires[0]['passing_score'];
                             $list['q_send_pass']                                = $portal_screening_questionnaires[0]['auto_reply_pass'];
                             $list['q_send_fail']                                = $portal_screening_questionnaires[0]['auto_reply_fail'];
-                            $list['q_pass_text']                                = '';//$portal_screening_questionnaires[0]['email_text_pass'];
-                            $list['q_fail_text']                                = '';//$portal_screening_questionnaires[0]['email_text_fail'];
+                            $list['q_pass_text']                                = ''; //$portal_screening_questionnaires[0]['email_text_pass'];
+                            $list['q_fail_text']                                = ''; //$portal_screening_questionnaires[0]['email_text_fail'];
                             $list['my_id']                                      = 'q_question_' . $questionnaire_sid;
                             $screening_questions_numrows                        = $this->job_details->get_screenings_count_by_id($questionnaire_sid);
 
@@ -4118,7 +4246,7 @@ class Home extends CI_Controller {
                                         $screening_answers                      = $this->job_details->get_screening_answers_by_id($questions_sid);
 
                                         foreach ($screening_answers as $akey => $avalue) {
-                                           $list['q_answer_' . $questions_sid][]= array('value' => $avalue['value'], 'score' => $avalue['sid']);
+                                            $list['q_answer_' . $questions_sid][] = array('value' => $avalue['value'], 'score' => $avalue['sid']);
                                         }
                                     }
                                 }
@@ -4157,16 +4285,16 @@ class Home extends CI_Controller {
 
                     $company_subdomain_url                                      = STORE_PROTOCOL_SSL . db_get_sub_domain($company_sid); //Generate Share Links - start
                     $portal_job_url                                             = $company_subdomain_url . '/job_details/' . $list['sid'];
-                    $fb_google_share_url                                        = str_replace(':','%3A',$portal_job_url);
+                    $fb_google_share_url                                        = str_replace(':', '%3A', $portal_job_url);
                     $btn_facebook                                               = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . $fb_google_share_url . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-2.png"></a>';
                     $btn_twitter                                                = '<a target="_blank" href="https://twitter.com/intent/tweet?text=' . urlencode($list['Title']) . '&amp;url=' . urlencode($portal_job_url) . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-3.png"></a>';
-                   // $btn_google                                                 = '<a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=' . $fb_google_share_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-1.png"></a>';
+                    // $btn_google                                                 = '<a target="_blank" href="https://plusone.google.com/_/+1/confirm?hl=en&amp;url=' . $fb_google_share_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-1.png"></a>';
                     $btn_linkedin                                               = '<a target="_blank" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=' . urlencode($portal_job_url) . '&amp;title=' . urlencode($list['Title']) . '&amp;summary=' . urlencode($list['Title']) . '&amp;source=' . $portal_job_url . '"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/theme-1/images/social-4.png"></a>';
                     $btn_job_link                                               = '<a target="_blank" href="' . $portal_job_url . '">' . ucwords($list['Title']) . '</a>';
                     $btn_tell_a_friend                                          = '<a class="tellafrien-popup" href="javascript:;" data-toggle="modal" data-target="#tellAFriendModal"><span><i class="fa fa-hand-o-right"></i></span>Tell A Friend</a>';
                     $links                                                      = '';
                     $links                                                      .= '<ul>';
-                   // $links                                                      .= '<li>' . $btn_google . '</li>';
+                    // $links                                                      .= '<li>' . $btn_google . '</li>';
                     $links                                                      .= '<li>' . $btn_facebook . '</li>';
                     $links                                                      .= '<li>' . $btn_linkedin . '</li>';
                     $links                                                      .= '<li>' . $btn_twitter . '</li>';
@@ -4226,11 +4354,11 @@ class Home extends CI_Controller {
                     $more_career_oppurtunatity                                  = db_get_sub_domain($job_company_sid);
                     $job_company_career_title                                   = $this->theme_meta_model->fGetThemeMetaData($job_company_sid, $theme_name, 'jobs', 'jobs_page_title');
 
-                    if(empty($job_company_career_title)) {
+                    if (empty($job_company_career_title)) {
                         $job_company_career_title                               = 'jobs';
                     }
 
-                    $data['more_career_oppurtunatity']                          = 'https://'.$more_career_oppurtunatity.'/'.$job_company_career_title;
+                    $data['more_career_oppurtunatity']                          = 'https://' . $more_career_oppurtunatity . '/' . $job_company_career_title;
 
                     if ($this->form_validation->run() == false) {
                         if ($data['is_paid']) {
@@ -4255,8 +4383,8 @@ class Home extends CI_Controller {
                         // Added on: 11-07-2019
                         // Reset phone numbers
                         $txt_phone_number = $this->input->post('phone_number', true);
-                        if($this->input->post('txt_phonenumber', true))
-                        $txt_phone_number = $this->input->post('txt_phonenumber', true);
+                        if ($this->input->post('txt_phonenumber', true))
+                            $txt_phone_number = $this->input->post('txt_phonenumber', true);
 
                         switch ($action) {
                             case 'job_applicant':
@@ -4272,7 +4400,7 @@ class Home extends CI_Controller {
                                     $email                                          = $this->input->post('email');
                                     $is_blocked_email                               = $this->check_domain->check_if_blocked($email);
 
-                                    if($is_blocked_email == 'blocked') {
+                                    if ($is_blocked_email == 'blocked') {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
                                         $applied_from                               = $this->input->post('applied_from');
 
@@ -4399,7 +4527,7 @@ class Home extends CI_Controller {
                                                 redirect('/job-feed/');
                                             } else {
                                                 redirect('/', 'refresh');
-                                            }    
+                                            }
 
                                             break;
                                         }
@@ -4426,7 +4554,8 @@ class Home extends CI_Controller {
                                                 'cover_letter'                      => $cover_letter,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email);
+                                                'referred_by_email'                 => $referred_by_email
+                                            );
 
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
 
@@ -4473,22 +4602,22 @@ class Home extends CI_Controller {
                                                 'referred_by_email'                 => $referred_by_email
                                             );
 
-                                            if($YouTube_code != '') { // check if youtube link is updated
+                                            if ($YouTube_code != '') { // check if youtube link is updated
                                                 $update_data_primary_youtube        = array('YouTube_Video' => $YouTube_code);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_youtube);
                                             }
 
-                                            if($resume != '') { // check if resume is updated
+                                            if ($resume != '') { // check if resume is updated
                                                 $update_data_primary_resume         = array('resume' => $resume);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_resume);
                                             }
 
-                                            if($pictures != '') { // check if profile picture is updated
+                                            if ($pictures != '') { // check if profile picture is updated
                                                 $update_data_primary_pictures       = array('pictures' => $pictures);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_pictures);
                                             }
 
-                                            if($cover_letter != '') { // check if cover letter is updated
+                                            if ($cover_letter != '') { // check if cover letter is updated
                                                 $update_data_primary_cover_letter   = array('cover_letter' => $cover_letter);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_cover_letter);
                                             }
@@ -4562,9 +4691,9 @@ class Home extends CI_Controller {
                                             $company_email                          = TO_EMAIL_INFO; //$data['company_details']['email'];
                                             $resume_url                             = '';
                                             $resume_anchor                          = '';
-                                            $profile_anchor                         = '<a href="https://www.automotohr.com/applicant_profile/'.$job_applications_sid.'/'.$portal_applicant_jobs_list_sid.'" style="'.DEF_EMAIL_BTN_STYLE_DANGER.'"  download="resume" >View Profile</a>';
+                                            $profile_anchor                         = '<a href="https://www.automotohr.com/applicant_profile/' . $job_applications_sid . '/' . $portal_applicant_jobs_list_sid . '" style="' . DEF_EMAIL_BTN_STYLE_DANGER . '"  download="resume" >View Profile</a>';
 
-                                            if(!empty($resume)) { // resume check here - change to button
+                                            if (!empty($resume)) { // resume check here - change to button
                                                 $resume_url                         = AWS_S3_BUCKET_URL . urlencode($resume);
                                                 $resume_anchor                      = '<a  style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . $resume_url . '" target="_blank">Download Resume</a>';
                                             }
@@ -4574,7 +4703,7 @@ class Home extends CI_Controller {
                                             $replacement_array['site_url']          = base_url();
                                             $replacement_array['date']              = month_date_year(date('Y-m-d'));
                                             $replacement_array['job_title']         = $title;
-                                            $replacement_array['original_job_title']= $original_job_title;
+                                            $replacement_array['original_job_title'] = $original_job_title;
                                             $replacement_array['phone_number']      = $phone_number;
                                             $replacement_array['city']              = $city;
                                             $replacement_array['company_name']      = $company_name;
@@ -4595,7 +4724,7 @@ class Home extends CI_Controller {
                                                 $applicant_notification_contacts    = get_notification_email_contacts($company_sid, 'new_applicant', $sid);
 
                                                 if (!empty($applicant_notification_contacts)) {
-                                                    foreach($applicant_notification_contacts as $contact) {
+                                                    foreach ($applicant_notification_contacts as $contact) {
                                                         $replacement_array['firstname']     = $first_name;
                                                         $replacement_array['lastname']      = $last_name;
                                                         $replacement_array['email']         = $email;
@@ -4641,11 +4770,11 @@ class Home extends CI_Controller {
                                                 $message_hf                         = message_header_footer_domain($company_id, $company_name);
                                                 $secret_key                         = $message_data['identity_key'] . "__";
                                                 $autoemailbody = $message_hf['header']
-                                                                . '<p>Subject: ' . $subject . '</p>'
-                                                                . $body
-                                                                . $message_hf['footer']
-                                                                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                                                . $secret_key . '</div>';
+                                                    . '<p>Subject: ' . $subject . '</p>'
+                                                    . $body
+                                                    . $message_hf['footer']
+                                                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                                    . $secret_key . '</div>';
 
                                                 sendMail(REPLY_TO, $email, $subject, $autoemailbody, $from_name, REPLY_TO);
                                                 $sent_to_pm                                     = $this->contact_model->save_message($message_data);
@@ -4676,112 +4805,114 @@ class Home extends CI_Controller {
                                                 $all_questions_ids                  = $_POST['all_questions_ids'];
 
                                                 foreach ($all_questions_ids as $key => $value) {
-                                                        $q_passing                  = 0;
-                                                        $post_questions_sid         = $value;
-                                                        $caption                    = 'caption' . $value;
-                                                        $type                       = 'type' . $value;
-                                                        $answer                     = $_POST[$type] . $value;
-                                                        $questions_type             = $_POST[$type];
-                                                        $my_question                = '';
-                                                        $individual_score           = 0;
-                                                        $individual_passing_score   = 0;
-                                                        $individual_status          = 'Pass';
-                                                        $result_status              = array();
+                                                    $q_passing                  = 0;
+                                                    $post_questions_sid         = $value;
+                                                    $caption                    = 'caption' . $value;
+                                                    $type                       = 'type' . $value;
+                                                    $answer                     = $_POST[$type] . $value;
+                                                    $questions_type             = $_POST[$type];
+                                                    $my_question                = '';
+                                                    $individual_score           = 0;
+                                                    $individual_passing_score   = 0;
+                                                    $individual_status          = 'Pass';
+                                                    $result_status              = array();
 
-                                                        if (isset($_POST[$caption])) {
-                                                            $my_question            = $_POST[$caption];
-                                                        }
+                                                    if (isset($_POST[$caption])) {
+                                                        $my_question            = $_POST[$caption];
+                                                    }
 
-                                                        $my_answer                  = NULL;
+                                                    $my_answer                  = NULL;
 
-                                                        if (isset($_POST[$answer])) {
-                                                            $my_answer              = $_POST[$answer];
-                                                        }
+                                                    if (isset($_POST[$answer])) {
+                                                        $my_answer              = $_POST[$answer];
+                                                    }
 
-                                                        if($questions_type != 'string') { // get the question possible score
-                                                            $q_passing              = $this->job_details->get_possible_score_of_questions($post_questions_sid, $questions_type);
-                                                        }
+                                                    if ($questions_type != 'string') { // get the question possible score
+                                                        $q_passing              = $this->job_details->get_possible_score_of_questions($post_questions_sid, $questions_type);
+                                                    }
 
-                                                        if($my_answer != NULL) { // It is required question
-                                                            if (is_array($my_answer)) {
-                                                                $answered                   = array();
-                                                                $answered_result_status     = array();
-                                                                $answered_question_score    = array();
-                                                                $total_questionnaire_score  += $q_passing;
-                                                                $is_string                  = 1;
+                                                    if ($my_answer != NULL) { // It is required question
+                                                        if (is_array($my_answer)) {
+                                                            $answered                   = array();
+                                                            $answered_result_status     = array();
+                                                            $answered_question_score    = array();
+                                                            $total_questionnaire_score  += $q_passing;
+                                                            $is_string                  = 1;
 
-                                                                foreach ($my_answer as $answers) {
-                                                                        $result                 = explode('@#$', $answers);
-                                                                        $a                      = $result[0];
-                                                                        $answered_question_sid  = $result[1];
-                                                                        $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
+                                                            foreach ($my_answer as $answers) {
+                                                                $result                 = explode('@#$', $answers);
+                                                                $a                      = $result[0];
+                                                                $answered_question_sid  = $result[1];
+                                                                $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
 
-                                                                        if(!empty($question_details)) {
-                                                                            $questions_score            = $question_details['score'];
-                                                                            $questions_result_status    = $question_details['result_status'];
-                                                                            $questions_result_value     = $question_details['value'];
-                                                                        }
-
-                                                                        $score                      = $questions_score;
-                                                                        $total_score                += $questions_score;
-                                                                        $individual_score           += $questions_score;
-                                                                        $individual_passing_score   = $q_passing;
-                                                                        $answered[]                 = $a;
-                                                                        $result_status[]            = $questions_result_status;
-                                                                        $answered_result_status[]   = $questions_result_status;
-                                                                        $answered_question_score[]  = $questions_score;
+                                                                if (!empty($question_details)) {
+                                                                    $questions_score            = $question_details['score'];
+                                                                    $questions_result_status    = $question_details['result_status'];
+                                                                    $questions_result_value     = $question_details['value'];
                                                                 }
-                                                            } else { // hassan WORKING area
-                                                                $result                     = explode('@#$', $my_answer);
-                                                                $total_questionnaire_score  += $q_passing;
-                                                                $a                          = $result[0];
-                                                                $answered                   = $a;
-                                                                $answered_result_status     = '';
-                                                                $answered_question_score    = 0;
 
-                                                                if (isset($result[1])) {
-                                                                    $answered_question_sid  = $result[1];
-                                                                    $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
-
-                                                                    if(!empty($question_details)) {
-                                                                        $questions_score = $question_details['score'];
-                                                                        $questions_result_status    = $question_details['result_status'];
-                                                                        $questions_result_value     = $question_details['value'];
-                                                                    }
-
-                                                                    $is_string                  = 1;
-                                                                    $score                      = $questions_score;
-                                                                    $total_score                += $questions_score;
-                                                                    $individual_score           += $questions_score;
-                                                                    $individual_passing_score   = $q_passing;
-                                                                    $result_status[]            = $questions_result_status;
-                                                                    $answered_result_status     = $questions_result_status;
-                                                                    $answered_question_score    = $questions_score;
-                                                                }
+                                                                $score                      = $questions_score;
+                                                                $total_score                += $questions_score;
+                                                                $individual_score           += $questions_score;
+                                                                $individual_passing_score   = $q_passing;
+                                                                $answered[]                 = $a;
+                                                                $result_status[]            = $questions_result_status;
+                                                                $answered_result_status[]   = $questions_result_status;
+                                                                $answered_question_score[]  = $questions_score;
                                                             }
-
-                                                            if(!empty($result_status)) {
-                                                                if(in_array('Fail', $result_status)) {
-                                                                    $individual_status  = 'Fail';
-                                                                    $overall_status     = 'Fail';
-                                                                }
-                                                            }
-                                                        } else { // it is optional question
-                                                            $answered                   = '';
-                                                            $individual_passing_score   = $q_passing;
-                                                            $individual_score           = 0;
-                                                            $individual_status          = 'Candidate did not answer the question';
+                                                        } else { // hassan WORKING area
+                                                            $result                     = explode('@#$', $my_answer);
+                                                            $total_questionnaire_score  += $q_passing;
+                                                            $a                          = $result[0];
+                                                            $answered                   = $a;
                                                             $answered_result_status     = '';
                                                             $answered_question_score    = 0;
+
+                                                            if (isset($result[1])) {
+                                                                $answered_question_sid  = $result[1];
+                                                                $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
+
+                                                                if (!empty($question_details)) {
+                                                                    $questions_score = $question_details['score'];
+                                                                    $questions_result_status    = $question_details['result_status'];
+                                                                    $questions_result_value     = $question_details['value'];
+                                                                }
+
+                                                                $is_string                  = 1;
+                                                                $score                      = $questions_score;
+                                                                $total_score                += $questions_score;
+                                                                $individual_score           += $questions_score;
+                                                                $individual_passing_score   = $q_passing;
+                                                                $result_status[]            = $questions_result_status;
+                                                                $answered_result_status     = $questions_result_status;
+                                                                $answered_question_score    = $questions_score;
+                                                            }
                                                         }
 
-                                                        $array_questionnaire[$my_question] = array( 'answer'                    => $answered,
-                                                                                                    'passing_score'             => $individual_passing_score,
-                                                                                                    'score'                     => $individual_score,
-                                                                                                    'status'                    => $individual_status,
-                                                                                                    'answered_result_status'    => $answered_result_status,
-                                                                                                    'answered_question_score'   => $answered_question_score);
-                                                        //echo '<pre>'; print_r($array_questionnaire); echo '</pre><hr>';
+                                                        if (!empty($result_status)) {
+                                                            if (in_array('Fail', $result_status)) {
+                                                                $individual_status  = 'Fail';
+                                                                $overall_status     = 'Fail';
+                                                            }
+                                                        }
+                                                    } else { // it is optional question
+                                                        $answered                   = '';
+                                                        $individual_passing_score   = $q_passing;
+                                                        $individual_score           = 0;
+                                                        $individual_status          = 'Candidate did not answer the question';
+                                                        $answered_result_status     = '';
+                                                        $answered_question_score    = 0;
+                                                    }
+
+                                                    $array_questionnaire[$my_question] = array(
+                                                        'answer'                    => $answered,
+                                                        'passing_score'             => $individual_passing_score,
+                                                        'score'                     => $individual_score,
+                                                        'status'                    => $individual_status,
+                                                        'answered_result_status'    => $answered_result_status,
+                                                        'answered_question_score'   => $answered_question_score
+                                                    );
+                                                    //echo '<pre>'; print_r($array_questionnaire); echo '</pre><hr>';
                                                 } // here
 
                                                 $questionnaire_result               = $overall_status;
@@ -4789,34 +4920,38 @@ class Home extends CI_Controller {
                                                 $remote_addr                        = getUserIP();
                                                 $user_agent                         = $_SERVER['HTTP_USER_AGENT'];
 
-                                                $questionnaire_data = array('applicant_sid'             => $job_applications_sid,
-                                                                            'applicant_jobs_list_sid'   => $portal_applicant_jobs_list_sid,
-                                                                            'job_sid'                   => $job_sid,
-                                                                            'job_title'                 => $title,
-                                                                            'job_type'                  => $job_type,
-                                                                            'company_sid'               => $company_sid,
-                                                                            'questionnaire_name'        => $questionnaire_name,
-                                                                            'questionnaire'             => $array_questionnaire,
-                                                                            'questionnaire_result'      => $questionnaire_result,
-                                                                            'attend_timestamp'          => $datetime,
-                                                                            'questionnaire_ip_address'  => $remote_addr,
-                                                                            'questionnaire_user_agent'  => $user_agent);
+                                                $questionnaire_data = array(
+                                                    'applicant_sid'             => $job_applications_sid,
+                                                    'applicant_jobs_list_sid'   => $portal_applicant_jobs_list_sid,
+                                                    'job_sid'                   => $job_sid,
+                                                    'job_title'                 => $title,
+                                                    'job_type'                  => $job_type,
+                                                    'company_sid'               => $company_sid,
+                                                    'questionnaire_name'        => $questionnaire_name,
+                                                    'questionnaire'             => $array_questionnaire,
+                                                    'questionnaire_result'      => $questionnaire_result,
+                                                    'attend_timestamp'          => $datetime,
+                                                    'questionnaire_ip_address'  => $remote_addr,
+                                                    'questionnaire_user_agent'  => $user_agent
+                                                );
 
                                                 $questionnaire_serialize            = serialize($questionnaire_data);
                                                 $array_questionnaire_serialize      = serialize($array_questionnaire);
                                                 //echo '<pre>'; print_r($questionnaire_data); echo '</pre><hr>';
-                                                $screening_questionnaire_results = array('applicant_sid'                => $job_applications_sid,
-                                                                                        'applicant_jobs_list_sid'       => $portal_applicant_jobs_list_sid,
-                                                                                        'job_sid'                       => $job_sid,
-                                                                                        'job_title'                     => $title,
-                                                                                        'job_type'                      => $job_type,
-                                                                                        'company_sid'                   => $company_sid,
-                                                                                        'questionnaire_name'            => $questionnaire_name,
-                                                                                        'questionnaire'                 => $array_questionnaire_serialize,
-                                                                                        'questionnaire_result'          => $questionnaire_result,
-                                                                                        'attend_timestamp'              => $datetime,
-                                                                                        'questionnaire_ip_address'      => $remote_addr,
-                                                                                        'questionnaire_user_agent'      => $user_agent);
+                                                $screening_questionnaire_results = array(
+                                                    'applicant_sid'                => $job_applications_sid,
+                                                    'applicant_jobs_list_sid'       => $portal_applicant_jobs_list_sid,
+                                                    'job_sid'                       => $job_sid,
+                                                    'job_title'                     => $title,
+                                                    'job_type'                      => $job_type,
+                                                    'company_sid'                   => $company_sid,
+                                                    'questionnaire_name'            => $questionnaire_name,
+                                                    'questionnaire'                 => $array_questionnaire_serialize,
+                                                    'questionnaire_result'          => $questionnaire_result,
+                                                    'attend_timestamp'              => $datetime,
+                                                    'questionnaire_ip_address'      => $remote_addr,
+                                                    'questionnaire_user_agent'      => $user_agent
+                                                );
 
                                                 $this->job_details->update_questionnaire_result($portal_applicant_jobs_list_sid, $questionnaire_serialize, $total_questionnaire_score, $total_score, $questionnaire_result);
                                                 $this->job_details->insert_questionnaire_result($screening_questionnaire_results);
@@ -4854,16 +4989,18 @@ class Home extends CI_Controller {
                                             }
 
                                             if ($eeo_form == 'Yes') { //Getting data for EEO Form Starts
-                                                $eeo_data = array(  'application_sid'                   => $job_applications_sid,
-                                                                    'users_type'                        => "applicant",
-                                                                    'portal_applicant_jobs_list_sid'    => $portal_applicant_jobs_list_sid,
-                                                                    'us_citizen'                        => $this->input->post('us_citizen'),
-                                                                    'visa_status '                      => $this->input->post('visa_status'),
-                                                                    'group_status'                      => $this->input->post('group_status'),
-                                                                    'veteran'                           => $this->input->post('veteran'),
-                                                                    'disability'                        => $this->input->post('disability'),
-                                                                    'gender'                            => $this->input->post('gender'),
-                                                                    'is_expired'                            => 1);
+                                                $eeo_data = array(
+                                                    'application_sid'                   => $job_applications_sid,
+                                                    'users_type'                        => "applicant",
+                                                    'portal_applicant_jobs_list_sid'    => $portal_applicant_jobs_list_sid,
+                                                    'us_citizen'                        => $this->input->post('us_citizen'),
+                                                    'visa_status '                      => $this->input->post('visa_status'),
+                                                    'group_status'                      => $this->input->post('group_status'),
+                                                    'veteran'                           => $this->input->post('veteran'),
+                                                    'disability'                        => $this->input->post('disability'),
+                                                    'gender'                            => $this->input->post('gender'),
+                                                    'is_expired'                            => 1
+                                                );
 
                                                 $this->job_details->save_eeo_form($eeo_data);
                                             } //Getting data for EEO Form Ends
@@ -4889,7 +5026,7 @@ class Home extends CI_Controller {
                                     $email                                          = $this->input->post('email');
                                     $is_blocked_email                               = $this->check_domain->check_if_blocked($email);
 
-                                    if($is_blocked_email == 'blocked') {
+                                    if ($is_blocked_email == 'blocked') {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
                                         $applied_from                               = $this->input->post('applied_from');
 
@@ -4936,7 +5073,7 @@ class Home extends CI_Controller {
                                             redirect('/job-feed/');
                                         } else {
                                             redirect('/', 'refresh');
-                                        }   
+                                        }
 
                                         break;
                                     }
@@ -5013,7 +5150,7 @@ class Home extends CI_Controller {
                                                 redirect('/job-feed/');
                                             } else {
                                                 redirect('/', 'refresh');
-                                            }   
+                                            }
 
                                             break;
                                         }
@@ -5040,7 +5177,8 @@ class Home extends CI_Controller {
                                                 'cover_letter'                      => $cover_letter,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email);
+                                                'referred_by_email'                 => $referred_by_email
+                                            );
 
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
 
@@ -5063,7 +5201,8 @@ class Home extends CI_Controller {
                                                     'main_referral'                 => $this->session->userdata('last_referral') ? $this->session->userdata('last_referral') : STORE_FULL_URL_SSL,
                                                     'ip_address'                    => getUserIP(),
                                                     'user_agent'                    => $_SERVER['HTTP_USER_AGENT'],
-                                                    'eeo_form'                      => $eeo_form);
+                                                    'eeo_form'                      => $eeo_form
+                                                );
 
                                                 $jobs_list_result                   = $this->job_details->add_applicant_job_details($insert_job_list);
                                                 $portal_applicant_jobs_list_sid     = $jobs_list_result[0];
@@ -5081,24 +5220,25 @@ class Home extends CI_Controller {
                                                 'state'                             => $state,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email);
+                                                'referred_by_email'                 => $referred_by_email
+                                            );
 
-                                            if($YouTube_code != '') { // check if youtube link is updated
+                                            if ($YouTube_code != '') { // check if youtube link is updated
                                                 $update_data_primary_youtube        = array('YouTube_Video' => $YouTube_code);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_youtube);
                                             }
 
-                                            if($resume != '') { // check if resume is updated
+                                            if ($resume != '') { // check if resume is updated
                                                 $update_data_primary_resume         = array('resume' => $resume);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_resume);
                                             }
 
-                                            if($pictures != '') { // check if profile picture is updated
+                                            if ($pictures != '') { // check if profile picture is updated
                                                 $update_data_primary_pictures       = array('pictures' => $pictures);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_pictures);
                                             }
 
-                                            if($cover_letter != '') { // check if cover letter is updated
+                                            if ($cover_letter != '') { // check if cover letter is updated
                                                 $update_data_primary_cover_letter   = array('cover_letter' => $cover_letter);
                                                 $update_data_primary                = array_merge($update_data_primary, $update_data_primary_cover_letter);
                                             }
@@ -5119,7 +5259,8 @@ class Home extends CI_Controller {
                                                 'main_referral'                     => $this->session->userdata('last_referral') ? $this->session->userdata('last_referral') : STORE_FULL_URL_SSL,
                                                 'ip_address'                        => getUserIP(),
                                                 'user_agent'                        => $_SERVER['HTTP_USER_AGENT'],
-                                                'eeo_form'                          => $eeo_form);
+                                                'eeo_form'                          => $eeo_form
+                                            );
 
                                             $jobs_list_result                       = $this->job_details->add_applicant_job_details($insert_job_list);
                                             $portal_applicant_jobs_list_sid         = $jobs_list_result[0];
@@ -5131,9 +5272,9 @@ class Home extends CI_Controller {
                                             $company_email                          = TO_EMAIL_INFO; //$data['company_details']['email'];
                                             $resume_url                             = '';
                                             $resume_anchor                          = '';
-                                            $profile_anchor                         = '<a href="https://www.automotohr.com/applicant_profile/'.$job_applications_sid.'/'.$portal_applicant_jobs_list_sid.'" style="'.DEF_EMAIL_BTN_STYLE_DANGER.'"  download="resume" >View Profile</a>';
+                                            $profile_anchor                         = '<a href="https://www.automotohr.com/applicant_profile/' . $job_applications_sid . '/' . $portal_applicant_jobs_list_sid . '" style="' . DEF_EMAIL_BTN_STYLE_DANGER . '"  download="resume" >View Profile</a>';
 
-                                            if(!empty($resume)) { // resume check here - change to button
+                                            if (!empty($resume)) { // resume check here - change to button
                                                 $resume_url                         = AWS_S3_BUCKET_URL . urlencode($resume);
                                                 $resume_anchor                      = '<a  style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" href="' . $resume_url . '" target="_blank">Download Resume</a>';
                                             }
@@ -5143,7 +5284,7 @@ class Home extends CI_Controller {
                                             $replacement_array['site_url']          = base_url();
                                             $replacement_array['date']              = month_date_year(date('Y-m-d'));
                                             $replacement_array['job_title']         = $title;
-                                            $replacement_array['original_job_title']= $original_job_title;
+                                            $replacement_array['original_job_title'] = $original_job_title;
                                             $replacement_array['phone_number']      = $phone_number;
                                             $replacement_array['city']              = $city;
                                             $replacement_array['company_name']      = $company_name;
@@ -5164,7 +5305,7 @@ class Home extends CI_Controller {
                                                 $applicant_notification_contacts    = get_notification_email_contacts($company_sid, 'new_applicant', $sid);
 
                                                 if (!empty($applicant_notification_contacts)) {
-                                                    foreach($applicant_notification_contacts as $contact) {
+                                                    foreach ($applicant_notification_contacts as $contact) {
                                                         $replacement_array['firstname']     = $first_name;
                                                         $replacement_array['lastname']      = $last_name;
                                                         $replacement_array['email']         = $email;
@@ -5210,11 +5351,11 @@ class Home extends CI_Controller {
                                                 $message_hf                         = message_header_footer_domain($company_id, $company_name);
                                                 $secret_key                         = $message_data['identity_key'] . "__";
                                                 $autoemailbody = $message_hf['header']
-                                                                . '<p>Subject: ' . $subject . '</p>'
-                                                                . $body
-                                                                . $message_hf['footer']
-                                                                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                                                . $secret_key . '</div>';
+                                                    . '<p>Subject: ' . $subject . '</p>'
+                                                    . $body
+                                                    . $message_hf['footer']
+                                                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                                    . $secret_key . '</div>';
 
                                                 sendMail(REPLY_TO, $email, $subject, $autoemailbody, $from_name, REPLY_TO);
                                                 $sent_to_pm                                     = $this->contact_model->save_message($message_data);
@@ -5245,112 +5386,114 @@ class Home extends CI_Controller {
                                                 $all_questions_ids                  = $_POST['all_questions_ids'];
 
                                                 foreach ($all_questions_ids as $key => $value) {
-                                                        $q_passing                  = 0;
-                                                        $post_questions_sid         = $value;
-                                                        $caption                    = 'caption' . $value;
-                                                        $type                       = 'type' . $value;
-                                                        $answer                     = $_POST[$type] . $value;
-                                                        $questions_type             = $_POST[$type];
-                                                        $my_question                = '';
-                                                        $individual_score           = 0;
-                                                        $individual_passing_score   = 0;
-                                                        $individual_status          = 'Pass';
-                                                        $result_status              = array();
+                                                    $q_passing                  = 0;
+                                                    $post_questions_sid         = $value;
+                                                    $caption                    = 'caption' . $value;
+                                                    $type                       = 'type' . $value;
+                                                    $answer                     = $_POST[$type] . $value;
+                                                    $questions_type             = $_POST[$type];
+                                                    $my_question                = '';
+                                                    $individual_score           = 0;
+                                                    $individual_passing_score   = 0;
+                                                    $individual_status          = 'Pass';
+                                                    $result_status              = array();
 
-                                                        if (isset($_POST[$caption])) {
-                                                            $my_question            = $_POST[$caption];
-                                                        }
+                                                    if (isset($_POST[$caption])) {
+                                                        $my_question            = $_POST[$caption];
+                                                    }
 
-                                                        $my_answer                  = NULL;
+                                                    $my_answer                  = NULL;
 
-                                                        if (isset($_POST[$answer])) {
-                                                            $my_answer              = $_POST[$answer];
-                                                        }
+                                                    if (isset($_POST[$answer])) {
+                                                        $my_answer              = $_POST[$answer];
+                                                    }
 
-                                                        if($questions_type != 'string') { // get the question possible score
-                                                            $q_passing              = $this->job_details->get_possible_score_of_questions($post_questions_sid, $questions_type);
-                                                        }
+                                                    if ($questions_type != 'string') { // get the question possible score
+                                                        $q_passing              = $this->job_details->get_possible_score_of_questions($post_questions_sid, $questions_type);
+                                                    }
 
-                                                        if($my_answer != NULL) { // It is required question
-                                                            if (is_array($my_answer)) {
-                                                                $answered                   = array();
-                                                                $answered_result_status     = array();
-                                                                $answered_question_score    = array();
-                                                                $total_questionnaire_score  += $q_passing;
-                                                                $is_string                  = 1;
+                                                    if ($my_answer != NULL) { // It is required question
+                                                        if (is_array($my_answer)) {
+                                                            $answered                   = array();
+                                                            $answered_result_status     = array();
+                                                            $answered_question_score    = array();
+                                                            $total_questionnaire_score  += $q_passing;
+                                                            $is_string                  = 1;
 
-                                                                foreach ($my_answer as $answers) {
-                                                                        $result                 = explode('@#$', $answers);
-                                                                        $a                      = $result[0];
-                                                                        $answered_question_sid  = $result[1];
-                                                                        $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
+                                                            foreach ($my_answer as $answers) {
+                                                                $result                 = explode('@#$', $answers);
+                                                                $a                      = $result[0];
+                                                                $answered_question_sid  = $result[1];
+                                                                $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
 
-                                                                        if(!empty($question_details)) {
-                                                                            $questions_score            = $question_details['score'];
-                                                                            $questions_result_status    = $question_details['result_status'];
-                                                                            $questions_result_value     = $question_details['value'];
-                                                                        }
-
-                                                                        $score                      = $questions_score;
-                                                                        $total_score                += $questions_score;
-                                                                        $individual_score           += $questions_score;
-                                                                        $individual_passing_score   = $q_passing;
-                                                                        $answered[]                 = $a;
-                                                                        $result_status[]            = $questions_result_status;
-                                                                        $answered_result_status[]   = $questions_result_status;
-                                                                        $answered_question_score[]  = $questions_score;
+                                                                if (!empty($question_details)) {
+                                                                    $questions_score            = $question_details['score'];
+                                                                    $questions_result_status    = $question_details['result_status'];
+                                                                    $questions_result_value     = $question_details['value'];
                                                                 }
-                                                            } else { // hassan WORKING area
-                                                                $result                     = explode('@#$', $my_answer);
-                                                                $total_questionnaire_score  += $q_passing;
-                                                                $a                          = $result[0];
-                                                                $answered                   = $a;
-                                                                $answered_result_status     = '';
-                                                                $answered_question_score    = 0;
 
-                                                                if (isset($result[1])) {
-                                                                    $answered_question_sid  = $result[1];
-                                                                    $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
-
-                                                                    if(!empty($question_details)) {
-                                                                        $questions_score = $question_details['score'];
-                                                                        $questions_result_status    = $question_details['result_status'];
-                                                                        $questions_result_value     = $question_details['value'];
-                                                                    }
-
-                                                                    $is_string                  = 1;
-                                                                    $score                      = $questions_score;
-                                                                    $total_score                += $questions_score;
-                                                                    $individual_score           += $questions_score;
-                                                                    $individual_passing_score   = $q_passing;
-                                                                    $result_status[]            = $questions_result_status;
-                                                                    $answered_result_status     = $questions_result_status;
-                                                                    $answered_question_score    = $questions_score;
-                                                                }
+                                                                $score                      = $questions_score;
+                                                                $total_score                += $questions_score;
+                                                                $individual_score           += $questions_score;
+                                                                $individual_passing_score   = $q_passing;
+                                                                $answered[]                 = $a;
+                                                                $result_status[]            = $questions_result_status;
+                                                                $answered_result_status[]   = $questions_result_status;
+                                                                $answered_question_score[]  = $questions_score;
                                                             }
-
-                                                            if(!empty($result_status)) {
-                                                                if(in_array('Fail', $result_status)) {
-                                                                    $individual_status  = 'Fail';
-                                                                    $overall_status     = 'Fail';
-                                                                }
-                                                            }
-                                                        } else { // it is optional question
-                                                            $answered                   = '';
-                                                            $individual_passing_score   = $q_passing;
-                                                            $individual_score           = 0;
-                                                            $individual_status          = 'Candidate did not answer the question';
+                                                        } else { // hassan WORKING area
+                                                            $result                     = explode('@#$', $my_answer);
+                                                            $total_questionnaire_score  += $q_passing;
+                                                            $a                          = $result[0];
+                                                            $answered                   = $a;
                                                             $answered_result_status     = '';
                                                             $answered_question_score    = 0;
+
+                                                            if (isset($result[1])) {
+                                                                $answered_question_sid  = $result[1];
+                                                                $question_details       = $this->job_details->get_individual_question_details($answered_question_sid);
+
+                                                                if (!empty($question_details)) {
+                                                                    $questions_score = $question_details['score'];
+                                                                    $questions_result_status    = $question_details['result_status'];
+                                                                    $questions_result_value     = $question_details['value'];
+                                                                }
+
+                                                                $is_string                  = 1;
+                                                                $score                      = $questions_score;
+                                                                $total_score                += $questions_score;
+                                                                $individual_score           += $questions_score;
+                                                                $individual_passing_score   = $q_passing;
+                                                                $result_status[]            = $questions_result_status;
+                                                                $answered_result_status     = $questions_result_status;
+                                                                $answered_question_score    = $questions_score;
+                                                            }
                                                         }
 
-                                                        $array_questionnaire[$my_question] = array( 'answer'                    => $answered,
-                                                                                                    'passing_score'             => $individual_passing_score,
-                                                                                                    'score'                     => $individual_score,
-                                                                                                    'status'                    => $individual_status,
-                                                                                                    'answered_result_status'    => $answered_result_status,
-                                                                                                    'answered_question_score'   => $answered_question_score);
-                                                        //echo '<pre>'; print_r($array_questionnaire); echo '</pre><hr>';
+                                                        if (!empty($result_status)) {
+                                                            if (in_array('Fail', $result_status)) {
+                                                                $individual_status  = 'Fail';
+                                                                $overall_status     = 'Fail';
+                                                            }
+                                                        }
+                                                    } else { // it is optional question
+                                                        $answered                   = '';
+                                                        $individual_passing_score   = $q_passing;
+                                                        $individual_score           = 0;
+                                                        $individual_status          = 'Candidate did not answer the question';
+                                                        $answered_result_status     = '';
+                                                        $answered_question_score    = 0;
+                                                    }
+
+                                                    $array_questionnaire[$my_question] = array(
+                                                        'answer'                    => $answered,
+                                                        'passing_score'             => $individual_passing_score,
+                                                        'score'                     => $individual_score,
+                                                        'status'                    => $individual_status,
+                                                        'answered_result_status'    => $answered_result_status,
+                                                        'answered_question_score'   => $answered_question_score
+                                                    );
+                                                    //echo '<pre>'; print_r($array_questionnaire); echo '</pre><hr>';
                                                 } // here
 
                                                 $questionnaire_result               = $overall_status;
@@ -5358,34 +5501,38 @@ class Home extends CI_Controller {
                                                 $remote_addr                        = getUserIP();
                                                 $user_agent                         = $_SERVER['HTTP_USER_AGENT'];
 
-                                                $questionnaire_data = array('applicant_sid'             => $job_applications_sid,
-                                                                            'applicant_jobs_list_sid'   => $portal_applicant_jobs_list_sid,
-                                                                            'job_sid'                   => $job_sid,
-                                                                            'job_title'                 => $title,
-                                                                            'job_type'                  => $job_type,
-                                                                            'company_sid'               => $company_sid,
-                                                                            'questionnaire_name'        => $questionnaire_name,
-                                                                            'questionnaire'             => $array_questionnaire,
-                                                                            'questionnaire_result'      => $questionnaire_result,
-                                                                            'attend_timestamp'          => $datetime,
-                                                                            'questionnaire_ip_address'  => $remote_addr,
-                                                                            'questionnaire_user_agent'  => $user_agent);
+                                                $questionnaire_data = array(
+                                                    'applicant_sid'             => $job_applications_sid,
+                                                    'applicant_jobs_list_sid'   => $portal_applicant_jobs_list_sid,
+                                                    'job_sid'                   => $job_sid,
+                                                    'job_title'                 => $title,
+                                                    'job_type'                  => $job_type,
+                                                    'company_sid'               => $company_sid,
+                                                    'questionnaire_name'        => $questionnaire_name,
+                                                    'questionnaire'             => $array_questionnaire,
+                                                    'questionnaire_result'      => $questionnaire_result,
+                                                    'attend_timestamp'          => $datetime,
+                                                    'questionnaire_ip_address'  => $remote_addr,
+                                                    'questionnaire_user_agent'  => $user_agent
+                                                );
 
                                                 $questionnaire_serialize            = serialize($questionnaire_data);
                                                 $array_questionnaire_serialize      = serialize($array_questionnaire);
                                                 //echo '<pre>'; print_r($questionnaire_data); echo '</pre><hr>';
-                                                $screening_questionnaire_results = array('applicant_sid'                => $job_applications_sid,
-                                                                                        'applicant_jobs_list_sid'       => $portal_applicant_jobs_list_sid,
-                                                                                        'job_sid'                       => $job_sid,
-                                                                                        'job_title'                     => $title,
-                                                                                        'job_type'                      => $job_type,
-                                                                                        'company_sid'                   => $company_sid,
-                                                                                        'questionnaire_name'            => $questionnaire_name,
-                                                                                        'questionnaire'                 => $array_questionnaire_serialize,
-                                                                                        'questionnaire_result'          => $questionnaire_result,
-                                                                                        'attend_timestamp'              => $datetime,
-                                                                                        'questionnaire_ip_address'      => $remote_addr,
-                                                                                        'questionnaire_user_agent'      => $user_agent);
+                                                $screening_questionnaire_results = array(
+                                                    'applicant_sid'                => $job_applications_sid,
+                                                    'applicant_jobs_list_sid'       => $portal_applicant_jobs_list_sid,
+                                                    'job_sid'                       => $job_sid,
+                                                    'job_title'                     => $title,
+                                                    'job_type'                      => $job_type,
+                                                    'company_sid'                   => $company_sid,
+                                                    'questionnaire_name'            => $questionnaire_name,
+                                                    'questionnaire'                 => $array_questionnaire_serialize,
+                                                    'questionnaire_result'          => $questionnaire_result,
+                                                    'attend_timestamp'              => $datetime,
+                                                    'questionnaire_ip_address'      => $remote_addr,
+                                                    'questionnaire_user_agent'      => $user_agent
+                                                );
 
                                                 $this->job_details->update_questionnaire_result($portal_applicant_jobs_list_sid, $questionnaire_serialize, $total_questionnaire_score, $total_score, $questionnaire_result);
                                                 $this->job_details->insert_questionnaire_result($screening_questionnaire_results);
@@ -5423,16 +5570,18 @@ class Home extends CI_Controller {
                                             }
 
                                             if ($eeo_form == 'Yes') { //Getting data for EEO Form Starts
-                                                $eeo_data = array(  'application_sid'                   => $job_applications_sid,
-                                                                    'users_type'                        => "applicant",
-                                                                    'portal_applicant_jobs_list_sid'    => $portal_applicant_jobs_list_sid,
-                                                                    'us_citizen'                        => $this->input->post('us_citizen'),
-                                                                    'visa_status '                      => $this->input->post('visa_status'),
-                                                                    'group_status'                      => $this->input->post('group_status'),
-                                                                    'veteran'                           => $this->input->post('veteran'),
-                                                                    'disability'                        => $this->input->post('disability'),
-                                                                    'gender'                            => $this->input->post('gender'),
-                                                                    'is_expired'                            => 1);
+                                                $eeo_data = array(
+                                                    'application_sid'                   => $job_applications_sid,
+                                                    'users_type'                        => "applicant",
+                                                    'portal_applicant_jobs_list_sid'    => $portal_applicant_jobs_list_sid,
+                                                    'us_citizen'                        => $this->input->post('us_citizen'),
+                                                    'visa_status '                      => $this->input->post('visa_status'),
+                                                    'group_status'                      => $this->input->post('group_status'),
+                                                    'veteran'                           => $this->input->post('veteran'),
+                                                    'disability'                        => $this->input->post('disability'),
+                                                    'gender'                            => $this->input->post('gender'),
+                                                    'is_expired'                            => 1
+                                                );
 
                                                 $this->job_details->save_eeo_form($eeo_data);
                                             } //Getting data for EEO Form Ends
@@ -5462,7 +5611,7 @@ class Home extends CI_Controller {
                                 $is_sender_blocked                              = $this->check_domain->check_if_blocked($sender_email);
                                 $is_receiver_blocked                            = $this->check_domain->check_if_blocked($receiver_email);
 
-                                if($is_sender_blocked == 'blocked' || $is_receiver_blocked) {
+                                if ($is_sender_blocked == 'blocked' || $is_receiver_blocked) {
                                     $this->session->set_flashdata('message', '<b>Success: </b>Thank you.');
                                     redirect('/job-feed-details/' . $sid, 'refresh');
                                     break;
@@ -5470,48 +5619,48 @@ class Home extends CI_Controller {
 
                                 $check_already_request = $this->job_details->check_if_applied_already($sid);
 
-                                if(isset($_POST['g-recaptcha-response']) && isset($_SERVER['HTTP_COOKIE']) && !empty($this->input->post('g-recaptcha-response'))  && $check_already_request < 3){
-                                    $this->job_details->save_friend_share_job_history($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $sid,'sent');
+                                if (isset($_POST['g-recaptcha-response']) && isset($_SERVER['HTTP_COOKIE']) && !empty($this->input->post('g-recaptcha-response'))  && $check_already_request < 3) {
+                                    $this->job_details->save_friend_share_job_history($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $sid, 'sent');
                                     $this->job_details->friend_share_job($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $data);
-                                    if($check_already_request != 0){
+                                    if ($check_already_request != 0) {
                                         //Send Email to Ali Bhai
                                         sendMail('info@automotohr.com', 'dev@automotohr.com', 'Spam Alert!', print_r($_POST, true) . print_r($_SERVER, true));
                                     }
-                                }else{
-                                    $this->job_details->save_friend_share_job_history($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $sid,'not-sent');
+                                } else {
+                                    $this->job_details->save_friend_share_job_history($sender_name, $sender_email, $receiver_name, $receiver_email, $comment, $sid, 'not-sent');
                                 }
                                 $post_data = $_POST;
                                 $server_data = $_SERVER;
-                                mail('mubashar.ahmed@egenienext.com', 'Friend Share Spam', print_r($post_data, true ));
-                                mail('mubashar.ahmed@egenienext.com', 'FS Spam Server', print_r($server_data, true ));
+                                mail('mubashar.ahmed@egenienext.com', 'Friend Share Spam', print_r($post_data, true));
+                                mail('mubashar.ahmed@egenienext.com', 'FS Spam Server', print_r($server_data, true));
                                 redirect('/job_details/' . $sid, 'refresh');
                                 break;
                             case 'send_tell_a_friend_email':
                                 sendMail('info@automotohr.com', 'dev@automotohr.com', 'send_tell_a_friend_email_ams!', print_r($_POST, true) . print_r($_SERVER, true));
-                               // $senderName                                     = $_POST['sender_name'];
-                               // $receiverName                                   = $_POST['receiver_name'];
-                               // $receiverEmail                                  = $_POST['receiver_email'];
-                               // $message                                        = $_POST['message'];
-                               // $subject                                        = ucwords($senderName) . ' Recommends ' . $list['Title'];
-                               // $message_body                                   = '';
-                               // $message_body                                   .= '<h1>' . 'Hi ' . $receiverName . '</h1>';
-                               // $message_body                                   .= '<h3>' . $senderName . '</h3>';
-                               // $message_body                                   .= '<p>' . 'Has Recommended The Following Job on our Website to You:' . '</p>';
-                               // $message_body                                   .= '<p>' . '</p>';
-                               // $message_body                                   .= '<p>' . '<a  style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" target="_blank" href="' . base_url('job_details') . '/' . $sid . '">' . $list['Title'] . '</a>' . '</p>';
-                               // $message_body                                   .= '<p>' . '</p>';
-                               // $message_body                                   .= '<p>' . '</p>';
-                               // $message_body                                   .= '<p>' . '<strong>' . 'Attached Personal Message' . '</strong>' . '</p>';
-                               // $message_body                                   .= '<p>' . $message . '</p>';
-                               // $message_body                                   .= '<p>' . '</p>';
-                               // $message_body                                   .= FROM_INFO_EMAIL_DISCLAIMER_MSG;
-                               //
-                               // if (base_url() == 'http://ams.example/') { //echo 'Local Working';
-                               //     save_email_log_common($senderName, $receiverEmail, $subject, $message_body);
-                               // } else { //echo 'LIVE';
-                               //     save_email_log_common($senderName, $receiverEmail, $subject, $message_body);
-                               //     sendMail(FROM_EMAIL_INFO, $receiverEmail, $subject, $message_body);
-                               // }
+                                // $senderName                                     = $_POST['sender_name'];
+                                // $receiverName                                   = $_POST['receiver_name'];
+                                // $receiverEmail                                  = $_POST['receiver_email'];
+                                // $message                                        = $_POST['message'];
+                                // $subject                                        = ucwords($senderName) . ' Recommends ' . $list['Title'];
+                                // $message_body                                   = '';
+                                // $message_body                                   .= '<h1>' . 'Hi ' . $receiverName . '</h1>';
+                                // $message_body                                   .= '<h3>' . $senderName . '</h3>';
+                                // $message_body                                   .= '<p>' . 'Has Recommended The Following Job on our Website to You:' . '</p>';
+                                // $message_body                                   .= '<p>' . '</p>';
+                                // $message_body                                   .= '<p>' . '<a  style="' . DEF_EMAIL_BTN_STYLE_PRIMARY . '" target="_blank" href="' . base_url('job_details') . '/' . $sid . '">' . $list['Title'] . '</a>' . '</p>';
+                                // $message_body                                   .= '<p>' . '</p>';
+                                // $message_body                                   .= '<p>' . '</p>';
+                                // $message_body                                   .= '<p>' . '<strong>' . 'Attached Personal Message' . '</strong>' . '</p>';
+                                // $message_body                                   .= '<p>' . $message . '</p>';
+                                // $message_body                                   .= '<p>' . '</p>';
+                                // $message_body                                   .= FROM_INFO_EMAIL_DISCLAIMER_MSG;
+                                //
+                                // if (base_url() == 'http://ams.example/') { //echo 'Local Working';
+                                //     save_email_log_common($senderName, $receiverEmail, $subject, $message_body);
+                                // } else { //echo 'LIVE';
+                                //     save_email_log_common($senderName, $receiverEmail, $subject, $message_body);
+                                //     sendMail(FROM_EMAIL_INFO, $receiverEmail, $subject, $message_body);
+                                // }
                                 break;
                         }
                     }
@@ -5528,9 +5677,10 @@ class Home extends CI_Controller {
         }
     }
 
-    private function isActiveFeed(){
+    private function isActiveFeed()
+    {
         $validSlug = $this->job_details->check_for_slug('automotosocial');
-        if(!$validSlug){
+        if (!$validSlug) {
             echo '<h1>404. Feed Not Found!</h1>';
             die();
         }
@@ -5538,23 +5688,24 @@ class Home extends CI_Controller {
     }
 }
 
-if(!function_exists('remakeSalary')){
-    function remakeSalary($salary, $jobType){
-        $salary = trim(str_replace([',','k','K'], ['','000','000'], $salary));
+if (!function_exists('remakeSalary')) {
+    function remakeSalary($salary, $jobType)
+    {
+        $salary = trim(str_replace([',', 'k', 'K'], ['', '000', '000'], $salary));
         $jobType = strtolower($jobType);
         //
-        if(preg_match('/year|yearly/', $jobType)) $jobType = 'per year';
-        else if(preg_match('/month|monthly/', $jobType)) $jobType = 'per month';
-        else if(preg_match('/week|weekly/', $jobType)) $jobType = 'per week';
-        else if(preg_match('/hour|hourly/', $jobType)) $jobType = 'per hour';
+        if (preg_match('/year|yearly/', $jobType)) $jobType = 'per year';
+        else if (preg_match('/month|monthly/', $jobType)) $jobType = 'per month';
+        else if (preg_match('/week|weekly/', $jobType)) $jobType = 'per week';
+        else if (preg_match('/hour|hourly/', $jobType)) $jobType = 'per hour';
         else $jobType = 'per year';
         //
-        if($salary == '') return $salary;
+        if ($salary == '') return $salary;
         //
-        if(strpos($salary, '$') === FALSE)
-        $salary = preg_replace('/(?<![^ ])(?=[^ ])(?![^0-9])/', '$', $salary);
+        if (strpos($salary, '$') === FALSE)
+            $salary = preg_replace('/(?<![^ ])(?=[^ ])(?![^0-9])/', '$', $salary);
         //
-        $salary = $salary.' '.$jobType;
+        $salary = $salary . ' ' . $jobType;
         //
         return $salary;
     }

@@ -10,6 +10,7 @@
         $input_group_end   = '</div>';
     }
 ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="modal modal-fullscreen fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog custom-popup" role="document">
         <div class="modal-content">
@@ -367,6 +368,12 @@
                                 <label for="squared" class="hint-label">I have Read and Understand the <a href="javascript:;" data-toggle="modal" data-target="#terms_and_conditions_apply_now">Terms & Conditions</a> and <a href="javascript:;" data-toggle="modal" data-target="#privay_policy_apply_now">Privacy Policy</a><span class="staric">*</span></label>
                                 <input type="checkbox" required="required" name="check_box" value="1" id="squared">
                             </li>
+
+                            <li>
+                                <div class="g-recaptcha" data-callback="googleCaptchaChecker" data-sitekey="<?= getCreds('AHR')->GOOGLE_CAPTCHA_API_KEY_V2; ?>"></div>
+                                <label id='captchaerrors' style="display: none; float: none !important;color: #CC0000 !important;font-weight: 400;margin: 0 !important;">Empty/Invalid Captcha </label>
+                            </li>
+
                             <li>
                                 <input type="hidden" name='job_sid' id="job_sid" value="">
                                 <input type="hidden" name="questionnaire_sid" id="questionnaire_sid" value="">
@@ -424,6 +431,12 @@
             }
             $('#state').html(html);
         }
+    }
+
+    var googleCaptchaToken = null;
+    
+    function googleCaptchaChecker(don) {
+        googleCaptchaToken = don;
     }
 
     function validate_form() {
@@ -497,6 +510,12 @@
                 gender: "Please Select Your Gender."
             },
             submitHandler: function (form) {
+
+                if(googleCaptchaToken === null){
+                    
+                       $("#captchaerrors").show();
+                        return;
+                    }
                 $('#mySubmitBtn').prop('disabled', true);
                 <?php if($is_regex === 1){ ?>
                     $("#register-form").append('<input type="hidden" name="txt_phonenumber" id="txt_phonenumber" value="+1'+($('#PhoneNumber').val().replace(/\D/g, ''))+'" />')

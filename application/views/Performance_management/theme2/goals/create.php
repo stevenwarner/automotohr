@@ -120,7 +120,7 @@
             ?>
             </select>
         </div>
-    </div>
+    </div>https://www.youtube.com/watch?v=W3uXcV9m3G0
 
     <div class="row">
         <br />
@@ -133,7 +133,7 @@
             <select  id="jsCGGoalType">
                 <option value="0">Select</option>
                 <option value="1">Percentage</option>
-                <option value="2">Volumn</option>
+                <option value="2">Volume</option>
                 <option value="3">Dollar</option>
                 <option value="4">Custom</option>
             </select>

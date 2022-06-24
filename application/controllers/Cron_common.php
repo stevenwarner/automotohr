@@ -400,7 +400,12 @@ class Cron_common extends CI_Controller
         // Get template
         $template = get_email_template(REVIEW_EXPIRING);
         //
+        $this->load->model('Hr_documents_management_model', 'HRDMM');
         foreach ($toArray as $record) {
+            //
+            if(!$this->HRDMM->isActiveUser($record['userId'])){
+                continue;
+            }
             //
             $hf = message_header_footer($record['companyId'], $record['companyName']);
             //

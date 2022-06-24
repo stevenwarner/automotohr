@@ -17,10 +17,13 @@ $hook['post_controller'][] = array(
     'function' => 'checkIfAppIsEnabled',
     'class' => 'AppVerify'
 );
-// Run 
-// $hook['post_controller'][] = array(
-//     'filepath' => 'hooks',
-//     'filename' => 'AppVerify.php',
-//     'function' => 'loginToAPI',
-//     'class' => 'AppVerify'
-// );
+
+/**
+ * Stop the not allowed traffic
+ */
+$hook['pre_controller'][] = array(
+    'filepath' => 'hooks',
+    'filename' => 'security.php',
+    'function' => 'checkBlockedIps',
+    'class' => 'Security'
+);

@@ -67,8 +67,11 @@ class Common_ajax extends Public_Controller{
                     $company_detail['CompanyName']
                 );
             } else{
-                //
-                $this->send_email_reminder($type, $post['note'], $user_detail, $company_detail, $email_hf);
+                $this->load->model('Hr_documents_management_model', 'HRDMM');
+                if($this->HRDMM->isActiveUser($post['userId'])){
+                    //
+                    $this->send_email_reminder($type, $post['note'], $user_detail, $company_detail, $email_hf);
+                }
             }
            
         }

@@ -66,6 +66,30 @@ if (!function_exists('getCompanyNameBySid')) {
     }
 }
 
+if (!function_exists('getDefaultApproverName')) {
+    function getDefaultApproverName($company_sid, $email)
+    {
+        //
+        $CI = &get_instance();
+        $CI->db->select('contact_name');
+        $CI->db->where('company_sid', $company_sid);
+        $CI->db->where('email', $email);
+        $CI->db->where('notifications_type', "default_approvers");
+        $CI->db->where('status', "active");
+        $record_obj = $CI->db->get('notifications_emails_management');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = ucwords($record_arr["contact_name"]);
+        } 
+
+        return $return_data;
+    }
+}
+
 if (!function_exists('getCompanyLogoBySid')) {
     function getCompanyLogoBySid($company_sid)
     {
@@ -11656,12 +11680,8 @@ if (!function_exists('cleanDocumentsByPermission')) {
     ) {
         //
         if (!count($data)) return;
-        if ($employerDetails['access_level_plus'] == 1) return;
-        if ($employerDetails['pay_plan_flag'] == 1) return;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
-        //
-        // if($role == 'admin') return;
         //
         if ($withCategories) {
             //
@@ -11671,43 +11691,23 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if(!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )){
+                            //
+                            unset($data['categories_no_action_documents'][$k0]['documents'][$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($data['categories_no_action_documents'][$k0]['documents'][$k2]);
                     }
                     //
                     $data['categories_no_action_documents'][$k0]['documents'] = array_values($data['categories_no_action_documents'][$k0]['documents']);
@@ -11721,42 +11721,23 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if(!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )){
+                            //
+                            unset($v1['documents'][$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($v1['documents'][$k2]);
                     }
                     //
                     $data['categories_documents_completed'][$k0] = array_values($v1['documents']);
@@ -11770,43 +11751,23 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if(!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )){
+                            //
+                            unset($v1['documents'][$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($v1['documents'][$k2]);
                     }
                     //
                     $data['no_action_document_categories'][$k0] = array_values($v1['documents']);
@@ -11818,42 +11779,22 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['completed_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if(!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )){
+                            unset($documents[$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($documents[$k2]);
                     }
                     //
                     $data['completed_documents'] = array_values($documents);
@@ -11865,42 +11806,22 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['no_action_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if(!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )){
+                            unset($documents[$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        unset($documents[$k2]);
                     }
                     //
                     $data['no_action_documents'] = array_values($documents);
@@ -11912,43 +11833,23 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data as $k0 => $documents) {
                     //
                     foreach ($documents['documents'] as $k2 => $document) {
-                        //
-                        if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                            continue;
+                        if(!hasPermissionToDocument(
+                            $document['allowed_employees'],
+                            $document['allowed_departments'],
+                            $document['allowed_teams'],
+                            $document['is_available_for_na'],
+                            $document['is_confidential'],
+                            $document['confidential_employees'],
+                            $employerDetails['access_level_plus'],
+                            $employerDetails['pay_plan_flag'],
+                            $role,
+                            $dt['Departments'],
+                            $dt['Teams'],
+                            $employerDetails['sid']
+                        )){
+                            $documents['documents_count']--;
+                            unset($documents['documents'][$k2]);
                         }
-
-                        //
-                        if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                            continue;
-                        }
-                        //
-                        if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                            //
-                            $b = explode(',', $document['allowed_departments']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                            if ($yes) continue;
-                        }
-
-                        //
-                        if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                            //
-                            $b = explode(',', $document['allowed_teams']);
-                            //
-                            if (in_array('-1', $b)) continue;
-                            //
-                            $yes = false;
-                            //
-                            foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                            if ($yes) continue;
-                        }
-                        //
-                        $documents['documents_count']--;
-                        unset($documents['documents'][$k2]);
                     }
                     //
                     $data[$k0]['documents_count'] = $documents['documents_count'];
@@ -11962,47 +11863,22 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 if (!is_array($documents) || !isset($documents[0]) || !isset($documents[0]['document_title'])) continue;
                 //
                 foreach ($documents as $k1 => $document) {
-                    //
-                    if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                        continue;
+                    if(!hasPermissionToDocument(
+                        $document['allowed_employees'],
+                        $document['allowed_departments'],
+                        $document['allowed_teams'],
+                        $document['is_available_for_na'],
+                        $document['is_confidential'],
+                        $document['confidential_employees'],
+                        $employerDetails['access_level_plus'],
+                        $employerDetails['pay_plan_flag'],
+                        $role,
+                        $dt['Departments'],
+                        $dt['Teams'],
+                        $employerDetails['sid']
+                    )){
+                        unset($documents[$k1]);
                     }
-
-                    //
-                    if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                        continue;
-                    }
-
-                    //
-                    if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                        //
-                        $b = explode(',', $document['allowed_departments']);
-                        //
-                        if (in_array('-1', $b)) continue;
-                        //
-                        $yes = false;
-                        //
-                        foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                        if ($yes) continue;
-                    }
-
-                    //
-                    if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                        //
-                        $b = explode(',', $document['allowed_teams']);
-                        // _e('--------------------------');
-                        // _e($b);
-                        // _e($dt['Teams']);
-                        // _e('--------------------------');
-                        //
-                        if (in_array('-1', $b)) continue;
-                        //
-                        $yes = false;
-                        //
-                        foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                        if ($yes) continue;
-                    }
-                    //
-                    unset($documents[$k1]);
                 }
                 //
                 $data[$k0] = array_values($documents);
@@ -12020,51 +11896,27 @@ if (!function_exists('cleanAssignedDocumentsByPermission')) {
     ) {
         //
         if (!count($documents)) return $documents;
-        if ($employerDetails['access_level_plus'] == 1) return $documents;
-        if ($employerDetails['pay_plan_flag'] == 1) return $documents;
         //
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
-        // if($role == 'admin') return $documents;
-        //
         foreach ($documents as $k0 => $document) {
-            //
-            if (!empty($document['is_available_for_na']) && in_array($role, explode(',', $document['is_available_for_na']))) {
-                continue;
+            if(!hasPermissionToDocument(
+                $document['allowed_employees'],
+                $document['allowed_departments'],
+                $document['allowed_teams'],
+                $document['is_available_for_na'],
+                $document['is_confidential'],
+                $document['confidential_employees'],
+                $employerDetails['access_level_plus'],
+                $employerDetails['pay_plan_flag'],
+                $role,
+                $dt['Departments'],
+                $dt['Teams'],
+                $employerDetails['sid']
+            )){
+                //
+                unset($documents[$k0]);
             }
-
-            //
-            if (!empty($document['allowed_employees']) && in_array($employerDetails['sid'], explode(',', $document['allowed_employees']))) {
-                continue;
-            }
-
-            //
-            if (!empty($document['allowed_departments']) && count($dt['Departments'])) {
-                //
-                $b = explode(',', $document['allowed_departments']);
-                //
-                if (in_array('-1', $b)) continue;
-                //
-                $yes = false;
-                //
-                foreach ($b as $c) if (in_array($c, $dt['Departments'])) $yes = true;
-                if ($yes) continue;
-            }
-
-            //
-            if (!empty($document['allowed_teams']) && count($dt['Teams'])) {
-                //
-                $b = explode(',', $document['allowed_teams']);
-                //
-                if (in_array('-1', $b)) continue;
-                //
-                $yes = false;
-                //
-                foreach ($b as $c) if (in_array($c, $dt['Teams'])) $yes = true;
-                if ($yes) continue;
-            }
-            //
-            unset($documents[$k0]);
         }
         //
         $documents = array_values($documents);
@@ -12072,6 +11924,7 @@ if (!function_exists('cleanAssignedDocumentsByPermission')) {
         return $documents;
     }
 }
+
 
 if (!function_exists('hasAnswer')) {
     function hasAnswer($question, $type, $index = 0, &$a)
@@ -12969,12 +12822,10 @@ if (!function_exists('getSelect')) {
 if (!function_exists('getImageURL')) {
     function getImageURL($img)
     {
-        /*
-        if ($img == '' || $img == null || !preg_match('/jpg|jpeg|png|gif/i', strtolower($img))) {
-           return base_url('assets/images/img-applicant.jpg');  
-        } else return AWS_S3_BUCKET_URL.$img;
-    */
-
+        //
+        $img = str_replace(AWS_S3_BUCKET_URL,"",$img);
+        $img = str_replace(AWS_S3_BUCKET_URL.'test.png',"",$img);
+        //
         if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img))) {
             return AWS_S3_BUCKET_URL . $img;
         } else {
@@ -15659,5 +15510,117 @@ if(!function_exists('generateEmailButton')){
         $color = '#ffffff'
     ){
         return '<a style="color: '.($color).'; background-color: '.($bgColor).'; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url($link) . '">'.($text).'</a>';
+    }
+}
+
+if(!function_exists('get_encryption_initialize_array')) {
+    /**
+     * CReturn encryption initialize array
+     *
+     * @return
+     * 
+     */
+    function get_encryption_initialize_array () {
+        $CI = &get_instance();
+        //
+        return array(
+            'cipher' => 'aes-256',
+            'mode' => 'ctr',
+            'key' => $CI->config->item('encryption_key'),
+            'driver' => 'openssl'
+        );
+    }
+}
+
+
+if(!function_exists('hasPermissionToDocument')){
+    /**
+     * Check the document permission
+     * 
+     * 
+     * @param array   $allowedEmployees
+     * @param array   $allowedDepartments
+     * @param array   $allowedTeams
+     * @param array   $allowedRoles
+     * @param integer $isConfidential
+     * @param array   $confidentialEmployees
+     * @param integer $isAdminPlus
+     * @param integer $isPayPlan
+     * @param string  $role
+     * @param array   $departments
+     * @param array   $teams
+     * @param integer $employeeId
+     * 
+     * @return booloan
+     */
+    function hasPermissionToDocument(
+        $allowedEmployees,
+        $allowedDepartments,
+        $allowedTeams,
+        $allowedRoles,
+        $isConfidential,
+        $confidentialEmployees,
+        $isAdminPlus,
+        $isPayPlan,
+        $role,
+        $departments,
+        $teams,
+        $employeeId
+    ){
+        // Check the confidential as priority
+        if($isConfidential == '1'){
+            //
+            if(!$confidentialEmployees){
+                return true;
+            }
+            //
+            if($confidentialEmployees == "-1" || in_array($employeeId, explode(',', $confidentialEmployees))){
+                return true;
+            }
+            //
+            return false;
+        }
+        // Check for plus
+        if($isAdminPlus || $isPayPlan){
+            return true;
+        }
+        // Check for the role
+        if (!empty($allowedRoles) && in_array($role, explode(',', $allowedRoles))) {
+            return true;
+        }
+        // Check for the employee
+        if  (
+                !empty($allowedEmployees) &&
+                (
+                    in_array($employeeId, explode(',', $allowedEmployees)) || 
+                    in_array("-1", explode(',', $allowedEmployees))
+                )
+            ) {
+                return true;
+        }
+        // Check for the department
+        if  (
+                !empty($departments) && 
+                !empty($allowedDepartments) && 
+                (
+                    in_array("-1", explode(',', $allowedDepartments)) ||
+                    array_intersect($departments, $allowedDepartments)
+                )
+            ) {
+                return true;
+        }
+        // Check for the teams
+        if  (
+                !empty($teams) && 
+                !empty($allowedTeams) && 
+                (
+                    in_array("-1", explode(',', $allowedTeams)) ||
+                    array_intersect($teams, $allowedTeams)
+                )
+            ) {
+                return true;
+        }
+        //
+        return false;
     }
 }

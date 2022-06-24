@@ -675,6 +675,7 @@ class Performance_management_model extends CI_Model{
             {$this->PRRS}.is_manager,
             {$this->PRRS}.reviewer_sid,
             {$this->U}.first_name,
+            {$this->U}.sid as userId,
             {$this->U}.last_name,
             reviewer.first_name as reviewer_first_name,
             reviewer.last_name as reviewer_last_name,

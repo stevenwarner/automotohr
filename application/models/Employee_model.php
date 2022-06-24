@@ -1078,6 +1078,7 @@
             'BasicRole' => $v['access_level'],
             'Role' => trim(remakeEmployeeName($v, false)),
             'Image' => AWS_S3_BUCKET_URL. (empty($v['profile_picture']) ? 'test.png' : $v['profile_picture']),
+            'Image2' => $v['profile_picture'],
             'Email' => strtolower($v['email']),
             'EmploymentType' => strtolower($v['employee_type']),
             'JobTitle' => ucwords(strtolower($v['job_title'])),
@@ -1634,6 +1635,25 @@
     }
 
     /**
+     * Get all the merged applicants data
+     * 
+     * @param number $employeeId
+     * @return
+     */
+    function GetMergedApplicants($employeeId){
+        //
+        return 
+        $this->db->select('
+            data_update as secondary_employee_profile_data,
+            created_date as merge_at
+        ')
+        ->where('employee_sid', $employeeId)
+        ->order_by('sid', 'ASC')
+        ->get('applicant_merge_employee_record')
+        ->result_array();
+    }
+
+    /**
      * Update rehire date in employee status
      * 
      * @param number $employeeId
@@ -1711,6 +1731,58 @@
             $this->db->where('users_type', $user_type);
             $this->db->where('application_sid', $user_sid);
             $this->db->update('portal_eeo_form', $dataToUpdate);
+        }
+    }
+
+    function GetEmployeeAssignAuthDocument($employee_sid, $company_sid) {
+        $this->db->select('document_assigned_sid, assigned_by_date');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('assigned_to_sid', $employee_sid);
+        $record_obj = $this->db->get('authorized_document_assigned_manager');
+        $assigned_document  = $record_obj->result_array();
+        $record_obj->free_result();
+
+        if (!empty($assigned_document)) {
+            foreach ($assigned_document as $akey => $document) {
+                $this->db->select('user_type, user_sid, document_title');
+                $this->db->where('sid', $document["document_assigned_sid"]);
+                $record_obj = $this->db->get('documents_assigned');
+                $document_info  = $record_obj->row_array();
+                $record_obj->free_result();
+                //
+                if (!empty($document_info)) {
+                    //
+                    $assigned_document[$akey]["user_type"] = $document_info["user_type"];
+                    $assigned_document[$akey]["document_title"] = $document_info["document_title"];
+                    $assigned_document[$akey]["company_name"] = getCompanyNameBySid($company_sid);
+                    //
+                    if ($document_info["user_type"] == "employee") {
+                        $assigned_document[$akey]["user_name"] = getUserNameBySID($document_info["user_sid"]);
+                    } else {
+                        $assigned_document[$akey]["user_name"] = getApplicantNameBySID($document_info["user_sid"]);
+                    }
+                } else {
+                    unset($assigned_document[$akey]);
+                }
+            }
+
+            return $assigned_document;
+        } else {
+            return array();
+        }
+    }
+
+    function getEmployeesCompanyId($employee_sid) {
+        $this->db->select('parent_sid');
+        $this->db->where('sid', $employee_sid);
+        $record_obj = $this->db->get('users');
+        $record_arr  = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            return $record_arr["parent_sid"];
+        } else {
+            return array();
         }
     }
 }

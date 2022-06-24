@@ -67,6 +67,10 @@ class Bulk_email extends Admin_Controller {
             $user_subject = $subject;
             $user_body = $body;
             $employee_data = $this->bulk_email_model->get_employee_data($employee_id);
+            //
+            if($employee_data['active'] == 0 || $employee_data['terminated_status'] == 1){
+                continue;
+            }
             // Added on 30-04-2019
             replace_magic_quotes(
                 $user_subject,
