@@ -601,7 +601,6 @@
 
 
 
-
         var pre_selected = '<?php echo !empty($document_info['video_url']) ? $document_info['video_source'] : ''; ?>';
 
         $('input[name="assign-in-days"]').val(0);

@@ -231,7 +231,60 @@
                                         <br>
                                         <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
                                        <br>
+                                       <?php // $this->load->view('hr_documents_management/partials/send_dwmc'); ?>
 
+                                      <br>
+                                       <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="hr-box">
+                                                    <div class="hr-box-header">
+                                                        <strong>Automatically assign after Days:</strong>
+                                                    </div>
+                                                    <div class="hr-innerpadding">
+                                                        <div class="row">
+                                                            <div class="col-xs-12">
+                                                                <div class="">
+                                                                    <div class="">
+                                                                        <label class="control control--radio">
+                                                                            Days
+                                                                            <input type="radio" name="assign_type" value="days" />
+                                                                            <div class="control__indicator"></div>
+                                                                        </label> &nbsp;
+                                                                        <label class="control control--radio font-normal">
+                                                                            Months
+                                                                            <input type="radio" name="assign_type" value="months" />
+                                                                            <div class="control__indicator"></div>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br />
+
+                                                        <div class="row">
+                                                            <div class="col-xs-6 js-type-days js-type">
+                                                                <div class="universal-form-style-v2">
+                                                                    <div class="input-group pto-time-off-margin-custom">
+                                                                        <input type="number" class="form-control" value="<?php echo isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in']) ? $document_info['automatic_assign_in'] : 0; ?>" name="assign-in-days">
+                                                                        <span class="input-group-addon">Days</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-6 js-type-months js-type">
+                                                                <div class="universal-form-style-v2">
+                                                                    <div class="input-group pto-time-off-margin-custom">
+                                                                        <input type="number" class="form-control" value="<?php echo isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in']) ? $document_info['automatic_assign_in'] : 0; ?>" name="assign-in-months">
+                                                                        <span class="input-group-addon">Months</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                       <br>
                                         <?php $this->load->view('hr_documents_management/partials/settings', [
                                             'is_confidential' =>  $document_info['is_confidential']
                                         ]); ?>
@@ -319,6 +372,60 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script>
+
+
+$(document).ready(function() {
+
+$("#confidentialSelectedEmployees").select2();
+
+if ($("#setting_is_confidential").is(":checked")) {
+    $("#confidentialSelectedEmployeesdiv").show();
+} else {
+    $("#confidentialSelectedEmployeesdiv").hide();
+}
+
+$("#setting_is_confidential").click(function() {
+    if ($(this).is(":checked")) {
+        $("#confidentialSelectedEmployeesdiv").show();
+
+    } else {
+        $("#confidentialSelectedEmployeesdiv").hide();
+        $("#confidentialSelectedEmployees").select2("val", "");
+    }
+});
+
+
+//--- Automatically assign after Days:
+
+$('input[name="assign-in-days"]').val(0);
+        $('input[name="assign-in-months"]').val(0);
+        $('.js-type').hide();
+        $('input[value="days"]').prop('checked', false);
+        $('input[value="months"]').prop('checked', false);
+        <?php if (isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in'])) { ?>
+            $('.js-type-<?= $document_info['automatic_assign_type']; ?>').show();
+            $('input[value="<?= $document_info['automatic_assign_type']; ?>"]').prop('checked', true);
+            $('.js-type-<?= $document_info['automatic_assign_type']; ?>').find('input').val(<?= $document_info['automatic_assign_in']; ?>);
+        <?php } else { ?>
+            $('input[value="days"]').prop('checked', true);
+            $('.js-type-days').show();
+        <?php } ?>
+        //
+        $('input[name="assign_type"]').click(function() {
+            $('.js-type').hide(0).val(0);
+            $('.js-type-' + ($(this).val()) + '').show(0);
+        });
+//---------------------
+
+
+
+
+
+});
+
+
+
+
     function validate_form() {
         $("#form_new_document").validate({
             ignore: [],
@@ -358,4 +465,5 @@
         $('#jsManagers').select2(config);
     });
 </script>
+
 <?php $this->load->view('hr_documents_management/scripts/approvers'); ?>

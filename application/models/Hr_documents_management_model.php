@@ -3633,7 +3633,12 @@ class Hr_documents_management_model extends CI_Model
             is_confidential,
             has_approval_flow,
             document_approval_note,
-            document_approval_employees
+            document_approval_employees,
+            confidential_employees,
+            automatic_assign_in,
+            automatic_assign_type,
+            managers_list as signers,
+            
         ')
             ->where('sid', $documentId)
             ->get('documents_management');

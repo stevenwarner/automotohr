@@ -3836,6 +3836,21 @@ if ($user_type == 'applicant') {
             }
         );
     });
+
+    $('#confidentialSelectedEmployees').select2();
+   
+    $(document).on('click', '[name="setting_is_confidential"]', function() {
+        //
+        if (!$(this).prop('checked')) {
+            $('#confidentialSelectedEmployeesdiv').hide();
+            $('#confidentialSelectedEmployees').select2('val', null);
+        } else {
+            $('#confidentialSelectedEmployeesdiv').show();
+        }
+
+    });
+
+
 </script>
 
 <!--  -->

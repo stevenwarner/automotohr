@@ -4544,7 +4544,7 @@ class Onboarding extends CI_Controller
                     $onboarding_instructions = str_replace('{{company_name}}', ucwords($data['session']['company_detail']['CompanyName']), $onboarding_instructions);
                     $data['onboarding_instructions'] = $onboarding_instructions;
 
-                    break;
+                     break;
                 case 'applicant':
                   
                     $ats_params = $this->session->userdata('ats_params');
@@ -4655,6 +4655,7 @@ class Onboarding extends CI_Controller
                             $data_to_insert['download_required'] = $document['download_required'];
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
                             $data_to_insert['confidential_employees'] = $document['confidential_employees'];
+                                                       
 
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
@@ -4894,7 +4895,6 @@ class Onboarding extends CI_Controller
                 $data['unique_sid'] = $unique_sid;
                 $data['email_sent_date'] = $email_sent_date;
 
-
                 $data['managers_list'] = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, $employer_sid);
 
                 $data['assigned_groups'] = $assigned_groups;
@@ -4912,13 +4912,13 @@ class Onboarding extends CI_Controller
                 $data['approval_documents'] = array_column($approval_documents, "document_sid");
                 $approval_offer_letters = $this->hr_documents_management_model->get_user_approval_pending_offer_letters($user_type, $user_sid);
                 $data['approval_offer_letters'] = array_column($approval_offer_letters, "document_sid");
+
                 //
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/setup');
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
-
                 switch ($perform_action) {
                     case 'assign_document':
                         $document_type = $this->input->post('document_type');
@@ -5219,7 +5219,7 @@ class Onboarding extends CI_Controller
                                 $data_to_insert['document_extension'] = $offer_letter_extension;
                                 $data_to_insert['document_s3_name'] = $upload_letter_description['uploaded_document_s3_name'];
                             } else {
-                                
+                            
                                 $data_to_insert['document_description'] = $letter_body;
                                 $data_to_insert['document_description'] = $letter_body;
                               // Document Settings - Confidential
@@ -5664,6 +5664,7 @@ class Onboarding extends CI_Controller
                 $this->load->view('main/footer');
             } else {
 
+            
                 $perform_action = $this->input->post('perform_action');
                 $offer_letter_sid = $this->input->post('offer_letter_select');
                 $letter_body = $this->input->post('letter_body');
@@ -5758,10 +5759,19 @@ class Onboarding extends CI_Controller
                         $data_to_insert['allowed_teams'] = implode(',', $post['teams']);
                     }
                     //
-               
-                   
-                      // Document Settings - Confidential
-            $data_to_insert['is_confidential'] = $this->input->post('setting_is_confidential', true) && $this->input->post('setting_is_confidential', true) == 'on' ? 1 : 0;
+           
+              // Document Settings - Confidential
+              $data_to_insert['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
+              //
+              $post['confidentialSelectedEmployees'] = $this->input->post('confidentialSelectedEmployees', true);
+              //
+              $data_to_insert['confidential_employees'] = NULL;
+              //
+              if ($post['confidentialSelectedEmployees']) {
+                  $data_to_insert['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
+              }
+
+
 
             // Assigner handling
             $data_to_insert['has_approval_flow'] = 0;
@@ -5772,15 +5782,12 @@ class Onboarding extends CI_Controller
                 $data_to_insert['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
                 $data_to_insert['document_approval_note'] = $post['assigner_note'];
             }
-         //  print_r($post);
-          //  die();
-
+        
                     $verification_key = random_key(80);
                     $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
                     $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
                     //
                     $signers = $this->input->post('js-signers');
-                   // print_r($signers);
                   //  die($signers.'asdasd');
                     //
                     if ($post['has_approval_flow'] == 'on') {
@@ -5853,8 +5860,6 @@ class Onboarding extends CI_Controller
                         }
 
                     }
-                   
-
                     
                 }
 

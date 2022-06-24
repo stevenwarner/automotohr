@@ -279,6 +279,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				)
 			}
 			//
+			
 			selectedTemplate = d;
 
 			//
@@ -359,7 +360,8 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('#js-modify-assign-document-signature option[value="' + (d.signature_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-download option[value="' + (d.download_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="' + (d.acknowledgment_required) + '"]').prop('selected', true);
-					do_descpt ? $('#js-modify-assigned-document-signers').select2('val', d.signers != null && d.signers != '' ? d.signers.split(',') : null) : '';
+					do_descpt ? $('#js-modify-assigned-document-signers').select2('val', d.managersList != null && d.managersList != '' ? d.managersList.split(',') : null) : '';
+
 					$('.js-modify-assign-document-required[value="' + (selectedTemplate.is_required) + '"]').prop('checked', true);
 					$('.js-modify-assign-document-signature-required[value="' + (selectedTemplate.is_signature_required) + '"]').prop('checked', true);
 					//
@@ -431,16 +433,31 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			});
 		}
 
-		$(document).on('click', '#modify-assigned-document-modal [name="setting_is_confidential"]', function() {
+		//== Offer Letter 
+		$(document).on('click', '#js-popup [name="setting_is_confidential"]', function() {
 			//
 			if (!$(this).prop('checked')) {
-				$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').hide();
-				$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2('val', null);
+				$('#js-popup  #confidentialSelectedEmployeesdiv').hide();
+				$('#js-popup  #confidentialSelectedEmployees').select2('val', null);
 			} else {
-				$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').show();
+				$('#js-popup  #confidentialSelectedEmployeesdiv').show();
 			}
 		});
 
+		$(document).on('click', '#modify-assign-offer-letter-modal [name="setting_is_confidential"]', function() {
+			//
+			if (!$(this).prop('checked')) {
+				$('#modify-assign-offer-letter-modal  #confidentialSelectedEmployeesdiv').hide();
+				$('#modify-assign-offer-letter-modal  #confidentialSelectedEmployees').select2('val', null);
+			} else {
+				$('#modify-assign-offer-letter-modal  #confidentialSelectedEmployeesdiv').show();
+			}
+		});
+
+
+
+
+		//== Document 
 		$(document).on('click', '#modify-assign-document-modal [name="setting_is_confidential"]', function() {
 			//
 			if (!$(this).prop('checked')) {
@@ -639,9 +656,9 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows = '',
 				do_upload,
 				do_descpt;
-
 			// 
 			selectedTemplate = d;
+			//	console.log(d);
 
 			modelFor = 'offer_letter';
 			//
@@ -751,10 +768,29 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					if (d.allowed_employees) {
 						$('#jsEmployees').select2('val', d.allowed_employees.split(','));
 					}
+
+					$('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').select2();
+
+
 					if (d.is_confidential == 1) {
 						$('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked', true);
 
 					}
+
+
+					$('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == "1" ? true : false);
+					$('#modify-assign-offer-letter-modal #confidentialSelectedEmployeesdiv').hide();
+					$('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').select2({
+						closeOnSelect: false
+					});
+					//
+					if (d.is_confidential == "1") {
+						$('#modify-assign-offer-letter-modal #confidentialSelectedEmployeesdiv').show();
+						if (d.confidential_employees) {
+							$('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
+						}
+					}
+
 
 
 					// }
@@ -1149,10 +1185,12 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.teams = $('#jsTeams').val() || '';
 			obj.employees = $('#jsEmployees').val() || '';
 
-			obj.setting_is_confidential = $('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
+			//Document Settings
+			obj.setting_is_confidential = $('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off',
+				obj.confidentialSelectedEmployees = $('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').val(),
 
-			//Approval Flow
-			obj.has_approval_flow = $('#modify-assign-offer-letter-modal [name="has_approval_flow"]').prop('checked') ? 'on' : 'off';
+				//Approval Flow
+				obj.has_approval_flow = $('#modify-assign-offer-letter-modal [name="has_approval_flow"]').prop('checked') ? 'on' : 'off';
 			obj.document_approval_employees = $('#modify-assign-offer-letter-modal [name="assigner"]').val();
 			obj.document_approval_note = $('#modify-assign-offer-letter-modal [name="assigner_note"]').val();
 
@@ -1606,9 +1644,32 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						.select2({
 							closeOnSelect: false
 						});
+
+					$('#js-popup  #confidentialSelectedEmployeesdiv').hide();
+					$("#js-popup #confidentialSelectedEmployees").select2();
+
 				}
 			);
 			//
+
+			//--- Automatically assign after Days:
+
+			$('input[name="assign-in-days"]').val(0);
+			$('input[name="assign-in-months"]').val(0);
+			$('.js-type').hide();
+			$('input[value="months"]').prop('checked', false);
+			$('input[value="days"]').prop('checked', true);
+			$('.js-type-days').show();
+
+			//
+			$('input[name="assign_type"]').click(function() {
+				$('.js-type').hide(0).val(0);
+				$('.js-type-' + ($(this).val()) + '').show(0);
+			});
+			//---------------------
+
+
+
 			$('.js-template-type[value="uploaded"]').click();
 			$('.js-template-send-email[value="no"]').click();
 			//
@@ -1627,6 +1688,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			var d = getOfferLetter($(this).data('id'));
 			var o = getOfferLetterBody('edit');
 			//
+
 			currentOfferLetter = d;
 			modelFor = 'offer_letter';
 			//
@@ -1773,7 +1835,8 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			var upload_file = $('#upload_document').mFileUploader('get');
 			//
-			var o = {
+
+	 	var o = {
 				name: $('#js-template-name').val().trim(),
 				body: CKEDITOR.instances['js-template-body'].getData().trim(),
 				guidence: CKEDITOR.instances['js-template-guidence'].getData().trim(),
@@ -1789,6 +1852,13 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				isRequired: $('.js-template-required:checked').val(),
 				isSignatureRequired: $('.js-template-signature-required:checked').val(),
 				setting_is_confidential: $('#js-popup [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off',
+				confidentialSelectedEmployees: $('#js-popup #confidentialSelectedEmployees').val(),
+			
+				//Automatically assign after Days
+				assign_in_months: $('#js-popup [name="assign-in-months"]').val(),
+				assign_in_days: $('#js-popup [name="assign-in-days"]').val(),
+				assign_type: $('#js-popup [name="assign_type"]:checked').val(),
+
 				assign: $(this).data('value'),
 				fromTemplate: false,
 				// Visibility
@@ -2038,7 +2108,21 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			if (l.signers !== null) $('#js-template-signers').select2('val', l.signers.split(','));
 
-			$('#js-popup [name="setting_is_confidential"]').prop('checked', l.is_confidential == 1 ? true : false);
+			$('#js-popup [name="setting_is_confidential"]').prop('checked', l.is_confidential == "1" ? true : false);
+			$('#js-popup #confidentialSelectedEmployeesdiv').hide();
+			$('#js-popup #confidentialSelectedEmployees').select2({
+				closeOnSelect: false
+			});
+			//
+			if (l.is_confidential == "1") {
+				$('#js-popup #confidentialSelectedEmployeesdiv').show();
+				if (l.confidential_employees) {
+					$('#js-popup #confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
+				}
+			}
+
+
+
 
 			// Approval flow 
 			if (l.has_approval_flow == 1) {
@@ -2053,6 +2137,23 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				$('#js-popup [name="assigner_note"]').val();
 
 			}
+       
+					
+//---------Automatically assign after Days
+$('input[name="assign-in-days"]').val(0);
+        $('input[name="assign-in-months"]').val(0);
+        $('.js-type').hide();
+        $('input[value="days"]').prop('checked', false);
+        $('input[value="months"]').prop('checked', false);
+            $('.js-type-'+l.automatic_assign_type).show();
+            $('input[value="'+l.automatic_assign_type+'"').prop('checked', true);
+            $('.js-type-'+l.automatic_assign_type).find('input').val(l.automatic_assign_in);
+        //
+        $('input[name="assign_type"]').click(function() {
+            $('.js-type').hide(0).val(0);
+            $('.js-type-' + ($(this).val()) + '').show(0);
+        });
+//---------------------
 
 		}
 
