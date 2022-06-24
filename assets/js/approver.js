@@ -1,4 +1,4 @@
-function DocumentApproverPrefill(assigners, documentID) {
+function DocumentApproverPrefill(assigners, documentID, modal) {
 	//
 	if (!assigners) {
 		return '';
@@ -8,19 +8,19 @@ function DocumentApproverPrefill(assigners, documentID) {
 
 		var rowId = Math.round((Math.random() * 10000) + 1);
 		var row = generateApproverRow(rowId, documentID, sa);
-		$(".jsEmployeesadditionalBox").append(row);
+		$(""+(modal !== undefined ? modal : '')+" .jsEmployeesadditionalBox").append(row);
 
-		$('#js-employees-' + rowId).select2({
+		$(''+(modal !== undefined ? modal : '')+' #js-employees-' + rowId).select2({
 			closeOnSelect: false,
 			allowHtml: true,
 			allowClear: true,
 		});
 
-		$('#js-employees-' + rowId).select2('val', sa);
+		$(''+(modal !== undefined ? modal : '')+' #js-employees-' + rowId).select2('val', sa);
 		
 	});
 	//
-	$(".jsAssignerEmployeesNote").show();
+	$(""+(modal !== undefined ? modal : '')+" .jsAssignerEmployeesNote").show();
 
 }
 
@@ -201,4 +201,12 @@ $(document).on('click', '.jsApproverViewExternalStatus', function(event) {
 	//
 	var approver_id = $(this).data("approver_email");
 	$("#jsApproverViewExternalStatus_"+approver_id).show();
-})	
+});
+
+function refreshApprovalSection (modalSid) {
+	//
+	$(""+(modalSid !== undefined ? modalSid : '')+" #jsHasApprovalFlow").prop('checked', false);
+	$(""+(modalSid !== undefined ? modalSid : '')+" .jsEmployeesadditionalBox").html("");
+	$(""+(modalSid !== undefined ? modalSid : '')+" #assigner_note").val("");
+	$(""+(modalSid !== undefined ? modalSid : '')+" .jsApproverFlowContainer").hide();
+}

@@ -362,16 +362,20 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('.js-modify-assign-document-required[value="' + (selectedTemplate.is_required) + '"]').prop('checked', true);
 					$('.js-modify-assign-document-signature-required[value="' + (selectedTemplate.is_signature_required) + '"]').prop('checked', true);
 					//
+					if (d.document_type == "offer_letter") {
+						$('#jsApprovalSection').hide();
+					}
+					//
+					refreshApprovalSection('#modify-assigned-document-modal');
+					//
 					if (d.has_approval_flow && d.has_approval_flow == 1 && d.document_type != "offer_letter") {
-						$('#jsHasApprovalFlow').prop('checked', true);
+						//
+						$('#modify-assigned-document-modal #jsHasApprovalFlow').prop('checked', true);
 						$('.jsApproverFlowContainer').show();
 
-						DocumentApproverPrefill(d.document_approval_employees, d.sid);
+						DocumentApproverPrefill(d.document_approval_employees, d.sid, '#modify-assigned-document-modal');
 						DocumentExternalApproverPrefill(d.sid);
-						$("#assigner_note").val(d.document_approval_note);
-					} else {
-						$('#jsHasApprovalFlow').prop('checked', false);
-						$('#jsApprovalSection').hide();
+						$("#modify-assigned-document-modal #assigner_note").val(d.document_approval_note);
 					}
 
 					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
@@ -536,15 +540,16 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.managers_list.split(',')) : '';
 					}
 					//
+					refreshApprovalSection("#modify-assign-document-modal");
+					//
 					if (d.has_approval_flow && d.has_approval_flow == 1) {
-						$('#jsHasApprovalFlow').prop('checked', true);
+						//
+						$('#modify-assign-document-modal #jsHasApprovalFlow').prop('checked', true);
 						$('.jsApproverFlowContainer').show();
 
-						DocumentApproverPrefill(d.document_approval_employees, 0);
-						$("#assigner_note").val(d.document_approval_note);
+						DocumentApproverPrefill(d.document_approval_employees, 0, "#modify-assign-document-modal");
+						$("#modify-assign-document-modal #assigner_note").val(d.document_approval_note);
 					}
-
-
 					//
 					if (d.visible_to_payroll) {
 						$('#jsVisibleToPayroll').prop('checked', true);
@@ -938,6 +943,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			// Visibility
 			if (selectedTemplate.document_type != "offer_letter") {
 				obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
+				obj.assigner_note = $('#modify-assigned-document-modal #assigner_note').val();
 			}
 			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
 			obj.selected_roles = $('#jsRoles').val() || '';
@@ -946,11 +952,12 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.selected_employees = $('#jsEmployees').val() || '';
 			obj.is_confidential = $('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
 			obj.confidentialSelectedEmployees = $('#modify-assigned-document-modal #confidentialSelectedEmployees').val() || '';
+			
 
 			//
 			var assigners = new Array();
 			//
-			$('.jsSelectedEmployee').each(function(i) {
+			$('#modify-assigned-document-modal .jsSelectedEmployee').each(function(i) {
 				var approver_id = $(this).val();
 				//
 				if (approver_id != 0) {
@@ -961,7 +968,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			if (assigners.length > 0) {
 				obj.assigner = assigners;
-				obj.assigner_note = $('#assigner_note').val();
+				
 			}
 			//
 			var post = new FormData();
@@ -1021,7 +1028,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			}
 			// Visibility
 			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
-			obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
 			obj.roles = $('#jsRoles').val() || '';
 			obj.departments = $('#jsDepartments').val() || '';
 			obj.teams = $('#jsTeams').val() || '';
@@ -1033,10 +1039,13 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
 			}
           	//
-			
+			if (selectedTemplate.document_type != "offer_letter") {
+				obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
+				obj.assigner_note = $('#modify-assign-document-modal #assigner_note').val();
+			}
 			var assigners = new Array();
 			//
-			$('.jsSelectedEmployee').each(function(i) {
+			$('#modify-assign-document-modal .jsSelectedEmployee').each(function(i) {
 				var approver_id = $(this).val();
 				//
 				if (approver_id != 0) {
@@ -1047,7 +1056,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			if (assigners.length > 0) {
 				obj.assigner = assigners;
-				obj.assigner_note = $('#assigner_note').val();
 			}
 			//
 			var post = new FormData();
