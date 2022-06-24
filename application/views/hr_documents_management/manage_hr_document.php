@@ -518,6 +518,15 @@ if ($pp_flag == 1) {
     }
 
     $(document).ready(function() {
+        $('#confidentialSelectedEmployees').select2({
+            closeOnSelect: false
+        });
+        //
+        <?php if ($document["confidential_employees"]) { ?>
+            var confidential_employees = '<?php echo $document["confidential_employees"]; ?>';
+            $('#confidentialSelectedEmployees').select2('val', confidential_employees.split(','));
+        <?php } ?>    
+        //
         $('#form_upload_file').validate({
             rules: {
                 upload_file: {

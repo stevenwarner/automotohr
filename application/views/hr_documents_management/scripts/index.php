@@ -405,14 +405,10 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					});
 					//
 					$('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == "1" ? true : false);
-					$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').hide();
 					$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2({ closeOnSelect: false });
 					//
-					if (d.is_confidential == "1") {
-						$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').show();
-						if(d.confidential_employees){
-							$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
-						}
+					if(d.confidential_employees){
+						$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 					}
 					//
 					$('.jsModifyModalLoader').fadeOut(300);
@@ -568,7 +564,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('#jsEmployees').select2({
 						closeOnSelect: false
 					});
-
+					//
 					if (d.is_available_for_na) {
 						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
 					}
@@ -587,19 +583,14 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					//
 					$('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == '1' ? true : false);
 					//
-					$('#modify-assign-document-modal .confidentialSelectedEmployeesdiv').hide();
 					$('#modify-assign-document-modal #confidentialSelectedEmployees').select2({ closeOnSelect: false });
 					//
-					if (d.is_confidential == "1") {
-						$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').show();
-						//
-						if(d.confidential_employees){
-							$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
-						}
+					if(d.confidential_employees){
+						$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 					}
-
+					//
 					$('.jsModifyModalLoader').fadeOut(300);
-
+					//
 					$('#modify_assign_document').mFileUploader({
 						fileLimit: -1, // Default is '2MB', Use -1 for no limit (Optional)
 						allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv'], //(Optional)
@@ -1035,9 +1026,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.setting_is_confidential = $('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
 			obj.confidentialSelectedEmployees = '';
 			//
-			if(obj.setting_is_confidential == 'on'){
-				obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
-			}
+			obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
           	//
 			if (selectedTemplate.document_type != "offer_letter") {
 				obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
