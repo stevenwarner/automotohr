@@ -1,31 +1,39 @@
 /**
  * @author: Mubashir Ahmed
  * @version: 1.0
- * @package: File uploader (documentApproval)
+ * @package: Approval flow
  * @description: Upload files using drag an drop / choose from file.
  *               It depends on jQuery.
  * @example:
  * 
- *  $('#fileInputReference').documentApproval({
- *      fileLimit: '2MB', // Default is '2MB', Use -1 for no limit (Optional)
- *      allowedTypes: ['jpg','jpeg','png','gif','pdf','doc','docx','rtf','ppt','xls','xlsx','csv'],  (Optional)
- *      text: 'Click / Drag to upload', // (Optional)
- *      onSuccess: (file, event) => {}, // file will the uploaded file object and event will be the actual event  (Optional)
- *      onError: (errorCode, event) => {}, // errorCode will either 'size' or 'type' and event will be the actual event  (Optional)
- *      placeholderImage: '' // Default is empty ('') but can be set any image  (Optional)
+ *    $("#reference").documentApprovalFlow({
+ *            appCheckbox_idx: '.jsHasApprovalFlow1', //
+ *            container_idx: '.jsApproverFlowContainer1', //
+ *            addEmployee_idx: '.jsAddDocumentApprovers1', //
+ *            intEmployeeBox_idx: '.jsEmployeesadditionalBox1', //
+ *            extEmployeeBox_idx: '.jsEmployeesadditionalExternalBox1', //
+ *            approverNote_idx: '.jsApproversNote1', // 
+ *            employees_list: employee_list, //
+ *            prefill:{ // optional
+ *                isChecked: true,
+ *                approverNote: "Sdasdas",
+ *                approversList: [15777, 15778]
+ *            },
+ *            document_id: 0 //
+ *        });
  *  })
  * 
- *  $('#fileInputReference').documentApproval('get'); // It will return the uploaded file object
+ *  $('#reference').documentApprovalFlow('get'); // It will return the uploaded file object
  *                                                    with an addition index of 'hasError'.
  *                                                    hasError will be true there was an error
  *                                                    with file and false when everything is okay.
  */
 
-(function($) {
+(function ($) {
     //
     let instances = {};
     //
-    $.fn.documentApproval = function(opt) {
+    $.fn.documentApprovalFlow = function (opt) {
         // Save the current instance
         let _this = this.length > 1 ? this[0] : this;
         //
@@ -58,79 +66,69 @@
         options['intEmployeeBox_idx'] = opt.intEmployeeBox_idx !== undefined ? opt.intEmployeeBox_idx : ".jsIntApproverContainer";
         options['extEmployeeBox_idx'] = opt.extEmployeeBox_idx !== undefined ? opt.extEmployeeBox_idx : ".jsExtApproverContainer";
         options['approverNote_idx'] = opt.approverNote_idx !== undefined ? opt.approverNote_idx : ".jsApproverNoteContainer";
-        options['employeeList'] = opt.employeesList !== undefined ? opt.employeesList : [];
-        options['prefix'] = getRandom();
+        options['employees_list'] = opt.employees_list !== undefined ? opt.employees_list : [];
+        options['document_id'] = opt.document_id !== undefined ? opt.document_id : 0;
 
-        // 
-        console.log(options)
-        $(document).on('click',  options['appCheckbox_idx'], function() {makeObj()
+        //
+        this.makeView = function () {
             //
-            console.log($(this).prop('checked'))
-            if ($(this).prop('checked')) {
+            var obj = instances[_this.selector];
+            //
+            $(options['appCheckbox_idx']).prop('checked', obj.isChecked);
+            $(options['approverNote_idx']).val(obj.approverNote);
+            $(options['intEmployeeBox_idx']).html('');
+            $(options['container_idx']).show();
+            //
+            obj.approversList.map(function (apId) {
+                var rowId = options['prefix'] + 'js-employees-' + _this.getRandom();
+                var row = _this.generateApproverRow(rowId, 0);
                 //
-                $(options['container_idx']).show();
-            } else {
+                $(options['intEmployeeBox_idx']).append(row);
+
+                $('#' + rowId).select2();
                 //
-                $(options['container_idx']).hide(0);
-                $(options['intEmployeeBox_idx']).html('');
-                $(options['approverNote_idx']).val('');
-            }
-        });
-        //
-        $(document).on('click', options['addEmployee_idx'], function(event) {
-            //
-            $(options['approverNote_idx']).show();
-            var rowId = options['prefix']+'js-employees-' + getRandom();
-            var row = generateApproverRow(rowId, 0);
-            //
-            $(options['intEmployeeBox_idx']).append(row);
-
-            $('#'+rowId).select2({
-                closeOnSelect: false,
-                allowHtml: true,
-                allowClear: true,
+                $('#' + rowId).select2('val', apId);
+                selectedApprovers[apId] = true;
             });
+        };
 
-        });
         //
-        $(document).on('select2:select', '.jsSelectedEmployee', function(event) {
-            //
-            selectedApprovers[$(this).val()] = true;
-        });
-        //
-        $(document).on('click', '.js-employee-delete-btn', function(e) {
-            //
-            e.preventDefault();
-            //
-            if ($(this).closest('.row_id').find('.jsSelectedEmployee').val() == 0) {
-                return $(this).closest('.row_id').remove();
-            }
-            //
-            var _this = $(this);
-            //
-            alertify.confirm('Do you want to delete this approver?', function() {
-                _this.closest('.row_id').remove();
-                delete selectedApprovers[_this.closest('.row_id').find('.jsSelectedEmployee').val()];
-            });
-        });
-        //
-        function getRandom () {
+        this.getRandom = function () {
             return Math.round((Math.random() * 10000) + 1);
-        }
-        //
+        };
+
+        this.makeObj = function () {
+            // Reset the object
+            returnObj = {
+                isChecked: false,
+                approverNote: "",
+                approversList: []
+            };
+            //
+            if ($(options['appCheckbox_idx']).prop("checked")) {
+                returnObj.isChecked = true;
+                returnObj.approverNote = $(options['approverNote_idx']).val();
+                returnObj.approversList = Object.keys(selectedApprovers) || [];
+            }
+
+            instances[_this.selector] = returnObj;
+        };
+
         // generates row
-        function generateApproverRow(rowId, documentId) {
+        this.generateApproverRow = function (rowId, documentId) {
             //
             var rows = '';
             rows += '<div class="row row_id">';
-            rows += '<br />';
+            rows += '   <br />';
             rows += '    <div class="cs-employee js-employee csMT">';
             rows += '        <div class="col-sm-10 col-sm-offset-0 text-left">';
-            rows += '           <select id="' + (rowId) + '" name="assigner[]" class="jsSelectedEmployee">';
+            rows += '           <select id="' + (rowId) + '" class="jsSelectedEmployee">';
             rows += '               <option value="0" >Please Select an Employee</option>';
-            if(options['employeeList'].length){
-                options['employeeList'].map(function(v){
-                    rows +='<option value="'+(v['sid'])+'">'+(remakeEmployeeName(v))+'</option>';
+            if (options['employees_list'].length) {
+                options['employees_list'].map(function (v) {
+                    if (selectedApprovers[v.sid] === undefined) {
+                        rows += '<option value="' + (v['sid']) + '">' + (_this.remakeEmployeeName(v)) + '</option>';
+                    }
                 });
             }
             rows += '           </select>';
@@ -143,34 +141,18 @@
             rows += '<br />';
             if (documentId != 0 && documentId != undefined) {
                 rows += '    <div class="col-sm-12" style="margin-top:8px;">';
-                rows += '         <a href="javascript:;" class="btn btn-success btn-xs jsApproverViewStatus" data-doc_sid="'+documentId+'" data-app_sid="'+approverID+'" data-row_sid="'+rowId+'"><i class="fa fa-eye" style="font-size: 12px;"></i> Show Detail</a>';
+                rows += '         <a href="javascript:;" class="btn btn-success btn-xs jsApproverViewStatus" data-doc_sid="' + documentId + '" data-app_sid="' + approverID + '" data-row_sid="' + rowId + '"><i class="fa fa-eye" style="font-size: 12px;"></i> Show Detail</a>';
                 rows += '    </div>';
-                rows += '    <div class="col-sm-12 jsApproverViewStatusBox" id="jsApproverViewStatus-'+rowId+'" style="display:none;">';
+                rows += '    <div class="col-sm-12 jsApproverViewStatusBox" id="jsApproverViewStatus-' + rowId + '" style="display:none;">';
                 rows += '    </div>';
             }
             rows += '</div>';
 
             //
             return rows;
-        }
+        };
 
-        function addApproverRow(row, rowId){
-            $('.jsEmployeesadditionalBox').prepend(row);
-            //
-            if (Object.keys(selectedApprovers).length) {
-                Object.keys(selectedApprovers).map(function(sa) {
-                    $('.js-employee-' + (rowId) + ' option[value="' + (sa) + '"]').remove();
-                });
-            }
-            //
-            $('#js-employees-' + rowId).select2({
-                closeOnSelect: false,
-                allowHtml: true,
-                allowClear: true,
-            });
-        }
-
-        function remakeEmployeeName(o, i) {
+        this.remakeEmployeeName = function (o, i) {
             //
             var r = '';
             //
@@ -180,7 +162,7 @@
             //
             r += ' [';
             //
-            if (typeof(o['is_executive_admin']) !== undefined && o['is_executive_admin'] != 0) r += 'Executive ';
+            if (typeof (o['is_executive_admin']) !== undefined && o['is_executive_admin'] != 0) r += 'Executive ';
             //
             if (o['access_level_plus'] == 1 && o['pay_plan_flag'] == 1) r += o['access_level'] + ' Plus / Payroll';
             else if (o['access_level_plus'] == 1) r += o['access_level'] + ' Plus';
@@ -190,27 +172,82 @@
             r += ']';
             //
             return r;
+        };
+
+        options['prefix'] = this.getRandom();
+
+        //
+        if (opt.prefill !== undefined) {
+            //
+            instances[_this.selector] = opt.prefill;
+            //
+            this.makeView();
         }
 
-        function makeObj () {
-
-            returnObj = {
-                isChecked: false,
-                approverNote: "",
-                approversList: []
-            };
+        // Events
+        // 
+        $(document).on('click', options['appCheckbox_idx'], function () {
             //
-            if ($(options['appCheckbox_idx']).prop("checked")) {
-                returnObj.isChecked = true;
-                returnObj.approverNote = $(options['approverNote_idx']).val();
-                returnObj.approversList = selectedApprovers;
+            _this.makeObj();
+            //
+            if ($(this).prop('checked')) {
+                //
+                $(options['container_idx']).show();
+            } else {
+                //
+                $(options['container_idx']).hide(0);
+                $(options['intEmployeeBox_idx']).html('');
+                $(options['approverNote_idx']).val('');
+            }
+        });
+
+        //
+        $(document).on('click', options['addEmployee_idx'], function (event) {
+            //
+            $(options['approverNote_idx']).show();
+            var rowId = options['prefix'] + 'js-employees-' + _this.getRandom();
+            var row = _this.generateApproverRow(rowId, 0);
+            //
+            $(options['intEmployeeBox_idx']).append(row);
+
+            $('#' + rowId).select2({
+                closeOnSelect: true,
+                allowHtml: true,
+                allowClear: true,
+            });
+
+        });
+
+        //
+        $(document).on('select2:select', '.jsSelectedEmployee', function () {
+            //
+            selectedApprovers[$(this).val()] = true;
+            //
+            _this.makeObj();
+        });
+        //
+        $(document).on('keyup', options['approverNote_idx'], _this.makeObj);
+        //
+        $(document).on('click', '.js-employee-delete-btn', function (e) {
+            //
+            e.preventDefault();
+            //
+            if ($(this).closest('.row_id').find('.jsSelectedEmployee').val() == 0) {
+                return $(this).closest('.row_id').remove();
             }
             //
-            console.log(returnObj)
-        }
+            var __this = $(this);
+            //
+            alertify.confirm('Do you want to delete this approver?', function () {
+                __this.closest('.row_id').remove();
+                delete selectedApprovers[__this.closest('.row_id').find('.jsSelectedEmployee').val()];
+                _this.makeObj();
+            });
+        });
+
     };
     //
-    return this;
+    $.fn.documentApprovalFlow.__proto__.instances = instances;
     //
-    $.fn.documentApproval.__proto__.instances = instances;
+    return this;
 })(jQuery || $);

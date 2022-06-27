@@ -5,8 +5,9 @@
     $intApproverBox_idx = isset($intApproverBox_idx) ? $intApproverBox_idx : "jsIntApproverContainer";
     $extApproverBox_idx = isset($extApproverBox_idx) ? $extApproverBox_idx : "jsExtApproverContainer";
     $approverNote_idx = isset($approverNote_idx) ? $approverNote_idx : "jsApproverNoteContainer";
+    $main_idx = isset($main_idx) ? $main_idx : "mainid";
 ?>
-<div class="row" id="jsApprovalSection">
+<div class="row" id="<?=$main_idx?>">
     <div class="col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">
