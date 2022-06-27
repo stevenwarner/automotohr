@@ -1383,7 +1383,11 @@ class Employee_management extends Public_Controller
                         $data['policies'] = $this->timeoff_model->getEmployeePoliciesByEmployeeId($company_id, $employer_id);
                     }
                     // Check if the employees has merges
-                    $data['MergeData'] = $this->employee_model->GetMergedEmployees($employer_id);
+                    $mergedEmployees = $this->employee_model->GetMergedEmployees($employer_id);
+                    $mergedApplicants = $this->employee_model->GetMergedApplicants($employer_id);
+                    //
+                    $data['MergeData'] = array_merge($mergedEmployees, $mergedApplicants);
+                    //
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/employee_management/employee_profile_ats_view');
                     $this->load->view('main/footer');

@@ -29,6 +29,9 @@
         data-type="{{type}}"
         title="Modify assigned document"
     >Modify</button>' ;
+    //
+    $assignIdObj = $confidential_sids;
+    //
 ?>
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -580,7 +583,11 @@
                                                                                                                             <input type="hidden" id="document_type" name="document_type" value="<?php echo $document['document_type']; ?>" />
                                                                                                                             <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
                                                                                                                         </form>
-                                                                                                                        <?=str_replace(['{{sid}}', '{{type}}'], [$document['sid'], 'notCompletedDocuments'], $modifyBTN);?>
+                                                                                                                        <?php 
+                                                                                                                            if(array_key_exists($document['sid'], $assignIdObj)){
+                                                                                                                                echo str_replace(['{{sid}}', '{{type}}'], [$document['sid'], 'notCompletedDocuments'], $modifyBTN);
+                                                                                                                            }
+                                                                                                                        ?>
                                                                                                                         <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
                                                                                                                     <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
                                                                                                                         <button
@@ -896,7 +903,12 @@
                                                                                                                 <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
                                                                                                             </form>
 
-                                                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['sid'], 'notCompletedDocuments'], $modifyBTN);?>
+                                                                                                            <?php 
+                                                                                                                if(array_key_exists($document['sid'], $assignIdObj)){
+                                                                                                                    echo str_replace(['{{sid}}', '{{type}}'], [$document['sid'], 'notCompletedDocuments'], $modifyBTN);
+                                                                                                                }
+                                                                                                            ?>
+
                                                                                                             <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
                                                                                                         <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
                                                                                                             <button
@@ -1556,7 +1568,11 @@
                                                                                                                 <?php } ?>
                                                                                                         </form>
                                                                                                           
-                                                                                                        <?=str_replace(['{{sid}}', '{{type}}'], [$offer_letter['sid'], 'notCompletedOfferLetters'], $modifyBTN);?>
+                                                                                                        <?php 
+                                                                                                            if(array_key_exists($document['sid'], $assignIdObj)){
+                                                                                                                echo str_replace(['{{sid}}', '{{type}}'], [$offer_letter['sid'], 'notCompletedOfferLetters'], $modifyBTN);
+                                                                                                            }
+                                                                                                        ?>  
                                                                                                             
                                                                                                         <button onclick="func_assign_uploaded_offer_letter('offer_letter', <?php echo $offer_letter['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
 
@@ -1695,7 +1711,12 @@
                                                                                                                         <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
                                                                                                                     </form>
 
-                                                                                                                    <?=str_replace(['{{sid}}', '{{type}}'], [$document['sid'], 'notCompletedDocuments'], $modifyBTN);?>
+                                                                                                                    <?php
+                                                                                                                        if(array_key_exists($document['sid'], $assignIdObj)){
+                                                                                                                            echo str_replace(['{{sid}}', '{{type}}'], [$document['sid'], 'notCompletedDocuments'], $modifyBTN);
+                                                                                                                        }
+                                                                                                                    ?>
+
                                                                                                                     <button onclick="func_remove_document('<?php echo $document['document_type']; ?>', <?php echo $document['sid']; ?>);" class="btn btn-danger btn-block btn-sm">Revoke</button>
                                                                                                                 <?php } else if (in_array($document['sid'], $signed_document_sids)) { ?>
                                                                                                                     <button

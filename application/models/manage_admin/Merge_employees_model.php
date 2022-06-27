@@ -71,7 +71,7 @@ class Merge_employees_model extends CI_Model {
             'primary_employee_sid' => $primary_employee_sid,
             'secondary_employee_sid' => $secondary_employee_sid,
             'primary_employee_profile_data' => serialize($primary_employee),
-            'secondary_employee_profile_data' => serialize($secondary_employee),
+            'secondary_employee_profile_data' => '',
             'updated_profile_data' => serialize($data_to_update),
             'merge_by' => $merge_by,
             'merge_at' => date('Y-m-d H:i:s', strtotime('now'))
@@ -81,6 +81,17 @@ class Merge_employees_model extends CI_Model {
         // Delete secondary Employee
         $this->db->where('sid', $secondary_employee_sid);
         $this->db->delete('users');
+        //
+        return $secondary_employee;
+    }
+
+    function save_merge_secondary_employee_info ($secondary_employee_data, $primary_employee_sid, $secondary_employee_sid) {
+        $data_to_update = array();
+        $data_to_update["secondary_employee_profile_data"] = serialize($secondary_employee_data);
+
+        $this->db->where('primary_employee_sid', $primary_employee_sid);
+        $this->db->where('secondary_employee_sid', $secondary_employee_sid);
+        $this->db->update('employee_merge_history', $data_to_update);
     }
 
     function update_employee_emergency_contacts($primary_employee_sid, $secondary_employee_sid)
@@ -122,6 +133,10 @@ class Merge_employees_model extends CI_Model {
                     }
                 }
             }
+            //
+            return $secondary_emergency_contacts;
+        } else {
+            return array();
         }
     }
 
@@ -145,6 +160,10 @@ class Merge_employees_model extends CI_Model {
                 //
                 $this->db->insert('equipment_information', $data_to_insert);
             }
+            //
+            return $secondary_equipments;
+        } else {
+            return array();
         }
     }
 
@@ -168,6 +187,10 @@ class Merge_employees_model extends CI_Model {
                 //
                 $this->db->insert('dependant_information', $data_to_insert);
             }
+            //
+            return $secondary_dependants;
+        } else {
+            return array();
         }
     }
 
@@ -191,7 +214,11 @@ class Merge_employees_model extends CI_Model {
                 //
                 $this->db->insert('license_information', $data_to_insert);
             }
-        } 
+            //
+            return $secondary_licenses;
+        } else {
+            return array();
+        }
     }
 
     function update_employee_background_check($primary_employee_sid, $secondary_employee_sid)
@@ -384,6 +411,12 @@ class Merge_employees_model extends CI_Model {
 
     function update_documents($primary_employee_sid, $secondary_employee_sid)
     {
+        $return_array = [
+            'W4' => '',
+            'W9' => '',
+            'I9' => '',
+            'documents' => "",
+        ];
         //Fillable Forms
         //W4
         $this->db->select('sid');
@@ -400,6 +433,9 @@ class Merge_employees_model extends CI_Model {
             $secondary_employee_w4 = $this->db->get('form_w4_original')->row_array();
             //
             if(!empty($secondary_employee_w4)){
+                //
+                $return_array['W4'] = $secondary_employee_w4;
+                //
                 unset($secondary_employee_w4['sid']);
                 $secondary_employee_w4['employer_sid'] = $primary_employee_sid;
                 $this->db->insert('form_w4_original', $secondary_employee_w4);
@@ -421,6 +457,9 @@ class Merge_employees_model extends CI_Model {
             $secondary_employee_w9 = $this->db->get('applicant_w9form')->row_array();
             //
             if(!empty($secondary_employee_w9)){
+                //
+                $return_array['W9'] = $secondary_employee_w9;
+                //
                 unset($secondary_employee_w9['sid']);
                 $secondary_employee_w9['user_sid'] = $primary_employee_sid;
                 $this->db->insert('applicant_w9form', $secondary_employee_w9);
@@ -442,6 +481,9 @@ class Merge_employees_model extends CI_Model {
             $secondary_employee_i9 = $this->db->get('applicant_i9form')->row_array();
             //
             if(!empty($secondary_employee_i9)){
+                //
+                $return_array['I9'] = $secondary_employee_i9;
+                //
                 unset($secondary_employee_i9['sid']);
                 $secondary_employee_i9['user_sid'] = $primary_employee_sid;
                 $this->db->insert('applicant_i9form', $secondary_employee_i9);
@@ -467,6 +509,8 @@ class Merge_employees_model extends CI_Model {
                     $secondary_doc['user_type'] = 'employee';
                     $this->db->insert('documents_assigned', $secondary_doc);
                 }
+                //
+                $return_array['documents'] = $secondary_general_docs;
             }
         } else {
             $already_sid = array();
@@ -489,8 +533,13 @@ class Merge_employees_model extends CI_Model {
                         $this->db->insert('documents_assigned', $secondary_doc);
                     }
                 }
+                //
+                $return_array['documents'] = $secondary_general_docs;
             } 
         }
+
+        //
+        return $return_array;
     }
 
     function update_employee_direct_deposit_information($primary_employee_sid, $secondary_employee_sid)
@@ -513,6 +562,10 @@ class Merge_employees_model extends CI_Model {
                 //
                 $this->db->insert('bank_account_details', $data_to_insert);
             }
+            //
+            return $secondary_employee_direct_deposits;
+        } else {
+            return array();
         }
     }
 
@@ -553,6 +606,10 @@ class Merge_employees_model extends CI_Model {
                     $this->db->insert('e_signatures_data', $data_to_insert);
                 }
             }
+            //
+            return $secondary_employee_signature;
+        } else {
+            return array();
         }
     }
 
@@ -590,6 +647,10 @@ class Merge_employees_model extends CI_Model {
                     $this->db->insert('portal_eeo_form', $data_to_insert);
                 }
             }
+            //
+            return $secondary_employee_eeoc;
+        } else {
+            return array();
         }
     }
 
