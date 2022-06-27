@@ -10408,16 +10408,18 @@ class Hr_documents_management extends Public_Controller
         $ins['sort_order'] = $post['sortOrder'] == '' ? 1 : $post['sortOrder'];
         $ins['is_specific'] = $post['EmployeeSid'];
        
-        //die($_POST['assigner']);
+      
         // Assigner handling
         $ins['has_approval_flow'] = 0;
         $ins['document_approval_note'] = $ins['document_approval_employees'] = '';
         // Assigner handling
+       
         if ($_POST['has_approval_flow'] == 'on') {
             $ins['has_approval_flow'] = 1;
-            $ins['document_approval_employees'] = isset($_POST['assigner']) && $_POST['assigner'] ?  $_POST['assigner'] : '';
-            $ins['document_approval_note'] = $_POST['assigner_note'];
+            $ins['document_approval_employees'] = isset($_POST['document_approval_employees']) && $_POST['document_approval_employees'] ?  $_POST['document_approval_employees'] : '';
+            $ins['document_approval_note'] = $_POST['document_approval_note'];
         }
+
 
         $post = $this->input->post(NULL, true);
 
@@ -10425,7 +10427,7 @@ class Hr_documents_management extends Public_Controller
         $ins['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
         //
         $post['confidentialSelectedEmployees'] = $this->input->post('confidentialSelectedEmployees', true);
-
+       
         //
         $ins['confidential_employees'] = NULL;
         //
@@ -10580,8 +10582,8 @@ class Hr_documents_management extends Public_Controller
                         $managersList = implode(',', $ins['signers']);
                     }
                     //
-                    $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
-                    $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : $is_approval_document["document_approval_note"];
+                    $approvers_list = isset($post['document_approval_employees']) ? $post['document_approval_employees'] : "";
+                    $approvers_note = isset($post['document_approval_note']) ? $post['document_approval_note'] : $is_approval_document["document_approval_note"];
                     //
 
                     // When approval employees are selected
@@ -11659,9 +11661,12 @@ class Hr_documents_management extends Public_Controller
 
         if ($_POST['has_approval_flow'] == 'on') {
             $a['has_approval_flow'] = 1;
-            $a['document_approval_employees'] = isset($_POST['assigner']) && $_POST['assigner'] ? $_POST['assigner'] : '';
+            $a['document_approval_employees'] = isset($_POST['document_approval_employees']) && $_POST['document_approval_employees'] ? $_POST['document_approval_employees'] : '';
             $a['document_approval_note'] = $_POST['assigner_note'];
         }
+
+      
+
 
 
         $company_name = getCompanyNameBySid($post['CompanySid']);
@@ -11743,11 +11748,12 @@ class Hr_documents_management extends Public_Controller
         //
 
         if ($assignInsertId == null)
-            $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
+         $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
         else
-            $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
+          $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
         //
-        if ($post["hasApprovalFlow"] == 1) {
+        if ($a["has_approval_flow"] == 1) {
+         
             //
             $managersList = '';
             //
@@ -11755,8 +11761,8 @@ class Hr_documents_management extends Public_Controller
                 $managersList = $post['managerList'];
             }
             //
-            $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
-            $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : '';
+            $approvers_list = isset($post['document_approval_employees']) ? $post['assigner'] : "";
+            $approvers_note = isset($post['document_approval_note']) ? $post['assigner_note'] : '';
 
             //     // When approval employees are selected
             $this->HandleApprovalFlow(
@@ -11767,6 +11773,7 @@ class Hr_documents_management extends Public_Controller
                 $managersList
             );
         } else {
+            
             //
             // Check if it's Authorize document
             if ($post['sendEmail'] == 'yes') {

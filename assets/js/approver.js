@@ -1,26 +1,25 @@
-function DocumentApproverPrefill(assigners, documentID) {
+function DocumentApproverPrefill(assigners, documentID, modal) {
 	//
 	if (!assigners) {
 		return '';
 	}
 	//
 	assigners.split(',').map(function(sa) {
-
 		var rowId = Math.round((Math.random() * 10000) + 1);
 		var row = generateApproverRow(rowId, documentID, sa);
-		$(".jsEmployeesadditionalBox").append(row);
+		$(""+(modal !== undefined ? modal : '')+" .jsEmployeesadditionalBox").append(row);
 
-		$('#js-employees-' + rowId).select2({
+		$(''+(modal !== undefined ? modal : '')+' .jsSelectedEmployee').select2({
 			closeOnSelect: false,
 			allowHtml: true,
 			allowClear: true,
 		});
-
-		$('#js-employees-' + rowId).select2('val', sa);
+		
+		$(''+(modal !== undefined ? modal : '')+' .jsSelectedEmployee').select2('val', sa);
 		
 	});
 	//
-	$(".jsAssignerEmployeesNote").show();
+	$(""+(modal !== undefined ? modal : '')+" .jsAssignerEmployeesNote").show();
 
 }
 
@@ -28,7 +27,7 @@ function DocumentApproverPrefill(assigners, documentID) {
 function generateApproverRow(rowId, documentID, approverID) {
 	//
 	var rows = '';
-	rows += '<div class="row js-employee-' + (rowId) + ' row_id" data-id="' + (rowId) + '">';
+	rows += '<div class="row js-employee-' + (rowId) + ' row_id jsSelectedEmployee" data-id="' + (rowId) + '">';
 	rows += '<br />';
 	rows += '    <div class="cs-employee js-employee csMT">';
 	rows += '        <div class="col-sm-10 col-sm-offset-0 text-left">';

@@ -4674,6 +4674,7 @@ class Onboarding extends CI_Controller
                                 }
                             }
                             //
+                         
                             if ($document['has_approval_flow'] == 1) {
                                 $this->HandleApprovalFlow(
                                     $assignment_sid,
@@ -4984,6 +4985,7 @@ class Onboarding extends CI_Controller
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                         }
 
+                          
                         // Managers handling
                         $this->hr_documents_management_model->addManagersToAssignedDocuments(
                             $document['managers_list'],
@@ -5220,6 +5222,7 @@ class Onboarding extends CI_Controller
                                 $data_to_insert['document_s3_name'] = $upload_letter_description['uploaded_document_s3_name'];
                             } else {
                             
+                                
                                 $data_to_insert['document_description'] = $letter_body;
                                 $data_to_insert['document_description'] = $letter_body;
                               // Document Settings - Confidential
@@ -5253,7 +5256,7 @@ class Onboarding extends CI_Controller
                             }
 
                             $this->onboarding_model->disable_all_previous_letter($company_sid, $user_type, $user_sid, 'offer_letter');
-
+                            
                             $data_to_insert['status'] = 1;
                             $verification_key = random_key(80);
                             $assignment_sid = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
@@ -5771,8 +5774,6 @@ class Onboarding extends CI_Controller
                   $data_to_insert['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
               }
 
-
-
             // Assigner handling
             $data_to_insert['has_approval_flow'] = 0;
             $data_to_insert['document_approval_note'] = $data_to_insert['document_approval_employees'] = '';
@@ -5783,27 +5784,27 @@ class Onboarding extends CI_Controller
                 $data_to_insert['document_approval_note'] = $post['assigner_note'];
             }
         
-                    $verification_key = random_key(80);
-                    $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
+        
+                   $verification_key = random_key(80);
+                   $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
                     $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
                     //
                     $signers = $this->input->post('js-signers');
-                  //  die($signers.'asdasd');
                     //
-                    if ($post['has_approval_flow'] == 'on') {
-
+                    if ($data_to_insert['has_approval_flow'] == 1) {
+                    
                         $managersList = '';
-                        
+                       
                         //
                         if ($do_descpt && isset($signers) && $signers != null && str_replace('{{authorized_signature}}', '', $do_descpt) != $do_descpt) {
                        
                             $managersList =  implode(',', $signers);
                         }
                         //
-                        $approvers_list = isset($post['assigner']) ? implode(',', $post['assigner']) : "";
-                        $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : "";
+                        $approvers_list = $data_to_insert['document_approval_employees']; //isset($post['assigner']) ? implode(',', $post['assigner']) : "";
+                        $approvers_note = $data_to_insert['document_approval_note']; //isset($post['assigner_note']) ? $post['assigner_note'] : "";
                         //
-                       // die('fdfd');
+                    
                         $this->HandleApprovalFlow(
                             $assignOfferLetterId,
                             $approvers_note,

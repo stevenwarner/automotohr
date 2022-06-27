@@ -2738,7 +2738,8 @@ if ($user_type == 'applicant') {
     });
 
     $(document).on('click', '#reassign-offer-letter', function() {
-    
+ 
+
         var letter_sid = $('#offer_letter_select').val();
         var letter_type = $('#selected_letter_type').val();
         var setting_is_confidential = $('[name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';

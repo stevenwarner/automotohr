@@ -1,4 +1,4 @@
-<div class="js-page-partial" id="js-offer-letter-area-add">	
+<div class="js-page-partial" id="js-offer-letter-area-add">
 	<div class="row">
 		<div class="col-sm-12">
 			<!-- 1 -->
@@ -13,11 +13,11 @@
 					<input type="radio" class="js-template-type" name="js-template-type" value="generated" data-type="offer_letter_add" /> Generate &nbsp;
 					<div class="control__indicator"></div>
 				</label>
-				<?php if(checkIfAppIsEnabled('hybrid_document')){ ?>
-				<label class="control control--radio">
-					<input type="radio" class="js-template-type" name="js-template-type" value="hybrid_document" data-type="offer_letter_add" /> Hybrid &nbsp;
-					<div class="control__indicator"></div>
-				</label>
+				<?php if (checkIfAppIsEnabled('hybrid_document')) { ?>
+					<label class="control control--radio">
+						<input type="radio" class="js-template-type" name="js-template-type" value="hybrid_document" data-type="offer_letter_add" /> Hybrid &nbsp;
+						<div class="control__indicator"></div>
+					</label>
 				<?php } ?>
 				<label class="control control--radio">
 					<input type="radio" class="js-template-type" name="js-template-type" value="template" data-type="offer_letter_add" /> Select Template &nbsp;
@@ -31,12 +31,12 @@
 				<label>Template(s) </label>
 				<select id="js-templates-add" class="js-templates">
 					<option value="0">[Select Offer Letter / Pay Plan Template]</option>
-					<?php 
-						if(sizeof($offer_letters)){
-							foreach ($offer_letters as $k => $v) {
-								echo '<option value="'.( $v['sid'] ).'">'.( $v['letter_name'] ).' ('.( ucwords($v['letter_type']) ).')</option>';
-							}
+					<?php
+					if (sizeof($offer_letters)) {
+						foreach ($offer_letters as $k => $v) {
+							echo '<option value="' . ($v['sid']) . '">' . ($v['letter_name']) . ' (' . (ucwords($v['letter_type'])) . ')</option>';
 						}
+					}
 					?>
 				</select>
 			</div>
@@ -63,7 +63,7 @@
 			<div class="form-group js-for-uploaded">
 				<label>Browse Document<span class="staric">*</span></label>
 				<input style="display: none;" type="file" name="document" id="upload_document" />
-                <p class="cs-error js-error"></p>
+				<p class="cs-error js-error"></p>
 			</div>
 			<!-- 3 -->
 			<div class="form-group">
@@ -109,15 +109,15 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h5>
-								<strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true"  data-target="visibilty"></i>
-								<p class="jsHintBody" data-hint="visibilty"><br /><?=getUserHint('visibility_hint');?></p>
+								<strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true" data-target="visibilty"></i>
+								<p class="jsHintBody" data-hint="visibilty"><br /><?= getUserHint('visibility_hint'); ?></p>
 							</h5>
 						</div>
 						<div class="panel-body">
 							<!-- Payroll -->
 							<label class="control control--checkbox">
 								Visible To Payroll
-								<input type="checkbox" name="visible_to_payroll" class="js-payroll-offer-letter-add" value="1"/>
+								<input type="checkbox" name="visible_to_payroll" class="js-payroll-offer-letter-add" value="1" />
 								<div class="control__indicator"></div>
 							</label>
 							<hr />
@@ -148,80 +148,80 @@
 				</div>
 			</div>
 			<!-- 9 -->
-			
+
 			<?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
 
-             <br>
+			<br>
 
-			 <div class="row">
-                                            <div class="col-xs-12">
-                                                <div class="hr-box">
-                                                    <div class="hr-box-header">
-                                                        <strong>Automatically assign after Days:</strong>
-                                                    </div>
-                                                    <div class="hr-innerpadding">
-                                                        <div class="row">
-                                                            <div class="col-xs-12">
-                                                                <div class="">
-                                                                    <div class="">
-                                                                        <label class="control control--radio">
-                                                                            Days
-                                                                            <input type="radio" name="assign_type" value="days" />
-                                                                            <div class="control__indicator"></div>
-                                                                        </label> &nbsp;
-                                                                        <label class="control control--radio font-normal">
-                                                                            Months
-                                                                            <input type="radio" name="assign_type" value="months" />
-                                                                            <div class="control__indicator"></div>
-                                                                        </label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <br />
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="hr-box">
+						<div class="hr-box-header">
+							<strong>Automatically assign after Days:</strong>
+						</div>
+						<div class="hr-innerpadding">
+							<div class="row">
+								<div class="col-xs-12">
+									<div class="">
+										<div class="">
+											<label class="control control--radio">
+												Days
+												<input type="radio" name="assign_type" value="days" />
+												<div class="control__indicator"></div>
+											</label> &nbsp;
+											<label class="control control--radio font-normal">
+												Months
+												<input type="radio" name="assign_type" value="months" />
+												<div class="control__indicator"></div>
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<br />
 
-                                                        <div class="row">
-                                                            <div class="col-xs-6 js-type-days js-type">
-                                                                <div class="universal-form-style-v2">
-                                                                    <div class="input-group pto-time-off-margin-custom">
-                                                                        <input type="number" class="form-control" value="<?php echo isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in']) ? $document_info['automatic_assign_in'] : 0; ?>" name="assign-in-days">
-                                                                        <span class="input-group-addon">Days</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-xs-6 js-type-months js-type">
-                                                                <div class="universal-form-style-v2">
-                                                                    <div class="input-group pto-time-off-margin-custom">
-                                                                        <input type="number" class="form-control" value="<?php echo isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in']) ? $document_info['automatic_assign_in'] : 0; ?>" name="assign-in-months">
-                                                                        <span class="input-group-addon">Months</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+							<div class="row">
+								<div class="col-xs-6 js-type-days js-type">
+									<div class="universal-form-style-v2">
+										<div class="input-group pto-time-off-margin-custom">
+											<input type="number" class="form-control" value="<?php echo isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in']) ? $document_info['automatic_assign_in'] : 0; ?>" name="assign-in-days">
+											<span class="input-group-addon">Days</span>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-6 js-type-months js-type">
+									<div class="universal-form-style-v2">
+										<div class="input-group pto-time-off-margin-custom">
+											<input type="number" class="form-control" value="<?php echo isset($document_info['automatic_assign_in']) && !empty($document_info['automatic_assign_in']) ? $document_info['automatic_assign_in'] : 0; ?>" name="assign-in-months">
+											<span class="input-group-addon">Months</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-                                    
-			 <br>
-			
+
+			<br>
+
 
 			<!--  Document Settings - Confidenti -->
 			<?php $this->load->view('hr_documents_management/partials/settings', [
-                                            'is_confidential' =>  $document_info['is_confidential']
-                                        ]); ?>
+				'is_confidential' =>  $document_info['is_confidential']
+			]); ?>
 
 			<!-- 7 -->
 			<div class="form-group js-for-generated">
 				<label>Authorized Management Signers</label>
 				<select id="js-template-signers" multiple="true">
-					<?php 
-						if(sizeof($managers_list)){
-							foreach ($managers_list as $k => $v) {
-								echo '<option value="'.( $v['sid'] ).'">'.( remakeEmployeeName( $v ) ).'</option>';
-							}
+					<?php
+					if (sizeof($managers_list)) {
+						foreach ($managers_list as $k => $v) {
+							echo '<option value="' . ($v['sid']) . '">' . (remakeEmployeeName($v)) . '</option>';
 						}
+					}
 					?>
 				</select>
 			</div>
@@ -234,7 +234,7 @@
 					<div class="control__indicator"></div>
 				</label>
 				<label class="control control--radio">
-					<input type="radio"  class="js-template-send-email" name="js-template-send-email" value="yes" /> Yes &nbsp;
+					<input type="radio" class="js-template-send-email" name="js-template-send-email" value="yes" /> Yes &nbsp;
 					<div class="control__indicator"></div>
 				</label>
 			</div>
@@ -247,7 +247,7 @@
 					<div class="control__indicator"></div>
 				</label>
 				<label class="control control--radio">
-					<input type="radio"  class="js-template-required" name="js-template-required" value="1" /> Yes &nbsp;
+					<input type="radio" class="js-template-required" name="js-template-required" value="1" /> Yes &nbsp;
 					<div class="control__indicator"></div>
 				</label>
 			</div>
@@ -260,7 +260,7 @@
 					<div class="control__indicator"></div>
 				</label>
 				<label class="control control--radio">
-					<input type="radio"  class="js-template-signature-required" name="js-template-signature-required" value="1" /> Yes &nbsp;
+					<input type="radio" class="js-template-signature-required" name="js-template-signature-required" value="1" /> Yes &nbsp;
 					<div class="control__indicator"></div>
 				</label>
 			</div>

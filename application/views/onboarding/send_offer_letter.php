@@ -518,9 +518,9 @@ if (isset($assigned_offer_letter_sid)) {
             $('#jsTeams').select2('val', l.allowed_teams && l.allowed_teams != 'null' ? l.allowed_teams.split(',') : null);
             $('#jsEmployees').select2('val', l.allowed_employees && l.allowed_employees != 'null' ? l.allowed_employees.split(',') : null);
             //
-           //Document Settings
-         //   $('#confidentialSelectedEmployees').select2();
-        
+            //Document Settings
+            //   $('#confidentialSelectedEmployees').select2();
+
             $('[name="setting_is_confidential"]').prop('checked', l.is_confidential == "1" ? true : false);
             $('#confidentialSelectedEmployeesdiv').hide();
             $('#confidentialSelectedEmployees').select2({
@@ -534,26 +534,19 @@ if (isset($assigned_offer_letter_sid)) {
                 }
             }
 
-            
-
             // Approval flow 
+            $(' [name="has_approval_flow"]').prop('checked', false);
+            $(' .jsApproverFlowContainer').hide();
+            $(' [name="assigner_note"]').val('');
+            //
             if (l.has_approval_flow == 1) {
 
-                $('.jsEmployeesadditionalBox').html('');
-                $('#js-popup [name="has_approval_flow"]').prop('checked', l.has_approval_flow == 1 ? true : false);
-                $('.jsApproverFlowContainer').show();
-                $('#js-popup [name="assigner_note"]').val(l.document_approval_note);
+                $(' [name="has_approval_flow"]').prop('checked', l.has_approval_flow == 1 ? true : false);
+                $(' .jsEmployeesadditionalBox').html('');
+                $(' .jsApproverFlowContainer').show();
+                $(' [name="assigner_note"]').val(l.document_approval_note);
                 DocumentApproverPrefill(l.document_approval_employees, 0);
-
-            } else {
-                $('#js-popup [name="has_approval_flow"]').prop('checked', false);
-                $('.jsApproverFlowContainer').hide();
-                $('#js-popup [name="assigner_note"]').val();
-
             }
-
-
-
 
             $('#js-signers').select2({
                 closeOnSelect: false
@@ -659,6 +652,7 @@ if (isset($assigned_offer_letter_sid)) {
     });
 
     $('.assign-offer-letter').on('click', function() {
+
         var btn_type = $(this).text();
         if (btn_type == 'Save' || btn_type == 'Reassign') {
             $('#perform_action').val('save_offer_letter');

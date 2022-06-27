@@ -1,4 +1,4 @@
-<div class="row" id="jsApprovalSection">
+<div class="row jsApprovalSection" id="jsApprovalSection">
     <div class="col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -18,7 +18,7 @@
                     <hr />
                     <div class="col-sm-12">
                         <label class="control control--checkbox">
-                            <input type="checkbox" name="has_approval_flow" id="jsHasApprovalFlow" /> This document needs approval
+                            <input type="checkbox" name="has_approval_flow" class="jsHasApprovalFlow" id="jsHasApprovalFlow" /> This document needs approval
                             <div class="control__indicator"></div>
                         </label>
                     </div>
@@ -29,7 +29,7 @@
                     <!--  -->
                     <div class="row">
                         <div class="col-sm-12 text-right">
-                            <a href="javascript:;" id="jsAddDocumentAssigner" class="btn btn-success"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add An Approver</a>
+                            <a href="javascript:;" id="jsAddDocumentAssigner" class="btn btn-success jsAddDocumentAssigner"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add An Approver</a>
                         </div>
                     </div>
                     <!--  -->

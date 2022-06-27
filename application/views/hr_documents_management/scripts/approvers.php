@@ -3,27 +3,29 @@
 		// 
 		var selectedApprovers = {};
 		//
-		$(document).on('click', '#jsHasApprovalFlow', function(event) {		
+		$(document).on('click', '.jsHasApprovalFlow', function(event) {		
 			//
+			var cls = $(this).closest('.jsApprovalSection');
 			// if ($(this).prop('checked')) {
-			if ($("#jsHasApprovalFlow").prop('checked')) {
+			if ($(this).prop('checked')) {
 				//
-				$('.jsApproverFlowContainer').show();
+				$(cls).find('.jsApproverFlowContainer').show();
 			} else {
 				//
-				$('.jsApproverFlowContainer').hide(0);
-				$('.jsEmployeesadditionalBox').html('');
-				$('#assigner_note').val('');
+				$(cls).find('.jsApproverFlowContainer').hide(0);
+				$(cls).find('.jsEmployeesadditionalBox').html('');
+				$(cls).find('[name="assigner_note"]').val('');
 			}
 		});
 
 		//
-		$(document).on('click', '#jsAddDocumentAssigner', function(event) {
+		$(document).on('click', '.jsAddDocumentAssigner', function(event) {
 			//
-			$(".jsAssignerEmployeesNote").show();
+			var cls = $(this).closest('.jsApprovalSection');
+			$(cls).find(".jsAssignerEmployeesNote").show();
 			var rowId = Math.round((Math.random() * 10000) + 1);
 			var row = generateRow(rowId);
-			AddApproverRow(row, rowId);
+			AddApproverRow(row, rowId, cls);
 		});
 
 		//
@@ -97,8 +99,9 @@
 
 		}
 
-		function AddApproverRow(row, rowId){
-			$('.jsEmployeesadditionalBox').prepend(row);
+		function AddApproverRow(row, rowId,cls){
+			
+			$(cls).find('.jsEmployeesadditionalBox').prepend(row);
 			//
 			if (Object.keys(selectedApprovers).length) {
 				Object.keys(selectedApprovers).map(function(sa) {
@@ -106,8 +109,8 @@
 				});
 			}
 			//
-			$('#js-employees-' + rowId).select2({
-				closeOnSelect: false,
+			$(cls).find('#js-employees-' + rowId).select2({
+				closeOnSelect: true,
 				allowHtml: true,
 				allowClear: true,
 			});
