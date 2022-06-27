@@ -1410,6 +1410,7 @@ $route["payroll/employees"]['get'] = "payroll/Payroll/EmployeeList/normal";
 $route["payroll/employees/payroll"]['get'] = "payroll/Payroll/EmployeeList/payroll";
 $route["payroll/employees/normal"]['get'] = "payroll/Payroll/EmployeeList/normal";
 $route["payroll/manage-admin"]['get'] = "payroll/Payroll/ManageAdmins";
+$route["payroll/manage-signatory"]['get'] = "payroll/Payroll/ManageSignatories";
 $route["payroll/service-terms"]['get'] = "payroll/Payroll/ServiceTerms";
 $route["payroll/settings"]['get'] = "payroll/Payroll/Settings";
 $route["payroll/my"]['get'] = "payroll/Payroll/MyPayStubs";
@@ -1503,6 +1504,7 @@ $route['get_payroll_page/(:any)/(:num)'] = 'payroll/Payroll_ajax/GetPage/$1/$2';
 //
 $route['save_payroll_admin/(:num)'] = 'payroll/Payroll_ajax/SaveAdmin/$1';
 $route['payroll_sync']['post'] = 'payroll/Payroll_ajax/Sync';
+$route['payroll_sync/(:num)']['get'] = 'payroll/Payroll_ajax/Sync/$1';
 
 /**
  * 

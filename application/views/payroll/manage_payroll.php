@@ -65,9 +65,11 @@
                                                 <a class="btn btn-success" href="<?php echo $onboarding_link; ?>" target="_blank">
                                                     Onboard Process
                                                 </a>
+                                                <?php if ($company_status['onboarding_completed']): ?>
                                                 <button class="btn btn-success jsPayrollSyncData">
                                                     Sync
                                                 </button>
+                                                <?php endif; ?>
                                             <?php } else if ($company_info['ssn']) { ?>
                                                 <button class="btn btn-orange jsAddCompanyToGusto" data-company_sid="<?php echo $company_info['sid'] ?>">
                                                     Start Onboard Process

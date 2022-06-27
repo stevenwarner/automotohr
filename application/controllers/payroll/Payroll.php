@@ -165,6 +165,39 @@ class Payroll extends CI_Controller
     }
 
     /**
+     * TODO
+     */
+    function ManageSignatories(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Manage Signatories';
+        $this->data['load_view'] = 0;
+        //
+        $this->data['PageScripts'] = [
+            'payroll/js/signatory'
+        ];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['company_sid'] = $company_sid;
+        //
+        $this->data['CompanySignatories'] = $this->pm->GetPayrollColumns(
+            'payroll_company_signatories', [
+                'company_sid' => $company_sid
+            ],
+            '*'
+        );
+        //
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/manage_admin')
+        ->view('main/footer');
+    }
+
+    /**
      * 
      */
     function ServiceTerms(){

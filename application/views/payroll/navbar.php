@@ -20,40 +20,73 @@
             'segment' => 'employees'
         ];
         $navpills[] = [
-            'title' => 'Run payroll',
-            'url' => '/run',
+            'title' => 'Run Payroll',
             'slug' => '',
             'icon' => 'bank',
-            'segment' => 'run'
+            'submenu' => [
+                [
+                    'title' => 'Regular Payroll',
+                    'url' => '/run',
+                    'slug' => '',
+                    'icon' => 'bank',
+                    'segment' => 'run'
+                ],
+                [
+                    'title' => 'Contractor Payroll',
+                    'url' => '/run',
+                    'slug' => '',
+                    'icon' => 'bank',
+                    'segment' => 'run'
+                ]
+            ]
         ];
         $navpills[] = [
-            'title' => 'Manage Admins',
-            'url' => '/manage-admin',
+            'title' => 'Manage',
             'slug' => '',
-            'icon' => 'users',
-            'segment' => 'manage'
-        ];
-        $navpills[] = [
-            'title' => 'Manage Contractors',
-            'url' => '/contractors',
-            'slug' => '',
-            'icon' => 'users',
-            'segment' => 'contractors'
-        ];
-        $navpills[] = [
-            'title' => 'Service Terms',
-            'url' => '/service-terms',
-            'slug' => '',
-            'icon' => 'file-pdf-o',
-            'segment' => 'service'
+            'icon' => 'cogs',
+            'submenu' => [
+                [
+                    'title' => 'Admins',
+                    'url' => '/manage-admin',
+                    'slug' => '',
+                    'icon' => 'users',
+                    'segment' => 'manage'
+                ], 
+                // [
+                //     'title' => 'Signatories',
+                //     'url' => '/manage-signatory',
+                //     'slug' => '',
+                //     'icon' => 'pencil-square',
+                //     'segment' => 'signatories'
+                // ],
+                [
+                    'title' => 'Contractors',
+                    'url' => '/contractors',
+                    'slug' => '',
+                    'icon' => 'users',
+                    'segment' => 'contractors'
+                ]
+            ]
         ];
         $navpills[] = [
             'title' => 'Settings',
-            'url' => '/settings',
             'slug' => '',
-            'icon' => 'cogs',
-            'segment' => 'settings'
+            'icon' => 'cog',
+            'submenu' => [[
+                'title' => 'Payment Info',
+                'url' => '/settings',
+                'slug' => '',
+                'icon' => 'money',
+                'segment' => 'settings'
+            ],[
+                'title' => 'Service Terms',
+                'url' => '/service-terms',
+                'slug' => '',
+                'icon' => 'file-pdf-o',
+                'segment' => 'service'
+            ]]
         ];
+        
     }
     $navpills[] = [
         'title' => 'My Pay Stubs',

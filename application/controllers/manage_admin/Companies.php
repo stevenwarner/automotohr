@@ -3073,6 +3073,7 @@ class Companies extends Admin_Controller {
         $this->load->model('Payroll_model', 'pm');
         $this->data['company_info']=$this->pm->GetGustoCompanyData($company_sid);
         $this->data['companyPayrollStatus']=$this->pm->GetCompanyPayrollStatus($company_sid);
+
         //
         $company_status = array();
         $onboarding_link = "";

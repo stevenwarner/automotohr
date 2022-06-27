@@ -29,7 +29,7 @@ class Payroll_ajax extends CI_Controller
         //
         $this->path = 'payroll/pages/';
         //
-        $this->session = $this->session->userdata('logged_in');
+        $this->lsession = $this->session->userdata('logged_in');
     }
 
     /**
@@ -1251,8 +1251,6 @@ class Payroll_ajax extends CI_Controller
         header("content-type: text/html");
         echo $this->load->view($this->path.$page, $data, true);
         exit(0);
-        //
-        // SendResponse(200, $this->load->view($this->path.$page, $data, true), 'html');
     }
 
     /**
@@ -1288,7 +1286,7 @@ class Payroll_ajax extends CI_Controller
         $onPayroll = (int)$this->input->get('on_payroll', true);
         //
         $data = $this->sem->GetCompanyEmployees(
-            $this->session['company_detail']['sid'],
+            $this->lsession['company_detail']['sid'],
             true,
             [
                 'users.active' => 1,
@@ -1354,12 +1352,432 @@ class Payroll_ajax extends CI_Controller
     }
 
     /**
+     * Sync the company from Gusto
      * 
+     * @version 1.0
      */
     public function Sync(){
         // 
         $companyId = $this->input->post('id', true);
+        // Get company credentials
+        $companyCredentials = $this->pm->GetGustoCompanyData($companyId);
+        //
+        $companyCredentials = [
+            'gusto_company_uid' => $companyCredentials['gusto_company_uid'],
+            'access_token' => $companyCredentials['access_token'],
+            'refresh_token' => $companyCredentials['refresh_token'],
+            'company_id' => $companyId
+        ];
+        //
+        $report = [];
+        $report['location'] = false;
+        $report['federal_tax'] = false;
+        $report['bank_info'] = false;
+        $report['payment_info'] = false;
+        $report['pay_schedule'] = false;
+        // Go to gusto and fetch the company details
+        // Company Location
+        $report['location'] = $this->syncCompanyAddress($companyCredentials);
+        // // Company Federal tax
+        $report['federal_tax'] = $this->syncCompanyFederalTax($companyCredentials);
+        // // Company Bank info
+        $report['bank_info'] = $this->syncCompanyBankInfo($companyCredentials);
+        // // Company settings
+        $report['payment_info'] = $this->syncCompanyPaymentInfo($companyCredentials);
+        // // Company pay schedules
+        $report['pay_schedules'] = $this->syncCompanyPaySchedules($companyCredentials);
 
-        _e($companyId, true);
+        echo SendResponse(200, $report);
+    }
+
+    /**
+     * Sync the company locations
+     * 
+     * @version 1.0
+     * @param array $credentials
+     * 
+     * @return boolean
+     */
+    private function syncCompanyAddress($credentials){
+        // Get company 
+        $response = GetCompanyLocations($credentials);
+        //
+        if(!isset($response[0]['company_id'])){
+            return false;
+        }
+        //
+        $locations = array_filter($response, function($location){
+            return $location['active'] == 1;
+        });
+        //
+        if(empty($locations)){
+            return false;
+        }
+        //
+        $location = $locations[0];
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        if(
+            !$this->db
+            ->where([
+                'company_sid' => $credentials['company_id']
+            ])
+            ->count_all_results('payroll_company_locations')
+        ){
+            //
+            $this->db->insert(
+                'payroll_company_locations', [
+                    'gusto_location_id' => $location['id'],
+                    'company_sid' => $credentials['company_id'],
+                    'country' => $location['country'],
+                    'state' => $location['state'],
+                    'city' => $location['city'],
+                    'street_1' => $location['street_1'],
+                    'street_2' => $location['street_2'],
+                    'zip' => $location['zip'],
+                    'phone_number' => $location['phone_number'],
+                    'mailing_address' => $location['mailing_address'],
+                    'filing_address' => $location['filing_address'],
+                    'last_updated_by' => 0,
+                    'version' => $location['version'],
+                    'created_at' => $dateTime,
+                    'updated_at' => $dateTime
+                ]
+            );
+            //
+            $id = $this->db->insert_id();
+            //
+            if(!$id){
+                return false;
+            }
+        } else{
+            //
+            $id = $this->db->select('sid')->where(['company_sid' => $credentials['company_id']])->get('payroll_company_locations')->row_array()['sid'];
+            //
+            if(!$id){
+                return false;
+            }
+            //
+            $this->db
+            ->where([
+                'company_sid' => $credentials['company_id']
+            ])->update(
+                'payroll_company_locations', [
+                    'gusto_location_id' => $location['id'],
+                    'country' => $location['country'],
+                    'state' => $location['state'],
+                    'city' => $location['city'],
+                    'street_1' => $location['street_1'],
+                    'street_2' => $location['street_2'],
+                    'zip' => $location['zip'],
+                    'phone_number' => $location['phone_number'],
+                    'mailing_address' => $location['mailing_address'],
+                    'filing_address' => $location['filing_address'],
+                    'version' => $location['version'],
+                    'updated_at' => $dateTime
+                ]
+            );
+        }
+        //
+        $this->db->insert(
+            'payroll_company_locations_versions', [
+                'payroll_company_location_sid' => $id,
+                'payroll_json' => json_encode($response),
+                'last_updated_by' => 0,
+                'version' => $location['version'],
+                'created_at' => $dateTime
+            ]
+        );
+        //
+        return true;
+    }
+    
+    /**
+     * Sync the company federal tax
+     * 
+     * @version 1.0
+     * @param array $credentials
+     * 
+     * @return boolean
+     */
+    private function syncCompanyFederalTax($credentials){
+        // Get company 
+        $response = GetCompanyFederalTax($credentials);
+        //
+        if(!isset($response['version'])){
+            return false;
+        }
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        if(
+            !$this->db
+            ->where([
+                'company_sid' => $credentials['company_id']
+            ])
+            ->count_all_results('payroll_company_tax_details')
+        ){
+            //
+            $this->db->insert(
+                'payroll_company_tax_details', [
+                    'company_sid' => $credentials['company_id'],
+                    'legal_name' => $response['legal_name'],
+                    'tax_payer_type' => $response['tax_payer_type'],
+                    'filling_form' => $response['filing_form'],
+                    'taxable_as_scorp' => $response['taxable_as_scorp'],
+                    'is_verified' => $response['ein_verified'],
+                    'last_updated_by' => 0,
+                    'version' => $response['version'],
+                    'created_at' => $dateTime,
+                    'updated_at' => $dateTime
+                ]
+            );
+            //
+            $id = $this->db->insert_id();
+            //
+            if(!$id){
+                return false;
+            }
+        } else{
+            //
+            $id = $this->db->select('sid')->where(['company_sid' => $credentials['company_id']])->get('payroll_company_tax_details')->row_array()['sid'];
+            //
+            if(!$id){
+                return false;
+            }
+            //
+            $this->db
+            ->where([
+                'company_sid' => $credentials['company_id']
+            ])->update(
+                'payroll_company_tax_details', [
+                    'legal_name' => $response['legal_name'],
+                    'tax_payer_type' => $response['tax_payer_type'],
+                    'filling_form' => $response['filing_form'],
+                    'taxable_as_scorp' => $response['taxable_as_scorp'],
+                    'is_verified' => $response['ein_verified'],
+                    'last_updated_by' => 0,
+                    'version' => $response['version'],
+                    'updated_at' => $dateTime
+                ]
+            );
+        }
+        //
+        $this->db->insert(
+            'payroll_company_tax_details_history', [
+                'payroll_company_tax_details_sid' => $id,
+                'company_sid' => $credentials['company_id'],
+                'version' => $response['version'],
+                'payroll_json' => json_encode($response),
+                'created_at' => $dateTime
+            ]
+        );
+        //
+        return true;
+    }
+
+    /**
+     * Sync the company bank info
+     * 
+     * @version 1.0
+     * @param array $credentials
+     * 
+     * @return boolean
+     */
+    private function syncCompanyBankInfo($credentials){
+        // Get company 
+        $response = GetCompanyBankInfo($credentials);
+        //
+        if(!isset($response[0]['uuid'])){
+            return false;
+        }
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $q = $this->db->select('uuid')->where(['company_sid' => $credentials['company_id']])->get('payroll_company_bank_accounts')->result_array();
+        //
+        if($q){
+            $preIds = array_column($q, 'uuid');
+        }
+        //
+        foreach($response as $account):
+            //
+            if(in_array($account['uuid'], $preIds)){
+                 //
+                $this->db
+                ->where([
+                    'uuid' => $account['uuid']
+                ])
+                ->insert(
+                    'payroll_company_bank_accounts', [
+                        'account_type' => $account['account_type'],
+                        'routing_number' => $account['routing_number'],
+                        'account_number' => $account['hidden_account_number'],
+                        'status' => $account['verification_status'],
+                        'verification_type' => $account['verification_type'],
+                        'updated_at' => $dateTime
+                    ]
+                );
+                continue;
+            }
+            //
+            $this->db->insert(
+                'payroll_company_bank_accounts', [
+                    'company_sid' => $credentials['company_id'],
+                    'uuid' => $account['uuid'],
+                    'account_type' => $account['account_type'],
+                    'routing_number' => $account['routing_number'],
+                    'account_number' => $account['hidden_account_number'],
+                    'status' => $account['verification_status'],
+                    'verification_type' => $account['verification_type'],
+                    'last_updated_by' => 0,
+                    'created_at' => $dateTime,
+                    'updated_at' => $dateTime
+                ]
+            );
+        endforeach;
+        //
+        $this->db->insert(
+            'payroll_company_bank_accounts_history', [
+                'company_sid' => $credentials['company_id'],
+                'payroll_json' => json_encode($response),
+                'created_at' => $dateTime
+            ]
+        );
+        //
+        return true;
+    }
+
+    /**
+     * Sync the company payment info
+     * 
+     * @version 1.0
+     * @param array $credentials
+     * 
+     * @return boolean
+     */
+    private function syncCompanyPaymentInfo($credentials){
+        // Get company 
+        $response = GetCompanyPaymentInfo($credentials);
+        //
+        if(!isset($response['partner_uuid'])){
+            return false;
+        }
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        if(
+            !$this->db
+            ->where([
+                'company_sid' => $credentials['company_id']
+            ])
+            ->count_all_results('payroll_settings')
+        ){
+            //
+            $this->db->insert(
+                'payroll_settings', [
+                    'company_sid' => $credentials['company_id'],
+                    'partner_uid' => $response['partner_uuid'],
+                    'fast_payment_limit' => $response['fast_payment_limit'],
+                    'payment_speed' => $response['payment_speed'],
+                    'last_updated_by' => 0,
+                    'created_at' => $dateTime,
+                    'updated_at' => $dateTime
+                ]
+            );
+        } else{
+            //
+            $this->db
+            ->where([
+                'company_sid' => $credentials['company_id']
+            ])
+            ->update(
+                'payroll_settings', [
+                    'partner_uid' => $response['partner_uuid'],
+                    'fast_payment_limit' => $response['fast_payment_limit'],
+                    'payment_speed' => $response['payment_speed'],
+                    'updated_at' => $dateTime
+                ]
+            );
+        }
+        //
+        return true;
+    }
+
+    /**
+     * Sync the company pay schedules
+     * 
+     * @version 1.0
+     * @param array $credentials
+     * 
+     * @return boolean
+     */
+    private function syncCompanyPaySchedules($credentials){
+        // Get company 
+        $response = GetCompanyPaySchedules($credentials);
+        //
+        if(!isset($response[0]['uuid'])){
+            return false;
+        }
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $q = $this->db->select('payroll_uuid')->where(['company_sid' => $credentials['company_id']])->get('payroll_company_pay_periods')->result_array();
+        //
+        if($q){
+            $preIds = array_column($q, 'payroll_uuid');
+        }
+        //
+        foreach($response as $account):
+            //
+            if(in_array($account['uuid'], $preIds)){
+                $this->db
+                ->where([
+                    'payroll_uuid' => $account['uuid']
+                ])
+                ->update(
+                    'payroll_company_pay_periods', [
+                        'frequency' => $account['frequency'],
+                        'anchor_pay_date' => $account['anchor_pay_date'],
+                        'day_1' => $account['day_1'],
+                        'day_2' => $account['day_2'],
+                        'name' => $account['name'],
+                        'auto_pilot' => $account['auto_pilot'],
+                        'version' => $account['version'],
+                        'updated_at' => $dateTime
+                    ]
+                );
+                continue;
+            }
+            //
+            $this->db->insert(
+                'payroll_company_pay_periods', [
+                    'company_sid' => $credentials['company_id'],
+                    'payroll_id' => $account['id'],
+                    'payroll_uuid' => $account['uuid'],
+                    'frequency' => $account['frequency'],
+                    'anchor_pay_date' => $account['anchor_pay_date'],
+                    'day_1' => $account['day_1'],
+                    'day_2' => $account['day_2'],
+                    'name' => $account['name'],
+                    'auto_pilot' => $account['auto_pilot'],
+                    'version' => $account['version'],
+                    'last_updated_by' => 0,
+                    'created_at' => $dateTime,
+                    'updated_at' => $dateTime
+                ]
+            );
+        endforeach;
+        //
+        $this->db->insert(
+            'payroll_company_pay_periods_history', [
+                'company_sid' => $credentials['company_id'],
+                'payroll_json' => json_encode($response),
+                'updated_at' => $dateTime
+            ]
+        );
+        //
+        return true;
     }
 }
