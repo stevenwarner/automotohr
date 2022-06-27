@@ -3871,12 +3871,20 @@ class Hr_documents_management extends Public_Controller
                     $data['session']['employer_detail'],
                     $employeeDepartments
                 );
+            //
+            $confidential_sids = array();
+            //
 
-            // _e($data['assigned_documents'], true);
-            // _e($data['completed_offer_letter'], true);
-            // _e($data['uncompleted_payrolls'], true);
-            // _e($data['completed_payroll_documents'], true);
-            // _e($data['categories_documents_completed'], true);
+            $confidential_sids =  array_merge($confidential_sids, is_array($data['no_action_required_payroll_documents']) ? array_column($data['no_action_required_payroll_documents'],'document_sid') : []);
+            $confidential_sids =  array_merge($confidential_sids, is_array($data['no_action_required_documents']) ? array_column($data['no_action_required_documents'],'document_sid') : []);
+            $confidential_sids =  array_merge($confidential_sids, is_array($data['assigned_documents']) ? array_column($data['assigned_documents'],'document_sid') : []);
+            $confidential_sids =  array_merge($confidential_sids, is_array($data['completed_offer_letter']) ? array_column($data['completed_offer_letter'],'document_sid') : []);
+            $confidential_sids =  array_merge($confidential_sids, is_array($data['completed_payroll_documents']) ? array_column($data['completed_payroll_documents'],'document_sid') : []);
+            $confidential_sids =  array_merge($confidential_sids, is_array($data['categories_documents_completed']) ? array_column($data['categories_documents_completed'],'document_sid') : []);
+            //
+            $confidential_sids = array_flip($confidential_sids);
+            $data['confidential_sids'] = $confidential_sids;
+            
 
             // Set completed/not completes/ no action required 
             // documents

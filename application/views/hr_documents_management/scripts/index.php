@@ -272,11 +272,19 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				do_descpt;
 			//
 			if(!Object.keys(d).length){
-				return alertify.alert(
-					"Error!",
-					"You don't have permission to this document.",
-					function(){}
+				d = getAssignedDocument(
+					$(this).data('id'),
+					"noActionDocuments"
 				)
+				//
+				if (!Object.keys(d).length) {
+					return alertify.alert(
+						"Error!",
+						"You don't have permission to this document.",
+						function(){}
+					)
+				}
+				
 			}
 			//
 			selectedTemplate = d;
