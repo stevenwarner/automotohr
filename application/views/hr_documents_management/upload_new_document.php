@@ -501,26 +501,6 @@
 
 <script>
     $(document).ready(function() {
-        //
-
-
-        if ($("#setting_is_confidential").is(":checked")) {
-            $("#confidentialSelectedEmployeesdiv").show();
-        } else {
-            $("#confidentialSelectedEmployeesdiv").hide();
-        }
-
-        $("#setting_is_confidential").click(function() {
-            if ($(this).is(":checked")) {
-                $("#confidentialSelectedEmployeesdiv").show();
-
-            } else {
-                $("#confidentialSelectedEmployeesdiv").hide();
-                $("#confidentialSelectedEmployees").select2("val", "");
-            }
-        });
-
-
 
         $('#jsFileUpload').mFileUploader({
             fileLimit: -1,

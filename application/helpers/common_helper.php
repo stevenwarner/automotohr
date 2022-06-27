@@ -15568,11 +15568,7 @@ if(!function_exists('hasPermissionToDocument')){
         $employeeId
     ){
         // Check the confidential as priority
-        if($isConfidential == '1'){
-            //
-            if(!$confidentialEmployees){
-                return true;
-            }
+        if($confidentialEmployees){
             //
             if($confidentialEmployees == "-1" || in_array($employeeId, explode(',', $confidentialEmployees))){
                 return true;
@@ -15622,5 +15618,37 @@ if(!function_exists('hasPermissionToDocument')){
         }
         //
         return false;
+    }
+}
+
+
+if(!function_exists('addColumnsForDocumentAssigned')){
+    /**
+     * 
+     */
+    function addColumnsForDocumentAssigned(
+        &$dataArray,
+        $document = []
+    ){
+        // Get CI instance
+        $_this = &get_instance();
+        //
+        $data = $document ? $document : $_this->input->post(null, true);
+        //
+        if(isset($data['setting_is_confidential'])){
+            $data['is_confidential'] = $data['setting_is_confidential'];
+        }
+        //
+        if(isset($data['confidentialSelectedEmployees'])){
+            $data['confidential_employees'] = $data['confidentialSelectedEmployees'];
+        }
+        //
+        $dataArray['is_confidential'] = ($data['is_confidential'] == 'on' || $data['is_confidential'] == 1) ? 1 : 0;
+        //
+        $dataArray['confidential_employees'] = NULL;
+        //
+        if($data['confidential_employees']){
+            $dataArray['confidential_employees'] = $data['confidential_employees'];
+        }
     }
 }

@@ -169,7 +169,8 @@
                                                                 <?php } ?>
                                                                 <td class="col-lg-1">
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
-                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                        <?php //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                        if (true) {  ?>
                                                                             <?php if ($document['document_sid'] != 0) { ?>
                                                                                 <?php if ($document['status'] == 1) { ?>
                                                                                     <?php if ($user_type == 'applicant') { ?>
@@ -218,7 +219,10 @@
 
                                                                 <td class="col-lg-2">
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
-                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                        <?php 
+                                                                            //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) {
+                                                                            if (true) {
+                                                                        ?>
                                                                             <?php if ($document['status'] == 1) { ?>
                                                                                 <?php if ($user_type == 'applicant') { ?>
                                                                                     <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
@@ -602,7 +606,10 @@
                                                                     <?php } ?>
                                                                         
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                        <?php 
+                                                                            //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                            if (true) {
+                                                                        ?>
                                                                             <?php if ($document['document_sid'] != 0) { ?>
                                                                                 <?php if ($document['status'] == 1) { ?>
                                                                                     <?php if ($user_type == 'applicant') { ?>
@@ -911,7 +918,10 @@
                                                                                         <?php } ?>
 
                                                                                         <?php if ($document_all_permission  && $document['isdoctolibrary'] == 0) { ?>
-                                                                                            <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                            <?php 
+                                                                                                //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                                if (true) {
+                                                                                            ?>
                                                                                                 <?php if ($document['document_sid'] != 0) { ?>
                                                                                                     <?php if ($document['status'] == 1) { ?>
                                                                                                         <?php if ($user_type == 'applicant') { ?>
@@ -967,7 +977,10 @@
                                                                                         <?php } ?>
 
                                                                                         <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                            <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                            <?php 
+                                                                                                //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                                if (true) {
+                                                                                            ?>
                                                                                                 <?php if ($document['document_sid'] != 0) { ?>
                                                                                                     <?php if ($document['status'] == 1) { ?>
                                                                                                         <?php if ($user_type == 'applicant') { ?>
@@ -1060,7 +1073,10 @@
                                                                                                 </a>
                                                                                             <?php } ?> 
 
-                                                                                            <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                            <?php 
+                                                                                                //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                                if (true) {
+                                                                                            ?>
                                                                                                 <?php if ($document['document_sid'] != 0 && $document['isdoctolibrary'] == 0) { ?>
                                                                                                     <?php if ($document['status'] == 1) { ?>
                                                                                                         <?php if ($user_type == 'applicant') { ?>
@@ -1566,7 +1582,10 @@
                                                                             <?php } ?>
 
                                                                             <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                <?php 
+                                                                                    // if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                    if (true) {
+                                                                                ?>
                                                                                     <?php if ($document['document_sid'] != 0) { ?>
                                                                                         <?php if ($document['status'] == 1) { ?>
                                                                                             <?php if ($user_type == 'applicant') { ?>
@@ -1694,7 +1713,10 @@
 
                                                                             <?php } ?>
                                                                             <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                                <?php 
+                                                                                    //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
+                                                                                    if (true) {
+                                                                                ?>
                                                                                     <?php if ($document['document_sid'] != 0) { ?>
                                                                                         <?php if ($document['status'] == 1) { ?>
                                                                                             <?php if ($user_type == 'applicant') { ?>
@@ -2284,7 +2306,10 @@
 
                                                                     <?php } ?>
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                        <?php if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { ?>
+                                                                        <?php 
+                                                                            // if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) {
+                                                                            if (true) {
+                                                                        ?>
                                                                             <?php if ($document['status'] == 1) { ?>
                                                                                 <?php if ($user_type == 'applicant') { ?>
                                                                                     <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>

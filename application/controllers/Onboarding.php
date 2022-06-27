@@ -179,7 +179,6 @@ class Onboarding extends CI_Controller
                             $data_to_insert['signature_required'] = $document['signature_required'];
                             $data_to_insert['download_required'] = $document['download_required'];
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
-                            $data_to_insert['confidential_employees'] = $document['confidential_employees'];
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //

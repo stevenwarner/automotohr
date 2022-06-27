@@ -1635,6 +1635,25 @@
     }
 
     /**
+     * Get all the merged applicants data
+     * 
+     * @param number $employeeId
+     * @return
+     */
+    function GetMergedApplicants($employeeId){
+        //
+        return 
+        $this->db->select('
+            data_update as secondary_employee_profile_data,
+            created_date as merge_at
+        ')
+        ->where('employee_sid', $employeeId)
+        ->order_by('sid', 'ASC')
+        ->get('applicant_merge_employee_record')
+        ->result_array();
+    }
+
+    /**
      * Update rehire date in employee status
      * 
      * @param number $employeeId

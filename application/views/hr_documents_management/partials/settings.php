@@ -60,6 +60,7 @@ $id_checkbox = isset($id_checkbox) ? $id_checkbox : 'setting_is_confidential';
             $('.jsUpdateDocumentSetting').click(function(event) {
                 //
                 event.preventDefault();
+                var confidentialEmployees = $('#confidentialSelectedEmployees').val() || '';
                 //
                 if (xhr !== null) {
                     return;
@@ -71,7 +72,8 @@ $id_checkbox = isset($id_checkbox) ? $id_checkbox : 'setting_is_confidential';
                 //
                 var obj = {
                     document_aid: <?= $documentAssignedId; ?>,
-                    is_confidential: $('[name="setting_is_confidential"]').prop('checked') ? 'on' : 'off'
+                    is_confidential: $('[name="setting_is_confidential"]').prop('checked') ? 'on' : 'off',
+                    confidentialSelectedEmployees: confidentialEmployees.toString()
                 };
                 //
                 xhr = $.ajax({
