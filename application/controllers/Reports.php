@@ -2850,19 +2850,19 @@ class Reports extends Public_Controller
 
             case 'get_employee_document':
 
-                $employeestatus = $this->reports_model->getEmployeeDocument($formpost);
+                $employeedocuments = $this->reports_model->getEmployeeDocument($formpost);
                 //
-                if (!sizeof($employeestatus)) {
+                if (!sizeof($employeedocuments)) {
                     $this->res['Response'] = 'No Employees found.';
                     $this->resp();
                 }
                 $this->res['Status'] = true;
                 $this->res['Limit'] = $formpost['limit'];
                 $this->res['Response'] = 'Proceed';
-                $this->res['Data'] = $employeestatus['Data'];
+                $this->res['Data'] = $employeedocuments['Data'];
                 //
                 if ($formpost['page'] == 1) {
-                    $this->res['TotalRecords'] = $employeestatus['Count'];
+                    $this->res['TotalRecords'] = $employeedocuments['Count'];
                     $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
                 }
                 $this->resp();
@@ -3033,7 +3033,7 @@ class Reports extends Public_Controller
             $post['companySid'] = $company_sid;
 
             $post['employeeSid'] = $post['dd-employee'];
-            $post['employeeStatus'] = $post['dd-status-emp'];
+            $post['documentStatus'] = $post['dd-status-doc'];
             // Fetch Status
             $employeedocument = $this->reports_model->getEmployeeDocument($post, true);
 
@@ -3044,16 +3044,18 @@ class Reports extends Public_Controller
                 $output = fopen('php://output', 'w');
                 fputcsv($output, array("Exported By: " . $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name'] . "\n" . " Export Date: " . date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR));
 
-                fputcsv($output, array('Employee', 'Document Title', 'isconfidential', 'confidentialemployees', 'Visible To Payroll'));
+                fputcsv($output, array('Employee', 'Document Title', 'isconfidential', 'confidentialemployees', 'Visible To Payroll' , 'Approval Flow'));
 
                 foreach ($employeedocument['Data'] as $row_document) {
                     $a = array();
                     $a[] = remakeEmployeeName($row_document);
                     $a[] = $row_document['document_title'];
-                    $a[] = $row_document['authorized_manager_name'] != '' ? $row_document['authorized_manager_name'] : '';
+                    $a[] = strip_tags($row_document['authorized_manager_name']) != '' ? strip_tags($row_document['authorized_manager_name']) : '';
                     $a[] = $row_document['is_confidential'] == '1' ? 'Yes' : 'No';
-                    $a[] = $row_document['confidentialemployees'] != '' ? $row_document['confidentialemployees'] : '';
-                    $a[] = $row_document['visible_to_payroll'] == '1' ? 'Yes' : 'No' . $row_document['allowed_employees_name'] . $row_document['is_available_for_na'] . $row_document['allowed_departments_name'] . $row_document['allowed_teams_name'];
+                    $a[] = strip_tags($row_document['confidentialemployees']) != '' ? strip_tags($row_document['confidentialemployees']) : '';
+                    $a[] = $row_document['visible_to_payroll'] == '1' ? 'Yes' : 'No' . strip_tags($row_document['allowed_employees_name']) . strip_tags($row_document['is_available_for_na']) . strip_tags($row_document['allowed_departments_name']) . strip_tags($row_document['allowed_teams_name']);
+                    $a[] = strip_tags($row_document['approval_employees_name']) != '' ? strip_tags($row_document['approval_employees_name']) : '';
+                   
                     fputcsv($output, $a);
                 }
 

@@ -2098,8 +2098,7 @@ class Reports_model extends CI_Model
         $employees = $post['employeeSid'];
         $companyid = $post['companySid'];
         //
-        $status = !is_array($post['employeeStatus']) || $post['employeeStatus'][0] == 'all' ? [1, 2, 3, 4, 5, 6, 7] : $post['employeeStatus'];
-
+        $documentstatus = !is_array($post['employeeStatus']) || $post['employeeStatus'][0] == 'all' ? ['all', 'confidential', 'authorizedsigners', 'approvalflow'] : $post['employeeStatus'];
         //
         if ($post['page'] == 1) {
             //
@@ -2108,11 +2107,29 @@ class Reports_model extends CI_Model
             $this->db->from('users');
             $this->db->where('users.parent_sid', $companyid);
             // for status
-            $this->db->group_start();
-            foreach ($status as $vs) {
-                $this->db->or_where('users.general_status', strtolower(GetEmployeeStatusText($vs)));
+
+            if ($documentstatus[0] != 'all') {
+                $this->db->group_start();
+                foreach ($documentstatus as $vs) {
+                    if ($vs == "confidential") {
+                        $this->db->or_where('documents_assigned.is_confidential', 1);
+                        $this->db->or_where('documents_assigned.confidential_employees <>', '');
+                    }
+
+                    if ($vs == "authorizedsigners") {
+                        $this->db->or_where('documents_assigned.managersList <>', '');
+                    }
+
+                    if ($vs == "approvalflow") {
+                        $this->db->or_where('documents_assigned.approval_process', 1);
+                        $this->db->or_where('documents_assigned.has_approval_flow', 1);
+                    }
+                }
+                $this->db->group_end();
             }
-            $this->db->group_end();
+
+
+
             // for employees
             if (is_array($employees) && $employees[0] != 'all') {
                 $this->db->where_in('users.sid', $employees);
@@ -2120,16 +2137,33 @@ class Reports_model extends CI_Model
             $r['Count'] = $this->db->count_all_results();
         }
         //
-        $this->db->select('users.sid as employee_sid, users.general_status, users.first_name, users.last_name, users.job_title,users.timezone, users.is_executive_admin, users.access_level_plus, users.access_level,documents_assigned.is_confidential, documents_assigned.confidential_employees, documents_assigned.document_title, documents_assigned.managersList,documents_assigned.visible_to_payroll, documents_assigned.allowed_roles, documents_assigned.allowed_employees, documents_assigned.allowed_departments, documents_assigned.allowed_teams,documents_assigned.is_available_for_na');
+        $this->db->select('users.sid as employee_sid, users.general_status, users.first_name, users.last_name, users.job_title,users.timezone, users.is_executive_admin, users.access_level_plus, users.access_level,documents_assigned.is_confidential, documents_assigned.confidential_employees, documents_assigned.document_title, documents_assigned.managersList,documents_assigned.visible_to_payroll, documents_assigned.allowed_roles, documents_assigned.allowed_employees, documents_assigned.allowed_departments, documents_assigned.allowed_teams,documents_assigned.is_available_for_na, documents_assigned.document_approval_employees');
         $this->db->join('documents_assigned', 'documents_assigned.user_sid = users.sid');
         $this->db->from('users');
         $this->db->where('users.parent_sid', $companyid);
         // for status
-        $this->db->group_start();
-        foreach ($status as $vs) {
-            $this->db->or_where('users.general_status', strtolower(GetEmployeeStatusText($vs)));
+
+        if ($documentstatus[0] != 'all') {
+            $this->db->group_start();
+            foreach ($documentstatus as $vs) {
+                if ($vs == "confidential") {
+                    $this->db->or_where('documents_assigned.is_confidential', 1);
+                    $this->db->or_where('documents_assigned.confidential_employees <>', '');
+                }
+
+                if ($vs == "authorizedsigners") {
+                    $this->db->or_where('documents_assigned.managersList <>', '');
+                }
+
+                if ($vs == "approvalflow") {
+                    $this->db->or_where('documents_assigned.approval_process', 1);
+                    $this->db->or_where('documents_assigned.has_approval_flow', 1);
+                }
+            }
+            $this->db->group_end();
         }
-        $this->db->group_end();
+
+
         // for employees
         if (is_array($employees) && $employees[0] != 'all') {
             $this->db->where_in('users.sid', $employees);
@@ -2150,66 +2184,67 @@ class Reports_model extends CI_Model
         foreach ($holderArray as $k => $v) {
             // confidential employees
             if ($holderArray[$k]['confidential_employees'] != 'NULL') {
-                $confidential_employees = explode(',', $holderArray[$k]['confidential_employees']);
-                $this->db->select('sid as employee_sid, general_status, first_name, last_name, job_title,timezone, is_executive_admin, access_level_plus, access_level');
-
-                if (!empty($confidential_employees) && $holderArray[$k]['confidential_employees'] != '-1') {
-                    $this->db->where_in('sid', $confidential_employees);
-                }
-
-                $this->db->where('parent_sid', $companyid);
-                $confidential_employees_rows =  $this->db->get('users')->result_array();
+                $confidential_employees_rows = $this->list_document_employees($holderArray[$k]['confidential_employees']);
             }
 
             if ($confidential_employees_rows) {
-                $confidential_employee_name  = ' ';
-                foreach ($confidential_employees_rows as $confidential_row) {
-                    $confidential_employee_name  =  $confidential_employee_name . remakeEmployeeName($confidential_row) . "<br><br>";
+                if ($confidential_employees_rows != 'all') {
+                    $confidential_employee_name  = ' ';
+                    foreach ($confidential_employees_rows as $confidential_row) {
+                        $confidential_employee_name  =  $confidential_employee_name . ' - ' . remakeEmployeeName($confidential_row) . "<hr class='employespan'>";
+                    }
+                    $holderArray[$k]['confidentialemployees'] = $confidential_employee_name;
+                    $holderArray[$k]['confidentialemployeeslable'] = count($confidential_employees_rows) . ' Employees <br> <br>';
+                } else {
+                    $holderArray[$k]['confidentialemployeeslable'] = 'All';
                 }
-                $holderArray[$k]['confidentialemployees'] = $confidential_employee_name;
             } else {
                 $holderArray[$k]['confidentialemployees'] = '';
+                $holderArray[$k]['confidentialemployeeslable'] = '';
             }
 
-            // Authorized Management Signers
+            // Authorized Management Signers start
             if ($holderArray[$k]['managersList'] != 'NULL') {
-                $managerslist_employees = explode(',', $holderArray[$k]['managersList']);
-                $this->db->select('sid as employee_sid, general_status, first_name, last_name, job_title,timezone, is_executive_admin, access_level_plus, access_level');
-                $this->db->where_in('sid', $managerslist_employees);
-                $managerslist_employees_rows =  $this->db->get('users')->result_array();
+                $managerslist_employees_rows = $this->list_document_employees($holderArray[$k]['managersList']);
             }
 
             if ($managerslist_employees_rows) {
-                $manager_name  = ' ';
-                foreach ($managerslist_employees_rows as $manager_row) {
-                    $manager_name  =  $manager_name . remakeEmployeeName($manager_row) . "<br><br>";
+                if ($managerslist_employees_rows != 'all') {
+                    $manager_name  = ' ';
+                    foreach ($managerslist_employees_rows as $manager_row) {
+                        $manager_name  =  $manager_name . ' - ' . remakeEmployeeName($manager_row) . "<hr class='employespan'>";
+                    }
+                    $holderArray[$k]['authorized_manager_name'] = $manager_name;
+                    $holderArray[$k]['authorized_manager_namelable'] = count($managerslist_employees_rows) . ' Employees <br> <br> ';
+                } else {
+                    $holderArray[$k]['authorized_manager_namelable'] = 'All';
                 }
-                $holderArray[$k]['authorized_manager_name'] = $manager_name;
             } else {
-                $holderArray[$k]['authorized_manager_name'] = '';
+                $holderArray[$k]['authorized_manager_namelable'] = '';
             }
 
-            // Visible To Payroll
+            // Visible To Payroll start
             if ($holderArray[$k]['allowed_employees'] != 'NULL') {
-                $allowed_employees = explode(',', $holderArray[$k]['allowed_employees']);
-                $this->db->select('sid as employee_sid, general_status, first_name, last_name, job_title,timezone, is_executive_admin, access_level_plus, access_level');
-                $this->db->where_in('sid', $allowed_employees);
-                $allowed_employees_rows =  $this->db->get('users')->result_array();
+                $allowed_employees_rows = $this->list_document_employees($holderArray[$k]['allowed_employees']);
             }
 
             if ($allowed_employees_rows) {
-                $allowed_employees_name  = 'Employees: <br>';
-                foreach ($allowed_employees_rows as $allowed_employees_rows_row) {
-                    $allowed_employees_name  =  $allowed_employees_name . remakeEmployeeName($allowed_employees_rows_row) . "<br><br>";
+                if ($allowed_employees_rows != 'all') {
+                    $allowed_employees_name  = '<div><span class="majorpoints"><span class="majorpointslegend expandheading">' . count($allowed_employees_rows) . ' Employees <br></span><div class="hider" style="display:none" >';
+                    foreach ($allowed_employees_rows as $allowed_employees_rows_row) {
+                        $allowed_employees_name  =  $allowed_employees_name . ' - ' . remakeEmployeeName($allowed_employees_rows_row) . "<hr class='employespan'>";
+                    }
+                    $holderArray[$k]['allowed_employees_name'] = $allowed_employees_name . "</div></div>";
+                } else {
+                    $holderArray[$k]['allowed_employees_name'] = "All";
                 }
-                $holderArray[$k]['allowed_employees_name'] = $allowed_employees_name;
             } else {
                 $holderArray[$k]['allowed_employees_name'] = '';
             }
 
-            // Allowed Departments
-
+            // Allowed Departments start
             if ($holderArray[$k]['allowed_departments'] != 'NULL') {
+
                 $allowed_departments = explode(',', $holderArray[$k]['allowed_departments']);
                 $this->db->select('name as department_name');
                 $this->db->where_in('sid', $allowed_departments);
@@ -2217,17 +2252,16 @@ class Reports_model extends CI_Model
             }
 
             if ($allowed_departments_rows) {
-                $allowed_departments_name  = 'Departments:  <br>';
+                $allowed_departments_name  = '<div><span class="majorpoints"><span class="majorpointslegend expandheading">' . count($allowed_departments_rows) . ' Departments: </span><div class="hider" style="display:none" >';
                 foreach ($allowed_departments_rows as $allowed_departments_row) {
-                    $allowed_departments_name  =  $allowed_departments_name . $allowed_departments_row['department_name'] . "<br><br>";
+                    $allowed_departments_name  =  $allowed_departments_name . ' - ' . $allowed_departments_row['department_name'] . "<br>";
                 }
-                $holderArray[$k]['allowed_departments_name'] = $allowed_departments_name;
+                $holderArray[$k]['allowed_departments_name'] = $allowed_departments_name . "</div></div>";
             } else {
                 $holderArray[$k]['allowed_departments_name'] = '';
             }
 
-            // Allowed Teams
-
+            // Allowed Teams start
             if ($holderArray[$k]['allowed_teams'] != 'NULL') {
                 $allowed_teams = explode(',', $holderArray[$k]['allowed_teams']);
                 $this->db->select('name as team_name');
@@ -2236,24 +2270,55 @@ class Reports_model extends CI_Model
             }
 
             if ($allowed_teams_rows) {
-                $allowed_teams_name  = 'Teams: <br>';
+                $allowed_teams_name  = '<div><span class="majorpoints"><span class="majorpointslegend expandheading">' . count($allowed_departments_rows) . ' Teams: </span><div class="hider" style="display:none" >';
                 foreach ($allowed_teams_rows as $allowed_teams_row) {
-                    $allowed_teams_name  =  $allowed_teams_name . $allowed_teams_row['team_name'] . "<br><br>";
+                    $allowed_teams_name  =  $allowed_teams_name . ' - ' . $allowed_teams_row['team_name'] . "<br>";
                 }
-                $holderArray[$k]['allowed_teams_name'] = $allowed_teams_name;
+                $holderArray[$k]['allowed_teams_name'] = $allowed_teams_name . "</div></div>";
             } else {
                 $holderArray[$k]['allowed_teams_name'] = '';
             }
+            // Allowed Teams end
 
             if (!empty($holderArray[$k]['is_available_for_na'])) {
-                $holderArray[$k]['is_available_for_na'] = "Roles: <br>" . $holderArray[$k]['is_available_for_na'] . "<br><br>";
+                $holderArray[$k]['is_available_for_na'] = "<b>Roles:</b> <br>" . $holderArray[$k]['is_available_for_na'] . "<br><br>";
             } else {
                 $holderArray[$k]['is_available_for_na'] = '';
+            }
+
+            // Approval Flow Employees start
+            if ($holderArray[$k]['document_approval_employees'] != 'NULL') {
+                $document_approval_employees_rows = $this->list_document_employees($holderArray[$k]['document_approval_employees']);
+            }
+
+            if ($document_approval_employees_rows) {
+                $approval_employees_name  = ' ';
+                if ($document_approval_employees_rows != 'all') {
+                    foreach ($document_approval_employees_rows as $approval_employees_row) {
+                        $approval_employees_name  =  $approval_employees_name . ' - ' . remakeEmployeeName($approval_employees_row) . "<hr class='employespan'>";
+                    }
+                    $holderArray[$k]['approval_employees_name'] = $approval_employees_name;
+                    $holderArray[$k]['approval_employees_namelable'] = count($document_approval_employees_rows) . ' Employees <br><br>';
+                } else {
+                    $holderArray[$k]['approval_employees_namelable'] = "All";
+                }
+            } else {
+                $holderArray[$k]['approval_employees_namelable'] = '';
             }
         }
         //
         $r['Data'] = array_values($holderArray);
         //
         return $r;
+    }
+
+    // Get comma separated  employes list 
+    function list_document_employees($employees)
+    {
+        if ($employees == '-1') return 'all';
+        $employees_array = explode(',', $employees);
+        $this->db->select('sid as employee_sid, general_status, first_name, last_name, job_title,timezone, is_executive_admin, access_level_plus, access_level');
+        $this->db->where_in('sid', $employees_array);
+        return  $this->db->get('users')->result_array();
     }
 }

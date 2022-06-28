@@ -1,3 +1,27 @@
+<style>
+    .expandheading {
+        cursor: pointer;
+        font-size: 14x;
+        color: #0c0cff;
+        text-decoration: underline;
+       
+    }
+
+    .expandheadingall {
+        font-size: 14x;
+        color: #0c0cff;
+       
+    }
+    hr.employespan{
+     
+      border-top: 1px solid #dddddd;
+      margin-top: 10px;
+      margin-bottom: 10px;
+   
+       }
+
+
+</style>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -40,14 +64,10 @@
                                                                         <label>Status</label>
                                                                         <select id="js-status-emp" name="dd-status-emp[]" multiple="true">
                                                                             <option value="all">All</option>
-                                                                            <option value="5">Active</option>
-                                                                            <option value="7">Leave</option>
-                                                                            <option value="4">Suspended</option>
-                                                                            <option value="2">Retired</option>
-                                                                            <option value="8">Rehired</option>
-                                                                            <option value="3">Deceased</option>
-                                                                            <option value="1">Terminated</option>
-                                                                            <option value="6">Inactive</option>
+                                                                            <option value="confidential">Confidential</option>
+                                                                            <option value="authorizedsigners">Authorized Signers</option>
+                                                                            <option value="approvalflow">Approval Flow</option>
+
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -87,8 +107,9 @@
                                                                         <th>Document Title</th>
                                                                         <th>Authorized Signers</th>
                                                                         <th>Is Confidential</th>
-                                                                        <th>Confidential Employee</th>
-                                                                         <th>Visibility</th>
+                                                                        <th>Confidential Employees</th>
+                                                                        <th>Visibility</th>
+                                                                        <th>Approval Flow</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody id="js-data-area"></tbody>
@@ -215,7 +236,7 @@
         }
         //
         function fetchFilter() {
-             $.post(baseHandlerURI, {
+            $.post(baseHandlerURI, {
                 action: 'get_employee_status_filter'
             }, function(resp) {
                 //
@@ -276,7 +297,7 @@
         // Filter Ends
 
         //
-        function fetchReport() { 
+        function fetchReport() {
             if (filterData.length === 0) {
                 intse = setInterval(function() {
                     fetchReport();
@@ -340,15 +361,37 @@
                 if (record.visible_to_payroll == '1') {
                     cl_visible_to_payroll = 'success';
                 }
-               
+
+                var expandheading = ' expandheading';
+                var majorpoints = ' majorpoints';
+                var expandheadingauth = ' expandheading';
+                var majorpointsauth = ' majorpoints';
+                var expandheadingapprov_flow = ' expandheading';
+                var majorpointsapprov_flow = ' majorpoints';
+
+                if (record.confidentialemployeeslable == "All") {
+                    expandheading = 'expandheadingall';
+                    majorpoints = '';
+                }
+                if (record.authorized_manager_namelable == "All") {
+                    expandheadingauth = ' expandheadingall';
+                    majorpointsauth = '';
+                }
+
+                if (record.approval_employees_namelable == "All") {
+                    expandheadingapprov_flow = ' expandheadingall';
+                    majorpointsapprov_flow = '';
+                }
+
                 rows += '<tr>';
                 rows += '   <td>' + (remakeEmployeeName(record)) + '</td>';
                 rows += '   <td >' + (record.document_title == '' ? 'N/A' : record.document_title) + '</td>';
-                rows += '   <td >' + (record.authorized_manager_name == '' ? '' : record.authorized_manager_name) + '</td>';
+                rows += '   <td class="vam" ><div><span class="' + majorpointsauth + '"><span class="majorpointslegend' + expandheadingauth + '">' + record.authorized_manager_namelable + '</span><div class="hider" style="display:none" >' + (record.authorized_manager_name == '' ? '' : record.authorized_manager_name) + '</div></div></td>';
                 rows += '   <td class="csB7 text-' + (cl_confidential) + '">' + (record.is_confidential == '1' ? 'Yes' : 'No') + '</td>';
-                rows += '   <td>' + (record.confidentialemployees == '' ? '' : record.confidentialemployees) + '</td>';
-                rows += '   <td class="csB7 text-' + (cl_visible_to_payroll) + '">' + (record.visible_to_payroll == '1' ? 'Yes <br><br>' : 'No <br><br>') + record.is_available_for_na + record.allowed_employees_name + record.allowed_departments_name + record.allowed_teams_name + '</td>';
-      
+                rows += '   <td class="vam"> <div><span class="' + majorpoints + '"><span class="majorpointslegend ' + expandheading + '">' + record.confidentialemployeeslable + '</span><div class="hider" style="display:none" >' + (record.confidentialemployees == '' ? '' : record.confidentialemployees) + '</div></div> </td>';
+                rows += '   <td ><span class="csB7 text-' + (cl_visible_to_payroll) + '">' + (record.visible_to_payroll == '1' ? 'Yes <br><br>' : 'No <br><br>') + '</span>' + record.is_available_for_na + record.allowed_employees_name + record.allowed_departments_name + record.allowed_teams_name + '</td>';
+                rows += '   <td class="vam"> <div><span class="'+ majorpointsapprov_flow + '"><span class="majorpointslegend' + expandheadingapprov_flow + '">' + record.approval_employees_namelable + '</span><div class="hider" style="display:none" >' + (record.approval_employees_name == '' ? '' : record.approval_employees_name) + '</div></div> </td>';
+
                 rows += '</tr>';
             });
             //
@@ -537,6 +580,12 @@
         mywindow.focus();
 
     }
+
+
+
+    $(document).on('click', '.majorpoints', function() {
+        $(this).find('.hider').toggle();
+    });
 </script>
 
 
