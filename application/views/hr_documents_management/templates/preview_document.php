@@ -6,7 +6,7 @@
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                    <a href="<?php echo $back_url; ?>" class="btn blue-button btn-block"><i class="fa fa-angle-left"></i>  Documents</a>
+                    <a href="<?php echo base_url('library_document'); ?>" class="btn blue-button btn-block"><i class="fa fa-angle-left"></i>  Document Library</a>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
