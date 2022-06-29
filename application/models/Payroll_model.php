@@ -1055,4 +1055,36 @@ class Payroll_model extends CI_Model{
         //
         return json_decode($q['payroll_json'], true);
     }
+
+
+    /**
+     * Version syncs
+     * 
+     * Contractor = syncContractorVersion
+     */
+    public function syncContractorVersion($companyId, $uuid){
+        //
+        $company_details = $this->GetPayrollCompany($companyId);
+        //
+        $response = getContractors($company_details);
+        //
+        $version = '';
+        //
+        if(isset($response[0]['uuid'])){
+            foreach($response as $record){
+                //
+                if($record['uuid'] == $uuid){
+                    $version = $record['version'];
+                }
+                //
+                $this->db
+                ->where(['id' => $record['id']])
+                ->update('payroll_company_contractors', [
+                    'version' => $record['version']
+                ]);
+            }
+        }
+        //
+        return $version;
+    }
 }

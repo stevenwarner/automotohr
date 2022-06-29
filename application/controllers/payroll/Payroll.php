@@ -130,6 +130,32 @@ class Payroll extends CI_Controller
         ->view('payroll/employees_list')
         ->view('main/footer');
     }
+    
+    /**
+     * 
+     */
+    function contractors(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Contractors Listing';
+        $this->data['load_view'] = 0;
+        //
+        $this->data['PageScripts'] = [
+            'payroll/js/contractor'
+        ];
+        //
+        $session = $this->session->userdata('logged_in');
+        //
+        $company_sid = $session['company_detail']['sid'];
+        //
+        $this->data['company_sid'] = $company_sid;
+        //
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/contractors')
+        ->view('main/footer');
+    }
 
     /**
      * 
@@ -1935,5 +1961,32 @@ class Payroll extends CI_Controller
             'payroll_settings', 
             $ai
         );
+    }
+
+
+    /**
+     * 
+     */
+    function contractorPayrollRun(){
+        //
+        $this->checkLogin($this->data);
+        //
+        $this->data['title'] = 'Payroll | Run Contractor Payroll';
+        $this->data['load_view'] = 0;
+        $this->data['hide_employer_section'] = 1;
+        // Get processed payrolls
+        //
+        $this->data['contractors'] = $this->pm->GetPayrollColumns(
+            'payroll_company_contractors', [
+                'company_sid' => $this->session->userdata('logged_in')['company_detail']['sid']
+            ],
+            '*'
+        );
+
+        // Get Gusto Company Details
+        $this->load
+        ->view('main/header', $this->data)
+        ->view('payroll/contractor/payment')
+        ->view('main/footer');
     }
 }

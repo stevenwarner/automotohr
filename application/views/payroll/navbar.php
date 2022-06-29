@@ -32,8 +32,8 @@
                     'segment' => 'run'
                 ],
                 [
-                    'title' => 'Contractor Payroll',
-                    'url' => '/run',
+                    'title' => 'Pay Contractors',
+                    'url' => '/contractor/run',
                     'slug' => '',
                     'icon' => 'bank',
                     'segment' => 'run'

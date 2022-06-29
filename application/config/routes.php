@@ -1379,28 +1379,6 @@ $route['send_manual_reminder_email_to_employee']['post'] = 'ajax/Email_manager/S
 $route['send_manual_reminder_email_to_manager']['post'] = 'ajax/Email_manager/SendManualEmailReminderToManager';
 
 
-
-//
-
-
-// // AJAX Get
-// $route['payroll/get_add_bank_account/(:num)']['get'] = 'payroll/Payroll/GetAddBankAccount/$1';
-// $route['payroll/get_edit_bank_account/(:num)/(:num)']['get'] = 'payroll/Payroll/GetEditBankAccount/$1/$2';
-// $route['cancel_payroll']['post'] = 'payroll/Payroll/CancelPayroll';
-
-// $route['add_employee_to_company']['get'] = 'payroll/Payroll/AddEmployeeToCompany';
-// $route['refresh_token']['post'] = 'payroll/Payroll/RefreshToken';
-// $route['payroll/add_employee_to_payroll']['post'] = 'payroll/Payroll/AddEmployeeToPayroll';
-// $route['payroll/add_bc_to_payroll']['post'] = 'payroll/Payroll/AddBankAccountToPayroll';
-// $route['payroll/add_company_payroll_bank_account']['post'] = 'payroll/Payroll/AddCompanyBankAccountToPayroll';
-// $route['payroll/edit_company_payroll_bank_account']['post'] = 'payroll/Payroll/EditCompanyBankAccountToPayroll';
-// $route['payroll/remove_company_bank_account']['post'] = 'payroll/Payroll/RemoveCompanyBankAccounts';
-// $route['payroll/update_bank_account_to_payroll']['post'] = 'payroll/Payroll/UpdateCompanyBankAccount';
-// //
-// $route['update_payroll_module']['post'] = 'manage_admin/Logs/UpdatePayroll';
-
-
-
 /**
  * Payroll routes
  */
@@ -1414,11 +1392,13 @@ $route["payroll/manage-signatory"]['get'] = "payroll/Payroll/ManageSignatories";
 $route["payroll/service-terms"]['get'] = "payroll/Payroll/ServiceTerms";
 $route["payroll/settings"]['get'] = "payroll/Payroll/Settings";
 $route["payroll/my"]['get'] = "payroll/Payroll/MyPayStubs";
+$route["payroll/contractors"]['get'] = "payroll/Payroll/contractors";
 $route["payroll/history"]['get'] = "payroll/Payroll/PayrollHistory";
 $route["payroll/history/(:num)"]['get'] = "payroll/Payroll/PayrollSingleHistory/$1";
 //
 $route["payroll/p/(:any)/(:num)"]['get'] = "payroll/Payroll/PrivateFile/$1/$2";
 
+$route['payroll/contractor/run']['get'] = 'payroll/Payroll/contractorPayrollRun';
 
 $route['company_tax']['get'] = 'payroll/Payroll/CompanyTax';
 $route['payroll/run']['get'] = 'payroll/Payroll/Run';
@@ -1427,7 +1407,6 @@ $route['payroll/run/(:any)']['get'] = 'payroll/Payroll/RunSingle/$1';
 
 // AJAX Get
 $route['payroll/employees']['get'] = 'payroll/Payroll_ajax/GetEmployees';
-
 
 $route['payroll/update_payroll']['post'] = 'payroll/Payroll/UpdatePayroll';
 $route['payroll/submit']['post'] = 'payroll/Payroll/SubmitPayroll';
@@ -1512,6 +1491,10 @@ $route['payroll_sync/(:num)']['get'] = 'payroll/Payroll_ajax/Sync/$1';
 $route['payroll/(:num)/admin']['post'] = "payroll/Payroll_onboard/AddAdmin/$1";
 $route['payroll/(:num)/service']['post'] = "payroll/Payroll_onboard/AcceptServiceTerms/$1";
 $route['payroll/(:num)/settings']['post'] = "payroll/Payroll_onboard/Settings/$1";
+$route['payroll/(:num)/contractor']['post'] = "payroll/Payroll_onboard/addContractor/$1";
+$route['payroll/(:num)/contractor']['get'] = "payroll/Payroll_ajax/getContractor/$1";
+$route['payroll/(:num)/contractor/(:num)']['get'] = "payroll/Payroll_ajax/getSingleContractor/$1/$2";
+$route['payroll/contractor/run']['post'] = "payroll/Payroll_ajax/contractorPayment";
 
 $route['payroll/onboard_company/(:num)']['post'] = "payroll/Payroll_onboard/OnboardCompany/$1";
 $route['payroll/onboard_employee/(:num)']['post'] = "payroll/Payroll_onboard/OnboardEmployee/$1";

@@ -1604,6 +1604,158 @@ if(!function_exists('CreateAdmin')){
         return $response;
     }
 }
+//
+if(!function_exists('CreateContractor')){
+    function CreateContractor($request, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('CreateContractor', $company['gusto_company_uid']),[
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return CreateContractor($request, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+//
+if(!function_exists('updateContractor')){
+    function updateContractor($request, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('updateContractor', $company['uuid']),[
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return updateContractor($request, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+//
+if(!function_exists('createContactorPayment')){
+    function createContactorPayment($request, $company){
+        //
+        $response =  MakeCall(
+            PayrollURL('createContactorPayment', $company['gusto_company_uid']),[
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return createContactorPayment($request, $company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
+
+//
+if(!function_exists('getContractors')){
+    function getContractors($company){
+        //
+        $response =  MakeCall(
+            PayrollURL('getContractors', $company['gusto_company_uid']),[
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Bearer '.($company['access_token']).'',
+                    'Content-Type: application/json'
+                )
+            ] 
+        );
+        //
+        if(isset($response['errors']['auth'])){
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if(isset($tokenResponse['access_token'])){
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getContractors($company);
+            } else{
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        }
+        //
+        return $response;
+    }
+}
 
 //
 if(!function_exists('AcceptServiceTerms')){
@@ -2035,7 +2187,7 @@ if(!function_exists('PayrollURL')){
         $urls['AcceptServiceTerms'] = 'v1/partner_managed_companies/'.($key).'/accept_terms_of_service';
         $urls['GetPaymentConfig'] = 'v1/companies/'.($key).'/payment_configs';
         $urls['UpdatePaymentConfig'] = 'v1/companies/'.($key).'/payment_configs';
-
+        
         // As of 2022
         $urls['GetCompany'] = 'v1/companies/'.($key);
         $urls['GetCompanyLocations'] = 'v1/companies/'.($key).'/locations';
@@ -2043,6 +2195,10 @@ if(!function_exists('PayrollURL')){
         $urls['GetCompanyBankInfo'] = 'v1/companies/'.($key).'/bank_accounts';
         $urls['GetCompanyPaymentInfo'] = 'v1/companies/'.($key).'/payment_configs';
         $urls['GetCompanyPaySchedules'] = 'v1/companies/'.($key).'/pay_schedules';
+        $urls['CreateContractor'] = 'v1/companies/'.($key).'/contractors';
+        $urls['updateContractor'] = 'v1/contractors/'.($key);
+        $urls['getContractors'] = 'v1/companies/'.($key).'/contractors';
+        $urls['createContactorPayment'] = 'v1/companies/'.($key).'/contractor_payments';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL).$urls[$index];
     }

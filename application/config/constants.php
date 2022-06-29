@@ -535,6 +535,7 @@ define('JOINING_DATE_LIMIT', '1960:+5');
 define('STARTING_DATE_LIMIT', '1960:+5');
 define('DATE', 'M d Y, D');
 define('DB_DATE', 'Y-m-d');
+define('ST_DATE', 'm/d/Y');
 define('DATE_WITH_TIME', 'M d, Y, D H:m:s');
 define('TIME', 'H:i:s');
 define('MD', 'H:i');
@@ -649,3 +650,4 @@ define('GUSTO_PAYROLL_TIME', '03:30 pm PDT');
 
 //
 define("WORK_WEEK_HOURS", 40);
+define("GUSTO_VERSION_ERROR", "This endpoint does not exist on this version of the Gusto API.");

@@ -1,6 +1,4 @@
-<?php
- defined('BASEPATH') || exit('No direct script access allowed');
-
+<?php defined('BASEPATH') || exit('No direct script access allowed');
 /**
  * 
  */
@@ -34,7 +32,6 @@ class Payroll_onboard extends CI_Controller
         //
         $this->datetime = date('Y-m-d H:i:s', strtotime('now'));
     }
-
 
     /**
      * Start the initial company onboard
@@ -119,6 +116,26 @@ class Payroll_onboard extends CI_Controller
     }
     
     /**
+     * Add contractor to payroll
+     * 
+     * @param number $companyId
+     * @return
+     */
+    public function addContractor($companyId)
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        if(isset($post['edit'])){
+            $eid = $this->updateContractorOnGusto($companyId, $post);
+        } else{
+            $eid = $this->createContractorOnGusto($companyId, $post);
+        }
+        //
+        return sendResponse(200, ['status' => $eid ? true: false]);
+    }
+    
+    /**
      * Accept terms
      * 
      * @param number $companyId
@@ -173,7 +190,7 @@ class Payroll_onboard extends CI_Controller
     public function Settings($companyId)
     {
         //
-        $post = $this->session->post(null, true);
+        $post = $this->input->post(null, true);
         //
         $request = [];
         $request['fast_payment_limit'] = $post['fast_payment_limit'];
@@ -239,7 +256,9 @@ class Payroll_onboard extends CI_Controller
                 'users.ssn',
                 'users.first_name',
                 'users.last_name',
+                'users.middle_name',
                 'users.email',
+                'users.joined_at',
                 'users.PhoneNumber',
                 'payroll_employees.payroll_employee_id'
             ]);
@@ -274,8 +293,11 @@ class Payroll_onboard extends CI_Controller
                         'user_id' => $employee['userId'],
                         'full_name_with_role' => remakeEmployeeName($employee),
                         'first_name' => $employee['first_name'],
+                        'middle_name' => $employee['middle_name'],
+                        'start_date' => $employee['joined_at'],
                         'last_name' => $employee['last_name'],
                         'email' => $employee['email'],
+                        'ssn' => $employee['ssn'],
                         'phone_number' => $employee['phone_number'],
                         'missing_fields' => $missing_fields
                     ];
@@ -1782,6 +1804,152 @@ class Payroll_onboard extends CI_Controller
         $ia['created_at'] = $ia['updated_at'] = $datetime;
         //
         $id = $this->pm->InsertPayroll('payroll_company_admin', $ia);
+        //
+        return $id;
+    }
+    
+    /**
+     * Create contractor on gusto
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function createContractorOnGusto($companyId, $post){
+        //
+        $request = $post;
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $request['start_date'] = formatDateToDB(
+            $request['start_date'],
+            ST_DATE,
+            DB_DATE
+        );
+        $id = $request['id'];
+        unset($request['id']);
+        //
+        $response = CreateContractor($request, $company_details);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0]['message'];
+            }
+            // Error took place
+            return false;
+        }
+        //
+        if(isset($response['message'])){
+            $errors = [
+                $response
+            ];
+            return false;
+        }
+        //
+        $datetime = date('Y-m-d H:i:s', strtotime('now'));
+        // Add entry to the payroll job
+        $ia = [];
+        $ia['id'] = $response['id'];
+        $ia['uuid'] = $response['uuid'];
+        $ia['version'] = $response['version'];
+        $ia['company_sid'] = $companyId;
+        $ia['employee_sid'] = $id;
+        $ia['type'] = $post['type'];
+        $ia['wage_type'] = $post['wage_type'];
+        $ia['business_name'] = $post['business_name'];
+        $ia['ein'] = $post['ein'];
+        $ia['first_name'] = $post['first_name'];
+        $ia['middle_initial'] = $post['middle_initial'];
+        $ia['last_name'] = $post['last_name'];
+        $ia['start_date'] = $post['start_date'];
+        $ia['email_address'] = $post['email'];
+        $ia['self_onboarding'] = $post['self_onboarding'];
+        $ia['created_at'] = $ia['updated_at'] = $datetime;
+        //
+        $id = $this->pm->InsertPayroll('payroll_company_contractors', $ia);
+        //
+        return $id;
+    }
+    
+    /**
+     * Create contractor on gusto
+     * 
+     * @param number $companyId
+     * @param array  $post
+     * 
+     * @return
+     */
+    private function updateContractorOnGusto($companyId, $post){
+        //
+        $record = $this->pm->GetPayrollColumn(
+            'payroll_company_contractors', [
+                'sid' => $post['id']
+            ],
+            'version, uuid',
+            false
+        );
+        //
+        $record['version'] = $this->pm->syncContractorVersion($companyId, $record['uuid']);
+        //
+        $request = $post;
+        $request['version'] = $record['version'];
+        // Get company details
+        $company_details = $this->pm->GetPayrollCompany($companyId);
+        //
+        $company_details['uuid'] = $record['uuid'];
+        //
+        $request['start_date'] = formatDateToDB(
+            $request['start_date'],
+            ST_DATE,
+            DB_DATE
+        );
+        $id = $request['id'];
+        unset($request['id']);
+        //
+        $response = updateContractor($request, $company_details);
+        //
+        $errors = [];
+        //
+        if (isset($response['errors'])) {
+            $errors = MakeErrorArray($response['errors']);
+        }
+        //
+        if(isset($response['message'])){
+            //
+            $errors = [
+                $response['message']
+            ];
+        }
+        //
+        if($errors){
+            // Error took place
+            SendResponse(200, [
+                'status' => false,
+                'error' => $errors
+            ]);
+        }
+        //
+        $datetime = date('Y-m-d H:i:s', strtotime('now'));
+        // Add entry to the payroll job
+        $ia = [];
+        $ia['type'] = $post['type'];
+        $ia['wage_type'] = $post['wage_type'];
+        $ia['business_name'] = $post['business_name'];
+        $ia['ein'] = $post['ein'];
+        $ia['first_name'] = $post['first_name'];
+        $ia['middle_initial'] = $post['middle_initial'];
+        $ia['last_name'] = $post['last_name'];
+        $ia['start_date'] = $post['start_date'];
+        $ia['hourly_rate'] = $post['hourly_rate'];
+        $ia['version'] = $response['version'];
+        $ia['self_onboarding'] = $post['self_onboarding'];
+        $ia['updated_at'] = $datetime;
+        //
+        $this->pm->UpdatePayroll('payroll_company_contractors', $ia, ['sid' => $id]);
         //
         return $id;
     }

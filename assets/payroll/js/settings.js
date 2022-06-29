@@ -16,7 +16,7 @@ $(function Settings() {
         //
         $('.jsRequiredLimit').show(0);
         //
-        if ($(this).val() === '2-day') {
+        if ($(this).val() === '4-day') {
             $('.jsRequiredLimit').hide(0);
         }
     });
@@ -37,7 +37,7 @@ $(function Settings() {
         //
         var _this = $(this);
         //                               
-        if (obj.payment_speed == '2-day' && !fast_speed_limit) {
+        if (obj.payment_speed == '2-day' && !obj.fast_speed_limit) {
             return alertify.alert(
                 'Warning!',
                 'Fast payment limit is required.',
@@ -47,15 +47,18 @@ $(function Settings() {
         //
         $(this).text('Please wait, while we are updating.');
         //
-        console.log(obj);
-        //
         xhr = $.post(
                 baseURI + 'payroll/' + companyId + '/settings',
                 obj
             )
-            .success(function(response) {
+            .success(function() {
                 //
                 xhr = null;
+                alertify.alert(
+                    'Success!',
+                    'You have successfully update the payroll setting.',
+                    ECB
+                )
                 //
                 _this.html('<i class="fa fa-edit" aria-hidden="true"></i>&nbsp;Update');
             })

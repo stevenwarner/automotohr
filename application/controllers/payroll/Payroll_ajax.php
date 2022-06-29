@@ -1780,4 +1780,82 @@ class Payroll_ajax extends CI_Controller
         //
         return true;
     }
+
+    /**
+     * 
+     */
+    public function getContractor($companyId){
+        //
+        $results = $this->pm->GetPayrollColumns(
+            'payroll_company_contractors', [
+                'company_sid' => $companyId
+            ],
+            '*'
+        );
+        //
+        SendResponse(200, $results);
+    }
+    
+    /**
+     * 
+     */
+    public function getSingleContractor($companyId, $contractorId){
+        //
+        $result = $this->pm->GetPayrollColumn(
+            'payroll_company_contractors', [
+                'sid' => $contractorId,
+                'company_sid' => $companyId
+            ],
+            '*',
+            false
+        );
+        //
+        SendResponse(200, $result);
+    }
+
+    /**
+     * 
+     */
+    public function contractorPayment(){
+        //
+        $post = $this->input->post(NULL, TRUE);
+        //
+        $companyCredentials = $this->pm->GetGustoCompanyData($this->session->userdata('logged_in')['company_detail']['sid']);
+        //
+        $companyCredentials = [
+            'gusto_company_uid' => $companyCredentials['gusto_company_uid'],
+            'access_token' => $companyCredentials['access_token'],
+            'refresh_token' => $companyCredentials['refresh_token'],
+        ];
+        //
+        $report = [];
+        //
+        foreach($post['contractors'] as $id => $contractor){
+            //
+            $report[$id] = false;
+            //
+            $request = [];
+            $request['date'] = formatDateToDB($post['date'], ST_DATE, DB_DATE);
+            $request['contractor_id'] = $this->pm->GetPayrollColumn('payroll_company_contractors', ['sid' => $id], 'id');
+            $request['wage'] = $contractor['wage'];
+            $request['hours'] = $contractor['hours'];
+            $request['bonus'] = $contractor['bonus'];
+            $request['reimbursement'] = $contractor['reimbursement'];
+            //
+            $response = createContactorPayment($request, $companyCredentials);
+            //
+            if(isset($response['errors'])){
+                $report[$id] = MakeErrorArray($response['errors']);
+            } else{
+                $report[$id] = true;
+            }
+        }
+        //
+        SendResponse(
+            200,
+            [
+                'report' => $report
+            ]
+        );
+    }
 }
