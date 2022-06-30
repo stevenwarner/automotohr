@@ -166,11 +166,26 @@
         $this->db->where('company_id', $companyId);
         $this->db->where('meta_key', $metaKey);
 
+        $metacolum = unserialize($metaValue);
+     
         $data =  array(
             'meta_value' => $metaValue
         );
 
         $this->db->update($this->tableName, $data);
+        //
+    if (isset($metacolum['enable_header_overlay'])) {
+
+        $data_2 =  array(
+            'header_video_overlay' => $metacolum['enable_header_overlay']
+        );
+        
+        $this->db->where('user_sid', $companyId);
+        $this->db->update('portal_employer', $data_2);
+    }
+
+
+     
     }
 
     /**

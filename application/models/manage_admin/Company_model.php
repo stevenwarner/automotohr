@@ -702,6 +702,36 @@ class Company_model extends CI_Model {
         $data['header_video_overlay'] = intval($header_video_overlay_status);
         $this->db->where('user_sid', $company_sid);
         $this->db->update('portal_employer', $data);
+
+        //
+        $this->db->select('company_id, meta_key, meta_value');
+        $this->db->where('meta_key', 'site_settings');
+        $this->db->where('company_id', $company_sid);
+        $result = $this->db->get('portal_themes_meta_data')->result_array();
+    
+        if (!empty($result)) {
+        
+            foreach ($result as $row) {
+                $meta_values = unserialize($row['meta_value']);
+                if (isset($meta_values['enable_header_overlay'])) {
+                      $metaValue =  [
+                        'enable_header_bg' => $meta_values['enable_header_bg'],
+                        'enable_header_overlay' => intval($header_video_overlay_status)
+                      ];
+                    
+                    $data2 =  array(
+                        'meta_value' => serialize($metaValue)
+                    );
+               
+                    $this->db->where('company_id', $row['company_id']);
+                    $this->db->where('meta_key', 'site_settings');
+                    $this->db->update('portal_themes_meta_data', $data2);
+                }
+            }
+        }
+
+
+
     }
 
     function set_eeo_footer_text_status($company_sid, $eeo_footer_text_status) {

@@ -11,14 +11,27 @@ class Testing extends CI_Controller
     }
 
 
- // Reset Default Categories is default status
-    public function reset_default_categories(){
-       
-        $this->db->where('company_sid', 0);
-        $this->db->or_where('default_category_sid <>', 0);
-        $this->db->update('documents_category_management', array('is_default'=>1));
 
+//
+    public function sync_header_video_overlay()
+    {
+        $this->db->select('company_id, meta_key, meta_value');
+        $this->db->where('meta_key', 'site_settings');
+        $result = $this->db->get('portal_themes_meta_data')->result_array();
+
+        if (!empty($result)) {
+            foreach ($result as $row) {
+                $meta_values = unserialize($row['meta_value']);
+                if (isset($meta_values['enable_header_overlay'])) {
+                    $data =  array(
+                        'header_video_overlay' => $meta_values['enable_header_overlay']
+                    );
+
+                    $this->db->where('user_sid', $row['company_id']);
+                    $this->db->update('portal_employer', $data);
+                }
+            }
+        }
+    
     }
-
-
 }
