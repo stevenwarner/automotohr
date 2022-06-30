@@ -13726,7 +13726,7 @@ class Hr_documents_management extends Public_Controller
             'Msg' => 'Invalid Request'
         ];
         //
-        $approver_reference = $post['approver_reference'];
+        $approver_reference = isset($post['approver_sid']) ? $post['approver_sid'] : $post['approver_reference'];
         $approver_action = $post['approver_action'];
         $approver_note = $_POST['approver_note'];
         $document_sid = $post['document_sid'];
