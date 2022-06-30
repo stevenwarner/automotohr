@@ -80,8 +80,8 @@ class Direct_deposit_model extends CI_Model
         //
         if($company_sid > 0) $this->db->where('bank_account_details.company_sid', $company_sid);
         //
-        $a = $this->db->get('bank_account_details');
-        return $a->count_all_results();
+        // $a = $this->db->get('bank_account_details');
+        return $this->db->count_all_results('bank_account_details');
     }
 
     //
