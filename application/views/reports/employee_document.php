@@ -356,11 +356,11 @@
                 //
                 console.log({record})
 
-                var authSigners = '';
-                //
-                if(record.authorize_signers){
-                    
-                }
+                var
+                authSigners = getEmployeeTable(record.authorize_signers),
+                confEmployees = getEmployeeTable(record.confidential_employees),
+                allowedEmployees = getEmployeeTable(record.allowed_employees),
+                conCLS = record.is_confidential == '1' ? 'success' : 'danger';
 
                 rows += '<tr>';
                 rows += '   <td class="vam">';
@@ -370,13 +370,58 @@
                 rows += '       <span>'+(record.document_title)+'</span>';
                 rows += '   </td>';
                 rows += '   <td class="vam">';
-                rows += '       <span>'+(record.document_title)+'</span>';
+                rows += '       <span>'+(authSigners)+'</span>';
+                rows += '   </td>';
+                rows += '   <td class="vam text-'+(conCLS)+'">';
+                rows += '       <strong>'+(record.is_confidential == '1' ? 'YES' : 'NO')+'</strong>';
+                rows += '   </td>';
+                rows += '   <td class="vam">';
+                rows += '       <span>'+(confEmployees)+'</span>';
+                rows += '   </td>';
+                rows += '   <td class="vam">';
+                rows +=     getEmployeeTable(record.allowed_roles, 'Roles', false);
+                rows += '   <hr />';
+                rows +=     getEmployeeTable(record.allowed_departments, 'Departments', false);
+                rows += '   <hr />';
+                rows +=     getEmployeeTable(record.allowed_teams, 'Teams', false);
+                rows += '   </td>';
+                rows += '   <td class="vam">';
+                rows += '       <span>'+(getEmployeeTable(record.document_approval_employees))+'</span>';
                 rows += '   </td>';
                 rows += '</tr>';
             });
             //
             dataTarget.html(rows);
             loader(false);
+        }
+
+        function getEmployeeTable(data, heading, doCheck){
+            //
+            if(!data){
+                return '';
+            }
+            //
+            var tmp = typeof data === 'string' ? data.split(',') : data;
+            //
+            var rows = '';
+            //
+            //
+            rows += '<table class="table table-bordered table-striped">';
+            if(heading !== undefined){
+                rows += '     <tr>';
+                rows += '       <th class="vam">'+(heading)+'<th>';
+                rows += '     </tr>';
+            }
+            tmp.map(function(singEmp){
+                rows += '     <tr>';
+                rows += '         <td class="vam">';
+                rows += '             <span>'+(doCheck === undefined ? localEmployeeONJ[singEmp] : singEmp)+'</span>';
+                rows += '         </td>';
+                rows += '     </tr>';
+            });
+            rows += '</table>';
+            //
+            return rows;
         }
 
         // Pagination

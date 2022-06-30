@@ -3034,35 +3034,143 @@ class Reports extends Public_Controller
             $post['companySid'] = $company_sid;
 
             $post['employeeSid'] = $post['dd-employee'];
-            $post['documentStatus'] = $post['dd-status-doc'];
+            $post['employeeStatus'] = $post['dd-status-emp'];
             // Fetch Status
             $employeedocument = $this->reports_model->getEmployeeDocument($post, true);
 
             if (sizeof($employeedocument['Data'])) {
 
-                // header('Content-Type: text/csv; charset=utf-8');
-                // header("Content-Disposition: attachment; filename=Employee_document_report_" . (date('YmdHis')) . ".csv");
-                // $output = fopen('php://output', 'w');
-                // fputcsv($output, array("Exported By: " . $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name'] . "\n" . " Export Date: " . date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR));
 
-                // fputcsv($output, array('Employee', 'Document Title', 'isconfidential', 'confidentialemployees', 'Visible To Payroll' , 'Approval Flow'));
+                header('Content-Type: text/csv; charset=utf-8');
+                header("Content-Disposition: attachment; filename=document_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
+                $output = fopen('php://output', 'w');
+                fputcsv($output, array(
+                    "Exported By", $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name']
+                ));
+                fputcsv($output, array(
+                    "Export Date", date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
+                ));
 
-                // foreach ($employeedocument['Data'] as $row_document) {
-                //     $a = array();
-                //     $a[] = remakeEmployeeName($row_document);
-                //     $a[] = $row_document['document_title'];
-                //     $a[] = strip_tags($row_document['authorized_manager_name']) != '' ? strip_tags($row_document['authorized_manager_name']) : '';
-                //     $a[] = $row_document['is_confidential'] == '1' ? 'Yes' : 'No';
-                //     $a[] = strip_tags($row_document['confidentialemployees']) != '' ? strip_tags($row_document['confidentialemployees']) : '';
-                //     $a[] = $row_document['visible_to_payroll'] == '1' ? 'Yes' : 'No' . strip_tags($row_document['allowed_employees_name']) . strip_tags($row_document['is_available_for_na']) . strip_tags($row_document['allowed_departments_name']) . strip_tags($row_document['allowed_teams_name']);
-                //     $a[] = strip_tags($row_document['approval_employees_name']) != '' ? strip_tags($row_document['approval_employees_name']) : '';
-                   
-                //     // fputcsv($output, $a);
-                // }
+                fputcsv($output, 
+                array(
+                    'Employee',
+                    'Document Title', 
+                    'Is Confidential?', 
+                    'Confidential Employees', 
+                    'Authorize Signers', 
+                    'Visible To Payroll', 
+                    'Allowed Departments', 
+                    'Allowed Teams', 
+                    'Allowed Employees', 
+                    'Approval Flow'
+                ));
 
-                // fclose($output);
-
-                // exit;
+                //
+                $rows = $employeedocument['Data'];
+                //
+                $employeeList = '';
+                //
+                $us = array_column($rows, 'user_sid');
+                //
+                if($us){
+                    $employeeList .= implode(',', $us).',';
+                }
+                //
+                $ce = array_column($rows, 'confidential_employees');
+                //
+                if($ce){
+                    $employeeList .= implode(',', $ce).',';
+                }
+                $as = array_column($rows, 'authorize_signers');
+                //
+                if($as){
+                    $employeeList .= implode(',', $as).',';
+                }
+                $ae = array_column($rows, 'allowed_employees');
+                //
+                if($ae){
+                    $employeeList .= implode(',', $ae).',';
+                }
+                $ae = array_column($rows, 'document_approval_employees');
+                //
+                if($ae){
+                    $employeeList .= implode(',', $ae).',';
+                }
+                //
+                $employeeList = array_values(array_unique(explode(',', rtrim($employeeList, ','))));
+                $employeeOBJ = $this->reports_model->getEmployeeByIdsOBJ($employeeList);
+                //
+                foreach($rows as $row){
+                    //
+                    $a = [];
+                    $a[] = $employeeOBJ[$row['user_sid']];
+                    $a[] = $row['document_title'];
+                    $a[] = $row['is_confidential'] == '1' ? "YES" : "NO";
+                    //
+                    if($row['confidential_employees']){
+                        //
+                        $tmp = explode(',', $row['confidential_employees']);
+                        //
+                        $b = '';
+                        foreach($tmp as $t){
+                            $b .= $employeeOBJ[$t]."\n\n";
+                        }
+                        //
+                        $a[] = $b;
+                    } else{
+                        $a[] = '-';
+                    }
+                    //
+                    if($row['authorize_signers']){
+                        //
+                        $tmp = explode(',', $row['authorize_signers']);
+                        //
+                        $b = '';
+                        foreach($tmp as $t){
+                            $b .= $employeeOBJ[$t]."\n\n";
+                        }
+                        //
+                        $a[] = $b;
+                    } else{
+                        $a[] = '-';
+                    }
+                    $a[] = $row['visible_to_payroll'] == '1' ? "YES" : "NO";
+                    $a[] = $row['allowed_departments'] ? implode("\n\n", $row['allowed_departments']) : '-';
+                    $a[] = $row['allowed_teams'] ? implode("\n\n", $row['allowed_teams']) : '-';
+                    //
+                    if($row['allowed_employees']){
+                        //
+                        $tmp = explode(',', $row['allowed_employees']);
+                        //
+                        $b = '';
+                        foreach($tmp as $t){
+                            $b .= $employeeOBJ[$t]."\n\n";
+                        }
+                        //
+                        $a[] = $b;
+                    } else{
+                        $a[] = '-';
+                    }
+                    //
+                    if($row['document_approval_employees']){
+                        //
+                        $tmp = explode(',', $row['document_approval_employees']);
+                        //
+                        $b = '';
+                        foreach($tmp as $t){
+                            $b .= $employeeOBJ[$t]."\n\n";
+                        }
+                        //
+                        $a[] = $b;
+                    } else{
+                        $a[] = '-';
+                    }
+                    //
+                    fputcsv($output, $a);
+                }
+                
+                fclose($output);
+                exit;
             }
         }
         //
