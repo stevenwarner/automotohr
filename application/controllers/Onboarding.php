@@ -5671,8 +5671,9 @@ class Onboarding extends CI_Controller
                 $offer_letter_sid = $this->input->post('offer_letter_select');
                 $letter_body = $this->input->post('letter_body');
                 $offer_letter_type = $this->input->post('letter_type');
-
+                //
                 $post = $this->input->post(NULL, TRUE);
+                //
                 $do_descpt='';
 
                 if (!empty($letter_body) || $offer_letter_type == "uploaded") {
@@ -5779,8 +5780,8 @@ class Onboarding extends CI_Controller
             // Assigner handling
             if ($post['has_approval_flow'] == 'on') {
                 $data_to_insert['has_approval_flow'] = 1;
-                $data_to_insert['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
-                $data_to_insert['document_approval_note'] = $post['assigner_note'];
+                $data_to_insert['document_approval_note'] = $post['approvers_note'];
+                $data_to_insert['document_approval_employees'] = isset($post['approvers_list']) && $post['approvers_list'] ? implode(',', $post['approvers_list']) : '';
             }
         
         

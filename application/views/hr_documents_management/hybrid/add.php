@@ -53,6 +53,7 @@
                                                 <?php echo form_error('document_title'); ?>
                                             </div>
                                         </div>
+
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <?php $field_id = 'document_description'; ?>
@@ -63,6 +64,7 @@
                                                 <?php echo form_error($field_id); ?>
                                             </div>
                                         </div>
+
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <label>Browse Document<?php echo !isset($document_info) ? '<span class="staric">*</span>' : ''; ?></label>
@@ -70,6 +72,7 @@
 
                                             </div>
                                         </div>
+
                                         <?php if (!empty($authorized_signature)) { ?>
                                             <div class="row">
                                                 <div class="col-xs-12">
@@ -77,6 +80,7 @@
                                                 </div>
                                             </div>
                                         <?php } ?>
+
                                         <div class="row">
                                             <div class="col-xs-12 margin-top">
                                                 <label>Include in Onboarding<span class="staric">*</span></label>
@@ -91,6 +95,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <label>Acknowledgment Required</label>
@@ -107,6 +112,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <label>Download Required</label>
@@ -123,6 +129,7 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <label>Signature Required</label>
@@ -137,13 +144,16 @@
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <label>Sort Order</label>
                                                 <input type="number" name="sort_order" class="invoice-fields" value="<?php if (isset($document_info['sort_order'])) echo $document_info['sort_order']; ?>">
                                             </div>
                                         </div>
+
                                         <br>
+
                                         <div class="row">
                                             <div class="col-xs-12">
                                                 <div class="hr-box">
@@ -305,6 +315,7 @@
                                             </div>
                                             <br>
                                         <?php } ?>
+
                                         <?php if (isset($document_info['sid'])) { ?>
                                             <div class="row">
                                                 <div class="col-xs-12">
@@ -319,7 +330,8 @@
                                         <?php } ?>
 
                                         <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
-                                        <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+
+                                        <?php $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowAHD", "containerIdx" => "jsApproverFlowContainerAHD", "addEmployeeIdx" => "jsAddDocumentApproversAHD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAHD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAHD", "approverNoteIdx" => "jsApproversNoteAHD", 'mainId' => 'testApproversAHD']); ?>
 
                                         <div class="row">
                                             <div class="col-xs-12">
@@ -470,8 +482,7 @@
                                                 }
                                                 ?>
                                                 <button type="submit" id="gen_boc_btn" class="btn btn-success" onclick="validate_form();"><?php echo $btn_text; ?></button>
-                                                <!-- <button type="button" id="auth_sign_btn" class="btn btn-success" onclick="check_authorized_signature();"><?php //echo $btn_text; 
-                                                                                                                                                                ?></button> -->
+                                                <!-- <button type="button" id="auth_sign_btn" class="btn btn-success" onclick="check_authorized_signature();"><?php //echo $btn_text; ?></button> -->
                                                 <a href="<?php echo base_url('hr_documents_management'); ?>" class="btn black-btn">Cancel</a>
                                             </div>
                                         </div>
@@ -571,9 +582,24 @@
 
 <link rel="stylesheet" href="<?= base_url('assets/mFileUploader/index.css'); ?>" />
 <script src="<?= base_url('assets/mFileUploader/index.js'); ?>"></script>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
+
 <script>
     $(document).ready(function() {
-
+        //
+        var approverSection = approverSection = {
+            appCheckboxIdx: '.jsHasApprovalFlowAHD',
+            containerIdx: '.jsApproverFlowContainerAHD',
+            addEmployeeIdx: '.jsAddDocumentApproversAHD',
+            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAHD',
+            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAHD',
+            approverNoteIdx: '.jsApproversNoteAHD',
+            employeesList: <?= json_encode($employeesList); ?>,
+            documentId: 0
+        };
+        //
+        $("#jsAddHybridDocument").documentApprovalFlow(approverSection);
+        //
         var pre_selected = '<?php echo !empty($document_info['video_url']) ? $document_info['video_source'] : ''; ?>';
 
         $('input[name="assign-in-days"]').val(0);

@@ -149,7 +149,18 @@
 			</div>
 			<!-- 9 -->
 
-			<?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+			<?php //$this->load->view('hr_documents_management/partials/approvers_section'); ?>
+			<?php $this->load->view(
+                'hr_documents_management/partials/test_approvers_section', 
+                [
+                    "appCheckboxIdx" => "jsHasApprovalFlowModal", 
+                    "containerIdx" => "jsApproverFlowContainerModal", 
+                    "addEmployeeIdx" => "jsAddDocumentApproversModal", 
+                    "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxModal", 
+                    "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxModal", 
+                    "approverNoteIdx" => "jsApproversNoteModal"
+                ]
+            ); ?>
 
 			<br>
 

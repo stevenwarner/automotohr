@@ -89,6 +89,9 @@ if (isset($assigned_offer_letter_sid)) {
                                         <input type="hidden" id="selected_letter_type" name="letter_type" value="" />
                                         <input type="hidden" id="selected_document_original_name" name="document_original_name" value="">
                                         <input type="hidden" id="selected_document_s3_name" name="document_s3_name" value="">
+                                        <!-- <input type="hidden" id="has_approval_flow" name="has_approval_flow" value="0">
+                                        <input type="hidden" id="approval_note" name="approval_note" value="">
+                                        <input type="hidden" id="approvers" name="approvers" value=""> -->
                                         <div id="offer_letter" class="offer-letter">
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -151,8 +154,6 @@ if (isset($assigned_offer_letter_sid)) {
                                                     </div>
                                                 </div>
                                             </div>
-
-
 
                                             <div id="generated_offer_letter" style="display: none">
                                                 <div class="row">
@@ -268,7 +269,18 @@ if (isset($assigned_offer_letter_sid)) {
                                                 </div>
                                             </div>
                                             <br>
-                                            <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                            <?php //$this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                            <?php $this->load->view(
+                                                'hr_documents_management/partials/test_approvers_section', 
+                                                [
+                                                    "appCheckboxIdx" => "jsHasApprovalFlowPage", 
+                                                    "containerIdx" => "jsApproverFlowContainerPage", 
+                                                    "addEmployeeIdx" => "jsAddDocumentApproversPage", 
+                                                    "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxPage", 
+                                                    "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxPage", 
+                                                    "approverNoteIdx" => "jsApproversNotePage"
+                                                ]
+                                            ); ?>
                                             <br>
 
                                             <?php $this->load->view('hr_documents_management/partials/settings', ['is_confidential' =>  $document_info['is_confidential']]); ?>
@@ -430,8 +442,6 @@ if (isset($assigned_offer_letter_sid)) {
                                                 </div>
                                             </div>
 
-
-
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right" style="top: 0;">
                                                     <div class="form-group">
@@ -451,9 +461,9 @@ if (isset($assigned_offer_letter_sid)) {
                                                 </div>
                                             </div>
                                         </div>
+                                    </form>
                                 </div>
                             </div>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -471,10 +481,10 @@ if (isset($assigned_offer_letter_sid)) {
 <?php $this->load->view('iframeLoader'); ?>
 <?php $this->load->view('hr_documents_management/hybrid/scripts'); ?>
 <?php $this->load->view('hr_documents_management/scripts/index', ['offerLetters' => $allOfferLetters]); ?>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
 <!-- Main End -->
 <script type="text/javascript">
     $(document).ready(function() {
-
         //
         $('#offer_letter_select').select2();
         //
@@ -494,6 +504,17 @@ if (isset($assigned_offer_letter_sid)) {
             var
                 l = [],
                 i = 0,
+                approverPrefill = {},
+                approverSection = {
+                    appCheckboxIdx: '.jsHasApprovalFlowPage',
+                    containerIdx: '.jsApproverFlowContainerPage',
+                    addEmployeeIdx: '.jsAddDocumentApproversPage',
+                    intEmployeeBoxIdx: '.jsEmployeesadditionalBoxPage',
+                    extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxPage',
+                    approverNoteIdx: '.jsApproversNotePage',
+                    employeesList: <?= json_encode($employeesList); ?>,
+                    documentId: 0
+                },
                 il = offerLetters.length;
             for (i; i < il; i++) {
                 if (offerLetters[i]['sid'] == sid) l = offerLetters[i];
@@ -509,8 +530,19 @@ if (isset($assigned_offer_letter_sid)) {
                 l.letter_body = l.document_description;
                 l.uploaded_document_s3_name = l.document_s3_name;
                 l.uploaded_document_original_name = l.document_original_name;
+                approverSection.documentId = l.sid
+            } 
+            //
+            if (l.has_approval_flow == 1) {
+                approverPrefill.isChecked = true;
+                approverPrefill.approverNote = l.document_approval_note;
+                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                //
+                approverSection.prefill = approverPrefill;
             }
-            console.log(l);
+               console.log(l) 
+            //
+            $("#jsOfferLetterPage").documentApprovalFlow(approverSection);
             //
             $('.jsVisibleToPayroll').prop('checked', l.visible_to_payroll);
             $('#jsRoles').select2('val', l.allowed_roles && l.allowed_roles != 'null' ? l.allowed_roles.split(',') : null);
@@ -533,25 +565,20 @@ if (isset($assigned_offer_letter_sid)) {
                     $('#confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
                 }
             }
-
-            // Approval flow 
-            $(' [name="has_approval_flow"]').prop('checked', false);
-            $(' .jsApproverFlowContainer').hide();
-            $(' [name="assigner_note"]').val('');
-            //
-            if (l.has_approval_flow == 1) {
-
-                $(' [name="has_approval_flow"]').prop('checked', l.has_approval_flow == 1 ? true : false);
-                $(' .jsEmployeesadditionalBox').html('');
-                $(' .jsApproverFlowContainer').show();
-                $(' [name="assigner_note"]').val(l.document_approval_note);
-                DocumentApproverPrefill(l.document_approval_employees, 0);
-            }
-
+            
             $('#js-signers').select2({
                 closeOnSelect: false
             });
-            $('#js-signers').select2('val', l.signers != null ? l.signers.split(',') : null);
+            //
+            var authManagers = null;
+            //
+            if (l.managersList) {
+                authManagers = l.managersList != null ? l.managersList.split(',') : null;
+            } else {
+                authManagers = l.signers != null ? l.signers.split(',') : null;
+            }
+
+            $('#js-signers').select2('val', authManagers);
 
             $('#selected_letter_type').val(l.letter_type);
             //
@@ -598,16 +625,10 @@ if (isset($assigned_offer_letter_sid)) {
                 //
                 $('#letter_body').val('');
             }
-
-
-
-
         }
 
 
         $('#offer_letter_select').on('change', function() {
-
-
             loadOfferLetterView($(this).val());
             return;
             var selected_offer_letter_type = $(this).find(':selected').attr('data-olt');
@@ -652,7 +673,14 @@ if (isset($assigned_offer_letter_sid)) {
     });
 
     $('.assign-offer-letter').on('click', function() {
-
+        // var approverInfo = $("#jsOfferLetterPage").documentApprovalFlow("get");
+        // //
+        // if (approverInfo.isChecked === true) {
+        //     $('#has_approval_flow').val(1);
+        //     $('#approval_note').val(approverInfo.approverNote);
+        //     $('#approvers').val(approverInfo.approversList.toString());
+        // }
+        //
         var btn_type = $(this).text();
         if (btn_type == 'Save' || btn_type == 'Reassign') {
             $('#perform_action').val('save_offer_letter');
@@ -732,15 +760,13 @@ if (isset($assigned_offer_letter_sid)) {
     $('#confidentialSelectedEmployees').select2();
 
     $(document).on('click', '[name="setting_is_confidential"]', function() {
-        //
-
+        // 
         if (!$(this).prop('checked')) {
             $('#confidentialSelectedEmployeesdiv').hide();
             $('#confidentialSelectedEmployees').select2('val', null);
         } else {
             $('#confidentialSelectedEmployeesdiv').show();
         }
-
     });
 
 

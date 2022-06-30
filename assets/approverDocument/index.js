@@ -2,31 +2,27 @@
  * @author: Mubashir Ahmed
  * @version: 1.0
  * @package: Approval flow
- * @description: Upload files using drag an drop / choose from file.
- *               It depends on jQuery.
+ * @description: .
  * @example:
  * 
- *    $("#reference").documentApprovalFlow({
- *            appCheckbox_idx: '.jsHasApprovalFlow1', //
- *            container_idx: '.jsApproverFlowContainer1', //
- *            addEmployee_idx: '.jsAddDocumentApprovers1', //
- *            intEmployeeBox_idx: '.jsEmployeesadditionalBox1', //
- *            extEmployeeBox_idx: '.jsEmployeesadditionalExternalBox1', //
- *            approverNote_idx: '.jsApproversNote1', // 
- *            employees_list: employee_list, //
- *            prefill:{ // optional
- *                isChecked: true,
- *                approverNote: "Sdasdas",
- *                approversList: [15777, 15778]
- *            },
- *            document_id: 0 //
- *        });
- *  })
+ *  $("#reference").documentApprovalFlow({
+ *     appCheckboxIdx: '.jsHasApprovalFlow1', //
+ *     containerIdx: '.jsApproverFlowContainer1', //
+ *     addEmployeeIdx: '.jsAddDocumentApprovers1', //
+ *     intEmployeeBoxIdx: '.jsEmployeesadditionalBox1', //
+ *     extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBox1', //
+ *     approverNoteIdx: '.jsApproversNote1', // 
+ *     employeesList: employee_list, //
+ *     prefill:{ // optional
+ *        isChecked: true,
+ *        approverNote: "Sdasdas",
+ *        approversList: [15777, 15778]
+ *     },
+ *     document_id: 0 //
+ *  });
+ *
  * 
- *  $('#reference').documentApprovalFlow('get'); // It will return the uploaded file object
- *                                                    with an addition index of 'hasError'.
- *                                                    hasError will be true there was an error
- *                                                    with file and false when everything is okay.
+ *  $('#reference').documentApprovalFlow('get'); // It will return the approver object which includes .
  */
 
 (function ($) {
@@ -60,30 +56,30 @@
         //
         instances[_this.selector] = returnObj;
         //
-        options['appCheckbox_idx'] = opt.appCheckbox_idx !== undefined ? opt.appCheckbox_idx : ".jsCheckBox";
-        options['container_idx'] = opt.container_idx !== undefined ? opt.container_idx : ".jsMainContainer";
-        options['addEmployee_idx'] = opt.addEmployee_idx !== undefined ? opt.addEmployee_idx : ".jsAddApprovers";
-        options['intEmployeeBox_idx'] = opt.intEmployeeBox_idx !== undefined ? opt.intEmployeeBox_idx : ".jsIntApproverContainer";
-        options['extEmployeeBox_idx'] = opt.extEmployeeBox_idx !== undefined ? opt.extEmployeeBox_idx : ".jsExtApproverContainer";
-        options['approverNote_idx'] = opt.approverNote_idx !== undefined ? opt.approverNote_idx : ".jsApproverNoteContainer";
-        options['employees_list'] = opt.employees_list !== undefined ? opt.employees_list : [];
-        options['document_id'] = opt.document_id !== undefined ? opt.document_id : 0;
-
+        options['appCheckboxIdx'] = opt.appCheckboxIdx !== undefined ? opt.appCheckboxIdx : ".jsCheckBox";
+        options['containerIdx'] = opt.containerIdx !== undefined ? opt.containerIdx : ".jsMainContainer";
+        options['addEmployeeIdx'] = opt.addEmployeeIdx !== undefined ? opt.addEmployeeIdx : ".jsAddApprovers";
+        options['intEmployeeBoxIdx'] = opt.intEmployeeBoxIdx !== undefined ? opt.intEmployeeBoxIdx : ".jsIntApproverContainer";
+        options['extEmployeeBoxIdx'] = opt.extEmployeeBoxIdx !== undefined ? opt.extEmployeeBoxIdx : ".jsExtApproverContainer";
+        options['approverNoteIdx'] = opt.approverNoteIdx !== undefined ? opt.approverNoteIdx : ".jsApproverNoteContainer";
+        options['employeesList'] = opt.employeesList !== undefined ? opt.employeesList : [];
+        options['documentId'] = opt.documentId !== undefined ? opt.documentId : 0;
         //
+        // makeView is a function which is used to prefill previous approver data
         this.makeView = function () {
             //
             var obj = instances[_this.selector];
             //
-            $(options['appCheckbox_idx']).prop('checked', obj.isChecked);
-            $(options['approverNote_idx']).val(obj.approverNote);
-            $(options['intEmployeeBox_idx']).html('');
-            $(options['container_idx']).show();
+            $(options['appCheckboxIdx']).prop('checked', obj.isChecked);
+            $(options['approverNoteIdx']).val(obj.approverNote);
+            $(options['intEmployeeBoxIdx']).html('');
+            $(options['containerIdx']).show();
             //
             obj.approversList.map(function (apId) {
                 var rowId = options['prefix'] + 'js-employees-' + _this.getRandom();
-                var row = _this.generateApproverRow(rowId, 0);
+                var row = _this.generateApproverRow(rowId, options['documentId'], apId);
                 //
-                $(options['intEmployeeBox_idx']).append(row);
+                $(options['intEmployeeBoxIdx']).append(row);
 
                 $('#' + rowId).select2();
                 //
@@ -91,12 +87,13 @@
                 selectedApprovers[apId] = true;
             });
         };
-
         //
+        // Only generate rendom keyword
         this.getRandom = function () {
             return Math.round((Math.random() * 10000) + 1);
         };
-
+        //
+        // Collect all Approver flow info and rape into object
         this.makeObj = function () {
             // Reset the object
             returnObj = {
@@ -105,27 +102,27 @@
                 approversList: []
             };
             //
-            if ($(options['appCheckbox_idx']).prop("checked")) {
+            if ($(options['appCheckboxIdx']).prop("checked")) {
                 returnObj.isChecked = true;
-                returnObj.approverNote = $(options['approverNote_idx']).val();
+                returnObj.approverNote = $(options['approverNoteIdx']).val();
                 returnObj.approversList = Object.keys(selectedApprovers) || [];
             }
 
             instances[_this.selector] = returnObj;
         };
-
-        // generates row
-        this.generateApproverRow = function (rowId, documentId) {
+        //
+        // generates Employee select box
+        this.generateApproverRow = function (rowId, documentId, approverID) {
             //
             var rows = '';
             rows += '<div class="row row_id">';
             rows += '   <br />';
             rows += '    <div class="cs-employee js-employee csMT">';
             rows += '        <div class="col-sm-10 col-sm-offset-0 text-left">';
-            rows += '           <select id="' + (rowId) + '" class="jsSelectedEmployee">';
+            rows += '           <select id="' + (rowId) + '" name="approvers_list[]" class="jsSelectedEmployee">';
             rows += '               <option value="0" >Please Select an Employee</option>';
-            if (options['employees_list'].length) {
-                options['employees_list'].map(function (v) {
+            if (options['employeesList'].length) {
+                options['employeesList'].map(function (v) {
                     if (selectedApprovers[v.sid] === undefined) {
                         rows += '<option value="' + (v['sid']) + '">' + (_this.remakeEmployeeName(v)) + '</option>';
                     }
@@ -151,7 +148,8 @@
             //
             return rows;
         };
-
+        //
+        // Remake Employee Name
         this.remakeEmployeeName = function (o, i) {
             //
             var r = '';
@@ -173,9 +171,8 @@
             //
             return r;
         };
-
+        //
         options['prefix'] = this.getRandom();
-
         //
         if (opt.prefill !== undefined) {
             //
@@ -183,42 +180,41 @@
             //
             this.makeView();
         }
-
+        //
         // Events
-        // 
-        $(document).on('click', options['appCheckbox_idx'], function () {
+        // This is document approval checkbox event
+        $(document).on('click', options['appCheckboxIdx'], function () {
             //
             _this.makeObj();
             //
             if ($(this).prop('checked')) {
                 //
-                $(options['container_idx']).show();
+                $(options['containerIdx']).show();
             } else {
                 //
-                $(options['container_idx']).hide(0);
-                $(options['intEmployeeBox_idx']).html('');
-                $(options['approverNote_idx']).val('');
+                $(options['containerIdx']).hide(0);
+                $(options['intEmployeeBoxIdx']).html('');
+                $(options['approverNoteIdx']).val('');
             }
         });
-
         //
-        $(document).on('click', options['addEmployee_idx'], function (event) {
+        // This is add new approver event
+        $(document).on('click', options['addEmployeeIdx'], function (event) {
             //
-            $(options['approverNote_idx']).show();
+            $(options['approverNoteIdx']).show();
             var rowId = options['prefix'] + 'js-employees-' + _this.getRandom();
-            var row = _this.generateApproverRow(rowId, 0);
+            var row = _this.generateApproverRow(rowId, 0, 0);
             //
-            $(options['intEmployeeBox_idx']).append(row);
-
+            $(options['intEmployeeBoxIdx']).append(row);
+            //
             $('#' + rowId).select2({
                 closeOnSelect: true,
                 allowHtml: true,
                 allowClear: true,
             });
-
         });
-
         //
+        // This is an event which trigger when we select an approver form employee list
         $(document).on('select2:select', '.jsSelectedEmployee', function () {
             //
             selectedApprovers[$(this).val()] = true;
@@ -226,8 +222,10 @@
             _this.makeObj();
         });
         //
-        $(document).on('keyup', options['approverNote_idx'], _this.makeObj);
+        // This is an event when some one write note for approvers
+        $(document).on('keyup', options['approverNoteIdx'], _this.makeObj);
         //
+        // this is an event to delete selectd approver or delete employee row
         $(document).on('click', '.js-employee-delete-btn', function (e) {
             //
             e.preventDefault();
@@ -242,6 +240,7 @@
                 __this.closest('.row_id').remove();
                 delete selectedApprovers[__this.closest('.row_id').find('.jsSelectedEmployee').val()];
                 _this.makeObj();
+                console.log(instances[_this.selector]);
             });
         });
 

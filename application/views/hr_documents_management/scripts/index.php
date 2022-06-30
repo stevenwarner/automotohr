@@ -81,6 +81,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 </style>
 <?php $this->load->view("hr_documents_management/scripts/approvers"); ?>
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>assets/js/approver.js"></script>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
 <script>
 	//
 	function remakeEmployeeName(o, i) {
@@ -311,7 +312,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows += getApproversManager();
 			}
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section', true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowMAD", "containerIdx" => "jsApproverFlowContainerMAD", "addEmployeeIdx" => "jsAddDocumentApproversMAD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxMAD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxMAD", "approverNoteIdx" => "jsApproversNoteMAD", 'mainId' => 'testApproversMAD'] ,true); ?>`;
 			//
 			rows += getEmailContent();
 			//
@@ -376,17 +377,30 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						$('#jsApprovalSection').hide();
 					}
 					//
-					refreshApprovalSection('#modify-assigned-document-modal');
-					//
-					if (d.has_approval_flow && d.has_approval_flow == 1 && d.document_type != "offer_letter") {
-						//
-						$('#modify-assigned-document-modal #jsHasApprovalFlow').prop('checked', true);
-						$('.jsApproverFlowContainer').show();
-
-						DocumentApproverPrefill(d.document_approval_employees, d.sid, '#modify-assigned-document-modal');
-						DocumentExternalApproverPrefill(d.sid);
-						$("#modify-assigned-document-modal #assigner_note").val(d.document_approval_note);
+					// Approver  Flow
+					var approverPrefill = {};
+			        var approverSection = approverSection = {
+			            appCheckboxIdx: '.jsHasApprovalFlowMAD',
+			            containerIdx: '.jsApproverFlowContainerMAD',
+			            addEmployeeIdx: '.jsAddDocumentApproversMAD',
+			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxMAD',
+			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxMAD',
+			            approverNoteIdx: '.jsApproversNoteMAD',
+			            employeesList: <?= json_encode($employeesList); ?>,
+			            documentId: d.sid
+			        };
+			        //
+			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+						approverPrefill.isChecked = true;
+		                approverPrefill.approverNote = d.document_approval_note;
+		                approverPrefill.approversList = d.document_approval_employees.split(','); 
+		                //
+		                approverSection.prefill = approverPrefill;
 					}
+			        //
+			        $("#jsModifyAssignedDocument").documentApprovalFlow(approverSection);
+			        //
+			        $('#jsModifyAssignedDocument').documentApprovalFlow('clear');
 
 					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
 					if (do_descpt) {
@@ -509,7 +523,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			if (do_descpt) rows += getSigners();
 			rows += getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section', true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowAND", "containerIdx" => "jsApproverFlowContainerAND", "addEmployeeIdx" => "jsAddDocumentApproversAND", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAND", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAND", "approverNoteIdx" => "jsApproversNoteAND", 'mainId' => 'testApproversAND'] ,true); ?>`;
 			//
 			rows += getEmailContent();
 			rows += getRequiredRow();
@@ -558,18 +572,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.signers.split(',')) : '';
 					} else if (d.managers_list != null && d.managers_list != '') {
 						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.managers_list.split(',')) : '';
-					}
-					//
-					refreshApprovalSection("#modify-assign-document-modal");
-					//
-					if (d.has_approval_flow && d.has_approval_flow == 1) {
-						//
-						$('#modify-assign-document-modal #jsHasApprovalFlow').prop('checked', true);
-						$('.jsApproverFlowContainer').show();
-
-
-						DocumentApproverPrefill(d.document_approval_employees, 0, "#modify-assign-document-modal");
-						$("#modify-assign-document-modal #assigner_note").val(d.document_approval_note);
 					}
 					//
 					if (d.visible_to_payroll) {
@@ -632,6 +634,31 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 					}
 					//
+					// Approver  Flow
+					var approverPrefill = {};
+			        var approverSection = approverSection = {
+			            appCheckboxIdx: '.jsHasApprovalFlowAND',
+			            containerIdx: '.jsApproverFlowContainerAND',
+			            addEmployeeIdx: '.jsAddDocumentApproversAND',
+			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAND',
+			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAND',
+			            approverNoteIdx: '.jsApproversNoteAND',
+			            employeesList: <?= json_encode($employeesList); ?>,
+			            documentId: 0
+			        };
+			        //
+			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+						approverPrefill.isChecked = true;
+		                approverPrefill.approverNote = d.document_approval_note;
+		                approverPrefill.approversList = d.document_approval_employees.split(','); 
+		                //
+		                approverSection.prefill = approverPrefill;
+					}
+			        //
+			        $("#jsModifyAndAssignNewDocument").documentApprovalFlow(approverSection);
+			        //
+			        $('#jsModifyAndAssignNewDocument').documentApprovalFlow('clear');
+			        //
 					$('.jsModifyModalLoader').fadeOut(300);
 					//
 					$('#modify_assign_document').mFileUploader({
@@ -659,8 +686,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				do_descpt;
 			// 
 			selectedTemplate = d;
-			console.log(d);
-
+			//
 			modelFor = 'offer_letter';
 			//
 			do_upload = d.letter_type == 'uploaded' || d.letter_type == 'hybrid_document' ? true : false;
@@ -679,8 +705,8 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			if (do_descpt) rows += getSigners('js-modify-assign-offer-letter-signers');
 			rows += getVisibilty(do_descpt);
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section', true);
-						?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowAOL", "containerIdx" => "jsApproverFlowContainerAOL", "addEmployeeIdx" => "jsAddDocumentApproversAOL", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAOL", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAOL", "approverNoteIdx" => "jsApproversNoteAOL", 'mainId' => 'testApproversAOL'] ,true); ?>`;
+
 			rows += `<?php echo $this->load->view('hr_documents_management/partials/settings', ['is_confidential' =>  $document_info['is_confidential']]); ?>`;
 
 			rows += getEmailContent();
@@ -745,12 +771,32 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 
 
 					//Approval flow
-					if (d.has_approval_flow && d.has_approval_flow == 1) {
-						$('#jsHasApprovalFlow').prop('checked', true);
-						$('.jsApproverFlowContainer').show();
-						DocumentApproverPrefill(d.document_approval_employees, 0, '#modify-assign-offer-letter-modal');
-						$("#assigner_note").val(d.document_approval_note);
+					//
+					// Approver  Flow
+					var approverPrefill = {};
+			        var approverSection = approverSection = {
+			            appCheckboxIdx: '.jsHasApprovalFlowAOL',
+			            containerIdx: '.jsApproverFlowContainerAOL',
+			            addEmployeeIdx: '.jsAddDocumentApproversAOL',
+			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+			            approverNoteIdx: '.jsApproversNoteAOL',
+			            employeesList: <?= json_encode($employeesList); ?>,
+			            documentId: 0
+			        };
+			        //
+			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+						approverPrefill.isChecked = true;
+		                approverPrefill.approverNote = d.document_approval_note;
+		                approverPrefill.approversList = d.document_approval_employees.split(','); 
+		                //
+		                approverSection.prefill = approverPrefill;
 					}
+			        //
+			        $("#jsModifyAndAssignOfferLetter").documentApprovalFlow(approverSection);
+			        //
+			        $('#jsModifyAndAssignOfferLetter').documentApprovalFlow('clear');
+			        //
 
 					//
 					if (d.is_available_for_na) {
@@ -1014,10 +1060,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
 			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
 			// Visibility
-			if (selectedTemplate.document_type != "offer_letter") {
-				obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
-				obj.assigner_note = $('#modify-assigned-document-modal #assigner_note').val();
-			}
 			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
 			obj.selected_roles = $('#jsRoles').val() || '';
 			obj.selected_departments = $('#jsDepartments').val() || '';
@@ -1025,23 +1067,18 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.selected_employees = $('#jsEmployees').val() || '';
 			obj.is_confidential = $('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
 			obj.confidentialSelectedEmployees = $('#modify-assigned-document-modal #confidentialSelectedEmployees').val() || '';
-			
-
 			//
-			var assigners = new Array();
+          	// approver flow
+			var approverInfo = $('#jsModifyAssignedDocument').documentApprovalFlow('get');
 			//
-			$('#modify-assigned-document-modal .jsSelectedEmployee').each(function(i) {
-				var approver_id = $(this).val();
-				//
-				if (approver_id != 0) {
-					assigners.push(approver_id);
-				}
-				//
-			});
-			//
-			if (assigners.length > 0) {
-				obj.assigner = assigners;
-				
+          	obj.has_approval_flow = "off";
+          	obj.approvers_note = "";
+          	obj.approvers_list = "";
+          	//
+			if (approverInfo.isChecked) {
+				obj.has_approval_flow = 'on';
+				obj.approvers_note = approverInfo.approverNote;
+				obj.approvers_list = approverInfo.approversList.toString();
 			}
 			//
 			var post = new FormData();
@@ -1110,23 +1147,17 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
           	//
-			if (selectedTemplate.document_type != "offer_letter") {
-				obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
-				obj.assigner_note = $('#modify-assign-document-modal #assigner_note').val();
-			}
-			var assigners = new Array();
+          	// approver flow
+			var approverInfo = $('#jsModifyAndAssignNewDocument').documentApprovalFlow('get');
 			//
-			$('#modify-assign-document-modal .jsSelectedEmployee').each(function(i) {
-				var approver_id = $(this).val();
-				//
-				if (approver_id != 0) {
-					assigners.push(approver_id);
-				}
-				//
-			});
-			//
-			if (assigners.length > 0) {
-				obj.assigner = assigners;
+          	obj.has_approval_flow = "off";
+          	obj.approvers_note = "";
+          	obj.approvers_list = "";
+          	//
+			if (approverInfo.isChecked) {
+				obj.has_approval_flow = 'on';
+				obj.approvers_note = approverInfo.approverNote;
+				obj.approvers_list = approverInfo.approversList.toString();
 			}
 			//
 			var post = new FormData();
@@ -1165,14 +1196,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			e.preventDefault();
 			//
 			var obj = {};
-
-			// Approval flow
-			var approval_employees_Array = [];
-			$('#modify-assign-offer-letter-modal .jsSelectedEmployee').map(function() {
-				approval_employees_Array.push($(this).val());
-			})
-			approval_employees_Array.join(',');
-
 			//
 			obj.documentTitle = selectedTemplate.letter_name;
 			obj.documentType = selectedTemplate.letter_type;
@@ -1197,13 +1220,22 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.employees = $('#jsEmployees').val() || '';
 
 			//Document Settings
-			obj.setting_is_confidential = $('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off',
-				obj.confidentialSelectedEmployees = $('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').val(),
+			obj.setting_is_confidential = $('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
+			obj.confidentialSelectedEmployees = $('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').val();
 
-				//Approval Flow
-				obj.has_approval_flow = $('#modify-assign-offer-letter-modal [name="has_approval_flow"]').prop('checked') ? 'on' : 'off';
-			obj.document_approval_employees = approval_employees_Array;
-			obj.document_approval_note = $('#modify-assign-offer-letter-modal [name="assigner_note"]').val();
+			//
+			// approver flow
+			var approverInfo = $('#jsModifyAndAssignOfferLetter').documentApprovalFlow('get');
+			//
+          	obj.has_approval_flow = "off";
+          	obj.approvers_note = "";
+          	obj.approvers_list = "";
+          	//
+			if (approverInfo.isChecked) {
+				obj.has_approval_flow = 'on';
+				obj.approvers_note = approverInfo.approverNote;
+				obj.approvers_list = approverInfo.approversList.toString();
+			}
 
 
 			//
@@ -1658,6 +1690,16 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('#js-popup  #confidentialSelectedEmployeesdiv').hide();
 					$("#js-popup #confidentialSelectedEmployees").select2();
 
+					$("#jsOfferLetterModal").documentApprovalFlow({
+			            appCheckboxIdx: '.jsHasApprovalFlowModal',
+			            containerIdx: '.jsApproverFlowContainerModal',
+			            addEmployeeIdx: '.jsAddDocumentApproversModal',
+			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxModal',
+			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxModal',
+			            approverNoteIdx: '.jsApproversNoteModal',
+			            employeesList: <?= json_encode($employeesList); ?>,
+			            documentId: 0
+			        });
 				}
 			);
 			//
@@ -1846,14 +1888,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			var upload_file = $('#upload_document').mFileUploader('get');
 			//
-
-			// Approval flow
-			var approval_employees_Array = [];
-			$('#js-popup .jsSelectedEmployee').map(function() {
-				approval_employees_Array.push($(this).val());
-			})
-			approval_employees_Array.join(',');
-
 			var o = {
 				name: $('#js-template-name').val().trim(),
 				body: CKEDITOR.instances['js-template-body'].getData().trim(),
@@ -1886,27 +1920,17 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				teams: $('#js-teams-offer-letter-add').val(),
 				employees: $('#js-employees-offer-letter-add').val(),
 				// Approval flow
-
-				has_approval_flow: $('#js-popup [name="has_approval_flow"]').prop('checked') ? 'on' : 'off',
-				document_approval_employees: approval_employees_Array,
-				document_approval_note: $('#js-popup [name="assigner_note"]').val()
-
-
+				has_approval_flow: 'off',
+				approvers_note: '',
+				approvers_list: ''
 			};
-			//
-			$('.jsSelectedEmployee').each(function(i, obj) {
-				var approver_id = $(this).val();
-				//
-				if (approver_id != 0) {
-					assigners.push(approver_id);
-				}
-				//
-			});
-			//
-			if (assigners.length > 0) {
-				o.assigner = assigners;
-				o.assigner_note = $('#assigner_note').val();
-			}
+			var approverInfo = $("#jsOfferLetterModal").documentApprovalFlow("get");
+	        //
+	        if (approverInfo.isChecked === true) {
+	        	o.has_approval_flow = 'on';
+				o.approvers_note = approverInfo.approverNote;
+				o.approvers_list = approverInfo.approversList.toString();
+	        }
 			//
 			if (o.type == 'template') {
 				o.type = selectedTemplate.letter_type;

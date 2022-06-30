@@ -377,7 +377,7 @@
                                                 <br />
                                                 <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
                                                 <br />
-                                                <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                                <?php $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowAD", "containerIdx" => "jsApproverFlowContainerAD", "addEmployeeIdx" => "jsAddDocumentApproversAD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAD", "approverNoteIdx" => "jsApproversNoteAD", 'mainId' => 'testApproversAD']); ?>
                                                 <!-- Sign In -->
                                                 <div class="row hidden">
                                                     <div class="col-xs-12">
@@ -697,12 +697,25 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/mFileUploader/index.js"></script>
-<?php $this->load->view("hr_documents_management/scripts/approvers"); ?>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
+
 <script>
     var btnTypeO = 'saveandassign';
     $(document).ready(function() {
-
-
+        //
+        var approverSection = approverSection = {
+            appCheckboxIdx: '.jsHasApprovalFlowAD',
+            containerIdx: '.jsApproverFlowContainerAD',
+            addEmployeeIdx: '.jsAddDocumentApproversAD',
+            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAD',
+            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAD',
+            approverNoteIdx: '.jsApproversNoteAD',
+            employeesList: <?= json_encode($employeesList); ?>,
+            documentId: 0
+        };
+        //
+        $("#jsGenerateOfferLetter").documentApprovalFlow(approverSection);
+        //
         $("#confidentialSelectedEmployeesdiv").hide();
 
         $("#setting_is_confidential").click(function() {
