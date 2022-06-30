@@ -2112,7 +2112,7 @@ class Reports_model extends CI_Model
         $holderArray = $this->getDocumentForReportByFilter(
             $companyId,
             (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
-            (!is_array($documentArray) || in_array('all', $documentArray)) ? ['confidential', 'authorizedsigners', 'approvalflow'] : $documentArray,
+            (!is_array($documentArray) || in_array('all', $documentArray)) ? ['all', 'confidential', 'authorizedsigners', 'approvalflow'] : $documentArray,
             false,
             !$csv ? [$offSet, $inSet] : []
         );
@@ -2181,7 +2181,7 @@ class Reports_model extends CI_Model
         endif;
         
         // Status filter
-        if($documentStatus):
+        if($documentStatus[0] !== 'all'):
             $this->db->group_start();
             //
             if (in_array("confidential", $documentStatus)) {
@@ -2270,5 +2270,24 @@ class Reports_model extends CI_Model
         }
         //
         return array_column($records, $column);
+    }
+
+    /**
+     * 
+     */
+    public function getEmployeeByIdsOBJ($ids){
+        //
+        $result = $this->db
+        ->select(getUserFields('users'))
+        ->where_in('sid', $ids)
+        ->get('users')
+        ->result_array();
+        //
+        $obj = [];
+        //
+        foreach($result as $v){
+            $obj[$v['userId']] = remakeEmployeeName($v);
+        }
+        return $obj;
     }
 }
