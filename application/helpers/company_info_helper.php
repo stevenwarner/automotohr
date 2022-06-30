@@ -2301,7 +2301,6 @@ if (!function_exists('broadcastAlert')) {
                 $dt = 'completed or changed the Document(s).';
                 $subject = 'Document Completed.';
                 $action = '';
-                return;
                 break;
         }
         //
