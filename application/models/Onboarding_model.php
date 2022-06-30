@@ -3167,11 +3167,9 @@ class Onboarding_model extends CI_Model
 
     public function get_notification_email_configuration($companySid)
     {
-        $this->db->where('company_sid', $companySid);
-        $result = $this->db->get('notifications_emails_configuration')->row();
-        return $result;
+        return $this->db
+            ->where('company_sid', $companySid)
+            ->where('general_information_status', 1)
+            ->get('notifications_emails_configuration')->count_all_results();
     }
-
-
-
 }

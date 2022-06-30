@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 if (!function_exists('get_contact_info')) {
 
@@ -8,7 +8,7 @@ if (!function_exists('get_contact_info')) {
     {
         $CI = &get_instance();
 
-        if($company_sid == NULL) {
+        if ($company_sid == NULL) {
             $session = $CI->session->userdata('logged_in');
             $company_sid = $session['company_detail']['sid'];
         }
@@ -31,7 +31,7 @@ if (!function_exists('get_employee_profile_info')) {
 
 if (!function_exists('get_fillable_info')) {
 
-    function get_fillable_info($form_name,$user_type,$user_sid)
+    function get_fillable_info($form_name, $user_type, $user_sid)
     {
         $CI = &get_instance();
 
@@ -45,7 +45,7 @@ if (!function_exists('get_fillable_info')) {
             $records_obj = $CI->db->get();
             $records_arr = $records_obj->result_array();
             $records_obj->free_result();
-        }elseif ($form_name == 'w9') {
+        } elseif ($form_name == 'w9') {
             $CI->db->where('user_type', $user_type);
             $CI->db->where('user_sid', $user_sid);
             $CI->db->where('status', 1);
@@ -63,7 +63,6 @@ if (!function_exists('get_fillable_info')) {
             $records_obj = $CI->db->get();
             $records_arr = $records_obj->result_array();
             $records_obj->free_result();
-
         }
         if (sizeof($records_arr) > 0) {
             return $records_arr[0];
@@ -89,7 +88,7 @@ if (!function_exists('get_document_type')) {
         $is_document_completed = 0;
 
         if (!empty($assigned_document['document_description'])) {
-           
+
             $document_description = $assigned_document['document_description'];
             $document_body = replace_select_html_tag($document_description);
             $magic_codes = document_description_tags('all');
@@ -98,21 +97,21 @@ if (!function_exists('get_document_type')) {
                 $is_magic_tag_exist = 1;
             }
         }
-        
+
         if (($assigned_document['acknowledgment_required'] || $assigned_document['download_required'] || $assigned_document['signature_required'] || $is_magic_tag_exist)) {
             return 'no';
         } else { // nothing is required so it is "No Action Required Document"
             return 'yes';
         }
     }
-}    
+}
 
 if (!function_exists('get_form_view')) {
 
-    function get_form_view($form,$form_data)
+    function get_form_view($form, $form_data)
     {
         $CI = &get_instance();
-        if ($form == 'w4'){
+        if ($form == 'w4') {
             $form_values['pre_form'] = $form_data;
             $assign_on = date("Y-m-d", strtotime($form_data['sent_date']));
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
@@ -122,19 +121,18 @@ if (!function_exists('get_form_view')) {
             } else {
                 $view = $CI->load->view('form_w4/test_form_w4', $form_values, TRUE);
             }
-            
-        } else if ($form == 'w9'){
+        } else if ($form == 'w9') {
             $form_values['pre_form'] = $form_data;
             $form_values['pre_form']['dated'] = !empty($form_data['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $form_data['signature_timestamp'])->format('M d Y') : '';
             $view = $CI->load->view('form_w9/form_w9_pdf_popup', $form_values, TRUE);
-        } else if ($form == 'i9'){
+        } else if ($form == 'i9') {
             $form_values['pre_form'] = $form_data;
             $form_values['pre_form']['dated'] = !empty($form_data['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $form_data['signature_timestamp'])->format('M d Y') : '';
             $view = $CI->load->view('form_i9/i9_pdf_popup', $form_values, TRUE);
-        } else if ($form == 'pw4'){
+        } else if ($form == 'pw4') {
             $form_values['pre_form'] = $form_data;
             $view = $CI->load->view('form_w4/pending_form_w4', $form_values, TRUE);
-        } else if ($form == 'pw9'){
+        } else if ($form == 'pw9') {
             $form_values['pre_form'] = $form_data;
             $form_values['pre_form']['dated'] = !empty($form_data['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $form_data['signature_timestamp'])->format('M d Y') : '';
             $view = $CI->load->view('form_w9/form_w9_pdf_popup', $form_values, TRUE);
@@ -147,7 +145,7 @@ if (!function_exists('get_form_view')) {
 if (!function_exists('replace_tags_for_document')) {
     function replace_tags_for_document($company_sid, $user_sid = null, $user_type = null, $document_body, $document_sid = 0, $authorized_signature = 0, $signature_base64 = false, $forDownload = false, $autofill = 0)
     {
-        
+
 
         $CI = &get_instance();
 
@@ -202,7 +200,6 @@ if (!function_exists('replace_tags_for_document')) {
             } else {
                 $career_site_url = STORE_PROTOCOL . $domain;
             }
-
         } else {
             $company_info = array();
         }
@@ -378,19 +375,19 @@ if (!function_exists('replace_tags_for_document')) {
         $value = isset($company_info['CompanyDescription']) ? $company_info['CompanyDescription'] : '[About Company]';
         $my_return = str_replace('{{about_company}}', $value, $my_return);
 
-        $value = isset($user_info['hourly_rate']) && $user_info['hourly_rate'] != 0 ? '<b>Hourly Rate : '.$user_info['hourly_rate'].' $</b>' : '<b>Hourly Rate : N/A</b>';
+        $value = isset($user_info['hourly_rate']) && $user_info['hourly_rate'] != 0 ? '<b>Hourly Rate : ' . $user_info['hourly_rate'] . ' $</b>' : '<b>Hourly Rate : N/A</b>';
         $my_return = str_replace('{{hourly_rate}}', $value, $my_return);
 
-        $value = isset($user_info['flat_rate_technician']) && $user_info['flat_rate_technician'] != 0 ? '<b>Flat Rate Technician : '.$user_info['flat_rate_technician'].' $</b>' : '<b>Flat Rate Technician : N/A</b>';
+        $value = isset($user_info['flat_rate_technician']) && $user_info['flat_rate_technician'] != 0 ? '<b>Flat Rate Technician : ' . $user_info['flat_rate_technician'] . ' $</b>' : '<b>Flat Rate Technician : N/A</b>';
         $my_return = str_replace('{{flat_rate_technician}}', $value, $my_return);
 
-        $value = isset($user_info['hourly_technician']) && $user_info['hourly_technician'] != 0 ? '<b>Hourly Technician : '.$user_info['hourly_technician'].' $</b>' : '<b>Hourly Technician : N/A</b>';
+        $value = isset($user_info['hourly_technician']) && $user_info['hourly_technician'] != 0 ? '<b>Hourly Technician : ' . $user_info['hourly_technician'] . ' $</b>' : '<b>Hourly Technician : N/A</b>';
         $my_return = str_replace('{{hourly_technician}}', $value, $my_return);
 
-        $value = isset($user_info['semi_monthly_salary']) && $user_info['semi_monthly_salary'] != 0 ? '<b>Semi Monthly Salary : '.$user_info['semi_monthly_salary'].' $</b>' : '<b>Semi Monthly Salary : N/A</b>';
+        $value = isset($user_info['semi_monthly_salary']) && $user_info['semi_monthly_salary'] != 0 ? '<b>Semi Monthly Salary : ' . $user_info['semi_monthly_salary'] . ' $</b>' : '<b>Semi Monthly Salary : N/A</b>';
         $my_return = str_replace('{{semi_monthly_salary}}', $value, $my_return);
 
-        $value = isset($user_info['semi_monthly_draw']) && $user_info['semi_monthly_draw'] != 0 ? '<b>Semi Monthly Draw : '.$user_info['semi_monthly_draw'].' $</b>' : '<b>Semi Monthly Draw : N/A</b>';
+        $value = isset($user_info['semi_monthly_draw']) && $user_info['semi_monthly_draw'] != 0 ? '<b>Semi Monthly Draw : ' . $user_info['semi_monthly_draw'] . ' $</b>' : '<b>Semi Monthly Draw : N/A</b>';
         $my_return = str_replace('{{semi_monthly_draw}}', $value, $my_return);
 
         $short_textboxes = substr_count($my_return, '{{short_text}}');
@@ -416,37 +413,37 @@ if (!function_exists('replace_tags_for_document')) {
         }
 
         for ($stb = 0; $stb < $short_textboxes; $stb++) {
-            $short_textbox_name = 'short_textbox_'.$stb;
+            $short_textbox_name = 'short_textbox_' . $stb;
             $short_textbox_value = !empty($form_input_data[$short_textbox_name]) && $autofill == 1 ? $form_input_data[$short_textbox_name] : '';
             // echo $short_textbox_value.'<br>';
-            $short_textbox_id = 'short_textbox_'.$stb.'_id';
-            $short_textbox = '<input type="text" data-type="text" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="'.$short_textbox_name.'" id="'.$short_textbox_id.'" value="'.$short_textbox_value.'" />';
-            $my_return = preg_replace('/{{short_text}}/', $short_textbox , $my_return, 1 );
-        }      
+            $short_textbox_id = 'short_textbox_' . $stb . '_id';
+            $short_textbox = '<input type="text" data-type="text" maxlength="40" style="width: 300px; height: 34px; border: 1px solid #777; border-radius: 4px; background-color:#eee; padding: 0 5px;" class="short_textbox" name="' . $short_textbox_name . '" id="' . $short_textbox_id . '" value="' . $short_textbox_value . '" />';
+            $my_return = preg_replace('/{{short_text}}/', $short_textbox, $my_return, 1);
+        }
 
         for ($ltb = 0; $ltb < $long_textboxes; $ltb++) {
-            $long_textbox_name = 'long_textbox_'.$ltb;
+            $long_textbox_name = 'long_textbox_' . $ltb;
             $long_textbox_value = !empty($form_input_data[$long_textbox_name]) && $autofill == 1 ? $form_input_data[$long_textbox_name] : '';
-            $long_textbox_id = 'long_textbox_'.$ltb.'_id';
-            $long_textbox = '<input type="text" data-type="text" class="form-control input-grey long_textbox" name="'.$long_textbox_name.'" id="'.$long_textbox_id.'" value="'.$long_textbox_value.'"/>';
-            $my_return = preg_replace('/{{text}}/', $long_textbox , $my_return, 1 );
+            $long_textbox_id = 'long_textbox_' . $ltb . '_id';
+            $long_textbox = '<input type="text" data-type="text" class="form-control input-grey long_textbox" name="' . $long_textbox_name . '" id="' . $long_textbox_id . '" value="' . $long_textbox_value . '"/>';
+            $my_return = preg_replace('/{{text}}/', $long_textbox, $my_return, 1);
         }
 
         for ($cb = 0; $cb < $checkboxes; $cb++) {
-            $checkbox_name = 'checkbox_'.$cb;
+            $checkbox_name = 'checkbox_' . $cb;
             $checkbox_value = !empty($form_input_data[$checkbox_name]) && $form_input_data[$checkbox_name] == 'yes' && $autofill == 1 ? 'checked="checked"' : '';
-            $checkbox_id = 'checkbox_'.$cb.'_id';
-            $checkbox = '<br><input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="'.$checkbox_name.'" id="'.$checkbox_id.'" '.$checkbox_value.'/>';
-            $my_return = preg_replace('/{{checkbox}}/', $checkbox , $my_return, 1 );
+            $checkbox_id = 'checkbox_' . $cb . '_id';
+            $checkbox = '<br><input type="checkbox" data-type="checkbox" class="user_checkbox input-grey" name="' . $checkbox_name . '" id="' . $checkbox_id . '" ' . $checkbox_value . '/>';
+            $my_return = preg_replace('/{{checkbox}}/', $checkbox, $my_return, 1);
         }
 
         for ($ta = 0; $ta < $textareas; $ta++) {
-            $textarea_name = 'textarea_'.$ta;
+            $textarea_name = 'textarea_' . $ta;
             $textarea_value = !empty($form_input_data[$textarea_name]) && $autofill == 1 ? $form_input_data[$textarea_name] : '';
-            $textarea_id = 'textarea_'.$ta.'_id';
-            $div_id = 'textarea_'.$ta.'_id_sec';
-            $textarea = '<textarea data-type="textarea" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="'.$textarea_name.'" id="'.$textarea_id.'">'.$textarea_value.'</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="'.$div_id.'"  contenteditable="false"></div>';
-            $my_return = preg_replace('/{{text_area}}/', $textarea , $my_return, 1 );
+            $textarea_id = 'textarea_' . $ta . '_id';
+            $div_id = 'textarea_' . $ta . '_id_sec';
+            $textarea = '<textarea data-type="textarea" style="border: 1px dotted #777; padding:5px; min-height: 145px; width:100%; background-color:#eee; resize: none;" class="text_area" name="' . $textarea_name . '" id="' . $textarea_id . '">' . $textarea_value . '</textarea><div style="border: 1px dotted #777; padding:5px; display: none; background-color:#eee;" class="div-editable fillable_input_field" id="' . $div_id . '"  contenteditable="false"></div>';
+            $my_return = preg_replace('/{{text_area}}/', $textarea, $my_return, 1);
         }
 
         // $value = '<br><input type="checkbox" class="user_checkbox input-grey" name="get_checkbox_condition"/>';
@@ -463,25 +460,25 @@ if (!function_exists('replace_tags_for_document')) {
         // $my_return = str_replace('{{text_area}}', $value, $my_return);
 
         //E_signature process
-        $signature_data =  get_e_signature($company_sid, $user_sid,$user_type);
-       // $signature_person_name = !empty($form_input_data['signature_person_name']) && $autofill == 1  ? $form_input_data['signature_person_name'] : '';
-        $signature_person_name = $signature_data['first_name']." ".$signature_data['last_name'];
+        $signature_data =  get_e_signature($company_sid, $user_sid, $user_type);
+        // $signature_person_name = !empty($form_input_data['signature_person_name']) && $autofill == 1  ? $form_input_data['signature_person_name'] : '';
+        $signature_person_name = $signature_data['first_name'] . " " . $signature_data['last_name'];
 
-        $value = '<input type="text" id="signature_person_name" class="form-control input-grey js_signature_person_name" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="'.$signature_person_name.'">';
+        $value = '<input type="text" id="signature_person_name" class="form-control input-grey js_signature_person_name" style="margin-top:16px; width: 50%;" name="signature_person_name" readonly value="' . $signature_person_name . '">';
         $my_return = str_replace('{{signature_print_name}}', $value, $my_return);
 
-        if($forDownload){
+        if ($forDownload) {
             $signature_bas64_image = '_______________________';
-        } else{
-            if(!$signature_base64)
-                $signature_bas64_image = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="draw_upload_img" />';
+        } else {
+            if (!$signature_base64)
+                $signature_bas64_image = '<a class="btn btn-sm blue-button get_signature" href="javascript:;">Create E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="draw_upload_img" />';
             else
-                $signature_bas64_image = '<img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src="'.( $signature_base64 ).'"  id="draw_upload_img" />';
+                $signature_bas64_image = '<img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src="' . ($signature_base64) . '"  id="draw_upload_img" />';
         }
-        
+
         if ($authorized_signature == 1) {
-            $authorized_signature = '<a class="btn btn-sm blue-button show_authorized_signature_popup" data-auth-signature="" href="javascript:;">Create Authorized E-Signature</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="show_authorized_signature" />'; 
-            $authorized_signature_date = '<a class="btn btn-sm blue-button get_authorized_sign_date" href="javascript:;">Authorized Sign Date</a><p id="target_authorized_signature_date"></p>'; 
+            $authorized_signature = '<a class="btn btn-sm blue-button show_authorized_signature_popup" data-auth-signature="" href="javascript:;">Create Authorized E-Signature</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="show_authorized_signature" />';
+            $authorized_signature_date = '<a class="btn btn-sm blue-button get_authorized_sign_date" href="javascript:;">Authorized Sign Date</a><p id="target_authorized_signature_date"></p>';
         } else {
             $authorized_signature = '<p>Authorized Signature (<b>Not Signed</b>)</p>';
             $authorized_signature_date = '<p>Authorized Signature Date (<b>Not Entered</b>)</p>';;
@@ -495,18 +492,18 @@ if (!function_exists('replace_tags_for_document')) {
         //     $authorized_signature = '';
         // }
 
-        
+
 
         $authorized_signature_name = '<input type="text" class="form-control" readonly style="background: #fff; margin-top:16px; width: 50%;">';
-        $init_signature_bas64_image = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: '.SIGNATURE_MAX_HEIGHT.';" src=""  id="target_signature_init" />';
+        $init_signature_bas64_image = '<a class="btn btn-sm blue-button get_signature_initial" href="javascript:;">Signature Initial</a><img style="max-height: ' . SIGNATURE_MAX_HEIGHT . ';" src=""  id="target_signature_init" />';
         $signature_timestamp = '<a class="btn btn-sm blue-button get_signature_date" href="javascript:;">Sign Date</a><p id="target_signature_timestamp"></p>';
 
         $my_return = str_replace('{{signature}}', $signature_bas64_image, $my_return);
         $my_return = str_replace('{{inital}}', $init_signature_bas64_image, $my_return);
-        $my_return = str_replace('{{sign_date}}', $signature_timestamp , $my_return);
-        $my_return = str_replace('{{authorized_signature}}', $authorized_signature , $my_return);
-        $my_return = str_replace('{{authorized_signature_print_name}}', $authorized_signature_name , $my_return);
-        $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date , $my_return);
+        $my_return = str_replace('{{sign_date}}', $signature_timestamp, $my_return);
+        $my_return = str_replace('{{authorized_signature}}', $authorized_signature, $my_return);
+        $my_return = str_replace('{{authorized_signature_print_name}}', $authorized_signature_name, $my_return);
+        $my_return = str_replace('{{authorized_signature_date}}', $authorized_signature_date, $my_return);
 
         return $my_return;
     }
@@ -516,7 +513,7 @@ if (!function_exists('log_and_send_templated_portal_email')) {
 
     function log_and_send_templated_portal_email($template_code, $company_sid, $to, $replacement_array = array(), $message_hf = array())
     {
-        if(empty($to) || $to == NULL) return 0;
+        if (empty($to) || $to == NULL) return 0;
         $emailTemplateData = get_portal_email_template($company_sid, $template_code);
 
         if (!empty($emailTemplateData)) {
@@ -556,7 +553,6 @@ if (!function_exists('log_and_send_templated_portal_email')) {
             log_and_sendEmail($from, $to, $subject, $body, $from_name);
         }
     }
-
 }
 
 if (!function_exists('count_assigned_documents')) {
@@ -828,15 +824,15 @@ if (!function_exists('check_for_blue_panel_status')) {
             $session = $CI->session->userdata('logged_in');
             $access_level = $session['employer_detail']['access_level'];
             $company_sid = $session['company_detail']['ems_status'];
-//            $company_sid = $session['employer_detail']['parent_sid'];
+            //            $company_sid = $session['employer_detail']['parent_sid'];
 
             $module_name = strtolower($CI->uri->segment(1));
             if ($user_type == 'self') {
-                if ($check_access_level == true ) {
+                if ($check_access_level == true) {
                     return strtolower($access_level) == 'employee' && $company_sid;
                 } else {
                     return (in_array($module_name, explode(',', BLUE_PANEL_MODULES)) &&
-                            !in_array($module_name, explode(',', PUBLIC_MODULES))) &&
+                        !in_array($module_name, explode(',', PUBLIC_MODULES))) &&
                         (ENABLE_BLUE_PANEL_FOR_ALL || $company_sid/*in_array($company_sid, explode(',', BLUE_PANEL_COMPANIES))*/);
                 }
             } else if ($user_type == 'employee') {
@@ -853,7 +849,8 @@ if (!function_exists('check_for_blue_panel_status')) {
 }
 
 if (!function_exists('check_blue_panel_status_for_view')) {
-    function check_blue_panel_status_for_view($check_access_level = false){
+    function check_blue_panel_status_for_view($check_access_level = false)
+    {
         $CI = &get_instance();
 
         if ($CI->session->userdata('logged_in')) {
@@ -871,7 +868,7 @@ if (!function_exists('check_blue_panel_status_for_view')) {
                 return strtolower($access_level) == 'employee' && $company_sid;
             } else {
                 return (in_array($module_name, explode(',', BLUE_PANEL_MODULES)) &&
-                        !in_array($module_name, explode(',', PUBLIC_MODULES))) &&
+                    !in_array($module_name, explode(',', PUBLIC_MODULES))) &&
                     (ENABLE_BLUE_PANEL_FOR_ALL || $company_sid/*in_array($company_sid, explode(',', BLUE_PANEL_COMPANIES))*/);
             }
         } else {
@@ -881,13 +878,14 @@ if (!function_exists('check_blue_panel_status_for_view')) {
 }
 
 if (!function_exists('check_affiliations')) {
-    function check_affiliations(){
+    function check_affiliations()
+    {
         $CI = &get_instance();
         $CI->db->select('is_reffered');
         $CI->db->where('status', 0);
         $CI->db->where('request_date >', date('Y-m-d 00:00:00'));
         $CI->db->where('request_date <', date('Y-m-d 23:59:59'));
-//        $CI->db->where('is_read', 0);
+        //        $CI->db->where('is_read', 0);
         $CI->db->from('affiliations');
         return $CI->db->get()->result_array();
     }
@@ -896,7 +894,7 @@ if (!function_exists('check_affiliations')) {
 if (!function_exists('set_e_signature')) {
 
     function set_e_signature($form_post)
-    {//print_r($form_post); die();
+    { //print_r($form_post); die();
         $company_sid = $form_post['company_sid'];
         $user_type = $form_post['user_type'];
         $user_sid = $form_post['user_sid'];
@@ -943,7 +941,7 @@ if (!function_exists('set_e_signature')) {
 if (!function_exists('set_prepare_e_signature')) {
 
     function set_prepare_e_signature($form_post)
-    {//print_r($form_post); die();
+    { //print_r($form_post); die();
         $company_sid = $form_post['company_sid'];
         $user_type = $form_post['user_type'];
         $user_sid = $form_post['user_sid'];
@@ -1004,13 +1002,12 @@ if (!function_exists('set_agent_e_signature')) {
             $CI->db->where('employer_sid', $marketing_sid);
             $CI->db->update('portal_job_applications', $data_to_update);
         }
-
-
     }
 }
 
 if (!function_exists('get_e_signature')) {
-    function get_e_signature($company_sid, $user_sid,$user_type){
+    function get_e_signature($company_sid, $user_sid, $user_type)
+    {
         $CI = &get_instance();
 
         $CI->db->select('*');
@@ -1034,7 +1031,8 @@ if (!function_exists('get_e_signature')) {
 }
 
 if (!function_exists('get_preparer_e_signature')) {
-    function get_preparer_e_signature($document_sid, $company_sid, $user_sid,$user_type){
+    function get_preparer_e_signature($document_sid, $company_sid, $user_sid, $user_type)
+    {
         $CI = &get_instance();
 
         $CI->db->select('section1_preparer_signature');
@@ -1058,7 +1056,8 @@ if (!function_exists('get_preparer_e_signature')) {
 }
 
 if (!function_exists('unpaid_commissions')) {
-    function unpaid_commissions(){
+    function unpaid_commissions()
+    {
         $CI = &get_instance();
         $CI->db->select('sid');
         $CI->db->where('commission_invoices.payment_status', 'unpaid');
@@ -1072,7 +1071,8 @@ if (!function_exists('unpaid_commissions')) {
 }
 
 if (!function_exists('end_user_license_signed')) {
-    function end_user_license_signed(){
+    function end_user_license_signed()
+    {
         $CI = &get_instance();
         $CI->db->select('sid');
         $CI->db->where('status', 'signed');
@@ -1084,7 +1084,8 @@ if (!function_exists('end_user_license_signed')) {
 }
 
 if (!function_exists('form_document_credit_card_authorization')) {
-    function form_document_credit_card_authorization(){
+    function form_document_credit_card_authorization()
+    {
         $CI = &get_instance();
         $CI->db->select('sid');
         $CI->db->where('status', 'signed');
@@ -1096,7 +1097,8 @@ if (!function_exists('form_document_credit_card_authorization')) {
 }
 
 if (!function_exists('form_affiliate_end_user_license_agreement')) {
-    function form_affiliate_end_user_license_agreement(){
+    function form_affiliate_end_user_license_agreement()
+    {
         $CI = &get_instance();
         $CI->db->select('marketing_agency_sid');
         $CI->db->where('status', 'signed');
@@ -1108,7 +1110,8 @@ if (!function_exists('form_affiliate_end_user_license_agreement')) {
 }
 
 if (!function_exists('fetch_private_message_notification')) {
-    function fetch_private_message_notification(){
+    function fetch_private_message_notification()
+    {
         $CI = &get_instance();
         $CI->db->where('to_id', 1);
         $CI->db->where('to_type', 'admin');
@@ -1122,7 +1125,8 @@ if (!function_exists('fetch_private_message_notification')) {
 }
 
 if (!function_exists('get_all_pending_incidents')) {
-    function get_all_pending_incidents(){
+    function get_all_pending_incidents()
+    {
         $CI = &get_instance();
         $CI->db->where('status', 'Pending');
         $CI->db->from('incident_reporting');
@@ -1142,7 +1146,8 @@ if (!function_exists('client_refer_by_affiliate')) {
 }
 
 if (!function_exists('regenerate_e_signature')) {
-    function regenerate_e_signature($company_sid, $user_sid, $user_type, $data_to_update){
+    function regenerate_e_signature($company_sid, $user_sid, $user_type, $data_to_update)
+    {
         $CI = &get_instance();
 
         $CI->db->where('company_sid', $company_sid);
@@ -1150,31 +1155,29 @@ if (!function_exists('regenerate_e_signature')) {
         $CI->db->where('user_type', $user_type);
         $CI->db->where('is_active', 1);
         $CI->db->update('e_signatures_data', $data_to_update);
-
-
     }
 }
 
 if (!function_exists('common_get_job_applicants_count')) {
-    function common_get_job_applicants_count($sid,$arch_status = null, $desiredJob = false, $companySid = false){
+    function common_get_job_applicants_count($sid, $arch_status = null, $desiredJob = false, $companySid = false)
+    {
 
         $CI = &get_instance();
-        if($desiredJob) {
+        if ($desiredJob) {
             $CI->db->where('desired_job_title', $sid);
             $CI->db->where('company_sid', $companySid);
-        }
-        else $CI->db->where('job_sid', $sid);
-        if($arch_status !== null){
+        } else $CI->db->where('job_sid', $sid);
+        if ($arch_status !== null) {
             $CI->db->where('archived', $arch_status);
         }
         $CI->db->from('portal_applicant_jobs_list');
         return $CI->db->count_all_results();
-
     }
 }
 
 if (!function_exists('get_agent_e_signature')) {
-    function get_agent_e_signature($marketing_agency_sid, $recode_sid, $user_type, $url){
+    function get_agent_e_signature($marketing_agency_sid, $recode_sid, $user_type, $url)
+    {
         $CI = &get_instance();
 
         if ($url == 'form_end_user_license_agreement') {
@@ -1225,7 +1228,8 @@ if (!function_exists('get_agent_e_signature')) {
 }
 
 if (!function_exists('get_interview_status')) {
-    function get_interview_status($status_sid) {
+    function get_interview_status($status_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('name, css_class, bar_bgcolor');
         $CI->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.status_sid = application_status.sid');
@@ -1234,7 +1238,7 @@ if (!function_exists('get_interview_status')) {
         $result = $CI->db->get()->result_array();
         $return_data = array();
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             $return_data = $result[0];
         }
 
@@ -1243,7 +1247,8 @@ if (!function_exists('get_interview_status')) {
 }
 
 if (!function_exists('get_interview_status_by_parent_id')) {
-    function get_interview_status_by_parent_id($status_sid) {
+    function get_interview_status_by_parent_id($status_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('name, css_class, bar_bgcolor');
         $CI->db->join('portal_applicant_jobs_list', 'portal_applicant_jobs_list.status_sid = application_status.sid');
@@ -1253,7 +1258,7 @@ if (!function_exists('get_interview_status_by_parent_id')) {
         $result = $CI->db->get()->result_array();
         $return_data = array();
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             $return_data = $result[0];
         }
 
@@ -1262,7 +1267,8 @@ if (!function_exists('get_interview_status_by_parent_id')) {
 }
 
 if (!function_exists('get_default_interview_status')) {
-    function get_default_interview_status($status_sid, $field_id) {
+    function get_default_interview_status($status_sid, $field_id)
+    {
         $CI = &get_instance();
         $CI->db->select('status');
         $CI->db->where($field_id, $status_sid);
@@ -1271,7 +1277,7 @@ if (!function_exists('get_default_interview_status')) {
         $result = $CI->db->get()->result_array();
         $return_data = 'Not Contacted Yet';
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             $return_data = $result[0]['status'];
         }
 
@@ -1280,7 +1286,8 @@ if (!function_exists('get_default_interview_status')) {
 }
 
 if (!function_exists('get_company_logo_status')) {
-    function get_company_logo_status($company_sid) {
+    function get_company_logo_status($company_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('enable_company_logo');
         $CI->db->where('user_sid', $company_sid);
@@ -1289,7 +1296,7 @@ if (!function_exists('get_company_logo_status')) {
         $result = $CI->db->get()->result_array();
         $return_data = '';
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             $return_data = $result[0]['enable_company_logo'];
         }
 
@@ -1298,7 +1305,8 @@ if (!function_exists('get_company_logo_status')) {
 }
 
 if (!function_exists('get_footer_copyright_data')) {
-    function get_footer_copyright_data($company_sid) {
+    function get_footer_copyright_data($company_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('copyright_company_status, copyright_company_name');
         $CI->db->where('user_sid', $company_sid);
@@ -1307,7 +1315,7 @@ if (!function_exists('get_footer_copyright_data')) {
         $result = $CI->db->get()->result_array();
         $return_data = '';
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             $return_data = $result[0];
         }
 
@@ -1316,7 +1324,8 @@ if (!function_exists('get_footer_copyright_data')) {
 }
 
 if (!function_exists('get_footer_logo_data')) {
-    function get_footer_logo_data($company_sid) {
+    function get_footer_logo_data($company_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('footer_powered_by_logo, footer_logo_type, footer_logo_text, footer_logo_image');
         $CI->db->where('user_sid', $company_sid);
@@ -1325,7 +1334,7 @@ if (!function_exists('get_footer_logo_data')) {
         $result = $CI->db->get()->result_array();
         $return_data = '';
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             $return_data = $result[0];
         }
 
@@ -1334,34 +1343,36 @@ if (!function_exists('get_footer_logo_data')) {
 }
 
 if (!function_exists('vimeo_video_data')) {
-    function vimeo_video_data($id) {
-        $ch = curl_init('http://vimeo.com/api/v2/video/'.$id.'.php');
-	curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, 1);
-	$a = curl_exec($ch);
-	$hash = unserialize($a);
+    function vimeo_video_data($id)
+    {
+        $ch = curl_init('http://vimeo.com/api/v2/video/' . $id . '.php');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        $a = curl_exec($ch);
+        $hash = unserialize($a);
         //to reutrn full data return hash[0] but at the moment we only require thumbnail image
         $data = $hash[0];
         $thumbnail_small = $data['thumbnail_small'];
         $thumbnail_medium = $data['thumbnail_medium'];
         $thumbnail_large = $data['thumbnail_large'];
 
-        if($thumbnail_medium != '') {
+        if ($thumbnail_medium != '') {
             $thumbnail_image = $thumbnail_medium;
-        } else if($thumbnail_small != '') {
+        } else if ($thumbnail_small != '') {
             $thumbnail_image = $thumbnail_small;
-        } else if($thumbnail_large != '') {
+        } else if ($thumbnail_large != '') {
             $thumbnail_image = $thumbnail_large;
         } else {
             $thumbnail_image = base_url('assets/images/video-play-icon.png');
         }
 
-	return $thumbnail_image;
+        return $thumbnail_image;
     }
 }
 
 if (!function_exists('getreferralusername')) {
-    function getreferralusername($sid) {
+    function getreferralusername($sid)
+    {
         $CI = &get_instance();
         $CI->db->select('full_name');
         $CI->db->where('sid', $sid);
@@ -1370,7 +1381,7 @@ if (!function_exists('getreferralusername')) {
         $result = $CI->db->get()->result_array();
         $return_data = '';
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             $return_data = $result[0]['full_name'];
         }
 
@@ -1379,7 +1390,8 @@ if (!function_exists('getreferralusername')) {
 }
 
 if (!function_exists('get_print_document_url')) {
-    function get_print_document_url($request_type, $document_type, $document_sid) {
+    function get_print_document_url($request_type, $document_type, $document_sid)
+    {
         $urls = '';
         if ($request_type == 'original') {
             if ($document_type == 'MS') {
@@ -1390,30 +1402,30 @@ if (!function_exists('get_print_document_url')) {
                 $CI->db->limit(1);
                 $result = $CI->db->get()->result_array();
                 $upload_document = $result[0]['uploaded_document_s3_name'];
-                $file_name = explode(".",$upload_document);
+                $file_name = explode(".", $upload_document);
                 $document_name = $file_name[0];
                 $document_extension = $file_name[1];
                 if ($document_extension == 'pdf') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pdf';
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
                 } else if ($document_extension == 'doc') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edoc&wdAccPdf=0';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
                 } else if ($document_extension == 'docx') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edocx&wdAccPdf=0';
-                } else if ($document_extension =='ppt') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.ppt';
-                } else if ($document_extension =='pptx') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pptx';
-                } else if ($document_extension =='xls') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exls';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                } else if ($document_extension == 'ppt') {
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.ppt';
+                } else if ($document_extension == 'pptx') {
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pptx';
+                } else if ($document_extension == 'xls') {
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
                 } else if ($document_extension == 'xlsx') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exlsx';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
                 } else if ($document_extension == 'csv') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.csv';
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
                 } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
-                    $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/'.$document_sid);
+                    $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document_sid);
                 }
                 $document_path = $result[0]['uploaded_document_s3_name'];
-                $urls['download_url'] = base_url('hr_documents_management/download_upload_document/'.$document_path);
+                $urls['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
             } else if ($document_type == 'DS') {
                 $CI = &get_instance();
                 $CI->db->select('document_s3_name, document_original_name');
@@ -1422,36 +1434,36 @@ if (!function_exists('get_print_document_url')) {
                 $CI->db->limit(1);
                 $result = $CI->db->get()->result_array();
                 $upload_document = $result[0]['document_s3_name'];
-                $file_name = explode(".",$upload_document);
+                $file_name = explode(".", $upload_document);
                 $document_name = $file_name[0];
                 $document_extension = $file_name[1];
                 if ($document_extension == 'pdf') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pdf';
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
                 } else if ($document_extension == 'doc') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edoc&wdAccPdf=0';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
                 } else if ($document_extension == 'docx') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edocx&wdAccPdf=0';
-                } else if ($document_extension =='xls') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exls';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                } else if ($document_extension == 'xls') {
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
                 } else if ($document_extension == 'xlsx') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exlsx';
-                } else if ($document_extension =='ppt') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.ppt';
-                } else if ($document_extension =='pptx') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pptx';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
+                } else if ($document_extension == 'ppt') {
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.ppt';
+                } else if ($document_extension == 'pptx') {
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pptx';
                 } else if ($document_extension == 'csv') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.csv';
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
                 } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
-                    $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/'.$document_sid);
+                    $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document_sid);
                 }
                 $document_path = $result[0]['document_s3_name'];
-                $urls['download_url'] = base_url('hr_documents_management/download_upload_document/'.$document_path);
+                $urls['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
             } else if ($document_type == 'generated') {
-                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/'.$document_sid);
-                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/'.$document_sid.'/download');
+                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/generated/' . $document_sid . '/download');
             } else if ($document_type == 'offer') {
-                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/'.$document_sid);
-                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/'.$document_sid.'/download');
+                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/original/offer/' . $document_sid . '/download');
             }
             // End of Original Documents
         } else if ($request_type == 'assigned') {
@@ -1463,45 +1475,45 @@ if (!function_exists('get_print_document_url')) {
                 $CI->db->limit(1);
                 $result = $CI->db->get()->result_array();
                 $upload_document = $result[0]['document_s3_name'];
-                $file_name = explode(".",$upload_document);
+                $file_name = explode(".", $upload_document);
                 $document_name = $file_name[0];
                 $document_extension = $file_name[1];
                 // $document_extension = $file_name[1];
-                
+
                 //
                 $index = sizeof($file_name) - 1;
-                $document_extension = $file_name[ $index ];
+                $document_extension = $file_name[$index];
                 unset($file_name[$index]);
                 $document_name = implode('.', $file_name);
                 //
                 if ($document_extension == 'pdf') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pdf';
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
                 } else if ($document_extension == 'doc') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edoc&wdAccPdf=0';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
                 } else if ($document_extension == 'docx') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edocx&wdAccPdf=0';
-                } else if ($document_extension =='xls') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exls';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                } else if ($document_extension == 'xls') {
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
                 } else if ($document_extension == 'xlsx') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exlsx';
-                } else if ($document_extension =='ppt') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.ppt';
-                } else if ($document_extension =='pptx') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pptx';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
+                } else if ($document_extension == 'ppt') {
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.ppt';
+                } else if ($document_extension == 'pptx') {
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pptx';
                 } else if ($document_extension == 'csv') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.csv';
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
                 } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
-                    $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/generated/'.$document_sid);
+                    $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/generated/' . $document_sid);
                 }
 
                 $document_path = $result[0]['document_s3_name'];
-                $urls['download_url'] = base_url('hr_documents_management/download_upload_document/'.$document_path);
+                $urls['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
             } else if ($document_type == 'generated') {
-                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/generated/'.$document_sid);
-                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/generated/'.$document_sid.'/download');
+                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/generated/' . $document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/generated/' . $document_sid . '/download');
             } else if ($document_type == 'offer') {
-                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/offer/'.$document_sid);
-                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/offer/'.$document_sid.'/download');
+                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/offer/' . $document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/assigned/offer/' . $document_sid . '/download');
             }
         } else if ($request_type == 'submitted') {
             if ($document_type == 'MS') {
@@ -1512,34 +1524,34 @@ if (!function_exists('get_print_document_url')) {
                 $CI->db->limit(1);
                 $result = $CI->db->get()->result_array();
                 $upload_document = $result[0]['uploaded_file'];
-                $file_name = explode(".",$upload_document);
+                $file_name = explode(".", $upload_document);
                 $document_name = $file_name[0];
                 $document_extension = $file_name[1];
                 if ($document_extension == 'pdf') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pdf';
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
                 } else if ($document_extension == 'doc') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edoc&wdAccPdf=0';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
                 } else if ($document_extension == 'docx') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edocx&wdAccPdf=0';
-                } else if ($document_extension =='xls') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exls';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+                } else if ($document_extension == 'xls') {
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
                 } else if ($document_extension == 'xlsx') {
-                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exlsx';
-                } else if ($document_extension =='ppt') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.ppt';
-                } else if ($document_extension =='pptx') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pptx';
+                    $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
+                } else if ($document_extension == 'ppt') {
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.ppt';
+                } else if ($document_extension == 'pptx') {
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pptx';
                 } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
-                    $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/'.$document_sid);
+                    $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/' . $document_sid);
                 } else if ($document_extension == 'csv') {
-                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.csv';
+                    $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
                 }
 
                 $document_path = $result[0]['uploaded_file'];
-                $urls['download_url'] = base_url('hr_documents_management/download_upload_document/'.$document_path);
+                $urls['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
             } else if ($document_type == 'generated') {
-                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/'.$document_sid);
-                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/'.$document_sid.'/download');
+                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/' . $document_sid);
+                $urls['download_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/' . $document_sid . '/download');
             }
         } else if ($request_type == 'offer_letter') {
             $CI = &get_instance();
@@ -1549,31 +1561,31 @@ if (!function_exists('get_print_document_url')) {
             $CI->db->limit(1);
             $result = $CI->db->get()->result_array();
             $upload_document = $result[0]['uploaded_file'];
-            $file_name = explode(".",$upload_document);
+            $file_name = explode(".", $upload_document);
             $document_name = $file_name[0];
             $document_extension = $file_name[1];
             if ($document_extension == 'pdf') {
-                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pdf';
+                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
             } else if ($document_extension == 'doc') {
-                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edoc&wdAccPdf=0';
+                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
             } else if ($document_extension == 'docx') {
-                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edocx&wdAccPdf=0';
-            } else if ($document_extension =='xls') {
-                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exls';
+                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
+            } else if ($document_extension == 'xls') {
+                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
             } else if ($document_extension == 'xlsx') {
-                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exlsx';
-            } else if ($document_extension =='ppt') {
-                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.ppt';
-            } else if ($document_extension =='pptx') {
-                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pptx';
+                $urls['print_url'] = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
+            } else if ($document_extension == 'ppt') {
+                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.ppt';
+            } else if ($document_extension == 'pptx') {
+                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pptx';
             } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
-                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/'.$document_sid);
+                $urls['print_url'] = base_url('hr_documents_management/print_generated_and_offer_later/submitted/generated/' . $document_sid);
             } else if ($document_extension == 'csv') {
-                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.csv';
+                $urls['print_url'] = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
             }
 
             $document_path = $result[0]['uploaded_file'];
-            $urls['download_url'] = base_url('hr_documents_management/download_upload_document/'.$document_path);
+            $urls['download_url'] = base_url('hr_documents_management/download_upload_document/' . $document_path);
         }
 
         return $urls;
@@ -1581,44 +1593,45 @@ if (!function_exists('get_print_document_url')) {
 }
 
 if (!function_exists('get_required_url')) {
-    function get_required_url ($document_s3_url) {
+    function get_required_url($document_s3_url)
+    {
         $document_name        = pathinfo($document_s3_url)['filename'];
         $document_extension   = pathinfo($document_s3_url)['extension'];
         $print_url = '';
         $preview_url = '';
         $type = 'document';
 
-        if (in_array($document_extension, ['pdf', 'csv', 'ppt', 'pptx'])) { 
+        if (in_array($document_extension, ['pdf', 'csv', 'ppt', 'pptx'])) {
             $preview_url = "https://docs.google.com/gview?url=" . AWS_S3_BUCKET_URL . $document_s3_url . "&embedded=true";
 
             if ($document_extension == 'pdf') {
-                $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pdf';
+                $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pdf';
             } else if ($document_extension == 'csv') {
-                $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.csv';    
+                $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.csv';
             } else if ($document_extension == 'ppt') {
-                $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.ppt';
+                $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.ppt';
             } else if ($document_extension == 'pptx') {
-                $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$document_name.'.pptx';
+                $print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' . $document_name . '.pptx';
             }
-        } else if (in_array($document_extension, ['doc', 'docx', 'xls', 'xlsx'])) { 
+        } else if (in_array($document_extension, ['doc', 'docx', 'xls', 'xlsx'])) {
             $preview_url = "https://view.officeapps.live.com/op/embed.aspx?src=" . AWS_S3_BUCKET_URL . $document_s3_url;
 
             if ($document_extension == 'doc') {
-                $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edoc&wdAccPdf=0';
+                $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edoc&wdAccPdf=0';
             } else if ($document_extension == 'docx') {
-                $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Edocx&wdAccPdf=0';
+                $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Edocx&wdAccPdf=0';
             } else if ($document_extension == 'xls') {
-                $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exls';
-            } else if ($document_extension == 'xlsx') {    
-                $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$document_name.'%2Exlsx';
+                $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exls';
+            } else if ($document_extension == 'xlsx') {
+                $print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' . $document_name . '%2Exlsx';
             }
-        } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { 
+        } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) {
             $type = 'image';
             $preview_url = AWS_S3_BUCKET_URL . $document_s3_url;
-            $print_url = base_url('hr_documents_management/print_s3_image/'.$document_s3_url);
+            $print_url = base_url('hr_documents_management/print_s3_image/' . $document_s3_url);
         }
 
-        $download_url = base_url('hr_documents_management/download_upload_document/'.$document_s3_url);
+        $download_url = base_url('hr_documents_management/download_upload_document/' . $document_s3_url);
 
         $data_to_return = array();
         $data_to_return['type'] = $type;
@@ -1626,12 +1639,12 @@ if (!function_exists('get_required_url')) {
         $data_to_return['print_url'] = $print_url;
         $data_to_return['download_url'] = $download_url;
         return $data_to_return;
-
     }
-} 
+}
 
 if (!function_exists('get_employee_resume')) {
-    function get_employee_resume ($employee_sid) {   
+    function get_employee_resume($employee_sid)
+    {
         $return_data = "not_found";
         if ($employee_sid > 0) {
             $CI = &get_instance();
@@ -1641,7 +1654,7 @@ if (!function_exists('get_employee_resume')) {
             $CI->db->from('users');
             $result = $CI->db->get()->result_array();
 
-            if(!empty($result[0]["resume"])) {
+            if (!empty($result[0]["resume"])) {
                 $return_data = $result[0]["resume"];
             } else {
                 $return_data = "not_found";
@@ -1650,10 +1663,11 @@ if (!function_exists('get_employee_resume')) {
 
         return $return_data;
     }
-}        
+}
 
 if (!function_exists('get_authorized_base64_signature')) {
-    function get_authorized_base64_signature($company_sid, $document_sid) {
+    function get_authorized_base64_signature($company_sid, $document_sid)
+    {
         $return_data = array();
         if ($document_sid > 0) {
             $CI = &get_instance();
@@ -1665,7 +1679,7 @@ if (!function_exists('get_authorized_base64_signature')) {
             $CI->db->from('documents_authorized_signature');
             $result = $CI->db->get()->result_array();
 
-            if(!empty($result)) {
+            if (!empty($result)) {
                 $return_data = $result[0]["signature_base64"];
             }
         }
@@ -1674,16 +1688,17 @@ if (!function_exists('get_authorized_base64_signature')) {
     }
 }
 
-function get_resume_lsq_date($company_sid, $user_type, $user_sid) {
+function get_resume_lsq_date($company_sid, $user_type, $user_sid)
+{
 
     $CI = &get_instance();
     $CI->db->select('requested_date');
     $CI->db->where('company_sid', $company_sid);
     $CI->db->where('user_type', $user_type);
     $CI->db->where('user_sid', $user_sid);
-    $CI->db->where('request_status < ',2);
+    $CI->db->where('request_status < ', 2);
     // $CI->db->where('is_respond', 1);
-    $CI->db->order_by('sid','DESC');
+    $CI->db->order_by('sid', 'DESC');
 
 
     $record_obj = $CI->db->get('resume_request_logs');
@@ -1697,7 +1712,8 @@ function get_resume_lsq_date($company_sid, $user_type, $user_sid) {
 }
 
 if (!function_exists('get_witness_name_by_id')) {
-    function get_witness_name_by_id ($witness_sid) {
+    function get_witness_name_by_id($witness_sid)
+    {
         $witness_name = '';
 
         $CI = &get_instance();
@@ -1706,7 +1722,7 @@ if (!function_exists('get_witness_name_by_id')) {
         $CI->db->from('incident_related_witnesses');
         $result = $CI->db->get()->result_array();
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             $witness_name = $result[0]['witness_name'];
         }
 
@@ -1715,7 +1731,8 @@ if (!function_exists('get_witness_name_by_id')) {
 }
 
 if (!function_exists('get_witness_email_by_id')) {
-    function get_witness_email_by_id ($witness_sid) {
+    function get_witness_email_by_id($witness_sid)
+    {
         $witness_name = '';
 
         $CI = &get_instance();
@@ -1724,7 +1741,7 @@ if (!function_exists('get_witness_email_by_id')) {
         $CI->db->from('incident_related_witnesses');
         $result = $CI->db->get()->result_array();
 
-        if(!empty($result)) {
+        if (!empty($result)) {
             $witness_name = $result[0]['witness_email'];
         }
 
@@ -1732,7 +1749,7 @@ if (!function_exists('get_witness_email_by_id')) {
     }
 }
 
-if(!function_exists('sendSMS')){
+if (!function_exists('sendSMS')) {
     function sendSMS(
         $receiverPhoneNumber,
         $message,
@@ -1741,25 +1758,25 @@ if(!function_exists('sendSMS')){
         $_this,
         $isSMSEnabled = null,
         $companySid = null
-    ){
+    ) {
         // Check if module is enabled and
-        if($isSMSEnabled === null && $companySid === null){
+        if ($isSMSEnabled === null && $companySid === null) {
             $ses = $_this->session->userdata('logged_in');
             $isSMSEnabled = $ses['company_detail']['sms_module_status'];
             //
             $companySid = $ses['company_detail']['sid'];
         }
-        if($isSMSEnabled == 0) return;
+        if ($isSMSEnabled == 0) return;
         // Check company phone sid
         $data = get_company_sms_phonenumber($companySid, $_this);
         //
-        if($data['phone_sid'] == '' || $data['phone_sid'] == null) return;
+        if ($data['phone_sid'] == '' || $data['phone_sid'] == null) return;
         //
         $senderPhoneNumber = $data['phone_number'];
         //
         $receiverPhoneNumber = preg_replace('/[^+0-9]/', '', trim($receiverPhoneNumber));
-        if(strpos($receiverPhoneNumber,'+1') === false){
-            $receiverPhoneNumber = '+1'.$receiverPhoneNumber;
+        if (strpos($receiverPhoneNumber, '+1') === false) {
+            $receiverPhoneNumber = '+1' . $receiverPhoneNumber;
         }
         $isValidate = (int)phonenumber_validate($receiverPhoneNumber);
         //
@@ -1769,15 +1786,15 @@ if(!function_exists('sendSMS')){
         $insertArray['user_email_address'] = $userEmailAddress;
         $insertArray['sender_phone_number'] = $senderPhoneNumber;
         $insertArray['receiver_phone_number'] = $receiverPhoneNumber != NULL ? $receiverPhoneNumber : 0;
-        if($isValidate === 0) $insertArray['note'] = "Receiver phone number is in-valid.";
-        else{
+        if ($isValidate === 0) $insertArray['note'] = "Receiver phone number is in-valid.";
+        else {
             // Send SMS to reciever
 
 
             $_this
                 ->twilioapp
                 ->setReceiverPhone($receiverPhoneNumber);
-            if(SMS_MODE === 'production'){
+            if (SMS_MODE === 'production') {
                 $_this
                     ->twilioapp
                     ->setMessageServiceSID($data['message_service_sid'])
@@ -1789,8 +1806,8 @@ if(!function_exists('sendSMS')){
                 ->setMessage($message)
                 ->sendMessage();
             // Check & Handling Errors
-            if(!is_array($resp)) $insertArray['note'] = 'System failed to send sms.';
-            else if(isset($resp['Error'])) $insertArray['note'] = $resp['Error'];
+            if (!is_array($resp)) $insertArray['note'] = 'System failed to send sms.';
+            else if (isset($resp['Error'])) $insertArray['note'] = $resp['Error'];
             else {
                 $insertArray['note'] = 'SMS sent.';
                 $insertArray['is_sent'] = 1;
@@ -1805,39 +1822,43 @@ if(!function_exists('sendSMS')){
 }
 
 if (!function_exists('get_company_sms_status')) {
-    function get_company_sms_status($_this, $company_sid){
-        if(in_array($company_sid,explode(',',TEST_COMPANIES))){
+    function get_company_sms_status($_this, $company_sid)
+    {
+        if (in_array($company_sid, explode(',', TEST_COMPANIES))) {
             $_this->db->select('sms_module_status');
-            $_this->db->where('sid',$company_sid);
+            $_this->db->where('sid', $company_sid);
             $sms_module = $_this->db->get('users')->result_array();
             return $sms_module[0]['sms_module_status'];
-        }else{
+        } else {
             return 0;
         }
     }
 }
 
 if (!function_exists('get_employee_sms_status')) {
-    function get_employee_sms_status($_this, $employee_sid){
+    function get_employee_sms_status($_this, $employee_sid)
+    {
         $_this->db->select('notified_by, PhoneNumber');
-        $_this->db->where('sid',$employee_sid);
+        $_this->db->where('sid', $employee_sid);
         $sms_module = $_this->db->get('users')->result_array();
         return $sms_module[0];
     }
 }
 
 if (!function_exists('get_company_sms_template')) {
-    function get_company_sms_template($_this, $company_sid,$code){
+    function get_company_sms_template($_this, $company_sid, $code)
+    {
         $_this->db->select('sms_body');
-        $_this->db->where('company_sid',$company_sid);
-        $_this->db->where('template_code',$code);
+        $_this->db->where('company_sid', $company_sid);
+        $_this->db->where('template_code', $code);
         $sms_template = $_this->db->get('portal_sms_templates')->result_array();
         return $sms_template[0];
     }
 }
 
 if (!function_exists('replace_sms_body')) {
-    function replace_sms_body($smsTemplateBody, $replacement_array){
+    function replace_sms_body($smsTemplateBody, $replacement_array)
+    {
         if (!empty($replacement_array)) {
             foreach ($replacement_array as $key => $value) {
                 $smsTemplateBody = str_replace('{{' . $key . '}}', ucwords($value), $smsTemplateBody);
@@ -1848,7 +1869,8 @@ if (!function_exists('replace_sms_body')) {
 }
 
 if (!function_exists('get_email_attachment')) {
-    function get_email_attachment($incident_sid, $email_sid) {
+    function get_email_attachment($incident_sid, $email_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('sid, attachment_type, item_title, item_type, item_path');
         $CI->db->where('incident_sid', $incident_sid);
@@ -1856,17 +1878,18 @@ if (!function_exists('get_email_attachment')) {
         $CI->db->from('incident_email_attachments');
         $attachments = $CI->db->get()->result_array();
         $return_data = array();
-        
-        if(!empty($attachments)) {
+
+        if (!empty($attachments)) {
             $return_data = $attachments;
         }
-        
+
         return $return_data;
     }
 }
 
 if (!function_exists('is_manager_have_new_email')) {
-    function is_manager_have_new_email($manager_sid, $incident_sid) {
+    function is_manager_have_new_email($manager_sid, $incident_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('sid');
         $CI->db->where('incident_reporting_id', $incident_sid);
@@ -1875,17 +1898,18 @@ if (!function_exists('is_manager_have_new_email')) {
         $CI->db->from('incident_reporting_emails');
         $result = $CI->db->get()->result_array();
         $return_data = 0;
-        
-        if(!empty($result)) {
+
+        if (!empty($result)) {
             $return_data = count($result);
         }
-        
+
         return $return_data;
     }
 }
 
 if (!function_exists('is_user_have_unread_message')) {
-    function is_user_have_unread_message($manager_sid, $user_sid, $incident_sid) {
+    function is_user_have_unread_message($manager_sid, $user_sid, $incident_sid)
+    {
 
         $CI = &get_instance();
         $CI->db->select('sid');
@@ -1895,26 +1919,27 @@ if (!function_exists('is_user_have_unread_message')) {
             $CI->db->where('manual_email', $user_sid);
         } else {
             $CI->db->where('sender_sid', $user_sid);
-        }    
+        }
         $CI->db->where('is_read', 0);
         $CI->db->from('incident_reporting_emails');
         $result = $CI->db->get()->result_array();
         $return_data = 0;
-        
-        if(!empty($result)) {
+
+        if (!empty($result)) {
             $return_data = count($result);
         }
-        
+
         return $return_data;
     }
 }
 
-if(!function_exists('domainParser')){
-    function domainParser($source, $referrer, $return = FALSE){
+if (!function_exists('domainParser')) {
+    function domainParser($source, $referrer, $return = FALSE)
+    {
         // Convert to lower case
         $source = trim(strtolower(urldecode($source)));
         $referrer = trim(strtolower(urldecode($referrer)));
-        if($source == '' && $referrer == '') return 'N/A';
+        if ($source == '' && $referrer == '') return 'N/A';
         // Set return array
         $r = array(
             'Original' => array(
@@ -1928,23 +1953,21 @@ if(!function_exists('domainParser')){
             'Text' => ''
         );
         // Check if referrer is empty
-        if($referrer != '' && $referrer != null && $referrer != "null") {
+        if ($referrer != '' && $referrer != null && $referrer != "null") {
             // Reset referrer URL
             // $referrer = preg_replace('/(http|https):\/\/(www.)?/', '', $referrer);
             // Check if AutomotoHR in the URL
-            if(preg_match('/automotohr/', strtolower($referrer))) {
+            if (preg_match('/automotohr/', strtolower($referrer))) {
                 $r['Source'] = 'https://www.automotohr.com';
                 $r['ReferrerSource'] = 'AutomotoHR';
                 return ($referrer);
-            }
-            else if(preg_match('/automotosocial/', strtolower($referrer))) {
+            } else if (preg_match('/automotosocial/', strtolower($referrer))) {
                 $r['Source'] = 'https://www.automotosocial.com';
                 $r['ReferrerSource'] = 'AutomotoSocial';
-            }
-            else {
-                if(strpos($referrer, '.') === FALSE){
+            } else {
+                if (strpos($referrer, '.') === FALSE) {
                     $r['ReferrerSource'] = ucfirst($referrer);
-                }else{
+                } else {
                     $m = array();
                     $referrer = parse_url($referrer)['host'];
                     preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $referrer, $m);
@@ -1952,38 +1975,36 @@ if(!function_exists('domainParser')){
                 }
             }
             // Check for UTM
-            if(strpos($referrer, "?utm_source") !== false){
+            if (strpos($referrer, "?utm_source") !== false) {
                 $r['URL'] = ucfirst(explode('?', $referrer)[0]);
                 $r['Referrer'] = ucfirst(explode('&', explode('?utm_source=', $referrer)[1])[0]);
                 $r['ReferrerSource'] = explode('.', preg_replace('#^(?:.+?\\.)+(.+?\\.(?:co\\.uk|com|net))#', '$1', $r['Referrer']))[0];
             }
-        } else{
-            if(preg_match('/automotohr/', strtolower($source))) {
+        } else {
+            if (preg_match('/automotohr/', strtolower($source))) {
                 $r['Source'] = 'https://www.automotohr.com';
                 $r['ReferrerSource'] = 'AutomotoHR';
-            }
-            else if(preg_match('/automotosocial/', strtolower($source))) {
+            } else if (preg_match('/automotosocial/', strtolower($source))) {
                 $r['Source'] = 'https://www.automotosocial.com';
                 $r['ReferrerSource'] = 'AutomotoSocial';
-            }
-            else {
-                if(strpos($source, '.') === FALSE){
+            } else {
+                if (strpos($source, '.') === FALSE) {
                     $r['ReferrerSource'] = ucfirst($source);
-                }else{
+                } else {
                     $source = isset(parse_url($source)['host']) ? parse_url($source)['host'] : $source;
                     preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $source, $m);
                     $r['ReferrerSource'] = ucfirst(isset($m['domain']) ? explode('.', $m['domain'])[0] : preg_replace('#^(?:.+?\\.)+(.+?\\.(?:co\\.uk|com|net))#', '$1', $source));
                 }
             }
             // Check for UTM
-            if(strpos($source, "utm_source") !== false){
+            if (strpos($source, "utm_source") !== false) {
                 $r['URL'] = ucfirst(explode('?', $source)[0]);
                 $r['Referrer'] = ucfirst(explode('&', explode('?utm_source=', $source)[1])[0]);
                 $r['ReferrerSource'] = explode('.', preg_replace('#^(?:.+?\\.)+(.+?\\.(?:co\\.uk|com|net))#', '$1', $r['Referrer']))[0];
             }
         }
         //
-        $r['Text'] = '<b>Source:</b> '.$r['Source'].($r['ReferrerSource'] == '' ? '' : '<br /><b>Origin Source: ('.( $r['ReferrerSource'] ).')<b>');
+        $r['Text'] = '<b>Source:</b> ' . $r['Source'] . ($r['ReferrerSource'] == '' ? '' : '<br /><b>Origin Source: (' . ($r['ReferrerSource']) . ')<b>');
         // if($r['URL'] != ''){
         //     $r['Text'] = '<b>Site:</b> '.$r['Source'].($r['URL'] == '' ? '' : '<br />URL: '.( $r['URL'] ).'').($r['Referrer'] == '' ? '' : '<br /><b>Referrer: ('.( $r['Referrer'] ).')<b>');
         // } else{
@@ -1993,7 +2014,8 @@ if(!function_exists('domainParser')){
     }
 }
 
-function fetchEmployees($company_sid, $_this){
+function fetchEmployees($company_sid, $_this)
+{
     $_this->db->select('sid, first_name, last_name, email');
     $_this->db->where('parent_sid', $company_sid);
     $_this->db->where('active', 1);
@@ -2003,11 +2025,12 @@ function fetchEmployees($company_sid, $_this){
 }
 
 if (!function_exists('get_policy_item_info')) {
-    function get_policy_item_info($info_slug = false){
+    function get_policy_item_info($info_slug = false)
+    {
         $CI = &get_instance();
 
         $CI->db->select('info_content, slug');
-        if($info_slug) $CI->db->where('slug', $info_slug);
+        if ($info_slug) $CI->db->where('slug', $info_slug);
         $CI->db->from('timeoff_policy_icons_info');
 
         $records_obj = $CI->db->get();
@@ -2015,7 +2038,7 @@ if (!function_exists('get_policy_item_info')) {
         $records_obj->free_result();
 
         if (!empty($records_arr)) {
-            if($info_slug) return $records_arr[0]['info_content'];
+            if ($info_slug) return $records_arr[0]['info_content'];
             //
             $r = [];
             foreach ($records_arr as $k => $v) $r[$v['slug']] = $v['info_content'];
@@ -2027,7 +2050,8 @@ if (!function_exists('get_policy_item_info')) {
 }
 
 if (!function_exists('get_pto_user_access')) {
-    function get_pto_user_access($company_sid, $user_sid){
+    function get_pto_user_access($company_sid, $user_sid)
+    {
         $user_status = get_this_user_status($user_sid);
         $is_access_level_plus = $user_status['access_level_plus'];
         $is_pay_roll = $user_status['pay_plan_flag'];
@@ -2036,7 +2060,7 @@ if (!function_exists('get_pto_user_access')) {
         $return_access_array = array();
 
         if ($is_access_level_plus == 1 || $is_pay_roll == 1) {
-            
+
             $return_access_array['url'] = base_url('timeoff/requests');
             $return_access_array['dashboard'] = 1;
             $return_access_array['quick_link'] = 1;
@@ -2092,12 +2116,13 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['report'] = 0;
             $return_access_array['employee_profile'] = 0;
         }
-        
-        return $return_access_array; 
+
+        return $return_access_array;
     }
 }
 
-function get_this_user_status ($user_sid){
+function get_this_user_status($user_sid)
+{
 
     $CI = &get_instance();
 
@@ -2117,17 +2142,19 @@ function get_this_user_status ($user_sid){
 }
 
 
-function is_approver ($companySid, $userSid){
+function is_approver($companySid, $userSid)
+{
     // Get approver all departments
     $CI = &get_instance();
-    return 
-    $CI->db
+    return
+        $CI->db
         ->where('employee_sid', $userSid)
         ->where('is_archived', 0)
         ->count_all_results('timeoff_approvers');
 }
 
-function get_department_status ($company_sid, $user_sid, $status_for){
+function get_department_status($company_sid, $user_sid, $status_for)
+{
 
     $CI = &get_instance();
 
@@ -2152,10 +2179,10 @@ function get_department_status ($company_sid, $user_sid, $status_for){
     $a->free_result();
 
     //
-    if(!$b || !count($b)) return 0;
+    if (!$b || !count($b)) return 0;
     //
     $a = $CI->db
-    ->select('
+        ->select('
         users.sid,
         users.sid as user_id,
         users.first_name, 
@@ -2170,22 +2197,22 @@ function get_department_status ($company_sid, $user_sid, $status_for){
         users.profile_picture as image,
         users.is_executive_admin
     ')
-    ->where_in($status_for == 'supervisor' ? 'departments_employee_2_team.department_sid' : 'departments_employee_2_team.team_sid', array_column($b, 'sid'))
-    ->join('users', 'users.sid = departments_employee_2_team.employee_sid')
-    ->order_by('concat(users.first_name, users.last_name)', 'ASC', false)
-    ->get('departments_employee_2_team');
+        ->where_in($status_for == 'supervisor' ? 'departments_employee_2_team.department_sid' : 'departments_employee_2_team.team_sid', array_column($b, 'sid'))
+        ->join('users', 'users.sid = departments_employee_2_team.employee_sid')
+        ->order_by('concat(users.first_name, users.last_name)', 'ASC', false)
+        ->get('departments_employee_2_team');
     //
     $b = $a->result_array();
     $a = $a->free_result();
     //
-    if(!$b || !count($b)) return 0;
+    if (!$b || !count($b)) return 0;
     //
     return $b;
 }
 
 
 //
-if(!function_exists('broadcastAlert')){
+if (!function_exists('broadcastAlert')) {
     function broadcastAlert(
         $templateCode,
         $alertSlug,
@@ -2197,12 +2224,11 @@ if(!function_exists('broadcastAlert')){
         $employeeSid,
         $extra = [],
         $userType = 'employee'
-    ){
+    ) {
         // Get employers that need to be notified
         $employers = getNotificationContacts($companySid, $alertSlug);
-       
         //
-        if(!count($employers)) return;
+        if (!count($employers)) return;
         // Set the document type
         $dt = 'Document';
         $dti = 'a document';
@@ -2210,109 +2236,103 @@ if(!function_exists('broadcastAlert')){
         $subject = '';
         $documentTitle = '';
         $employeeName = '';
-        $link = 'hr_documents_management/documents_assignment/'. $userType.'/';
+        $link = 'hr_documents_management/documents_assignment/' . $userType . '/';
         //
-        switch($notificationSlug){
-            case 'driver_license': 
-                $dt = 'Driver\'s License'; 
+        switch ($notificationSlug) {
+            case 'driver_license':
+                $dt = 'Driver\'s License';
                 $subject = 'Driver\'s license details have changed';
-                $link = 'drivers_license_info/'. $userType.'/';
-                return '';
-            break;
+                $link = 'drivers_license_info/' . $userType . '/';
+                break;
             case 'occupational_license':
-                $dt = 'Occupational License'; 
+                $dt = 'Occupational License';
                 $subject = 'Occupational license details have changed';
-                $link = 'occupational_license_info/'. $userType.'/';
-                return '';
-            break;
+                $link = 'occupational_license_info/' . $userType . '/';
+                break;
             case 'dependent_details':
-                $dt = 'Dependent Details'; 
+                $dt = 'Dependent Details';
                 $subject = 'Dependent details have changed';
-                $link = 'dependants/'. $userType.'/';
-                return '';
-            break;
+                $link = 'dependants/' . $userType . '/';
+                break;
             case 'emergency_contact':
-                $dt = 'Emergency Contact'; 
+                $dt = 'Emergency Contact';
                 $subject = 'Emergency contact details have changed';
-                $link = 'emergency_contacts/'. $userType.'/';
-                return '';
-            break;
-            case 'direct_deposit_information': 
-                $dt = 'Direct Deposit Information'; 
+                $link = 'emergency_contacts/' . $userType . '/';
+                break;
+            case 'direct_deposit_information':
+                $dt = 'Direct Deposit Information';
                 $subject = 'Direct Deposit Information has changed';
-                $link = 'direct_deposit/'. $userType.'/';
-            break;
-            case 'equipment_info': 
-                $dt = 'Equipment Information'; 
+                $link = 'direct_deposit/' . $userType . '/';
+                break;
+            case 'equipment_info':
+                $dt = 'Equipment Information';
                 $subject = 'Equipment Information has changed';
-                $link = 'equipment_info/'. $userType.'/';
-                return '';
-            break;
-            case 'equipment_info_acknowledged': 
-                $dt = 'Equipment Information'; 
+                $link = 'equipment_info/' . $userType . '/';
+                break;
+            case 'equipment_info_acknowledged':
+                $dt = 'Equipment Information';
                 $subject = 'Equipment Information Acknowledged';
                 $action = 'Acknowledged';
-                $link = 'equipment_info/'. $userType.'/';
-                return '';
-            break;
-            case 'i9_completed': 
-                $dt = 'I9 Form'; 
+                $link = 'equipment_info/' . $userType . '/';
+                break;
+            case 'i9_completed':
+                $dt = 'I9 Form';
                 $subject = 'I9 Form Completed';
                 $action = 'Completed';
-            break;
-            case 'w9_completed': 
-                $dt = 'W9 Form'; 
+                break;
+            case 'w9_completed':
+                $dt = 'W9 Form';
                 $subject = 'W9 Form Completed';
                 $action = 'Completed';
-            break;
-            case 'w4_completed': 
-                $dt = 'W4 Form'; 
+                break;
+            case 'w4_completed':
+                $dt = 'W4 Form';
                 $subject = 'W4 Form Completed';
                 $action = 'Completed';
-            break;
-            case 'document_assigned': 
-                $dt = $extra['document_title']; 
-                $subject = 'Document assigned to '.$extra['employee_name'].'.';
+                break;
+            case 'document_assigned':
+                $dt = $extra['document_title'];
+                $subject = 'Document assigned to ' . $extra['employee_name'] . '.';
                 $action = 'Assigned';
                 $employeeName = $extra['employee_name'];
                 $documentTitle = $extra['document_title'];
-            break;
-            case 'document_completed': 
-                $dt = 'completed or changed the Document(s).'; 
+                break;
+            case 'document_completed':
+                $dt = 'completed or changed the Document(s).';
                 $subject = 'Document Completed.';
                 $action = '';
                 return;
-            break;
+                break;
         }
         //
         $list = '';
         //
-        if(isset($extra['completedDocTitles'])){
+        if (isset($extra['completedDocTitles'])) {
             //
             $list .= '<ul style="margin-left: 10px;">';
             //
-            foreach($extra['completedDocTitles'] as $t0){
-                $list .= '<li>'.($t0).'</li>';
-            }   
+            foreach ($extra['completedDocTitles'] as $t0) {
+                $list .= '<li>' . ($t0) . '</li>';
+            }
             //
             $list .= '</ul>';
         }
         //
         $hf = message_header_footer($companySid, $companyName);
         //
-        if(!isset($_SESSION[$templateCode.'_SES'])){
+        if (!isset($_SESSION[$templateCode . '_SES'])) {
             // Get email template
-            $_SESSION[$templateCode.'_SES'] = get_portal_email_template($companySid, $templateCode);
+            $_SESSION[$templateCode . '_SES'] = get_portal_email_template($companySid, $templateCode);
             //
-            if(!count($_SESSION[$templateCode.'_SES'])) $_SESSION[$templateCode.'_SES'] = get_email_template($templateCode);
+            if (!count($_SESSION[$templateCode . '_SES'])) $_SESSION[$templateCode . '_SES'] = get_email_template($templateCode);
         }
         //
-        $template = $_SESSION[$templateCode.'_SES'];
+        $template = $_SESSION[$templateCode . '_SES'];
         //
         $fromName = str_replace('{{company_name}}', $companyName, $template['from_name']);
         $fromEmail = !empty($template['from_email']) ? $template['from_email'] : FROM_EMAIL_NOTIFICATIONS;
         $subject = str_replace('{{company_name}}', $companyName, ($subject == '' ? $template['subject'] : $subject));
-        $content = $hf['header'].$template['text'].$hf['footer'];
+        $content = $hf['header'] . $template['text'] . $hf['footer'];
         //
         $replaceArray = [
             '{{company_name}}' => $companyName,
@@ -2320,15 +2340,15 @@ if(!function_exists('broadcastAlert')){
             '{{last_name}}' => $employeeLastName,
             '{{action}}' => $action,
             '{{list}}' => $list,
-            '{{document}}' => $dt, 
-            '{{document_title}}' => $documentTitle, 
-            '{{employee_name}}' => $employeeName, 
-            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="'.( base_url().'/'.$link.$employeeSid ).'">Click Here</a>',
+            '{{document}}' => $dt,
+            '{{document_title}}' => $documentTitle,
+            '{{employee_name}}' => $employeeName,
+            '{{link}}' => '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="' . (base_url() . '/' . $link . $employeeSid) . '">Click Here</a>',
             $dti => $dt
         ];
 
         //
-        foreach($employers as $employer){
+        foreach ($employers as $employer) {
             //
             $replaceArray['{{contact-name}}'] = $employer['contact_name'];
             //
@@ -2359,48 +2379,46 @@ if(!function_exists('broadcastAlert')){
  * 
  * @return array
  */
-if(!function_exists('getNotificationContacts')){
+if (!function_exists('getNotificationContacts')) {
     function getNotificationContacts(
         $companySid,
         $slug,
         $mainSlug = false
-    ){
+    ) {
         //
         $mainSlug = $mainSlug ? $mainSlug : $slug;
         //
         $CI = &get_instance();
         //
-        if(!
-            $CI->db
+        if (!$CI->db
             ->where('company_sid', $companySid)
             ->where($mainSlug, 1)
-            ->count_all_results('notifications_emails_configuration')
-            ) return [];
-            //
+            ->count_all_results('notifications_emails_configuration')) return [];
+        //
         $a = $CI->db
-        ->select('
+            ->select('
             notifications_emails_management.contact_name, 
             notifications_emails_management.email, 
             notifications_emails_management.employer_sid,
             users.active as useractive,
             users.terminated_status
         ')
-        ->join('users', 'notifications_emails_management.employer_sid = users.sid', 'left')
-        ->where('notifications_emails_management.company_sid', $companySid)
-        ->where('notifications_emails_management.status', 'active')
-        ->where('notifications_emails_management.notifications_type', $slug)
-        ->group_by('notifications_emails_management.email')
-        ->get('notifications_emails_management');
+            ->join('users', 'notifications_emails_management.employer_sid = users.sid', 'left')
+            ->where('notifications_emails_management.company_sid', $companySid)
+            ->where('notifications_emails_management.status', 'active')
+            ->where('notifications_emails_management.notifications_type', $slug)
+            ->group_by('notifications_emails_management.email')
+            ->get('notifications_emails_management');
         //
         $b = $a->result_array();
         $a = $a->free_result();
         // Remove the in-active / terminated employers
-        if(count($b)){
+        if (count($b)) {
             //
-            foreach($b as $k => $v) {
+            foreach ($b as $k => $v) {
                 //
-                if($v['employer_sid'] != 0 && $v['employer_sid'] != null){
-                    if($v['useractive'] == 0 || $v['terminated_status'] == 1) unset($b[$k]);
+                if ($v['employer_sid'] != 0 && $v['employer_sid'] != null) {
+                    if ($v['useractive'] == 0 || $v['terminated_status'] == 1) unset($b[$k]);
                 }
             }
             //
@@ -2412,62 +2430,63 @@ if(!function_exists('getNotificationContacts')){
 }
 
 //
-if(!function_exists('checkAndUpdateDD')){
+if (!function_exists('checkAndUpdateDD')) {
     //
     function checkAndUpdateDD(
         $userSid,
         $userType,
         $companySid,
         $documentType
-    ){
+    ) {
         $CI = &get_instance();
         //
         $CI->db
-        ->where('user_sid', $userSid)
-        ->where('user_type', $userType)
-        ->where('company_sid', $companySid)
-        ->where('document_type', $documentType)
-        ->update('documents_assigned_general', [
-            'is_completed' => 1
-        ]);
+            ->where('user_sid', $userSid)
+            ->where('user_type', $userType)
+            ->where('company_sid', $companySid)
+            ->where('document_type', $documentType)
+            ->update('documents_assigned_general', [
+                'is_completed' => 1
+            ]);
 
         // Get documents_assigned_general_sid
         $a = $CI->db
-        ->select('sid')
-        ->where('user_sid', $userSid)
-        ->where('user_type', $userType)
-        ->where('company_sid', $companySid)
-        ->where('document_type', $documentType)
-        ->get('documents_assigned_general');
+            ->select('sid')
+            ->where('user_sid', $userSid)
+            ->where('user_type', $userType)
+            ->where('company_sid', $companySid)
+            ->where('document_type', $documentType)
+            ->get('documents_assigned_general');
         //
         $b = $a->row_array();
         $a = $a->free_result();
         //
-        if(!count($b)){
+        if (!count($b)) {
             $CI->db
-            ->insert('documents_assigned_general', [
-                'company_sid' => $companySid,
-                'user_sid' => $userSid,
-                'user_type' => $userType,
-                'document_type' => $documentType,
-                'status' => 1,
-                'is_completed' => 1,
-                'note' => '',
-                'assigned_at' => date('Y-m-d H:i:s')
-            ]);
+                ->insert('documents_assigned_general', [
+                    'company_sid' => $companySid,
+                    'user_sid' => $userSid,
+                    'user_type' => $userType,
+                    'document_type' => $documentType,
+                    'status' => 1,
+                    'is_completed' => 1,
+                    'note' => '',
+                    'assigned_at' => date('Y-m-d H:i:s')
+                ]);
             //
             $b['sid'] = $CI->db->insert_id();
         }
         //
         $CI->db
-        ->insert(
-            'documents_assigned_general_assigners', [
-                'documents_assigned_general_sid' => $b['sid'],
-                'user_sid' => $userSid,
-                'user_type' => $userType,
-                'action' => 'completed'
-            ]
-        );
+            ->insert(
+                'documents_assigned_general_assigners',
+                [
+                    'documents_assigned_general_sid' => $b['sid'],
+                    'user_sid' => $userSid,
+                    'user_type' => $userType,
+                    'action' => 'completed'
+                ]
+            );
     }
 }
 
@@ -2485,7 +2504,7 @@ if (!function_exists('get_applicant_name')) {
         if (empty($result)) { // applicant does not exits
             return 'error';
         } else {
-            return $result[0]['first_name']. ' ' . $result[0]['last_name'];
+            return $result[0]['first_name'] . ' ' . $result[0]['last_name'];
         }
     }
 }
@@ -2505,23 +2524,23 @@ if (!function_exists('get_applicant_name')) {
  * 
  * @return Integer
  */
-if(!function_exists('checkAndInsertCompletedDocument')){
+if (!function_exists('checkAndInsertCompletedDocument')) {
     function checkAndInsertCompletedDocument(
         $ins
-    ){
+    ) {
         // Get CI instance
         $_this = &get_instance();
         // Check if document already exists
-        if(
+        if (
             !$_this->db
-            ->where('document_sid', $ins['document_sid'])
-            ->where('document_type', $ins['document_type'])
-            ->where('company_sid', $ins['company_sid'])
-            ->where('user_sid', $ins['user_sid'])
-            ->where('user_type', $ins['user_type'])
-            ->where('completion_date', date('Y-m-d', strtotime('now')))
-            ->count_all_results('portal_completed_documents_list')
-        ){
+                ->where('document_sid', $ins['document_sid'])
+                ->where('document_type', $ins['document_type'])
+                ->where('company_sid', $ins['company_sid'])
+                ->where('user_sid', $ins['user_sid'])
+                ->where('user_type', $ins['user_type'])
+                ->where('completion_date', date('Y-m-d', strtotime('now')))
+                ->count_all_results('portal_completed_documents_list')
+        ) {
             //
             $ins['completion_date'] = date('Y-m-d', strtotime('now'));
             //
@@ -2550,23 +2569,23 @@ if(!function_exists('checkAndInsertCompletedDocument')){
  * 
  * @return Integer
  */
-if(!function_exists('checkAndInsertCompletedDocument')){
+if (!function_exists('checkAndInsertCompletedDocument')) {
     function checkAndInsertCompletedDocument(
         $ins
-    ){
+    ) {
         // Get CI instance
         $_this = &get_instance();
         // Check if document already exists
-        if(
+        if (
             !$_this->db
-            ->where('document_sid', $ins['document_sid'])
-            ->where('document_type', $ins['document_type'])
-            ->where('company_sid', $ins['company_sid'])
-            ->where('user_sid', $ins['user_sid'])
-            ->where('user_type', $ins['user_type'])
-            ->where('completion_date', date('Y-m-d', strtotime('now')))
-            ->count_all_results('portal_completed_documents_list')
-        ){
+                ->where('document_sid', $ins['document_sid'])
+                ->where('document_type', $ins['document_type'])
+                ->where('company_sid', $ins['company_sid'])
+                ->where('user_sid', $ins['user_sid'])
+                ->where('user_type', $ins['user_type'])
+                ->where('completion_date', date('Y-m-d', strtotime('now')))
+                ->count_all_results('portal_completed_documents_list')
+        ) {
             //
             $ins['completion_date'] = date('Y-m-d', strtotime('now'));
             //
@@ -2588,14 +2607,15 @@ if(!function_exists('checkAndInsertCompletedDocument')){
  * 
  * @return Booleon
  */
-if(!function_exists('hasDocumentsAssigned')){
-    function hasDocumentsAssigned($employerArray){
+if (!function_exists('hasDocumentsAssigned')) {
+    function hasDocumentsAssigned($employerArray)
+    {
         // Check if the user is access level plus or payrol plus
-        if($employerArray['access_level_plus'] == 1 || $employerArray['pay_plan_flag'] == 1)  return true;
+        if ($employerArray['access_level_plus'] == 1 || $employerArray['pay_plan_flag'] == 1)  return true;
         // Set role
         $role = strtolower(preg_replace('/[^a-zA-Z]/', '_', $employerArray['access_level']));
         //
-        if($role == 'admin') return true;
+        if ($role == 'admin') return true;
         // Get CI instance
         $_this = &get_instance();
         // Load HR model
@@ -2620,12 +2640,13 @@ if(!function_exists('hasDocumentsAssigned')){
  * 
  * @return Booleon
  */
-if(!function_exists('hasEMSPermission')){
-    function hasEMSPermission($employerArray){
+if (!function_exists('hasEMSPermission')) {
+    function hasEMSPermission($employerArray)
+    {
         //
         $role = strtolower(preg_replace('/[^a-zA-Z]/', '_', $employerArray['access_level']));
         // Check if the user is not access level plus and role is manager
-        if($employerArray['access_level_plus'] == 0 && $role == 'manager')  
+        if ($employerArray['access_level_plus'] == 0 && $role == 'manager')
             return false;
         else
             return true;
@@ -2643,8 +2664,9 @@ if(!function_exists('hasEMSPermission')){
  * 
  * @return VOID
  */
-if(!function_exists('CheckLogin')){
-    function CheckLogin(&$data, $return = FALSE){
+if (!function_exists('CheckLogin')) {
+    function CheckLogin(&$data, $return = FALSE)
+    {
         //
         $_this = &get_instance();
         //
@@ -2659,8 +2681,7 @@ if(!function_exists('CheckLogin')){
         //
         if ($return) {
             return true;
-        }
-        else {
+        } else {
             //
             $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid'], NULL, $data['session']);
         }

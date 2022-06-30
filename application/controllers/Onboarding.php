@@ -1186,7 +1186,7 @@ class Onboarding extends CI_Controller
                 }
 
                 $data['onboarding_disclosure'] = $onboarding_disclosure;
-               
+
                 $assign_links = $this->onboarding_model->onboarding_assign_useful_links($applicant_sid, $company_sid);
                 $data['locations'] = array_merge($locations, $custom_office_locations);
                 $data['timings'] = $timings;
@@ -3053,7 +3053,7 @@ class Onboarding extends CI_Controller
                 $data['useful_links'] = $useful_links;
                 $ems_notification = $this->onboarding_model->get_all_ems_notification($company_sid); //Useful Links
                 $data['ems_notification'] = $ems_notification;
-                
+
                 $data['onboarding_disclosure'] = $onboarding_disclosure;
 
                 $employees = $this->onboarding_model->get_all_employees($company_sid); //Employees
@@ -4510,7 +4510,7 @@ class Onboarding extends CI_Controller
                         $onboarding_disclosure = $onboarding_disclosure_data[0]['disclosure'];
                     }
 
-                    
+
                     $data['onboarding_disclosure'] = $onboarding_disclosure;
 
                     $video_session = array();
@@ -4545,7 +4545,7 @@ class Onboarding extends CI_Controller
 
                     break;
                 case 'applicant':
-                  
+
                     $ats_params = $this->session->userdata('ats_params');
                     $data = applicant_right_nav($user_sid, $job_list_sid, $ats_params);
                     $data['job_list_sid'] = $job_list_sid;
@@ -4584,9 +4584,9 @@ class Onboarding extends CI_Controller
                     } else {
                         $onboarding_disclosure = $onboarding_disclosure_data[0]['disclosure'];
                     }
-              
+
                     $data['onboarding_disclosure'] = $onboarding_disclosure;
-                   
+
                     $video_session = array();
 
                     if (sizeof($sessions) > 0) {
@@ -5340,11 +5340,11 @@ class Onboarding extends CI_Controller
                 }
 
                 $this->onboarding_model->save_update_setup_onboarding_instructions($instructions, $user_type, $user_sid, $data['session']['company_detail']['sid'], $data['session']['employer_detail']['sid']);
-                
+
                 $this->onboarding_model->save_update_setup_onboarding_disclosure($disclosure, $user_type, $user_sid, $data['session']['company_detail']['sid'], $data['session']['employer_detail']['sid']);
 
 
-                
+
                 if (!empty($tsession)) {
                     $this->onboarding_model->update_specific_training_session($user_sid, $user_type, array('status' => 0));
 
@@ -9475,7 +9475,7 @@ class Onboarding extends CI_Controller
     //
     function document($token)
     {
-       // Load encryptipn library
+        // Load encryptipn library
         $this->load->library('encryption', 'encrypt');
         // Clean token
         $token = str_replace(['$eb$eb$1', '$eb$eb$2'], ['/', '+'], $token);
@@ -9489,17 +9489,17 @@ class Onboarding extends CI_Controller
         $this->load->model('hr_documents_management_model', 'hdm');
         //
         $type = 'document';
-        
+
         //
         if (isset($d[4])) $type = $d[4];
-         
+
         //
         $document = $this->hdm->checkForExiredToken(
             $d[0],
             $type
         );
 
-      
+
         //
         $data['session']['company_detail'] = $this->hdm->getCompanyInfo($document['company_sid']);
         //
@@ -9515,12 +9515,12 @@ class Onboarding extends CI_Controller
         //
         $data['Expired'] = false;
         //
-        
+
         $post = $this->input->post(NULL, FALSE);
         //
-        
+
         if (count($post)) {
-              //
+            //
             $save_input_values = array();
             $users_type = $data['users_type'];
             $users_sid = $data['users_sid'];
@@ -9962,7 +9962,6 @@ class Onboarding extends CI_Controller
         $session = $this->session->userdata('logged_in');
         $post = $this->input->post(NULL, TRUE);
         //
-  
         $this->db->insert(
             'emergency_contacts',
             [
@@ -9983,42 +9982,33 @@ class Onboarding extends CI_Controller
         );
         //
         $this->db
-            ->where('user_sid', $post['userSid'])
-            ->where('user_type', $post['userType'])
-            ->where('document_type', 'emergency_contacts')
-            ->where('company_sid', $post['companySid'])
-            ->update(
-                'documents_assigned_general',
-                [
-                    'is_completed' => 1
-                ]
-            );
-            
-            
-
-           $email_configuration_data = $this->onboarding_model->get_notification_email_configuration($post['companySid']);
-           //-- Send Email 
-       if($email_configuration_data->general_information_status == 1) {
-        
-        // Send document completion alert
-        broadcastAlert(
-            DOCUMENT_NOTIFICATION_TEMPLATE,
-            'general_information_status',
-            'emergency_contact',
-            $post['companySid'],
-            $session['company_detail']['CompanyName'],
-            $post['firstName'],
-            $post['lastName'],
-            $post['userSid'],
-            [],
-            $post['userType']
-
+        ->where('user_sid', $post['userSid'])
+        ->where('user_type', $post['userType'])
+        ->where('document_type', 'emergency_contacts')
+        ->where('company_sid', $post['companySid'])
+        ->update(
+            'documents_assigned_general',
+            [
+                'is_completed' => 1
+            ]
         );
-    }  
+        //-- Send Email 
+        if ($this->onboarding_model->get_notification_email_configuration($post['companySid']) > 0) {
+            // Send document completion alert
+            broadcastAlert(
+                DOCUMENT_NOTIFICATION_TEMPLATE,
+                'general_information_status',
+                'emergency_contact',
+                $post['companySid'],
+                $session['company_detail']['CompanyName'],
+                $post['firstName'],
+                $post['lastName'],
+                $post['userSid'],
+                [],
+                $post['userType']
 
-
-
-
+            );
+        }
     }
 
     //
