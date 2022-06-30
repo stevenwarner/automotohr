@@ -13733,10 +13733,14 @@ class Hr_documents_management extends Public_Controller
         //
         $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
         //
-        $current_approver_sid = $this->hr_documents_management_model->get_document_current_approver_sid($document_info['approval_flow_sid']);
+        if(empty($document_info)){
+            $resp['Msg'] = 'You are not allowed to perform that action!';
+            res($resp);
+        }
+        $currentFlowId = $document_info['approval_flow_sid'];
         //
         $current_approver_reference = "";
-        $current_approver_info = $this->hr_documents_management_model->get_document_current_approver_sid($document_info['approval_flow_sid']);
+        $current_approver_info = $this->hr_documents_management_model->get_document_current_approver_sid($currentFlowId);
         //
         if ($current_approver_info["assigner_sid"] == 0 && !empty($current_approver_info["approver_email"])) {
             $approver_detail = $this->hr_documents_management_model->get_default_outer_approver($document_info['company_sid'], $current_approver_info["approver_email"]);

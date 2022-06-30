@@ -8863,10 +8863,10 @@ class Hr_documents_management_model extends CI_Model
         return $return_data;
     }
 
-    public function get_document_current_approver_sid ($document_sid) {
+    public function get_document_current_approver_sid ($currentFlowId) {
         //
         $this->db->select('assigner_sid, approver_email');
-        $this->db->where('portal_document_assign_sid', $document_sid);
+        $this->db->where('portal_document_assign_sid', $currentFlowId);
         $this->db->where('assigner_turn', 1);
         $records_obj = $this->db->get('portal_document_assign_flow_employees');
         $records_arr = $records_obj->row_array();
