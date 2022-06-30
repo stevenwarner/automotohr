@@ -403,7 +403,9 @@ class Emergency_contacts extends Public_Controller
                             $data['session']['company_detail']['CompanyName'],
                             $userData['first_name'],
                             $userData['last_name'],
-                            $sid
+                            $sid,
+                            [],
+                            $type
                         );
                     }
                 }
@@ -594,7 +596,9 @@ class Emergency_contacts extends Public_Controller
                             $data['session']['company_detail']['CompanyName'],
                             $userData['first_name'],
                             $userData['last_name'],
-                            $sid
+                            $sid,
+                            [],
+                            $type
                         );
                     }
                 }

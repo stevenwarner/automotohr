@@ -2195,10 +2195,12 @@ if(!function_exists('broadcastAlert')){
         $employeeFirstName,
         $employeeLastName,
         $employeeSid,
-        $extra = []
+        $extra = [],
+        $userType = 'employee'
     ){
         // Get employers that need to be notified
         $employers = getNotificationContacts($companySid, $alertSlug);
+       
         //
         if(!count($employers)) return;
         // Set the document type
@@ -2208,49 +2210,49 @@ if(!function_exists('broadcastAlert')){
         $subject = '';
         $documentTitle = '';
         $employeeName = '';
-        $link = 'hr_documents_management/documents_assignment/employee/';
+        $link = 'hr_documents_management/documents_assignment/'. $userType.'/';
         //
         switch($notificationSlug){
             case 'driver_license': 
                 $dt = 'Driver\'s License'; 
                 $subject = 'Driver\'s license details have changed';
-                $link = 'drivers_license_info/employee/';
+                $link = 'drivers_license_info/'. $userType.'/';
                 return '';
             break;
             case 'occupational_license':
                 $dt = 'Occupational License'; 
                 $subject = 'Occupational license details have changed';
-                $link = 'occupational_license_info/employee/';
+                $link = 'occupational_license_info/'. $userType.'/';
                 return '';
             break;
             case 'dependent_details':
                 $dt = 'Dependent Details'; 
                 $subject = 'Dependent details have changed';
-                $link = 'dependants/employee/';
+                $link = 'dependants/'. $userType.'/';
                 return '';
             break;
             case 'emergency_contact':
                 $dt = 'Emergency Contact'; 
                 $subject = 'Emergency contact details have changed';
-                $link = 'emergency_contacts/employee/';
+                $link = 'emergency_contacts/'. $userType.'/';
                 return '';
             break;
             case 'direct_deposit_information': 
                 $dt = 'Direct Deposit Information'; 
                 $subject = 'Direct Deposit Information has changed';
-                $link = 'direct_deposit/employee/';
+                $link = 'direct_deposit/'. $userType.'/';
             break;
             case 'equipment_info': 
                 $dt = 'Equipment Information'; 
                 $subject = 'Equipment Information has changed';
-                $link = 'equipment_info/employee/';
+                $link = 'equipment_info/'. $userType.'/';
                 return '';
             break;
             case 'equipment_info_acknowledged': 
                 $dt = 'Equipment Information'; 
                 $subject = 'Equipment Information Acknowledged';
                 $action = 'Acknowledged';
-                $link = 'equipment_info/employee/';
+                $link = 'equipment_info/'. $userType.'/';
                 return '';
             break;
             case 'i9_completed': 
