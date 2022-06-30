@@ -3163,4 +3163,15 @@ class Onboarding_model extends CI_Model
             $this->db->update('onboarding_disclosure', $data);
         }
     }
+
+
+    public function get_notification_email_configuration($companySid)
+    {
+        $this->db->where('company_sid', $companySid);
+        $result = $this->db->get('notifications_emails_configuration')->row();
+        return $result;
+    }
+
+
+
 }

@@ -9475,7 +9475,7 @@ class Onboarding extends CI_Controller
     //
     function document($token)
     {
-        // Load encryptipn library
+       // Load encryptipn library
         $this->load->library('encryption', 'encrypt');
         // Clean token
         $token = str_replace(['$eb$eb$1', '$eb$eb$2'], ['/', '+'], $token);
@@ -9489,13 +9489,17 @@ class Onboarding extends CI_Controller
         $this->load->model('hr_documents_management_model', 'hdm');
         //
         $type = 'document';
+        
         //
         if (isset($d[4])) $type = $d[4];
+         
         //
         $document = $this->hdm->checkForExiredToken(
             $d[0],
             $type
         );
+
+      
         //
         $data['session']['company_detail'] = $this->hdm->getCompanyInfo($document['company_sid']);
         //
@@ -9511,10 +9515,12 @@ class Onboarding extends CI_Controller
         //
         $data['Expired'] = false;
         //
+        
         $post = $this->input->post(NULL, FALSE);
         //
+        
         if (count($post)) {
-            //
+              //
             $save_input_values = array();
             $users_type = $data['users_type'];
             $users_sid = $data['users_sid'];
@@ -9953,8 +9959,10 @@ class Onboarding extends CI_Controller
     function emergency_contacts_add()
     {
         //
+        $session = $this->session->userdata('logged_in');
         $post = $this->input->post(NULL, TRUE);
         //
+  
         $this->db->insert(
             'emergency_contacts',
             [
@@ -9985,6 +9993,32 @@ class Onboarding extends CI_Controller
                     'is_completed' => 1
                 ]
             );
+            
+            
+
+           $email_configuration_data = $this->onboarding_model->get_notification_email_configuration($post['companySid']);
+           //-- Send Email 
+       if($email_configuration_data->general_information_status == 1) {
+        
+        // Send document completion alert
+        broadcastAlert(
+            DOCUMENT_NOTIFICATION_TEMPLATE,
+            'general_information_status',
+            'emergency_contact',
+            $post['companySid'],
+            $session['company_detail']['CompanyName'],
+            $post['firstName'],
+            $post['lastName'],
+            $post['userSid'],
+            [],
+            $post['userType']
+
+        );
+    }  
+
+
+
+
     }
 
     //

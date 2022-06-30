@@ -70,6 +70,7 @@
                 <?php } ?>
 
                 <!--  -->
+             
                 <?php if($type == 'direct_deposit') { ?>
                     <style>
                         .panel-heading{ background-color: #ff0000; }

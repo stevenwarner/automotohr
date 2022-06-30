@@ -4587,7 +4587,7 @@ class Hr_documents_management_model extends CI_Model
         //
         if($this->isActiveUser($managerId) && $this->doSendEmail($managerId, 'employee', "HREMSM1")){
             //
-            log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
+             log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
         }
     }
 
@@ -8306,6 +8306,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $this->logEmailPlace('HR_DOCUMENTS_NOTIFICATION_EMS', $userId, $placeCode, $userType);
         //
+     
         $q = $this->db
         ->select('document_sent_on')
         ->where('sid', $userId)
@@ -8313,7 +8314,10 @@ class Hr_documents_management_model extends CI_Model
         //
         $r = $q->row_array();
         $q->free_result();
+       
         //
+        
+        /*
         if(!empty($r['document_sent_on'])) {
             //
             $date1 = DateTime::createFromFormat('Y-m-d H:i:s', $r['document_sent_on']);
@@ -8324,6 +8328,8 @@ class Hr_documents_management_model extends CI_Model
                 return false;
             }
         }
+*/
+
         //
         $this->db->where('sid', $userId)->update($userType === 'employee' ? 'users' : 'portal_job_applications', [
             'document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))
