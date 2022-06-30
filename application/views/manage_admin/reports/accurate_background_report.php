@@ -193,7 +193,12 @@
         $('.js-status').select2();
         $('.js-company').select2();
 
-        $('.datepicker').datepicker({ dateFormat: 'mm-dd-yy' });
+        $('.datepicker').datepicker({
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
+             dateFormat: 'mm-dd-yy'
+             });
 
         $('button.js-search').click(function(e) {
             e.preventDefault();

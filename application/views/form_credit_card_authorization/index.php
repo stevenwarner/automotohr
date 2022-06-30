@@ -502,7 +502,9 @@
             $(document).ready(function () {
                 $('.startdate').datepicker({
                     dateFormat: 'mm/dd/yy',
-                    changeYear: true
+                    changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
                 }).val();
             });
         </script>

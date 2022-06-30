@@ -349,7 +349,12 @@
         $('.js-product-type').select2();
         $('#order_by').select2();
 
-        $('.datepicker').datepicker({ dateFormat: 'mm-dd-yy' });
+        $('.datepicker').datepicker({ 
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+         });
 
         $('button.js-search').click(function(e) {
             e.preventDefault();

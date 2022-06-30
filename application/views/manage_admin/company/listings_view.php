@@ -200,6 +200,9 @@
         });
         $('#startdate').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (value) { //console.log(value);
                 $('#enddate').datepicker('option', 'minDate', value);
                 generate_search_url();
@@ -208,6 +211,9 @@
 
         $('#enddate').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (value) { //console.log(value);
                 $('#startdate').datepicker('option', 'maxDate', value);
                 generate_search_url();

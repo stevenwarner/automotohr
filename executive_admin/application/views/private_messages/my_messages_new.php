@@ -12,12 +12,15 @@
                         <div class="panel-heading" role="tab" id="searchArea">
                             <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#search_area" aria-expanded="true" aria-controls="collapseOne">
-                                    <i class="more-less glyphicon <?php echo $glyphicon_class; ?>"></i><!--plus or minus -->
-                                    <strong>Click To Search Messages <?php //echo $glyphicon_class; ?></strong>
+                                    <i class="more-less glyphicon <?php echo $glyphicon_class; ?>"></i>
+                                    <!--plus or minus -->
+                                    <strong>Click To Search Messages <?php //echo $glyphicon_class; 
+                                                                        ?></strong>
                                 </a>
                             </h4>
                         </div>
-                        <div id="search_area" class="panel-collapse collapse <?php echo $collapse_class; ?>" role="tabpanel" aria-labelledby="searchArea"><!--in class to keep it open by default -->
+                        <div id="search_area" class="panel-collapse collapse <?php echo $collapse_class; ?>" role="tabpanel" aria-labelledby="searchArea">
+                            <!--in class to keep it open by default -->
                             <div class="panel-body">
                                 <form method="GET" action="">
                                     <div class="row">
@@ -30,13 +33,13 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="form-group">
                                                 <label>Email</label>
-                                                <input type="email" name="email" class="form-control" value="<?php echo $email; ?>"  />
+                                                <input type="email" name="email" class="form-control" value="<?php echo $email; ?>" />
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="form-group">
                                                 <label>Subject</label>
-                                                <input type="text" name="subject" class="form-control" value="<?php echo $subject; ?>"  />
+                                                <input type="text" name="subject" class="form-control" value="<?php echo $subject; ?>" />
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -44,13 +47,13 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <label>Date From</label>
-                                                        <input id="start_date_applied" type="text" name="start_date" class="form-control" value="<?php echo $start_date; ?>"  readonly/>
+                                                        <input id="start_date_applied" type="text" name="start_date" class="form-control" value="<?php echo $start_date; ?>" readonly />
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <label>Date To</label>
-                                                        <input id="end_date_applied" type="text" name="end_date" class="form-control" value="<?php echo $end_date; ?>"  readonly/>
+                                                        <input id="end_date_applied" type="text" name="end_date" class="form-control" value="<?php echo $end_date; ?>" readonly />
                                                     </div>
                                                 </div>
                                             </div>
@@ -58,7 +61,7 @@
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                             <div class="button-panel text-right">
                                                 <input type="submit" name="filter" value="Search" class="btn btn-success" />
-                                                <a href="<?php echo base_url('private_messages').'/'.$company_id; ?>" class="btn btn-success">Clear</a>
+                                                <a href="<?php echo base_url('private_messages') . '/' . $company_id; ?>" class="btn btn-success">Clear</a>
                                             </div>
                                         </div>
                                     </div>
@@ -71,13 +74,14 @@
                     <div class="row">
                         <div class="col-lg-8 col-md-6 col-xs-12 col-sm-5">
                             <div class="company-name pull-left">
-<!--                                Company Name: <strong><?php //echo $company_name; ?></strong>-->
+                                <!--                                Company Name: <strong><?php //echo $company_name; 
+                                                                                            ?></strong>-->
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-6 col-xs-12 col-sm-7">
-                            <a href="<?php echo base_url('private_messages').'/'.$company_id; ?>" class="btn btn-success">Inbox <?php if($total_messages>0 ) { ?><span>(<?= $total_messages ?>)</span><?php } ?></a>
-                            <a href="<?php echo base_url('outbox').'/'.$company_id; ?>" class="btn btn-success">Outbox</a>
-                            <a href="<?php echo base_url('compose_message').'/'.$company_id; ?>" class="btn btn-success">Compose new Message</a>
+                            <a href="<?php echo base_url('private_messages') . '/' . $company_id; ?>" class="btn btn-success">Inbox <?php if ($total_messages > 0) { ?><span>(<?= $total_messages ?>)</span><?php } ?></a>
+                            <a href="<?php echo base_url('outbox') . '/' . $company_id; ?>" class="btn btn-success">Outbox</a>
+                            <a href="<?php echo base_url('compose_message') . '/' . $company_id; ?>" class="btn btn-success">Compose new Message</a>
                         </div>
                     </div>
                 </div>
@@ -102,16 +106,17 @@
                                 </thead>
                                 <tbody>
                                     <?php foreach ($messages as $message) { ?>
-                                        <tr <?php if ($page == 'inbox' && $message['status'] == 0) { ?>class="unread"<?php } ?> id="parent_<?= $message['msg_id'] ?>">
-                                            <td><?php   if ($page == 'inbox') {
-                                                    echo $message['username'].'<br>'.$message['email'];
+                                        <tr <?php if ($page == 'inbox' && $message['status'] == 0) { ?>class="unread" <?php } ?> id="parent_<?= $message['msg_id'] ?>">
+                                            <td><?php if ($page == 'inbox') {
+                                                    echo $message['username'] . '<br>' . $message['email'];
                                                 } else {
-                                                    echo $message['to_id'].'<br>'.$message['email'];
+                                                    echo $message['to_id'] . '<br>' . $message['email'];
                                                 } ?>
                                             </td>
                                             <td><?php echo $message['subject']; ?></td>
                                             <td>
-<!--                                                --><?php //echo my_date_format($message['date']); ?>
+                                                <!--                                                --><?php //echo my_date_format($message['date']); 
+                                                                                                        ?>
                                                 <?php echo reset_datetime(array(
                                                     'datetime' => $message['date'],
                                                     // 'from_format' => 'h:iA', // Y-m-d H:i:s
@@ -123,18 +128,18 @@
                                             </td>
                                             <td class="text-center">
                                                 <div class="btn-msg-actions display-block">
-                                            <?php   if ($page == 'inbox') { ?>
-                                                        <a href="<?= base_url('inbox_message_detail') ?>/<?=$company_id?>/<?= $message["msg_id"] ?>" class="btn btn-success btn-sm">View Message</a>
-                                            <?php   } else { ?>
-                                                        <a href="<?= base_url('outbox_message_detail') ?>/<?=$company_id?>/<?= $message["msg_id"] ?>" class="btn btn-success btn-sm">View Message</a>
-                                            <?php   } ?>
+                                                    <?php if ($page == 'inbox') { ?>
+                                                        <a href="<?= base_url('inbox_message_detail') ?>/<?= $company_id ?>/<?= $message["msg_id"] ?>" class="btn btn-success btn-sm">View Message</a>
+                                                    <?php   } else { ?>
+                                                        <a href="<?= base_url('outbox_message_detail') ?>/<?= $company_id ?>/<?= $message["msg_id"] ?>" class="btn btn-success btn-sm">View Message</a>
+                                                    <?php   } ?>
                                                     <a class="btn btn-danger btn-sm" href="javascript:;" id="<?= $message["msg_id"] ?>" onclick="todo('delete', this.id);">
                                                         <i class="fa fa-remove"></i>
                                                         <span class="btn-tooltip">Delete</span>
                                                     </a>
-                                            <?php   if ($page == 'inbox' && $message['status'] == 0) { ?>
+                                                    <?php if ($page == 'inbox' && $message['status'] == 0) { ?>
                                                         <img class="icon-msg-new" src="<?= base_url() ?>assets/images/new_msg.gif">
-                                            <?php   } ?>
+                                                    <?php   } ?>
                                                 </div>
                                             </td>
                                         </tr>
@@ -144,75 +149,84 @@
                         </div>
                     </div>
                 <?php } else { ?>
-                <div class="panel panel-default full-width">
-                    <div class="panel-heading"><strong>Message Listing</strong></div>
-                    <div class="panel-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        <?php if ($page == 'inbox') { ?>
-                                            From
-                                        <?php } else { ?>
-                                            To
-                                        <?php } ?>
-                                    </th>
-                                    <th>Subject</th>
-                                    <th>Received on</th>
-                                    <th class="text-center col-lg-3" colspan="3">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr <?php if ($page == 'inbox' && $message['status'] == 0) { ?>class="unread"<?php } ?> id="parent_<?= $message['msg_id'] ?>">
-                                    <td colspan="7" class="text-center"><span style="color:red;">No Messages found!</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="panel panel-default full-width">
+                        <div class="panel-heading"><strong>Message Listing</strong></div>
+                        <div class="panel-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <?php if ($page == 'inbox') { ?>
+                                                From
+                                            <?php } else { ?>
+                                                To
+                                            <?php } ?>
+                                        </th>
+                                        <th>Subject</th>
+                                        <th>Received on</th>
+                                        <th class="text-center col-lg-3" colspan="3">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr <?php if ($page == 'inbox' && $message['status'] == 0) { ?>class="unread" <?php } ?> id="parent_<?= $message['msg_id'] ?>">
+                                        <td colspan="7" class="text-center"><span style="color:red;">No Messages found!</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
                 <?php } ?>
             </div>
         </div>
     </div>
 </div>
 <script src="<?= base_url() ?>assets/alertifyjs/alertify.min.js"></script>
-<link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/alertify.min.css"/>
-<link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/themes/default.min.css"/>
+<link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/alertify.min.css" />
+<link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/themes/default.min.css" />
 <script>
-    $(document).ready(function () {
-//      $('#start_date_applied').datepicker();
+    $(document).ready(function() {
+        //      $('#start_date_applied').datepicker();
         $('#start_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) { //console.log(value);
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) { //console.log(value);
                 $('#end_date_applied').datepicker('option', 'minDate', value);
             }
         }).datepicker('option', 'maxDate', $('#end_date_applied').val());
-        
-//      $('#end_date_applied').datepicker();
+
+        //      $('#end_date_applied').datepicker();
         $('#end_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) { //console.log(value);
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) { //console.log(value);
                 $('#start_date_applied').datepicker('option', 'maxDate', value);
             }
         }).datepicker('option', 'minDate', $('#start_date_applied').val());
-    
+
     });
-    
+
     function todo(action, id) {
         url = "<?= base_url() ?>private_messages/message_task";
         alertify.confirm('Confirmation', "Are you sure you want to " + action + " this Message?",
-                function () {
-                    $.post(url, {action: action, sid: id})
-                            .done(function (data) {
-                                messagesCount = parseInt($(".messagesCounter").html());
-                                messagesCount--;
-                                $(".messagesCounter").html(messagesCount);
-                                alertify.success('Selected message have been ' + action + 'd.');
-                                $("#parent_" + id).remove();
-                            });
-                },
-                function () {
-                    alertify.error('Canceled');
-                });
+            function() {
+                $.post(url, {
+                        action: action,
+                        sid: id
+                    })
+                    .done(function(data) {
+                        messagesCount = parseInt($(".messagesCounter").html());
+                        messagesCount--;
+                        $(".messagesCounter").html(messagesCount);
+                        alertify.success('Selected message have been ' + action + 'd.');
+                        $("#parent_" + id).remove();
+                    });
+            },
+            function() {
+                alertify.error('Canceled');
+            });
     }
 </script>

@@ -102,8 +102,9 @@
 
         <?php if(empty($Employee['dob'])) :?>
             $('.jsDOB').datepicker({
+                changeMonth: true,
                 changeYear: true,
-                changeMonth: true
+                yearRange: "<?php echo DOB_LIMIT; ?>"
             });
         <?php endif; ?>
         //

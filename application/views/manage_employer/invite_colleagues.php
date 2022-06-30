@@ -381,7 +381,7 @@
     $('.startdate').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
-        changeYear: true,
-        yearRange: "1960:+5"
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
     }).val();
 </script>

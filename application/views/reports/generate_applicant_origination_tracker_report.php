@@ -75,76 +75,76 @@
                                                         <?php if (!empty($companies_applicants_by_source)) { ?>
                                                             <?php $company_applicants_by_source = $companies_applicants_by_source; ?>
 
-                                                                <?php $company_info = $company_applicants_by_source['company_info']; ?>
-                                                                <?php $applicants_by_source = $company_applicants_by_source['applicants_by_source']; ?>
-                                                                <div class="hr-box">
-                                                                    <div class="hr-box-header bg-header-green">
-                                                                        <span class="hr-registered pull-left"><?php echo ucwords($company_info['CompanyName']); ?></span>
-                                                                    </div>
-                                                                    <div class="hr-box-body hr-innerpadding">
-                                                                        <?php if (!empty($applicants_by_source)) { ?>
-                                                                            <?php foreach ($applicants_by_source as $key => $source_applicants) { ?>
-                                                                                <div class="hr-box-body">
-                                                                                    <div class="heading-title page-title">
-                                                                                        <h2 class="page-title" style="width: 100%;">
-                                                                                            <span class="hr-registered"><?php echo ucwords(str_replace('_', ' ', $key)); ?></span>
-                                                                                            <span class="label label-default pull-right" style="font-size: 14px; background-color:#518401; padding: 0.5em 0.8em;">
-                                                                                                Total <?php echo count($source_applicants); ?> Applicant(s)
-                                                                                            </span>
-                                                                                        </h2>
-                                                                                    </div>
+                                                            <?php $company_info = $company_applicants_by_source['company_info']; ?>
+                                                            <?php $applicants_by_source = $company_applicants_by_source['applicants_by_source']; ?>
+                                                            <div class="hr-box">
+                                                                <div class="hr-box-header bg-header-green">
+                                                                    <span class="hr-registered pull-left"><?php echo ucwords($company_info['CompanyName']); ?></span>
+                                                                </div>
+                                                                <div class="hr-box-body hr-innerpadding">
+                                                                    <?php if (!empty($applicants_by_source)) { ?>
+                                                                        <?php foreach ($applicants_by_source as $key => $source_applicants) { ?>
+                                                                            <div class="hr-box-body">
+                                                                                <div class="heading-title page-title">
+                                                                                    <h2 class="page-title" style="width: 100%;">
+                                                                                        <span class="hr-registered"><?php echo ucwords(str_replace('_', ' ', $key)); ?></span>
+                                                                                        <span class="label label-default pull-right" style="font-size: 14px; background-color:#518401; padding: 0.5em 0.8em;">
+                                                                                            Total <?php echo count($source_applicants); ?> Applicant(s)
+                                                                                        </span>
+                                                                                    </h2>
+                                                                                </div>
 
 
-                                                                                    <div class="table-responsive hr-innerpadding">
-                                                                                        <table class="table table-bordered table-stripped table-hover">
-                                                                                            <thead>
-                                                                                                <tr>
-                                                                                                    <th class="col-xs-2">Application Date</th>
-                                                                                                    <th class="col-xs-3">Applicant Name</th>
-                                                                                                    <th class="col-xs-4">Job Title</th>
-                                                                                                    <th class="col-xs-3">Email</th>
-                                                                                                </tr>
-                                                                                            </thead>
-                                                                                            <tbody>
-                                                                                                <?php if (!empty($source_applicants)) { ?>
-                                                                                                    <?php foreach ($source_applicants as $applicant) { ?>
-                                                                                                        <tr>
-                                                                                                            <td>
-                                                                                                                <?php echo convert_date_to_frontend_format($applicant['date_applied']); ?>
-                                                                                                            </td>
-                                                                                                            <td> 
-                                                                                                                <?php echo ucwords($applicant['first_name'] . ' ' . $applicant['last_name']); ?>
-                                                                                                            </td>
-                                                                                                            <td <?php echo (($applicant['job_title'] == 'Job Not Applied' || $applicant['job_title'] == 'Job Deleted') ? 'style="color:red;"' : 'style="color:green;"'); ?>>
-                                                                                                                <?php echo ucwords($applicant['job_title']); ?>
-                                                                                                            </td>
-                                                                                                            <td>
-                                                                                                                <?php echo ucwords($applicant['email']); ?>
-                                                                                                            </td>
-                                                                                                        </tr>
-                                                                                                    <?php } ?>
-                                                                                                <?php } else { ?>
+                                                                                <div class="table-responsive hr-innerpadding">
+                                                                                    <table class="table table-bordered table-stripped table-hover">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th class="col-xs-2">Application Date</th>
+                                                                                                <th class="col-xs-3">Applicant Name</th>
+                                                                                                <th class="col-xs-4">Job Title</th>
+                                                                                                <th class="col-xs-3">Email</th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <?php if (!empty($source_applicants)) { ?>
+                                                                                                <?php foreach ($source_applicants as $applicant) { ?>
                                                                                                     <tr>
-                                                                                                        <td class="text-center" colspan="4">
-                                                                                                            <span class="no-data">No Applicants</span>
+                                                                                                        <td>
+                                                                                                            <?php echo convert_date_to_frontend_format($applicant['date_applied']); ?>
+                                                                                                        </td>
+                                                                                                        <td>
+                                                                                                            <?php echo ucwords($applicant['first_name'] . ' ' . $applicant['last_name']); ?>
+                                                                                                        </td>
+                                                                                                        <td <?php echo (($applicant['job_title'] == 'Job Not Applied' || $applicant['job_title'] == 'Job Deleted') ? 'style="color:red;"' : 'style="color:green;"'); ?>>
+                                                                                                            <?php echo ucwords($applicant['job_title']); ?>
+                                                                                                        </td>
+                                                                                                        <td>
+                                                                                                            <?php echo ucwords($applicant['email']); ?>
                                                                                                         </td>
                                                                                                     </tr>
                                                                                                 <?php } ?>
-                                                                                            </tbody>
-                                                                                        </table>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                            <?php } ?>
-                                                                        <?php } else { ?>
-                                                                            <div class="hr-box">
-                                                                                <div class="hr-box-body text-center">
-                                                                                    <span class="no-data">No Applicants</span>
+                                                                                            <?php } else { ?>
+                                                                                                <tr>
+                                                                                                    <td class="text-center" colspan="4">
+                                                                                                        <span class="no-data">No Applicants</span>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            <?php } ?>
+                                                                                        </tbody>
+                                                                                    </table>
                                                                                 </div>
                                                                             </div>
+
                                                                         <?php } ?>
-                                                                    </div>
+                                                                    <?php } else { ?>
+                                                                        <div class="hr-box">
+                                                                            <div class="hr-box-body text-center">
+                                                                                <span class="no-data">No Applicants</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    <?php } ?>
                                                                 </div>
+                                                            </div>
                                                         <?php } else { ?>
                                                             <div class="hr-box">
                                                                 <div class="hr-box-body text-center">
@@ -171,59 +171,61 @@
 
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
-<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css"  />
+<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
 
 <script>
-    jQuery(function () {
+    jQuery(function() {
         $("#startdate").datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
-            onSelect: function (selected) {
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() + 1);
                 $("#enddate").datepicker("option", "minDate", dt);
             }
-        }).on('focusin', function () {
+        }).on('focusin', function() {
             $(this).prop('readonly', true);
-        }).on('focusout', function () {
+        }).on('focusout', function() {
             $(this).prop('readonly', false);
         });
 
         $("#enddate").datepicker({
             dateFormat: 'mm-dd-yy',
             setDate: new Date(),
-            changeYear: true,
             changeMonth: true,
-            onSelect: function (selected) {
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() - 1);
                 $("#startdate").datepicker("option", "maxDate", dt);
             }
-        }).on('focusin', function () {
+        }).on('focusin', function() {
             $(this).prop('readonly', true);
-        }).on('focusout', function () {
+        }).on('focusout', function() {
             $(this).prop('readonly', false);
         });
 
     });
 
-    function fApplyDateFilters(){
+    function fApplyDateFilters() {
         var startDate = $('#startdate').val();
         var endDate = $('#enddate').val();
 
-        var url = '<?php echo base_url();?>' + 'reports/applicant_origination_tracker_report/';
+        var url = '<?php echo base_url(); ?>' + 'reports/applicant_origination_tracker_report/';
 
-        if(startDate != '' && endDate == ''){
+        if (startDate != '' && endDate == '') {
             url += encodeURI(startDate) + '/end-of-days/';
         }
 
-        if(endDate != '' && startDate == ''){
+        if (endDate != '' && startDate == '') {
             url += 'beginning-of-time/' + encodeURI(endDate) + '/';
         }
 
-        if((startDate != '') && (endDate != '')){
+        if ((startDate != '') && (endDate != '')) {
             url += encodeURI(startDate) + '/' + encodeURI(endDate) + '/';
         }
 
@@ -233,19 +235,18 @@
 
     }
 
-    function fClearDateFilters(){
+    function fClearDateFilters() {
         $('#startdate').val('');
         $('#enddate').val('');
 
-        var url = '<?php echo base_url();?>' + 'reports/applicant_origination_tracker_report/';
+        var url = '<?php echo base_url(); ?>' + 'reports/applicant_origination_tracker_report/';
         window.location = url;
     }
-    
-    function print_page(elem)
-    {
+
+    function print_page(elem) {
         var data = ($(elem).html());
         var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
-        
+
         mywindow.document.write('<html><head><title>' + '<?php echo $title; ?>' + '</title>');
         mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/style.css'); ?>" type="text/css" />');
         mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/font-awesome-animation.min.css'); ?>" type="text/css" />');
@@ -265,8 +266,7 @@
         mywindow.document.write('</body></html>');
         mywindow.document.write('<scr' + 'ipt src="<?php echo site_url('assets/manage_admin/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');
         mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
-        mywindow.document.close(); 
-        mywindow.focus(); 
+        mywindow.document.close();
+        mywindow.focus();
     }
 </script>
-

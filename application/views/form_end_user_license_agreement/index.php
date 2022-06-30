@@ -441,7 +441,12 @@
     <?php if ($company_document['status'] != 'signed') { ?>
         <script type="text/javascript">
             $(document).ready(function () {
-                $('.startdate').datepicker({dateFormat: 'mm-dd-yy'}).val();
+                $('.startdate').datepicker({
+                    dateFormat: 'mm-dd-yy',
+                    changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+                }).val();
 
                 $('.static-class').each(function () {
                     $(this).on('change', function () {

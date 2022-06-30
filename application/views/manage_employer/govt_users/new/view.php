@@ -386,7 +386,10 @@
             onSelect: function (v) { $('#js-filter-end-date').datepicker('option', 'minDate', v); }
         })
         $('#js-filter-end-date').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
         }).datepicker('option', 'minDate', $('#js-filter-start-date').val());
 
 

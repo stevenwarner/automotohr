@@ -375,8 +375,9 @@ $(function(){
     });
     //
     $('#jsReportEndDate').datepicker({
-        changeYear: true,
         changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
     });
 
     //

@@ -438,7 +438,12 @@
     <script>
         $(document).ready(function(){
             $('#form_affiliate_end_user_license_agreement').validate();
-            $('.startdate').datepicker({dateFormat: 'mm-dd-yy'}).val();
+            $('.startdate').datepicker({
+                dateFormat: 'mm-dd-yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+            }).val();
 
             $('.static-class').each(function () {
                 $(this).on('change', function () {

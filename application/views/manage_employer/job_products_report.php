@@ -143,7 +143,12 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function(){
-        $('.eventdate').datepicker({dateFormat: 'mm-dd-yy', yearRange: "1960:+5"}).val();
+        $('.eventdate').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
     });
     
     

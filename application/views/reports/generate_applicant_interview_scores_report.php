@@ -347,8 +347,9 @@
 
         $('#startdate').datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (value) {
                 //console.log(value);
                 $('#enddate').datepicker('option', 'minDate', value);
@@ -358,8 +359,9 @@
 
         $('#enddate').datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (value) {
                 //console.log(value);
                 $('#startdate').datepicker('option', 'maxDate', value);

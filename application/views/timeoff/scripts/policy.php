@@ -96,19 +96,22 @@
         // $('#js-policy-start-date-edit').datepicker({ dateFormat: 'mm-dd-yy' });
         $('#js-custom-reset-date-edit-reset').datepicker({ 
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         });
         $('#js-custom-date-edit').datepicker({ 
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         });
         // $('#js-policy-start-date-edit').datepicker({ dateFormat: 'mm-dd-yy' });
         $('#js-custom-reset-date-edit').datepicker({ 
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         });
         //
         $('#js-unlimited-policy-check-edit').click(function(){

@@ -1,5 +1,5 @@
 <?php
-    $company_name = ucwords($session['company_detail']['CompanyName']);
+$company_name = ucwords($session['company_detail']['CompanyName']);
 ?>
 <div class="main">
     <div class="container">
@@ -7,23 +7,23 @@
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                    <a href="<?php echo base_url('onboarding/hr_documents/'.$unique_sid); ?>" class="btn blue-button btn-block"><i class="fa fa-angle-left"></i>  Documents</a>
+                    <a href="<?php echo base_url('onboarding/hr_documents/' . $unique_sid); ?>" class="btn blue-button btn-block"><i class="fa fa-angle-left"></i> Documents</a>
                 </div>
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <div class="page-header"><span class="section-ttile"><?php echo $title; ?></span></div>
                 <div class="form-wrp">
-                    <?php if(sizeof($pre_form)>0  && $pre_form['user_consent']!=NULL && $pre_form['user_consent']!=0){ ?>
+                    <?php if (sizeof($pre_form) > 0  && $pre_form['user_consent'] != NULL && $pre_form['user_consent'] != 0) { ?>
                         <div class="row mb-2">
                             <div class="col-lg-3 pull-right">
-                                <a target="_blank" href="<?php echo base_url('form_i9/download_i9form/' . $pre_form['user_type'] . '/' . $pre_form['user_sid'])?>" class="btn blue-button btn-block">Download PDF</a>
+                                <a target="_blank" href="<?php echo base_url('form_i9/download_i9form/' . $pre_form['user_type'] . '/' . $pre_form['user_sid']) ?>" class="btn blue-button btn-block">Download PDF</a>
                             </div>
                             <div class="col-lg-3 pull-right">
-                                <a target="_blank" href="<?php echo base_url('form_i9/preview_i9form/' . $pre_form['user_type'] . '/' .$pre_form['user_sid'])?>" class="btn blue-button btn-block">Preview</a>
+                                <a target="_blank" href="<?php echo base_url('form_i9/preview_i9form/' . $pre_form['user_type'] . '/' . $pre_form['user_sid']) ?>" class="btn blue-button btn-block">Preview</a>
                             </div>
                         </div>
                     <?php } ?>
-                    <form action="<?php echo current_url();?>" id="i9-form" method="post">
+                    <form action="<?php echo current_url(); ?>" id="i9-form" method="post">
                         <p><strong>START HERE:</strong> Read instructions carefully before completing this form. The instructions must be available, either in paper or electronically, during completion of this form. Employers are liable for errors in the completion of this form.</p>
                         <p><strong>ANTI-DISCRIMINATION NOTICE:</strong> It is illegal to discriminate against work-authorized individuals. Employers CANNOT specify which document(s) an employee may present to establish employment authorization and identity. The refusal to hire or continue to employ an individual because the documentation presented has a future expiration date may also constitute illegal discrimination.</p>
                         <div class="hr-box">
@@ -36,43 +36,43 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Last Name (Family Name) <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_last_name"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_last_name']: ''?>" name="section1_last_name" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_last_name'] : '' ?>" name="section1_last_name" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
-                                            <label>First Name (Given Name) <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow"  src="section_1_first_name"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_first_name']: ''?>" name="section1_first_name" class="form-control" />
+                                            <label>First Name (Given Name) <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_first_name"></i></label>
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_first_name'] : '' ?>" name="section1_first_name" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Middle Initial <i class="fa fa-question-circle-o modalShow" src="section_1_middle_initial"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_middle_initial']: ''?>" name="section1_middle_initial" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_middle_initial'] : '' ?>" name="section1_middle_initial" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Other Last Names Used (if any) <i class="fa fa-question-circle-o modalShow" src="section_1_other_last_names_used"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_other_last_names']: ''?>" name="section1_other_last_names" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_other_last_names'] : '' ?>" name="section1_other_last_names" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Address (Street Number and Name) <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_address"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_address']: ''?>" name="section1_address" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_address'] : '' ?>" name="section1_address" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Apt. Number <i class="fa fa-question-circle-o modalShow" src="section_1_Apt_number"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 && !empty($pre_form['section1_apt_number']) ? $pre_form['section1_apt_number']: ''?>" name="section1_apt_number" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 && !empty($pre_form['section1_apt_number']) ? $pre_form['section1_apt_number'] : '' ?>" name="section1_apt_number" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                         <div class="form-group">
                                             <label>City or Town <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_city_or_town "></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_apt_number']: ''?>" name="section1_city_town" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_apt_number'] : '' ?>" name="section1_city_town" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
@@ -80,10 +80,10 @@
                                             <label>State <i class="fa fa-question-circle-o modalShow" src="section_1_state"></i></label>
                                             <div class="select">
                                                 <select name="section1_state" class="form-control">
-                                                    <?php foreach($states as $state){
-                                                        $select = sizeof($pre_form)>0 && $state['state_code'] == $pre_form['section1_state'] ? 'selected="selected"':"";
-                                                        echo '<option value="'.$state['state_code']. '"'. $select .'>'.$state['state_name'].'</option>';
-                                                    }?>
+                                                    <?php foreach ($states as $state) {
+                                                        $select = sizeof($pre_form) > 0 && $state['state_code'] == $pre_form['section1_state'] ? 'selected="selected"' : "";
+                                                        echo '<option value="' . $state['state_code'] . '"' . $select . '>' . $state['state_name'] . '</option>';
+                                                    } ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -91,33 +91,33 @@
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                         <div class="form-group">
                                             <label>ZIP Code <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_zip_code"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_zip_code']: ''?>" name="section1_zip_code" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_zip_code'] : '' ?>" name="section1_zip_code" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Date of Birth <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_date_of_birth"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 && !empty($pre_form['section1_date_of_birth']) ? date('m-d-Y',strtotime($pre_form['section1_date_of_birth'])): ''?>" name="section1_date_of_birth" class="form-control date_picker2" readonly/>
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 && !empty($pre_form['section1_date_of_birth']) ? date('m-d-Y', strtotime($pre_form['section1_date_of_birth'])) : '' ?>" name="section1_date_of_birth" class="form-control date_picker2" readonly />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>U.S. Social Security Number <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_us_social_security_number"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_social_security_number']: ''?>"  name="section1_social_security_number" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_social_security_number'] : '' ?>" name="section1_social_security_number" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Employee's E-mail Address <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_employees_email_address"></i></label>
-                                            <input type="email" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_emp_email_address']: ''?>" name="section1_emp_email_address" class="form-control" />
+                                            <input type="email" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_emp_email_address'] : '' ?>" name="section1_emp_email_address" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                    <div class="form-group">
-                                        <label>Employee's Telephone Number <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_employees_telephone_number"></i></label>
-                                        <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_emp_telephone_number']: ''?>" name="section1_emp_telephone_number" class="form-control" />
+                                        <div class="form-group">
+                                            <label>Employee's Telephone Number <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_employees_telephone_number"></i></label>
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_emp_telephone_number'] : '' ?>" name="section1_emp_telephone_number" class="form-control" />
+                                        </div>
                                     </div>
-                                </div>
                                 </div>
                             </div>
                         </div>
@@ -129,15 +129,15 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                         <label class="control control--radio">
                                             1. A citizen of the United States
-                                            <input class="" name="section1_penalty_of_perjury" value="citizen" type="radio" checked <?php echo sizeof($pre_form)>0 && $pre_form['section1_penalty_of_perjury'] == 'citizen' ? 'checked': ''?>>
+                                            <input class="" name="section1_penalty_of_perjury" value="citizen" type="radio" checked <?php echo sizeof($pre_form) > 0 && $pre_form['section1_penalty_of_perjury'] == 'citizen' ? 'checked' : '' ?>>
                                             <div class="control__indicator"></div>
                                         </label>
                                         <i class="fa fa-question-circle-o modalShow" src="section_2_citizen_of_the_us"></i>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                         <label class="control control--radio">
-                                           2. A noncitizen of the United States
-                                            <input class="" name="section1_penalty_of_perjury" value="noncitizen" type="radio" <?php echo sizeof($pre_form)>0 && $pre_form['section1_penalty_of_perjury'] == 'noncitizen' ? 'checked': ''?>>
+                                            2. A noncitizen of the United States
+                                            <input class="" name="section1_penalty_of_perjury" value="noncitizen" type="radio" <?php echo sizeof($pre_form) > 0 && $pre_form['section1_penalty_of_perjury'] == 'noncitizen' ? 'checked' : '' ?>>
                                             <div class="control__indicator"></div>
                                         </label>
                                         <i class="fa fa-question-circle-o modalShow" src="section_2_noncitizen_of_the_us"></i>
@@ -145,7 +145,7 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                         <label class="control control--radio">
                                             3. A lawful permanent resident
-                                            <input class="" name="section1_penalty_of_perjury" value="permanent-resident" type="radio" <?php echo sizeof($pre_form)>0 && $pre_form['section1_penalty_of_perjury'] == 'permanent-resident' ? 'checked': ''?>>
+                                            <input class="" name="section1_penalty_of_perjury" value="permanent-resident" type="radio" <?php echo sizeof($pre_form) > 0 && $pre_form['section1_penalty_of_perjury'] == 'permanent-resident' ? 'checked' : '' ?>>
                                             <div class="control__indicator"></div>
                                         </label>
                                         <i class="fa fa-question-circle-o modalShow" src="section_2_lawful_permanent_resident"></i>
@@ -153,15 +153,15 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                         <label class="control control--radio">
                                             4. An alien authorized to work
-                                            <input class="" name="section1_penalty_of_perjury" value="alien-work" id="alien_authorized_to_work" type="radio" <?php echo sizeof($pre_form)>0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work' ? 'checked': ''?>>
+                                            <input class="" name="section1_penalty_of_perjury" value="alien-work" id="alien_authorized_to_work" type="radio" <?php echo sizeof($pre_form) > 0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work' ? 'checked' : '' ?>>
                                             <div class="control__indicator"></div>
                                         </label>
                                         <i class="fa fa-question-circle-o modalShow" src="section_2_alien_authorized_to_work"></i>
                                     </div>
 
-<!--                                        Un Serialize Options Data -->
+                                    <!--                                        Un Serialize Options Data -->
                                     <?php
-                                        $db_serialized_data = sizeof($pre_form)>0 ? unserialize($pre_form['section1_alien_registration_number']) : array();
+                                    $db_serialized_data = sizeof($pre_form) > 0 ? unserialize($pre_form['section1_alien_registration_number']) : array();
                                     ?>
 
 
@@ -169,7 +169,7 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="form-group">
                                                 <label>Alien Number/USCIS Number): <i class="fa fa-question-circle-o modalShow" src="section_2_alien_number"></i></label>
-                                                <input type="number" value="<?php echo sizeof($db_serialized_data)>0 ? $db_serialized_data['section1_alien_registration_number_one']: ''?>" name="section1_alien_registration_number_one" id="section1_alien_registration_number_one" class="form-control"/>
+                                                <input type="number" value="<?php echo sizeof($db_serialized_data) > 0 ? $db_serialized_data['section1_alien_registration_number_one'] : '' ?>" name="section1_alien_registration_number_one" id="section1_alien_registration_number_one" class="form-control" />
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -177,8 +177,8 @@
                                                 <label>Number Type/Number Type): </label>
                                                 <div class="select">
                                                     <select class="form-control" name="section1_alien_registration_number_two" id="section1_alien_registration_number_two">
-                                                        <option value="Alien-Number" value="<?php echo sizeof($db_serialized_data)>0 && $db_serialized_data['section1_alien_registration_number_two'] == 'Alien-Number' ? 'selected="selected"' : ''?>">Alien Number</option>
-                                                        <option value="USCIS-Number" value="<?php echo sizeof($db_serialized_data)>0 && $db_serialized_data['section1_alien_registration_number_two'] == 'USCIS-Number' ? 'selected="selected"' : ''?>">USCIS Number</option>
+                                                        <option value="Alien-Number" value="<?php echo sizeof($db_serialized_data) > 0 && $db_serialized_data['section1_alien_registration_number_two'] == 'Alien-Number' ? 'selected="selected"' : '' ?>">Alien Number</option>
+                                                        <option value="USCIS-Number" value="<?php echo sizeof($db_serialized_data) > 0 && $db_serialized_data['section1_alien_registration_number_two'] == 'USCIS-Number' ? 'selected="selected"' : '' ?>">USCIS Number</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -190,25 +190,25 @@
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="form-group">
                                                 <label>An alien authorized to work (expiration date) <i class="fa fa-question-circle-o modalShow" src="section_2_expiration_date"></i></label>
-                                                <input type="text" name="alien_authorized_expiration_date" value="<?php echo sizeof($db_serialized_data)>0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work'? date('m-d-Y',strtotime($db_serialized_data['alien_authorized_expiration_date'])): ''?>" id="alien_authorized_expiration_date" class="form-control date_picker2" />
+                                                <input type="text" name="alien_authorized_expiration_date" value="<?php echo sizeof($db_serialized_data) > 0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work' ? date('m-d-Y', strtotime($db_serialized_data['alien_authorized_expiration_date'])) : '' ?>" id="alien_authorized_expiration_date" class="form-control date_picker2" />
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="form-group">
                                                 <label>Form I-94 Admission Number <i class="fa fa-question-circle-o modalShow" src="section_2_admission_number"></i></label>
-                                                <input type="text" name="form_admission_number" value="<?php echo sizeof($db_serialized_data)>0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work'? $db_serialized_data['form_admission_number']: ''?>" id="form_admission_number" class="form-control" />
+                                                <input type="text" name="form_admission_number" value="<?php echo sizeof($db_serialized_data) > 0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work' ? $db_serialized_data['form_admission_number'] : '' ?>" id="form_admission_number" class="form-control" />
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="form-group autoheight">
                                                 <label>Foreign Passport Number <i class="fa fa-question-circle-o modalShow" src="section_2_passport_number"></i></label>
-                                                <input type="text" name="foreign_passport_number" value="<?php echo sizeof($db_serialized_data)>0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work'? $db_serialized_data['foreign_passport_number']: ''?>" id="foreign_passport_number" class="form-control" />
+                                                <input type="text" name="foreign_passport_number" value="<?php echo sizeof($db_serialized_data) > 0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work' ? $db_serialized_data['foreign_passport_number'] : '' ?>" id="foreign_passport_number" class="form-control" />
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="form-group autoheight">
                                                 <label>Country of Issuance <i class="fa fa-question-circle-o modalShow" src="section_2_country_of_issuance"></i></label>
-                                                <input type="text" name="country_of_issuance" value="<?php echo sizeof($db_serialized_data)>0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work'? $db_serialized_data['country_of_issuance']: ''?>" id="country_of_issuance" class="form-control" />
+                                                <input type="text" name="country_of_issuance" value="<?php echo sizeof($db_serialized_data) > 0 && $pre_form['section1_penalty_of_perjury'] == 'alien-work' ? $db_serialized_data['country_of_issuance'] : '' ?>" id="country_of_issuance" class="form-control" />
                                             </div>
                                         </div>
                                     </div>
@@ -222,18 +222,18 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Signature of Employee <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_3_signature_of_employee"></i></label>
-                                            <?php if($signed_flag == true) { ?>
-                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>"  />
+                                            <?php if ($signed_flag == true) { ?>
+                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>" />
                                             <?php } else { ?>
                                                 <!-- the below loaded view add e-signature -->
                                                 <?php $this->load->view('static-pages/e_signature_button'); ?>
-                                            <?php } ?>    
+                                            <?php } ?>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Today's Date (mm/dd/yyyy) <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_3_today_date"></i></label>
-                                            <input type="text" name="section1_today_date" value="<?php echo sizeof($pre_form)>0 && !empty($pre_form['section1_today_date']) ? date('m-d-Y',strtotime($pre_form['section1_today_date'])): ''; ?>" class="form-control date_picker" readonly/>
+                                            <input type="text" name="section1_today_date" value="<?php echo sizeof($pre_form) > 0 && !empty($pre_form['section1_today_date']) ? date('m-d-Y', strtotime($pre_form['section1_today_date'])) : ''; ?>" class="form-control date_picker" readonly />
                                         </div>
                                     </div>
                                 </div>
@@ -242,7 +242,7 @@
 
                         <!--                                        Un Serialize Preparer Options Data -->
                         <?php
-                        $db_preparer_serialized_data = sizeof($pre_form)>0 && $pre_form['section1_preparer_or_translator'] != NULL ? unserialize($pre_form['section1_preparer_or_translator']) : array();
+                        $db_preparer_serialized_data = sizeof($pre_form) > 0 && $pre_form['section1_preparer_or_translator'] != NULL ? unserialize($pre_form['section1_preparer_or_translator']) : array();
                         ?>
                         <div class="hr-box">
                             <div class="hr-box-header">
@@ -253,14 +253,14 @@
                                     <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5">
                                         <label class="control control--radio">
                                             I did not use a preparer or translator.
-                                            <input class="" name="section1_preparer_or_translator" value="not-used" type="radio" checked <?php echo sizeof($db_preparer_serialized_data)>0 && $db_preparer_serialized_data['section1_preparer_or_translator'] == 'not-used' ? 'checked': ''?>>
+                                            <input class="" name="section1_preparer_or_translator" value="not-used" type="radio" checked <?php echo sizeof($db_preparer_serialized_data) > 0 && $db_preparer_serialized_data['section1_preparer_or_translator'] == 'not-used' ? 'checked' : '' ?>>
                                             <div class="control__indicator"></div>
                                         </label>
                                     </div>
                                     <div class="col-lg-7 col-md-7 col-xs-12 col-sm-7">
                                         <label class="control control--radio">
                                             A preparer(s) and/or translator(s) assisted the employee in completing Section 1
-                                            <input class="" name="section1_preparer_or_translator" value="used" type="radio" <?php echo sizeof($db_preparer_serialized_data)>0 && $db_preparer_serialized_data['section1_preparer_or_translator'] == 'used' ? 'checked': ''?>>
+                                            <input class="" name="section1_preparer_or_translator" value="used" type="radio" <?php echo sizeof($db_preparer_serialized_data) > 0 && $db_preparer_serialized_data['section1_preparer_or_translator'] == 'used' ? 'checked' : '' ?>>
                                             <div class="control__indicator"></div>
                                         </label>
                                     </div>
@@ -269,10 +269,10 @@
                                             <div class="form-group autoheight">
                                                 <div class="select">
                                                     <select class="form-control" name="number-of-preparer" id="number-of-preparer">
-                                                        <option value="1" <?php echo sizeof($db_preparer_serialized_data)>0 && $db_preparer_serialized_data['number-of-preparer'] == '1' ? 'selected="selected"': ''?>>1</option>
-                                                        <option value="2" <?php echo sizeof($db_preparer_serialized_data)>0 && $db_preparer_serialized_data['number-of-preparer'] == '2' ? 'selected="selected"': ''?>>2</option>
-                                                        <option value="3" <?php echo sizeof($db_preparer_serialized_data)>0 && $db_preparer_serialized_data['number-of-preparer'] == '3' ? 'selected="selected"': ''?>>3</option>
-                                                        <option value="4" <?php echo sizeof($db_preparer_serialized_data)>0 && $db_preparer_serialized_data['number-of-preparer'] == '4' ? 'selected="selected"': ''?>>4</option>
+                                                        <option value="1" <?php echo sizeof($db_preparer_serialized_data) > 0 && $db_preparer_serialized_data['number-of-preparer'] == '1' ? 'selected="selected"' : '' ?>>1</option>
+                                                        <option value="2" <?php echo sizeof($db_preparer_serialized_data) > 0 && $db_preparer_serialized_data['number-of-preparer'] == '2' ? 'selected="selected"' : '' ?>>2</option>
+                                                        <option value="3" <?php echo sizeof($db_preparer_serialized_data) > 0 && $db_preparer_serialized_data['number-of-preparer'] == '3' ? 'selected="selected"' : '' ?>>3</option>
+                                                        <option value="4" <?php echo sizeof($db_preparer_serialized_data) > 0 && $db_preparer_serialized_data['number-of-preparer'] == '4' ? 'selected="selected"' : '' ?>>4</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -293,46 +293,46 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Signature of Preparer or Translator <i class="fa fa-question-circle-o modalShow" src="section_41_signature_of_preparer"></i></label>
-                                            <?php if($signed_flag == true) { ?>
-                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_preparer_signature']; ?>"  />
+                                            <?php if ($signed_flag == true) { ?>
+                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $pre_form['section1_preparer_signature']; ?>" />
                                             <?php } else { ?>
                                                 <!-- the below loaded view add e-signature -->
                                                 <a class="btn blue-button btn-sm get_prepare_signature_btn" href="javascript:;">Create E-Signature</a>
                                                 <div class="img-full">
-                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src=""  id="prepare_signature_img" />
+                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="" id="prepare_signature_img" />
                                                 </div>
                                                 <input type="hidden" id="section1_preparer_signature" name="section1_preparer_signature" value="" />
-                                            <?php } ?> 
+                                            <?php } ?>
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Today's Date (mm/dd/yyyy) <i class="fa fa-question-circle-o modalShow" src="section_41_today_date"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 && !empty($pre_form['section1_preparer_today_date']) ? date('m-d-Y',strtotime($pre_form['section1_preparer_today_date'])): ''; ?>" name="section1_preparer_today_date" id="section1_preparer_today_date" class="form-control date_picker" readonly/>
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 && !empty($pre_form['section1_preparer_today_date']) ? date('m-d-Y', strtotime($pre_form['section1_preparer_today_date'])) : ''; ?>" name="section1_preparer_today_date" id="section1_preparer_today_date" class="form-control date_picker" readonly />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Last Name (Family Name) <i class="fa fa-question-circle-o modalShow" src="section_41_last_name"></i></label>
-                                            <input type="text" name="section1_preparer_last_name" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_preparer_last_name'] : ''?>" id="section1_preparer_last_name" class="form-control" />
+                                            <input type="text" name="section1_preparer_last_name" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_preparer_last_name'] : '' ?>" id="section1_preparer_last_name" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>First Name (Given Name) <i class="fa fa-question-circle-o modalShow" src="section_41_first_name"></i></label>
-                                            <input type="text" name="section1_preparer_first_name" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_preparer_first_name'] : ''?>" id="section1_preparer_first_name" class="form-control" />
+                                            <input type="text" name="section1_preparer_first_name" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_preparer_first_name'] : '' ?>" id="section1_preparer_first_name" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>Address (Street Number and Name) <i class="fa fa-question-circle-o modalShow" src="section_41_address"></i></label>
-                                            <input type="text" name="section1_preparer_address" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_preparer_address'] : ''?>" id="section1_preparer_address" class="form-control" />
+                                            <input type="text" name="section1_preparer_address" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_preparer_address'] : '' ?>" id="section1_preparer_address" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>City or Town <i class="fa fa-question-circle-o modalShow" src="section_41_city_or_town"></i></label>
-                                            <input type="text" name="section1_preparer_city_town" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_preparer_city_town'] : ''?>" id="section1_preparer_city_town" class="form-control" />
+                                            <input type="text" name="section1_preparer_city_town" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_preparer_city_town'] : '' ?>" id="section1_preparer_city_town" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -341,11 +341,11 @@
                                             <div class="select">
                                                 <select name="section1_preparer_state" id="section1_preparer_state" class="form-control">
                                                     <?php
-                                                    $pre_state = sizeof($pre_form)>0 ? $pre_form['section1_preparer_state'] : '';
-                                                    foreach($states as $state){
-                                                        $select = $pre_state == $state['state_code'] ? 'selected="selected"':'';
-                                                        echo '<option value="'.$state['state_code'].'"'.$select.'>'.$state['state_name'].'</option>';
-                                                    }?>
+                                                    $pre_state = sizeof($pre_form) > 0 ? $pre_form['section1_preparer_state'] : '';
+                                                    foreach ($states as $state) {
+                                                        $select = $pre_state == $state['state_code'] ? 'selected="selected"' : '';
+                                                        echo '<option value="' . $state['state_code'] . '"' . $select . '>' . $state['state_name'] . '</option>';
+                                                    } ?>
                                                 </select>
                                             </div>
                                         </div>
@@ -353,21 +353,21 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                         <div class="form-group">
                                             <label>ZIP Code <i class="fa fa-question-circle-o modalShow" src="section_41_zip_code"></i></label>
-                                            <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_preparer_zip_code'] : '' ?>" name="section1_preparer_zip_code" id="section1_preparer_zip_code" class="form-control" />
+                                            <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_preparer_zip_code'] : '' ?>" name="section1_preparer_zip_code" id="section1_preparer_zip_code" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-<!--                            Section 2 Starts    -->
+                        <!--                            Section 2 Starts    -->
 
-                        <?php if($section2_flag) { ?>
+                        <?php if ($section2_flag) { ?>
                             <div class="section-2">
                                 <div class="hr-box">
                                     <div class="hr-box-header">
                                         <strong>Section 2. Employer or Authorized Representative Review and
-                                            Verification</strong><br/>
+                                            Verification</strong><br />
                                         <em>Employers or their authorized representative must complete and sign
                                             Section 2 within 3 business days of the employee's first day of
                                             employment. You
@@ -380,34 +380,25 @@
                                         <div class="row">
                                             <div class="col-lg-12">
                                                 <div class="form-group autoheight">
-                                                    <label>Employee Info from Section 1 <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_4_employee_info_from"></i></label>
+                                                    <label>Employee Info from Section 1 <i class="fa fa-question-circle-o modalShow" src="section_4_employee_info_from"></i></label>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Last Name (Family Name) <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_4_last_name"></i></label>
-                                                    <input type="text"
-                                                           value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_last_name'] : '' ?>"
-                                                           name="section2_last_name" class="form-control"/>
+                                                    <label>Last Name (Family Name) <i class="fa fa-question-circle-o modalShow" src="section_4_last_name"></i></label>
+                                                    <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_last_name'] : '' ?>" name="section2_last_name" class="form-control" />
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>First Name (Given Name) <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_4_first_name"></i></label>
-                                                    <input type="text"
-                                                           value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_first_name'] : '' ?>"
-                                                           name="section2_first_name" class="form-control"/>
+                                                    <label>First Name (Given Name) <i class="fa fa-question-circle-o modalShow" src="section_4_first_name"></i></label>
+                                                    <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_first_name'] : '' ?>" name="section2_first_name" class="form-control" />
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>M.I. <i class="fa fa-question-circle-o modalShow" src="section_4_mi"></i></label>
-                                                    <input type="text" name="section2_middle_initial"
-                                                           value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_middle_initial'] : '' ?>"
-                                                           class="form-control"/>
+                                                    <input type="text" name="section2_middle_initial" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_middle_initial'] : '' ?>" class="form-control" />
                                                 </div>
                                             </div>
                                             <?php
@@ -418,11 +409,8 @@
                                             ?>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Citizenship/Immigration Status <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_4_citizenship"></i></label>
-                                                    <input type="text" name="section2_citizenship"
-                                                           value="<?php echo $citizen ?>" class="form-control"
-                                                           readonly/>
+                                                    <label>Citizenship/Immigration Status <i class="fa fa-question-circle-o modalShow" src="section_4_citizenship"></i></label>
+                                                    <input type="text" name="section2_citizenship" value="<?php echo $citizen ?>" class="form-control" readonly />
                                                 </div>
                                             </div>
                                         </div>
@@ -442,9 +430,7 @@
                                                     <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_5_document_title"></i></label>
 
                                                     <div class="select">
-                                                        <select class="form-control"
-                                                                name="section2_lista_part1_document_title"
-                                                                id="section2_lista_part1_document_title">
+                                                        <select class="form-control" name="section2_lista_part1_document_title" id="section2_lista_part1_document_title">
                                                             <option value="n_a">N/A</option>
                                                         </select>
                                                     </div>
@@ -455,9 +441,7 @@
                                                     <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_5_issuing_authority"></i></label>
 
                                                     <div class="select">
-                                                        <select class="form-control"
-                                                                name="section2_lista_part1_issuing_authority"
-                                                                id="section2_lista_part1_issuing_authority">
+                                                        <select class="form-control" name="section2_lista_part1_issuing_authority" id="section2_lista_part1_issuing_authority">
                                                             <option value="n_a">N/A</option>
                                                         </select>
                                                     </div>
@@ -466,17 +450,13 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_5_document_number"></i></label>
-                                                    <input type="text" name="section2_lista_part1_document_number"
-                                                           id="section2_lista_part1_document_number"
-                                                           class="form-control">
+                                                    <input type="text" name="section2_lista_part1_document_number" id="section2_lista_part1_document_number" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_5_expiration_date"></i></label>
-                                                    <input type="text" name="section2_lista_part1_expiration_date"
-                                                           id="section2_lista_part1_expiration_date"
-                                                           class="form-control date_picker2">
+                                                    <input type="text" name="section2_lista_part1_expiration_date" id="section2_lista_part1_expiration_date" class="form-control date_picker2">
                                                 </div>
                                             </div>
                                         </div>
@@ -486,9 +466,7 @@
                                                     <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_51_document_title"></i></label>
                                                     <!--                                                    <input type="text"  class="form-control">-->
                                                     <div class="select">
-                                                        <select class="form-control"
-                                                                name="section2_lista_part2_document_title"
-                                                                id="section2_lista_part2_document_title">
+                                                        <select class="form-control" name="section2_lista_part2_document_title" id="section2_lista_part2_document_title">
                                                             <option value="n_a">N/A</option>
                                                         </select>
                                                     </div>
@@ -499,9 +477,7 @@
                                                     <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_51_issuing_authority"></i></label>
                                                     <!--                                                    <input type="text"  class="form-control">-->
                                                     <div class="select">
-                                                        <select class="form-control"
-                                                                name="section2_lista_part2_issuing_authority"
-                                                                id="section2_lista_part2_issuing_authority">
+                                                        <select class="form-control" name="section2_lista_part2_issuing_authority" id="section2_lista_part2_issuing_authority">
                                                             <option value="n_a">N/A</option>
                                                         </select>
                                                     </div>
@@ -510,17 +486,13 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_51_document_number"></i></label>
-                                                    <input type="text" name="section2_lista_part2_document_number"
-                                                           id="section2_lista_part2_document_number"
-                                                           class="form-control">
+                                                    <input type="text" name="section2_lista_part2_document_number" id="section2_lista_part2_document_number" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_51_expiration_date"></i></label>
-                                                    <input type="text" name="section2_lista_part2_expiration_date"
-                                                           id="section2_lista_part2_expiration_date"
-                                                           class="form-control date_picker2">
+                                                    <input type="text" name="section2_lista_part2_expiration_date" id="section2_lista_part2_expiration_date" class="form-control date_picker2">
                                                 </div>
                                             </div>
                                         </div>
@@ -530,9 +502,7 @@
                                                     <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_52_document_title"></i></label>
                                                     <!--                                                    <input type="text"  class="form-control">-->
                                                     <div class="select">
-                                                        <select class="form-control"
-                                                                name="section2_lista_part3_document_title"
-                                                                id="section2_lista_part3_document_title">
+                                                        <select class="form-control" name="section2_lista_part3_document_title" id="section2_lista_part3_document_title">
                                                             <option value="n_a">N/A</option>
                                                         </select>
                                                     </div>
@@ -543,9 +513,7 @@
                                                     <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_52_issuing_authority"></i></label>
                                                     <!--                                                    <input type="text" class="form-control">-->
                                                     <div class="select">
-                                                        <select class="form-control"
-                                                                name="section2_lista_part3_issuing_authority"
-                                                                id="section2_lista_part3_issuing_authority">
+                                                        <select class="form-control" name="section2_lista_part3_issuing_authority" id="section2_lista_part3_issuing_authority">
                                                             <option value="n_a">N/A</option>
                                                         </select>
                                                     </div>
@@ -554,25 +522,19 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_52_document_number"></i></label>
-                                                    <input type="text" name="section2_lista_part3_document_number"
-                                                           id="section2_lista_part3_document_number"
-                                                           class="form-control">
+                                                    <input type="text" name="section2_lista_part3_document_number" id="section2_lista_part3_document_number" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_52_expiration_date"></i></label>
-                                                    <input type="text" name="section2_lista_part3_expiration_date"
-                                                           id="section2_lista_part3_expiration_date"
-                                                           class="form-control date_picker2">
+                                                    <input type="text" name="section2_lista_part3_expiration_date" id="section2_lista_part3_expiration_date" class="form-control date_picker2">
                                                 </div>
                                             </div>
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                 <div class="form-group autoheight">
                                                     <label>Additional Information <i class="fa fa-question-circle-o modalShow" src="section_52_additional_information"></i></label>
-                                                    <textarea class="form-control textarea"
-                                                              name="section2_additional_information"
-                                                              id="section2_additional_information"></textarea>
+                                                    <textarea class="form-control textarea" name="section2_additional_information" id="section2_additional_information"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -585,32 +547,25 @@
                                                     <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_53_document_title"></i></label>
 
                                                     <div class="select">
-                                                        <select class="form-control"
-                                                                name="section2_listb_document_title"
-                                                                id="section2_listb_document_title"></select>
+                                                        <select class="form-control" name="section2_listb_document_title" id="section2_listb_document_title"></select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_53_issuing_authority"></i></label>
                                                     <!--                                                    <input type="text"class="form-control">-->
                                                     <div class="select" id="list_b_auth">
-                                                        <select class="form-control"
-                                                                name="section2_listb_issuing_authority"
-                                                                id="section2_listb_issuing_authority">
+                                                        <select class="form-control" name="section2_listb_issuing_authority" id="section2_listb_issuing_authority">
                                                             <option value="n_a">N/A</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_53_document_number"></i></label>
-                                                    <input type="text" name="section2_listb_document_number"
-                                                           id="section2_listb_document_number" class="form-control">
+                                                    <input type="text" name="section2_listb_document_number" id="section2_listb_document_number" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_53_expiration_date"></i></label>
-                                                    <input type="text" name="section2_listb_expiration_date"
-                                                           id="section2_listb_expiration_date"
-                                                           class="form-control date_picker2">
+                                                    <input type="text" name="section2_listb_expiration_date" id="section2_listb_expiration_date" class="form-control date_picker2">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 list-b-fields">
@@ -621,38 +576,29 @@
                                                     <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_54_document_title"></i></label>
 
                                                     <div class="select">
-                                                        <select class="form-control"
-                                                                name="section2_listc_document_title"
-                                                                id="section2_listc_document_title"></select>
+                                                        <select class="form-control" name="section2_listc_document_title" id="section2_listc_document_title"></select>
                                                     </div>
                                                 </div>
-                                                <div class="form-group" id="listc_extra_field"
-                                                     style="display: none">
+                                                <div class="form-group" id="listc_extra_field" style="display: none">
                                                     <label>&nbsp;</label>
-                                                    <input type="text" name="section2_listc_dhs_extra_field"
-                                                           id="section2_listc_extra_field" class="form-control">
+                                                    <input type="text" name="section2_listc_dhs_extra_field" id="section2_listc_extra_field" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Issuing Authority <i class="fa fa-question-circle-o modalShow" src="section_54_issuing_authority"></i></label>
 
                                                     <div class="select" id="list_c_auth">
-                                                        <select class="form-control"
-                                                                name="section2_listc_issuing_authority"
-                                                                id="section2_listc_issuing_authority">
+                                                        <select class="form-control" name="section2_listc_issuing_authority" id="section2_listc_issuing_authority">
                                                             <option value="n_a" selected>N/A</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_54_document_number"></i></label>
-                                                    <input type="text" name="section2_listc_document_number"
-                                                           id="section2_listc_document_number" class="form-control">
+                                                    <input type="text" name="section2_listc_document_number" id="section2_listc_document_number" class="form-control">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_54_expiration_date"></i></label>
-                                                    <input type="text" name="section2_listc_expiration_date"
-                                                           id="section2_listc_expiration_date"
-                                                           class="form-control date_picker2">
+                                                    <input type="text" name="section2_listc_expiration_date" id="section2_listc_expiration_date" class="form-control date_picker2">
                                                 </div>
                                             </div>
                                         </div>
@@ -673,9 +619,7 @@
                                                     instructions for exemptions)</strong></p>
                                         </div>
                                         <div class="col-lg-3">
-                                            <input type="text" name="section2_firstday_of_emp_date"
-                                                   id="section2_firstday_of_emp_date"
-                                                   class="form-control date_picker2"/>
+                                            <input type="text" name="section2_firstday_of_emp_date" id="section2_firstday_of_emp_date" class="form-control date_picker2" />
                                         </div>
                                     </div>
                                 </div>
@@ -685,21 +629,21 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Signature of Employer or Authorized Representative <i class="fa fa-question-circle-o modalShow" src="section_6_signature"></i></label>
-                                                    <?php $e_signature_data = $signed_flag == true ? $pre_form : $e_signature_data?>
-                                                    <?php if(!empty($e_signature_data)) { ?>
+                                                    <?php $e_signature_data = $signed_flag == true ? $pre_form : $e_signature_data ?>
+                                                    <?php if (!empty($e_signature_data)) { ?>
                                                         <?php $active_signature = isset($e_signature_data['active_signature']) ? $e_signature_data['active_signature'] : 'typed'; ?>
-                                                        <?php $signature = isset($e_signature_data['signature']) ? $e_signature_data['signature'] : '';?>
+                                                        <?php $signature = isset($e_signature_data['signature']) ? $e_signature_data['signature'] : ''; ?>
 
-                                                        <?php if($e_signature_data['active_signature'] == 'typed') { ?>
+                                                        <?php if ($e_signature_data['active_signature'] == 'typed') { ?>
 
                                                             <div id="type_signature" style="max-height: 50px;" class="field-row autoheight">
-                                                                <input readonly="readonly" data-rule-required="true" type="text" class="signature-form-field" id="signature" value="<?php echo set_value('signature', $signature); ?>"  placeholder="John Doe" />
+                                                                <input readonly="readonly" data-rule-required="true" type="text" class="signature-form-field" id="signature" value="<?php echo set_value('signature', $signature); ?>" placeholder="John Doe" />
                                                             </div>
 
-                                                        <?php } else if($e_signature_data['active_signature'] == 'drawn') { ?>
+                                                        <?php } else if ($e_signature_data['active_signature'] == 'drawn') { ?>
 
                                                             <div class="img-full">
-                                                                <img style="max-height: 50px;" src="<?php echo isset($e_signature_data['signature_bas64_image']) && !empty($e_signature_data['signature_bas64_image']) ? $e_signature_data['signature_bas64_image'] : ''; ?>"  />
+                                                                <img style="max-height: 50px;" src="<?php echo isset($e_signature_data['signature_bas64_image']) && !empty($e_signature_data['signature_bas64_image']) ? $e_signature_data['signature_bas64_image'] : ''; ?>" />
                                                             </div>
 
                                                         <?php } ?>
@@ -707,67 +651,50 @@
                                                         <a class="btn blue-button btn-sm" href="<?php echo base_url('e_signature'); ?>">Create E-Signature</a>
                                                     <?php } ?>
 
-<!--                                                    <input name="section2_sig_emp_auth_rep" class="form-control" type="text">-->
+                                                    <!--                                                    <input name="section2_sig_emp_auth_rep" class="form-control" type="text">-->
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Today's Date (mm/dd/yyyy) <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_today_date"></i></label>
-                                                    <input name="section2_today_date" id="section2_today_date"
-                                                           class="form-control date_picker" type="text">
+                                                    <label>Today's Date (mm/dd/yyyy) <i class="fa fa-question-circle-o modalShow" src="section_6_today_date"></i></label>
+                                                    <input name="section2_today_date" id="section2_today_date" class="form-control date_picker" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Title of Employer or Authorized Representative <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_title"></i></label>
-                                                    <input name="section2_title_of_emp" id="section2_title_of_emp"
-                                                           class="form-control" type="text">
+                                                    <label>Title of Employer or Authorized Representative <i class="fa fa-question-circle-o modalShow" src="section_6_title"></i></label>
+                                                    <input name="section2_title_of_emp" id="section2_title_of_emp" class="form-control" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Last Name of Employer or Authorized Representative <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_last_name"></i></label>
-                                                    <input name="section2_last_name_of_emp"
-                                                           id="section2_last_name_of_emp" class="form-control"
-                                                           type="text">
+                                                    <label>Last Name of Employer or Authorized Representative <i class="fa fa-question-circle-o modalShow" src="section_6_last_name"></i></label>
+                                                    <input name="section2_last_name_of_emp" id="section2_last_name_of_emp" class="form-control" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>First Name of Employer or Authorized Representative <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_first_name"></i>
+                                                    <label>First Name of Employer or Authorized Representative <i class="fa fa-question-circle-o modalShow" src="section_6_first_name"></i>
                                                     </label>
-                                                    <input name="section2_first_name_of_emp"
-                                                           id="section2_first_name_of_emp" class="form-control"
-                                                           type="text">
+                                                    <input name="section2_first_name_of_emp" id="section2_first_name_of_emp" class="form-control" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Employer's Business or Organization Name <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_organization_name"></i></label>
-                                                    <input name="section2_emp_business_name"
-                                                           id="section2_emp_business_name" class="form-control"
-                                                           type="text">
+                                                    <label>Employer's Business or Organization Name <i class="fa fa-question-circle-o modalShow" src="section_6_organization_name"></i></label>
+                                                    <input name="section2_emp_business_name" id="section2_emp_business_name" class="form-control" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Employer's Business or Organization Address <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_6_organization_address"></i></label>
-                                                    <input name="section2_emp_business_address"
-                                                           id="section2_emp_business_address" class="form-control"
-                                                           type="text">
+                                                    <label>Employer's Business or Organization Address <i class="fa fa-question-circle-o modalShow" src="section_6_organization_address"></i></label>
+                                                    <input name="section2_emp_business_address" id="section2_emp_business_address" class="form-control" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>City or Town <i class="fa fa-question-circle-o modalShow" src="section_6_city_or_town"></i></label>
-                                                    <input name="section2_city_town" id="section2_city_town"
-                                                           class="form-control" type="text">
+                                                    <input name="section2_city_town" id="section2_city_town" class="form-control" type="text">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -775,8 +702,7 @@
                                                     <label>State <i class="fa fa-question-circle-o modalShow" src="section_6_state"></i></label>
 
                                                     <div class="select">
-                                                        <select class="form-control" name="section2_state"
-                                                                id="section2_state">
+                                                        <select class="form-control" name="section2_state" id="section2_state">
                                                             <?php foreach ($states as $state) {
                                                                 echo '<option value="' . $state['state_code'] . '"">' . $state['state_name'] . '</option>';
                                                             } ?>
@@ -787,8 +713,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>ZIP Code <i class="fa fa-question-circle-o modalShow" src="section_6_zip_code"></i></label>
-                                                    <input name="section2_zip_code" id="section2_zip_code"
-                                                           class="form-control" type="text">
+                                                    <input name="section2_zip_code" id="section2_zip_code" class="form-control" type="text">
                                                 </div>
                                             </div>
                                         </div>
@@ -802,29 +727,21 @@
                                         <div class="row">
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>Last Name (Family Name) <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_7_last_name"></i>
+                                                    <label>Last Name (Family Name) <i class="fa fa-question-circle-o modalShow" src="section_7_last_name"></i>
                                                     </label>
-                                                    <input type="text"
-                                                           value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_last_name'] : '' ?>"
-                                                           class="form-control" name="section3_pre_last_name">
+                                                    <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_last_name'] : '' ?>" class="form-control" name="section3_pre_last_name">
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                 <div class="form-group">
-                                                    <label>First Name (Given Name) <i
-                                                            class="fa fa-question-circle-o modalShow" src="section_7_first_name"></i></label>
-                                                    <input type="text"
-                                                           value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_first_name'] : '' ?>"
-                                                           class="form-control" name="section3_pre_first_name">
+                                                    <label>First Name (Given Name) <i class="fa fa-question-circle-o modalShow" src="section_7_first_name"></i></label>
+                                                    <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_first_name'] : '' ?>" class="form-control" name="section3_pre_first_name">
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-12">
                                                 <div class="form-group">
                                                     <label>Middle Initial <i class="fa fa-question-circle-o modalShow" src="section_7_middle_initial"></i></label>
-                                                    <input type="text"
-                                                           value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_middle_initial'] : '' ?>"
-                                                           class="form-control" name="section3_pre_middle_initial">
+                                                    <input type="text" value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_middle_initial'] : '' ?>" class="form-control" name="section3_pre_middle_initial">
                                                 </div>
                                             </div>
                                         </div>
@@ -846,22 +763,19 @@
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                         <div class="form-group">
                                                             <label>Last Name <i class="fa fa-question-circle-o modalShow" src="section_8_last_name"></i></label>
-                                                            <input type="text" class="form-control"
-                                                                   name="section3_last_name">
+                                                            <input type="text" class="form-control" name="section3_last_name">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                         <div class="form-group">
                                                             <label>First Name <i class="fa fa-question-circle-o modalShow" src="section_8_first_name"></i></label>
-                                                            <input type="text" class="form-control"
-                                                                   name="section3_first_name">
+                                                            <input type="text" class="form-control" name="section3_first_name">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                         <div class="form-group">
                                                             <label>Middle Initial <i class="fa fa-question-circle-o modalShow" src="section_8_middle_initial"></i></label>
-                                                            <input type="text" class="form-control"
-                                                                   name="section3_middle_initial">
+                                                            <input type="text" class="form-control" name="section3_middle_initial">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -872,8 +786,7 @@
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Date (mm/dd/yyyy) <i class="fa fa-question-circle-o modalShow" src="section_8_date"></i></label>
-                                                    <input type="text" class="form-control date_picker2"
-                                                           name="section3_rehire_date">
+                                                    <input type="text" class="form-control date_picker2" name="section3_rehire_date">
                                                 </div>
                                             </div>
                                             <div class="col-lg-12">
@@ -889,12 +802,10 @@
                                                         <div class="row">
                                                             <div class="col-lg-4 col-md-6 col-xs-12 col-sm-6">
                                                                 <div class="form-group">
-                                                                    <label>Document Title <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_document_title"></i></label>
+                                                                    <label>Document Title <i class="fa fa-question-circle-o modalShow" src="section_8_document_title"></i></label>
 
                                                                     <div class="select">
-                                                                        <select class="form-control"
-                                                                                name="section3_document_title">
+                                                                        <select class="form-control" name="section3_document_title">
                                                                             <option value="N/A">N/A</option>
                                                                             <option value="U.S. Passport">U.S.
                                                                                 Passport
@@ -902,54 +813,43 @@
                                                                             <option value="U.S. Passport Card">U.S.
                                                                                 Passport Card
                                                                             </option>
-                                                                            <option
-                                                                                value="Perm. Resident Card (Form I-551)">
+                                                                            <option value="Perm. Resident Card (Form I-551)">
                                                                                 Perm. Resident Card (Form I-551)
                                                                             </option>
-                                                                            <option
-                                                                                value="Alien Reg. Receipt Card (Form I-551)">
+                                                                            <option value="Alien Reg. Receipt Card (Form I-551)">
                                                                                 Alien Reg. Receipt Card (Form I-551)
                                                                             </option>
-                                                                            <option
-                                                                                value="Foreign Passport with Temp. I-551 Stamp">
+                                                                            <option value="Foreign Passport with Temp. I-551 Stamp">
                                                                                 Foreign Passport with Temp. I-551
                                                                                 Stamp
                                                                             </option>
-                                                                            <option
-                                                                                value="Foreign Passport with Temp. I-551 MRIV">
+                                                                            <option value="Foreign Passport with Temp. I-551 MRIV">
                                                                                 Foreign Passport with Temp. I-551
                                                                                 MRIV
                                                                             </option>
-                                                                            <option
-                                                                                value="Employment Auth. Document (Form I-766)">
+                                                                            <option value="Employment Auth. Document (Form I-766)">
                                                                                 Employment Auth. Document (Form
                                                                                 I-766)
                                                                             </option>
-                                                                            <option
-                                                                                value="Foreign Passport with Form I-94, endorsement">
+                                                                            <option value="Foreign Passport with Form I-94, endorsement">
                                                                                 Foreign Passport with Form I-94,
                                                                                 endorsement
                                                                             </option>
-                                                                            <option
-                                                                                value="FSM Passport with Form I-94">
+                                                                            <option value="FSM Passport with Form I-94">
                                                                                 FSM Passport with Form I-94
                                                                             </option>
-                                                                            <option
-                                                                                value="RMI Passport with Form I-94">
+                                                                            <option value="RMI Passport with Form I-94">
                                                                                 RMI Passport with Form I-94
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Form I-94/I-94A w/I-551 stamp, photo">
+                                                                            <option value="Receipt Form I-94/I-94A w/I-551 stamp, photo">
                                                                                 Receipt Form I-94/I-94A w/I-551
                                                                                 stamp, photo
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Form I-94/I-94A w/refugee stamp (or RE class of admission)">
+                                                                            <option value="Receipt Form I-94/I-94A w/refugee stamp (or RE class of admission)">
                                                                                 Receipt Form I-94/I-94A w/refugee
                                                                                 stamp (or RE class of admission)
                                                                             </option>
-                                                                            <option
-                                                                                value="Social Security Card (Unrestricted)">
+                                                                            <option value="Social Security Card (Unrestricted)">
                                                                                 Social Security Card (Unrestricted)
                                                                             </option>
                                                                             <option value="Form FS-545">Form
@@ -964,60 +864,49 @@
                                                                             <option value="U.S. Birth certificate">
                                                                                 U.S. Birth certificate
                                                                             </option>
-                                                                            <option
-                                                                                value="Native American tribal document">
+                                                                            <option value="Native American tribal document">
                                                                                 Native American tribal document
                                                                             </option>
                                                                             <option value="Form I-197">Form I-197
                                                                             </option>
                                                                             <option value="Form I-179">Form I-179
                                                                             </option>
-                                                                            <option
-                                                                                value="Employment auth. document (DHS)">
+                                                                            <option value="Employment auth. document (DHS)">
                                                                                 Employment auth. document (DHS)
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Replacement Perm. Resident Card (Form I-551)">
+                                                                            <option value="Receipt Replacement Perm. Resident Card (Form I-551)">
                                                                                 Receipt Replacement Perm. Resident
                                                                                 Card (Form I-551)
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Replacement Employment Auth. Document (Form I-766)">
+                                                                            <option value="Receipt Replacement Employment Auth. Document (Form I-766)">
                                                                                 Receipt Replacement Employment Auth.
                                                                                 Document (Form I-766)
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Replacement Foreign Passport with Form I-94, endorsement">
+                                                                            <option value="Receipt Replacement Foreign Passport with Form I-94, endorsement">
                                                                                 Receipt Replacement Foreign Passport
                                                                                 with Form I-94, endorsement
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Replacement FSM passport/Form I-94">
+                                                                            <option value="Receipt Replacement FSM passport/Form I-94">
                                                                                 Receipt Replacement FSM
                                                                                 passport/Form I-94
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Replacement RMI passport/Form I-94">
+                                                                            <option value="Receipt Replacement RMI passport/Form I-94">
                                                                                 Receipt Replacement RMI
                                                                                 passport/Form I-94
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Replacement Social Security Card">
+                                                                            <option value="Receipt Replacement Social Security Card">
                                                                                 Receipt Replacement Social Security
                                                                                 Card
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Replacement Birth Certificate">
+                                                                            <option value="Receipt Replacement Birth Certificate">
                                                                                 Receipt Replacement Birth
                                                                                 Certificate
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Replacement Native American Tribal Document">
+                                                                            <option value="Receipt Replacement Native American Tribal Document">
                                                                                 Receipt Replacement Native American
                                                                                 Tribal Document
                                                                             </option>
-                                                                            <option
-                                                                                value="Receipt Replacement Employment Auth. Doc. (DHS)">
+                                                                            <option value="Receipt Replacement Employment Auth. Doc. (DHS)">
                                                                                 Receipt Replacement Employment Auth.
                                                                                 Doc. (DHS)
                                                                             </option>
@@ -1027,19 +916,14 @@
                                                             </div>
                                                             <div class="col-lg-4 col-md-6 col-xs-12 col-sm-6">
                                                                 <div class="form-group">
-                                                                    <label>Document Number <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_document_number"></i></label>
-                                                                    <input type="text" class="form-control"
-                                                                           name="section3_document_number">
+                                                                    <label>Document Number <i class="fa fa-question-circle-o modalShow" src="section_8_document_number"></i></label>
+                                                                    <input type="text" class="form-control" name="section3_document_number">
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12">
                                                                 <div class="form-group">
-                                                                    <label>Expiration Date (if any) (mm/dd/yyyy) <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_expiration"></i></label>
-                                                                    <input type="text"
-                                                                           class="form-control date_picker2"
-                                                                           name="section3_expiration_date">
+                                                                    <label>Expiration Date (if any) (mm/dd/yyyy) <i class="fa fa-question-circle-o modalShow" src="section_8_expiration"></i></label>
+                                                                    <input type="text" class="form-control date_picker2" name="section3_expiration_date">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1059,45 +943,40 @@
                                                             <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
                                                                 <div class="form-group">
                                                                     <label>Signature of Authorized Representative <i class="fa fa-question-circle-o modalShow" src="section_8_signature"></i></label>
-                                                                    <?php $e_signature_data = $signed_flag == true ? $pre_form : $e_signature_data?>
-                                                                    <?php if(!empty($e_signature_data)) { ?>
+                                                                    <?php $e_signature_data = $signed_flag == true ? $pre_form : $e_signature_data ?>
+                                                                    <?php if (!empty($e_signature_data)) { ?>
                                                                         <?php $active_signature = isset($e_signature_data['active_signature']) ? $e_signature_data['active_signature'] : 'typed'; ?>
-                                                                        <?php $signature = isset($e_signature_data['signature']) ? $e_signature_data['signature'] : '';?>
+                                                                        <?php $signature = isset($e_signature_data['signature']) ? $e_signature_data['signature'] : ''; ?>
 
-                                                                        <?php if($e_signature_data['active_signature'] == 'typed') { ?>
+                                                                        <?php if ($e_signature_data['active_signature'] == 'typed') { ?>
 
                                                                             <div id="type_signature" style="max-height: 150px;" class="field-row autoheight">
-                                                                                <input readonly="readonly" data-rule-required="true" type="text" class="signature-form-field" id="signature" value="<?php echo set_value('signature', $signature); ?>"  placeholder="John Doe" />
+                                                                                <input readonly="readonly" data-rule-required="true" type="text" class="signature-form-field" id="signature" value="<?php echo set_value('signature', $signature); ?>" placeholder="John Doe" />
                                                                             </div>
 
-                                                                        <?php } else if($e_signature_data['active_signature'] == 'drawn') { ?>
+                                                                        <?php } else if ($e_signature_data['active_signature'] == 'drawn') { ?>
 
                                                                             <div class="img-full">
-                                                                                <img style="max-height: 150px;" src="<?php echo isset($e_signature_data['signature_bas64_image']) && !empty($e_signature_data['signature_bas64_image']) ? $e_signature_data['signature_bas64_image'] : ''; ?>"  />
+                                                                                <img style="max-height: 150px;" src="<?php echo isset($e_signature_data['signature_bas64_image']) && !empty($e_signature_data['signature_bas64_image']) ? $e_signature_data['signature_bas64_image'] : ''; ?>" />
                                                                             </div>
 
                                                                         <?php } ?>
                                                                     <?php } else { ?>
                                                                         <a class="btn blue-button btn-sm" href="<?php echo base_url('e_signature'); ?>">Create E-Signature</a>
                                                                     <?php } ?>
-<!--                                                                    <input type="text" class="form-control" name="section3_emp_sign">-->
+                                                                    <!--                                                                    <input type="text" class="form-control" name="section3_emp_sign">-->
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
                                                                 <div class="form-group">
-                                                                    <label>Today's Date (mm/dd/yyyy) <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_today_date"></i></label>
-                                                                    <input type="text"
-                                                                           class="form-control date_picker"
-                                                                           name="section3_today_date">
+                                                                    <label>Today's Date (mm/dd/yyyy) <i class="fa fa-question-circle-o modalShow" src="section_8_today_date"></i></label>
+                                                                    <input type="text" class="form-control date_picker" name="section3_today_date">
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12">
                                                                 <div class="form-group">
-                                                                    <label>Name of Authorized Representative <i
-                                                                            class="fa fa-question-circle-o modalShow" src="section_8_authorized"></i></label>
-                                                                    <input type="text" class="form-control"
-                                                                           name="section3_name_of_emp">
+                                                                    <label>Name of Authorized Representative <i class="fa fa-question-circle-o modalShow" src="section_8_authorized"></i></label>
+                                                                    <input type="text" class="form-control" name="section3_name_of_emp">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1108,18 +987,18 @@
                                     </div>
                                 </div>
                             </div>
-                        <?php }?>
+                        <?php } ?>
 
-                      <!--   <div class="hr-box">
+                        <!--   <div class="hr-box">
                             <div class="hr-box-header">
                                 <strong>Requester Supporting Docs :</strong>
                             </div>
                             <div class="hr-innerpadding">
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                        <?php if(isset($files) && sizeof($files)>0) {
+                                        <?php if (isset($files) && sizeof($files) > 0) {
                                             foreach ($files as $file) {
-                                                ?>
+                                        ?>
                                                 <div class="form-group autoheight">
                                                     <div class="form-control">
                                                         <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
@@ -1132,17 +1011,17 @@
                                                             <label><?= date('d M, Y H:i:s', strtotime($file['upload_date'])) ?></label>
                                                         </div>
 
-                                                        <?php if (sizeof($pre_form) > 0 && $section2_flag){ ?>
+                                                        <?php if (sizeof($pre_form) > 0 && $section2_flag) { ?>
                                                             <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4">
                                                                 Status:
-                                                                <label id="<?=$file['sid']?>"><?= $file['verified'] ? 'Verified' : '<a href="javascript:;" data-id="'.$file['sid'].'" class="btn blue-button verify-doc">Mark It Verified</a>' ?></label>
+                                                                <label id="<?= $file['sid'] ?>"><?= $file['verified'] ? 'Verified' : '<a href="javascript:;" data-id="' . $file['sid'] . '" class="btn blue-button verify-doc">Mark It Verified</a>' ?></label>
                                                             </div>
 
                                                         <?php } ?>
                                                     </div>
                                                 </div>
                                             <?php }
-                                        } else{?>
+                                        } else { ?>
 
                                             <div class="form-group autoheight">
                                                 <div class="form-control">
@@ -1150,15 +1029,15 @@
                                                 </div>
                                             </div>
 
-                                        <?php }?>
+                                        <?php } ?>
                                     </div>
                                 </div>
                             </div>
                         </div> -->
 
-                        <input type="hidden" id="form-id" name="form-id" value="<?php echo empty($pre_form) ? 0 : $pre_form['sid']?>"/>
-<!--                            Section 2 Ends    -->
-                        <?php if(empty($pre_form) || $pre_form['applicant_flag'] != 1 || ($section2_flag && $pre_form['employer_flag'] != 1)) {?>
+                        <input type="hidden" id="form-id" name="form-id" value="<?php echo empty($pre_form) ? 0 : $pre_form['sid'] ?>" />
+                        <!--                            Section 2 Ends    -->
+                        <?php if (empty($pre_form) || $pre_form['applicant_flag'] != 1 || ($section2_flag && $pre_form['employer_flag'] != 1)) { ?>
 
 
                             <!-- <div class="hr-box">
@@ -1195,23 +1074,23 @@
 
                                     </div>
 
-                                    <?php if($section2_flag){?>
+                                    <?php if ($section2_flag) { ?>
 
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                             <div class="section-2">
-                                                <?php $this->load->view('form_i9/partial_acceptable_document_list');?>
+                                                <?php $this->load->view('form_i9/partial_acceptable_document_list'); ?>
                                             </div>
                                         </div>
 
-                                    <?php }?>
+                                    <?php } ?>
                                 </div>
                             </div> -->
 
-                        <?php }?>
+                        <?php } ?>
 
 
 
-                       
+
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" id="consent_and_notice_section">
                             <input type="hidden" id="perform_action" name="perform_action" value="sign_document" />
                             <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_info['sid']; ?>" />
@@ -1233,19 +1112,19 @@
                             <input type="hidden" id="signature_ip_address" name="signature_ip_address" value="" />
 
                             <input type="hidden" id="signature_user_agent" name="signature_user_agent" value="" />
-                                
+
                             <hr />
 
                             <div class="row">
                                 <div class="col-xs-12 text-justify">
                                     <p>
-                                        <?php echo str_replace("{{company_name}}",$company_name,SIGNATURE_CONSENT_HEADING); ?>
+                                        <?php echo str_replace("{{company_name}}", $company_name, SIGNATURE_CONSENT_HEADING); ?>
                                     </p>
                                     <p>
                                         <?php echo SIGNATURE_CONSENT_TITLE; ?>
                                     </p>
                                     <p>
-                                        <?php echo str_replace("{{company_name}}",$company_name,SIGNATURE_CONSENT_DESCRIPTION); ?>
+                                        <?php echo str_replace("{{company_name}}", $company_name, SIGNATURE_CONSENT_DESCRIPTION); ?>
                                     </p>
                                 </div>
                             </div>
@@ -1255,14 +1134,14 @@
                                     <?php $consent = isset($pre_form['user_consent']) ? $pre_form['user_consent'] : 0; ?>
                                     <label class="control control--checkbox">
                                         <?php echo SIGNATURE_CONSENT_CHECKBOX; ?>
-                                        <input <?php echo $signed_flag == true ? 'disabled="disabled"' : ''; ?> <?php echo $consent == 1 ? 'checked="checked"' : ''; ?>   data-rule-required="true" type="checkbox" id="user_consent" name="user_consent" value="1" />
+                                        <input <?php echo $signed_flag == true ? 'disabled="disabled"' : ''; ?> <?php echo $consent == 1 ? 'checked="checked"' : ''; ?> data-rule-required="true" type="checkbox" id="user_consent" name="user_consent" value="1" />
                                         <div class="control__indicator"></div>
                                     </label>
                                 </div>
                             </div>
                             <hr />
 
-                            <?php if($signed_flag == false) { ?>
+                            <?php if ($signed_flag == false) { ?>
                                 <div class="row">
                                     <div class="col-lg-12 text-center">
                                         <button <?php echo $signed_flag == true ? 'disabled="disabled"' : ''; ?> onclick="func_save_e_signature();" type="button" class="btn blue-button break-word-text"><?php echo SIGNATURE_CONSENT_BUTTON; ?></button>
@@ -1283,11 +1162,15 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/i9-form.js?v=1"></script>
 <script type="text/javascript">
     // $('#consent_and_notice_section').hide();
-    $(document).ready(function () {
-        var exist_e_signature_data = '<?php if(!empty($e_signature_data)) { echo true; } else {echo false; }?>';
-        if(exist_e_signature_data == 1){
+    $(document).ready(function() {
+        var exist_e_signature_data = '<?php if (!empty($e_signature_data)) {
+                                            echo true;
+                                        } else {
+                                            echo false;
+                                        } ?>';
+        if (exist_e_signature_data == 1) {
             // $('#consent_and_notice_section').show();
-            var signature = '<?php echo isset($signature)? $signature : ""; ?>';
+            var signature = '<?php echo isset($signature) ? $signature : ""; ?>';
             var base64_url = '<?php echo isset($e_signature_data['signature_bas64_image']) ? '' : ""; ?>';
             var signature_type = '<?php echo isset($active_signature) ? $active_signature : ""; ?>';
             $('#signature_bas64_image').val(base64_url);
@@ -1296,22 +1179,22 @@
         } else {
             // $('#consent_and_notice_section').hide();
         }
-        
 
-        $('.modalShow').click(function(event){
-            
+
+        $('.modalShow').click(function(event) {
+
             event.preventDefault();
 
             var info_id = $(this).attr("src");
-            var title_string = $(this).parent().text(); 
+            var title_string = $(this).parent().text();
             var model_title = title_string.replace("*", "");
             if (info_id == "section_2_alien_number") {
-                if($('#alien_authorized_to_work').is(':checked')) { 
-                    info_id = 'section_21_alien_number'; 
+                if ($('#alien_authorized_to_work').is(':checked')) {
+                    info_id = 'section_21_alien_number';
                 }
             }
 
-            var model_content =  $('#'+info_id).html(); 
+            var model_content = $('#' + info_id).html();
 
             var mymodal = $('#myPopupModal');
 
@@ -1320,7 +1203,7 @@
             mymodal.modal('show');
         });
 
-        $('.verify-doc').click(function () {
+        $('.verify-doc').click(function() {
             var doc_id = $(this).attr('data-id');
             $.ajax({
                 url: '<?= base_url('form_i9/verify_docs') ?>',
@@ -1328,11 +1211,11 @@
                 data: {
                     id: doc_id
                 },
-                success: function (data) {
+                success: function(data) {
                     alertify.success('Document verified successfully');
                     $('#' + doc_id).html('Verified');
                 },
-                error: function () {
+                error: function() {
 
                 }
 
@@ -1343,13 +1226,18 @@
             dateFormat: 'mm-dd-yy',
             setDate: new Date(),
             maxDate: new Date,
-            minDate: new Date()
+            minDate: new Date(),
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         });
         $('.date_picker2').datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         });
-        var option_val = '<?php echo sizeof($pre_form)>0 ? $pre_form['section1_penalty_of_perjury'] : '' ?>';
+        var option_val = '<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_penalty_of_perjury'] : '' ?>';
         if (option_val == 'alien-work') {
             $('#option-4').show();
         } else if (option_val == 'permanent-resident') {
@@ -1359,7 +1247,7 @@
             $('#option-3').hide();
             $('#option-4').hide();
         }
-        var prep_div = '<?php echo sizeof($db_preparer_serialized_data)>0 ? $db_preparer_serialized_data['section1_preparer_or_translator'] : '' ?>';
+        var prep_div = '<?php echo sizeof($db_preparer_serialized_data) > 0 ? $db_preparer_serialized_data['section1_preparer_or_translator'] : '' ?>';
         if (prep_div == 'used') {
             $('.preparer-number-div').show();
         } else {
@@ -1449,7 +1337,7 @@
                     required: 'Date is required'
                 }
             },
-            submitHandler: function (form) {
+            submitHandler: function(form) {
                 var radio_val = $('input[name="section1_penalty_of_perjury"]:checked').val();
                 var prepare_radio = $('input[name="section1_preparer_or_translator"]:checked').val();
                 if (radio_val == 'permanent-resident') {
@@ -1481,7 +1369,7 @@
             }
         });
 
-        $('input[name="section1_preparer_or_translator"]').on('change', function () {
+        $('input[name="section1_preparer_or_translator"]').on('change', function() {
             if ($(this).val() != 'not-used') {
                 $('.preparer-number-div').show();
             } else {
@@ -1489,7 +1377,7 @@
             }
         });
 
-        $('input[name="section1_penalty_of_perjury"]').on('change', function () {
+        $('input[name="section1_penalty_of_perjury"]').on('change', function() {
             var radio_val = $(this).val();
             if (radio_val == 'citizen' || radio_val == 'noncitizen') {
                 $('#option-3').hide();
@@ -1505,22 +1393,22 @@
             i9_manager.fill_list_c(radio_val);
         });
 
-        $('#section2_lista_part1_document_title').on('change', function () {
+        $('#section2_lista_part1_document_title').on('change', function() {
             var title = $(this).val();
             i9_manager.fill_part1_authority(title);
         });
 
-        $('#section2_lista_part3_document_title').on('change', function () {
+        $('#section2_lista_part3_document_title').on('change', function() {
             var title = $(this).val();
             i9_manager.fill_part3_auth(title);
         });
 
-        $('#section2_listc_document_title').on('change', function () {
+        $('#section2_listc_document_title').on('change', function() {
             var title = $(this).val();
             i9_manager.fill_list_c_auth(title);
         });
 
-        $('#section2_listb_document_title').on('change', function () {
+        $('#section2_listb_document_title').on('change', function() {
             var title = $(this).val();
             i9_manager.fill_list_b_auth(title);
         });
@@ -1556,11 +1444,11 @@
         var file_data = $('#docs').prop('files')[0];
         var uploader = $('#uploader').val();
         var form_id = $('#form-id').val();
-        var prefill_flag = '<?php echo sizeof($pre_form)>0 ? $pre_form['sid'] : -1;?>';
+        var prefill_flag = '<?php echo sizeof($pre_form) > 0 ? $pre_form['sid'] : -1; ?>';
         var form_data = new FormData();
         form_data.append('docs', file_data);
         form_data.append('form_id', prefill_flag == -1 ? form_id : prefill_flag);
-        form_data.append('app_id', <?php echo sizeof($pre_form)>0 ? $pre_form['emp_app_sid'] : $employer_sid;?>);
+        form_data.append('app_id', <?php echo sizeof($pre_form) > 0 ? $pre_form['emp_app_sid'] : $employer_sid; ?>);
         form_data.append('uploader', uploader);
         $('#loader').show();
         $('#upload').addClass('disabled-btn');
@@ -1572,7 +1460,7 @@
             processData: false,
             type: 'post',
             data: form_data,
-            success: function (data) {
+            success: function(data) {
                 $('#loader').hide();
                 $('#upload').removeClass('disabled-btn');
                 $('#upload').prop('disabled', false);
@@ -1584,21 +1472,19 @@
                 $('#name_docs').html("No file selected");
                 if (data != "error") {
                     $('#form-id').val(data);
-                }
-                else {
+                } else {
                     alert('Document Error');
                 }
             },
-            error: function () {
-            }
+            error: function() {}
         });
     }
 
 
     function func_save_e_signature() {
-        
+
         var is_signature_exist = $('#signature_bas64_image').val();
-        if(is_signature_exist == ""){
+        if (is_signature_exist == "") {
             alertify.error('Please Add Your Signature!');
             return false;
         }
@@ -1607,12 +1493,15 @@
             alertify.confirm(
                 'Are you Sure?',
                 'Are you sure you want to Consent And Accept Electronic Signature Agreement?',
-                function () {
+                function() {
                     $('#i9-form').submit();
                 },
-                function () {
+                function() {
                     alertify.error('Cancelled!');
-                }).set('labels', {ok: 'I Consent and Accept!', cancel: 'Cancel'});
+                }).set('labels', {
+                ok: 'I Consent and Accept!',
+                cancel: 'Cancel'
+            });
         }
     }
 </script>

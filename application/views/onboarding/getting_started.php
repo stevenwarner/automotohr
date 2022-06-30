@@ -1381,6 +1381,7 @@ ul.cs-jam-ul li {
                 format: 'm/d/y',
                 changeMonth: true,
                 changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
                 onSelect: function(d){
                     $('#jsReportEndDate').datepicker('option', 'minDate', d);
                 }
@@ -1417,7 +1418,8 @@ ul.cs-jam-ul li {
             $('#jsReportEndDate').datepicker({
                 format: 'm/d/y',
                 changeMonth: true,
-                changeYear: true
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
             });
             //
              $(document).on('click', '.timeoff_count', function() {    

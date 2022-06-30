@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -21,7 +21,7 @@
                                                         <h1 class="page-title">company detail</h1>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">  
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="field-row">
                                                         <label for="CompanyName">Company Name <span class="hr-required">*</span></label>
                                                         <?php echo form_input('CompanyName', set_value('CompanyName'), 'class="hr-form-fileds"'); ?>
@@ -42,10 +42,7 @@
                                                             <select class="invoice-fields" id="country" name="Location_Country" onchange="getStates(this.value, <?php echo $states; ?>)">
                                                                 <option value="">Select Country</option>
                                                                 <?php foreach ($active_countries as $active_country) { ?>
-                                                                    <option value="<?php echo $active_country["sid"]; ?>"
-                                                                        <?php if ($data["Location_Country"] == $active_country["sid"]) { ?>
-                                                                            selected
-                                                                        <?php } ?>>
+                                                                    <option value="<?php echo $active_country["sid"]; ?>" <?php if ($data["Location_Country"] == $active_country["sid"]) { ?> selected <?php } ?>>
                                                                         <?php echo $active_country["country_name"]; ?>
                                                                     </option>
                                                                 <?php } ?>
@@ -59,7 +56,7 @@
                                                         <label class="state">State</label>
                                                         <p style="display: none;" id="state_id"><?php echo $data["Location_State"]; ?></p>
                                                         <div class="hr-select-dropdown">
-                                                            <select class="invoice-fields" id="state" name="Location_State"  >
+                                                            <select class="invoice-fields" id="state" name="Location_State">
                                                                 <option value="">Select State</option>
                                                             </select>
                                                         </div>
@@ -90,9 +87,9 @@
                                                     <div class="field-row">
                                                         <label>Phone Number</label>
                                                         <div class="input-group">
-                                                          <div class="input-group-addon">
-                                                              <span class="input-group-text">+1</span>
-                                                          </div>
+                                                            <div class="input-group-addon">
+                                                                <span class="input-group-text">+1</span>
+                                                            </div>
                                                             <?php echo form_input('PhoneNumber', set_value('PhoneNumber'), 'class="hr-form-fileds js-phone" id="PhoneNumber"'); ?>
                                                         </div>
                                                         <?php echo form_error('PhoneNumber'); ?>
@@ -102,8 +99,10 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="field-row">
                                                         <label>YouTube Video</label>
-                                                        <?php //echo form_input('YouTubeVideo', set_value('YouTubeVideo'), 'class="hr-form-fileds"'); ?>
-                                                        <?php //echo form_error('YouTubeVideo'); ?>
+                                                        <?php //echo form_input('YouTubeVideo', set_value('YouTubeVideo'), 'class="hr-form-fileds"'); 
+                                                        ?>
+                                                        <?php //echo form_error('YouTubeVideo'); 
+                                                        ?>
                                                     </div>
                                                 </div>
 
@@ -118,7 +117,7 @@
                                                     <div class="field-row field-row-autoheight">
                                                         <label>Company Description</label>
                                                         <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
-                                                        <textarea class="ckeditor" name="CompanyDescription" rows="8" cols="60" >
+                                                        <textarea class="ckeditor" name="CompanyDescription" rows="8" cols="60">
                                                             <?php echo set_value('CompanyDescription'); ?>
                                                         </textarea>
                                                         <?php echo form_error('CompanyDescription'); ?>
@@ -143,9 +142,9 @@
                                                     <div class="field-row">
                                                         <label for="country">Marketing Agency</label>
                                                         <div class="hr-select-dropdown">
-                                                            <select class="invoice-fields" id="marketing_agency_sid" name="marketing_agency_sid" >
+                                                            <select class="invoice-fields" id="marketing_agency_sid" name="marketing_agency_sid">
                                                                 <option value="">Please Select</option>
-                                                                <?php if(!empty($marketing_agencies)) { ?>
+                                                                <?php if (!empty($marketing_agencies)) { ?>
                                                                     <?php foreach ($marketing_agencies as $marketing_agency) { ?>
                                                                         <option value="<?php echo $marketing_agency["sid"]; ?>">
                                                                             <?php echo $marketing_agency["full_name"]; ?>
@@ -156,14 +155,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                 <!-- job category sid -->
+                                                <!-- job category sid -->
                                                 <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
                                                     <div class="field-row">
                                                         <label>Industry Category</label>
                                                         <div class="hr-select-dropdown">
-                                                            <select class="invoice-fields" id="job_category_industries_sid" name="job_category_industries_sid" >
+                                                            <select class="invoice-fields" id="job_category_industries_sid" name="job_category_industries_sid">
                                                                 <option value="">Please Select</option>
-                                                                <?php if(!empty($industry_categories)) { ?>
+                                                                <?php if (!empty($industry_categories)) { ?>
                                                                     <?php foreach ($industry_categories as $category) { ?>
                                                                         <option value="<?php echo $category["sid"]; ?>">
                                                                             <?php echo $category["industry_name"]; ?>
@@ -249,9 +248,9 @@
                                                         <div class="hr-select-dropdown">
                                                             <select name="security_access_level" id="security_access_level" class="invoice-fields">
                                                                 <option value="">Please Select</option>
-                                                                <?php if(!empty($security_access_levels)) { ?>
-                                                                    <?php foreach($security_access_levels as $security_access_level) { ?>
-                                                                        <option value="<?php echo $security_access_level;?>"><?php echo ucwords($security_access_level);?></option>
+                                                                <?php if (!empty($security_access_levels)) { ?>
+                                                                    <?php foreach ($security_access_levels as $security_access_level) { ?>
+                                                                        <option value="<?php echo $security_access_level; ?>"><?php echo ucwords($security_access_level); ?></option>
                                                                     <?php } ?>
                                                                 <?php } ?>
                                                             </select>
@@ -270,9 +269,9 @@
                                                     <div class="field-row">
                                                         <label>Cell Number<span class="hr-required"></span></label>
                                                         <div class="input-group">
-                                                          <div class="input-group-addon">
-                                                              <span class="input-group-text">+1</span>
-                                                          </div>
+                                                            <div class="input-group-addon">
+                                                                <span class="input-group-text">+1</span>
+                                                            </div>
                                                             <?php echo form_input('cell_number', set_value('cell_number'), 'class="hr-form-fileds js-phone" id="CellNumber"'); ?>
                                                         </div>
                                                         <?php echo form_error('cell_number'); ?>
@@ -294,7 +293,7 @@
                                                 -->
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-center hr-btn-panel">
                                                     <!--<input type="submit" class="search-btn" value="Register" name="submit">-->
-                                                    <input name="action" type="hidden" id="submit_action" value="" >
+                                                    <input name="action" type="hidden" id="submit_action" value="">
                                                     <input type="button" name="action" value="Register" onclick="return fValidateForm('addonly')" class="site-btn">
                                                     <input type="button" name="action" value="Register & Send Email" onclick="return fValidateForm('sendemail')" class="site-btn">
                                                 </div>
@@ -313,24 +312,27 @@
 
 <script>
     // get the states
-    $(document).ready(function () {
+    $(document).ready(function() {
         var myid = $('#state_id').html();
-        
-        setTimeout(function () {
+
+        setTimeout(function() {
             $("#country").change();
         }, 1000);
-        
+
         if (myid) {
-            setTimeout(function () {
+            setTimeout(function() {
                 $('#state').val(myid);
             }, 1200);
         }
-        
+
         $('.datepicker').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         });
     });
-    
+
     function getStates(val, states) {
         var html = '';
         if (val == '') {
@@ -345,7 +347,7 @@
             $('#state').html(html);
         }
     }
-    
+
     function fValidateForm(actionType) {
         console.log('validat');
         $("#submit_action").val(actionType);
@@ -407,17 +409,21 @@
             }
         });
 
-        if($('#form_add_new_employer').valid()){
+        if ($('#form_add_new_employer').valid()) {
 
             // Check for phone number
-            if($('#PhoneNumber').val() != '' && $('#PhoneNumber').val().trim() != '(___) ___-____' && !fpn($('#PhoneNumber').val(), '', true)){
-                alertify.alert('Error!', 'Invalid phone number.', function(){ return; });
+            if ($('#PhoneNumber').val() != '' && $('#PhoneNumber').val().trim() != '(___) ___-____' && !fpn($('#PhoneNumber').val(), '', true)) {
+                alertify.alert('Error!', 'Invalid phone number.', function() {
+                    return;
+                });
                 return;
             }
-            
+
             // Check for cell number
-            if($('#CellNumber').val() != '' && $('#CellNumber').val().trim() != '(___) ___-____' && !fpn($('#CellNumber').val(), '', true)){
-                alertify.alert('Error!', 'Invalid cell number.', function(){ return; });
+            if ($('#CellNumber').val() != '' && $('#CellNumber').val().trim() != '(___) ___-____' && !fpn($('#CellNumber').val(), '', true)) {
+                alertify.alert('Error!', 'Invalid cell number.', function() {
+                    return;
+                });
                 return;
             }
 
@@ -425,11 +431,11 @@
             $('#js-phonenumber').remove();
             $('#js-cellnumber').remove();
             // Check the fields
-            if($('#PhoneNumber').val().trim() == '(___) ___-____') $('#PhoneNumber').val('');
-            else $('#form_add_new_employer').append('<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1'+($('#PhoneNumber').val().replace(/\D/g, ''))+'" />');
-            if($('#CellNumber').val().trim() == '(___) ___-____') $('#CellNumber').val('');
-            else $('#form_add_new_employer').append('<input type="hidden" id="js-cellnumber" name="txt_cellnumber" value="+1'+($('#CellNumber').val().replace(/\D/g, ''))+'" />');
-            
+            if ($('#PhoneNumber').val().trim() == '(___) ___-____') $('#PhoneNumber').val('');
+            else $('#form_add_new_employer').append('<input type="hidden" id="js-phonenumber" name="txt_phonenumber" value="+1' + ($('#PhoneNumber').val().replace(/\D/g, '')) + '" />');
+            if ($('#CellNumber').val().trim() == '(___) ___-____') $('#CellNumber').val('');
+            else $('#form_add_new_employer').append('<input type="hidden" id="js-cellnumber" name="txt_cellnumber" value="+1' + ($('#CellNumber').val().replace(/\D/g, '')) + '" />');
+
             document.getElementById('form_add_new_employer').submit();
         }
     }
@@ -438,22 +444,21 @@
 
 
 <script>
-
     $.each($('.js-phone'), function() {
         var v = fpn($(this).val().trim());
-        if(typeof(v) === 'object'){
-            $(this).val( v.number );
+        if (typeof(v) === 'object') {
+            $(this).val(v.number);
             setCaretPosition(this, v.cur);
-        }else $(this).val( v );
+        } else $(this).val(v);
     });
 
 
-    $('.js-phone').keyup(function(e){
+    $('.js-phone').keyup(function(e) {
         var val = fpn($(this).val().trim());
-        if(typeof(val) === 'object'){
-            $(this).val( val.number );
+        if (typeof(val) === 'object') {
+            $(this).val(val.number);
             setCaretPosition(this, val.cur);
-        }else $(this).val( val );
+        } else $(this).val(val);
     })
 
 
@@ -469,42 +474,86 @@
         // 
         var default_number = '(___) ___-____';
         var cleaned = phone_number.replace(/\D/g, '');
-        if(cleaned.length > 10) cleaned = cleaned.substring(0, 10);
+        if (cleaned.length > 10) cleaned = cleaned.substring(0, 10);
         match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
         //
         if (match) {
             var intlCode = '';
-            if( format == 'e164') intlCode = (match[1] ? '+1 ' : '');
+            if (format == 'e164') intlCode = (match[1] ? '+1 ' : '');
             return is_return === undefined ? [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('') : true;
-        } else{
-            var af = '', an = '', cur = 1;
-            if(cleaned.substring(0,1) != '') { af += "(_"; an += '('+cleaned.substring(0,1); cur++; }
-            if(cleaned.substring(1,2) != '') { af += "_";  an += cleaned.substring(1,2); cur++; }
-            if(cleaned.substring(2,3) != '') { af += "_) "; an += cleaned.substring(2,3)+') '; cur = cur + 3; }
-            if(cleaned.substring(3,4) != '') { af += "_"; an += cleaned.substring(3,4);  cur++;}
-            if(cleaned.substring(4,5) != '') { af += "_"; an += cleaned.substring(4,5);  cur++;}
-            if(cleaned.substring(5,6) != '') { af += "_-"; an += cleaned.substring(5,6)+'-';  cur = cur + 2;}
-            if(cleaned.substring(6,7) != '') { af += "_"; an += cleaned.substring(6,7);  cur++;}
-            if(cleaned.substring(7,8) != '') { af += "_"; an += cleaned.substring(7,8);  cur++;}
-            if(cleaned.substring(8,9) != '') { af += "_"; an += cleaned.substring(8,9);  cur++;}
-            if(cleaned.substring(9,10) != '') { af += "_"; an += cleaned.substring(9,10);  cur++;}
+        } else {
+            var af = '',
+                an = '',
+                cur = 1;
+            if (cleaned.substring(0, 1) != '') {
+                af += "(_";
+                an += '(' + cleaned.substring(0, 1);
+                cur++;
+            }
+            if (cleaned.substring(1, 2) != '') {
+                af += "_";
+                an += cleaned.substring(1, 2);
+                cur++;
+            }
+            if (cleaned.substring(2, 3) != '') {
+                af += "_) ";
+                an += cleaned.substring(2, 3) + ') ';
+                cur = cur + 3;
+            }
+            if (cleaned.substring(3, 4) != '') {
+                af += "_";
+                an += cleaned.substring(3, 4);
+                cur++;
+            }
+            if (cleaned.substring(4, 5) != '') {
+                af += "_";
+                an += cleaned.substring(4, 5);
+                cur++;
+            }
+            if (cleaned.substring(5, 6) != '') {
+                af += "_-";
+                an += cleaned.substring(5, 6) + '-';
+                cur = cur + 2;
+            }
+            if (cleaned.substring(6, 7) != '') {
+                af += "_";
+                an += cleaned.substring(6, 7);
+                cur++;
+            }
+            if (cleaned.substring(7, 8) != '') {
+                af += "_";
+                an += cleaned.substring(7, 8);
+                cur++;
+            }
+            if (cleaned.substring(8, 9) != '') {
+                af += "_";
+                an += cleaned.substring(8, 9);
+                cur++;
+            }
+            if (cleaned.substring(9, 10) != '') {
+                af += "_";
+                an += cleaned.substring(9, 10);
+                cur++;
+            }
 
-            if(is_return) return match === null ? false : true;
+            if (is_return) return match === null ? false : true;
 
-            return { number: default_number.replace(af, an), cur: cur };
+            return {
+                number: default_number.replace(af, an),
+                cur: cur
+            };
         }
     }
 
     // Change cursor position in input
     function setCaretPosition(elem, caretPos) {
-        if(elem != null) {
-            if(elem.createTextRange) {
+        if (elem != null) {
+            if (elem.createTextRange) {
                 var range = elem.createTextRange();
                 range.move('character', caretPos);
                 range.select();
-            }
-            else {
-                if(elem.selectionStart) {
+            } else {
+                if (elem.selectionStart) {
                     elem.focus();
                     elem.setSelectionRange(caretPos, caretPos);
                 } else elem.focus();
@@ -514,6 +563,9 @@
 </script>
 
 <style>
-  /* Remove the radius from left fro phone field*/
-  .input-group input{ border-top-left-radius: 0; border-bottom-left-radius: 0; }
+    /* Remove the radius from left fro phone field*/
+    .input-group input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
 </style>

@@ -1,7 +1,7 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
-        <div class="row">		
+        <div class="row">
             <div class="inner-content">
                 <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
@@ -12,7 +12,7 @@
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
                                         <h1 class="page-title"><i class="fa fa-file-excel-o"></i><?php echo $page_title; ?></h1>
-                                        <a href="<?php echo base_url('manage_admin/invoice')?>" class="black-btn pull-right"><i class="fa fa-long-arrow-left"></i> Back to Invoices</a>
+                                        <a href="<?php echo base_url('manage_admin/invoice') ?>" class="black-btn pull-right"><i class="fa fa-long-arrow-left"></i> Back to Invoices</a>
                                         <a href="<?php echo base_url('manage_admin/companies/manage_company/' . $invoiceData['company_sid']); ?>" class="black-btn pull-right"><i class="fa fa-long-arrow-left"></i> Back to Manage Company</a>
                                     </div>
                                     <!-- Edit Invoice Start -->
@@ -46,26 +46,26 @@
                                                                         <label>Customer: <span class="hr-required">*</span></label>
                                                                         <div class="hr-select-dropdown">
                                                                             <select class="invoice-fields" id="emp_name" name="user_sid">
-                                                                                <option <?php if ($invoiceData['user_sid'] == NULL) { ?>selected="selected" <?php } ?> value="" >Select Employer Name</option>
+                                                                                <option <?php if ($invoiceData['user_sid'] == NULL) { ?>selected="selected" <?php } ?> value="">Select Employer Name</option>
                                                                                 <?php foreach ($employers as $employer) { ?>
                                                                                     <option <?php if ($invoiceData['user_sid'] == $employer['sid']) { ?>selected="selected" <?php } ?> value="<?= $employer['sid'] ?>"><?= ucwords($employer['username']) ?> (<?= strtolower($employer['email']) ?>)</option>
                                                                                 <?php } ?>
                                                                             </select>
                                                                         </div>
-                                                                        
+
                                                                         <?= form_error('user_sid') ?>
                                                                     </div>
                                                                 </div>
                                                                 <div id="to_name_div" <?php echo $invoiceData['to_email'] == NULL ? 'style="display: none"' : ''; ?> class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                                     <div>
                                                                         <label>Receiver Name: <span class="hr-required">*</span></label>
-                                                                        <input type="text" value="<?= set_value('to_name', $invoiceData['to_name']) ?>" name="to_name" id="to_name"  class="invoice-fields" >
+                                                                        <input type="text" value="<?= set_value('to_name', $invoiceData['to_name']) ?>" name="to_name" id="to_name" class="invoice-fields">
                                                                     </div>
                                                                 </div>
                                                                 <div id="to_email_div" <?php echo $invoiceData['to_email'] == NULL ? 'style="display: none"' : ''; ?> class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                                     <div>
                                                                         <label>Receiver Email: <span class="hr-required">*</span></label>
-                                                                        <input type="email" value="<?= set_value('email', $invoiceData['to_email']) ?>" name="email" id="email" class="invoice-fields" >
+                                                                        <input type="email" value="<?= set_value('email', $invoiceData['to_email']) ?>" name="email" id="email" class="invoice-fields">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -117,10 +117,10 @@
                                                                         <label>Payment Method:</label>
                                                                         <div class="hr-select-dropdown">
                                                                             <select class="invoice-fields" name="payment_method">
-                                                                                <option  <?php if ($invoiceData['payment_method'] == "") { ?>selected="selected" <?php } ?> value="">Select Payment method</option>
-                                                                                <option  <?php if ($invoiceData['payment_method'] == "Invoice_billing") { ?>selected="selected" <?php } ?>>Invoice billing</option>
-                                                                                <option  <?php if ($invoiceData['payment_method'] == "Paypal") { ?>selected="selected" <?php } ?>>Paypal</option>
-                                                                                <option  <?php if ($invoiceData['payment_method'] == "Free_checkout") { ?>selected="selected" <?php } ?>>Free Checkout</option>
+                                                                                <option <?php if ($invoiceData['payment_method'] == "") { ?>selected="selected" <?php } ?> value="">Select Payment method</option>
+                                                                                <option <?php if ($invoiceData['payment_method'] == "Invoice_billing") { ?>selected="selected" <?php } ?>>Invoice billing</option>
+                                                                                <option <?php if ($invoiceData['payment_method'] == "Paypal") { ?>selected="selected" <?php } ?>>Paypal</option>
+                                                                                <option <?php if ($invoiceData['payment_method'] == "Free_checkout") { ?>selected="selected" <?php } ?>>Free Checkout</option>
                                                                             </select>
                                                                         </div>
                                                                     </div>
@@ -129,7 +129,7 @@
                                                                     <label class="">&nbsp;</label>
                                                                     <label class="control control--checkbox">
                                                                         Include Tax
-                                                                        <input type="checkbox"  <?php if ($invoiceData['include_tax'] == 1) { ?>checked <?php } ?> name="include_tax" value="1">
+                                                                        <input type="checkbox" <?php if ($invoiceData['include_tax'] == 1) { ?>checked <?php } ?> name="include_tax" value="1">
                                                                         <div class="control__indicator"></div>
                                                                     </label>
                                                                 </div>
@@ -144,7 +144,9 @@
                                                                 <?php $counter = 0; ?>
                                                                 <?php $serialized_products = $invoiceData['serialized_products']; ?>
                                                                 <?php for ($i = 0; $i < count($serialized_products['custom_text']); $i++) { ?>
-                                                                    <?php if($serialized_products['custom_text'][$i]!=''){continue;} ?>
+                                                                    <?php if ($serialized_products['custom_text'][$i] != '') {
+                                                                        continue;
+                                                                    } ?>
                                                                     <ul id="item-<?= $counter ?>">
                                                                         <li>
                                                                             <label>Item
@@ -159,13 +161,13 @@
                                                                                     <select class="invoice-fields" required="required" name="product_sid[]" onchange="generatePrice(this.value, <?= $counter ?>)">
                                                                                         <option value="">Please select product</option>
                                                                                         <?php foreach ($products as $product) { ?>
-                                                                                            <option <?php if ($serialized_products['products'][$i] == $product->sid) { ?> selected="selected"<?php } ?> value="<?= $product->sid ?>"><?= $product->name ?></option>
+                                                                                            <option <?php if ($serialized_products['products'][$i] == $product->sid) { ?> selected="selected" <?php } ?> value="<?= $product->sid ?>"><?= $product->name ?></option>
                                                                                         <?php } ?>
                                                                                         <option <?php if ($serialized_products['products'][$i][0] == 'c') { ?> selected="selected" <?php } ?> value="custom_<?= $counter ?>">Custom product</option>
                                                                                     </select>
                                                                                 <?php } ?>
                                                                             </div>
-                                                                            <input class="invoice-fields" name="custom_text[]" type="text" id="custom_text_<?= $counter ?>" value="" style="width: 60%; margin-top:15px; display: none " >
+                                                                            <input class="invoice-fields" name="custom_text[]" type="text" id="custom_text_<?= $counter ?>" value="" style="width: 60%; margin-top:15px; display: none ">
                                                                         </li>
                                                                         <li>
                                                                             <label>Qty</label>
@@ -203,7 +205,7 @@
                                                         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8">
                                                             <div class="">
                                                                 <label>Invoice Description:</label>
-                                                                <textarea style="padding:10px; height:150px; " class="hr-form-fileds" name="invoice_description"><?php echo (isset($invoiceData['invoice_description']) ? $invoiceData['invoice_description'] : '' ); ?></textarea>
+                                                                <textarea style="padding:10px; height:150px; " class="hr-form-fileds" name="invoice_description"><?php echo (isset($invoiceData['invoice_description']) ? $invoiceData['invoice_description'] : ''); ?></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
@@ -218,11 +220,15 @@
                                                                         <label>Coupon Discount</label>
                                                                     </li>
                                                                     <li>
-                                                                        <input type="text" value="<?php if(isset($serialized_products['special_discount'])){ echo $serialized_products['special_discount']; }else{ echo '0.00'; } ?>" id="special_discount" class="invoice-fields" readonly="">
+                                                                        <input type="text" value="<?php if (isset($serialized_products['special_discount'])) {
+                                                                                                        echo $serialized_products['special_discount'];
+                                                                                                    } else {
+                                                                                                        echo '0.00';
+                                                                                                    } ?>" id="special_discount" class="invoice-fields" readonly="">
                                                                         <label>Special Discount</label>
                                                                     </li>
                                                                     <li>
-                                                                        <input type="text" value="0.00" id="total" name="total"  class="invoice-fields" readonly="">
+                                                                        <input type="text" value="0.00" id="total" name="total" class="invoice-fields" readonly="">
                                                                         <label>total</label>
                                                                     </li>
                                                                     <li class="btns-row">
@@ -272,28 +278,27 @@
                                                 <div class="table-responsive table-outer">
                                                     <table class="table table-bordered">
                                                         <thead>
-                                                        <tr>
-                                                            <th class="col-lg-2 col-md-2 col-xs-2 col-sm-2"><strong>Invoice Type</strong></th>
-                                                            <th class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Invoice Notes</strong></th>
-                                                            <th class="col-lg-2 col-md-2 col-xs-2 col-sm-2"><strong>Credit Amount</strong></th>
-                                                            <th class="col-lg-2 col-md-2 col-xs-2 col-sm-2"><strong>Credit/Refund Date</strong></th>
-                                                        </tr>
+                                                            <tr>
+                                                                <th class="col-lg-2 col-md-2 col-xs-2 col-sm-2"><strong>Invoice Type</strong></th>
+                                                                <th class="col-lg-6 col-md-6 col-xs-6 col-sm-6"><strong>Invoice Notes</strong></th>
+                                                                <th class="col-lg-2 col-md-2 col-xs-2 col-sm-2"><strong>Credit Amount</strong></th>
+                                                                <th class="col-lg-2 col-md-2 col-xs-2 col-sm-2"><strong>Credit/Refund Date</strong></th>
+                                                            </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <?php if(sizeof($notes)>0) {
-                                                            foreach ($notes as $note) {
-                                                                ?>
-                                                                <tr>
-                                                                    <td class=""><strong><?php echo $note['invoice_type'];?></strong></td>
-                                                                    <td class=""><strong><?php echo $note['notes'];?></strong></td>
-                                                                    <td class=""><strong><?php echo $note['credit_amount'];?></strong></td>
-                                                                    <td class=""><strong><?php echo date_with_time($note['refund_date']);?></strong></td>
-                                                                </tr>
+                                                            <?php if (sizeof($notes) > 0) {
+                                                                foreach ($notes as $note) {
+                                                            ?>
+                                                                    <tr>
+                                                                        <td class=""><strong><?php echo $note['invoice_type']; ?></strong></td>
+                                                                        <td class=""><strong><?php echo $note['notes']; ?></strong></td>
+                                                                        <td class=""><strong><?php echo $note['credit_amount']; ?></strong></td>
+                                                                        <td class=""><strong><?php echo date_with_time($note['refund_date']); ?></strong></td>
+                                                                    </tr>
                                                             <?php }
-                                                        }
-                                                        else{
-                                                            echo '<tr><td>No Notes Found</td></tr>';
-                                                        }?>
+                                                            } else {
+                                                                echo '<tr><td>No Notes Found</td></tr>';
+                                                            } ?>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -314,13 +319,9 @@
                                                                         </div>
                                                                     </div>
                                                                     <div style="" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                                        <div >
+                                                                        <div>
                                                                             <label for="rfd_date">Refund Date</label>
-                                                                                <input class="invoice-fields"
-                                                                                       type="text"
-                                                                                       name="rfd_date"
-                                                                                       id="rfd_date"
-                                                                                       value="<?php echo set_value('rfd_date'); ?>" required="required"/>
+                                                                            <input class="invoice-fields" type="text" name="rfd_date" id="rfd_date" value="<?php echo set_value('rfd_date'); ?>" required="required" />
                                                                         </div>
                                                                     </div>
                                                                     <div style="" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
@@ -332,7 +333,7 @@
                                                                     </div>
                                                                     <div style="" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                                                                         <div>
-                                                                            <label ></label>
+                                                                            <label></label>
                                                                             <button style="margin-top:15px; float:right;" type="submit" class="site-btn lineheight">Add Refund</button>
                                                                         </div>
                                                                     </div>
@@ -355,16 +356,24 @@
     </div>
 </div>
 <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
         var dateToday = new Date();
-        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
         $('#rfd_date').datepicker({
             dateFormat: 'mm-dd-yy',
-//            minDate: dateToday,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
+            //            minDate: dateToday,
         });
     });
-////////////Populate Previous Data////////////////
-<?php for ($i = 0; $i < $counter; $i++) { ?>
+    ////////////Populate Previous Data////////////////
+    <?php for ($i = 0; $i < $counter; $i++) { ?>
         console.log(<?php echo $i; ?>);
         if ("<?= $invoiceData["product_sid"][$i][0] ?>" != 'c' && "<?= $serialized_products['flag'][$i] ?>" != 'no_edit') {
             generatePrice("<?= $invoiceData["product_sid"][$i] ?>", "<?= $i ?>");
@@ -375,31 +384,48 @@
                 product_name = custom_data_array.custom_text[<?= $i ?>];
                 product_qty = custom_data_array.item_qty[<?= $i ?>];
                 product_price = custom_data_array.item_price[<?= $i ?>];
-                $("#custom_text_" + <?= $i ?>).css({'display': 'block', 'background-color': '#fff'});
+                $("#custom_text_" + <?= $i ?>).css({
+                    'display': 'block',
+                    'background-color': '#fff'
+                });
                 $("#custom_text_" + <?= $i ?>).attr('value', product_name);
                 $("#item-amount-" + <?= $i ?>).attr('value', product_qty * product_price);
                 $("#item-qty-" + <?= $i ?>).attr('value', product_qty);
-                $("#item-qty-" + <?= $i ?>).css({'display': 'block', 'background-color': '#fff'});
-                $("#item-qty-" + <?= $i ?>).prop({'type': 'number', 'min': '0', 'readonly': false});
+                $("#item-qty-" + <?= $i ?>).css({
+                    'display': 'block',
+                    'background-color': '#fff'
+                });
+                $("#item-qty-" + <?= $i ?>).prop({
+                    'type': 'number',
+                    'min': '0',
+                    'readonly': false
+                });
                 $("#item-price-" + <?= $i ?>).attr('value', product_price);
-                $("#item-price-" + <?= $i ?>).css({'display': 'block', 'background-color': '#fff'});
-                $("#item-price-" + <?= $i ?>).prop({'type': 'number', 'min': '0', 'readonly': false});
+                $("#item-price-" + <?= $i ?>).css({
+                    'display': 'block',
+                    'background-color': '#fff'
+                });
+                $("#item-price-" + <?= $i ?>).prop({
+                    'type': 'number',
+                    'min': '0',
+                    'readonly': false
+                });
             }
         }
-<?php } ?>
+    <?php } ?>
     calculateTotalPrice();
     /////////////////////////////////////////////////
-<?php if ($invoiceData['to_email'] == NULL) { ?>
+    <?php if ($invoiceData['to_email'] == NULL) { ?>
         $("#emp_name").prop('required', true);
         $("#email").prop('required', false);
         $("#to_name").prop('required', false);
-<?php } else { ?>
+    <?php } else { ?>
         $("#emp_name").prop('required', false);
         $("#email").prop('required', true);
         $("#to_name").prop('required', true);
-<?php } ?>
+    <?php } ?>
 
-    $('input[name="send_invoice"]').change(function (e) {
+    $('input[name="send_invoice"]').change(function(e) {
         var div_to_show = $(this).val();
         if (div_to_show == 'to_employer') {
             $('#to_employer_div').show();
@@ -418,38 +444,39 @@
         }
     });
     var idItem = parseInt(<?= $counter ?>);
+
     function addRow() {
         $('#product_container').append("<ul id='item-" + idItem + "'>" +
-                "<li>" +
-                "<label>Item</label>" +
-                "<div class='hr-select-dropdown'>" +
-                "<select class='invoice-fields' id='" + idItem + "' name='product_sid[]' onchange='generatePrice(this.value,this.id)'>" +
-                "<option value=''>Please select product</option>" +
-                "<?php foreach ($products as $product) { ?>" +
-                    "<option value='<?= $product->sid ?>'><?= $product->name ?></option>" +
-                    "<?php } ?>" +
-                "<option value='custom_" + idItem + "'>Custom product</option>" +
-                "</select>" +
-                "</div>" +
-                "<input class='invoice-fields'  name='custom_text[]'  type='text' id='custom_text_" + idItem + "' value='' style='width: 60%; margin-top:15px; display: none ' >" +
-                "</li>" +
-                "<li>" +
-                "<label>Qty</label>" +
-                "<input class='invoice-fields' name='item_qty[]'  id='item-qty-" + idItem + "' value='0'  type='text' style='width: 70px;'  onchange='customAmount(this.id);'  readonly=''>" +
-                "</li>" +
-                "<li>" +
-                "<label>Price</label>" +
-                "<input class='invoice-fields' name='item_price[]' id='item-price-" + idItem + "' type='text' style='width: 90px; ' value='0.00'  onchange='customAmount(this.id);'  readonly=''>" +
-                "</li>" +
-                "<li>" +
-                "<label>Amount</label>" +
-                "<input class='invoice-fields  values_to_add' id='item-amount-" + idItem + "' type='text' style='width: 90px; ' value='0.00' readonly=''>" +
-                "<a class='hr-item-delete' id='" + idItem + "' href='javascript:;' onclick='deleteItem(this.id)'><i class='fa fa-times'></i></a>" +
-                "</li>" +
-                "<input type='hidden' name='item_remaining_qty[]' id='remaining-qty-" + idItem + "' value='0'>" +
-                "<input type='hidden' name='flag[]' id='item-flag-" + idItem + "' value='editable'>" +
-                "<input type='hidden' name='no_of_days[]' id='no-of-days-" + idItem + "' value=''>" +
-                "</ul>");
+            "<li>" +
+            "<label>Item</label>" +
+            "<div class='hr-select-dropdown'>" +
+            "<select class='invoice-fields' id='" + idItem + "' name='product_sid[]' onchange='generatePrice(this.value,this.id)'>" +
+            "<option value=''>Please select product</option>" +
+            "<?php foreach ($products as $product) { ?>" +
+            "<option value='<?= $product->sid ?>'><?= $product->name ?></option>" +
+            "<?php } ?>" +
+            "<option value='custom_" + idItem + "'>Custom product</option>" +
+            "</select>" +
+            "</div>" +
+            "<input class='invoice-fields'  name='custom_text[]'  type='text' id='custom_text_" + idItem + "' value='' style='width: 60%; margin-top:15px; display: none ' >" +
+            "</li>" +
+            "<li>" +
+            "<label>Qty</label>" +
+            "<input class='invoice-fields' name='item_qty[]'  id='item-qty-" + idItem + "' value='0'  type='text' style='width: 70px;'  onchange='customAmount(this.id);'  readonly=''>" +
+            "</li>" +
+            "<li>" +
+            "<label>Price</label>" +
+            "<input class='invoice-fields' name='item_price[]' id='item-price-" + idItem + "' type='text' style='width: 90px; ' value='0.00'  onchange='customAmount(this.id);'  readonly=''>" +
+            "</li>" +
+            "<li>" +
+            "<label>Amount</label>" +
+            "<input class='invoice-fields  values_to_add' id='item-amount-" + idItem + "' type='text' style='width: 90px; ' value='0.00' readonly=''>" +
+            "<a class='hr-item-delete' id='" + idItem + "' href='javascript:;' onclick='deleteItem(this.id)'><i class='fa fa-times'></i></a>" +
+            "</li>" +
+            "<input type='hidden' name='item_remaining_qty[]' id='remaining-qty-" + idItem + "' value='0'>" +
+            "<input type='hidden' name='flag[]' id='item-flag-" + idItem + "' value='editable'>" +
+            "<input type='hidden' name='no_of_days[]' id='no-of-days-" + idItem + "' value=''>" +
+            "</ul>");
         $("#" + idItem).prop('required', true);
         idItem++;
     }
@@ -478,63 +505,84 @@
         console.log(product_id + ' ' + item_id);
         var res = product_id.split("_");
         if (res[0] == "custom") {
-            $("#custom_text_" + res[1]).css({'display': 'block', 'background-color': '#fff'});
+            $("#custom_text_" + res[1]).css({
+                'display': 'block',
+                'background-color': '#fff'
+            });
             $("#item-amount-" + res[1]).attr('value', "0.00");
             $("#item-qty-" + res[1]).attr('value', "");
-            $("#item-qty-" + res[1]).css({'display': 'block', 'background-color': '#fff'});
-            $("#item-qty-" + res[1]).prop({'type': 'number', 'min': '0', 'readonly': false});
+            $("#item-qty-" + res[1]).css({
+                'display': 'block',
+                'background-color': '#fff'
+            });
+            $("#item-qty-" + res[1]).prop({
+                'type': 'number',
+                'min': '0',
+                'readonly': false
+            });
             $("#item-price-" + res[1]).attr('value', "");
-            $("#item-price-" + res[1]).css({'display': 'block', 'background-color': '#fff'});
-            $("#item-price-" + res[1]).prop({'type': 'number', 'step': 'any', 'min': '0', 'readonly': false});
+            $("#item-price-" + res[1]).css({
+                'display': 'block',
+                'background-color': '#fff'
+            });
+            $("#item-price-" + res[1]).prop({
+                'type': 'number',
+                'step': 'any',
+                'min': '0',
+                'readonly': false
+            });
         } else {
             $("#custom_text_" + item_id).css('display', 'none');
-            $("#item-qty-" + item_id).prop({'readonly': true, 'type': 'text'});
-            $("#item-price-" + item_id).prop({'readonly': true, 'type': 'text'});
+            $("#item-qty-" + item_id).prop({
+                'readonly': true,
+                'type': 'text'
+            });
+            $("#item-price-" + item_id).prop({
+                'readonly': true,
+                'type': 'text'
+            });
             $("#item-qty-" + item_id).css('background-color', '#eee');
             $("#item-price-" + item_id).css('background-color', '#eee');
-<?php foreach ($products as $product) { ?>
+            <?php foreach ($products as $product) { ?>
                 if (product_id == <?= $product->sid ?>) {
                     $("#item-qty-" + item_id).attr('value', "<?= $product->number_of_postings ?>");
                     $("#remaining-qty-" + item_id).attr('value', "<?= $product->number_of_postings ?>");
                     $("#no-of-days-" + item_id).val("<?= $product->expiry_days ?>");
                     $("#item-price-" + item_id).attr('value', "<?= $product->price ?>");
                     $("#item-amount-" + item_id).attr('value', "<?= $product->price ?>");
-                }
-                else if (product_id == "")
-                {
+                } else if (product_id == "") {
                     $("#item-qty-" + item_id).attr('value', "0");
                     $("#item-price-" + item_id).attr('value', "0.00");
                     $("#remaining-qty-" + item_id).attr('value', "0");
                     $("#no-of-days-" + item_id).val("0");
                     $("#item-amount-" + item_id).attr('value', "0.00");
                 }
-<?php } ?>
+            <?php } ?>
             calculateTotalPrice();
         }
     }
 
     function calculateTotalPrice() {
         total_amount = parseFloat(0);
-        $(".values_to_add").each(function () {
+        $(".values_to_add").each(function() {
             total_amount += parseFloat($(this).val());
         });
-//                                                               
+        //                                                               
         $("#sub_total").attr('value', total_amount.toFixed(2));
         var total_discount = $("#total_discount").val();
         var special_discount = $("#special_discount").val();
         console.log(total_discount);
         var final_total = total_amount - total_discount - special_discount;
-        if(final_total > 0){
+        if (final_total > 0) {
             $("#total").attr('value', final_total.toFixed(2));
-        }else{
+        } else {
             $("#total").attr('value', '0.00');
         }
 
     }
 
 
-    function PrintElem(elem)
-    {
+    function PrintElem(elem) {
         $(".hr-item-delete").hide();
         $(".hr-add-new-item").hide();
         $(".bottom-buttons").hide();
@@ -544,8 +592,7 @@
         $(".bottom-buttons").show();
     }
 
-    function Popup(data)
-    {
+    function Popup(data) {
         var mywindow = window.open('', 'Print Invoice', 'height=800,width=1200');
         mywindow.document.write('<html><head><title>Invoice # <?php echo $invoiceData['sid'] ?></title>');
         /*optional stylesheet*/
@@ -563,6 +610,4 @@
 
         return true;
     }
-
-
 </script>

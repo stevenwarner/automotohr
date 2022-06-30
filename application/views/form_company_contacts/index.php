@@ -537,7 +537,9 @@
     <?php if($document_record['status'] != 'signed') { ?>
     $('.startdate').datepicker({
       dateFormat: 'mm/dd/yy',
-      changeYear: true
+      changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
     }).val();
     <?php } ?>
 

@@ -328,6 +328,9 @@
         });
         $('#start_date').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function(value) {
                 console.log(func_build_url());
             }
@@ -335,6 +338,9 @@
 
         $('#end_date').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function(value) {
                 console.log(func_build_url());
             }

@@ -308,7 +308,9 @@
         
         $("#startdate").datepicker({
             dateFormat: 'mm-dd-yy',
-            yearRange: "1960:+5",
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() + 1);

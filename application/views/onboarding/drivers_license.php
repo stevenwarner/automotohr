@@ -35,10 +35,10 @@
                                     <div class="hr-select-dropdown">
                                         <select class="invoice-fields" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>">
                                             <option value="" selected="">Please Select</option>
-                                            <?php if(!empty($license_types)) { ?>
-                                                <?php foreach($license_types as $key => $license_type) { ?>
+                                            <?php if (!empty($license_types)) { ?>
+                                                <?php foreach ($license_types as $key => $license_type) { ?>
                                                     <?php $default_selected = $key == $temp ? true : false; ?>
-                                                    <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_type?></option>
+                                                    <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_type ?></option>
                                                 <?php } ?>
                                             <?php } ?>
                                         </select>
@@ -59,10 +59,10 @@
                                     <div class="hr-select-dropdown">
                                         <select class="invoice-fields" name="<?php echo $field_name; ?>" id="<?php echo $field_name; ?>">
                                             <option value="" selected="">Please Select</option>
-                                            <?php if(!empty($license_classes)) { ?>
-                                                <?php foreach($license_classes as $key => $license_class) { ?>
+                                            <?php if (!empty($license_classes)) { ?>
+                                                <?php foreach ($license_classes as $key => $license_class) { ?>
                                                     <?php $default_selected = $key == $temp ? true : false; ?>
-                                                    <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_class?></option>
+                                                    <option <?php echo set_select($field_name, $key, $default_selected); ?> value="<?php echo $key; ?>"><?php echo $license_class ?></option>
                                                 <?php } ?>
                                             <?php } ?>
                                         </select>
@@ -96,7 +96,7 @@
                                     <?php $default_selected = 'on' == $temp ? true : false; ?>
                                     <label class="control control--checkbox">
                                         Indefinite
-                                        <input <?php echo $default_selected == true ? 'checked="checked"': ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
+                                        <input <?php echo $default_selected == true ? 'checked="checked"' : ''; ?> name="<?php echo $field_name; ?>" id="Indefinite" type="checkbox">
                                         <div class="control__indicator"></div>
                                     </label>
                                 </li>
@@ -120,12 +120,10 @@
                                     <em style="color:rgb(255, 155, 0);"><i class="fa fa-warning"></i>&nbsp;Maximum file size allowed: 10MB</em>
                                     <br />
                                     <div class="img-thumbnail text-center">
-                                        <?php if(empty($temp)) { ?>
+                                        <?php if (empty($temp)) { ?>
                                             <span class="text-center text-success" style="font-size: 200px; display: inline-block; color: #81b431;"><i class="fa fa-picture-o"></i></span>
                                         <?php } else { ?>
-                                            <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $temp; ?>"
-                                        <?php } ?>
-                                    </div>
+                                            <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $temp; ?>" <?php } ?> </div>
                                 </li>
                             </ul>
                             <div class="btn-wrp">
@@ -157,11 +155,15 @@
     </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('.datepicker').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         });
     });
+
     function check_file_all(val) {
         var fileName = $("#" + val).val();
         if (fileName.length > 0) {
@@ -172,5 +174,4 @@
             //console.log('in else case');
         }
     }
-
 </script>

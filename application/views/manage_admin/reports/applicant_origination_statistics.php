@@ -1,23 +1,23 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
-        <div class="row">		
+        <div class="row">
             <div class="inner-content">
                 <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
                     <div class="dashboard-content">
                         <div class="dash-inner-block">
-                            <div class="row"> 
+                            <div class="row">
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                     <div class="heading-title page-title">
                                         <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
                                     </div>
                                     <div class="hr-search-main search-collapse-area" <?php
-                                    if (isset($flag) && $flag == true) {
-                                        echo "style='display:block'";
-                                    }
-                                    ?>>
+                                                                                        if (isset($flag) && $flag == true) {
+                                                                                            echo "style='display:block'";
+                                                                                        }
+                                                                                        ?>>
                                         <form method="GET" action="<?php echo base_url('manage_admin/reports/applicant_origination_statistics'); ?>" name="search" id="search">
                                             <div class="row">
                                                 <div class="form-col-100 field-row field-row-autoheight">
@@ -33,17 +33,17 @@
                                                             <div class="col-md-3">
                                                                 <label class="control control--radio">Select Date Range
                                                                     <input type="radio" name="date_option" value="by_date" id="by_date" <?php
-                                                                    if (isset($search['date_option']) && $search['date_option'] == 'by_date') {
-                                                                        echo 'checked';
-                                                                    }
-                                                                    ?>>
+                                                                                                                                        if (isset($search['date_option']) && $search['date_option'] == 'by_date') {
+                                                                                                                                            echo 'checked';
+                                                                                                                                        }
+                                                                                                                                        ?>>
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="daily_div">                                                    
+                                                <div id="daily_div">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
                                                             <label class="text-left">
@@ -52,7 +52,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="by_date_div">                                                    
+                                                <div id="by_date_div">
                                                     <div class="col-lg-2 col-md-2 col-xs-2 col-sm-6">
                                                         <div class="field-row">
                                                             <label>Date From: <span class="hr-required red"> * </span></label>
@@ -60,12 +60,7 @@
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-3 col-sm-6">
                                                         <div class="field-row">
-                                                            <input class="invoice-fields"
-                                                                           placeholder="Select Start Date"
-                                                                           type="text"
-                                                                           name="startdate"
-                                                                           id="startdate"
-                                                                           value="<?php echo isset($search['startdate']) ? $search['startdate'] : date('m-d-Y'); ?>"/>
+                                                            <input class="invoice-fields" placeholder="Select Start Date" type="text" name="startdate" id="startdate" value="<?php echo isset($search['startdate']) ? $search['startdate'] : date('m-d-Y'); ?>" />
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-2 col-md-2 col-xs-2 col-sm-6">
@@ -75,12 +70,7 @@
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-3 col-sm-6">
                                                         <div class="field-row">
-                                                            <input class="invoice-fields"
-                                                                           placeholder="Select End Date"
-                                                                           type="text"
-                                                                           name="enddate"
-                                                                           id="enddate"
-                                                                           value="<?php echo isset($search['enddate']) ? $search['enddate'] : date('m-d-Y'); ?>"/>
+                                                            <input class="invoice-fields" placeholder="Select End Date" type="text" name="enddate" id="enddate" value="<?php echo isset($search['enddate']) ? $search['enddate'] : date('m-d-Y'); ?>" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -93,12 +83,12 @@
                                         </form>
                                     </div>
                                     <!-- *** table *** -->
-                                    <div class="hr-box">                                        
+                                    <div class="hr-box">
                                         <div class="hr-box-header bg-header-green">
                                             <h1 class="hr-registered">
                                                 Applicant Statistics
-                                                <?php 
-                                                    echo ($search['date_option'] == 'daily') ? 'for ' . date('F j, Y') : 'between ' . $search['startdate'] . ' and ' . $search['enddate']; 
+                                                <?php
+                                                echo ($search['date_option'] == 'daily') ? 'for ' . date('F j, Y') : 'between ' . $search['startdate'] . ' and ' . $search['enddate'];
                                                 ?>
                                             </h1>
                                         </div>
@@ -160,26 +150,36 @@
                                                             <td>Other</td>
                                                             <td><?php echo sizeof($other); ?></td>
                                                         </tr>
-<!--                                                        --><?php //foreach($career_sites_array as $key => $value) { ?>
-<!--                                                        <tr>-->
-<!--                                                            <td>-->
-<!--                                                                <div class="table-responsive applicant_source_link_in_table" style="width:100%;">-->
-<!--                                                                    --><?php //echo $key; ?>
-<!--                                                                </div>-->
-<!--                                                            </td>-->
-<!--                                                            <td>--><?php //echo sizeof($value); ?><!--</td>-->
-<!--                                                        </tr>-->
-<!--                                                        --><?php //} ?>
-<!--                                                        --><?php //foreach($other_sites_array as $key => $value) { ?>
-<!--                                                        <tr>-->
-<!--                                                            <td>-->
-<!--                                                                <div class="table-responsive applicant_source_link_in_table" style="width:100%;">-->
-<!--                                                                    --><?php //echo $key; ?>
-<!--                                                                </div>-->
-<!--                                                            </td>-->
-<!--                                                            <td>--><?php //echo sizeof($value); ?><!--</td>-->
-<!--                                                        </tr>-->
-<!--                                                        --><?php //} ?>
+                                                        <!--                                                        --><?php //foreach($career_sites_array as $key => $value) { 
+                                                                                                                        ?>
+                                                        <!--                                                        <tr>-->
+                                                        <!--                                                            <td>-->
+                                                        <!--                                                                <div class="table-responsive applicant_source_link_in_table" style="width:100%;">-->
+                                                        <!--                                                                    --><?php //echo $key; 
+                                                                                                                                    ?>
+                                                        <!--                                                                </div>-->
+                                                        <!--                                                            </td>-->
+                                                        <!--                                                            <td>--><?php //echo sizeof($value); 
+                                                                                                                                ?>
+                                                        <!--</td>-->
+                                                        <!--                                                        </tr>-->
+                                                        <!--                                                        --><?php //} 
+                                                                                                                        ?>
+                                                        <!--                                                        --><?php //foreach($other_sites_array as $key => $value) { 
+                                                                                                                        ?>
+                                                        <!--                                                        <tr>-->
+                                                        <!--                                                            <td>-->
+                                                        <!--                                                                <div class="table-responsive applicant_source_link_in_table" style="width:100%;">-->
+                                                        <!--                                                                    --><?php //echo $key; 
+                                                                                                                                    ?>
+                                                        <!--                                                                </div>-->
+                                                        <!--                                                            </td>-->
+                                                        <!--                                                            <td>--><?php //echo sizeof($value); 
+                                                                                                                                ?>
+                                                        <!--</td>-->
+                                                        <!--                                                        </tr>-->
+                                                        <!--                                                        --><?php //} 
+                                                                                                                        ?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -187,23 +187,23 @@
                                             <div class="table-responsive">
                                                 <table class="table table-bordered">
                                                     <thead>
-                                                    <tr>
-                                                        <th class="col-xs-12 text-center">Others Applicant Source</th>
-                                                    </tr>
+                                                        <tr>
+                                                            <th class="col-xs-12 text-center">Others Applicant Source</th>
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
 
-                                                    <?php foreach($other as $value){
-                                                        echo $value['applicant_source'] != '' ? "<tr><td>". $value['applicant_source'] ."</td></tr>" : "";
-                                                    }?>
+                                                        <?php foreach ($other as $value) {
+                                                            echo $value['applicant_source'] != '' ? "<tr><td>" . $value['applicant_source'] . "</td></tr>" : "";
+                                                        } ?>
                                                     </tbody>
                                                 </table>
                                             </div>
-                                        <!-- -->
+                                            <!-- -->
                                         </div>
                                     </div>
-                                    <!-- *** table *** -->  
-                                </div>  
+                                    <!-- *** table *** -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -217,20 +217,28 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript">
     $(document).keypress(function(e) {
-        if(e.which == 13) {
+        if (e.which == 13) {
             // enter pressed
             $('#apply_filters_submit').click();
         }
     });
-    $(document).ready(function () {
-//        $('#startdate, #enddate').datepicker({
-//            dateFormat: 'yy-mm-dd'
-//        });
-        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+    $(document).ready(function() {
+        //        $('#startdate, #enddate').datepicker({
+        //            dateFormat: 'yy-mm-dd'
+        //        });
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
 
         $('#startdate').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) {
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#enddate').datepicker('option', 'minDate', value);
             }
@@ -238,23 +246,26 @@
 
         $('#enddate').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) {
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#startdate').datepicker('option', 'maxDate', value);
             }
         }).datepicker('option', 'minDate', $('#startdate').val());
 
-        $('#apply_filters_submit').click(function () {
+        $('#apply_filters_submit').click(function() {
             $("#search").validate({
                 ignore: [],
                 rules: {
                     startdate: {
-                        required: function (element) {
+                        required: function(element) {
                             return $('input[name=date_option]:checked').val() == 'by_date';
                         }
                     },
                     enddate: {
-                        required: function (element) {
+                        required: function(element) {
                             return $('input[name=date_option]:checked').val() == 'by_date';
                         }
                     }
@@ -277,7 +288,7 @@
         }
         display(div_to_show);
 
-        $('input[name="date_option"]').change(function (e) {
+        $('input[name="date_option"]').change(function(e) {
             var div_to_show = $(this).val();
             display(div_to_show);
         });
@@ -321,8 +332,9 @@
                     <?php echo $zip_recruiter_count; ?>,
                     <?php echo $jobs_2_career_count; ?>,
                     <?php echo $career_builder_count; ?>,
-                    <?php echo $other_count; ?>,
-<!--                    --><?php //echo $other_count; ?>//,
+                    <?php echo $other_count; ?>, <
+                    !-- -- > <?php //echo $other_count; 
+                                ?> //,
                 ],
                 backgroundColor: [
                     '<?php echo COLOR_INDEED; ?>',
@@ -360,7 +372,7 @@
 
 
 
-    window.onload = function () {
+    window.onload = function() {
         var ctx = document.getElementById("pie-chart").getContext("2d");
         window.myPie = new Chart(ctx, pie_config);
 
@@ -369,5 +381,4 @@
 
 
     //Chart Code
-
 </script>

@@ -1208,6 +1208,9 @@
             // Load date calendar
             $(".datepicker").datepicker({
                 dateFormat: 'mm-dd-yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
                 onSelect: function(d){
                     $('.js-datepicker').datepicker('setDate', new Date(d));
                 }
@@ -1908,6 +1911,9 @@
             // Datepicker for personal type
             $('.js-datepicker').datepicker({
                 dateFormat: 'mm-dd-yy',
+                changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
                 onSelect: function(d){
                     $('.datepicker').datepicker('setDate', new Date(d));
                 }

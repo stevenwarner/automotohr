@@ -1741,8 +1741,18 @@
             }
         });
 
-        $('.eventdate').datepicker({dateFormat: 'mm-dd-yy'}).val();
-        $('#eventdate').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.eventdate').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
+        $('#eventdate').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
         $("#eventdate").datepicker("setDate", new Date());
 
         $('.selected').click(function () {

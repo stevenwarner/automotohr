@@ -5,23 +5,23 @@
                 <div class="heading-title page-title">
                     <h1 class="page-title"><i class="fa fa-dashboard"></i><?php echo $title; ?></h1>
                     <a class="black-btn pull-right" href="<?php echo base_url('dashboard/reports/' . $company_sid); ?>">
-                        <i class="fa fa-long-arrow-left"></i> 
+                        <i class="fa fa-long-arrow-left"></i>
                         Back to Reports
                     </a>
-                </div>   
+                </div>
                 <!-- search form drop down -->
                 <div class="hr-search-criteria <?php
-                if (isset($flag) && $flag == true) {
-                    echo 'opened';
-                }
-                ?>">
+                                                if (isset($flag) && $flag == true) {
+                                                    echo 'opened';
+                                                }
+                                                ?>">
                     <strong>Click to modify search criteria</strong>
                 </div>
                 <div class="hr-search-main" <?php
-                if (isset($flag) && $flag == true) {
-                    echo "style='display:block'";
-                }
-                ?>>
+                                            if (isset($flag) && $flag == true) {
+                                                echo "style='display:block'";
+                                            }
+                                            ?>>
                     <!-- search form -->
                     <form method="GET" action="<?php echo base_url('reports/new_hires_report/' . $company_sid); ?>" name="search" id="search">
                         <div class="row">
@@ -66,7 +66,7 @@
                 <?php if (isset($applicants) && !empty($applicants)) { ?>
                     <div class="bt-panel">
                         <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
-                            <i class="fa fa-print" aria-hidden="true"></i> 
+                            <i class="fa fa-print" aria-hidden="true"></i>
                             Print
                         </a>
                         <form method="post" id="export" name="export">
@@ -79,7 +79,7 @@
                     </div>
                     <div class="page-header-area">
                         <span class="page-heading pull-right">
-                            <b><?= 'Total number of applicants:    ' . sizeof($applicants)?></b>
+                            <b><?= 'Total number of applicants:    ' . sizeof($applicants) ?></b>
                         </span>
                     </div>
                 <?php } ?>
@@ -108,7 +108,8 @@
                                                     <td><?php echo ucwords($applicant['first_name'] . ' ' . $applicant['last_name']); ?></td>
                                                     <?php if (isset($is_hired_report) && $is_hired_report == true) { ?>
                                                         <td>
-<!--                                                            --><?php //echo date_with_time($applicant['hired_date']); ?>
+                                                            <!--                                                            --><?php //echo date_with_time($applicant['hired_date']); 
+                                                                                                                                ?>
                                                             <?php echo reset_datetime(array(
                                                                 'datetime' => $applicant['hired_date'],
                                                                 // 'from_format' => 'h:iA', // Y-m-d H:i:s
@@ -120,7 +121,8 @@
                                                         </td>
                                                     <?php } else { ?>
                                                         <td>
-<!--                                                            --><?php //echo date_with_time($applicant['date_applied']); ?>
+                                                            <!--                                                            --><?php //echo date_with_time($applicant['date_applied']); 
+                                                                                                                                ?>
                                                             <?php echo reset_datetime(array(
                                                                 'datetime' => $applicant['date_applied'],
                                                                 // 'from_format' => 'h:iA', // Y-m-d H:i:s
@@ -150,32 +152,37 @@
                 <?php if (isset($applicants) && !empty($applicants)) { ?>
                     <div class="bt-panel">
                         <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
-                            <i class="fa fa-print" aria-hidden="true"></i> 
+                            <i class="fa fa-print" aria-hidden="true"></i>
                             Print
                         </a>
                         <form method="post" id="export" name="export">
                             <input type="hidden" name="submit" value="Export" />
                             <button class="btn btn-success" type="submit"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export To Excel</button>
                         </form>
-                    </div> 
+                    </div>
                 <?php } ?>
-            </div>               					
+            </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         // Search Area Toggle Function    
-        jQuery('.hr-search-criteria').click(function () {
+        jQuery('.hr-search-criteria').click(function() {
             jQuery(this).next().slideToggle('1000');
             jQuery(this).toggleClass("opened");
         });
 
-        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy'
+        }).val();
 
         $('#startdate').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) {
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#enddate').datepicker('option', 'minDate', value);
 
@@ -185,7 +192,10 @@
 
         $('#enddate').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (value) {
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#startdate').datepicker('option', 'maxDate', value);
 
@@ -195,8 +205,7 @@
     });
 
 
-    function print_page(elem)
-    {
+    function print_page(elem) {
         var data = ($(elem).html());
         var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
 

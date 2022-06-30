@@ -207,7 +207,9 @@
 
         $('#start_date').Zebra_DatePicker({
             format: 'm-d-Y',
-            yearRange: "1960:+5",
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             pair: $('#end_date')
         });
 

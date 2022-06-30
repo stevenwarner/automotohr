@@ -62,25 +62,15 @@
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                 <div class="field-row">
                                                     <label class="">Date From</label>
-                                                    <?php $start_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : date('m-d-Y');?>
-                                                    <input class="form-control"
-                                                           placeholder="<?php echo date('m-d-Y'); ?>"
-                                                           type="text"
-                                                           name="start_date_applied"
-                                                           id="start_date_applied"
-                                                           value="<?php echo set_value('start_date_applied', $start_date); ?>"/>
+                                                    <?php $start_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : date('m-d-Y'); ?>
+                                                    <input class="form-control" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" />
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                 <div class="field-row">
                                                     <label class="">Date To</label>
-                                                    <?php $end_date = $this->uri->segment(7) != 'all' && $this->uri->segment(7) != '' ? urldecode($this->uri->segment(7)) : date('m-d-Y');?>
-                                                    <input class="form-control"
-                                                           placeholder="<?php echo date('m-d-Y'); ?>"
-                                                           type="text"
-                                                           name="end_date_applied"
-                                                           id="end_date_applied"
-                                                           value="<?php echo set_value('end_date_applied', $end_date); ?>"/>
+                                                    <?php $end_date = $this->uri->segment(7) != 'all' && $this->uri->segment(7) != '' ? urldecode($this->uri->segment(7)) : date('m-d-Y'); ?>
+                                                    <input class="form-control" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" />
                                                 </div>
                                             </div>
                                         </div>
@@ -105,18 +95,18 @@
 </div>
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>assets/js/chosen.jquery.js"></script>
 <script>
-//    $(document).ready(function () {
-//        $('#form_export_employees').validate();
-//    });
+    //    $(document).ready(function () {
+    //        $('#form_export_employees').validate();
+    //    });
 
     $(document).keypress(function(e) {
-        if(e.which == 13) {
+        if (e.which == 13) {
             // enter pressed
             $('#btn_apply_filters').click();
         }
     });
 
-    function generate_search_url(){
+    function generate_search_url() {
         var keyword = $('#keyword').val();
         var job_sid = $('#job_sid').val();
         var applicant_type = $('#applicant_type').val();
@@ -137,41 +127,47 @@
         $('#btn_apply_filters').attr('href', url);
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         $('#app_sid').select2();
         $('#status').select2();
 
-        $('#btn_apply_filters').on('click', function(e){
+        $('#btn_apply_filters').on('click', function(e) {
             e.preventDefault();
             generate_search_url();
 
             window.location = $(this).attr('href').toString();
         });
 
-        $('#job_sid').on('change',function (value){
+        $('#job_sid').on('change', function(value) {
             generate_search_url();
         });
-        $('#applicant_type').on('change',function (value) {
+        $('#applicant_type').on('change', function(value) {
             generate_search_url();
         });
-        $('#applicant_status').on('change',function (value) {
+        $('#applicant_status').on('change', function(value) {
             generate_search_url();
         });
 
-        $('#keyword').on('keyup', function () {
+        $('#keyword').on('keyup', function() {
             generate_search_url();
         });
 
         $('#keyword').trigger('keyup');
 
-        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
 
         $('#start_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
             changeYear: true,
             changeMonth: true,
-            onSelect: function (value) {
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#end_date_applied').datepicker('option', 'minDate', value);
 
@@ -183,7 +179,8 @@
             dateFormat: 'mm-dd-yy',
             changeYear: true,
             changeMonth: true,
-            onSelect: function (value) {
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 //console.log(value);
                 $('#start_date_applied').datepicker('option', 'maxDate', value);
 

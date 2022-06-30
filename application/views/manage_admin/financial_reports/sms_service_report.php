@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -25,11 +25,11 @@
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                                         <div class="field-row">
                                                             <label for="company">Select Company</label>
-                                                            <div  class="hr-select-dropdown">
-                                                                <?php $selected = $this->uri->segment(4);?>
+                                                            <div class="hr-select-dropdown">
+                                                                <?php $selected = $this->uri->segment(4); ?>
                                                                 <select id="company_sid" class="invoice-fields">
                                                                     <option value="all">All</option>
-                                                                    <?php foreach($companies as $company) { ?>
+                                                                    <?php foreach ($companies as $company) { ?>
                                                                         <?php $selected_option =  $company['sid'] == $company_sid ? 'selected="selected"' : ''; ?>
                                                                         <option value="<?php echo $company['sid']; ?>" <?php echo $selected_option; ?>><?php echo $company['CompanyName']; ?></option>
                                                                     <?php } ?>
@@ -41,7 +41,7 @@
                                                         <div class="field-row">
                                                             <label for="year">Start Date</label>
                                                             <?php $start_date = $this->uri->segment(5); ?>
-                                                                <input type="text" name="start" value="<?= $start_date; ?>" class="invoice-fields" id="startdate" readonly>
+                                                            <input type="text" name="start" value="<?= $start_date; ?>" class="invoice-fields" id="startdate" readonly>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
@@ -82,8 +82,8 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <?php if(!empty($sms_data)) { ?>
-                                                                    <?php foreach($sms_data as $sms) { ?>
+                                                                <?php if (!empty($sms_data)) { ?>
+                                                                    <?php foreach ($sms_data as $sms) { ?>
                                                                         <tr>
                                                                             <td class="text-left">
                                                                                 <?php echo $sms['company_name']; ?>
@@ -121,7 +121,7 @@
                                                                         <strong>Total</strong>
                                                                     </td>
                                                                     <td class="text-right">
-                                                                        <strong>$<?php echo $grand_total;?></strong>
+                                                                        <strong>$<?php echo $grand_total; ?></strong>
                                                                     </td>
                                                                 </tr>
                                                             </tfoot>
@@ -143,8 +143,8 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        function generate_search_url(){
+    $(document).ready(function() {
+        function generate_search_url() {
             var company_sid = $('#company_sid').val();
             var start_date = $('#startdate').val();
             var end_date = $('#enddate').val();
@@ -153,15 +153,18 @@
             start_date = start_date != '' && start_date != null && start_date != undefined && start_date != 0 ? encodeURIComponent(start_date) : 'all';
             end_date = end_date != '' && end_date != null && end_date != undefined && end_date != 0 ? encodeURIComponent(end_date) : 'all';
 
-            var myUrl = '<?php echo base_url("manage_admin/financial_reports/sms_service_report")?>' + '/' + company_sid + '/' + start_date + '/' + end_date;
+            var myUrl = '<?php echo base_url("manage_admin/financial_reports/sms_service_report") ?>' + '/' + company_sid + '/' + start_date + '/' + end_date;
 
             console.log(myUrl);
             $('#search_btn').attr('href', myUrl);
         }
 
-    	$('#startdate').datepicker({
+        $('#startdate').datepicker({
             dateFormat: 'dd-mm-yy',
-            onSelect: function (value) { //console.log(value);
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) { //console.log(value);
                 $('#enddate').datepicker('option', 'minDate', value);
                 generate_search_url();
             }
@@ -169,17 +172,20 @@
 
         $('#enddate').datepicker({
             dateFormat: 'dd-mm-yy',
-            onSelect: function (value) { //console.log(value);
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) { //console.log(value);
                 $('#startdate').datepicker('option', 'maxDate', value);
                 generate_search_url();
             }
         }).datepicker('option', 'minDate', $('#startdate').val());
 
-        $("search_btn").on('click',function(){
+        $("search_btn").on('click', function() {
             alert('pakisatn');
         });
-        
-        $('select').on('change', function(){
+
+        $('select').on('change', function() {
             generate_search_url();
         }).trigger('change');
     });

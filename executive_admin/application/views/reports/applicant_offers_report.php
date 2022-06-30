@@ -169,10 +169,18 @@
             jQuery(this).toggleClass("opened");
         });
 
-        $('.datepicker').datepicker({dateFormat: 'mm-dd-yy'}).val();
+        $('.datepicker').datepicker({
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
+        }).val();
 
         $('#startdate').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (value) {
                 //console.log(value);
                 $('#enddate').datepicker('option', 'minDate', value);
@@ -183,6 +191,9 @@
 
         $('#enddate').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (value) {
                 //console.log(value);
                 $('#startdate').datepicker('option', 'maxDate', value);

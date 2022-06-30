@@ -402,6 +402,9 @@ if(isset($license_type) && $license_type == 'drivers') {
 
         $('#oc_license_expiration_date').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (selectedDate) {
                 $('#oc_license_issue_date').datepicker('option', 'maxDate', selectedDate);
             }
@@ -409,6 +412,9 @@ if(isset($license_type) && $license_type == 'drivers') {
 
         $('#dr_license_issue_date').datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (selectedDate) {
                 $('#dr_license_expiration_date').datepicker('option', 'minDate', selectedDate);
             }

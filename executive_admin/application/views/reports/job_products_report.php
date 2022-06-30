@@ -5,7 +5,7 @@
                 <div class="heading-title page-title">
                     <h1 class="page-title"><i class="fa fa-dashboard"></i><?php echo $title; ?></h1>
                     <a class="black-btn pull-right" href="<?php echo base_url('dashboard/reports/' . $company_sid); ?>">
-                        <i class="fa fa-long-arrow-left"></i> 
+                        <i class="fa fa-long-arrow-left"></i>
                         Back to Reports
                     </a>
                 </div>
@@ -42,9 +42,14 @@
                                             <option value="<?= $active_job['sid'] ?>" <?php if (in_array($active_job['sid'], $job_sid_array)) { ?> selected="selected" <?php } ?>>
                                                 <?php echo $active_job['Title']; ?>
                                             </option>
-<!--                                            <option --><?php //echo set_select('product_sid', $active_job['sid'], $job_sid == $active_job['sid']); ?><!-- value="--><?php //echo $active_job['sid']; ?><!--">-->
-<!--                                                --><?php //echo $active_job['Title']; ?>
-<!--                                            </option>-->
+                                            <!--                                            <option --><?php //echo set_select('product_sid', $active_job['sid'], $job_sid == $active_job['sid']); 
+                                                                                                        ?>
+                                            <!-- value="--><?php //echo $active_job['sid']; 
+                                                            ?>
+                                            <!--">-->
+                                            <!--                                                --><?php //echo $active_job['Title']; 
+                                                                                                    ?>
+                                            <!--                                            </option>-->
                                         <?php } ?>
                                     <?php } else { ?>
                                         <option value="">Any Job</option>
@@ -53,15 +58,15 @@
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
                                 <label>Date From</label>
-                                <?php $start_date = $this->uri->segment(6);?>
-                                <?php $start_date = $start_date != 'all' && $start_date != '' ? $start_date : date('m-d-Y');?>
+                                <?php $start_date = $this->uri->segment(6); ?>
+                                <?php $start_date = $start_date != 'all' && $start_date != '' ? $start_date : date('m-d-Y'); ?>
                                 <input type="text" name="startdate" value="<?php echo set_value('startdate', $start_date); ?>" class="invoice-fields" id="startdate" readonly>
                             </div>
 
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 field-row">
                                 <label>Date To</label>
-                                <?php $end_date = $this->uri->segment(7);?>
-                                <?php $end_date = $end_date != 'all' && $end_date != '' ? $end_date : date('m-d-Y');?>
+                                <?php $end_date = $this->uri->segment(7); ?>
+                                <?php $end_date = $end_date != 'all' && $end_date != '' ? $end_date : date('m-d-Y'); ?>
                                 <input type="text" name="enddate" value="<?php echo set_value('enddate', $end_date); ?>" class="invoice-fields" id="enddate" readonly>
                             </div>
                             <div class="col-lg-12 text-right field-row field-row-autoheight">
@@ -73,20 +78,20 @@
                 </div>
                 <!-- search form drop down -->
                 <?php if (isset($products) && sizeof($products) > 0) { ?>
-                <div class="col-xs-12 col-sm-12 margin-top">
-                    <div class="row">
-                        <div class="bt-panel">
-                            <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
-                                <i class="fa fa-print" aria-hidden="true"></i> 
-                                Print
-                            </a>
-                            <form method="post" id="export" name="export">
-                                <input type="hidden" name="submit" value="Export" />
-                                <button class="btn btn-success" type="submit"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export To Excel</button>
-                            </form>
-                        </div>                                                               
+                    <div class="col-xs-12 col-sm-12 margin-top">
+                        <div class="row">
+                            <div class="bt-panel">
+                                <a href="javascript:;" class="btn btn-success" onclick="print_page('#print_div');">
+                                    <i class="fa fa-print" aria-hidden="true"></i>
+                                    Print
+                                </a>
+                                <form method="post" id="export" name="export">
+                                    <input type="hidden" name="submit" value="Export" />
+                                    <button class="btn btn-success" type="submit"><i class="fa fa-file-excel-o" aria-hidden="true"></i> Export To Excel</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                </div>
                 <?php } ?>
 
                 <div class="hr-box">
@@ -95,7 +100,7 @@
                             <h1 class="hr-registered">Job Products Report</h1>
                         </span>
                         <span class="pull-right">
-                            <h1 class="hr-registered">Total Records Found : <?php echo $record_count;?></h1>
+                            <h1 class="hr-registered">Total Records Found : <?php echo $record_count; ?></h1>
                         </span>
 
                     </div>
@@ -104,10 +109,10 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <span class="pull-left">
-                                    <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $record_count?></p>
+                                    <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $record_count ?></p>
                                 </span>
                                 <span class="pull-right" style="margin-top: 20px; margin-bottom: 20px;">
-                                    <?php echo $page_links?>
+                                    <?php echo $page_links ?>
                                 </span>
                             </div>
                         </div>
@@ -124,34 +129,35 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        <?php if (isset($products) && sizeof($products) > 0) { ?>
-                                            <?php foreach ($products as $product) { ?>
+                                            <?php if (isset($products) && sizeof($products) > 0) { ?>
+                                                <?php foreach ($products as $product) { ?>
+                                                    <tr>
+                                                        <td><?php echo $product['job_sid']; ?></td>
+                                                        <td><?php echo $product['job_title']; ?></td>
+                                                        <td><?php echo $product['product_name']; ?></td>
+                                                        <td>
+                                                            <!--                                                        --><?php //echo date_with_time($product['purchased_date']); 
+                                                                                                                            ?>
+                                                            <?php echo reset_datetime(array(
+                                                                'datetime' => $product['purchased_date'],
+                                                                'from_format' => 'm/t/Y', // Y-m-d H:i:s
+                                                                'format' => 'm/t/Y', //
+                                                                'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR, // PST
+                                                                'from_timezone' => $executive_user['timezone'], //
+                                                                '_this' => $this
+                                                            )) ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php } ?>
+                                            <?php } else { ?>
                                                 <tr>
-                                                    <td><?php echo $product['job_sid']; ?></td>
-                                                    <td><?php echo $product['job_title']; ?></td>
-                                                    <td><?php echo $product['product_name']; ?></td>
-                                                    <td>
-<!--                                                        --><?php //echo date_with_time($product['purchased_date']); ?>
-                                                        <?php echo reset_datetime(array(
-                                                            'datetime' => $product['purchased_date'],
-                                                            'from_format' => 'm/t/Y', // Y-m-d H:i:s
-                                                            'format' => 'm/t/Y', //
-                                                            'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR, // PST
-                                                            'from_timezone' => $executive_user['timezone'], //
-                                                            '_this' => $this
-                                                        )) ?>
+                                                    <td class="text-center" colspan="5">
+                                                        <div class="no-data">
+                                                            No advertised products found.
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             <?php } ?>
-                                        <?php } else { ?>
-                                            <tr>
-                                                <td class="text-center" colspan="5">
-                                                    <div class="no-data">
-                                                        No advertised products found.
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        <?php } ?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -161,10 +167,10 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <span class="pull-left">
-                                    <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $record_count?></p>
+                                    <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $record_count ?></p>
                                 </span>
                                 <span class="pull-right" style="margin-top: 20px; margin-bottom: 20px;">
-                                    <?php echo $page_links?>
+                                    <?php echo $page_links ?>
                                 </span>
                             </div>
                         </div>
@@ -187,24 +193,25 @@
                         </div>
                     </div>
                 <?php } ?>
-            </div>               					
+            </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
     $(document).keypress(function(e) {
-        if(e.which == 13) {
+        if (e.which == 13) {
             // enter pressed
             $('#btn_search').click();
         }
     });
-    function generate_search_url(){
+
+    function generate_search_url() {
         var product_sid = $('#product_sid').val();
         var job_sid = $('#job_sid').val();
         var start_date = $('#startdate').val();
         var end_date = $('#enddate').val();
 
-        product_sid = product_sid != '' && product_sid != null && product_sid != undefined  && product_sid != 0? encodeURIComponent(product_sid) : 'all';
+        product_sid = product_sid != '' && product_sid != null && product_sid != undefined && product_sid != 0 ? encodeURIComponent(product_sid) : 'all';
         job_sid = job_sid != '' && job_sid != null && job_sid != undefined && job_sid != 0 ? encodeURIComponent(job_sid) : 'all';
         start_date = start_date != '' && start_date != null && start_date != undefined && start_date ? encodeURIComponent(start_date) : 'all';
         end_date = end_date != '' && end_date != null && end_date != undefined && end_date ? encodeURIComponent(end_date) : 'all';
@@ -215,7 +222,7 @@
     }
 
 
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         $('.chosen-select').selectize({
             plugins: ['remove_button'],
@@ -229,18 +236,18 @@
             }
         });
 
-        $('#btn_search').on('click', function(e){
+        $('#btn_search').on('click', function(e) {
             e.preventDefault();
             generate_search_url();
             window.location = $(this).attr('href').toString();
         });
         $('#product_sid').selectize({
-            onChange: function (value) {
+            onChange: function(value) {
                 generate_search_url();
             }
         });
         $('#job_sid').selectize({
-            onChange: function (value) {
+            onChange: function(value) {
                 generate_search_url();
             }
         });
@@ -254,7 +261,10 @@
 
         $('#startdate').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function(value){
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 $('#enddate').datepicker('option', 'minDate', value);
                 generate_search_url();
             }
@@ -262,15 +272,17 @@
 
         $('#enddate').datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function(value){
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 $('#startdate').datepicker('option', 'maxDate', value);
                 generate_search_url();
             }
         }).datepicker('option', 'minDate', $('#startdate').val());
     });
 
-    function print_page(elem)
-    {
+    function print_page(elem) {
         var data = ($(elem).html());
         var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
 

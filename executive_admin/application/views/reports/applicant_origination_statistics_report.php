@@ -5,7 +5,7 @@
                 <div class="heading-title page-title">
                     <h1 class="page-title"><i class="fa fa-dashboard"></i><?php echo $title; ?></h1>
                     <a class="black-btn pull-right" href="<?php echo base_url('dashboard/reports/' . $company_sid); ?>">
-                        <i class="fa fa-long-arrow-left"></i> 
+                        <i class="fa fa-long-arrow-left"></i>
                         Back to Reports
                     </a>
                 </div>
@@ -29,10 +29,10 @@
                                     <div class="col-md-3">
                                         <label class="control control--radio">Select Date Range
                                             <input type="radio" name="date_option" value="by_date" id="by_date" <?php
-                                            if (isset($search['date_option']) && $search['date_option'] == 'by_date') {
-                                                echo 'checked';
-                                            }
-                                            ?>>
+                                                                                                                if (isset($search['date_option']) && $search['date_option'] == 'by_date') {
+                                                                                                                    echo 'checked';
+                                                                                                                }
+                                                                                                                ?>>
                                             <div class="control__indicator"></div>
                                         </label>
                                     </div>
@@ -57,12 +57,7 @@
                             </div>
                             <div class="col-lg-3 col-md-3 col-xs-3 col-sm-6">
                                 <div class="field-row">
-                                    <input class="invoice-fields"
-                                           placeholder="Select Start Date"
-                                           type="text"
-                                           name="startdate"
-                                           id="startdate"
-                                           value="<?php echo isset($search['startdate']) ? $search['startdate'] : date('m-d-Y'); ?>"/>
+                                    <input class="invoice-fields" placeholder="Select Start Date" type="text" name="startdate" id="startdate" value="<?php echo isset($search['startdate']) ? $search['startdate'] : date('m-d-Y'); ?>" />
                                 </div>
                             </div>
                             <div class="col-lg-2 col-md-2 col-xs-2 col-sm-6">
@@ -72,12 +67,7 @@
                             </div>
                             <div class="col-lg-3 col-md-3 col-xs-3 col-sm-6">
                                 <div class="field-row">
-                                    <input class="invoice-fields"
-                                           placeholder="Select End Date"
-                                           type="text"
-                                           name="enddate"
-                                           id="enddate"
-                                           value="<?php echo isset($search['enddate']) ? $search['enddate'] : date('m-d-Y'); ?>"/>
+                                    <input class="invoice-fields" placeholder="Select End Date" type="text" name="enddate" id="enddate" value="<?php echo isset($search['enddate']) ? $search['enddate'] : date('m-d-Y'); ?>" />
                                 </div>
                             </div>
                         </div>
@@ -111,45 +101,45 @@
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
-                                <tr>
-                                    <th class="col-xs-10 text-center">Applicant Source</th>
-                                    <th class="col-xs-2 text-center">Source Count</th>
-                                </tr>
+                                    <tr>
+                                        <th class="col-xs-10 text-center">Applicant Source</th>
+                                        <th class="col-xs-2 text-center">Source Count</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>Automoto Social</td>
-                                    <td><?php echo sizeof($automoto_social); ?></td>
-                                </tr>
-                                <tr>
-                                    <td>Glassdoor</td>
-                                    <td><?php echo sizeof($glassdoor); ?></td>
-                                </tr>
-                                <tr>
-                                    <td>Indeed</td>
-                                    <td><?php echo sizeof($indeed); ?></td>
-                                </tr>
-                                <tr>
-                                    <td>JuJu</td>
-                                    <td><?php echo sizeof($juju); ?></td>
-                                </tr>
-                                <tr>
-                                    <td>ZipRecruiter</td>
-                                    <td><?php echo $zip_recruiter_count; ?></td>
-                                </tr>
-                                <tr>
-                                    <td>Jobs2Career</td>
-                                    <td><?php echo $jobs_2_career_count; ?></td>
-                                </tr>
-                                <tr>
-                                    <td>AutomotoHR</td>
-                                    <td><?php echo sizeof($automotohr); ?></td>
-                                </tr>
-                                <tr>
-                                    <td>Other</td>
-                                    <td><?php echo sizeof($other); ?></td>
-                                </tr>
-                                <!--                                                    <tr>
+                                    <tr>
+                                        <td>Automoto Social</td>
+                                        <td><?php echo sizeof($automoto_social); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Glassdoor</td>
+                                        <td><?php echo sizeof($glassdoor); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Indeed</td>
+                                        <td><?php echo sizeof($indeed); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>JuJu</td>
+                                        <td><?php echo sizeof($juju); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>ZipRecruiter</td>
+                                        <td><?php echo $zip_recruiter_count; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jobs2Career</td>
+                                        <td><?php echo $jobs_2_career_count; ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>AutomotoHR</td>
+                                        <td><?php echo sizeof($automotohr); ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Other</td>
+                                        <td><?php echo sizeof($other); ?></td>
+                                    </tr>
+                                    <!--                                                    <tr>
                                                             <td>Career Website</td>
                                                             <td><?php echo sizeof($automotohr); ?></td>
                                                         </tr>
@@ -157,41 +147,51 @@
                                                             <td>Other</td>
                                                             <td><?php echo sizeof($other); ?></td>
                                                         </tr>-->
-<!--                                --><?php //foreach($career_sites_array as $key => $value) { ?>
-<!--                                    <tr>-->
-<!--                                        <td>-->
-<!--                                            <div class="table-responsive" style="width:100%;">-->
-<!--                                                --><?php //echo $key; ?>
-<!--                                            </div>-->
-<!--                                        </td>-->
-<!--                                        <td>--><?php //echo sizeof($value); ?><!--</td>-->
-<!--                                    </tr>-->
-<!--                                --><?php //} ?>
-<!--                                --><?php //foreach($other_sites_array as $key => $value) { ?>
-<!--                                    <tr>-->
-<!--                                        <td>-->
-<!--                                            <div class="table-responsive" style="width:100%;">-->
-<!--                                                --><?php //echo $key; ?>
-<!--                                            </div>-->
-<!--                                        </td>-->
-<!--                                        <td>--><?php //echo sizeof($value); ?><!--</td>-->
-<!--                                    </tr>-->
-<!--                                --><?php //} ?>
+                                    <!--                                --><?php //foreach($career_sites_array as $key => $value) { 
+                                                                            ?>
+                                    <!--                                    <tr>-->
+                                    <!--                                        <td>-->
+                                    <!--                                            <div class="table-responsive" style="width:100%;">-->
+                                    <!--                                                --><?php //echo $key; 
+                                                                                            ?>
+                                    <!--                                            </div>-->
+                                    <!--                                        </td>-->
+                                    <!--                                        <td>--><?php //echo sizeof($value); 
+                                                                                        ?>
+                                    <!--</td>-->
+                                    <!--                                    </tr>-->
+                                    <!--                                --><?php //} 
+                                                                            ?>
+                                    <!--                                --><?php //foreach($other_sites_array as $key => $value) { 
+                                                                            ?>
+                                    <!--                                    <tr>-->
+                                    <!--                                        <td>-->
+                                    <!--                                            <div class="table-responsive" style="width:100%;">-->
+                                    <!--                                                --><?php //echo $key; 
+                                                                                            ?>
+                                    <!--                                            </div>-->
+                                    <!--                                        </td>-->
+                                    <!--                                        <td>--><?php //echo sizeof($value); 
+                                                                                        ?>
+                                    <!--</td>-->
+                                    <!--                                    </tr>-->
+                                    <!--                                --><?php //} 
+                                                                            ?>
                                 </tbody>
                             </table>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
-                                <tr>
-                                    <th class="col-xs-12 text-center">Others Applicant Source</th>
-                                </tr>
+                                    <tr>
+                                        <th class="col-xs-12 text-center">Others Applicant Source</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
 
-                                <?php foreach($other as $value){
-                                    echo $value['applicant_source'] != '' ? "<tr><td>". $value['applicant_source'] ."</td></tr>" : "";
-                                }?>
+                                    <?php foreach ($other as $value) {
+                                        echo $value['applicant_source'] != '' ? "<tr><td>" . $value['applicant_source'] . "</td></tr>" : "";
+                                    } ?>
                                 </tbody>
                             </table>
                         </div>
@@ -199,45 +199,50 @@
                     </div>
                 </div>
 
-            </div>               					
+            </div>
         </div>
     </div>
 </div>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/Chart.bundle.min.js"></script>
 
 <script type="text/javascript">
-
-    jQuery(function () {
+    jQuery(function() {
         $("#startdate").datepicker({
             dateFormat: 'mm-dd-yy',
-            onSelect: function (selected) {
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() + 1);
                 $("#enddate").datepicker("option", "minDate", dt);
             }
-        }).on('focusin', function () {
+        }).on('focusin', function() {
             $(this).prop('readonly', true);
-        }).on('focusout', function () {
+        }).on('focusout', function() {
             $(this).prop('readonly', false);
         });
 
         $("#enddate").datepicker({
             dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
             setDate: new Date(),
-            onSelect: function (selected) {
+            onSelect: function(selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() - 1);
                 $("#startdate").datepicker("option", "maxDate", dt);
             }
-        }).on('focusin', function () {
+        }).on('focusin', function() {
             $(this).prop('readonly', true);
-        }).on('focusout', function () {
+        }).on('focusout', function() {
             $(this).prop('readonly', false);
         });
 
     });
 
-    $(document).ready(function () {
+    $(document).ready(function() {
         var div_to_show = $('input[name="date_option"]').val();
         var search = '<?php echo isset($search['date_option']) ? $search['date_option'] : ''; ?>';
         if (search != '') {
@@ -245,7 +250,7 @@
         }
         display(div_to_show);
 
-        $('input[name="date_option"]').change(function (e) {
+        $('input[name="date_option"]').change(function(e) {
             var div_to_show = $(this).val();
             display(div_to_show);
         });
@@ -320,7 +325,7 @@
         }
     };
 
-    window.onload = function () {
+    window.onload = function() {
         var ctx = document.getElementById("pie-chart").getContext("2d");
         window.myPie = new Chart(ctx, pie_config);
 

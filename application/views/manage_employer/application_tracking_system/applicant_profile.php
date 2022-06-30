@@ -1876,10 +1876,16 @@ if ($_ssv) {
         });
 
         $('.eventdate').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $('#eventdate').datepicker({
-            dateFormat: 'mm-dd-yy'
+            dateFormat: 'mm-dd-yy',
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $("#eventdate").datepicker("setDate", new Date());
         $('.selected').click(function() {

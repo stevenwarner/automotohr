@@ -44,12 +44,22 @@
                                                                         <div class="hr-select-dropdown ">
                                                                             <select class="chosen-select" multiple="multiple" name="job_sid[]" id="job_sid">
                                                                                 <?php if (!empty($jobOptions)) { ?>
-<!--                                                                                    <option value="all" --><?php //if (in_array('all', $job_sid_array)) { ?><!-- selected="selected" --><?php //} ?><!-->All Jobs</option>-->
+                                                                                    <!--                                                                                    <option value="all" --><?php //if (in_array('all', $job_sid_array)) { 
+                                                                                                                                                                                                    ?>
+                                                                                    <!-- selected="selected" --><?php //} 
+                                                                                                                ?>
+                                                                                    <!-->All Jobs</option>-->
                                                                                     <?php foreach ($jobOptions as $key => $value) { ?>
                                                                                         <option value="<?= $key ?>" <?php if (in_array($key, $job_sid_array)) { ?> selected="selected" <?php } ?>>
                                                                                             <?php echo $value; ?>
                                                                                         </option>
-<!--                                                                                        <option --><?php //echo set_select('job_sid', $key, $job_sid == $key); ?><!-- value="--><?php //echo $key; ?><!--">--><?php //echo $value; ?><!--</option>-->
+                                                                                        <!--                                                                                        <option --><?php //echo set_select('job_sid', $key, $job_sid == $key); 
+                                                                                                                                                                                                ?>
+                                                                                        <!-- value="--><?php //echo $key; 
+                                                                                                        ?>
+                                                                                        <!--">--><?php //echo $value; 
+                                                                                                    ?>
+                                                                                        <!--</option>-->
                                                                                     <?php } ?>
                                                                                 <?php } else { ?>
                                                                                     <option value="">No jobs found</option>
@@ -64,7 +74,7 @@
                                                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                                                     <div class="field-row">
                                                                         <label>Source</label>
-                                                                        <?php $source = $this->uri->segment(8) != 'all' ? urldecode($this->uri->segment(8)) : '';?>
+                                                                        <?php $source = $this->uri->segment(8) != 'all' ? urldecode($this->uri->segment(8)) : ''; ?>
                                                                         <div class="hr-select-dropdown">
                                                                             <select class="invoice-fields" name="source" id="source">
                                                                                 <option value="all">Please Select</option>
@@ -109,25 +119,15 @@
                                                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                                                     <div class="field-row">
                                                                         <label class="">Start Date</label>
-                                                                        <?php $start_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : date('m-d-Y');?>
-                                                                        <input class="invoice-fields"
-                                                                               placeholder="<?php echo date('m-d-Y'); ?>"
-                                                                               type="text"
-                                                                               name="start_date_applied"
-                                                                               id="start_date_applied"
-                                                                               value="<?php echo set_value('start_date_applied', $start_date); ?>"/>
+                                                                        <?php $start_date = $this->uri->segment(6) != 'all' && $this->uri->segment(6) != '' ? urldecode($this->uri->segment(6)) : date('m-d-Y'); ?>
+                                                                        <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="start_date_applied" id="start_date_applied" value="<?php echo set_value('start_date_applied', $start_date); ?>" />
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                                                     <div class="field-row">
                                                                         <label class="">End Date</label>
-                                                                        <?php $end_date = $this->uri->segment(7) != 'all' && $this->uri->segment(7) != '' ? urldecode($this->uri->segment(7)) : date('m-d-Y');?>
-                                                                        <input class="invoice-fields"
-                                                                               placeholder="<?php echo date('m-d-Y'); ?>"
-                                                                               type="text"
-                                                                               name="end_date_applied"
-                                                                               id="end_date_applied"
-                                                                               value="<?php echo set_value('end_date_applied', $end_date); ?>"/>
+                                                                        <?php $end_date = $this->uri->segment(7) != 'all' && $this->uri->segment(7) != '' ? urldecode($this->uri->segment(7)) : date('m-d-Y'); ?>
+                                                                        <input class="invoice-fields" placeholder="<?php echo date('m-d-Y'); ?>" type="text" name="end_date_applied" id="end_date_applied" value="<?php echo set_value('end_date_applied', $end_date); ?>" />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -154,7 +154,7 @@
                                                                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
                                                                     <div class="field-row">
                                                                         <label class="">&nbsp;</label>
-                                                                        <a id="btn_apply_filters" class="btn btn-success btn-block" href="#" >Apply Filters</a>
+                                                                        <a id="btn_apply_filters" class="btn btn-success btn-block" href="#">Apply Filters</a>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
@@ -180,11 +180,11 @@
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         <span class="pull-left">
-                                                            <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $applicants_count?></p>
+                                                            <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $applicants_count ?></p>
                                                         </span>
-                                                        <?php if(!empty($page_links)) { ?>
+                                                        <?php if (!empty($page_links)) { ?>
                                                             <span class="pull-right">
-                                                                <?php echo $page_links?>
+                                                                <?php echo $page_links ?>
                                                             </span>
                                                         <?php } ?>
                                                     </div>
@@ -210,8 +210,9 @@
                                                                     <?php if (!empty($applicants)) { ?>
                                                                         <?php foreach ($applicants as $applicant) { ?>
                                                                             <tr>
-                                                                                <!-- <td><?php //echo DateTime::createFromFormat('Y-m-d H:i:s', $applicant['date_applied'])->format('M j, Y h:i A'); ?></td> -->
-                                                                                <td><?=reset_datetime(array('datetime' => $applicant['date_applied'], '_this' => $this));?></td>
+                                                                                <!-- <td><?php //echo DateTime::createFromFormat('Y-m-d H:i:s', $applicant['date_applied'])->format('M j, Y h:i A'); 
+                                                                                            ?></td> -->
+                                                                                <td><?= reset_datetime(array('datetime' => $applicant['date_applied'], '_this' => $this)); ?></td>
                                                                                 <td><?php echo $applicant['applicant_type']; ?></td>
                                                                                 <td><?php echo $applicant['status']; ?></td>
                                                                                 <td><?php echo ucwords($applicant['first_name'] . ' ' . $applicant['last_name']); ?></td>
@@ -240,11 +241,11 @@
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                                         <span class="pull-left">
-                                                            <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $applicants_count?></p>
+                                                            <p>Showing <?php echo $from_records; ?> to <?php echo $to_records; ?> out of <?php echo $applicants_count ?></p>
                                                         </span>
-                                                        <?php if(!empty($page_links)) { ?>
+                                                        <?php if (!empty($page_links)) { ?>
                                                             <span class="pull-right">
-                                                                <?php echo $page_links?>
+                                                                <?php echo $page_links ?>
                                                             </span>
                                                         <?php } ?>
                                                     </div>
@@ -262,17 +263,17 @@
     </div>
 </div>
 
-<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css"  />
+<link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>/assets/css/chosen.css" />
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/js/chosen.jquery.js"></script>
 <script>
     $(document).keypress(function(e) {
-        if(e.which == 13) {
+        if (e.which == 13) {
             // enter pressed
             $('#btn_apply_filters').click();
         }
     });
 
-    function generate_search_url(){
+    function generate_search_url() {
         var keyword = $('#applicant_name').val();
         var job_sid = $('#job_sid').val();
         var applicant_type = $('#applicant_type').val();
@@ -294,7 +295,7 @@
         $('#btn_apply_filters').attr('href', url);
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         $('.chosen-select').selectize({
             plugins: ['remove_button'],
@@ -308,41 +309,41 @@
             }
         });
 
-        $('#btn_apply_filters').on('click', function(e){
+        $('#btn_apply_filters').on('click', function(e) {
             e.preventDefault();
             generate_search_url();
             window.location = $(this).attr('href').toString();
         });
-        $('.collapse').on('shown.bs.collapse', function () {
+        $('.collapse').on('shown.bs.collapse', function() {
             $(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
-        }).on('hidden.bs.collapse', function () {
+        }).on('hidden.bs.collapse', function() {
             $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
         });
 
-        $('#job_sid').on('change', function (value) {
+        $('#job_sid').on('change', function(value) {
             generate_search_url();
         });
 
-        $('#applicant_type').on('change', function (value) {
+        $('#applicant_type').on('change', function(value) {
             generate_search_url();
         });
 
 
-        $('#applicant_status').on('change', function (value) {
+        $('#applicant_status').on('change', function(value) {
             generate_search_url();
         });
 
-        $('#source').on('change', function (value) {
+        $('#source').on('change', function(value) {
             generate_search_url();
         });
 
-        $('#applicant_name').on('keyup', function () {
+        $('#applicant_name').on('keyup', function() {
             generate_search_url();
         });
 
         $('#applicant_name').trigger('keyup');
 
-        $('#btn_apply_filters').on('click', function(e){
+        $('#btn_apply_filters').on('click', function(e) {
             e.preventDefault();
             generate_search_url();
 
@@ -352,15 +353,17 @@
 
         $('.datepicker').datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
 
         $('#start_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
-            onSelect: function (value) {
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 $('#end_date_applied').datepicker('option', 'minDate', value);
                 generate_search_url();
             }
@@ -368,21 +371,21 @@
 
         $('#end_date_applied').datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
-            onSelect: function (value) {
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>",
+            onSelect: function(value) {
                 $('#start_date_applied').datepicker('option', 'maxDate', value);
                 generate_search_url();
             }
         }).datepicker('option', 'minDate', $('#start_date_applied').val());
     });
 
-    function print_page(elem)
-    { 
-        
+    function print_page(elem) {
+
         var data = ($(elem).html());
         var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
-        
+
         mywindow.document.write('<html><head><title>' + '<?php echo $title; ?>' + '</title>');
         mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/style.css'); ?>" type="text/css" />');
         mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/font-awesome-animation.min.css'); ?>" type="text/css" />');
@@ -402,9 +405,8 @@
         mywindow.document.write('</body></html>');
         mywindow.document.write('<scr' + 'ipt src="<?php echo site_url('assets/manage_admin/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');
         mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
-        mywindow.document.close(); 
-        mywindow.focus(); 
-        
+        mywindow.document.close();
+        mywindow.focus();
+
     }
-    
 </script>

@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -21,25 +21,22 @@
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                             <div class="field-row field-row-autoheight">
                                                 <label class="valign-middle" for="report_date">Date</label>
-                                                
+
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                             <div class="field-row field-row-autoheight">
-                                                <input type="text" name="report_date"
-                                                       value="<?php echo set_value('report_date', date('m/d/Y')); ?>"
-                                                       class="invoice-fields" id="report_date" readonly>
+                                                <input type="text" name="report_date" value="<?php echo set_value('report_date', date('m/d/Y')); ?>" class="invoice-fields" id="report_date" readonly>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
                                             <div class="field-row field-row-autoheight">
-                                                <button class="btn btn-success btn-equalizer btn-block"
-                                                        onclick="get_inactivity_report();">Get Report
+                                                <button class="btn btn-success btn-equalizer btn-block" onclick="get_inactivity_report();">Get Report
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <hr/>
+                                    <hr />
                                     <!-- -->
                                     <div class="col-xs-12 col-sm-12 margin-top">
                                         <div class="row">
@@ -87,23 +84,26 @@
     </div>
 </div>
 <script>
-    function fExportCSV(){
-        var date = $('#report_date').val(); 
+    function fExportCSV() {
+        var date = $('#report_date').val();
 
-        if(date != '' && parseInt(date) != 0 && date != null && date != undefined){
+        if (date != '' && parseInt(date) != 0 && date != null && date != undefined) {
             $('#excel_date').val(date);
             $('#export').submit();
         } else {
             alertify.error('Please select date');
         }
     }
-    
-    
-    $(document).ready(function () {
+
+
+    $(document).ready(function() {
         $('.bt-panel').hide();
-        
+
         $('#report_date').datepicker({
-            format: 'mm/dd/yyyy'
+            format: 'mm/dd/yyyy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         });
     });
 
@@ -111,9 +111,11 @@
     function get_inactivity_report() {
         var report_date = $('#report_date').val();
 
-        if (report_date != '' && report_date != null && report_date != undefined)
-        {
-            var request_data = { "perform_action" : "get_daily_activity_overview", "report_date" : report_date};
+        if (report_date != '' && report_date != null && report_date != undefined) {
+            var request_data = {
+                "perform_action": "get_daily_activity_overview",
+                "report_date": report_date
+            };
 
             var my_request;
             var my_url = '<?php echo base_url('manage_admin/reports/daily_activity_overview_report/ajax_responder'); ?>';
@@ -121,15 +123,15 @@
             $('#main_container_for_ajax_response').html('<div class="cssload-loader"></div>');
 
             my_request = $.ajax({
-                url : my_url,
+                url: my_url,
                 type: 'POST',
                 data: request_data
             });
 
-            my_request.done(function (response) {
-                 //console.log(response);
-                 $('.bt-panel').show();
-                 $('#main_container_for_ajax_response').html(response);
+            my_request.done(function(response) {
+                //console.log(response);
+                $('.bt-panel').show();
+                $('#main_container_for_ajax_response').html(response);
             });
 
 
@@ -138,13 +140,12 @@
         }
 
     }
-    
-    
-    function print_page(elem)
-    {
+
+
+    function print_page(elem) {
         var data = ($(elem).html());
         var mywindow = window.open('', 'Print Report', 'height=800,width=1200');
-        
+
         mywindow.document.write('<html><head><title>' + '<?php echo $page_title; ?>' + '</title>');
         mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/style.css'); ?>" type="text/css" />');
         mywindow.document.write('<link rel="stylesheet" href="<?php echo site_url('assets/manage_admin/css/font-awesome-animation.min.css'); ?>" type="text/css" />');
@@ -164,7 +165,7 @@
         mywindow.document.write('</body></html>');
         mywindow.document.write('<scr' + 'ipt src="<?php echo site_url('assets/manage_admin/js/jquery-1.11.3.min.js'); ?>"></scr' + 'ipt>');
         mywindow.document.write('<scr' + 'ipt type="text/javascript">$(window).load(function() { window.print(); window.close(); });</scr' + 'ipt>');
-        mywindow.document.close(); 
-        mywindow.focus(); 
+        mywindow.document.close();
+        mywindow.focus();
     }
 </script>

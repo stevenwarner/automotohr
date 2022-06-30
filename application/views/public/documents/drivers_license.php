@@ -182,7 +182,8 @@
         $('.jsSelect').select2();
         $('.jsDatePicker').datepicker({
             changeMonth: true,
-            changeYear: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         });
         //
         setData();

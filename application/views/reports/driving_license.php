@@ -217,13 +217,15 @@
         // Filter Start
         $('#js-issue-date').datepicker({ 
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
-            changeMonth: true
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         })
         $('#js-expiration-date').datepicker({ 
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
-            changeMonth: true
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         })
 
         $('#js-apply-filter').click(applyFilter);

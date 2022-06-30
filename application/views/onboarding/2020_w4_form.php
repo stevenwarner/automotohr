@@ -1346,7 +1346,10 @@
             dateFormat: 'mm-dd-yy',
             setDate: new Date(),
             maxDate: new Date,
-            minDate: new Date()
+            minDate: new Date(),
+            changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>"
         });
 
         $('.date_picker').datepicker({

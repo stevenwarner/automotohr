@@ -146,8 +146,9 @@
     jQuery(function () {
         $("#startdate").datepicker({
             dateFormat: 'mm-dd-yy',
-            changeYear: true,
             changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() + 1);
@@ -162,8 +163,9 @@
         $("#enddate").datepicker({
             dateFormat: 'mm-dd-yy',
             setDate: new Date(),
-            changeYear: true,
             changeMonth: true,
+                changeYear: true,
+                yearRange: "<?php echo DOB_LIMIT; ?>",
             onSelect: function (selected) {
                 var dt = $.datepicker.parseDate("mm-dd-yy", selected);
                 dt.setDate(dt.getDate() - 1);
