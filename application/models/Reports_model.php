@@ -2095,230 +2095,180 @@ class Reports_model extends CI_Model
         );
 
         //
-        $employees = $post['employeeSid'];
-        $companyid = $post['companySid'];
-        //
-        $documentstatus = !is_array($post['employeeStatus']) || $post['employeeStatus'][0] == 'all' ? ['all', 'confidential', 'authorizedsigners', 'approvalflow'] : $post['employeeStatus'];
+        $companyId = $post['companySid'];
+        $employeeArray = $post['employeeSid'];
+        $documentArray = $post['employeeStatus'];
         //
         if ($post['page'] == 1) {
             //
-            $this->db->select('users.sid as employee_sid, users.general_status, users.first_name, users.last_name, users.job_title,users.timezone, users.is_executive_admin, users.access_level_plus, users.access_level, documents_assigned.is_confidential, documents_assigned.confidential_employees');
-            $this->db->join('documents_assigned', 'documents_assigned.user_sid = users.sid');
-            $this->db->from('users');
-            $this->db->where('users.parent_sid', $companyid);
-            // for status
-
-            if ($documentstatus[0] != 'all') {
-                $this->db->group_start();
-                foreach ($documentstatus as $vs) {
-                    if ($vs == "confidential") {
-                        $this->db->or_where('documents_assigned.is_confidential', 1);
-                        $this->db->or_where('documents_assigned.confidential_employees <>', '');
-                    }
-
-                    if ($vs == "authorizedsigners") {
-                        $this->db->or_where('documents_assigned.managersList <>', '');
-                    }
-
-                    if ($vs == "approvalflow") {
-                        $this->db->or_where('documents_assigned.approval_process', 1);
-                        $this->db->or_where('documents_assigned.has_approval_flow', 1);
-                    }
-                }
-                $this->db->group_end();
-            }
-
-
-
-            // for employees
-            if (is_array($employees) && $employees[0] != 'all') {
-                $this->db->where_in('users.sid', $employees);
-            }
-            $r['Count'] = $this->db->count_all_results();
+            $r['Count'] = $this->getDocumentForReportByFilter(
+                $companyId,
+                (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+                (!is_array($documentArray) || in_array('all', $documentArray)) ? ['confidential', 'authorizedsigners', 'approvalflow'] : $documentArray,
+                true
+            );
         }
         //
-        $this->db->select('users.sid as employee_sid, users.general_status, users.first_name, users.last_name, users.job_title,users.timezone, users.is_executive_admin, users.access_level_plus, users.access_level,documents_assigned.is_confidential, documents_assigned.confidential_employees, documents_assigned.document_title, documents_assigned.managersList,documents_assigned.visible_to_payroll, documents_assigned.allowed_roles, documents_assigned.allowed_employees, documents_assigned.allowed_departments, documents_assigned.allowed_teams,documents_assigned.is_available_for_na, documents_assigned.document_approval_employees');
-        $this->db->join('documents_assigned', 'documents_assigned.user_sid = users.sid');
-        $this->db->from('users');
-        $this->db->where('users.parent_sid', $companyid);
-        // for status
-
-        if ($documentstatus[0] != 'all') {
-            $this->db->group_start();
-            foreach ($documentstatus as $vs) {
-                if ($vs == "confidential") {
-                    $this->db->or_where('documents_assigned.is_confidential', 1);
-                    $this->db->or_where('documents_assigned.confidential_employees <>', '');
-                }
-
-                if ($vs == "authorizedsigners") {
-                    $this->db->or_where('documents_assigned.managersList <>', '');
-                }
-
-                if ($vs == "approvalflow") {
-                    $this->db->or_where('documents_assigned.approval_process', 1);
-                    $this->db->or_where('documents_assigned.has_approval_flow', 1);
-                }
-            }
-            $this->db->group_end();
-        }
-
-
-        // for employees
-        if (is_array($employees) && $employees[0] != 'all') {
-            $this->db->where_in('users.sid', $employees);
-        }
-        // pagination
-        if (!$csv) {
-            $this->db->limit($offSet, $inSet);
-        }
-        $this->db->order_by('first_name', 'ASC');
-        //
-        $holderArray = $this->db->get()->result_array();
+        $holderArray = $this->getDocumentForReportByFilter(
+            $companyId,
+            (!is_array($employeeArray) || in_array('all', $employeeArray)) ? [] : $employeeArray,
+            (!is_array($documentArray) || in_array('all', $documentArray)) ? ['confidential', 'authorizedsigners', 'approvalflow'] : $documentArray,
+            false,
+            !$csv ? [$offSet, $inSet] : []
+        );
         //
         if (!$holderArray) {
             return $r;
         }
         //
-
-        foreach ($holderArray as $k => $v) {
-            // confidential employees
-            if ($holderArray[$k]['confidential_employees'] != 'NULL') {
-                $confidential_employees_rows = $this->list_document_employees($holderArray[$k]['confidential_employees']);
-            }
-
-            if ($confidential_employees_rows) {
-                if ($confidential_employees_rows != 'all') {
-                    $confidential_employee_name  = ' ';
-                    foreach ($confidential_employees_rows as $confidential_row) {
-                        $confidential_employee_name  =  $confidential_employee_name . ' - ' . remakeEmployeeName($confidential_row) . "<hr class='employespan'>";
-                    }
-                    $holderArray[$k]['confidentialemployees'] = $confidential_employee_name;
-                    $holderArray[$k]['confidentialemployeeslable'] = count($confidential_employees_rows) . ' Employees <br> <br>';
-                } else {
-                    $holderArray[$k]['confidentialemployeeslable'] = 'All';
-                }
-            } else {
-                $holderArray[$k]['confidentialemployees'] = '';
-                $holderArray[$k]['confidentialemployeeslable'] = '';
-            }
-
-            // Authorized Management Signers start
-            if ($holderArray[$k]['managersList'] != 'NULL') {
-                $managerslist_employees_rows = $this->list_document_employees($holderArray[$k]['managersList']);
-            }
-
-            if ($managerslist_employees_rows) {
-                if ($managerslist_employees_rows != 'all') {
-                    $manager_name  = ' ';
-                    foreach ($managerslist_employees_rows as $manager_row) {
-                        $manager_name  =  $manager_name . ' - ' . remakeEmployeeName($manager_row) . "<hr class='employespan'>";
-                    }
-                    $holderArray[$k]['authorized_manager_name'] = $manager_name;
-                    $holderArray[$k]['authorized_manager_namelable'] = count($managerslist_employees_rows) . ' Employees <br> <br> ';
-                } else {
-                    $holderArray[$k]['authorized_manager_namelable'] = 'All';
-                }
-            } else {
-                $holderArray[$k]['authorized_manager_namelable'] = '';
-            }
-
-            // Visible To Payroll start
-            if ($holderArray[$k]['allowed_employees'] != 'NULL') {
-                $allowed_employees_rows = $this->list_document_employees($holderArray[$k]['allowed_employees']);
-            }
-
-            if ($allowed_employees_rows) {
-                if ($allowed_employees_rows != 'all') {
-                    $allowed_employees_name  = '<div><span class="majorpoints"><span class="majorpointslegend expandheading">' . count($allowed_employees_rows) . ' Employees <br></span><div class="hider" style="display:none" >';
-                    foreach ($allowed_employees_rows as $allowed_employees_rows_row) {
-                        $allowed_employees_name  =  $allowed_employees_name . ' - ' . remakeEmployeeName($allowed_employees_rows_row) . "<hr class='employespan'>";
-                    }
-                    $holderArray[$k]['allowed_employees_name'] = $allowed_employees_name . "</div></div>";
-                } else {
-                    $holderArray[$k]['allowed_employees_name'] = "All";
-                }
-            } else {
-                $holderArray[$k]['allowed_employees_name'] = '';
-            }
-
-            // Allowed Departments start
-            if ($holderArray[$k]['allowed_departments'] != 'NULL') {
-
-                $allowed_departments = explode(',', $holderArray[$k]['allowed_departments']);
-                $this->db->select('name as department_name');
-                $this->db->where_in('sid', $allowed_departments);
-                $allowed_departments_rows =  $this->db->get('departments_management')->result_array();
-            }
-
-            if ($allowed_departments_rows) {
-                $allowed_departments_name  = '<div><span class="majorpoints"><span class="majorpointslegend expandheading">' . count($allowed_departments_rows) . ' Departments: </span><div class="hider" style="display:none" >';
-                foreach ($allowed_departments_rows as $allowed_departments_row) {
-                    $allowed_departments_name  =  $allowed_departments_name . ' - ' . $allowed_departments_row['department_name'] . "<br>";
-                }
-                $holderArray[$k]['allowed_departments_name'] = $allowed_departments_name . "</div></div>";
-            } else {
-                $holderArray[$k]['allowed_departments_name'] = '';
-            }
-
-            // Allowed Teams start
-            if ($holderArray[$k]['allowed_teams'] != 'NULL') {
-                $allowed_teams = explode(',', $holderArray[$k]['allowed_teams']);
-                $this->db->select('name as team_name');
-                $this->db->where_in('sid', $allowed_teams);
-                $allowed_teams_rows =  $this->db->get('departments_team_management')->result_array();
-            }
-
-            if ($allowed_teams_rows) {
-                $allowed_teams_name  = '<div><span class="majorpoints"><span class="majorpointslegend expandheading">' . count($allowed_departments_rows) . ' Teams: </span><div class="hider" style="display:none" >';
-                foreach ($allowed_teams_rows as $allowed_teams_row) {
-                    $allowed_teams_name  =  $allowed_teams_name . ' - ' . $allowed_teams_row['team_name'] . "<br>";
-                }
-                $holderArray[$k]['allowed_teams_name'] = $allowed_teams_name . "</div></div>";
-            } else {
-                $holderArray[$k]['allowed_teams_name'] = '';
-            }
-            // Allowed Teams end
-
-            if (!empty($holderArray[$k]['is_available_for_na'])) {
-                $holderArray[$k]['is_available_for_na'] = "<b>Roles:</b> <br>" . $holderArray[$k]['is_available_for_na'] . "<br><br>";
-            } else {
-                $holderArray[$k]['is_available_for_na'] = '';
-            }
-
-            // Approval Flow Employees start
-            if ($holderArray[$k]['document_approval_employees'] != 'NULL') {
-                $document_approval_employees_rows = $this->list_document_employees($holderArray[$k]['document_approval_employees']);
-            }
-
-            if ($document_approval_employees_rows) {
-                $approval_employees_name  = ' ';
-                if ($document_approval_employees_rows != 'all') {
-                    foreach ($document_approval_employees_rows as $approval_employees_row) {
-                        $approval_employees_name  =  $approval_employees_name . ' - ' . remakeEmployeeName($approval_employees_row) . "<hr class='employespan'>";
-                    }
-                    $holderArray[$k]['approval_employees_name'] = $approval_employees_name;
-                    $holderArray[$k]['approval_employees_namelable'] = count($document_approval_employees_rows) . ' Employees <br><br>';
-                } else {
-                    $holderArray[$k]['approval_employees_namelable'] = "All";
-                }
-            } else {
-                $holderArray[$k]['approval_employees_namelable'] = '';
-            }
-        }
+        foreach($holderArray as $k => $v):
+            //
+            if($v['allowed_departments']):
+                $holderArray[$k]['allowed_departments'] = $this->getDepartmentByIds(explode(',', $v['allowed_departments']), 'name');
+            endif;
+            //
+            if($v['allowed_teams']):
+                $holderArray[$k]['allowed_teams'] = $this->getTeamByIds(explode(',', $v['allowed_teams']), 'name');
+            endif;
+        endforeach;
         //
-        $r['Data'] = array_values($holderArray);
+        $r['Data'] = $holderArray;
         //
         return $r;
     }
 
-    // Get comma separated  employes list 
-    function list_document_employees($employees)
-    {
-        if ($employees == '-1') return 'all';
-        $employees_array = explode(',', $employees);
-        $this->db->select('sid as employee_sid, general_status, first_name, last_name, job_title,timezone, is_executive_admin, access_level_plus, access_level');
-        $this->db->where_in('sid', $employees_array);
-        return  $this->db->get('users')->result_array();
+    /**
+     * 
+     */
+    private function getDocumentForReportByFilter(
+        $companyId,
+        $employeeArray = [],
+        $documentStatus = [],
+        $doCount = false,
+        $limit = []
+    ){
+        //
+        if(!$doCount):
+            //
+            $this->db->select('
+                documents_assigned.user_sid,
+                documents_assigned.user_type,
+                documents_assigned.document_title,
+                documents_assigned.is_confidential,
+                documents_assigned.confidential_employees,
+                documents_assigned.managersList as authorize_signers,
+                documents_assigned.visible_to_payroll,
+                documents_assigned.allowed_roles,
+                documents_assigned.allowed_employees,
+                documents_assigned.allowed_departments,
+                documents_assigned.allowed_teams,
+                documents_assigned.document_approval_employees
+            ');
+        endif;
+        // Common
+        $this->db
+        ->from('documents_assigned')
+        ->join('users', 'users.sid = documents_assigned.user_sid')
+        ->where('documents_assigned.user_type', 'employee')
+        ->where('users.terminated_status', 0)
+        ->where('users.active', 1)
+        ->where('documents_assigned.company_sid', $companyId);
+        // Filter
+
+        // Employee filter
+        if($employeeArray):
+            $this->db->where_in('documents_assigned.user_sid', $employeeArray);
+        endif;
+        
+        // Status filter
+        if($documentStatus):
+            $this->db->group_start();
+            //
+            if (in_array("confidential", $documentStatus)) {
+                $this->db->or_where('documents_assigned.is_confidential', 1);
+                $this->db->or_where('documents_assigned.confidential_employees <>', '');
+            }
+            //
+            if (in_array("authorizedsigners", $documentStatus)) {
+                $this->db->or_where('documents_assigned.managersList <>', '');
+            }
+            //
+            if (in_array("approvalflow", $documentStatus)) {
+                $this->db->or_where('documents_assigned.approval_process', 1);
+                $this->db->or_where('documents_assigned.has_approval_flow', 1);
+            }
+            //
+            $this->db->group_end();
+        endif;
+        //
+        if($doCount):
+            return $this->db->count_all_results();
+        endif;
+        //
+        if(isset($limit[0])):
+            $this->db->limit($limit[0], $limit[1]);
+        endif;
+        //
+        $this->db->order_by('users.first_name', 'ASC');
+        //
+        $result = $this->db->get();
+        //
+        return $result ? $result->result_array() : [];
+    }
+
+    /**
+     * 
+     */
+    private function getDepartmentByIds(
+        $ids,
+        $column
+    ){
+        //
+        $d = 
+        $this->db
+        ->select($column)
+        ->where_in('sid', $ids)
+        ->order_by('name', 'ASC')
+        ->get('departments_management');
+        //
+        if(!$d){
+            return [];
+        }
+        //
+        $records = $d->result_array();
+        //
+        if(!$records){
+            return [];
+        }
+        //
+        return array_column($records, $column);
+    }
+
+    /**
+     * 
+     */
+    private function getTeamByIds(
+        $ids,
+        $column
+    ){
+        //
+        $d = 
+        $this->db
+        ->select($column)
+        ->where_in('sid', $ids)
+        ->order_by('name', 'ASC')
+        ->get('departments_team_management');
+        //
+        if(!$d){
+            return [];
+        }
+        //
+        $records = $d->result_array();
+        //
+        if(!$records){
+            return [];
+        }
+        //
+        return array_column($records, $column);
     }
 }

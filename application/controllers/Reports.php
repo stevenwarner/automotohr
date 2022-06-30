@@ -3018,12 +3018,13 @@ class Reports extends Public_Controller
 
     function employee_document()
     {
-        if (!$this->session->userdata('logged_in')) redirect('login', "refresh");
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login', "refresh");
+        }
         //
         $data['session'] = $this->session->userdata('logged_in');
         $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
         check_access_permissions($data['security_details'], 'my_settings', 'reports');
-        // print_r( $data['session']);
         $company_sid   = $data['session']['company_detail']['sid'];
         //
         $data['title'] = 'Employee Document Report';
@@ -3039,29 +3040,29 @@ class Reports extends Public_Controller
 
             if (sizeof($employeedocument['Data'])) {
 
-                header('Content-Type: text/csv; charset=utf-8');
-                header("Content-Disposition: attachment; filename=Employee_document_report_" . (date('YmdHis')) . ".csv");
-                $output = fopen('php://output', 'w');
-                fputcsv($output, array("Exported By: " . $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name'] . "\n" . " Export Date: " . date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR));
+                // header('Content-Type: text/csv; charset=utf-8');
+                // header("Content-Disposition: attachment; filename=Employee_document_report_" . (date('YmdHis')) . ".csv");
+                // $output = fopen('php://output', 'w');
+                // fputcsv($output, array("Exported By: " . $data['session']['employer_detail']['first_name'] . " " . $data['session']['employer_detail']['last_name'] . "\n" . " Export Date: " . date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR));
 
-                fputcsv($output, array('Employee', 'Document Title', 'isconfidential', 'confidentialemployees', 'Visible To Payroll' , 'Approval Flow'));
+                // fputcsv($output, array('Employee', 'Document Title', 'isconfidential', 'confidentialemployees', 'Visible To Payroll' , 'Approval Flow'));
 
-                foreach ($employeedocument['Data'] as $row_document) {
-                    $a = array();
-                    $a[] = remakeEmployeeName($row_document);
-                    $a[] = $row_document['document_title'];
-                    $a[] = strip_tags($row_document['authorized_manager_name']) != '' ? strip_tags($row_document['authorized_manager_name']) : '';
-                    $a[] = $row_document['is_confidential'] == '1' ? 'Yes' : 'No';
-                    $a[] = strip_tags($row_document['confidentialemployees']) != '' ? strip_tags($row_document['confidentialemployees']) : '';
-                    $a[] = $row_document['visible_to_payroll'] == '1' ? 'Yes' : 'No' . strip_tags($row_document['allowed_employees_name']) . strip_tags($row_document['is_available_for_na']) . strip_tags($row_document['allowed_departments_name']) . strip_tags($row_document['allowed_teams_name']);
-                    $a[] = strip_tags($row_document['approval_employees_name']) != '' ? strip_tags($row_document['approval_employees_name']) : '';
+                // foreach ($employeedocument['Data'] as $row_document) {
+                //     $a = array();
+                //     $a[] = remakeEmployeeName($row_document);
+                //     $a[] = $row_document['document_title'];
+                //     $a[] = strip_tags($row_document['authorized_manager_name']) != '' ? strip_tags($row_document['authorized_manager_name']) : '';
+                //     $a[] = $row_document['is_confidential'] == '1' ? 'Yes' : 'No';
+                //     $a[] = strip_tags($row_document['confidentialemployees']) != '' ? strip_tags($row_document['confidentialemployees']) : '';
+                //     $a[] = $row_document['visible_to_payroll'] == '1' ? 'Yes' : 'No' . strip_tags($row_document['allowed_employees_name']) . strip_tags($row_document['is_available_for_na']) . strip_tags($row_document['allowed_departments_name']) . strip_tags($row_document['allowed_teams_name']);
+                //     $a[] = strip_tags($row_document['approval_employees_name']) != '' ? strip_tags($row_document['approval_employees_name']) : '';
                    
-                    fputcsv($output, $a);
-                }
+                //     // fputcsv($output, $a);
+                // }
 
-                fclose($output);
+                // fclose($output);
 
-                exit;
+                // exit;
             }
         }
         //

@@ -4,23 +4,24 @@
         font-size: 14x;
         color: #0c0cff;
         text-decoration: underline;
-       
+
     }
 
     .expandheadingall {
         font-size: 14x;
         color: #0c0cff;
-       
+
     }
-    hr.employespan{
-     
-      border-top: 1px solid #dddddd;
-      margin-top: 10px;
-      margin-bottom: 10px;
-   
-       }
 
+    hr.employespan {
+        border-top: 1px solid #dddddd;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 
+    .vam{
+        vertical-align: middle;
+    }
 </style>
 <div class="main-content">
     <div class="dashboard-wrp">
@@ -165,6 +166,7 @@
                 employeeStatus: 'all',
                 page: 1
             },
+            localEmployeeONJ = {},
             pOBJ = {
                 'fetchReport': {
                     page: 1,
@@ -175,7 +177,6 @@
                     cb: fetchReport
                 }
             };
-
         fetchFilter();
         // loader(false);
 
@@ -253,7 +254,8 @@
                 rows += allRow;
                 if (filterData !== undefined && filterData.length != 0) {
                     filterData.map(function(employee) {
-                        rows += '<option value="' + (employee.employeeId) + '">' + (remakeEmployeeName(employee)) + '</option>';
+                        localEmployeeONJ[employee.employeeId] = remakeEmployeeName(employee);
+                        rows += '<option value="' + (employee.employeeId) + '">' + (localEmployeeONJ[employee.employeeId]) + '</option>';
                     });
                 }
                 $('#js-employee').html(rows);
@@ -343,6 +345,7 @@
 
 
         }
+
         //
         function setTable() {
             if (pOBJ.fetchReport.records.length == 0) return;
@@ -350,48 +353,25 @@
             var rows = '';
             //
             pOBJ.fetchReport.records.map(function(record) {
-
                 //
-                var cl_confidential = 'success';
-                if (record.is_confidential == '1') {
-                    cl_confidential = 'danger';
-                }
+                console.log({record})
 
-                var cl_visible_to_payroll = 'danger';
-                if (record.visible_to_payroll == '1') {
-                    cl_visible_to_payroll = 'success';
-                }
-
-                var expandheading = ' expandheading';
-                var majorpoints = ' majorpoints';
-                var expandheadingauth = ' expandheading';
-                var majorpointsauth = ' majorpoints';
-                var expandheadingapprov_flow = ' expandheading';
-                var majorpointsapprov_flow = ' majorpoints';
-
-                if (record.confidentialemployeeslable == "All") {
-                    expandheading = 'expandheadingall';
-                    majorpoints = '';
-                }
-                if (record.authorized_manager_namelable == "All") {
-                    expandheadingauth = ' expandheadingall';
-                    majorpointsauth = '';
-                }
-
-                if (record.approval_employees_namelable == "All") {
-                    expandheadingapprov_flow = ' expandheadingall';
-                    majorpointsapprov_flow = '';
+                var authSigners = '';
+                //
+                if(record.authorize_signers){
+                    
                 }
 
                 rows += '<tr>';
-                rows += '   <td>' + (remakeEmployeeName(record)) + '</td>';
-                rows += '   <td >' + (record.document_title == '' ? 'N/A' : record.document_title) + '</td>';
-                rows += '   <td class="vam" ><div><span class="' + majorpointsauth + '"><span class="majorpointslegend' + expandheadingauth + '">' + record.authorized_manager_namelable + '</span><div class="hider" style="display:none" >' + (record.authorized_manager_name == '' ? '' : record.authorized_manager_name) + '</div></div></td>';
-                rows += '   <td class="csB7 text-' + (cl_confidential) + '">' + (record.is_confidential == '1' ? 'Yes' : 'No') + '</td>';
-                rows += '   <td class="vam"> <div><span class="' + majorpoints + '"><span class="majorpointslegend ' + expandheading + '">' + record.confidentialemployeeslable + '</span><div class="hider" style="display:none" >' + (record.confidentialemployees == '' ? '' : record.confidentialemployees) + '</div></div> </td>';
-                rows += '   <td ><span class="csB7 text-' + (cl_visible_to_payroll) + '">' + (record.visible_to_payroll == '1' ? 'Yes <br><br>' : 'No <br><br>') + '</span>' + record.is_available_for_na + record.allowed_employees_name + record.allowed_departments_name + record.allowed_teams_name + '</td>';
-                rows += '   <td class="vam"> <div><span class="'+ majorpointsapprov_flow + '"><span class="majorpointslegend' + expandheadingapprov_flow + '">' + record.approval_employees_namelable + '</span><div class="hider" style="display:none" >' + (record.approval_employees_name == '' ? '' : record.approval_employees_name) + '</div></div> </td>';
-
+                rows += '   <td class="vam">';
+                rows += '       <strong>'+(localEmployeeONJ[record.user_sid])+'</strong>';
+                rows += '   </td>';
+                rows += '   <td class="vam">';
+                rows += '       <span>'+(record.document_title)+'</span>';
+                rows += '   </td>';
+                rows += '   <td class="vam">';
+                rows += '       <span>'+(record.document_title)+'</span>';
+                rows += '   </td>';
                 rows += '</tr>';
             });
             //
