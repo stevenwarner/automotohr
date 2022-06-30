@@ -434,7 +434,10 @@ class Dependents extends Public_Controller
                         $data['session']['company_detail']['CompanyName'],
                         $userData['first_name'],
                         $userData['last_name'],
-                        $sid
+                        $sid,
+                        [],
+                        $type
+
                     );
                 }
                 $this->session->set_flashdata('message', '<b>Success:</b> Dependent info updated successfully');
@@ -619,7 +622,9 @@ class Dependents extends Public_Controller
                         $data['session']['company_detail']['CompanyName'],
                         $userData['first_name'],
                         $userData['last_name'],
-                        $sid
+                        $sid,
+                        [],
+                        $type
                     );
                 }
                 $this->session->set_flashdata('message', '<b>Success:</b> Dependent info saved successfully');

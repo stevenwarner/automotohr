@@ -10000,13 +10000,12 @@ class Hr_documents_management extends Public_Controller
                         $replacement_array['baseurl'] = base_url();
                         $replacement_array['url'] = base_url('hr_documents_management/my_documents');
                         //
-                        $this->hr_documents_management_model->update_employee($post['userSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
-                        //
                         $user_extra_info = array();
                         $user_extra_info['user_sid'] = $post['userSid'];
                         $user_extra_info['user_type'] = $post['userType'];
                         //
                         $this->load->model('Hr_documents_management_model', 'HRDMM');
+                        
                         if ($this->HRDMM->isActiveUser($post['userSid'], $post['userType'])) {
                             //
                             if ($this->hr_documents_management_model->doSendEmail($post['userSid'], $post['userType'], "HREMS13")) {

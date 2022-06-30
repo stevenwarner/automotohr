@@ -406,7 +406,10 @@ class Direct_deposit extends Public_Controller
                     $session['company_detail']['CompanyName'],
                     $userData['first_name'],
                     $userData['last_name'],
-                    $user_sid
+                    $user_sid,
+                    [],
+                    $user_type
+
                 );
             }    
 

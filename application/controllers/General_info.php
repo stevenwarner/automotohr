@@ -206,7 +206,6 @@ class General_info extends Public_Controller {
                         //
                         checkAndInsertCompletedDocument($cpArray);
 
-
                         // Only send if dosend is true
                         if($doSend == true){
 

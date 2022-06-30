@@ -394,7 +394,9 @@ class Form_w4 extends Public_Controller
                         $data['session']['company_detail']['CompanyName'],
                         $data['first_name'],
                         $data['last_name'],
-                        $data['users_sid']
+                        $data['users_sid'],
+                        [],
+                        $type
                     );
                 }
 
