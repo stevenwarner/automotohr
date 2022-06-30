@@ -30,6 +30,15 @@ class Direct_deposit extends Public_Controller
             $company_sid = $data["session"]["company_detail"]["sid"];
             $company_name = $data['session']['company_detail']['CompanyName'];
 
+            //
+            if($type == 'employee'){
+                $exits = $this->direct_deposit_model->checkDDI($type, $sid, $company_sid);
+                //
+                if($exits == 0){
+                    $type = 'applicant';
+                }
+            }
+
             if ($sid == NULL && $type == NULL) {
                 $sid = $employer_sid;
                 $left_navigation = 'manage_employer/employee_management/profile_right_menu_personal';
