@@ -1447,10 +1447,10 @@ class Settings extends Public_Controller
                 $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('RadioButtonListDriversLicenseTraffic', 'guilty', 'required|trim|xss_clean');
-            }
-            
-            if($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No'){
-                $this->form_validation->set_rules('license_guilty_details_violation', 'Violation', 'required|trim|xss_clean');
+
+                if($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No'){
+                    $this->form_validation->set_rules('license_guilty_details_violation', 'Violation', 'required|trim|xss_clean');
+                }
             }
             
             //

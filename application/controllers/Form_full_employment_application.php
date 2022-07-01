@@ -8,7 +8,7 @@ class Form_full_employment_application extends CI_Controller {
         $this->load->model('dashboard_model');
     }
 
-    public function index($verification_key = null) {
+    public function index($verification_key = null) { 
       
         if ($verification_key != null) {
 
@@ -344,10 +344,12 @@ class Form_full_employment_application extends CI_Controller {
                     $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
                     $this->form_validation->set_rules('RadioButtonListDriversLicenseTraffic', 'guilty', 'required|trim|xss_clean');
+
+                    if($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No'){
+                        $this->form_validation->set_rules('license_guilty_details_violation', 'Violation', 'required|trim|xss_clean');
+                    }
                 }
-                if($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No'){
-                    $this->form_validation->set_rules('license_guilty_details_violation', 'Violation', 'required|trim|xss_clean');
-                }
+                
                 //
                 if($data['l_employment']){
                     $this->form_validation->set_rules('TextBoxEmploymentEmployerName1', 'Employment Type', 'required|trim|xss_clean');
@@ -377,6 +379,10 @@ class Form_full_employment_application extends CI_Controller {
                 }
                 
                 if ($this->form_validation->run() == false) {
+                    //
+                    // echo validation_errors();
+                    // die();
+                    //
                     $data['states'] = db_get_active_states(227);
                     $data['starting_year_loop'] = 1930;
                     $suffix_values = array();
