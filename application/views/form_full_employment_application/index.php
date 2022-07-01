@@ -2578,7 +2578,7 @@
 <?php                                                       $key = 'signature_date'; ?>
                                                                 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <div class="calendar-picker">
-                                                            <input <?php echo $readonly_check; ?> type="text" class="invoice-fields startdate" readonly="" name="signature_date" id="signature_date" value="<?php echo set_value($key, $def_value); ?>" />
+                                                            <input <?php echo $readonly_check; ?> type="text" class="invoice-fields  " readonly name="signature_date" id="signature_date" value="<?php echo set_value($key, $def_value); ?>" />
                                                         </div>
                                                                 <?php echo form_error($key); ?>
                                                     </div>
@@ -3011,14 +3011,22 @@
         }
 
         $('.startdate').datepicker({dateFormat: 'mm-dd-yy', changeMonth: true, changeYear: true, yearRange: "-100:+50", }).val();
+        
+        $('#signature_date').datepicker({
+            dateFormat: 'mm-dd-yy',
+            setDate: new Date(),
+            maxDate: new Date,
+            minDate: new Date(),
+         }).val();
+
+        
 
         <?php if ($signed_flag == false) { ?>
             $(document).ready(function () {
                 $('.startdate').datepicker({
                     dateFormat: 'mm/dd/yy',
-                    changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+                    changeYear: true,
+                    yearRange: "<?php echo DOB_LIMIT; ?>"
                 }).val();
 
                 //Disable Autocomplete

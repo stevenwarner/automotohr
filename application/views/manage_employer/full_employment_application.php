@@ -3533,7 +3533,7 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
                                                     <div class="col-lg-4">
 <?php $def_value = (isset($formpost['signature_date']) ? $formpost['signature_date'] : '' ); ?>
                                                         <div class="calendar-picker">
-                                                            <input  type="text" class="invoice-fields startdate" name="signature_date" id="signature_date" value="<?php echo set_value('signature_date', $def_value); ?>" />
+                                                            <input  type="text" class="invoice-fields " name="signature_date" id="signature_date" value="<?php echo set_value('signature_date', $def_value); ?>"/>
                                                         </div>
                                                                 <?php echo form_error('signature_date'); ?>
                                                     </div>
@@ -3906,6 +3906,14 @@ if (isset($formpost['CheckBoxAgree']) && $formpost['CheckBoxAgree'] == 1) {
             changeYear: true,
             yearRange: "-100:+50"
         }).val();
+
+        $('#signature_date').datepicker({
+            dateFormat: 'mm-dd-yy',
+            setDate: new Date(),
+            maxDate: new Date,
+            minDate: new Date(),
+        }).val();
+        
 
         $('#dob').datepicker({
             dateFormat: 'mm-dd-yy',
