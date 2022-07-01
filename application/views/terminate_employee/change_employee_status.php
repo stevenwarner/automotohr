@@ -50,7 +50,7 @@
                                                     </optgroup>
                                                     
                                                     <optgroup label="Voluntary">    
-                                                        <option value="4">Voluntary</option>
+                                                        <option value="4">Personal</option>
                                                         <option value="5">Another Job</option>
                                                         <option value="6">Problem with Supervisor</option>
                                                         <option value="7">Relocation</option>

@@ -82,9 +82,39 @@
                                                                                 echo 'Fired';
                                                                             } else if ($reason == 3) {
                                                                                 echo 'Tenure Completed';
+                                                                            } else if ($reason == 4) {
+                                                                                echo 'Personal';
+                                                                            } else if ($reason == 5) {
+                                                                                echo 'Personal';
+                                                                            } else if ($reason == 6) {
+                                                                                echo 'Problem with Supervisor';
+                                                                            } else if ($reason == 7) {
+                                                                                echo 'Relocation';
+                                                                            } else if ($reason == 8) {
+                                                                                echo 'Work Schedule';
+                                                                            } else if ($reason == 9) {
+                                                                                echo 'Retirement';
+                                                                            } else if ($reason == 10) {
+                                                                                echo 'Return to School';
+                                                                            } else if ($reason == 11) {
+                                                                                echo 'Pay';
+                                                                            } else if ($reason == 12) {
+                                                                                echo 'Without Notice/Reason';
+                                                                            } else if ($reason == 13) {
+                                                                                echo 'Involuntary';
+                                                                            } else if ($reason == 14) {
+                                                                                echo 'Violating Company Policy';
+                                                                            } else if ($reason == 15) {
+                                                                                echo 'Attendance Issues';
+                                                                            } else if ($reason == 16) {
+                                                                                echo 'Performance';
+                                                                            } else if ($reason == 17) {
+                                                                                echo 'Workforce Reduction';
                                                                             } else {
                                                                                 echo 'N/A';
                                                                             }
+
+
                                                                         } else {
                                                                             echo 'N/A';
                                                                         } 

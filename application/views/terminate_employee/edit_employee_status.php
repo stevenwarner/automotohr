@@ -51,21 +51,23 @@
                                                     </optgroup>
                                                     
                                                     <optgroup label="Voluntary">
-                                                        <option value="4" <?= $status_data['termination_reason'] == 4 ? 'selected="selected"': '';?>>Another Job</option>
-                                                        <option value="5" <?= $status_data['termination_reason'] == 5 ? 'selected="selected"': '';?>>Problem with Supervisor</option>
-                                                        <option value="6" <?= $status_data['termination_reason'] == 6 ? 'selected="selected"': '';?>>Relocation</option>
-                                                        <option value="7" <?= $status_data['termination_reason'] == 7 ? 'selected="selected"': '';?>>Work Schedule</option>
-                                                        <option value="8" <?= $status_data['termination_reason'] == 8 ? 'selected="selected"': '';?>>Retirement</option>
-                                                        <option value="9" <?= $status_data['termination_reason'] == 9 ? 'selected="selected"': '';?>>Return to School</option>
-                                                        <option value="10" <?= $status_data['termination_reason'] == 10 ? 'selected="selected"': '';?>>Pay</option>
-                                                        <option value="11" <?= $status_data['termination_reason'] == 11 ? 'selected="selected"': '';?>>Without Notice/Reason</option>
+                                                        <option value="4" <?= $status_data['termination_reason'] == 4 ? 'selected="selected"': '';?>>Personal</option>
+                                                        <option value="5" <?= $status_data['termination_reason'] == 5 ? 'selected="selected"': '';?>>Another Job</option>
+                                                        <option value="6" <?= $status_data['termination_reason'] == 6 ? 'selected="selected"': '';?>>Problem with Supervisor</option>
+                                                        <option value="7" <?= $status_data['termination_reason'] == 7 ? 'selected="selected"': '';?>>Relocation</option>
+                                                        <option value="8" <?= $status_data['termination_reason'] == 8 ? 'selected="selected"': '';?>>Work Schedule</option>
+                                                        <option value="9" <?= $status_data['termination_reason'] == 9 ? 'selected="selected"': '';?>>Retirement</option>
+                                                        <option value="10" <?= $status_data['termination_reason'] == 10 ? 'selected="selected"': '';?>>Return to School</option>
+                                                        <option value="11" <?= $status_data['termination_reason'] == 11 ? 'selected="selected"': '';?>>Pay</option>
+                                                        <option value="12" <?= $status_data['termination_reason'] == 12 ? 'selected="selected"': '';?>>Without Notice/Reason</option>
                                                     </optgroup>
                                                     
                                                     <optgroup label="Involuntary">
-                                                        <option value="12" <?= $status_data['termination_reason'] == 12 ? 'selected="selected"': '';?>>Violating Company Policy</option>
-                                                        <option value="13" <?= $status_data['termination_reason'] == 13 ? 'selected="selected"': '';?>>Attendance Issues</option>
-                                                        <option value="14" <?= $status_data['termination_reason'] == 14 ? 'selected="selected"': '';?>>Performance</option>
-                                                        <option value="15" <?= $status_data['termination_reason'] == 15 ? 'selected="selected"': '';?>>Workforce Reduction</option>
+                                                        <option value="13" <?= $status_data['termination_reason'] == 13 ? 'selected="selected"': '';?>>Involuntary</option>
+                                                        <option value="14" <?= $status_data['termination_reason'] == 14 ? 'selected="selected"': '';?>>Violating Company Policy</option>
+                                                        <option value="15" <?= $status_data['termination_reason'] == 15 ? 'selected="selected"': '';?>>Attendance Issues</option>
+                                                        <option value="16" <?= $status_data['termination_reason'] == 16 ? 'selected="selected"': '';?>>Performance</option>
+                                                        <option value="17" <?= $status_data['termination_reason'] == 17 ? 'selected="selected"': '';?>>Workforce Reduction</option>
                                                     </optgroup>    
                                                 </select>
                                                 <?php echo form_error('terminated_status'); ?>
