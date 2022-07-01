@@ -592,6 +592,11 @@
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
                                                         <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                        <?php 
+                                                            if ($yes_selected === false && $no_selected === false) {
+                                                                $no_selected = true;
+                                                            }
+                                                        ?>
                                                         <div class="hr-radio-btns">
                                                             <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListWorkTransportation_0" name="RadioButtonListWorkTransportation" type="radio" <?php echo $disabled_check; ?>>
                                                             <label for="RadioButtonListWorkTransportation_0">Yes</label>
@@ -644,6 +649,11 @@
                                                         <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
                                                         <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                        <?php 
+                                                            if ($yes_selected === false && $no_selected === false) {
+                                                                $no_selected = true;
+                                                            }
+                                                        ?>
                                                         <div class="hr-radio-btns">
                                                             <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListAliases_0" name="RadioButtonListAliases" type="radio" <?php echo $disabled_check; ?>>
                                                             <label for="RadioButtonListAliases_0">Yes</label>
@@ -809,6 +819,11 @@
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
                                                             <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php 
+                                                                if ($yes_selected === false && $no_selected === false) {
+                                                                    $no_selected = true;
+                                                                }
+                                                            ?>
                                                             <label class="autoheight">Within the last 5 years, have you ever plead Guilty, No Contest, or been Convicted of any traffic violation(s)? <?=$d_license ? ' <span class="staric dllr">*</span>' : '';?></label>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> id="RadioButtonListDriversLicenseTraffic" value="Yes" name="RadioButtonListDriversLicenseTraffic" type="radio" <?php echo $disabled_check; ?>>
@@ -856,6 +871,11 @@
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
                                                             <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php 
+                                                                if ($yes_selected === false && $no_selected === false) {
+                                                                    $no_selected = true;
+                                                                }
+                                                            ?>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListEducationHighSchoolGraduated_0" name="RadioButtonListEducationHighSchoolGraduated" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListEducationHighSchoolGraduated_0">Yes</label>
@@ -1013,6 +1033,11 @@
                                                                 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
                                                                 <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                                <?php 
+                                                                    if ($yes_selected === false && $no_selected === false) {
+                                                                        $no_selected = true;
+                                                                    }
+                                                                ?>
                                                                 <div class="hr-radio-btns">
                                                                     <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListEducationCollegeGraduated_0" name="RadioButtonListEducationCollegeGraduated" type="radio" <?php echo $disabled_check; ?>>
                                                                     <label for="RadioButtonListEducationCollegeGraduated_0">Yes</label>
@@ -1190,6 +1215,11 @@
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
                                                             <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php 
+                                                                if ($yes_selected === false && $no_selected === false) {
+                                                                    $no_selected = true;
+                                                                }
+                                                            ?>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListEducationOtherGraduated_0" name="RadioButtonListEducationOtherGraduated" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListEducationOtherGraduated_0">Yes</label>
@@ -1600,10 +1630,15 @@
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-7">
                                                         <li class="autoheight">
-<?php $key = 'RadioButtonListEmploymentEmployerContact1_0'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
-                                                        <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php $key = 'RadioButtonListEmploymentEmployerContact1_0'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                            <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php 
+                                                                if ($yes_selected === false && $no_selected === false) {
+                                                                    $no_selected = true;
+                                                                }
+                                                            ?>
                                                             <label class="contact-to-employee">May we contact this employer?</label>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> id="RadioButtonListEmploymentEmployerContact1_0" value="Yes" name="RadioButtonListEmploymentEmployerContact1_0" type="radio" <?php echo $disabled_check; ?>>
@@ -1613,15 +1648,16 @@
                                                                 <input <?php echo set_radio($key, 'No', $no_selected); ?> id="RadioButtonListEmploymentEmployerContact1_1" value="No" name="RadioButtonListEmploymentEmployerContact1_0" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListEmploymentEmployerContact1_1">No</label>
                                                             </div>
+                                                            <br>
+                                                            <span class="required"><?php echo form_error($key); ?></span>
                                                         </li>
-<?php echo form_error('RadioButtonListEmploymentEmployerContact1_0'); ?>
                                                     </div>
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li class="form-col-100 autoheight">
                                                                 <?php $key = 'TextBoxEmploymentEmployerReasonLeave1'; ?>
                                                                 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerReasonLeave1" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                 </div>
@@ -1630,10 +1666,10 @@
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                             <li>
                                                                 <?php $key = 'TextBoxEmploymentEmployerName2'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                                <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Previous Employer</label>
                                                                 <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerName2" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                                <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -1758,10 +1794,10 @@
                                                                 <label></label>
                                                                 <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd2">
                                                                     <option vlaue="">Please Select</option>
-                                                                <?php foreach ($months as $month) { ?>
-                                                                    <?php $def_selected = false; ?>
-                                                                    <?php $cur_value = $month; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                    <?php foreach ($months as $month) { ?>
+                                                                        <?php $def_selected = false; ?>
+                                                                        <?php $cur_value = $month; ?>
+                                                                        <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                         <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
                                                                     <?php } ?>
                                                                 </select>
@@ -1775,12 +1811,12 @@
                                                                 <label></label>
                                                                 <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentYearEnd2">
                                                                     <option value="">Please Select</option>
-<?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
-    <?php $def_selected = false; ?>
-                                                                    <?php $cur_value = $count; ?>
-                                                                    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
-                                                                        <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
-<?php } ?>
+                                                                    <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
+                                                                        <?php $def_selected = false; ?>
+                                                                        <?php $cur_value = $count; ?>
+                                                                        <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                            <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
+                                                                    <?php } ?>
                                                                 </select>
                                                                 <?php echo form_error($key); ?>
                                                             </li>
@@ -1807,8 +1843,8 @@
 <!--                                                        </div>-->
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                             <li>
-<?php $key = 'TextBoxEmploymentEmployerSupervisor2'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                                <?php $key = 'TextBoxEmploymentEmployerSupervisor2'; ?>
+                                                                <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>Supervisor</label>
                                                                 <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerSupervisor2" value="<?php echo set_value($key, $def_value); ?>" type="text">
                                                                 <?php echo form_error($key); ?>
@@ -1823,10 +1859,15 @@
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-7">
                                                             <li class="autoheight">
-<?php $key = 'RadioButtonListEmploymentEmployerContact2_0'; ?>
+                                                                <?php $key = 'RadioButtonListEmploymentEmployerContact2_0'; ?>
                                                                 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
-<?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                                <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                                <?php 
+                                                                    if ($yes_selected === false && $no_selected === false) {
+                                                                        $no_selected = true;
+                                                                    }
+                                                                ?>
                                                                 <label class="contact-to-employee">May we contact this employer?</label>
                                                                 <div class="hr-radio-btns">
                                                                     <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> id="RadioButtonListEmploymentEmployerContact2_0" value="Yes" name="RadioButtonListEmploymentEmployerContact2_0" type="radio" <?php echo $disabled_check; ?>>
@@ -1836,7 +1877,7 @@
                                                                     <input <?php echo set_radio($key, 'No', $no_selected); ?> id="RadioButtonListEmploymentEmployerContact2_1" value="No" name="RadioButtonListEmploymentEmployerContact2_0" type="radio" <?php echo $disabled_check; ?>>
                                                                     <label for="RadioButtonListEmploymentEmployerContact2_1">No</label>
                                                                 </div>
-<?php echo form_error('RadioButtonListEmploymentEmployerContact2_0'); ?>
+                                                                <?php echo form_error('RadioButtonListEmploymentEmployerContact2_0'); ?>
                                                             </li>
                                                         </div>
                                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -1852,11 +1893,11 @@
                                                 <div class="form-col-100">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li>
-<?php $key = 'TextBoxEmploymentEmployerName3'; ?>
+                                                            <?php $key = 'TextBoxEmploymentEmployerName3'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Previous Employer</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerName3" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -1872,11 +1913,11 @@
                                                 <div class="form-col-100">
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li>
-<?php $key = 'TextBoxEmploymentEmployerAddress3'; ?>
+                                                            <?php $key = 'TextBoxEmploymentEmployerAddress3'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Address</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerAddress3" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
@@ -1892,17 +1933,17 @@
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 DropDownListEmploymentEmployerCountry3">
                                                         <li>
                                                             <?php $key = 'DropDownListEmploymentEmployerCountry3'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $country_id = $def_value ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $country_id = $def_value ?>
                                                             <label>Country:</label>
                                                             <select class="invoice-fields" id="country_ee3" name="<?php echo $key; ?>" onchange="getStates(this.value, <?php echo $states; ?>, 'state_ee3')">
                                                                 <option value="">Please Select</option>
                                                             <?php foreach ($active_countries as $active_country) { ?>
                                                                 <?php $default_selected = $country_id == $active_country['sid'] ? true : false; ?>
                                                                     <option <?php echo set_select($key, $active_country['sid'], $default_selected); ?> value="<?= $active_country["sid"]; ?>" > <?= $active_country["country_name"]; ?></option>
-<?php } ?>
+                                                            <?php } ?>
                                                             </select>
-                                                                <?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
 
@@ -1913,15 +1954,15 @@
                                                             <?php $state_id = $def_value ?>
                                                             <label>State:</label>
                                                             <select class="invoice-fields" name="<?php echo $key; ?>" id="state_ee3">
-<?php if (empty($country_id)) { ?>
+                                                                <?php if (empty($country_id)) { ?>
                                                                     <option value="">Select State</option> <?php
-} else {
-    foreach ($active_states[$country_id] as $active_state) {
-        ?>
+                                                                    } else {
+                                                                        foreach ($active_states[$country_id] as $active_state) {
+                                                                ?>
                                                                     <?php $default_selected = $state_id == $active_state['sid'] ? true : false; ?>
                                                                         <option <?php echo set_select($key, $active_state['sid'], $default_selected); ?> value="<?= $active_state["sid"] ?>" ><?= $active_state["state_name"] ?></option>
+                                                                    <?php } ?>
                                                                 <?php } ?>
-<?php } ?>
                                                             </select>
                                                             <?php echo form_error($key); ?>
                                                         </li>
@@ -1931,8 +1972,8 @@
                                                 <div class="form-col-100">
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6">
                                                         <li>
-<?php $key = 'TextBoxEmploymentEmployerPhoneNumber3'; ?>
-                                                                <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $key = 'TextBoxEmploymentEmployerPhoneNumber3'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Telephone</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerPhoneNumber3" value="<?php echo keepSecret(set_value($key, $def_value), "end"); ?>" type="text">
                                                                 <?php echo form_error($key); ?>
@@ -1941,14 +1982,14 @@
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li>
                                                             <?php $key = 'DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin3'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Dates of Employment</label>
                                                             <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin3">
                                                                 <option vlaue="">Please Select</option>
                                                             <?php foreach ($months as $month) { ?>
                                                                 <?php $def_selected = false; ?>
-    <?php $cur_value = $month; ?>
-    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                <?php $cur_value = $month; ?>
+                                                                <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                     <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
                                                                 <?php } ?>
                                                             </select>
@@ -1958,18 +1999,18 @@
                                                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6 select-year">
                                                         <li>
                                                             <?php $key = 'DropDownListEmploymentEmployerDatesOfEmploymentYearBegin3'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label></label>
                                                             <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentYearBegin3">
                                                                 <option value="">Please Select</option>
-<?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
-    <?php $def_selected = false; ?>
-                                                                <?php $cur_value = $count; ?>
-                                                                <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
+                                                                <?php for ($count = $starting_year_loop; $count <= intval(date('Y')); $count++) { ?>
+                                                                    <?php $def_selected = false; ?>
+                                                                    <?php $cur_value = $count; ?>
+                                                                    <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                     <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $count; ?>"><?php echo $count; ?></option>
-<?php } ?>
+                                                                <?php } ?>
                                                             </select>
-                                                                <?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                     <div class="col-lg-1 col-md-1 col-xs-12 col-sm-12">
@@ -1978,12 +2019,12 @@
                                                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6">
                                                         <li>
                                                             <?php $key = 'DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd3'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label></label>
                                                             <select <?php echo $disabled_check; ?> class="invoice-fields" name="DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd3">
                                                                 <option vlaue="">Please Select</option>
-<?php foreach ($months as $month) { ?>
-    <?php $def_selected = false; ?>
+                                                                <?php foreach ($months as $month) { ?>
+                                                                    <?php $def_selected = false; ?>
                                                                     <?php $cur_value = $month; ?>
                                                                     <?php $def_selected = ($def_value == $cur_value ? true : false ); ?>
                                                                     <option <?php echo set_select($key, $cur_value, $def_selected); ?> value="<?php echo $month; ?>"><?php echo $month; ?></option>
@@ -2001,7 +2042,7 @@
                                                                     <option value="<?php echo $count; ?>"><?php echo $count; ?></option>
                                                             <?php } ?>
                                                             </select>
-<?php echo form_error('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd3'); ?>
+                                                            <?php echo form_error('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd3'); ?>
                                                         </li>
                                                     </div>
                                                 </div>
@@ -2026,8 +2067,8 @@
 <!--                                                    </div>-->
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <li>
-<?php $key = 'TextBoxEmploymentEmployerSupervisor3'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $key = 'TextBoxEmploymentEmployerSupervisor3'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <label>Supervisor</label>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerSupervisor3" value="<?php echo set_value($key, $def_value); ?>" type="text">
                                                             <?php echo form_error($key); ?>
@@ -2044,8 +2085,13 @@
                                                         <li class="autoheight">
                                                             <?php $key = 'RadioButtonListEmploymentEmployerContact3_0'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
-<?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                            <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php 
+                                                                if ($yes_selected === false && $no_selected === false) {
+                                                                    $no_selected = true;
+                                                                }
+                                                            ?>
                                                             <label class="contact-to-employee">May we contact this employer?</label>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> id="RadioButtonListEmploymentEmployerContact3_0" value="Yes" name="RadioButtonListEmploymentEmployerContact3_0" type="radio" <?php echo $disabled_check; ?>>
@@ -2055,7 +2101,7 @@
                                                                 <input <?php echo set_radio($key, 'No', $no_selected); ?> id="RadioButtonListEmploymentEmployerContact3_1" value="No" name="RadioButtonListEmploymentEmployerContact3_0" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListEmploymentEmployerContact3_1">No</label>
                                                             </div>
-<?php echo form_error('RadioButtonListEmploymentEmployerContact3_0'); ?>
+                                                            <?php echo form_error('RadioButtonListEmploymentEmployerContact3_0'); ?>
                                                         </li>
 
                                                     </div>
@@ -2064,7 +2110,7 @@
                                                             <?php $key = 'TextBoxEmploymentEmployerReasonLeave3'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxEmploymentEmployerReasonLeave3" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                 </div>
@@ -2073,8 +2119,13 @@
                                                         <li class="form-col-100 autoheight">
                                                             <?php $key = 'RadioButtonListEmploymentEverTerminated'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                            <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
                                                             <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php 
+                                                                if ($yes_selected === false && $no_selected === false) {
+                                                                    $no_selected = true;
+                                                                }
+                                                            ?>
                                                             <label class="autoheight">Have you ever been laid off or terminated from any job or position? </label>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListEmploymentEverTerminated_0" name="RadioButtonListEmploymentEverTerminated" type="radio" <?php echo $disabled_check; ?>>
@@ -2084,18 +2135,18 @@
                                                                 <input <?php echo set_radio($key, 'No', $no_selected); ?> value="No" id="RadioButtonListEmploymentEverTerminated_1" name="RadioButtonListEmploymentEverTerminated" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListEmploymentEverTerminated_1">No</label>
                                                             </div>
-<?php echo form_error('RadioButtonListEmploymentEverTerminated'); ?>
+                                                            <?php echo form_error('RadioButtonListEmploymentEverTerminated'); ?>
                                                         </li>
                                                         <li class="form-col-100 autoheight">
-<?php $key = 'TextBoxEmploymentEverTerminatedReason'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $key = 'TextBoxEmploymentEverTerminatedReason'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <small class="autoheight">If yes, please explain:</small>
                                                             <div class="comment-area">
                                                                 <textarea <?php echo $readonly_check; ?> class="form-col-100 invoice-fields" id="TextBoxEmploymentEverTerminatedReason" maxlength="128" onkeyup="check_length('TextBoxEmploymentEverTerminatedReason')" name="TextBoxEmploymentEverTerminatedReason"><?php echo set_value($key, $def_value); ?></textarea>
                                                                 <span id="TextBoxEmploymentEverTerminatedReason_remaining">128 Characters Left</span>
                                                                 <p style="display: none;" id="TextBoxEmploymentEverTerminatedReason_length">128</p>
                                                             </div>
-<?php echo form_error('TextBoxEmploymentEverTerminatedReason'); ?>
+                                                            <?php echo form_error('TextBoxEmploymentEverTerminatedReason'); ?>
                                                         </li>
                                                     </div>
                                                 </div>
@@ -2104,8 +2155,13 @@
                                                         <li class="form-col-100 autoheight">
                                                             <?php $key = 'RadioButtonListEmploymentEverResign'; ?>
                                                             <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
-<?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
+                                                            <?php $yes_selected = ( $def_value == 'Yes' ? true : false ); ?>
                                                             <?php $no_selected = ( $def_value == 'No' ? true : false ); ?>
+                                                            <?php 
+                                                                if ($yes_selected === false && $no_selected === false) {
+                                                                    $no_selected = true;
+                                                                }
+                                                            ?>
                                                             <label class="autoheight">Have you ever been asked to resign from any job or position?</label>
                                                             <div class="hr-radio-btns">
                                                                 <input <?php echo set_radio($key, 'Yes', $yes_selected); ?> value="Yes" id="RadioButtonListEmploymentEverResign_0" name="RadioButtonListEmploymentEverResign" type="radio" <?php echo $disabled_check; ?>>
@@ -2115,25 +2171,25 @@
                                                                 <input <?php echo set_radio($key, 'No', $no_selected); ?> value="No" id="RadioButtonListEmploymentEverResign_1" name="RadioButtonListEmploymentEverResign" type="radio" <?php echo $disabled_check; ?>>
                                                                 <label for="RadioButtonListEmploymentEverResign_1">No</label>
                                                             </div>
-<?php echo form_error('RadioButtonListEmploymentEverResign'); ?>
+                                                            <?php echo form_error('RadioButtonListEmploymentEverResign'); ?>
                                                         </li>
                                                         <li class="form-col-100 autoheight">
-<?php $key = 'TextBoxEmploymentEverResignReason'; ?>
-                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                            <?php $key = 'TextBoxEmploymentEverResignReason'; ?>
+                                                            <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                             <small class="autoheight">If yes, please explain:</small>
                                                             <div class="comment-area">
                                                                 <textarea <?php echo $readonly_check; ?> class="form-col-100 invoice-fields" id="TextBoxEmploymentEverResignReason" maxlength="128" onkeyup="check_length('TextBoxEmploymentEverResignReason')" name="TextBoxEmploymentEverResignReason"><?php echo set_value($key, $def_value); ?></textarea>
                                                                 <span id="TextBoxEmploymentEverResignReason_remaining">128 Characters Left</span>
                                                                 <p style="display: none;" id="TextBoxEmploymentEverResignReason_length">128</p>
                                                             </div>
-<?php echo form_error('TextBoxEmploymentEverResignReason'); ?>
+                                                            <?php echo form_error('TextBoxEmploymentEverResignReason'); ?>
                                                         </li>
                                                     </div>
                                                 </div>
                                                 <div class="bg-color">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-<?php $key = 'TextBoxEmploymentGaps'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $key = 'TextBoxEmploymentGaps'; ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <li class="form-col-100 autoheight">
                                                             <label class="autoheight">Please explain any "gaps" in your employment history</label>
                                                         </li>
@@ -2143,14 +2199,14 @@
                                                                 <span id="TextBoxEmploymentGaps_remaining">512 Characters Left</span>
                                                                 <p style="display: none;" id="TextBoxEmploymentGaps_length">512</p>
                                                             </div>
-<?php echo form_error($key); ?>
+                                                            <?php echo form_error($key); ?>
                                                         </li>
                                                     </div>
                                                 </div>
                                                 <div class="form-col-100">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-<?php $key = 'TextBoxEmploymentEmployerNoContact'; ?>
-<?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
+                                                        <?php $key = 'TextBoxEmploymentEmployerNoContact'; ?>
+                                                        <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                         <li class="form-col-100 autoheight">
                                                             <label class="autoheight">If you indicated that we may not contact an employer, please explain</label>
                                                         </li>
@@ -2172,7 +2228,7 @@
                                                                 <?php $def_value = (isset($user_info[$key]) ? $user_info[$key] : '' ); ?>
                                                                 <label>References Name</label>
                                                                 <input <?php echo $readonly_check; ?> class="invoice-fields" name="TextBoxReferenceName1" value="<?php echo set_value($key, $def_value); ?>" type="text">
-<?php echo form_error($key); ?>
+                                                                <?php echo form_error($key); ?>
                                                             </li>
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -2667,7 +2723,7 @@
 
             if("<?=$d_license?>" == 1){
                 var DLvalue = $('input[name="RadioButtonListDriversLicenseQuestion"]:checked').val();
-                console.log(DLvalue)
+                
                 if (DLvalue == "Yes") {
                     $("#TextBoxDriversLicenseNumber").prop('required',true);
                     $("#TextBoxDriversLicenseExpiration").prop('required',true);
@@ -2676,9 +2732,8 @@
                     $("#license_guilty_details").prop('required',true);
                     $(".dllr").show();
                 } else {
-                    console.log("here")
                     $("#TextBoxDriversLicenseNumber").prop('required',false);
-                     $("#TextBoxDriversLicenseExpiration").prop('required',false);
+                    $("#TextBoxDriversLicenseExpiration").prop('required',false);
                     $("#country_dl").prop('required',false);
                     $("#state_dl").prop('required',false);
                     $("#license_guilty_details").prop('required',false);
