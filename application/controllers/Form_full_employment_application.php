@@ -380,9 +380,6 @@ class Form_full_employment_application extends CI_Controller {
                 
                 if ($this->form_validation->run() == false) {
                     //
-                    // echo validation_errors();
-                    // die();
-                    //
                     $data['states'] = db_get_active_states(227);
                     $data['starting_year_loop'] = 1930;
                     $suffix_values = array();
@@ -919,75 +916,75 @@ class Form_full_employment_application extends CI_Controller {
                 $this->form_validation->set_rules('CheckBoxAgreement1786', 'CheckBoxAgreement1786', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('CheckBoxAgree', 'Acknowledge Agree', 'required|trim|xss_clean');
                 //
-            $ei = unserialize($data['session']['company_detail']['extra_info']);
-            //
-            $data['eight_plus'] = 0;
-            $data['affiliate'] = 0;
-            $data['d_license'] = 0;
-            $data['l_employment'] = 0;
-            $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
-            $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
-            //
-            if($data['ssn_required'] == 1){
+                $ei = unserialize($data['session']['company_detail']['extra_info']);
                 //
-                $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
-            }
-            //
-            if($data['dob_required'] == 1){
+                $data['eight_plus'] = 0;
+                $data['affiliate'] = 0;
+                $data['d_license'] = 0;
+                $data['l_employment'] = 0;
+                $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
+                $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
                 //
-                $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
-            }
-            
-            if(isset($ei['affiliate'])){
-                $data['affiliate'] = $ei['affiliate'];
-            }
-            if(isset($ei['18_plus'])){
-                $data['eight_plus'] = $ei['18_plus'];
-            }
-            if(isset($ei['d_license'])){
-                $data['d_license'] = $ei['d_license'];
-            }
-            if(isset($ei['l_employment'])){
-                $data['l_employment'] = $ei['l_employment'];
-            }
+                if($data['ssn_required'] == 1){
+                    //
+                    $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
+                }
+                //
+                if($data['dob_required'] == 1){
+                    //
+                    $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
+                }
+                
+                if(isset($ei['affiliate'])){
+                    $data['affiliate'] = $ei['affiliate'];
+                }
+                if(isset($ei['18_plus'])){
+                    $data['eight_plus'] = $ei['18_plus'];
+                }
+                if(isset($ei['d_license'])){
+                    $data['d_license'] = $ei['d_license'];
+                }
+                if(isset($ei['l_employment'])){
+                    $data['l_employment'] = $ei['l_employment'];
+                }
+        
+                //
+                if($data['d_license'] && $this->input->post('RadioButtonListDriversLicenseQuestion', true) != 'No'){
 
-            
-            //
-            if($data['d_license']){
-                $this->form_validation->set_rules('TextBoxDriversLicenseNumber', 'License Number', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('RadioButtonListDriversLicenseTraffic', 'guilty', 'required|trim|xss_clean');
-            }
-            
-            //
-            if($data['l_employment']){
-                $this->form_validation->set_rules('TextBoxEmploymentEmployerName1', 'Employment Type', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxEmploymentEmployerPosition1', 'Position', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxEmploymentEmployerAddress1', 'Address', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('DropDownListEmploymentEmployerCountry1', 'Country', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('DropDownListEmploymentEmployerState1', 'State', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxEmploymentEmployerCity1', 'City', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxEmploymentEmployerPhoneNumber1', 'Telephone', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1', 'Employment Start Month', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1', 'Employment Start Year', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1', 'Employment End Month', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1', 'Employment End Year', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor1', 'Supervisor', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact1_0', 'Contact', 'required|trim|xss_clean');
-                $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave1', 'Reason', 'required|trim|xss_clean');
-            }
-           
-            //
-            if($data['eight_plus']){
-                $this->form_validation->set_rules('RadioButtonListWorkOver18', '18 years', 'required|trim|xss_clean');
-            }
-            
-            //
-            if($data['affiliate']){
-                $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
-            }
+                    $this->form_validation->set_rules('TextBoxDriversLicenseNumber', 'License Number', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('RadioButtonListDriversLicenseTraffic', 'guilty', 'required|trim|xss_clean');
+                }
+                
+                //
+                if($data['l_employment']){
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerName1', 'Employment Type', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerPosition1', 'Position', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerAddress1', 'Address', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerCountry1', 'Country', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerState1', 'State', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerCity1', 'City', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerPhoneNumber1', 'Telephone', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthBegin1', 'Employment Start Month', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearBegin1', 'Employment Start Year', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentMonthEnd1', 'Employment End Month', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('DropDownListEmploymentEmployerDatesOfEmploymentYearEnd1', 'Employment End Year', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerSupervisor1', 'Supervisor', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact1_0', 'Contact', 'required|trim|xss_clean');
+                    $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave1', 'Reason', 'required|trim|xss_clean');
+                }
+               
+                //
+                if($data['eight_plus']){
+                    $this->form_validation->set_rules('RadioButtonListWorkOver18', '18 years', 'required|trim|xss_clean');
+                }
+                
+                //
+                if($data['affiliate']){
+                    $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
+                }
                 
                 $drivers_license = $this->form_full_employment_application_model->get_license_details('applicant', $sid, 'drivers');
                 if (!empty($drivers_license)) {
@@ -1099,6 +1096,7 @@ class Form_full_employment_application extends CI_Controller {
                         redirect('application_tracking_system/active/all/all/all/all', 'refresh');
                     }
                 } else {
+
                     $company_sid = $data["session"]["company_detail"]["sid"];
                     $employer_sid = $data["session"]["employer_detail"]["sid"];
                     $formpost = $this->input->post(NULL, TRUE);
