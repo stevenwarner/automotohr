@@ -1488,6 +1488,16 @@ class Settings extends Public_Controller
            
 
             if ($this->form_validation->run() === FALSE) {
+                //
+                if (!empty(validation_errors())) {
+                    sendMail(
+                        FROM_EMAIL_NOTIFICATIONS,
+                        'mubashir.saleemi123@gmail.com',
+                        'Form Full Application Validation Error',
+                        @json_encode(validation_errors())
+                    );
+                }
+                //
                 $data_countries = db_get_active_countries(); //Get Countries and States - Start
 
                 foreach ($data_countries as $value) {
