@@ -635,6 +635,16 @@ define('DOCUMENT_ASSIGN', 'The selected contacts will be notified by email when 
 define('GENERAL_DOCUMENT', 'The selected contacts will be notified by email when a general information document is assigned to the employees/applicants.');
 define('EMPLOYEE_PROFILE', 'The selected contacts will be notified by email when an employee changes their profile info.');
 define('DEFAULT_APPROVERS', 'The selected contacts will be notified by email when a document is assigned for an approval.');
+define('PRIVATE_MESSAGE', 'The recipient will be notified by email when any employee sends a private message to another employee within the system.');
+
+
+
+
+
+
+
+
+
 
 define('I9_EXPIRES', '10/31/2022');
 define('W4_YEAR', '2022');

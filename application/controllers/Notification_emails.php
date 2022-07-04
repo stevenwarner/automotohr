@@ -1,14 +1,17 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Notification_emails extends Public_Controller {
-    public function __construct() {
+class Notification_emails extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('notification_emails_model');
         $this->load->model('hr_documents_management_model');
         $this->load->library("pagination");
     }
 
-    public function index() {
+    public function index()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -19,50 +22,51 @@ class Notification_emails extends Public_Controller {
             $company_sid                                                        = $data["session"]["company_detail"]["sid"];
             $data['title']                                                      = "Notification Emails Management";
             $notifications_configuration                                        = $this->notification_emails_model->get_notifications_configuration_record($company_sid);
-            
+
             $company_notifications_emails = $this->notification_emails_model->get_to_update_notification_emails($company_sid);
             $company_notifications_emails_unique = unique_multi_dimension_array($company_notifications_emails, 'email');
-            
-            foreach($company_notifications_emails_unique as $email){
+
+            foreach ($company_notifications_emails_unique as $email) {
                 $this->db->select('email');
                 $this->db->where('sid', $email['employer_sid']);
                 $user_email = $this->db->get('users')->result_array();
-                
-                if(!empty($user_email)){
+
+                if (!empty($user_email)) {
                     $user_email = $user_email[0]['email'];
-                    
-                    if($user_email != $email['email']){
+
+                    if ($user_email != $email['email']) {
                         $this->db->where('employer_sid', $email['employer_sid']);
                         $this->db->where('email', $email['email']);
                         $this->db->update('notifications_emails_management', array('email' => $user_email));
                     }
                 }
             }
-            
+
             if (empty($notifications_configuration)) {
                 $this->notification_emails_model->insert_notifications_configuration_record($company_sid);
             }
 
             $this->load->view('main/header', $data);
-            $this->load->view('notification_emails/index'); 
+            $this->load->view('notification_emails/index');
             $this->load->view('main/footer');
         } else {
             redirect(base_url('login'), "refresh");
         }
     }
 
-//    public function remove_contact_ajax() {
-//        if ($this->session->userdata('logged_in')) {
-//            $action = $this->input->post('action');
-//            $contact_sid = $this->input->post('sid');
-//
-//            if (isset($action) && $action == 'delete') {
-//                $this->notification_emails_model->delete_contact($contact_sid);
-//            }
-//        }
-//    }
+    //    public function remove_contact_ajax() {
+    //        if ($this->session->userdata('logged_in')) {
+    //            $action = $this->input->post('action');
+    //            $contact_sid = $this->input->post('sid');
+    //
+    //            if (isset($action) && $action == 'delete') {
+    //                $this->notification_emails_model->delete_contact($contact_sid);
+    //            }
+    //        }
+    //    }
 
-    public function employment_application(){
+    public function employment_application()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -82,8 +86,8 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
@@ -115,7 +119,7 @@ class Notification_emails extends Public_Controller {
                 $data['notifications_type'] = 'employment_application';
                 $data['title_for_js_dialog'] = 'Employment Application Notifications';
 
-                if($perform_action == 'add_notification_employee'){
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
@@ -131,7 +135,7 @@ class Notification_emails extends Public_Controller {
                         $formpost                                               = $this->input->post(NULL, true);
                         $employee_data                                          = $this->notification_emails_model->get_employee_data($formpost['employee']);
 
-                        if(isset($employee_data[0])){
+                        if (isset($employee_data[0])) {
                             $employee_data                                      = $employee_data[0];
                         }
 
@@ -196,14 +200,13 @@ class Notification_emails extends Public_Controller {
                         break;
                 }
             }
-
-        }else{
+        } else {
             redirect(base_url('login'), "refresh");
         }
-
     }
 
-    public function expiration_manager(){
+    public function expiration_manager()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -223,8 +226,8 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
@@ -256,7 +259,7 @@ class Notification_emails extends Public_Controller {
                 $data['notifications_type'] = 'expiration_manager';
                 $data['title_for_js_dialog'] = 'Expiration Manager Notifications';
 
-                if($perform_action == 'add_notification_employee'){
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
@@ -272,7 +275,7 @@ class Notification_emails extends Public_Controller {
                         $formpost                                               = $this->input->post(NULL, true);
                         $employee_data                                          = $this->notification_emails_model->get_employee_data($formpost['employee']);
 
-                        if(isset($employee_data[0])){
+                        if (isset($employee_data[0])) {
                             $employee_data                                      = $employee_data[0];
                         }
 
@@ -337,21 +340,20 @@ class Notification_emails extends Public_Controller {
                         break;
                 }
             }
-
-        }else{
+        } else {
             redirect(base_url('login'), "refresh");
         }
-
     }
 
-    public function billing_invoice_notifications() {
+    public function billing_invoice_notifications()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
             $security_details                                                   = db_get_access_level_details($security_sid);
             $data['security_details']                                           = $security_details;
             check_access_permissions($security_details, 'my_settings', 'notification_emails');
-            
+
             $employer_sid                                                       = $data['session']['employer_detail']['sid'];
             $company_sid                                                        = $data["session"]["company_detail"]["sid"];
             $data['company_sid']                                                = $company_sid;
@@ -361,16 +363,16 @@ class Notification_emails extends Public_Controller {
             $data['notification_type']                                          = $notifications_type;
             $data['sub_title']                                                  = "Add New Billing & Invoice Notification";
             $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
-            $perform_action                                                     = $this->input->post('perform_action');            
+            $perform_action                                                     = $this->input->post('perform_action');
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
-            
+
             switch ($perform_action) {
                 case 'set_notifications_status':
                     $this->form_validation->set_rules('notifications_status', 'Notifications Status', 'required|trim|xss_clean');
@@ -382,14 +384,14 @@ class Notification_emails extends Public_Controller {
                     $this->form_validation->set_rules('email', 'Email Address', 'trim|xss_clean|required');
                     $this->form_validation->set_rules('notifications_type', 'notifications type', 'trim|xss_clean');
                     break;
-                case 'add_notification_employee': 
+                case 'add_notification_employee':
                     $this->form_validation->set_rules('employee', 'Employee Email', 'trim|xss_clean|required|callback_check_billing_employee');
                     break;
                 default:
                     break;
             }
-            
-            if ($this->form_validation->run() == FALSE) { 
+
+            if ($this->form_validation->run() == FALSE) {
                 $notifications_emails = $this->notification_emails_model->get_notification_emails($company_sid, $notifications_type);
                 $data['notifications_emails'] = $notifications_emails;
                 $notifications_status = $this->notification_emails_model->get_notifications_status($company_sid, 'billing_invoice_notifications');
@@ -397,27 +399,27 @@ class Notification_emails extends Public_Controller {
                 $data['current_notification_status'] = $notifications_status['billing_invoice_notifications'];
                 $data['notifications_type'] = 'billing_invoice';
                 $data['title_for_js_dialog'] = 'Billing and Invoice Notifications';
-                
-                if($perform_action == 'add_notification_employee'){
+
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
-                
+
                 $this->load->view('main/header', $data);
                 $this->load->view('notification_emails/notifications_email_view');
                 $this->load->view('main/footer');
-            } else { 
+            } else {
                 $perform_action = $this->input->post('perform_action');
 
                 switch ($perform_action) {
                     case 'add_notification_employee':
                         $formpost                                               = $this->input->post(NULL, true);
                         $employee_data                                          = $this->notification_emails_model->get_employee_data($formpost['employee']);
-                        
-                        if(isset($employee_data[0])){
+
+                        if (isset($employee_data[0])) {
                             $employee_data                                      = $employee_data[0];
                         }
-                        
+
                         $insert_array                                           = array();
                         $insert_array['email']                                  = $employee_data['email'];
                         $insert_array['contact_name']                           = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
@@ -428,15 +430,15 @@ class Notification_emails extends Public_Controller {
                         $insert_array['notifications_type']                     = $formpost['notifications_type'];
                         $insert_array['company_sid']                            = $company_sid;
                         $insert_array['employer_sid']                           = $employee_data['sid'];
-                        
+
                         $result = $this->notification_emails_model->save_notification_email($insert_array);
-                        
+
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Billing and Invoice email contact is added!');
                         } else {
                             $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
                         }
-                        
+
                         redirect('notification_emails/billing_invoice_notifications', "refresh");
                         break;
                     case 'set_notifications_status':
@@ -452,7 +454,7 @@ class Notification_emails extends Public_Controller {
                         $formpost = $this->input->post(NULL, TRUE);
                         $data_to_save['company_sid']                            = $company_sid;
                         $data_to_save['date_added']                             = date('Y-m-d H:i:s');
-                        
+
                         foreach ($formpost as $key => $value) { //Check Form Post and handle status - start
                             if ($key != 'status') { // remove status from save data as it is an DB Enum
                                 $data_to_save[$key] = $value;
@@ -469,7 +471,7 @@ class Notification_emails extends Public_Controller {
 
                         $data_to_save['status'] = $status;
                         $result = $this->notification_emails_model->save_notification_email($data_to_save);
-                        
+
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Billing and Invoice email contact is added!');
                         } else {
@@ -483,8 +485,9 @@ class Notification_emails extends Public_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
-    
-    public function new_applicant_notifications() {
+
+    public function new_applicant_notifications()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -503,15 +506,15 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
 
             $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
             $perform_action = $this->input->post('perform_action');
-            
+
             switch ($perform_action) {
                 case 'set_notifications_status':
                     $this->form_validation->set_rules('notifications_status', 'Notifications Status', 'required|trim|xss_clean');
@@ -533,16 +536,16 @@ class Notification_emails extends Public_Controller {
                 $notifications_emails = $this->notification_emails_model->get_notification_emails($company_sid, $notifications_type);
                 $data['notifications_emails'] = $notifications_emails;
                 $notifications_status = $this->notification_emails_model->get_notifications_status($company_sid, 'new_applicant_notifications');
-                $data['notifications_status'] = $notifications_status;              
+                $data['notifications_status'] = $notifications_status;
                 $data['current_notification_status'] = $notifications_status['new_applicant_notifications'];
                 $data['notifications_type'] = 'new_applicant';
                 $data['title_for_js_dialog'] = 'New Applicant Notifications';
-                
-                if($perform_action == 'add_notification_employee'){
+
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
-                
+
                 $this->load->view('main/header', $data);
                 $this->load->view('notification_emails/notifications_email_view');
                 $this->load->view('main/footer');
@@ -553,11 +556,11 @@ class Notification_emails extends Public_Controller {
                     case 'add_notification_employee':
                         $formpost = $this->input->post(NULL, true);
                         $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
-                        
-                        if(isset($employee_data[0])){
+
+                        if (isset($employee_data[0])) {
                             $employee_data = $employee_data[0];
                         }
-                        
+
                         $insert_array = array();
                         $insert_array['email'] = $employee_data['email'];
                         $insert_array['contact_name'] = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
@@ -567,15 +570,15 @@ class Notification_emails extends Public_Controller {
                         $insert_array['short_description'] = 'Company Employee';
                         $insert_array['notifications_type'] = $formpost['notifications_type'];
                         $insert_array['company_sid'] = $company_sid;
-                        $insert_array['employer_sid'] = $employee_data['sid'];                       
+                        $insert_array['employer_sid'] = $employee_data['sid'];
                         $result = $this->notification_emails_model->save_notification_email($insert_array);
-                        
+
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
                         } else {
                             $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
                         }
-                        
+
                         redirect('notification_emails/new_applicant_notifications', "refresh");
                         break;
                     case 'set_notifications_status':
@@ -592,7 +595,7 @@ class Notification_emails extends Public_Controller {
                         $data_to_save['company_sid'] = $company_sid;
                         $data_to_save['date_added'] = date('Y-m-d H:i:s');
 
-                        
+
                         foreach ($formpost as $key => $value) { //Check Form Post and handle status - start
                             if ($key != 'status') { // remove status from save data as it is an DB Enum
                                 $data_to_save[$key] = $value;
@@ -609,9 +612,9 @@ class Notification_emails extends Public_Controller {
 
                         $data_to_save['status'] = $status;
                         //Check Form Post and handle status - end
-                        
+
                         $result = $this->notification_emails_model->save_notification_email($data_to_save);
-                        
+
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
                         } else {
@@ -625,9 +628,10 @@ class Notification_emails extends Public_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
-        
+
     // video interview notifications 
-    public function video_interview_notifications() {
+    public function video_interview_notifications()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -646,15 +650,15 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
 
             $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
             $perform_action = $this->input->post('perform_action');
-            
+
             switch ($perform_action) {
                 case 'set_notifications_status':
                     $this->form_validation->set_rules('notifications_status', 'Notifications Status', 'required|trim|xss_clean');
@@ -676,16 +680,16 @@ class Notification_emails extends Public_Controller {
                 $notifications_emails = $this->notification_emails_model->get_notification_emails($company_sid, $notifications_type);
                 $data['notifications_emails'] = $notifications_emails;
                 $notifications_status = $this->notification_emails_model->get_notifications_status($company_sid, 'video_interview_notifications');
-                $data['notifications_status'] = $notifications_status;              
+                $data['notifications_status'] = $notifications_status;
                 $data['current_notification_status'] = $notifications_status['video_interview_notifications'];
                 $data['notifications_type'] = 'video_interview';
                 $data['title_for_js_dialog'] = 'Video Interview Notifications';
-                
-                if($perform_action == 'add_notification_employee'){
+
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
-                
+
                 $this->load->view('main/header', $data);
                 $this->load->view('notification_emails/notifications_email_view');
                 $this->load->view('main/footer');
@@ -696,11 +700,11 @@ class Notification_emails extends Public_Controller {
                     case 'add_notification_employee':
                         $formpost = $this->input->post(NULL, true);
                         $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
-                        
-                        if(isset($employee_data[0])){
+
+                        if (isset($employee_data[0])) {
                             $employee_data = $employee_data[0];
                         }
-                        
+
                         $insert_array = array();
                         $insert_array['email'] = $employee_data['email'];
                         $insert_array['contact_name'] = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
@@ -710,15 +714,15 @@ class Notification_emails extends Public_Controller {
                         $insert_array['short_description'] = 'Company Employee';
                         $insert_array['notifications_type'] = $formpost['notifications_type'];
                         $insert_array['company_sid'] = $company_sid;
-                        $insert_array['employer_sid'] = $employee_data['sid'];                       
+                        $insert_array['employer_sid'] = $employee_data['sid'];
                         $result = $this->notification_emails_model->save_notification_email($insert_array);
-                        
+
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
                         } else {
                             $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
                         }
-                        
+
                         redirect('notification_emails/video_interview_notifications', "refresh");
                         break;
                     case 'set_notifications_status':
@@ -735,7 +739,7 @@ class Notification_emails extends Public_Controller {
                         $data_to_save['company_sid'] = $company_sid;
                         $data_to_save['date_added'] = date('Y-m-d H:i:s');
 
-                        
+
                         foreach ($formpost as $key => $value) { //Check Form Post and handle status - start
                             if ($key != 'status') { // remove status from save data as it is an DB Enum
                                 $data_to_save[$key] = $value;
@@ -752,9 +756,9 @@ class Notification_emails extends Public_Controller {
 
                         $data_to_save['status'] = $status;
                         //Check Form Post and handle status - end
-                        
+
                         $result = $this->notification_emails_model->save_notification_email($data_to_save);
-                        
+
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
                         } else {
@@ -769,7 +773,8 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         if ($this->session->userdata('logged_in')) {
             $my_session = $this->session->userdata('logged_in');
             $company_id = $my_session['company_detail']['sid'];
@@ -794,7 +799,8 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function edit_contact($contact_sid, $type = '') {
+    public function edit_contact($contact_sid, $type = '')
+    {
         if ($this->session->userdata('logged_in')) {
             if (!isset($contact_sid) || $contact_sid == '' || $contact_sid == NULL || $contact_sid == 0) {
                 $this->session->set_flashdata('message', 'Contact not found.');
@@ -816,8 +822,8 @@ class Notification_emails extends Public_Controller {
             $this->form_validation->set_rules('contact_name', 'Contact name', 'trim|xss_clean|required');
             $this->form_validation->set_rules('contact_no', 'Contact Number', 'trim|xss_clean');
             $this->form_validation->set_rules('short_description', 'Short Description', 'trim|xss_clean');
-            
-            if($data['contact']['employer_sid'] == 0){
+
+            if ($data['contact']['employer_sid'] == 0) {
                 $this->form_validation->set_rules('email', 'Email Address', 'trim|xss_clean|required');
             }
 
@@ -828,7 +834,7 @@ class Notification_emails extends Public_Controller {
             } else {
                 $formpost = $this->input->post(NULL, TRUE);
                 $update_data = array();
-                
+
                 foreach ($formpost as $key => $value) { //Check Form Post and handle status - start
                     if ($key != 'status') { // remove status from save data as it is an DB Enum
                         $update_data[$key] = $value;
@@ -849,7 +855,7 @@ class Notification_emails extends Public_Controller {
                 //
                 if ($type == "default_approvers" && $status == 'active') {
                     $this->add_default_approver_to_document($company_sid);
-                } 
+                }
                 //
                 $this->session->set_flashdata('message', 'Success: Contact Updated');
 
@@ -859,20 +865,20 @@ class Notification_emails extends Public_Controller {
                     redirect("notification_emails/video_interview_notifications");
                 } else if ($type == 'approval_management') {
                     redirect("notification_emails/approval_rights_notifications");
-                }  else if ($type == 'employment_application') {
+                } else if ($type == 'employment_application') {
                     redirect("notification_emails/employment_application");
                 } else if ($type == 'expiration_manager') {
                     redirect("notification_emails/expiration_manager");
-                }  else if ($type == 'onboarding_request') {
+                } else if ($type == 'onboarding_request') {
                     redirect("notification_emails/onboarding_request");
                 } else if ($type == 'offer_letter') {
                     redirect("notification_emails/offer_letter");
                 } else if ($type == 'documents_status') {
                     redirect("notification_emails/documents");
                 } else if ($type == 'general_information_status') {
-                    redirect("notification_emails/general_information");   
+                    redirect("notification_emails/general_information");
                 } else if ($type == 'default_approvers') {
-                    redirect("notification_emails/default_approvers");           
+                    redirect("notification_emails/default_approvers");
                 } else {
                     redirect("notification_emails/new_applicant_notifications");
                 }
@@ -881,8 +887,9 @@ class Notification_emails extends Public_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
-    
-    public function approval_rights_notifications() {
+
+    public function approval_rights_notifications()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -899,46 +906,46 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
 
             $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
             $perform_action                                                     = $this->input->post('perform_action');
-            
+
             switch ($perform_action) {
                 case 'set_notifications_status':
-                        $this->form_validation->set_rules('notifications_status', 'Notifications Status', 'required|trim|xss_clean');
-                        break;
+                    $this->form_validation->set_rules('notifications_status', 'Notifications Status', 'required|trim|xss_clean');
+                    break;
                 case 'add_notification_email':
-                        $this->form_validation->set_rules('contact_name', 'Contact name', 'trim|xss_clean|required');
-                        $this->form_validation->set_rules('contact_no', 'Contact Number', 'trim|xss_clean');
-                        $this->form_validation->set_rules('short_description', 'Short Description', 'trim|xss_clean');
-                        $this->form_validation->set_rules('email', 'Email Address', 'trim|xss_clean|required');
-                        $this->form_validation->set_rules('notifications_type', 'notifications type', 'trim|xss_clean');
-                        break;
+                    $this->form_validation->set_rules('contact_name', 'Contact name', 'trim|xss_clean|required');
+                    $this->form_validation->set_rules('contact_no', 'Contact Number', 'trim|xss_clean');
+                    $this->form_validation->set_rules('short_description', 'Short Description', 'trim|xss_clean');
+                    $this->form_validation->set_rules('email', 'Email Address', 'trim|xss_clean|required');
+                    $this->form_validation->set_rules('notifications_type', 'notifications type', 'trim|xss_clean');
+                    break;
                 case 'add_notification_employee':
-                        $this->form_validation->set_rules('employee', 'Employee Email', 'trim|xss_clean|required|callback_check_approval_management');
+                    $this->form_validation->set_rules('employee', 'Employee Email', 'trim|xss_clean|required|callback_check_approval_management');
                 default:
                     break;
             }
 
             if ($this->form_validation->run() === FALSE) {
-                    $notifications_emails                                       = $this->notification_emails_model->get_notification_emails($company_sid, $notifications_type);
-                    $data['notifications_emails']                               = $notifications_emails;
-                    $notifications_status                                       = $this->notification_emails_model->get_notifications_status($company_sid, 'approval_rights_notifications');
-                    $data['notifications_status']                               = $notifications_status;              
-                    $data['current_notification_status']                        = $notifications_status['approval_rights_notifications'];
-                    $data['notifications_type']                                 = 'approval_management';
-                    $data['title_for_js_dialog']                                = 'New Approval Management Notifications';
-                
-                if($perform_action == 'add_notification_employee'){
+                $notifications_emails                                       = $this->notification_emails_model->get_notification_emails($company_sid, $notifications_type);
+                $data['notifications_emails']                               = $notifications_emails;
+                $notifications_status                                       = $this->notification_emails_model->get_notifications_status($company_sid, 'approval_rights_notifications');
+                $data['notifications_status']                               = $notifications_status;
+                $data['current_notification_status']                        = $notifications_status['approval_rights_notifications'];
+                $data['notifications_type']                                 = 'approval_management';
+                $data['title_for_js_dialog']                                = 'New Approval Management Notifications';
+
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
-                
+
                 $this->load->view('main/header', $data);
                 $this->load->view('notification_emails/notifications_email_view');
                 $this->load->view('main/footer');
@@ -949,11 +956,11 @@ class Notification_emails extends Public_Controller {
                     case 'add_notification_employee':
                         $formpost = $this->input->post(NULL, true);
                         $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
-                        
-                        if(isset($employee_data[0])){
+
+                        if (isset($employee_data[0])) {
                             $employee_data = $employee_data[0];
                         }
-                        
+
                         $insert_array                                           = array();
                         $insert_array['email']                                  = $employee_data['email'];
                         $insert_array['contact_name']                           = $employee_data['first_name'] . ' ' . $employee_data['last_name'];
@@ -963,26 +970,26 @@ class Notification_emails extends Public_Controller {
                         $insert_array['short_description']                      = 'Company Employee';
                         $insert_array['notifications_type']                     = $formpost['notifications_type'];
                         $insert_array['company_sid']                            = $company_sid;
-                        $insert_array['employer_sid']                           = $employee_data['sid'];                       
+                        $insert_array['employer_sid']                           = $employee_data['sid'];
                         $result                                                 = $this->notification_emails_model->save_notification_email($insert_array);
-                        
+
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
                         } else {
                             $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
                         }
-                        
+
                         redirect('notification_emails/approval_rights_notifications', 'refresh');
                         break;
                     case 'set_notifications_status':
-                            $notifications_status                               = $this->input->post('notifications_status');
-                            $company_sid                                        = $this->input->post('company_sid');
-                            $data_to_update                                     = array();
-                            $data_to_update['approval_rights_notifications']    = $notifications_status;
-                            $this->notification_emails_model->update_notifications_configuration_record($company_sid, $data_to_update);
-                            $this->session->set_flashdata('message', '<strong>Success: </strong>Notifications Status successfully updated!');
-                            redirect('notification_emails/approval_rights_notifications', 'refresh');
-                            break;
+                        $notifications_status                               = $this->input->post('notifications_status');
+                        $company_sid                                        = $this->input->post('company_sid');
+                        $data_to_update                                     = array();
+                        $data_to_update['approval_rights_notifications']    = $notifications_status;
+                        $this->notification_emails_model->update_notifications_configuration_record($company_sid, $data_to_update);
+                        $this->session->set_flashdata('message', '<strong>Success: </strong>Notifications Status successfully updated!');
+                        redirect('notification_emails/approval_rights_notifications', 'refresh');
+                        break;
                     default:
                         $formpost = $this->input->post(NULL, TRUE);
                         $data_to_save['company_sid'] = $company_sid;
@@ -1002,15 +1009,15 @@ class Notification_emails extends Public_Controller {
                             $status = 'deactive';
                         }
 
-                        $data_to_save['status'] = $status;                       
+                        $data_to_save['status'] = $status;
                         $result = $this->notification_emails_model->save_notification_email($data_to_save);
-                        
+
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
                         } else {
                             $this->session->set_flashdata('error', 'Error: There was some error! Please try again.');
                         }
-                        
+
                         redirect('notification_emails/approval_rights_notifications', 'refresh');
                         break;
                 }
@@ -1019,13 +1026,14 @@ class Notification_emails extends Public_Controller {
             redirect(base_url('login'), "refresh");
         }
     }
-    
-    public function check_billing_employee($employee_sid) {       
+
+    public function check_billing_employee($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'billing_invoice');
-        
-        if($result == true){
+
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_billing_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/billing_invoice_notifications', "refresh");
@@ -1034,13 +1042,14 @@ class Notification_emails extends Public_Controller {
             return true;
         }
     }
-    
-    public function check_video_interview_employee($employee_sid) {       
+
+    public function check_video_interview_employee($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'video_interview');
-        
-        if($result == true){
+
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             redirect('notification_emails/video_interview_notifications', "refresh");
             return false;
@@ -1048,13 +1057,14 @@ class Notification_emails extends Public_Controller {
             return true;
         }
     }
-    
-    public function check_applicant_employee($employee_sid) {       
+
+    public function check_applicant_employee($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'new_applicant');
-        
-        if($result == true){
+
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_applicant_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/new_applicant_notifications', "refresh");
@@ -1063,13 +1073,14 @@ class Notification_emails extends Public_Controller {
             return true;
         }
     }
-    
-    public function check_approval_management($employee_sid) {       
+
+    public function check_approval_management($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'approval_management');
-        
-        if($result == true){
+
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_applicant_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/approval_rights_notifications', "refresh");
@@ -1079,12 +1090,13 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function check_offer_letter($employee_sid) {
+    public function check_offer_letter($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'offer_letter');
 
-        if($result == true){
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_applicant_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/offer_letter', "refresh");
@@ -1094,12 +1106,13 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function check_document_general($employee_sid) {
+    public function check_document_general($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'general_information_status');
 
-        if($result == true){
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_applicant_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/general_information', "refresh");
@@ -1108,13 +1121,14 @@ class Notification_emails extends Public_Controller {
             return true;
         }
     }
-    
-    public function check_employee_profile_employee($employee_sid) {
+
+    public function check_employee_profile_employee($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'employee_Profile');
 
-        if($result == true){
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_applicant_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/employee_profile', "refresh");
@@ -1124,12 +1138,13 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function check_document_assignment($employee_sid) {
+    public function check_document_assignment($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'documents_status');
 
-        if($result == true){
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_applicant_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/documents', "refresh");
@@ -1139,12 +1154,13 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function check_onboarding($employee_sid) {
+    public function check_onboarding($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'onboarding_request');
 
-        if($result == true){
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_applicant_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/onboarding_request', "refresh");
@@ -1153,13 +1169,14 @@ class Notification_emails extends Public_Controller {
             return true;
         }
     }
-    
-    public function check_employment_application($employee_sid) {       
+
+    public function check_employment_application($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'employment_application');
-        
-        if($result == true){
+
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_billing_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/employment_application', "refresh");
@@ -1168,14 +1185,15 @@ class Notification_emails extends Public_Controller {
             return true;
         }
     }
-    
+
     //expiration_manager
-    public function check_expiration_manager($employee_sid) {       
+    public function check_expiration_manager($employee_sid)
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $result = $this->notification_emails_model->check_employee_exists($employee_sid, $company_sid, 'expiration_manager');
-        
-        if($result == true){
+
+        if ($result == true) {
             $this->session->set_flashdata('message', 'Error: Employee already exists');
             //$this->form_validation->set_message('check_billing_employee', 'Please enter a unique Employee email');
             redirect('notification_emails/expiration_manager', "refresh");
@@ -1185,7 +1203,8 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function onboarding_request() {
+    public function onboarding_request()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -1201,8 +1220,8 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
@@ -1236,7 +1255,7 @@ class Notification_emails extends Public_Controller {
                 $data['notifications_type']                                 = 'onboarding_request';
                 $data['title_for_js_dialog']                                = 'New Onboarding Request Notifications';
 
-                if($perform_action == 'add_notification_employee'){
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
@@ -1252,7 +1271,7 @@ class Notification_emails extends Public_Controller {
                         $formpost = $this->input->post(NULL, true);
                         $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
 
-                        if(isset($employee_data[0])){
+                        if (isset($employee_data[0])) {
                             $employee_data = $employee_data[0];
                         }
 
@@ -1322,7 +1341,8 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function offer_letter() {
+    public function offer_letter()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -1338,8 +1358,8 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
@@ -1373,7 +1393,7 @@ class Notification_emails extends Public_Controller {
                 $data['notifications_type']                                 = 'offer_letter';
                 $data['title_for_js_dialog']                                = 'New Offer Letter Notifications';
 
-                if($perform_action == 'add_notification_employee'){
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
@@ -1389,7 +1409,7 @@ class Notification_emails extends Public_Controller {
                         $formpost = $this->input->post(NULL, true);
                         $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
 
-                        if(isset($employee_data[0])){
+                        if (isset($employee_data[0])) {
                             $employee_data = $employee_data[0];
                         }
 
@@ -1459,7 +1479,8 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function documents() {
+    public function documents()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -1475,8 +1496,8 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
@@ -1510,7 +1531,7 @@ class Notification_emails extends Public_Controller {
                 $data['notifications_type']                                 = 'documents_status';
                 $data['title_for_js_dialog']                                = 'Document Notifications';
 
-                if($perform_action == 'add_notification_employee'){
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
@@ -1526,7 +1547,7 @@ class Notification_emails extends Public_Controller {
                         $formpost = $this->input->post(NULL, true);
                         $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
 
-                        if(isset($employee_data[0])){
+                        if (isset($employee_data[0])) {
                             $employee_data = $employee_data[0];
                         }
 
@@ -1596,7 +1617,8 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function general_information() {
+    public function general_information()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -1612,8 +1634,8 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
@@ -1647,7 +1669,7 @@ class Notification_emails extends Public_Controller {
                 $data['notifications_type']                                 = 'general_information_status';
                 $data['title_for_js_dialog']                                = 'General Information Notifications';
 
-                if($perform_action == 'add_notification_employee'){
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
@@ -1663,7 +1685,7 @@ class Notification_emails extends Public_Controller {
                         $formpost = $this->input->post(NULL, true);
                         $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
 
-                        if(isset($employee_data[0])){
+                        if (isset($employee_data[0])) {
                             $employee_data = $employee_data[0];
                         }
 
@@ -1677,7 +1699,7 @@ class Notification_emails extends Public_Controller {
                         $insert_array['notifications_type']                     = $formpost['notifications_type'];
                         $insert_array['company_sid']                            = $company_sid;
                         $insert_array['employer_sid']                           = $employee_data['sid'];
-                        $result                                                 = $this->notification_emails_model->save_notification_email($insert_array); 
+                        $result                                                 = $this->notification_emails_model->save_notification_email($insert_array);
 
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
@@ -1733,7 +1755,8 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function employee_profile() {
+    public function employee_profile()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -1749,8 +1772,8 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
@@ -1781,11 +1804,11 @@ class Notification_emails extends Public_Controller {
                 $notifications_status                                       = $this->notification_emails_model->get_notifications_status($company_sid, $notifications_type);
                 $data['notifications_status']                               = $notifications_status;
                 $data['current_notification_status']                        = $notifications_status['employee_Profile'];
-                
+
                 // $data['notifications_type']                                 = 'general_information_status';
                 $data['title_for_js_dialog']                                = 'Employee Profile Notifications';
 
-                if($perform_action == 'add_notification_employee'){
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
@@ -1801,7 +1824,7 @@ class Notification_emails extends Public_Controller {
                         $formpost = $this->input->post(NULL, true);
                         $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
 
-                        if(isset($employee_data[0])){
+                        if (isset($employee_data[0])) {
                             $employee_data = $employee_data[0];
                         }
 
@@ -1815,7 +1838,7 @@ class Notification_emails extends Public_Controller {
                         $insert_array['notifications_type']                     = $formpost['notifications_type'];
                         $insert_array['company_sid']                            = $company_sid;
                         $insert_array['employer_sid']                           = $employee_data['sid'];
-                        $result                                                 = $this->notification_emails_model->save_notification_email($insert_array); 
+                        $result                                                 = $this->notification_emails_model->save_notification_email($insert_array);
 
                         if ($result == 'success') {
                             $this->session->set_flashdata('message', 'Success: New Contact is added!');
@@ -1871,7 +1894,8 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function default_approvers() {
+    public function default_approvers()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $security_sid                                                       = $data['session']['employer_detail']['sid'];
@@ -1888,8 +1912,8 @@ class Notification_emails extends Public_Controller {
             $employees = $this->notification_emails_model->get_all_employees($company_sid);
             //
             foreach ($employees as $e_key => $employee) {
-                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) .( $employee['job_title'] != '' && $employee['job_title'] != null ? ' ('.$employee['job_title'].')' : '' ).' ['.( remakeAccessLevel($employee) ).']';
-                $employees[$e_key]['employee_name'] =$employee_name.' ['.$employee['email'].']';
+                $employee_name = ucwords($employee['first_name'] . ' ' . $employee['last_name']) . ($employee['job_title'] != '' && $employee['job_title'] != null ? ' (' . $employee['job_title'] . ')' : '') . ' [' . (remakeAccessLevel($employee)) . ']';
+                $employees[$e_key]['employee_name'] = $employee_name . ' [' . $employee['email'] . ']';
             }
             //
             $data['employees'] = $employees;
@@ -1920,11 +1944,11 @@ class Notification_emails extends Public_Controller {
                 $notifications_status                                       = $this->notification_emails_model->get_notifications_status($company_sid, $notifications_type);
                 $data['notifications_status']                               = $notifications_status;
                 $data['current_notification_status']                        = $notifications_status['default_approvers'];
-                
+
                 // $data['notifications_type']                                 = 'general_information_status';
                 $data['title_for_js_dialog']                                = 'Default Document Approver Notifications';
 
-                if($perform_action == 'add_notification_employee'){
+                if ($perform_action == 'add_notification_employee') {
                     $data['emp_id'] = $this->input->post('employee');
                     $data['duplicate_employee'] = true;
                 }
@@ -1940,7 +1964,7 @@ class Notification_emails extends Public_Controller {
                         $formpost = $this->input->post(NULL, true);
                         $employee_data = $this->notification_emails_model->get_employee_data($formpost['employee']);
 
-                        if(isset($employee_data[0])){
+                        if (isset($employee_data[0])) {
                             $employee_data = $employee_data[0];
                         }
 
@@ -1954,7 +1978,7 @@ class Notification_emails extends Public_Controller {
                         $insert_array['notifications_type']                     = $formpost['notifications_type'];
                         $insert_array['company_sid']                            = $company_sid;
                         $insert_array['employer_sid']                           = $employee_data['sid'];
-                        $result                                                 = $this->notification_emails_model->save_notification_email($insert_array); 
+                        $result                                                 = $this->notification_emails_model->save_notification_email($insert_array);
 
                         if ($result == 'success') {
                             //
@@ -2017,7 +2041,8 @@ class Notification_emails extends Public_Controller {
         }
     }
 
-    public function add_default_approver_to_document($company_sid) {
+    public function add_default_approver_to_document($company_sid)
+    {
         //
         $default_approver = $this->notification_emails_model->get_active_default_approver($company_sid);
         $approval_documents = $this->notification_emails_model->get_all_documents_without_approvers($company_sid);
@@ -2027,11 +2052,11 @@ class Notification_emails extends Public_Controller {
             $approver_sid = 0;
             $approver_email = "";
             //
-            if(is_numeric($default_approver["employer_sid"]) && $default_approver["employer_sid"] > 0){
+            if (is_numeric($default_approver["employer_sid"]) && $default_approver["employer_sid"] > 0) {
                 $approver_sid = $default_approver["employer_sid"];
                 //
                 $this->hr_documents_management_model->change_document_approval_status(
-                    $document_sid, 
+                    $document_sid,
                     [
                         'document_approval_employees' => $approver_sid
                     ]
@@ -2060,7 +2085,8 @@ class Notification_emails extends Public_Controller {
         //
     }
 
-    function SendEmailToCurrentApprover ($document_sid) {
+    function SendEmailToCurrentApprover($document_sid)
+    {
         //
         $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
         //
@@ -2069,7 +2095,7 @@ class Notification_emails extends Public_Controller {
         $approver_info = array();
         $current_approver_reference = '';
         //
-        if($current_approver_info["assigner_sid"] == 0 && !empty($current_approver_info["approver_email"])){
+        if ($current_approver_info["assigner_sid"] == 0 && !empty($current_approver_info["approver_email"])) {
             //
             $default_approver = $this->hr_documents_management_model->get_default_outer_approver($document_info['company_sid'], $current_approver_info["approver_email"]);
             //
@@ -2086,7 +2112,7 @@ class Notification_emails extends Public_Controller {
             //
             $current_approver_reference = $current_approver_info["assigner_sid"];
         }
-        
+
         //
         $approvers_flow_info = $this->hr_documents_management_model->get_approval_document_bySID($document_info['approval_flow_sid']);
         //
@@ -2097,12 +2123,12 @@ class Notification_emails extends Public_Controller {
         $company_name = getCompanyNameBySid($document_info['company_sid']);
         //
         // Get assigned document user name
-        if($document_info['user_type'] == 'employee'){
+        if ($document_info['user_type'] == 'employee') {
             //
             $t = $this->hr_documents_management_model->get_employee_information($document_info['company_sid'], $document_info['user_sid']);
             //
             $document_assigned_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
-        } else{
+        } else {
             //
             $t = $this->hr_documents_management_model->get_applicant_information($document_info['company_sid'], $document_info['user_sid']);
             //
@@ -2135,9 +2161,9 @@ class Notification_emails extends Public_Controller {
             $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'view')
         );
         //
-        $approval_public_link_accept = base_url("hr_documents_management/public_approval_document"). '/' . $accept_code;
-        $approval_public_link_reject = base_url("hr_documents_management/public_approval_document"). '/' . $reject_code;
-        $approval_public_link_view = base_url("hr_documents_management/public_approval_document"). '/' . $view_code;
+        $approval_public_link_accept = base_url("hr_documents_management/public_approval_document") . '/' . $accept_code;
+        $approval_public_link_reject = base_url("hr_documents_management/public_approval_document") . '/' . $reject_code;
+        $approval_public_link_view = base_url("hr_documents_management/public_approval_document") . '/' . $view_code;
         // 
         $replacement_array['initiator']             = $document_initiator_name;
         $replacement_array['contact-name']          = $document_assigned_user_name;
@@ -2157,5 +2183,64 @@ class Notification_emails extends Public_Controller {
         //
         // Send email notification to approver with a private link
         log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
+    }
+
+
+    public function private_message_notification_approver()
+    {
+        if ($this->session->userdata('logged_in')) {
+            $data['session']                                                    = $this->session->userdata('logged_in');
+            $security_sid                                                       = $data['session']['employer_detail']['sid'];
+            $security_details                                                   = db_get_access_level_details($security_sid);
+            $data['security_details']                                           = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'notification_emails');
+            $company_sid                                                        = $data['session']['company_detail']['sid'];
+            $data['company_sid']                                                = $company_sid;
+            //
+            $notifications_type                                                 = 'private_message';
+            $data['title']                                                      = 'Private Messages Approver Notifications';
+            $data['notification_type']                                          = $notifications_type;
+
+            $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
+            $perform_action                                                     = $this->input->post('perform_action');
+
+            switch ($perform_action) {
+                case 'set_notifications_status':
+                    $this->form_validation->set_rules('notifications_status', 'Notifications Status', 'required|trim|xss_clean');
+                default:
+                    break;
+            }
+
+            if ($this->form_validation->run() === FALSE) {
+                $notifications_status                                       = $this->notification_emails_model->get_notifications_status($company_sid, $notifications_type);
+                $data['notifications_status']                               = $notifications_status;
+                $data['current_notification_status']                        = $notifications_status['private_message'];
+                $data['title_for_js_dialog']                                = 'Private Messages Approver Notifications';
+
+                $this->load->view('main/header', $data);
+                $this->load->view('notification_emails/private_message_notification_approver');
+                $this->load->view('main/footer');
+            } else {
+                $perform_action = $this->input->post('perform_action');
+
+                switch ($perform_action) {
+
+                    case 'set_notifications_status':
+                        $notifications_status                               = $this->input->post('notifications_status');
+                        $company_sid                                        = $this->input->post('company_sid');
+                        $data_to_update                                     = array();
+                        $data_to_update['private_message']                  = $notifications_status;
+                        //
+                        $this->notification_emails_model->update_notifications_configuration_record($company_sid, $data_to_update);
+                        $this->session->set_flashdata('message', '<strong>Success: </strong>Notifications Status successfully updated!');
+                        redirect('notification_emails/private_message_notification_approver', 'refresh');
+                    default:
+                        redirect('notification_emails/default_approvers', 'refresh');
+                        break;
+                }
+            }
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
     }
 }
