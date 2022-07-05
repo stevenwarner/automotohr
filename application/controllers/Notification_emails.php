@@ -2186,7 +2186,7 @@ class Notification_emails extends Public_Controller
     }
 
 
-    public function private_message_notification_approver()
+    public function private_message_notification()
     {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
@@ -2198,7 +2198,7 @@ class Notification_emails extends Public_Controller
             $data['company_sid']                                                = $company_sid;
             //
             $notifications_type                                                 = 'private_message';
-            $data['title']                                                      = 'Private Messages Approver Notifications';
+            $data['title']                                                      = 'Private Messages Notifications';
             $data['notification_type']                                          = $notifications_type;
 
             $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
@@ -2215,10 +2215,10 @@ class Notification_emails extends Public_Controller
                 $notifications_status                                       = $this->notification_emails_model->get_notifications_status($company_sid, $notifications_type);
                 $data['notifications_status']                               = $notifications_status;
                 $data['current_notification_status']                        = $notifications_status['private_message'];
-                $data['title_for_js_dialog']                                = 'Private Messages Approver Notifications';
+                $data['title_for_js_dialog']                                = 'Private Messages Notifications';
 
                 $this->load->view('main/header', $data);
-                $this->load->view('notification_emails/private_message_notification_approver');
+                $this->load->view('notification_emails/private_message_notification');
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
@@ -2233,9 +2233,9 @@ class Notification_emails extends Public_Controller
                         //
                         $this->notification_emails_model->update_notifications_configuration_record($company_sid, $data_to_update);
                         $this->session->set_flashdata('message', '<strong>Success: </strong>Notifications Status successfully updated!');
-                        redirect('notification_emails/private_message_notification_approver', 'refresh');
+                        redirect('notification_emails/private_message_notification', 'refresh');
                     default:
-                        redirect('notification_emails/default_approvers', 'refresh');
+                        rredirect('notification_emails/private_message_notification', 'refresh');
                         break;
                 }
             }
