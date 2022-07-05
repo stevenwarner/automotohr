@@ -2686,3 +2686,20 @@ if (!function_exists('CheckLogin')) {
         }
     }
 }
+
+
+
+
+
+if (!function_exists('getnotifications_emails_configuration')) {
+    function getnotifications_emails_configuration($companySid,$slug) {
+         //
+        $CI = &get_instance();
+        //
+         return $CI->db
+            ->where('company_sid', $companySid)
+            ->where($slug, 1)
+            ->count_all_results('notifications_emails_configuration');
+    }
+       
+}
