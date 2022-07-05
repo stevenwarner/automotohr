@@ -26,12 +26,12 @@
 
                                     <li class="form-col-100 autoheight">
                                         <label for="title_section_01">Title</label>
-                                        <input type="text" name="title_section_01" id="title_section_01" class="invoice-fields" placeholder="Title Goes Here" value="<?php echo (isset($section_01_meta['title']) ? $section_01_meta['title'] : ''); ?>" />
+                                        <input type="text" name="title_section_01" id="title_section_01" class="invoice-fields" placeholder="Title Goes Here" value="<?php echo (isset($section_01_meta['title']) && trim($section_01_meta['title'])!='' ? $section_01_meta['title'] : 'Are You Looking for an Amazing Career Opportunity?'); ?>" />
                                     </li>
 
                                     <li class="form-col-100 autoheight">
                                         <label for="section_01_tagline">Tag Line</label>
-                                        <input type="text" name="tag_line_section_01" id="tag_line_section_01" class="invoice-fields" placeholder="Tag Line Goes Here" value="<?php echo (isset($section_01_meta['tag_line']) ? $section_01_meta['tag_line'] : ''); ?>" />
+                                        <input type="text" name="tag_line_section_01" id="tag_line_section_01" class="invoice-fields" placeholder="Tag Line Goes Here" value="<?php echo (isset($section_01_meta['tag_line']) && trim($section_01_meta['tag_line'])!='' ? $section_01_meta['tag_line'] : ' There is No Better Place!'); ?>" />
                                     </li>
 
                                     <!-- Capitalize option section -->

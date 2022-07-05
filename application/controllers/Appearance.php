@@ -799,10 +799,11 @@ class Appearance extends Public_Controller {
                 if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'update_jobs_page_title') { //Save Jobs Page Title
                     $company_sid = $company_id; //$_POST['company_sid'];
                     $jobs_page_title = $_POST['jobs_page_title'];
-                    $jobs_page_title = strtolower(str_replace('{{company_name}}', '', $jobs_page_title));
+                   // $jobs_page_title = strtolower(str_replace('{{company_name}}', '', $jobs_page_title));
+                    $jobs_page_title = str_replace('{{company_name}}', '', $jobs_page_title);
                     $jobs_page_title = trim($jobs_page_title);
                     $jobs_page_title = str_replace('  ', ' ', $jobs_page_title);
-                    $jobs_page_title = str_replace(' ', '-', $jobs_page_title);
+                  //  $jobs_page_title = str_replace(' ', '-', $jobs_page_title);
                     $jobs_page_title = str_replace('\`', '', $jobs_page_title);
                     $jobs_page_title = str_replace('"', '', $jobs_page_title);
                     $jobs_page_title = str_replace('\'', '', $jobs_page_title);
@@ -911,7 +912,7 @@ class Appearance extends Public_Controller {
                 $data['jobs_detail_page_banner'] = $jobs_detail_page_banner;
 //                echo '<pre>';
 //                print_r($jobs_detail_page_banner);
-//                die();
+             
                 $data['jobs_page_title'] = $jobs_page_title;
                 $data['footer_content'] = $footer_content;
                 $google_fonts = $this->customize_appearance_model->get_google_fonts(); // get list of all the google font family

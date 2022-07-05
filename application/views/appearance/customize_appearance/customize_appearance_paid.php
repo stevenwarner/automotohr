@@ -220,7 +220,7 @@ ul.select2-selection__rendered li{
                                                                                             <ul>
                                                                                                 <li class="form-col-100">
                                                                                                     <label>Page Title:</label>
-                                                                                                    <input class="invoice-fields" name="jobs_page_title" id="jobs_page_title" value="<?php echo isset($jobs_page_title) && $jobs_page_title != '' ? $jobs_page_title : 'Jobs';  ?>" type="text">
+                                                                                                    <input class="invoice-fields" name="jobs_page_title" id="jobs_page_title" value="<?php echo isset($jobs_page_title) && $jobs_page_title != '' ? $jobs_page_title : 'Join Our Team';  ?>" type="text">
                                                                                                 </li>
                                                                                         <?php   
                                                                                                 if($job_fair_configuration) { ?>
