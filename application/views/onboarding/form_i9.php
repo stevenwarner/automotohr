@@ -456,7 +456,8 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <div class="form-group">
                                                     <label>Expiration Date <i class="fa fa-question-circle-o modalShow" src="section_5_expiration_date"></i></label>
-                                                    <input type="text" name="section2_lista_part1_expiration_date" id="section2_lista_part1_expiration_date" class="form-control date_picker2">
+                                                    <input type="text" 
+                                                    readonly name="section2_lista_part1_expiration_date" id="section2_lista_part1_expiration_date" class="form-control date_picker2">
                                                 </div>
                                             </div>
                                         </div>
