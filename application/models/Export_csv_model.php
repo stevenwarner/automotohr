@@ -508,4 +508,14 @@ class Export_csv_model extends CI_Model {
             return array();
         }
     }
+
+
+    function save_employee_csv_report_settings($data_to_insert)
+    {
+         $this->db->insert('employee_csv_report_settings', $data_to_insert);
+      
+    }
+
+
+
 }

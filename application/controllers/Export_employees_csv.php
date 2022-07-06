@@ -301,8 +301,23 @@ class Export_employees_csv extends Public_Controller
                         echo $rows;
                         break; */
 
-                    case 'save_report_setting':   
-                        _e($_POST,true,true);
+                    case 'save_report_setting':
+                      //  _e($_POST,true,true);
+                        //
+                        $employer_sid = $data['session']['employer_detail']['sid'];
+                        $data_to_insert['company_sid'] = $this->input->post('company_sid');
+                        $data_to_insert['employee_type'] = $this->input->post('access_level');
+                        $data_to_insert['employee_status'] = $this->input->post('status');
+                        $data_to_insert['custom_type'] = $this->input->post('assignAndSendDocument');
+                        $data_to_insert['custom_date'] = $this->input->post('assignAndSendCustomDate');
+                        $data_to_insert['custom_day'] = $this->input->post('assignAndSendCustomDay');
+                        $data_to_insert['custom_time'] = $this->input->post('assignAndSendCustomTime');
+                        $data_to_insert['selected_columns'] = $this->input->post('test');
+                        $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
+                        $data_to_insert['created_at'] = date('Y-m-d H:i:s');
+                        $data_to_insert['created_by'] = $employer_sid;
+                       $this->export_csv_model->save_employee_csv_report_settings($data_to_insert);
+
                         break;    
                 }
             }
