@@ -532,7 +532,7 @@ define('TIMEOFFYEARLYCOMPANY', '58,5635');
 define('ASSIGNEDOCIMPL', TRUE);
 define('DOB_LIMIT', '-100:+1');
 define('JOINING_DATE_LIMIT', '1960:+5');
-define('STARTING_DATE_LIMIT', '1960:+5');
+define('STARTING_DATE_LIMIT', '1960:+20');
 define('DATE', 'M d Y, D');
 define('DB_DATE', 'Y-m-d');
 define('DATE_WITH_TIME', 'M d, Y, D H:m:s');
