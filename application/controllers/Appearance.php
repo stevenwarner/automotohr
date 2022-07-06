@@ -139,6 +139,7 @@ class Appearance extends Public_Controller {
 
             if (isset($_POST["action"]) && $_POST["action"] == "update") {
                 $theme_name = $this->input->post('theme_name');
+                die($theme_name);
                 $sid = $this->input->post('sid');
                 $job_fair_homepage_page_url = !empty($this->input->post('job_fair_homepage_page_url')) ? implode(',', $this->input->post('job_fair_homepage_page_url')) : '';
                 $theme4_enable_job_fair_homepage = 0;
@@ -238,6 +239,7 @@ class Appearance extends Public_Controller {
             }
             
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_config_section_01') {
+                
                 $theme_name = $_POST["theme_name"];
                 $page_name = $_POST["page_name"];
                 $title = $_POST['title_section_01'];
