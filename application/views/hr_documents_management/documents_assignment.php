@@ -4080,7 +4080,7 @@ if ($user_type == 'employee') {
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
         changeYear: true,
-        yearRange: "<?php echo DOB_LIMIT; ?>"
+        yearRange: "<?php echo STARTING_DATE_LIMIT; ?>"
     });
 
     <?php if (sizeof($pre_form) > 0) { ?>
