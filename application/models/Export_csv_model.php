@@ -54,6 +54,83 @@ class Export_csv_model extends CI_Model {
         }
     }
 
+    function get_all_employees_from_DB($company_sid, $access_level, $status, $start, $end) {
+        //
+        $this->db->select('*');
+        $this->db->where('parent_sid', $company_sid);
+
+        if($access_level != 'all' && $access_level != 'executive_admin') {
+            $this->db->where('access_level', $access_level);
+        }
+        
+        if($access_level == 'executive_admin') {
+            $this->db->where('is_executive_admin', 1);
+        }
+        
+        if($status == 'active'){
+             $this->db->where('active', 1);
+        }
+        
+        if($status == 'archived'){
+             $this->db->where('active', 0);
+        }
+
+        if($status == 'terminated'){
+            $this->db->where('terminated_status ', 1);
+            $this->db->where('general_status ', "terminated");
+        }
+
+        if($status == 'manual_employee'){
+            $this->db->where('applicant_sid', NULL);
+        }
+
+        if(!empty($start) && !empty($end)){
+            $this->db->where('created_at BETWEEN "' . date('Y-m-d 00:00:00', strtotime($start)) . '" and "' . date('Y-m-d 23:59:59', strtotime($end)) . '"');
+        } 
+        
+        $records_obj = $this->db->get('users');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        if(!empty($records_arr)){
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
+     // Fetch all active employees
+    function getAllActiveEmployees(
+        $companySid,
+        $withExec = true
+    ) {
+        $this->db
+            ->select('
+            sid, 
+            first_name, 
+            last_name, 
+            is_executive_admin, 
+            access_level, 
+            access_level_plus,
+            pay_plan_flag,
+            job_title
+        ')
+            ->where('parent_sid', $companySid)
+            ->where('active', 1)
+            ->where('terminated_status', 0)
+            ->order_by('first_name', 'ASC');
+        //
+        if (!$withExec) {
+            $this->db->where('is_executive_admin', 0);
+        }
+        $a = $this->db->get('users');
+        //
+        $b = $a->result_array();
+        $a = $a->free_result();
+        //
+        return $b;
+    }
+
     function get_all_applicants($company_sid, $applicant_type){
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.first_name');

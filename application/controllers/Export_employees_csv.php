@@ -30,6 +30,7 @@ class Export_employees_csv extends Public_Controller
                 $data["company_sid"] = $company_sid;
                 $data["pay_plan_flag"] = $pay_plan_flag;
                 $data["access_level_plus"] = $access_level_plus;
+                $data['employeesList'] = $this->export_csv_model->getAllActiveEmployees($company_sid, false);
                 $this->load->view('main/header', $data);
                 $this->load->view('export_employees_csv/index');
                 $this->load->view('main/footer');
@@ -38,6 +39,7 @@ class Export_employees_csv extends Public_Controller
 
                 switch ($perform_action) {
                     case 'export_employees':
+                       
                         $access_level_plus = $data['session']['employer_detail']['access_level_plus'];
                         $pay_plan_flag = $data['session']['employer_detail']['pay_plan_flag'];
                         if (($access_level_plus || $pay_plan_flag == 1)) {
@@ -48,7 +50,31 @@ class Export_employees_csv extends Public_Controller
                         $access_level = $this->input->post('access_level');
                         $company_sid = $this->input->post('company_sid');
                         $status = $this->input->post('status');
-                        $employees = $this->export_csv_model->get_all_employees($company_sid, $access_level, $status);
+                        $to_date = $this->input->post('to_date');
+                        $from_date = $this->input->post('from_date');
+                        $start_time = '';
+                        $end_time = '';
+                        //
+                        if (!empty($to_date)) {
+                            $start_time = empty($to_date) ? null : DateTime::createFromFormat('m-d-Y', $to_date)->format('Y-m-d 00:00:00');
+                        }
+                        //
+                        if (!empty($from_date)) {
+                            $end_time = empty($from_date) ? null : DateTime::createFromFormat('m-d-Y', $from_date)->format('Y-m-d 23:59:59');
+                        }
+                        //
+                        if ($status == "new_hires") {
+                            $start_time = date('Y-m-01 00:00:00');
+                            $end_time = date('Y-m-t 23:59:59');
+                        }
+                        echo "Start Date = ". $start_time . "<br>";
+                        echo "End Date = ". $end_time . "<br>";
+                        
+                        //
+                        // $employees = $this->export_csv_model->get_all_employees($company_sid, $access_level, $status);
+                        $employees = $this->export_csv_model->get_all_employees_from_DB($company_sid, $access_level, $status, $start_time, $end_time);
+                        _e($_POST);
+                        _e($employees,true,true);
 
                         $export_data = array();
                         $i = 0;
@@ -274,6 +300,10 @@ class Export_employees_csv extends Public_Controller
                         echo $header_row . ',' . PHP_EOL;
                         echo $rows;
                         break; */
+
+                    case 'save_report_setting':   
+                        _e($_POST,true,true);
+                        break;    
                 }
             }
         } else {
