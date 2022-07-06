@@ -221,7 +221,8 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                         <input type="hidden" id="perform_action" name="perform_action" value="export_employees" />
                                         <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $company_sid; ?>" />
                                         <div class="row">
-                                            <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5">
+                                            <!--  -->
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <label>Access Level:</label>
                                                 <div class="hr-select-dropdown autoheight">
                                                     <select data-rule-required="true" class="invoice-fields" name="access_level" id="access_level">
@@ -235,27 +236,51 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                            <!--  -->
+                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                 <label>Status:</label>
                                                 <div class="hr-select-dropdown autoheight">
-                                                    <select data-rule-required="true" class="invoice-fields" name="status">
+                                                    <select data-rule-required="true" class="invoice-fields" name="status" id="employee_status">
                                                         <option value="active">Active Employees</option>
                                                         <option value="archived">Archived Employees</option>
+                                                        <option value="new_hires">New Hires</option>
+                                                        <option value="terminated">Terminated Employees</option>
+                                                        <option value="manual_employee">Manual Added Employees</option>
                                                         <option value="both">Both Active & Archived</option>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
+                                        </div>
+                                        <div class="row" style="margin-top: 12px;">    
+                                            <!--  -->
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                <label>To:</label>
+                                                <input type="text" name="to_date" value="" class="invoice-fields" id="display_start_date">
+                                            </div>
+                                            <!--  -->
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                <label>From:</label>
+                                                <input type="text" name="from_date" value="" class="invoice-fields" id="display_end_date">
+                                            </div>
+                                            <!--  -->
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                 <label>&nbsp;</label>
                                                 <button type="submit" class="btn btn-block btn-success">Export</button>
                                             </div>
                                         </div>
                                         <div class="clear"></div>
                                     </form>
+                                    
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <?php $this->load->view('export_employees_csv/csv_report_section'); ?>
+                        </div>
+                    </div>        
 
                 </div>
             </div>
@@ -263,21 +288,46 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
     </div>
 </div>
 <script>
-   $("#check_all").click(function(){
+    $('#display_start_date').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>",
+        onSelect: function (value) {
+            $('#display_end_date').datepicker('option', 'minDate', value);
+        }
+    }).datepicker('option', 'minDate', $('#display_end_date').val());
+
+    $('#display_end_date').datepicker({
+        dateFormat: 'mm-dd-yy',
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>",
+        onSelect: function (value) {
+            $('#display_start_date').datepicker('option', 'maxDate', value);
+        }
+    }).datepicker('option', 'minDate', $('#display_start_date').val());
+
+    $("#check_all").click(function(){
         $(".check_it").prop("checked",this.checked);
-   });
+    });
+
     $(document).ready(function () {
         $('#form_export_employees').validate();
     });
+
     $(".fa-minus").hide();
+
     $(".fa-plus").click(function(){
         $(".fa-plus").hide();
         $(".fa-minus").show();
     });
+
     $(".fa-minus").click(function(){
         $(".fa-minus").hide();
         $(".fa-plus").show();
     });
+    
     $(".check_it").click(function(){
         var total_boxes=$(".check_it").length;
         var checked_boxes=$(".check_it:checked").length;
