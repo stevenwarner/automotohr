@@ -1526,7 +1526,7 @@
                 dateFormat: 'mm-dd-yy',
                 changeMonth: true,
                 changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+                yearRange: "<?php echo STARTING_DATE_LIMIT; ?>"
             });
 
             $('.date_of_birth').datepicker({

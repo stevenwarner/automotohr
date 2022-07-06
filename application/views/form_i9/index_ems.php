@@ -1595,7 +1595,7 @@ $(document).ready(function() {
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
                 changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+                yearRange: "<?php echo STARTING_DATE_LIMIT; ?>"
     });
     var option_val = '<?php echo isset($pre_form['section1_penalty_of_perjury']) > 0 ? $pre_form['section1_penalty_of_perjury'] : '' ?>';
     if (option_val == 'alien-work') {
