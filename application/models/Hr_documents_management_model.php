@@ -3281,8 +3281,10 @@ class Hr_documents_management_model extends CI_Model
         addDefaultCategoriesIntoCompany($companySid);
         //
         $this->db->select('sid, name')
+            ->group_start()
             ->where('company_sid', $companySid)
             ->or_where('sid', PP_CATEGORY_SID)
+            ->group_end()
             ->order_by('sort_order', 'asc');
         //
         if ($status != NULL) $this->db->where('status', $status);
@@ -3291,6 +3293,7 @@ class Hr_documents_management_model extends CI_Model
         //
         $b = $a->result_array();
         $a->free_result();
+        
         //
         return $b;
     }
