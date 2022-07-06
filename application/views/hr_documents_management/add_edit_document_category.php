@@ -28,7 +28,7 @@
                                             <?php 
                                                 $is_default = "";
                                                 //
-                                                if ($category['default_category_sid'] != 0) {
+                                                if ($category['default_category_sid'] != 0 || $category['is_default'] == 1 ) {
                                                     $is_default = "readonly";
                                                 }
                                             ?>

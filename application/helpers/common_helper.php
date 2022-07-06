@@ -13964,10 +13964,13 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
         //
         // Only execute below code if system have default categories
         //
-        $CI->db->select('sid, name, status, created_by_sid, updated_by_sid');
+        $CI->db->select('sid, name, status, created_by_sid, updated_by_sid,default_category_sid');
         $CI->db->where('company_sid', $company_sid);
         //
         $company_categories = $CI->db->get('documents_category_management')->result_array();
+      //  print_r($default_categories);
+      //  die();
+        
         //
         if (empty($company_categories)) {
             // Only execute if company have no categories
@@ -13987,14 +13990,18 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
                 }
             }
         } else {
+
+           //  $default_category_sids = array_column($company_categories,'default_category_sid');
             // Only execute if company already have categories
             $process_catogeries = array();
             foreach ($default_categories as $default_category) {
                 //
                 $DCName = strtolower(str_replace(" ", "_", $default_category['name']));
                 $already_exist = array_column($company_categories, "name");
-                //
-                if (!in_array($default_category['name'], $already_exist)) {
+               //
+
+              //  if (!in_array($default_category['name'], $already_exist) && !in_array($default_category['sid'], $default_category_sids) ) {
+                    if (!in_array($default_category['name'], $already_exist) ) {
 
                     if ($default_category['status'] == 1) {
                         $data_to_insert = array();

@@ -2559,4 +2559,29 @@ class Company_model extends CI_Model {
             $this->db->update('portal_eeo_form', $dataToUpdate);
         }
     }
+
+
+
+    function get_company_all_default_categories ($company_sid) {
+        $this->db->select('sid, name, status, sort_order, created_date');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->group_start();
+        $this->db->or_where('is_default', 1);
+        $this->db->or_where('default_category_sid!=', 0);
+        $this->db->group_end();
+        
+        $records_obj = $this->db->get('documents_category_management');
+
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        
+        if(!empty($records_arr)){
+            return $records_arr;
+        } else {
+            return array();
+        }
+    }
+
+
+
 }

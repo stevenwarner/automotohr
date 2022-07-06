@@ -3093,4 +3093,126 @@ class Companies extends Admin_Controller {
         //
         $this->render('payroll/manage_payroll');
     }
+
+
+    function default_document_category_listing ($company_sid = null) {
+     //
+   $this->data['page_title'] = "Document Default Categories";
+   $this->data['company_sid'] = $company_sid;
+
+   $default_categories = $this->company_model->get_company_all_default_categories($company_sid);
+   $this->data['default_categories'] = $default_categories;
+   
+   //
+   $this->render('manage_admin/documents/default_companies_categories');
+
+    }
+
+
+
+
+    function add_default_category ($company_sid = null) { 
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+     
+        $this->data['page_title'] = "Add a Default Category";
+        $this->data['page_sub_title'] = "Add a New Category";
+        $this->data['company_sid'] = $company_sid;
+        //
+        $config = array(
+            array(
+                'field' => 'category_name',
+                'label' => 'Category Name',
+                'rules' => 'xss_clean|trim|required'
+            )
+        );
+        $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
+        $this->form_validation->set_rules($config);
+
+        if ($this->form_validation->run() == FALSE) {
+            $this->data['default_category'] = array();
+            //
+            $this->render('manage_admin/documents/companies_default_category_form');
+        } else{
+            $formpost = $this->input->post(NULL, TRUE);
+            $insert_array = array();
+            $insert_array['company_sid']  = $company_sid;
+            $insert_array['is_default']  = 1;
+            $insert_array['name'] = $formpost['category_name'];
+            $insert_array['status']  = $formpost['status'];
+            $insert_array['description']  = $formpost['description'];
+            $insert_array['sort_order']  = $formpost['sort_order'];
+            $insert_array['created_by_sid']  = 0;
+            $insert_array['created_date'] = date('Y-m-d H:i:s');
+            //
+            $this->load->model('manage_admin/documents_model');
+            $check = $this->documents_model->check_unique_with_name(0, $formpost['category_name']);
+
+            if($check > 0){
+                $this->session->set_flashdata('message', '<b>Warning:</b>Category name is already Exists!');
+                redirect(base_url('manage_admin/companies/default_document_category_listing/'.$company_sid));
+            }
+            $this->documents_model->add_category($insert_array);
+            redirect(base_url('manage_admin/companies/default_document_category_listing/'.$company_sid));
+        }
+    }
+
+
+    function edit_default_category ($sid) {
+        $company_sid = $this->uri->segment('5');
+        $this->load->model('manage_admin/documents_model');
+         //
+        $this->data['page_title'] = "Edit a Default Category";
+        $this->data['page_sub_title'] = "Edit Category";
+        //
+        $default_category = $this->documents_model->get_category($sid);
+        //
+        if (empty($default_category)) {
+            $this->session->set_flashdata('message', '<b>Warning:</b>Default category not found!');
+            redirect(base_url('manage_admin/default_categories'));
+        }
+        //
+        $config = array(
+            array(
+                'field' => 'category_name',
+                'label' => 'Category Name',
+                'rules' => 'xss_clean|trim|required'
+            )
+        );
+        //
+        $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
+        $this->form_validation->set_rules($config);
+        //
+        if ($this->form_validation->run() == FALSE) {
+            //
+            $this->data['category'] = $default_category;
+            $this->data['company_sid'] = $company_sid;
+            //
+            $this->render('manage_admin/documents/companies_default_category_form');
+        } else{
+            $formpost = $this->input->post(NULL, TRUE);
+            $data_to_update = array();
+            $data_to_update['name'] = $formpost['category_name'];
+            $data_to_update['status']  = $formpost['status'];
+            $data_to_update['description']  = $formpost['description'];
+            $data_to_update['sort_order']  = $formpost['sort_order'];
+            //
+            $check = $this->documents_model->check_unique_with_name(0, $formpost['category_name'], $sid);
+            //
+            if($check > 0){
+                $this->session->set_flashdata('message', '<b>Warning:</b>Category name is already Exists!');
+                redirect(base_url('manage_admin/companies/default_document_category_listing/'.$company_sid));
+            }
+            //
+            $this->documents_model->update_category($sid, $data_to_update);
+            //
+            redirect(base_url('manage_admin/companies/default_document_category_listing/'.$company_sid));
+        }
+    }
+
+
+
+
+
 }
