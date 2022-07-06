@@ -662,7 +662,9 @@
                                             <div class="form-group">
                                                 <label>Expiration Date <i class="fa fa-question-circle-o modalShow"
                                                         src="section_5_expiration_date"></i></label>
-                                                <input type="text" name="section2_lista_part1_expiration_date"
+                                                <input type="text" 
+                                                readonly
+                                                name="section2_lista_part1_expiration_date"
                                                     id="section2_lista_part1_expiration_date"
                                                     class="form-control date_picker2">
                                             </div>
