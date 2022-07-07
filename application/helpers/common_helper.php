@@ -14000,8 +14000,8 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
                 $already_exist = array_column($company_categories, "name");
                //
 
-              //  if (!in_array($default_category['name'], $already_exist) && !in_array($default_category['sid'], $default_category_sids) ) {
-                    if (!in_array($default_category['name'], $already_exist) ) {
+                //  if (!in_array($default_category['name'], $already_exist) && !in_array($default_category['sid'], $default_category_sids) ) {
+                if (!in_array($default_category['name'], $already_exist) ) {
 
                     if ($default_category['status'] == 1) {
                         $data_to_insert = array();
@@ -14025,7 +14025,7 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
                         if ($DCName == $CCName && $company_category['created_by_sid'] == 0 && $company_category['updated_by_sid'] == 0) {
                             if ($default_category['status'] != $company_category['status']) {
                                 $data_to_update = array();
-                                $data_to_update['status']  = $default_category['status'];
+                                // $data_to_update['status']  = $default_category['status'];
                                 $data_to_update['updated_by_sid']  = 0;
                                 $data_to_update['updated_date']  = date('Y-m-d');
                                 //
