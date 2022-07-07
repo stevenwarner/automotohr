@@ -511,7 +511,7 @@ class Private_messages extends Public_Controller
                     $subject = 'Private Message Notification'; //send email
                     $body = $message_hf['header']
                         . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                        . '</b> You have a message in your AutomotoHR inbox from '.$employer_name
+                        . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
                         . $message_hf['footer']
                         . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                         . $secret_key . '</div>';
@@ -598,7 +598,7 @@ class Private_messages extends Public_Controller
                                 $secret_key = $message_data['identity_key'] . "__";
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                                    . '</b> You have a message in your AutomotoHR inbox from '.$employer_name
+                                    . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
@@ -661,7 +661,7 @@ class Private_messages extends Public_Controller
                                 $secret_key = $message_data['identity_key'] . "__";
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                                    . '</b> You have a message in your AutomotoHR inbox from '.$employer_name
+                                    . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
@@ -712,7 +712,7 @@ class Private_messages extends Public_Controller
                                 $secret_key = $message_data['identity_key'] . "__";
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                                    . '</b> You have a message in your AutomotoHR inbox from '.$employer_name
+                                    . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
@@ -810,7 +810,7 @@ class Private_messages extends Public_Controller
                             $subject = $formpost['subject'];
                             $body = $message_hf['header']
                                 . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $message_data['contact_name'] . ',</h2>'
-                                . '</b> You have a message in your AutomotoHR inbox from '.$employer_name
+                                . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
                                 . $message_hf['footer']
                                 . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                 . $secret_key . '</div>';
