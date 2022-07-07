@@ -18,11 +18,10 @@
         </div>
         <div class="slider-text">
             <div class="slide-inner">
-            <?php if(isset($section_01_meta['show_video_or_image']) && $section_01_meta['show_video_or_image'] != 'video' ){ ?>
-                <h2 class="slider-title"  <?=isset($section_01_meta['do_capitalize']) && $section_01_meta['do_capitalize'] == 0 ? 'style="text-transform: none;"' : ''; ?>><?php echo (isset($section_01_meta['image']) && trim($section_01_meta['title']) != '' ? $section_01_meta['title'] : 'Are You Looking for an Amazing Career Opportunity?' ); ?></h2>
-                <p class="slide-description"  <?=isset($section_01_meta['do_capitalize']) && $section_01_meta['do_capitalize'] == 0 ? 'style="text-transform: none;"' : ''; ?>><?php echo (isset($section_01_meta['image']) && trim($section_01_meta['tag_line']) != '' ? $section_01_meta['tag_line'] : ' There is No Better Place!' ); ?></p>
-            <?php } ?>
-            
+                <?php if(isset($section_01_meta['show_video_or_image']) && $section_01_meta['show_video_or_image'] != 'video' ){ ?>
+                    <h2 class="slider-title"  <?=isset($section_01_meta['do_capitalize']) && $section_01_meta['do_capitalize'] == 0 ? 'style="text-transform: none;"' : ''; ?>><?php echo (isset($section_01_meta['image']) && trim($section_01_meta['title']) != '' ? $section_01_meta['title'] : 'Are You Looking for an Amazing Career Opportunity?' ); ?></h2>
+                    <p class="slide-description"  <?=isset($section_01_meta['do_capitalize']) && $section_01_meta['do_capitalize'] == 0 ? 'style="text-transform: none;"' : ''; ?>><?php echo (isset($section_01_meta['image']) && trim($section_01_meta['tag_line']) != '' ? $section_01_meta['tag_line'] : 'There is No Better Place!' ); ?></p>
+                <?php } ?>
             </div>
         </div>
     </section>
