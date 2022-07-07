@@ -496,7 +496,7 @@ class Hr_documents_management extends Public_Controller
             $data['document_groups'] = $groups;
             $pre_assigned_groups = array();
             $data['pre_assigned_groups'] = $pre_assigned_groups;
-            $data['active_categories'] = $this->hr_documents_management_model->get_all_documents_category($company_sid, 1);
+            $data['active_categories'] = $this->hr_documents_management_model->getAllCategories($company_sid, 1);
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
 
             $data['employeesList'] = $this->hr_documents_management_model->fetch_all_company_managers(
@@ -781,7 +781,7 @@ class Hr_documents_management extends Public_Controller
             $data['document_groups'] = $groups;
             $pre_assigned_groups = array();
             $data['pre_assigned_groups'] = $pre_assigned_groups;
-            $data['active_categories'] = $this->hr_documents_management_model->get_all_documents_category($company_sid, 1);
+            $data['active_categories'] = $this->hr_documents_management_model->getAllCategories($company_sid, 1);
 
             $data['employeesList'] = $this->hr_documents_management_model->fetch_all_company_managers(
                 $data['company_sid'],
@@ -1035,7 +1035,7 @@ class Hr_documents_management extends Public_Controller
             $data['document_groups'] = $groups;
             $pre_assigned_groups = array();
             $data['pre_assigned_groups'] = $pre_assigned_groups;
-            $data['active_categories'] = $this->hr_documents_management_model->get_all_documents_category($company_sid, 1);
+            $data['active_categories'] = $this->hr_documents_management_model->getAllCategories($company_sid, 1);
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
 
             if ($this->form_validation->run() == false) {
@@ -1258,7 +1258,7 @@ class Hr_documents_management extends Public_Controller
                 }
             }
             $pre_assigned_categories = array();
-            $data['active_categories'] = $this->hr_documents_management_model->get_all_documents_category($company_sid, 1);
+            $data['active_categories'] = $this->hr_documents_management_model->getAllCategories($company_sid, 1);
             $pre_assigned_category_data = $this->hr_documents_management_model->get_all_category_2_document($sid);
 
             if (!empty($pre_assigned_category_data)) {
@@ -13140,7 +13140,7 @@ class Hr_documents_management extends Public_Controller
 
         $data['user_type'] = $user_type;
         $data['user_sid'] = $user_sid;
-        $data['active_categories'] = $this->hr_documents_management_model->get_all_documents_category($data['company_sid']);
+        $data['active_categories'] = $this->hr_documents_management_model->getAllCategories($data['company_sid'], 1);
 
         $this->load->view('main/header', $data);
         $this->load->view('hr_documents_management/assign_bulk_document');

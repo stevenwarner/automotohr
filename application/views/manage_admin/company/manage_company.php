@@ -564,6 +564,23 @@
                                                     </div>
                                                     <header class="hr-box-header hr-box-footer"></header>
                                                 </article>
+
+                                               
+                                                <article class="information-box">
+                                                    <header class="hr-box-header">Company Default Categories</header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li>
+                                                                    <strong>Manage Company  Default Categories </strong>
+                                                                    <a href="<?php echo base_url('manage_admin/companies/default_document_category_listing/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+
                                                 <article class="information-box">
                                                     <header class="hr-box-header">
                                                         Notification Emails Management
@@ -1302,23 +1319,6 @@
                                                     </article>
                                                 <?php }
                                             } ?>
-                                        </div>
-
-                                        <div class="row">
-                                        <article class="col-sm-6 information-box">
-                                                    <header class="hr-box-header">Company Default Categories</header>
-                                                    <div class="table-outer">
-                                                        <div class="info-row">
-                                                            <ul>
-                                                                <li>
-                                                                    <strong>Manage Company  Default Categories </strong>
-                                                                    <a href="<?php echo base_url('manage_admin/companies/default_document_category_listing/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <header class="hr-box-header hr-box-footer"></header>
-                                                </article>
                                         </div>
 
 
