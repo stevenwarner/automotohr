@@ -23,7 +23,7 @@
                         <a class="btn btn-success btn-block mb-2" href="<?=base_url('outbox') ?>"><i class="fa fa-inbox"></i> Outbox</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a class="btn btn-success btn-block mb-2" href="<?=base_url('compose_message')?>"><i class="fa fa-pencil-square-o"></i> Compose new Message </a>
+                        <a class="btn btn-succes-selected btn-block mb-2" href="<?=base_url('compose_message')?>"><i class="fa fa-pencil-square-o"></i> Compose new Message </a>
                     </div>
                 </div>
             </div>

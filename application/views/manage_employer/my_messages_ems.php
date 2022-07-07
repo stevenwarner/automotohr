@@ -1,3 +1,12 @@
+<style>
+    .btn-succes-selected{
+        color: #fff;
+        background-color: #068206;
+        pointer-events: none;
+        
+    }
+    </style>
+
 <div class="main">
     <div class="container">
         <div class="row">
@@ -12,13 +21,13 @@
                         <?php } ?>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a class="btn btn-success btn-block mb-2" href="<?= base_url('private_messages') ?>"><i class="fa fa-envelope-o"></i> Inbox <?php if ($total_messages > 0) { ?><span>(<?= $total_messages ?>)</span><?php } ?></a>
+                        <a class="btn  <?php echo ($this->uri->segment(1) == 'private_messages')? ' btn-succes-selected':' btn-success' ?> btn-block mb-2" href="<?= base_url('private_messages') ?>"><i class="fa fa-envelope-o"></i> Inbox <?php if ($total_messages > 0) { ?><span>(<?= $total_messages ?>)</span><?php } ?></a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a class="btn btn-success btn-block mb-2" href="<?= base_url('outbox') ?>"><i class="fa fa-inbox"></i> Outbox</a>
+                        <a class="btn <?php echo ($this->uri->segment(1) == 'outbox')? ' btn-succes-selected':' btn-success' ?> btn-block mb-2" href="<?= base_url('outbox') ?>"><i class="fa fa-inbox"></i> Outbox</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                        <a class="btn btn-success btn-block mb-2" href="<?= base_url('compose_message') ?>"><i class="fa fa-pencil-square-o"></i> Compose new Message </a>
+                        <a class="btn <?php echo ($this->uri->segment(1) == 'compose_message')? ' btn-succes-selected':' btn-success' ?> btn-block mb-2" href="<?= base_url('compose_message') ?>"><i class="fa fa-pencil-square-o"></i> Compose new Message</a>
                     </div>
                 </div>
             </div>

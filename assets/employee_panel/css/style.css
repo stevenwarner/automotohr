@@ -2848,3 +2848,16 @@ input[type='checkbox'].user_checkbox:checked:after {
 .btn-black{
     background-color: #000000 !important;
 }
+
+.btn-succes-selected{
+  color: #fff;
+  background-color: #068206;
+  pointer-events: none;
+  
+}
+
+.btn-success:hover {
+  color: #fff;
+  background-color: #068206 !important;
+  border-color: #398439;
+}

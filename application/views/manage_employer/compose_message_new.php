@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+  <?php defined('BASEPATH') OR exit('No direct script access allowed');
 if(!$load_view) { ?>
 <div class="main-content">
     <div class="container-fluid">
@@ -18,7 +18,7 @@ if(!$load_view) { ?>
                                 <div class="message-action-btn">
                                     <a class="submit-btn" href="<?= base_url('private_messages') ?>">Inbox <?php if($total_messages>0 ) { ?><span>(<?= $total_messages ?>)</span><?php } ?></a>
                                     <a class="submit-btn" href="<?= base_url('outbox') ?>" >Outbox</a>
-                                    <a class="submit-btn" href="<?= base_url('compose_message') ?>" >Compose new Message </a>
+                                    <a class="submit-btn " href="<?= base_url('compose_message') ?>" >Compose new Message </a>
                                 </div>
                             </div>
                         </div>
