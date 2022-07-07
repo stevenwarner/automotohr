@@ -380,12 +380,14 @@ class Form_full_employment_application extends CI_Controller {
                 
                 if ($this->form_validation->run() == false) {
                     //
-                    sendMail(
-                        FROM_EMAIL_NOTIFICATIONS,
-                        'mubashir.saleemi123@gmail.com',
-                        'Form Full Application Validation Error',
-                        @json_encode(validation_errors())
-                    );
+                    if (!empty(validation_errors())) {
+                        sendMail(
+                            FROM_EMAIL_NOTIFICATIONS,
+                            'mubashir.saleemi123@gmail.com',
+                            'Form Full Application Validation Error',
+                            @json_encode(validation_errors())
+                        );
+                    }    
                     //
                     $data['states'] = db_get_active_states(227);
                     $data['starting_year_loop'] = 1930;
@@ -1004,12 +1006,14 @@ class Form_full_employment_application extends CI_Controller {
 
                 if ($this->form_validation->run() === FALSE) {
                     //
-                    sendMail(
-                        FROM_EMAIL_NOTIFICATIONS,
-                        'mubashir.saleemi123@gmail.com',
-                        'Form Full Application Validation Error',
-                        @json_encode(validation_errors())
-                    );
+                    if (!empty(validation_errors())) {
+                        sendMail(
+                            FROM_EMAIL_NOTIFICATIONS,
+                            'mubashir.saleemi123@gmail.com',
+                            'Form Full Application Validation Error',
+                            @json_encode(validation_errors())
+                        );
+                    }    
                     //
                     $company_id = $data["session"]["company_detail"]["sid"];
                     $employer_id = $data["session"]["employer_detail"]["sid"];
