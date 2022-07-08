@@ -517,5 +517,16 @@ class Export_csv_model extends CI_Model {
     }
 
 
+    function get_employee_csv_report_settings(){
+
+        $records_obj = $this->db->get('employee_csv_report_settings');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+
+        return $records_arr;
+
+    }
+
+
 
 }
