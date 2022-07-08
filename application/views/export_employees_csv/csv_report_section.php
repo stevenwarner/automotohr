@@ -96,7 +96,6 @@
                     </div>
                 </div>
 
-                
                 <div class="col-sm-12">
                     <hr />
                 </div>
@@ -110,29 +109,32 @@
                         <?php } ?>
                     </select>
                 </div>
-                <div class="col-sm-12">  
+                <div class="col-sm-12">
                     <!--  -->
                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                        
+
                     </div>
                     <!--  -->
                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                       
+
                     </div>
                     <!--  -->
                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                         <label>&nbsp;</label>
-                        <button id="save_report_setting" class="btn btn-block btn-success">Save Report Setting</button>
+                        <a id="save_report_setting" class="btn btn-block btn-success">Save Report Setting</a>
                     </div>
                 </div>
-
             </div>
-        </form>    
+        </form>
     </div>
 </div>
 
-
 <script>
+    $(document).ready(function() {
+        $('.jsCustomDateRow').hide();
+
+    });
+
     $(function() {
         //
         $('.assignSelectedEmployees').select2({
@@ -194,23 +196,75 @@
         //
         $('.assignAndSendDocument[value="none"]').prop('checked', true);
         //
-        $("#save_report_setting").on("click", function(){
+        $("#save_report_setting").on("click", function(e) {
+             //  e.preventDefault();
+
+            var form_validation = 0;
             var access_level = $("#access_level").val();
             var status = $("#employee_status").val();
             //
             $("#report_access_level").val(access_level);
             $("#report_employee_status").val(status);
             //
-            $("#form_export_employees_report").submit(function(e){
-                var ids=[];
-                $(".check_it:checked").map(function(){
+            // Start Validation
+            var custom_type = $('input[name="assignAndSendDocument"]:checked').val();
+            var custom_time = $('input[name="assignAndSendCustomTime"]').val();
+            var custom_date = $('input[name="assignAndSendCustomDate"]').val();
+            var selected_employes = $('.assignSelectedEmployees').val();
+
+            //  console.log(custom_type);
+            //  alert(custom_type)
+            //
+            if (custom_type == "none") {
+                form_validation == 1;
+                alertify.alert("Error", "Please select Report Type");
+                return;
+            } else if (custom_type == "daily" || custom_type == "weekly") {
+                if (custom_time == '' || custom_time == undefined) {
+                    form_validation == 1;
+                    alertify.alert("Error", "Please select Time");
+                    return;
+                }
+            } else if (custom_type == "monthly" || custom_type == "yearly" || custom_type == "custom") {
+
+                if (custom_date == '' || custom_date == undefined) {
+                    form_validation == 1;
+                    alertify.alert("Error", "Please select Date");
+                    return;
+                }
+
+                if (custom_time == '' || custom_time == undefined) {
+                    form_validation == 1;
+                    alertify.alert("Error", "Please select Time");
+                    return;
+                }
+            }
+
+            if (selected_employes == '' || selected_employes == undefined) {
+                form_validation == 1;
+                alertify.alert("Error", "Please select Employee");
+                return;
+            }
+
+            if (form_validation == 0) {
+                submitforms();
+            }
+
+
+        });
+
+
+        function submitforms() {
+            $("#form_export_employees_report").submit(function(e) {
+         
+                var ids = [];
+                $(".check_it:checked").map(function() {
                     ids.push($(this).val());
                 });
                 $(this).append("<input type='hidden' name='test'>");
                 $("input[name='test']").val(ids);
-               
-            });
 
-        });
+            });
+        }
     });
 </script>
