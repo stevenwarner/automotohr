@@ -67,22 +67,15 @@ class Export_employees_csv extends Public_Controller
                             $start_time = date('Y-m-01 00:00:00');
                             $end_time = date('Y-m-t 23:59:59');
                         }
-                        echo "Start Date = ". $start_time . "<br>";
-                        echo "End Date = ". $end_time . "<br>";
                         
                         //
                         // $employees = $this->export_csv_model->get_all_employees($company_sid, $access_level, $status);
                         $employees = $this->export_csv_model->get_all_employees_from_DB($company_sid, $access_level, $status, $start_time, $end_time);
-                        _e($_POST);
-                        _e($employees,true,true);
 
                         $export_data = array();
                         $i = 0;
                         $rows = '';
 
-                        // echo "<pre>";
-                        // print_r($employees);
-                        // die();
                         if (!empty($employees)) { 
                             foreach ($employees as $key => $employee) {
 
@@ -316,7 +309,9 @@ class Export_employees_csv extends Public_Controller
                         $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
                         $data_to_insert['created_at'] = date('Y-m-d H:i:s');
                         $data_to_insert['created_by'] = $employer_sid;
-                       $this->export_csv_model->save_employee_csv_report_settings($data_to_insert);
+                        $this->export_csv_model->save_employee_csv_report_settings($data_to_insert);
+                        $this->session->set_flashdata('message', '<strong>Success</strong> CSV Report Settings Saved Successfully');
+                        redirect('export_employees_csv', 'refresh');
 
                         break;    
                 }
