@@ -17,6 +17,7 @@
             <?php } ?>
         </div>
         <div class="slider-text">
+            <?php _e($section_01_meta, true);?>
             <div class="slide-inner">
                 <h2 class="slider-title"  <?=isset($section_01_meta['do_capitalize']) && $section_01_meta['do_capitalize'] == 0 ? 'style="text-transform: none;"' : ''; ?>><?php echo (isset($section_01_meta['image']) && trim($section_01_meta['title']) != '' ? $section_01_meta['title'] : 'Are You Looking for an Amazing Career Opportunity?' ); ?></h2>
                 <p class="slide-description"  <?=isset($section_01_meta['do_capitalize']) && $section_01_meta['do_capitalize'] == 0 ? 'style="text-transform: none;"' : ''; ?>><?php echo (isset($section_01_meta['image']) && trim($section_01_meta['tag_line']) != '' ? $section_01_meta['tag_line'] : 'There is No Better Place!' ); ?></p>
