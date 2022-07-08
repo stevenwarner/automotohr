@@ -1075,6 +1075,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
           	obj.approvers_note = "";
           	obj.approvers_list = "";
           	//
+          	console.log(approverInfo)
 			if (approverInfo.isChecked) {
 				obj.has_approval_flow = 'on';
 				obj.approvers_note = approverInfo.approverNote;

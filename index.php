@@ -326,7 +326,7 @@ switch (ENVIRONMENT)
 
 if(in_array($_SERVER['HTTP_HOST'], ['automotohr.local'])){
 	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
+	ini_set('display_errors', 0);
 	define('MINIFIED', '');
 } else{
 	error_reporting(E_ALL);
