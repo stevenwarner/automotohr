@@ -1537,7 +1537,6 @@ $route['attendance/manage']['post'] = "sheet/Attendance_ajax/ManageTimeSheet";
 $route['attendance/settings']['post'] = "sheet/Attendance_ajax/UpdateSettings";
 
 
-
 /**
  * 
  */

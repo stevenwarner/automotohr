@@ -111,7 +111,7 @@ class Appearance extends Public_Controller {
 
     public function customize_appearance($theme_id = 0) {
         header("X-XSS-Protection: 0");
-        if ($this->session->userdata('logged_in')) {
+          if ($this->session->userdata('logged_in')) {
             if ($theme_id == 0) { // theme not found - redirect to appreance
                 $this->session->set_flashdata('message', '<b>Error:</b> Theme not found!');
                 redirect('appearance', 'refresh');
@@ -239,7 +239,6 @@ class Appearance extends Public_Controller {
             }
             
             if (isset($_POST['perform_action']) && $_POST['perform_action'] == 'save_config_section_01') {
-                
                 $theme_name = $_POST["theme_name"];
                 $page_name = $_POST["page_name"];
                 $title = $_POST['title_section_01'];
@@ -254,11 +253,14 @@ class Appearance extends Public_Controller {
 
                 $current_section_meta = get_page_section_meta($company_id, $theme_name, $page_name, 'section_01');
                 $update_section_meta = $this->generate_page_section_meta_array('', '', $title, $tag_line, '', 0, $show_img_vdo, '', $do_capitalize);
+                             
                 $dataToStore = merge_arrays_override_key_values($current_section_meta, $update_section_meta);
                 // Added on: 10-03-2019
                 // Overwrite tagline
                 if($tag_line == '') $dataToStore['tag_line'] = NULL;
+                if($title == '') $dataToStore['title'] = '';
                 $dataToStore['do_capitalize'] = $do_capitalize == 'on' ? 1 : 0;
+               //  die($dataToStore);
                 $this->customize_appearance_model->fSaveThemeMetaData($company_id, $theme_name, $page_name, 'section_01', $dataToStore);
             }
 
