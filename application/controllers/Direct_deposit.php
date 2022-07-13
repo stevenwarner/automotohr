@@ -35,7 +35,8 @@ class Direct_deposit extends Public_Controller
                 $exits = $this->direct_deposit_model->checkDDI($type, $sid, $company_sid);
                 //
                 if($exits == 0){
-                    $type = 'applicant';
+                    //$type = 'applicant';
+                    // not understand this logic
                 }
             }
 
@@ -53,7 +54,7 @@ class Direct_deposit extends Public_Controller
                 $data['applicant_average_rating'] = $this->application_tracking_system_model->getApplicantAverageRating($employer_sid, 'employee');
                 $load_view = check_blue_panel_status(false, 'self');
                 $data["employee"] = $data['session']['employer_detail'];
-            } elseif ($type == 'employee') {
+            } else if ($type == 'employee') {
                 check_access_permissions($security_details, 'employee_management', 'employee_occupational_license_info');  // Param2: Redirect URL, Param3: Function Name
                 $data = employee_right_nav($sid);
                 $data['security_details'] = $security_details;
@@ -83,7 +84,7 @@ class Direct_deposit extends Public_Controller
                 $data['send_email_notification'] = 'yes';
                 //
 
-            } elseif ($type == 'applicant') {
+            } else if ($type == 'applicant') {
                 if ($data['session']['employer_detail']['access_level'] != "Hiring Manager"){
                     check_access_permissions($security_details, 'application_tracking', 'direct_deposit_info');  // Param2: Redirect URL, Param3: Function Name
                 }
