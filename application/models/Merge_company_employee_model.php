@@ -455,7 +455,7 @@ class Merge_company_employee_model extends CI_Model
                 foreach ($secondary_general_docs as $secondary_doc) {
                     if(!in_array($secondary_doc['sid'],$already_sid)){
                         unset($secondary_doc['sid']);
-                        $secondary_doc['user_sid'] = $hired_sid;
+                        $secondary_doc['user_sid'] = $secondary_employee_sid;
                         $secondary_doc['user_type'] = 'employee';
                         $this->db->insert('documents_assigned', $secondary_doc);
                     }

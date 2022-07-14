@@ -1074,7 +1074,7 @@ class Hire_onboarding_applicant_model extends CI_Model
         }
 
         //General Documents
-        $this->db->select('sid');
+        $this->db->select('sid,document_sid');
         $this->db->where('user_sid', $hired_sid);
         $this->db->where('user_type', 'employee');
         $records_obj = $this->db->get('documents_assigned')->result_array();
@@ -1103,8 +1103,10 @@ class Hire_onboarding_applicant_model extends CI_Model
         } else {
             $already_sid = array();
             foreach ($records_obj as $obj) {
-                $already_sid[] = $obj['sid'];
+                $already_sid[] = $obj['document_sid'];
+                 
             }
+     
             $this->db->select('*');
             $this->db->where('user_sid', $sid);
             $this->db->where('user_type', 'applicant');
@@ -1114,7 +1116,7 @@ class Hire_onboarding_applicant_model extends CI_Model
 
             if (!empty($records_arr)) {
                 foreach ($records_arr as $record) {
-                    if (!in_array($record['sid'], $already_sid)) {
+                    if (!in_array($record['document_sid'], $already_sid)) {
                         unset($record['sid']);
                         $record['user_sid'] = $hired_sid;
                         $record['user_type'] = 'employee';
