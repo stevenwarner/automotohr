@@ -31,7 +31,7 @@
 
                                     <li class="form-col-100 autoheight">
                                         <label for="section_01_tagline">Tag Line</label>
-                                        <input type="text" name="tag_line_section_01" id="tag_line_section_01" class="invoice-fields" placeholder="Tag Line Goes Here" value="<?php echo (isset($section_01_meta['tag_line']) && trim($section_01_meta['tag_line'])!='' ? $section_01_meta['tag_line'] : 'There is No Better Place!'); ?>" />
+                                        <input type="text" name="tag_line_section_01" id="tag_line_section_01" class="invoice-fields" placeholder="Tag Line Goes Here" value="<?php echo (isset($section_01_meta['tag_line']) && trim($section_01_meta['tag_line'])!='' ? $section_01_meta['tag_line'] : ''); ?>" />
                                     </li>
 
                                     <!-- Capitalize option section -->
