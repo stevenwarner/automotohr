@@ -2971,21 +2971,28 @@ class Reports extends Public_Controller
 
     function error_report()
     {
+        
         $alertpages = ["assign_bulk_documents", "add_history_documents"];
         $page = str_replace(base_url(), "", $_POST["OnPage"]);
-
         $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
-        $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
-
+        $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
         if (str_replace($alertpages, '', $page) != $page) {
-            sendMail(
+               sendMail(
                 FROM_EMAIL_NOTIFICATIONS,
                 'mubashir.saleemi123@gmail.com',
                 'Bulk Upload Documents Error',
                 @json_encode($_POST)
             );
-        }
+        }else{
+            sendMail(
+                FROM_EMAIL_NOTIFICATIONS,
+                'mubashir.saleemi123@gmail.com',
+                'Error On '.$page,
+                @json_encode($_POST)
+            );
 
+        }
+      
         $folder = APPPATH . '../../error_logs';
         //
         if (!is_dir($folder)) {
