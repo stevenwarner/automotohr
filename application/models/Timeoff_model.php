@@ -1315,6 +1315,21 @@ class Timeoff_model extends CI_Model
         );
     }
 
+    function getReuestStatus ($request_sid) {
+        $this->db->select('status ,level_status');
+        $this->db->where("sid", $request_sid);
+        $records_obj = $this->db->get('timeoff_requests');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = $records_arr;
+        }
+
+        return $return_data;
+    } 
+
     /**
      * Check if approver exists
      * 

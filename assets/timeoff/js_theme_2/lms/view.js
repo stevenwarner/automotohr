@@ -893,12 +893,22 @@ $(function() {
         rows += `        <div class="csBoxFooter">`;
         if (callOBJ.Requests.Main.isMine == 1) {
             if (expired == 1) {
-                rows += `            <div class="col-sm-12">`;
-                rows += `                <button class="btn btn-orange btn-theme form-control jsEditTimeOff"><i class="fa fa-eye"></i> View</button>`;
-                rows += `            </div>`;
+                
+                if (v.status == "approved" && v.level_status == "approved") {
+                    rows += `            <div class="col-sm-6">`;
+                    rows += `               <button class=" btn alert-danger btn-theme form-control jsCancelTimeOffRequest"><i class="fa fa-times-circle-o"></i> Cancel Request</button>`;
+                    rows += `            </div>`;
+                    rows += `            <div class="col-sm-6">`;
+                    rows += `                <button class="btn btn-orange btn-theme form-control jsEditTimeOff"><i class="fa fa-eye"></i> View</button>`;
+                    rows += `            </div>`;
+                } else {
+                    rows += `            <div class="col-sm-12">`;
+                    rows += `                <button class="btn btn-orange btn-theme form-control jsEditTimeOff"><i class="fa fa-eye"></i> View</button>`;
+                    rows += `            </div>`;
+                }
             } else if (v.status == "pending" && v.level_status == "pending" && moment(v.request_from_date) > moment()) {
                 rows += `            <div class="col-sm-12">`;
-                rows += `     <button class=" btn alert-danger btn-theme form-control jsCancelTimeOffRequest"><i class="fa fa-times-circle-o"></i> Cancel Request</button>`;
+                rows += `               <button class=" btn alert-danger btn-theme form-control jsCancelTimeOffRequest"><i class="fa fa-times-circle-o"></i> Cancel Request</button>`;
                 rows += `            </div>`;
             }
         } else {

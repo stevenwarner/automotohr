@@ -3695,10 +3695,19 @@ class Time_off extends Public_Controller
             // Create timeoff
             case "cancel_request":
                 //
+                
                 $in = [];
                 $in['status'] = 'cancelled';
                 //
+                $previous_status = $this->timeoff_model->getReuestStatus($post['requestId']);
+                _e($previous_status);
+                die("please stop");
+                //
                 $this->timeoff_model->updateTable($in, $post['requestId'], 'timeoff_requests');
+                //
+                if ($previous_status["status"] == "approved" && $previous_status["level_status"] == "approved") {
+                    $this->sendEmailToInformApprovers($post);
+                }
                 //
                 $in = [];
                 $in['request_sid'] = $post['requestId'];
@@ -6011,6 +6020,10 @@ class Time_off extends Public_Controller
                 );
             }    
         }
+    }
+
+    private function sendEmailToInformApprovers () {
+        
     }
 
     function approver_public ($varification_key) {
