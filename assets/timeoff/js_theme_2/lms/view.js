@@ -894,7 +894,7 @@ $(function() {
         if (callOBJ.Requests.Main.isMine == 1) {
             if (expired == 1) {
                 
-                if (v.status == "approved" && v.level_status == "approved") {
+                if (v.status == "approved" && v.level_status == "approved" && moment(v.request_from_date) > moment()) {
                     rows += `            <div class="col-sm-6">`;
                     rows += `               <button class=" btn alert-danger btn-theme form-control jsCancelTimeOffRequest"><i class="fa fa-times-circle-o"></i> Cancel Request</button>`;
                     rows += `            </div>`;
