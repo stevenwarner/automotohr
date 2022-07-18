@@ -139,6 +139,7 @@ class Appearance extends Public_Controller {
 
             if (isset($_POST["action"]) && $_POST["action"] == "update") {
                 $theme_name = $this->input->post('theme_name');
+
                 $sid = $this->input->post('sid');
                 $job_fair_homepage_page_url = !empty($this->input->post('job_fair_homepage_page_url')) ? implode(',', $this->input->post('job_fair_homepage_page_url')) : '';
                 $theme4_enable_job_fair_homepage = 0;
