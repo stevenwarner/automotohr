@@ -1315,7 +1315,6 @@ class Timeoff_model extends CI_Model
         );
     }
 
-
     /**
      * Update Employee Note 
      *
@@ -1344,18 +1343,36 @@ class Timeoff_model extends CI_Model
         );
     }
 
-     function getEmployeePreviousNote ($request_sid, $employee_sid) {
+    function getEmployeePreviousNote ($request_sid, $employee_sid) {
         $this->db->select('note');
         $this->db->where("request_sid", $request_sid);
         $this->db->where('employee_sid', $employee_sid);
         $this->db->where('action', "update");
         $records_obj = $this->db->get('timeoff_request_timeline');
+
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+
+        if (!empty($records_arr)) {
+            $return_data = json_decode($records_arr["note"],true);
+        }
+
+        return $return_data;
+    } 
+
+    function getPreviousStatus ($request_sid) {
+        $this->db->select('status ,level_status');
+        $this->db->where("sid", $request_sid);
+        $records_obj = $this->db->get('timeoff_requests');
+
         $records_arr = $records_obj->row_array();
         $records_obj->free_result();
         $return_data = array();
 
         if (!empty($records_arr)) {
-            $return_data = json_decode($records_arr["note"],true);
+            $return_data = $records_arr;
         }
 
         return $return_data;

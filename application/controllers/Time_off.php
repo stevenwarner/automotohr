@@ -3695,10 +3695,17 @@ class Time_off extends Public_Controller
             // Create timeoff
             case "cancel_request":
                 //
+                
                 $in = [];
                 $in['status'] = 'cancelled';
                 //
+                $previous_status = $this->timeoff_model->getPreviousStatus($post['requestId']);
+                //
                 $this->timeoff_model->updateTable($in, $post['requestId'], 'timeoff_requests');
+                //
+                if ($previous_status["status"] == "approved" && $previous_status["level_status"] == "approved") {
+                    $this->sendEmailToInformApprovers($post['requestId']);
+                }
                 //
                 $in = [];
                 $in['request_sid'] = $post['requestId'];
@@ -6046,6 +6053,43 @@ class Time_off extends Public_Controller
                     $approverTemplateI['FromName']
                 );
             }    
+        }
+    }
+
+    private function sendEmailToInformApprovers ($requestId) {
+        $request = $this->timeoff_model->getRequestById($requestId);
+        $approver_sid = $post['employerId'];
+        $user_arr = getUserNameBySID($employeeId, false);
+        $user_name = ucwords($user_arr[0]['first_name'].' '.$user_arr[0]['last_name']);
+        $approvers_list = $this->timeoff_model->getEmployeeApprovers($request['company_sid'], $request['employee_sid']);
+        //
+        $approverTemplate = $this->timeoff_model->getEmailTemplate(CANCELED_TIMEOFF_REQUEST);
+        $CHF = message_header_footer($request['company_sid'], $request['CompanyName']);
+        //
+        foreach($approvers_list as $approver){
+            //
+            $eRP['{{approver_first_name}}'] = $approver['first_name'];
+            $eRP['{{approver_last_name}}'] = $approver['last_name'];
+            $eRP['{{approver_name}}'] = $approver_name;
+            //
+            $eRP['{{reason}}'] = $request['reason'];
+            $eRP['{{policy_name}}'] = $request['title'];
+            $eRP['{{requested_date}}'] =  $request['request_from_date'] == $request['request_to_date'] ? 
+            DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('M d Y, D') : 
+                DateTime::createfromformat('Y-m-d', $request['request_from_date'])->format('M d Y, D').' - '.DateTime::createfromformat('Y-m-d', $request['request_to_date'])->format('M d Y, D');
+            //
+            $eRP['{{company_name}}'] = $request['CompanyName'];
+            $eRP['{{requester_name}}'] = ucwords($request['first_name'].' '.$request['last_name']);
+            //
+            $approverTemplateI = timeoffMagicQuotesReplace($approverTemplate, $eRP);
+            //
+            log_and_sendEmail(
+                $approverTemplateI['FromEmail'],
+                $approver['email'],
+                $approverTemplateI['Subject'],
+                $CHF['header'] . $approverTemplateI['Body'] . $CHF['footer'],
+                $approverTemplateI['FromName']
+            );   
         }
     }
 

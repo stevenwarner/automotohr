@@ -604,6 +604,7 @@ define('TIMEOFF_UPDATE_FOR_APPROVER', 393); // when the requestw as updated
 define('USER_TIMEOFF_REQUEST', 414); // Send approve email to employee
 define('APPROVER_TIMEOFF_REQUEST_UPDATE', 412); // Send approve/reject email to approvers
 define('APPROVER_TIMEOFF_REQUEST', 413); // Send request email
+define('CANCELED_TIMEOFF_REQUEST', 423); // Send request email
 
 //
 define('SHIFT_START', '9:00 AM'); // Default Shift Start
