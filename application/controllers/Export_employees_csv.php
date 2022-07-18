@@ -31,6 +31,10 @@ class Export_employees_csv extends Public_Controller
                 $data["pay_plan_flag"] = $pay_plan_flag;
                 $data["access_level_plus"] = $access_level_plus;
                 $data['employeesList'] = $this->export_csv_model->getAllActiveEmployees($company_sid, false);
+                $data['csv_report_settings'] = $this->export_csv_model->get_employee_csv_report_settings_bycompany($company_sid, false);
+                //print_r($data['csv_report_settings']);
+                
+                
                 $this->load->view('main/header', $data);
                 $this->load->view('export_employees_csv/index');
                 $this->load->view('main/footer');
@@ -52,15 +56,19 @@ class Export_employees_csv extends Public_Controller
                         $status = $this->input->post('status');
                         $to_date = $this->input->post('to_date');
                         $from_date = $this->input->post('from_date');
+                      
+                      
                         $start_time = '';
                         $end_time = '';
                         //
                         if (!empty($to_date)) {
                             $start_time = empty($to_date) ? null : DateTime::createFromFormat('m-d-Y', $to_date)->format('Y-m-d 00:00:00');
+                        
                         }
                         //
                         if (!empty($from_date)) {
                             $end_time = empty($from_date) ? null : DateTime::createFromFormat('m-d-Y', $from_date)->format('Y-m-d 23:59:59');
+                       
                         }
                         //
                         if ($status == "new_hires") {
@@ -299,16 +307,50 @@ class Export_employees_csv extends Public_Controller
                         //
                         $employer_sid = $data['session']['employer_detail']['sid'];
                         $data_to_insert['company_sid'] = $this->input->post('company_sid');
-                        $data_to_insert['employee_type'] = $this->input->post('access_level');
+                        $access_level = explode(',',$this->input->post('access_level'));
+                 
+                        if($access_level[0]=='all'){
+                            $data_to_insert['employee_type'] ='all';
+                        }else{
+                            $data_to_insert['employee_type'] = $this->input->post('access_level');
+                        }
+                    
                         $data_to_insert['employee_status'] = $this->input->post('status');
                         $data_to_insert['custom_type'] = $this->input->post('assignAndSendDocument');
                         $data_to_insert['custom_date'] = $this->input->post('assignAndSendCustomDate');
                         $data_to_insert['custom_day'] = $this->input->post('assignAndSendCustomDay');
                         $data_to_insert['custom_time'] = $this->input->post('assignAndSendCustomTime');
+                        if($this->input->post('report_all_columns')==1){
+                        $data_to_insert['selected_columns'] = 'all';
+                        }else{
                         $data_to_insert['selected_columns'] = $this->input->post('test');
-                        $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
+                        }
+                        
+                        $sender_list = $this->input->post('assignAdnSendSelectedEmployees');
+                        if($sender_list[0]=='-1'){
+                            $data_to_insert['sender_list'] ='all';
+                        }else{
+                            $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
+                        }
+                      //  $data_to_insert['sender_list'] = !empty($this->input->post('assignAdnSendSelectedEmployees')) ? implode(',',$this->input->post('assignAdnSendSelectedEmployees')) : '';
+                        
                         $data_to_insert['created_at'] = date('Y-m-d H:i:s');
                         $data_to_insert['created_by'] = $employer_sid;
+                        $to_date = $this->input->post('to_date');
+                        $from_date =  $this->input->post('from_date'); 
+
+                        if (!empty($to_date)) {
+                            $to_date = empty($to_date) ? null : DateTime::createFromFormat('m-d-Y', $to_date)->format('Y-m-d 00:00:00');
+                           
+                        }
+                        //
+                        if (!empty($from_date)) {
+                            $from_date = empty($from_date) ? null : DateTime::createFromFormat('m-d-Y', $from_date)->format('Y-m-d 23:59:59');
+  
+                        }
+
+                        $data_to_insert['to_date'] = $to_date;
+                        $data_to_insert['from_date'] = $from_date; 
                         $this->export_csv_model->save_employee_csv_report_settings($data_to_insert);
                         $this->session->set_flashdata('message', '<strong>Success</strong> CSV Report Settings Saved Successfully');
                         redirect('export_employees_csv', 'refresh');
@@ -320,4 +362,13 @@ class Export_employees_csv extends Public_Controller
             redirect('login', 'refresh');
         }
     }
+
+
+public function report_setting_remove(){
+    $sid = $this->input->post('sid');
+    $data = array('status' => 0);
+    $this->export_csv_model->csv_report_settings_delete($sid,$data);
+     
+}
+
 }
