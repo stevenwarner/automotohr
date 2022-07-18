@@ -451,7 +451,7 @@
                                                         <a href="<?php echo $url; ?>">Employee</a>
                                                     </h2>
                                                     <div class="count-box">
-                                                        <small>Document</small>
+                                                        <small>Confidential and Authorized Document Report</small>
                                                     </div>
                                                     <div class="button-panel">
                                                         <a class="site-btn" href="<?php echo $url; ?>">Generate</a>

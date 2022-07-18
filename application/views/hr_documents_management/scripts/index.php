@@ -436,25 +436,25 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			});
 		}
 
-		$(document).on('click', '#modify-assigned-document-modal [name="setting_is_confidential"]', function(){
-			//
-			if(!$(this).prop('checked')){
-				$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').hide();
-				$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2('val', null);
-			} else{
-				$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').show();
-			}
-		});
+		// $(document).on('click', '#modify-assigned-document-modal [name="setting_is_confidential"]', function(){
+		// 	//
+		// 	if(!$(this).prop('checked')){
+		// 		$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').hide();
+		// 		$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2('val', null);
+		// 	} else{
+		// 		$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').show();
+		// 	}
+		// });
 		
-		$(document).on('click', '#modify-assign-document-modal [name="setting_is_confidential"]', function(){
-			//
-			if(!$(this).prop('checked')){
-				$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').hide();
-				$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', null);
-			} else{
-				$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').show();
-			}
-		});
+		// $(document).on('click', '#modify-assign-document-modal [name="setting_is_confidential"]', function(){
+		// 	//
+		// 	if(!$(this).prop('checked')){
+		// 		$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').hide();
+		// 		$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', null);
+		// 	} else{
+		// 		$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').show();
+		// 	}
+		// });
 
 
 		// Modify and Assign

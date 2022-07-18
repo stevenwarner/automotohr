@@ -214,7 +214,7 @@
             $('.js-ip-pagination').html('');
             dataTarget.html('');
 
-            // fetchReport();
+            fetchReport();
         }
         //
         function applyFilter(e) {
@@ -301,13 +301,13 @@
         //
         function fetchReport() {
             if (filterData.length === 0) {
-                intse = setInterval(function() {
+                intse = setTimeout(function() {
                     fetchReport();
                 }, 5000);
                 return;
             }
             loader(true);
-            if (intse !== undefined) clearInterval(intse);
+            // if (intse !== undefined) clearInterval(intse);
             filterOBJ.page = pOBJ['fetchReport']['page'];
 
             //
@@ -354,8 +354,6 @@
             //
             pOBJ.fetchReport.records.map(function(record) {
                 //
-                console.log({record})
-
                 var
                 authSigners = getEmployeeTable(record.authorize_signers),
                 confEmployees = getEmployeeTable(record.confidential_employees),
@@ -379,11 +377,23 @@
                 rows += '       <span>'+(confEmployees)+'</span>';
                 rows += '   </td>';
                 rows += '   <td class="vam">';
-                rows +=     getEmployeeTable(record.allowed_roles, 'Roles', false);
-                rows += '   <hr />';
-                rows +=     getEmployeeTable(record.allowed_departments, 'Departments', false);
-                rows += '   <hr />';
-                rows +=     getEmployeeTable(record.allowed_teams, 'Teams', false);
+               
+                if (record.allowed_roles.length !== 0) {
+                    rows +=     getEmployeeTable(record.allowed_roles, 'Roles', false);
+                    rows += '   <hr />';
+                }
+                if (record.allowed_departments.length !== 0) {
+                    rows +=     getEmployeeTable(record.allowed_departments, 'Departments', false);
+                    rows += '   <hr />';
+                }
+                if (record.allowed_teams.length !== 0) {
+                    rows +=     getEmployeeTable(record.allowed_teams, 'Teams', false);
+                    rows += '   <hr />';
+                }
+                if (record.allowed_employees.length !== 0) {
+                    rows +=     getEmployeeTable(record.allowed_employees, 'Employees');
+                }
+                
                 rows += '   </td>';
                 rows += '   <td class="vam">';
                 rows += '       <span>'+(getEmployeeTable(record.document_approval_employees))+'</span>';
@@ -409,7 +419,7 @@
             rows += '<table class="table table-bordered table-striped">';
             if(heading !== undefined){
                 rows += '     <tr>';
-                rows += '       <th class="vam">'+(heading)+'<th>';
+                rows += '       <th class="vam">'+(heading)+'</th>';
                 rows += '     </tr>';
             }
             tmp.map(function(singEmp){

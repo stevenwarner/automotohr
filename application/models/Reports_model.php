@@ -2130,6 +2130,7 @@ class Reports_model extends CI_Model
             if($v['allowed_teams']):
                 $holderArray[$k]['allowed_teams'] = $this->getTeamByIds(explode(',', $v['allowed_teams']), 'name');
             endif;
+
         endforeach;
         //
         $r['Data'] = $holderArray;

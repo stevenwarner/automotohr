@@ -11129,7 +11129,8 @@ class Hr_documents_management extends Public_Controller
     function assign_document($document = array())
     {
         //
-
+        // _e($_POST,true,true);
+        //
         $r = [
             'Status' => FALSE,
             'Response' => 'Invalid request'
@@ -11421,6 +11422,12 @@ class Hr_documents_management extends Public_Controller
                     $post['EmployerSid']
                 );
                 //
+                $this->hr_documents_management_model->change_document_approval_status(
+                    $assignInsertId,
+                    [
+                        'managersList' => $post['managerList']
+                    ]
+                );
             }
         }
 
@@ -11840,6 +11847,13 @@ class Hr_documents_management extends Public_Controller
                     $assignInsertId,
                     $post['CompanySid'],
                     $post['EmployerSid']
+                );
+                //
+                $this->hr_documents_management_model->change_document_approval_status(
+                    $assignInsertId,
+                    [
+                        'managersList' => $post['managerList']
+                    ]
                 );
             }
 
