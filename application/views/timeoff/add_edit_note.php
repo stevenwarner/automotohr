@@ -85,7 +85,8 @@
                         resp.Response,
                         function() {
                             $("#jsAddNoteModal").modal('hide');
-                            window.location.reload();
+                           // window.location.reload();
+                            fetchTimeOffs();
                         }
                     )
                 }
