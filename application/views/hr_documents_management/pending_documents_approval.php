@@ -19,7 +19,7 @@
                 <!--  -->
                 <div class="panel panel-default ems-documents">
                     <div class="panel-heading">
-                        <strong class="csF20 csB7">Documents to be approve for assign</strong>
+                        <strong class="csF20 csB7">Assigned Documents Pending Approval</strong>
                     </div>
                     <div class="panel-body">
                         <table class="table table-striped">
