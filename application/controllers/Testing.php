@@ -10,9 +10,6 @@ class Testing extends CI_Controller
         $this->load->model("test_model", "tm");
     }
 
-
-
-//
     public function sync_header_video_overlay()
     {
         $this->db->select('company_id, meta_key, meta_value');
