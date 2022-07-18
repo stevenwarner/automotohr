@@ -19,7 +19,7 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
-                        <textarea class="invoice-fields autoheight" maxlength="250" id="jsNoteSection" cols="78" rows="6"></textarea>    
+                        <textarea class="invoice-fields autoheight form-control" maxlength="250" id="jsNoteSection" rows="6"></textarea>    
                     </div>
                 </div>        
             </div>
