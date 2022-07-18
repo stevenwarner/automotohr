@@ -1672,3 +1672,12 @@ button.btn-black:focus {
     bottom: 52px;
     left: 0px;
 }
+
+.jsEditNote{
+    float: right;
+    padding-right: 10px;
+}
+
+.jsEditNote:hover {
+    cursor: pointer;
+}

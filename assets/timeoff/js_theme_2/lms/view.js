@@ -859,6 +859,9 @@ $(function() {
                 rows += `                </div>`;
                 rows += `                <div class="col-sm-10 col-xs-10 pr0" style="padding-left: 26px;">`;
                 rows += `                    <p class="csBoxContentComentName">${comments[0].employeeName} ${comments[0].employeeRole}</p>`;
+                if (employerId == comments[0].employeeSid) {
+                rows += `                       <i class="fa fa-pencil jsEditNote" title="Edit Comment" data-empSid="${comments[0].employeeSid}" data-reqSid="${v.sid}"></i>`;
+                }
                 rows += `                    <p class="csBoxContentComentTag">${moment(comments[0].time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
                 if(comments[0].msg.length != 0){   
                 rows += `                    <div>"${strip_tags(comments[0].msg).substr(0, 25)}"</div>`;
@@ -1056,7 +1059,8 @@ $(function() {
                     employeeName: `${his.first_name} ${his.last_name}`,
                     employeeRole: remakeEmployeeName(his, false),
                     employeeImage: his.image == null || his.image == "" ? awsURL + "test_file_01.png" : awsURL + his.image,
-                    employeeCanApprove: approvel_rights
+                    employeeCanApprove: approvel_rights,
+                    employeeSid: his.userId
                 };
             //
             if (action.status == "pending") return;

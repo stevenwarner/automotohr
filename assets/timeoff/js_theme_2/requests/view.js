@@ -677,7 +677,8 @@ resp.Response
                     employeeName: `${his.first_name} ${his.last_name}`,
                     employeeRole: remakeEmployeeName(his, false),
                     employeeImage: his.image == null || his.image == "" ? awsURL + "test_file_01.png" : awsURL + his.image,
-                    employeeCanApprove: approvel_rights
+                    employeeCanApprove: approvel_rights,
+                    employeeSid: his.userId
                 };
             //
             if (action.status == "pending") return;
@@ -837,12 +838,18 @@ resp.Response
             rows += `                    <img src="${comments[0].employeeImage}" class="csRoundImg" />`;
             rows += `                </div>`;
             rows += `                <div class="col-sm-9 col-xs-9 pr0">`;
-            rows += `                    <p class="csBoxContentComentName">${comments[0].employeeName}</p>`;
+            rows += `                    <p class="csBoxContentComentName">`;
+            rows += `                       ${comments[0].employeeName}`;
+            if (employerId == comments[0].employeeSid) {
+            rows += `                       <i class="fa fa-pencil jsEditNote" title="Edit Comment" data-empSid="${comments[0].employeeSid}" data-reqSid="${v.sid}"></i>`;
+            }
+            rows += `                    </p>`;
             rows += `                    <p class="csBoxContentComentTag"> ${comments[0].employeeRole}</p>`;
             rows += `                    <p class="csBoxContentComentTag">${moment(comments[0].time, timeoffDateFormatDWT).format(timeoffDateFormatWithTime)}</p>`;
             if(comments[0].msg.length != 0){   
-            rows += `                    <div>"${strip_tags(comments[0].msg).substr(0, 25)}"</div>`;
+            rows += `                    <div>${strip_tags(comments[0].msg).substr(0, 25)}</div>`;
             } 
+            
             if(comments[0].status == 'approved'){
                 rows += `                    <div class="text-success"><b>${strip_tags(comments[0].status).toUpperCase()}</b></div>`;
             } else {
@@ -855,6 +862,7 @@ resp.Response
                 rows += `                    <span class="jsCommentsPopover" title="p">`;
                 rows += `                        <i class="fa fa-comment"></i>`;
                 rows += `                    </span>`;
+                
             rows += `                </div>`;
             rows += `                <div class="clearfix"></div>`;
             rows += `            </div>`;
@@ -915,6 +923,4 @@ resp.Response
         //
         return rows;
     }
-
-
 });

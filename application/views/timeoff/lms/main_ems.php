@@ -37,6 +37,8 @@
     </div>
 </div>
 
+<?php $this->load->view('timeoff/add_edit_note'); ?>
+
 <script>
     $("#all_time_off").on("click", function () {
         $("#report_btn").attr('data-action', 'all');

@@ -180,168 +180,172 @@ $(function() {
                 }
                 //
                 $.each(resp.Data, function(i, v) {
-                            //
-                            let allow_update = v.allow_update;
-                            let userRow = getUserById(
-                                v.employee_sid,
-                                window.timeoff.employees,
-                                "user_id"
-                            );
-                            if (Object.keys(userRow).length == 0) return;
-                            //
-                            let tab_status = callOBJ.Requests.Main.type;
-                            let bgStatusColor = '';
-                            //
-                            if (tab_status == "pending") {
-                                $("#request_status_info").show();
-                                if (v.level_status == 'approved') {
-                                    bgStatusColor = 'background: rgba(129, 180, 49, .2)';
-                                } else if (v.level_status == 'rejected') {
-                                    bgStatusColor = 'background: rgba(242, 222, 222, .5)';
-                                }
-                            } else {
-                                $("#request_status_info").hide();
-                            }
-                            //
-                            rows += `<tr data-id="${v.sid}" style="${bgStatusColor}" data-status="${v.status}" data-userid="${v.employee_sid}" data-name="${userRow.first_name} ${userRow.last_name}">`;
-                            rows += '    <td scope="row">';
-                            rows += '        <div class="employee-info">';
-                            rows += "            <figure>";
-                            rows += `                <img src="${getImageURL(
-        userRow.image
-      )}" class="img-circle emp-image" />`;
-                            rows += "            </figure>";
-                            rows += '            <div class="text">';
-                            rows += `                <h4>${userRow.first_name} ${userRow.last_name} </h4>`;
-                            rows += `                <p>${remakeEmployeeName(userRow, false)}</p>`;
-                            rows += `                <p><a href="${baseURL}employee_profile/${
-        userRow.user_id
-      }" target="_blank">Id: ${getEmployeeId(
-        userRow.user_id,
-        userRow.employee_number
-      )}</a></p>`;
-                            rows += "            </div>";
-                            rows += "        </div>";
-                            rows += "    </td>";
-                            rows += `<td>
-                        <div class="upcoming-time-info">            
-                            <div class="icon-image">                   
-                                <img src="${baseURL}assets/images/upcoming-time-off-icon.png" class="emp-image" alt="emp-1">             
-                            </div>             
-                            <div class="text">                  
-                                <h4>${
-                                  v.request_from_date == v.request_to_date
-                                    ? moment(v.request_from_date).format(
-                                        timeoffDateFormat
-                                      )
-                                    : moment(v.request_from_date).format(
-                                        timeoffDateFormat
-                                      ) +
-                                      " - " +
-                                      moment(v.request_to_date).format(
-                                        timeoffDateFormat
-                                      )
-                                }</h4>                  
-                                <span>${v.title}</span><br />          
-                                <span>${v.breakdown.text}</span>
-                            </div>       
-                        </div>
-                    </td>`;
-
-                            rows += `<td>
-            <div class="progress" style="margin-top: 10px;">
-                <div class="progress-bar progress-bar-success" role="progressbar" style="width: ${
-                  v.status == "pending"
-                    ? v.level_status != "pending"
-                      ? 50
-                      : 0
-                    : 100
-                }%;">
-                    <span class="sr-only"> ${
-                      v.status == "pending"
-                        ? v.level_status != "pending"
-                          ? 50
-                          : 0
-                        : 100
-                    } % Complete</span>
-                </div>
-                <p>${
-                  v.status == "pending"
-                    ? v.level_status != "pending"
-                      ? 50
-                      : 0
-                    : 100
-                }%</p>
-            </div>
-            ${getApproverLisiting(v.history)}
-            </td>`;
-                            rows += `<td class="cs-vam">
-                        <p>${
-                          v.reason == "" || v.reason == null ? "-" : v.reason
-                        }</p>
-                    </td>`;
-                            rows += `<td class="cs-vam">
-                        <p>${moment(v.created_at).format(
-                          timeoffDateFormatWithTime
-                        )}</p>
-                    </td>`;
-
-                            rows += `    <td>`;
-                            rows += `    <div class="dropdown" style="margin-top: 10px;">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        Action
-                        <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="right:0; left: auto;">`;
-                        if (allow_update == 'yes') {
-                            rows += `<li><a href="#" class="jsEditTimeOff">Edit Time-off</a></li>`;
+                    //
+                    let allow_update = v.allow_update;
+                    let userRow = getUserById(
+                        v.employee_sid,
+                        window.timeoff.employees,
+                        "user_id"
+                    );
+                    if (Object.keys(userRow).length == 0) return;
+                    //
+                    let tab_status = callOBJ.Requests.Main.type;
+                    let bgStatusColor = '';
+                    //
+                    if (tab_status == "pending") {
+                        $("#request_status_info").show();
+                        if (v.level_status == 'approved') {
+                            bgStatusColor = 'background: rgba(129, 180, 49, .2)';
+                        } else if (v.level_status == 'rejected') {
+                            bgStatusColor = 'background: rgba(242, 222, 222, .5)';
                         }
-                        if (allow_update == 'yes') {
-                            rows += ` ${
-                              v.status == "cancelled" || v.status == "cancel"
-                                ? ""
-                                : `<li><a href="#" class="${
-                                    v.archive == 1
-                                      ? "jsActiveTimeOff"
-                                      : "jsArchiveTimeOff"
-                                  }">${
-                                    v.archive == 1 ? "Activate" : "Archive"
-                                  }</a></li>`
-                            }`;
-                        }    
-                        rows += `<li><a href="#" class="jsHistoryTimeOff">View History</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="${baseURL}timeoff/print/requests/${
-        v.sid
-      }" target="_blank">Print</a></li>
-                        <li><a href="${baseURL}timeoff/download/requests/${
-        v.sid
-      }" target="_blank">Download</a></li>
-                        </ul>
-                    </div>`;
-      rows += `    </td>`;
-      rows += `</tr>`;
-    });
+                    } else {
+                        $("#request_status_info").hide();
+                    }
+                    //
+                    rows += `<tr class="jsBox" data-id="${v.sid}" style="${bgStatusColor}" data-status="${v.status}" data-userid="${v.employee_sid}" data-name="${userRow.first_name} ${userRow.last_name}">`;
+                    rows += '    <td scope="row">';
+                    rows += '        <div class="employee-info">';
+                    rows += "            <figure>";
+                    rows += `                <img src="${getImageURL(
+                                                userRow.image
+                                              )}" class="img-circle emp-image" />`;
+                    rows += "            </figure>";
+                    rows += '            <div class="text">';
+                    rows += `                <h4>${userRow.first_name} ${userRow.last_name} </h4>`;
+                    rows += `                <p>${remakeEmployeeName(userRow, false)}</p>`;
+                    rows += `                <p><a href="${baseURL}employee_profile/${
+                                                userRow.user_id
+                                              }" target="_blank">Id: ${getEmployeeId(
+                                                userRow.user_id,
+                                                userRow.employee_number
+                                              )}</a></p>`;
+                    rows += "            </div>";
+                    rows += "        </div>";
+                    rows += "    </td>";
+                    rows += `<td>
+                                <div class="upcoming-time-info">            
+                                    <div class="icon-image">                   
+                                        <img src="${baseURL}assets/images/upcoming-time-off-icon.png" class="emp-image" alt="emp-1">             
+                                    </div>             
+                                    <div class="text">                  
+                                        <h4>${
+                                          v.request_from_date == v.request_to_date
+                                            ? moment(v.request_from_date).format(
+                                                timeoffDateFormat
+                                              )
+                                            : moment(v.request_from_date).format(
+                                                timeoffDateFormat
+                                              ) +
+                                              " - " +
+                                              moment(v.request_to_date).format(
+                                                timeoffDateFormat
+                                              )
+                                        }</h4>                  
+                                        <span>${v.title}</span><br />          
+                                        <span>${v.breakdown.text}</span>
+                                    </div>       
+                                </div>
+                            </td>`;
 
-    //
-    $("#js-data-area").html(rows);
+                    rows += `<td>
+                                <div class="progress" style="margin-top: 10px;">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" style="width: ${
+                                      v.status == "pending"
+                                        ? v.level_status != "pending"
+                                          ? 50
+                                          : 0
+                                        : 100
+                                    }%;">
+                                        <span class="sr-only"> ${
+                                          v.status == "pending"
+                                            ? v.level_status != "pending"
+                                              ? 50
+                                              : 0
+                                            : 100
+                                        } % Complete</span>
+                                    </div>
+                                    <p>${
+                                      v.status == "pending"
+                                        ? v.level_status != "pending"
+                                          ? 50
+                                          : 0
+                                        : 100
+                                    }%</p>
+                                </div>
+                                ${getApproverLisiting(v.history)}
+                            </td>`;
+                    rows += `<td class="cs-vam">
+                                <p>${
+                                  v.reason == "" || v.reason == null ? "-" : v.reason
+                                }</p>
+                            </td>`;
+                    rows += `<td class="cs-vam">
+                                <p>${moment(v.created_at).format(
+                                  timeoffDateFormatWithTime
+                                )}</p>
+                            </td>`;
 
-    //
-    $(".js-type-popover").popover({
-      html: true,
-      trigger: "hover",
-    });
-    //
-    $('[data-toggle="tooltip"]').tooltip();
-    //
-    $(".csApproverBox").popover({
-      html: true,
-      trigger: "hover",
-      placement: "left",
-    });
-    //
-    ml(false, "requests");
-  }
+                    rows += `    <td>`;
+                    rows += `    <div class="dropdown" style="margin-top: 10px;">
+                                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Action
+                                    <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="right:0; left: auto;">`;
+                                        if (allow_update == 'yes') {
+                                            rows += `<li><a href="#" class="jsEditTimeOff">Edit Time-off</a></li>`;
+                                            let approversSids = getApproverSids(v.history);
+                                            if ($.inArray(employerId, approversSids) == -1) {
+                                            rows += `<li><a href="#" class="jsEditNote" title="Edit Comment" data-empSid="${userRow.user_id}" data-reqSid="${v.sid}">Edit Comment</a></li>`;
+                                            }
+                                        }
+                                        if (allow_update == 'yes') {
+                                            rows += ` ${
+                                              v.status == "cancelled" || v.status == "cancel"
+                                                ? ""
+                                                : `<li><a href="#" class="${
+                                                    v.archive == 1
+                                                      ? "jsActiveTimeOff"
+                                                      : "jsArchiveTimeOff"
+                                                  }">${
+                                                    v.archive == 1 ? "Activate" : "Archive"
+                                                  }</a></li>`
+                                            }`;
+                                        }    
+                                        rows += `<li><a href="#" class="jsHistoryTimeOff">View History</a></li>
+                                                <li role="separator" class="divider"></li>
+                                                <li><a href="${baseURL}timeoff/print/requests/${
+                                                v.sid
+                                              }" target="_blank">Print</a></li>
+                                                                <li><a href="${baseURL}timeoff/download/requests/${
+                                                v.sid
+                                              }" target="_blank">Download</a></li>
+                                    </ul>
+                                </div>`;
+                    rows += `    </td>`;
+                    rows += `</tr>`;
+                });
+
+                //
+                $("#js-data-area").html(rows);
+
+                //
+                $(".js-type-popover").popover({
+                  html: true,
+                  trigger: "hover",
+                });
+                //
+                $('[data-toggle="tooltip"]').tooltip();
+                //
+                $(".csApproverBox").popover({
+                  html: true,
+                  trigger: "hover",
+                  placement: "left",
+                });
+                //
+                ml(false, "requests");
+            }
 
   //
   $(document).on("click", ".jsArchiveTimeOff", function (e) {
@@ -633,6 +637,22 @@ $(function() {
       }
     );
   });
+
+    //
+    function getApproverSids(history) {
+        if (history.length == 0) return "";
+        //
+        let arr = [];
+        //
+        history.map((his) => {
+            //
+            if ($.inArray(his.userId, arr) !== -1) return "";
+            arr.push(his.userId);
+            //
+        });
+        //
+        return arr;
+    }
 
   //
   function getApproverLisiting(history) {

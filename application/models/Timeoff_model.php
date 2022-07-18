@@ -1315,6 +1315,52 @@ class Timeoff_model extends CI_Model
         );
     }
 
+
+    /**
+     * Update Employee Note 
+     *
+     * @employee  Aleem Shaukat
+     * @date      07/15/2022
+     * 
+     * @param  Array   $data_to_update
+     * @param  Integer $request_sid
+     * @param  Integer  $employee_sid
+     * 
+     * @return VOID
+     */
+    function updateEmployeeNote(
+        $data_to_update,
+        $request_sid,
+        $employee_sid
+    ){
+        //
+        $this->db
+        ->where('request_sid', $request_sid)
+        ->where('employee_sid', $employee_sid)
+        ->where('action', "update")
+        ->update(
+            "timeoff_request_timeline",
+            $data_to_update
+        );
+    }
+
+     function getEmployeePreviousNote ($request_sid, $employee_sid) {
+        $this->db->select('note');
+        $this->db->where("request_sid", $request_sid);
+        $this->db->where('employee_sid', $employee_sid);
+        $this->db->where('action', "update");
+        $records_obj = $this->db->get('timeoff_request_timeline');
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        if (!empty($records_arr)) {
+            $return_data = json_decode($records_arr["note"],true);
+        }
+
+        return $return_data;
+    } 
+
     /**
      * Check if approver exists
      * 

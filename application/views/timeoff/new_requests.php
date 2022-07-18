@@ -11,3 +11,5 @@
         </div>
     </div>
 </div>
+
+<?php $this->load->view('timeoff/add_edit_note'); ?>

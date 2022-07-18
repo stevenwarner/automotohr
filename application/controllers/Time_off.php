@@ -3754,6 +3754,42 @@ class Time_off extends Public_Controller
                 $this->resp();
             break;
 
+            case 'get_employee_note':
+                // Get Employee Previous Note
+                $request_sid = $post['requestId'];
+                //
+                $previous_note = $this->timeoff_model->getEmployeePreviousNote($post['requestId'], $post["employerId"]);
+                //
+                $this->res['Comment'] = $previous_note['comment'];
+                $this->res['Response'] = 'You have succesfully get previous employee comment.';
+                $this->res['Status'] = TRUE;
+                $this->res['Code'] = 'SUCCESS';
+                $this->resp();
+            break;
+
+            case 'update_employee_note':
+                // Update Employee Note
+                //
+                $in = [];
+                //
+                $previous_note = $this->timeoff_model->getEmployeePreviousNote($post['requestId'], $post["employerId"]);
+                //
+                $in['note'] = json_encode([
+                    'status' => $previous_note['status'], 
+                    'canApprove' => $previous_note['canApprove'], 
+                    'comment' => $post['comment'],
+                    'details' => $previous_note['details']
+                ]);
+                $in['comment'] = $post['comment'];
+                //
+                $this->timeoff_model->updateEmployeeNote($in, $post['requestId'], $post["employerId"]);
+                //
+                $this->res['Response'] = 'You have succesfully add new note.';
+                $this->res['Status'] = TRUE;
+                $this->res['Code'] = 'SUCCESS';
+                $this->resp();
+            break;
+
 
             case 'get_my_team_employees':
                 $employees = $this->timeoff_model->getMyEmployees($post);
