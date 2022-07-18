@@ -527,6 +527,22 @@ class Export_csv_model extends CI_Model {
 
     }
 
+    function get_employee_csv_report_settings_bycompany($company_sid){
+        $this->db->where('company_sid',$company_sid);
+        $this->db->where('status',1);
+        $this->db->order_by('sid','Desc');
+        $records_obj = $this->db->get('employee_csv_report_settings');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
 
+        return $records_arr;
+
+    }
+
+
+    function csv_report_settings_delete($sid,$data ) {
+        $this->db->where('sid', $sid);
+        $this->db->update('employee_csv_report_settings', $data);
+    }
 
 }

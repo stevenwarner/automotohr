@@ -16,6 +16,24 @@
         background-color: #fff !important;
         border: 1px solid #aaa !important;
     }
+
+    .show {
+        cursor: pointer;
+
+    }
+
+    .empbgcolor {
+        padding: 2px;
+        color: #3554dc;
+        font-size: 14px;
+        text-decoration: underline;
+    }
+
+    hr {
+        margin-top: 10px !important;
+        margin-bottom: 10px !important;
+
+    }
 </style>
 
 <!-- Panel for send documents DMWYC -->
@@ -28,6 +46,9 @@
             <input type="hidden" name="company_sid" value="<?php echo $company_sid; ?>" />
             <input type="hidden" id="report_access_level" name="access_level" value="" />
             <input type="hidden" id="report_employee_status" name="status" value="" />
+            <input type="hidden" id="report_to_date" name="to_date" value="" />
+            <input type="hidden" id="report_from_date" name="from_date" value="" />
+            <input type="hidden" id="report_all_columns" name="report_all_columns" value="0" />
 
             <div class="row">
                 <!-- Selection row -->
@@ -101,7 +122,7 @@
                 </div>
                 <!-- Against Selected Employees -->
                 <div class="col-sm-12">
-                    <label>Employee(s)</label>
+                    <label id="employeelable">Employee(s)</label>
                     <select multiple="true" name="assignAdnSendSelectedEmployees[]" class="assignSelectedEmployees">
                         <option value="-1">All</option>
                         <?php foreach ($employeesList as $key => $employee) { ?>
@@ -121,17 +142,139 @@
                     <!--  -->
                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                         <label>&nbsp;</label>
-                        <a id="save_report_setting" class="btn btn-block btn-success">Save Report Setting</a>
+                        <a id="save_report_setting" class="btn btn-block btn-success">Schedule Report</a>
                     </div>
                 </div>
             </div>
         </form>
+
     </div>
 </div>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading"><b>Scheduled Reports </b></div>
+    <div class="panel-body">
+        <div class="col-sm-12">
+
+
+            <table class="table table-bordered table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Frequency</th>
+                        <th>Employees</th>
+                        <th>Filters</th>
+                        <th>Selected Fields</th>
+                        <th class="last-col" width="1%" colspan="3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--All records-->
+
+                    <?php if (sizeof($csv_report_settings) > 0) {
+                        foreach ($csv_report_settings as $setting_row) {
+                    ?>
+                            <tr>
+                                <td class="vam">
+
+                                    <?= ucfirst($setting_row['custom_type']); ?><br>
+                                    <?php if ($setting_row['custom_type'] == 'daily') {
+                                        echo "At : " . $setting_row['custom_time'] . "<br>";
+                                    }
+                                    if ($setting_row['custom_type'] == 'monthly') {
+                                        echo "On " . $setting_row['custom_date'] . "th At : " . $setting_row['custom_time'] . "<br>";
+                                    }
+
+                                    if ($setting_row['custom_type'] == 'weekly') {
+                                        echo "On " . $setting_row['custom_day'] . "th day At : " . $setting_row['custom_time'] . "<br>";
+                                    }
+                                    if ($setting_row['custom_type'] == 'yearly') {
+                                        echo "On " . $setting_row['custom_date'] . " At : " . $setting_row['custom_time'] . "<br>";
+                                    }
+
+                                    ?>
+                                </td>
+                                <td class="vam">
+                                    <?php
+                                    if ($setting_row['sender_list'] != 'all') {
+                                        $sender_list = explode(',', $setting_row['sender_list']);
+                                    ?>
+
+                                        <div class="show"><span class="empbgcolor"><?= count($sender_list); ?> Employees</span>
+                                            <div class="menu" style="display: none;">
+                                                <?php
+                                                foreach ($sender_list as $employee_sid) {
+                                                    echo  getUserNameBySID($employee_sid) . "<hr>";
+                                                } ?>
+                                            </div>
+                                        </div>
+                                    <?php
+
+                                    } else {
+                                        echo "All Employees";
+                                    }
+
+                                    ?>
+                                </td>
+                                <td class="vam">
+                                    <?php
+                                    echo "<b>Date:  </b> <br>(" . date('M d Y, D', strtotime($setting_row['to_date']));
+                                    echo " &nbsp; - &nbsp;" . date('M d Y, D', strtotime($setting_row['from_date'])) . ")<br>";
+
+                                    if ($setting_row['employee_type'] != null) {
+
+                                        if ($setting_row['employee_type'] == 'all') {
+                                            echo "Access Level: All Employes <br>";
+                                        } else {
+                                            echo "<b>Access Level: </b>" . str_replace(",", ", ", $setting_row['employee_type']) . " <br>";
+                                        }
+                                        echo "<b>Status: </b>" . ucfirst($setting_row['employee_status']);
+                                    }
+
+                                    ?>
+                                </td>
+
+                                <td class="vam"><?php
+                                                if ($setting_row['selected_columns'] == 'all') {
+                                                    echo "All Fields";
+                                                } else {
+                                                    echo ucwords(str_replace(",", ", ", str_replace("_", " ", $setting_row['selected_columns'])));
+                                                }
+                                                ?>
+                                </td>
+
+                                <td class="vam">
+                                    <a class="btn btn-danger btn-sm btn-block" href="javascript:;" id="<?php echo $setting_row['sid']; ?>" onclick="todo('delete', this.id);">
+                                        <i class="fa fa-trash fa-fw" style="font-size: 12px;"></i>
+                                        <span>Delete</span>
+                                    </a>
+                                </td>
+                                <?php
+                                ?>
+                            </tr>
+                        <?php  }
+                    } else { ?>
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                <span class="no-data">Settings are not found</span>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
 
 <script>
     $(document).ready(function() {
         $('.jsCustomDateRow').hide();
+
+        $('.show').click(function() {
+            $(this).find(".menu").toggle();
+        });
 
     });
 
@@ -140,6 +283,16 @@
         $('.assignSelectedEmployees').select2({
             closeOnSelect: false
         });
+
+
+        $('#access_level').select2({
+            closeOnSelect: false
+        });
+
+        $('.assignSelectedEmployees').next(".select2-container").hide();
+        $('#employeelable').hide();
+        //$("#save_report_setting").attr("disabled", "disabled");
+
         //
         $('#jsCustomDaySLT').select2();
         //
@@ -153,10 +306,21 @@
                 changeMonth: true
             });
             //
+            if ($(this).val().toLowerCase() == 'none') {
+                $(".assignSelectedEmployees").select2("val", "");
+                $('.assignSelectedEmployees').next(".select2-container").hide();
+                $('#employeelable').hide();
+                // $("#save_report_setting").attr("disabled", "disabled");
+            }
+
             if ($(this).val().toLowerCase() == 'daily') {
+                $('#employeelable').show();
+                $('.assignSelectedEmployees').next(".select2-container").show();
                 $('#jsCustomLabel').text('Select time');
                 $('#jsCustomDate').hide();
             } else if ($(this).val().toLowerCase() == 'monthly') {
+                $('#employeelable').show();
+                $('.assignSelectedEmployees').next(".select2-container").show();
                 $('#jsCustomLabel').text('Select a date & time');
                 $('.jsDatePicker').datepicker('option', {
                     dateFormat: 'dd'
@@ -165,10 +329,14 @@
                     changeMonth: false
                 });
             } else if ($(this).val().toLowerCase() == 'weekly') {
+                $('#employeelable').show();
+                $('.assignSelectedEmployees').next(".select2-container").show();
                 $('#jsCustomDate').hide();
                 $('#jsCustomDay').show();
                 $('#jsCustomLabel').text('Select day & time');
             } else if ($(this).val().toLowerCase() == 'yearly' || $(this).val().toLowerCase() == 'custom') {
+                $('#employeelable').show();
+                $('.assignSelectedEmployees').next(".select2-container").show();
                 $('.jsDatePicker').datepicker('option', {
                     dateFormat: 'mm/dd'
                 });
@@ -197,14 +365,27 @@
         $('.assignAndSendDocument[value="none"]').prop('checked', true);
         //
         $("#save_report_setting").on("click", function(e) {
-             //  e.preventDefault();
-         
+            //  e.preventDefault();
+
             var form_validation = 0;
             var access_level = $("#access_level").val();
             var status = $("#employee_status").val();
+
+            var display_start_date = $("#display_start_date").val();
+            var display_end_date = $("#display_end_date").val();
             //
             $("#report_access_level").val(access_level);
             $("#report_employee_status").val(status);
+
+            $("#report_to_date").val(display_start_date);
+            $("#report_from_date").val(display_end_date);
+
+            if ($('#check_all').is(":checked")) {
+                $("#report_all_columns").val('1');
+            } else {
+                $("#report_all_columns").val('0');
+            }
+
             //
             // Start Validation
             var custom_type = $('input[name="assignAndSendDocument"]:checked').val();
@@ -212,8 +393,6 @@
             var custom_date = $('input[name="assignAndSendCustomDate"]').val();
             var selected_employes = $('.assignSelectedEmployees').val();
 
-            //  console.log(custom_type);
-            //  alert(custom_type)
             //
             if (custom_type == "none") {
                 form_validation == 1;
@@ -247,23 +426,40 @@
             }
 
             if (form_validation == 0) {
-               // submitforms();
-             var ids = [];
-               $(".check_it:checked").map(function() {
-                  ids.push($(this).val());
-               });
+                // submitforms();
+                var ids = [];
+                $(".check_it:checked").map(function() {
+                    ids.push($(this).val());
+                });
 
-            $(this).append("<input type='hidden' name='test'>");
-             $("input[name='test']").val(ids);
+                $(this).append("<input type='hidden' name='test'>");
+                $("input[name='test']").val(ids);
 
-
-               $("#form_export_employees_report").submit();
+                $("#form_export_employees_report").submit();
 
             }
-
 
         });
 
     });
 
+
+    function todo(action, id) {
+
+        url = "<?= base_url() ?>/export_employees_csv/report_setting_remove";
+        alertify.confirm('Confirmation', "Are you sure you want to " + action + " setting?",
+            function() {
+                $.post(url, {
+                        action: action,
+                        sid: id
+                    })
+                    .done(function(data) {
+                        alertify.success('Selected setting have been ' + action + 'd.');
+                        location.reload();
+                    });
+            },
+            function() {
+                alertify.error('Canceled');
+            });
+    }
 </script>
