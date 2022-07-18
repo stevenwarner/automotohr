@@ -77,7 +77,7 @@
                                                     <span id="add_teamlead_error" class="text-danger person_error"></span>
                                                 </div>
                                             </div> 
-                                            <?php if (checkIfAppIsEnabled('performance_management')) { ?>  
+                                            <?php if (checkIfAppIsEnabled('timeoff')) { ?>  
                                             <div class="form-group autoheight">
                                                 <label for="name">Approvers <i
                                                     class="fa fa-question-circle-o help"
