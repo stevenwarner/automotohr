@@ -198,7 +198,7 @@
         //
         $("#save_report_setting").on("click", function(e) {
              //  e.preventDefault();
-
+         
             var form_validation = 0;
             var access_level = $("#access_level").val();
             var status = $("#employee_status").val();
@@ -247,24 +247,23 @@
             }
 
             if (form_validation == 0) {
-                submitforms();
+               // submitforms();
+             var ids = [];
+               $(".check_it:checked").map(function() {
+                  ids.push($(this).val());
+               });
+
+            $(this).append("<input type='hidden' name='test'>");
+             $("input[name='test']").val(ids);
+
+
+               $("#form_export_employees_report").submit();
+
             }
 
 
         });
 
-
-        function submitforms() {
-            $("#form_export_employees_report").submit(function(e) {
-         
-                var ids = [];
-                $(".check_it:checked").map(function() {
-                    ids.push($(this).val());
-                });
-                $(this).append("<input type='hidden' name='test'>");
-                $("input[name='test']").val(ids);
-
-            });
-        }
     });
+
 </script>

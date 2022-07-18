@@ -7,11 +7,17 @@ class Cron_csv_report extends CI_Controller
 
     public function index()
     {
+        
         $this->load->model('export_csv_model');
         // Get CSV report setting 
         $csv_report_settings = $this->export_csv_model->get_employee_csv_report_settings();
 
         if (!empty($csv_report_settings)) {
+             //Get current day,month and time
+             $current_day =  (int) date("d");
+             $current_month = (int) date('m');
+             $current_time = date('H:i A');
+             
             foreach ($csv_report_settings as $settings_row) {
                
                 $custom_type = $settings_row['custom_type'];
@@ -29,10 +35,7 @@ class Cron_csv_report extends CI_Controller
                 $start_time = '';
                 $end_time = '';
                 
-                //Get current day,month and time
-                $current_day =  (int) date("d");
-                $current_month = (int) date('m');
-                $current_time = date('H:i A');
+               
 
                 //
                 if ($status == "new_hires") {
@@ -70,7 +73,7 @@ class Cron_csv_report extends CI_Controller
                     }
                 }
 
-                $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list,$checked_boxes);
+              //  $this->generate_csv($company_sid, $access_level, $status, $start_time, $end_time, $sender_list,$checked_boxes);
                 // die('d');
             }
         }
@@ -275,7 +278,7 @@ class Cron_csv_report extends CI_Controller
 
                    $email->Body = $body;
                    $email->addAddress($to);
-                //  $email->send();
+                  $email->send();
             }
             break;
         } else {
