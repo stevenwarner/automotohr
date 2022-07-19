@@ -4909,6 +4909,9 @@ class Onboarding extends CI_Controller
                 $data['approval_documents'] = array_column($approval_documents, "document_sid");
                 $approval_offer_letters = $this->hr_documents_management_model->get_user_approval_pending_offer_letters($user_type, $user_sid);
                 $data['approval_offer_letters'] = array_column($approval_offer_letters, "document_sid");
+
+                $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
+                $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
                 //
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/setup');
