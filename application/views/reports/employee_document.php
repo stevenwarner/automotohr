@@ -378,19 +378,19 @@
                 rows += '   </td>';
                 rows += '   <td class="vam">';
                
-                if (record.allowed_roles.length !== 0) {
+                if (record.allowed_roles != undefined || record.allowed_roles.length !== 0) {
                     rows +=     getEmployeeTable(record.allowed_roles, 'Roles', false);
                     rows += '   <hr />';
                 }
-                if (record.allowed_departments.length !== 0) {
+                if (record.allowed_departments != undefined || record.allowed_departments.length !== 0) {
                     rows +=     getEmployeeTable(record.allowed_departments, 'Departments', false);
                     rows += '   <hr />';
                 }
-                if (record.allowed_teams.length !== 0) {
+                if (record.allowed_teams != undefined || record.allowed_teams.length !== 0) {
                     rows +=     getEmployeeTable(record.allowed_teams, 'Teams', false);
                     rows += '   <hr />';
                 }
-                if (record.allowed_employees.length !== 0) {
+                if (record.allowed_employees != undefined || record.allowed_employees.length !== 0) {
                     rows +=     getEmployeeTable(record.allowed_employees, 'Employees');
                 }
                 
