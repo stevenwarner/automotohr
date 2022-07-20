@@ -554,16 +554,13 @@ if (isset($assigned_offer_letter_sid)) {
             //   $('#confidentialSelectedEmployees').select2();
 
             $('[name="setting_is_confidential"]').prop('checked', l.is_confidential == "1" ? true : false);
-            $('#confidentialSelectedEmployeesdiv').hide();
+            $('#confidentialSelectedEmployeesdiv').show();
             $('#confidentialSelectedEmployees').select2({
                 closeOnSelect: false
             });
             //
-            if (l.is_confidential == "1") {
-                $('#confidentialSelectedEmployeesdiv').show();
-                if (l.confidential_employees) {
-                    $('#confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
-                }
+            if (l.confidential_employees) {
+                $('#confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
             }
             
             $('#js-signers').select2({
@@ -758,16 +755,6 @@ if (isset($assigned_offer_letter_sid)) {
 
 
     $('#confidentialSelectedEmployees').select2();
-
-    $(document).on('click', '[name="setting_is_confidential"]', function() {
-        // 
-        if (!$(this).prop('checked')) {
-            $('#confidentialSelectedEmployeesdiv').hide();
-            $('#confidentialSelectedEmployees').select2('val', null);
-        } else {
-            $('#confidentialSelectedEmployeesdiv').show();
-        }
-    });
 
 
     $(function() {

@@ -403,22 +403,7 @@
 
         $("#confidentialSelectedEmployees").select2();
 
-        if ($("#setting_is_confidential").is(":checked")) {
-            $("#confidentialSelectedEmployeesdiv").show();
-        } else {
-            $("#confidentialSelectedEmployeesdiv").hide();
-        }
-
-        $("#setting_is_confidential").click(function() {
-            if ($(this).is(":checked")) {
-                $("#confidentialSelectedEmployeesdiv").show();
-
-            } else {
-                $("#confidentialSelectedEmployeesdiv").hide();
-                $("#confidentialSelectedEmployees").select2("val", "");
-            }
-        });
-
+        $("#confidentialSelectedEmployeesdiv").show();
 
         //--- Automatically assign after Days:
         $('input[name="assign-in-days"]').val(0);

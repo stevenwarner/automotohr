@@ -5704,6 +5704,7 @@ class Onboarding extends CI_Controller
                         $data_to_insert['document_extension'] = $offer_letter_extension;
                         $data_to_insert['document_s3_name'] = $upload_letter_description['uploaded_document_s3_name'];
                         $data_to_insert['document_description'] = $letter_body;
+                        $do_descpt = $letter_body;
                     } else if ($offer_letter_type == "uploaded") {
                         $upload_letter_description = $this->onboarding_model->get_assign_offer_letter_info($offer_letter_sid);
                         $data_to_insert['document_description'] = $upload_letter_description['letter_body'];
@@ -5718,7 +5719,7 @@ class Onboarding extends CI_Controller
                         $data_to_insert['document_s3_name'] = $this->input->post('document_s3_name');
                     } else {
                         $data_to_insert['document_description'] = $letter_body;
-                        $do_descpt=$letter_body;
+                        $do_descpt = $letter_body;
                     }
 
                     $already_assigned = $this->onboarding_model->check_applicant_offer_letter_exist($company_sid, $user_type, $user_sid, 'offer_letter');
@@ -5784,7 +5785,6 @@ class Onboarding extends CI_Controller
                 $data_to_insert['document_approval_employees'] = isset($post['approvers_list']) && $post['approvers_list'] ? implode(',', $post['approvers_list']) : '';
             }
         
-        
                    $verification_key = random_key(80);
                    $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
                     $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
@@ -5815,13 +5815,25 @@ class Onboarding extends CI_Controller
 
                     } else {
                        
-                        // Managers handling
-                        $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                            $signers,
-                            $assignOfferLetterId,
-                            $company_sid,
-                            $employer_sid
-                        );
+                        //
+                         if ($do_descpt && isset($signers) && $signers != null && str_replace('{{authorized_signature}}', '', $do_descpt) != $do_descpt) {
+                            // Managers handling
+                            $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                $signers,
+                                $assignOfferLetterId,
+                                $company_sid,
+                                $employer_sid
+                            );
+                            //
+                            $managersList =  implode(',', $signers);
+                            //
+                            $this->hr_documents_management_model->change_document_approval_status(
+                                $assignOfferLetterId,
+                                [
+                                    'managersList' => $managersList
+                                ]
+                            );
+                        }
                         //
                         if ($perform_action == 'save_and_send_offer_letter') {
                             $applicant_sid = $user_info['sid'];

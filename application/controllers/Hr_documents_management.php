@@ -745,6 +745,7 @@ class Hr_documents_management extends Public_Controller
                             $new_history_data['document_approval_employees'] = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
                             $new_history_data['document_approval_note'] = isset($_POST['approvers_note']) && !empty($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
                         }
+                        //
                         $this->hr_documents_management_model->insert_document_management_history($new_history_data);
                         $this->session->set_flashdata('message', '<strong>Success:</strong> HR Document Upload Successful!');
                         redirect('hr_documents_management', 'refresh');
@@ -1711,7 +1712,6 @@ class Hr_documents_management extends Public_Controller
                         $offer_letter_data['allowed_employees'] = $assign_employees;
                         $offer_letter_data['is_available_for_na'] = $assign_roles;
                         $offer_letter_data['visible_to_payroll'] = $visible_to_payroll;
-
                         //
                         $this->hr_documents_management_model->update_documents($sid, $offer_letter_data, 'offer_letter');
 
@@ -10599,24 +10599,14 @@ class Hr_documents_management extends Public_Controller
                 //
                 $verification_key = random_key(80);
                 $this->hr_documents_management_model->set_offer_letter_verification_key($a['user_sid'], $verification_key, $post['Type']);
-                //
-                $is_approval_document = $this->hr_documents_management_model->is_document_has_approval_flow_offer_letter($insertId);
-                //
+                ///
                 if ($hasApprovalFlow == 1) {
-                    $ins['has_approval_flow'] = $hasApprovalFlow;
-                    $ins['document_approval_employees'] = isset($_POST['approvers_list']) && $_POST['approvers_list'] ?  $_POST['approvers_list'] : '';
-                    $ins['document_approval_note'] = $_POST['approvers_note'];
                     //
                     $managersList = '';
                     //
                     if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $authManagers != null) {
                         $managersList = $authManagers;
                     }
-                    //
-                    $approvers_list = isset($post['document_approval_employees']) ? $post['document_approval_employees'] : "";
-                    $approvers_note = isset($post['document_approval_note']) ? $post['document_approval_note'] : $is_approval_document["document_approval_note"];
-                    //
-
                     // When approval employees are selected
                     $this->HandleApprovalFlow(
                         $assignInsertId,
@@ -10683,13 +10673,20 @@ class Hr_documents_management extends Public_Controller
                     }
 
                     // Check if it's Authorize document
-                    if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $ins['signers'] != null) {
+                    if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $authManagers != null) {
                         // Managers handling
                         $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                            $ins['signers'],
+                            $authManagers,
                             $assignInsertId,
                             $post['CompanySid'],
                             $post['EmployerSid']
+                        );
+                        //
+                        $this->hr_documents_management_model->change_document_approval_status(
+                            $assignInsertId,
+                            [
+                                'managersList' => $ins['signers']
+                            ]
                         );
                     }
                 }
@@ -11455,7 +11452,7 @@ class Hr_documents_management extends Public_Controller
             }
             //
             $approvers_list = isset($post['approvers_list']) ? $post['approvers_list'] : "";
-            $approvers_note = isset($post['approvers_note']) ? $post['approvers_note'] : $is_approval_document["document_approval_note"];
+            $approvers_note = isset($post['approvers_note']) ? $post['approvers_note'] : "";
             //
             // When approval employees are selected
             $this->HandleApprovalFlow(
@@ -11766,7 +11763,7 @@ class Hr_documents_management extends Public_Controller
             }
             //
             $approvers_list = isset($post['approvers_list']) ? $post['approvers_list'] : "";
-            $approvers_note = isset($post['approvers_note']) ? $post['approvers_note'] : '';
+            $approvers_note = isset($post['approvers_note']) ? $post['approvers_note'] : "";
 
             //     // When approval employees are selected
             $this->HandleApprovalFlow(
@@ -11915,7 +11912,7 @@ class Hr_documents_management extends Public_Controller
             }
             //
             $approvers_list = isset($post['approvers_list']) ? $post['approvers_list'] : "";
-            $approvers_note = isset($post['approvers_note']) ? $post['approvers_note'] : $is_approval_document["document_approval_note"];
+            $approvers_note = isset($post['approvers_note']) ? $post['approvers_note'] : "";
             //
             // When approval employees are selected
             $this->HandleApprovalFlow(
