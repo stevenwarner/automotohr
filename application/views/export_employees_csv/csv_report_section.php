@@ -38,7 +38,7 @@
 
 <!-- Panel for send documents DMWYC -->
 <div class="panel panel-default">
-    <div class="panel-heading"><b>Send CSV Report</b></div>
+    <div class="panel-heading"><b>Schedule Report</b></div>
     <div class="panel-body">
         <!--  -->
         <form id="form_export_employees_report" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
@@ -155,113 +155,115 @@
 <div class="panel panel-default">
     <div class="panel-heading"><b>Scheduled Reports </b></div>
     <div class="panel-body">
-        <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-12">
 
 
-            <table class="table table-bordered table-hover table-striped">
-                <thead>
-                    <tr>
-                        <th>Frequency</th>
-                        <th>Employees</th>
-                        <th>Filters</th>
-                        <th>Selected Fields</th>
-                        <th class="last-col" width="1%" colspan="3">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!--All records-->
-
-                    <?php if (sizeof($csv_report_settings) > 0) {
-                        foreach ($csv_report_settings as $setting_row) {
-                    ?>
-                            <tr>
-                                <td class="vam">
-
-                                    <?= ucfirst($setting_row['custom_type']); ?><br>
-                                    <?php if ($setting_row['custom_type'] == 'daily') {
-                                        echo "At : " . $setting_row['custom_time'] . "<br>";
-                                    }
-                                    if ($setting_row['custom_type'] == 'monthly') {
-                                        echo "On " . $setting_row['custom_date'] . "th At : " . $setting_row['custom_time'] . "<br>";
-                                    }
-
-                                    if ($setting_row['custom_type'] == 'weekly') {
-                                        echo "On " . $setting_row['custom_day'] . "th day At : " . $setting_row['custom_time'] . "<br>";
-                                    }
-                                    if ($setting_row['custom_type'] == 'yearly') {
-                                        echo "On " . $setting_row['custom_date'] . " At : " . $setting_row['custom_time'] . "<br>";
-                                    }
-
-                                    ?>
-                                </td>
-                                <td class="vam">
-                                    <?php
-                                    if ($setting_row['sender_list'] != 'all') {
-                                        $sender_list = explode(',', $setting_row['sender_list']);
-                                    ?>
-
-                                        <div class="show"><span class="empbgcolor"><?= count($sender_list); ?> Employees</span>
-                                            <div class="menu" style="display: none;">
-                                                <?php
-                                                foreach ($sender_list as $employee_sid) {
-                                                    echo  getUserNameBySID($employee_sid) . "<hr>";
-                                                } ?>
-                                            </div>
-                                        </div>
-                                    <?php
-
-                                    } else {
-                                        echo "All Employees";
-                                    }
-
-                                    ?>
-                                </td>
-                                <td class="vam">
-                                    <?php
-                                    echo "<b>Date:  </b> <br>(" . date('M d Y, D', strtotime($setting_row['to_date']));
-                                    echo " &nbsp; - &nbsp;" . date('M d Y, D', strtotime($setting_row['from_date'])) . ")<br>";
-
-                                    if ($setting_row['employee_type'] != null) {
-
-                                        if ($setting_row['employee_type'] == 'all') {
-                                            echo "Access Level: All Employes <br>";
-                                        } else {
-                                            echo "<b>Access Level: </b>" . str_replace(",", ", ", $setting_row['employee_type']) . " <br>";
-                                        }
-                                        echo "<b>Status: </b>" . ucfirst($setting_row['employee_status']);
-                                    }
-
-                                    ?>
-                                </td>
-
-                                <td class="vam"><?php
-                                                if ($setting_row['selected_columns'] == 'all') {
-                                                    echo "All Fields";
-                                                } else {
-                                                    echo ucwords(str_replace(",", ", ", str_replace("_", " ", $setting_row['selected_columns'])));
-                                                }
-                                                ?>
-                                </td>
-
-                                <td class="vam">
-                                    <a class="btn btn-danger btn-sm btn-block" href="javascript:;" id="<?php echo $setting_row['sid']; ?>" onclick="todo('delete', this.id);">
-                                        <i class="fa fa-trash fa-fw" style="font-size: 12px;"></i>
-                                        <span>Delete</span>
-                                    </a>
-                                </td>
-                                <?php
-                                ?>
-                            </tr>
-                        <?php  }
-                    } else { ?>
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
                         <tr>
-                            <td colspan="8" class="text-center">
-                                <span class="no-data">Settings are not found</span>
-                            </td>
+                            <th>Frequency</th>
+                            <th>Employees</th>
+                            <th>Filters</th>
+                            <th>Columns</th>
+                            <th class="last-col" width="1%" colspan="3">Actions</th>
                         </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <!--All records-->
+
+                        <?php if (sizeof($csv_report_settings) > 0) {
+                            foreach ($csv_report_settings as $setting_row) {
+                        ?>
+                                <tr>
+                                    <td class="vam">
+
+                                        <?= ucfirst($setting_row['custom_type']); ?><br>
+                                        <?php if ($setting_row['custom_type'] == 'daily') {
+                                            echo "At : " . $setting_row['custom_time'] . "<br>";
+                                        }
+                                        if ($setting_row['custom_type'] == 'monthly') {
+                                            echo "On " . $setting_row['custom_date'] . "th At : " . $setting_row['custom_time'] . "<br>";
+                                        }
+
+                                        if ($setting_row['custom_type'] == 'weekly') {
+                                            echo "On " . $setting_row['custom_day'] . "th day At : " . $setting_row['custom_time'] . "<br>";
+                                        }
+                                        if ($setting_row['custom_type'] == 'yearly') {
+                                            echo "On " . $setting_row['custom_date'] . " At : " . $setting_row['custom_time'] . "<br>";
+                                        }
+
+                                        ?>
+                                    </td>
+                                    <td class="vam">
+                                        <?php
+                                        if ($setting_row['sender_list'] != 'all') {
+                                            $sender_list = explode(',', $setting_row['sender_list']);
+                                        ?>
+
+                                            <div class="show"><span class="empbgcolor"><?= count($sender_list); ?> Employees</span>
+                                                <div class="menu" style="display: none;">
+                                                    <?php
+                                                    foreach ($sender_list as $employee_sid) {
+                                                        echo  getUserNameBySID($employee_sid) . "<hr>";
+                                                    } ?>
+                                                </div>
+                                            </div>
+                                        <?php
+
+                                        } else {
+                                            echo "All Employees";
+                                        }
+
+                                        ?>
+                                    </td>
+                                    <td class="vam">
+                                        <?php
+                                        echo "<b>Date:  </b> <br>(" . date('M d Y, D', strtotime($setting_row['to_date']));
+                                        echo " &nbsp; - &nbsp;" . date('M d Y, D', strtotime($setting_row['from_date'])) . ")<br>";
+
+                                        if ($setting_row['employee_type'] != null) {
+
+                                            if ($setting_row['employee_type'] == 'all') {
+                                                echo "Access Level: All Employes <br>";
+                                            } else {
+                                                echo "<b>Access Level: </b>" . str_replace(",", ", ", $setting_row['employee_type']) . " <br>";
+                                            }
+                                            echo "<b>Status: </b>" . ucfirst($setting_row['employee_status']);
+                                        }
+
+                                        ?>
+                                    </td>
+
+                                    <td class="vam"><?php
+                                                    if ($setting_row['selected_columns'] == 'all') {
+                                                        echo "All Fields";
+                                                    } else {
+                                                        echo ucwords(str_replace(",", ", ", str_replace("_", " ", $setting_row['selected_columns'])));
+                                                    }
+                                                    ?>
+                                    </td>
+
+                                    <td class="vam">
+                                        <a class="btn btn-danger btn-sm btn-block" href="javascript:;" id="<?php echo $setting_row['sid']; ?>" onclick="todo('delete', this.id);">
+                                            <i class="fa fa-trash fa-fw" style="font-size: 12px;"></i>
+                                            <span>Delete</span>
+                                        </a>
+                                    </td>
+                                    <?php
+                                    ?>
+                                </tr>
+                            <?php  }
+                        } else { ?>
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <span class="no-data">Settings are not found</span>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
