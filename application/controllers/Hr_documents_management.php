@@ -3736,7 +3736,7 @@ class Hr_documents_management extends Public_Controller
             if (!empty($current_assigned_offer_letter)) {
                 if ($current_assigned_offer_letter[0]['user_consent'] == 1) {
                     $completed_offer_letter = $current_assigned_offer_letter;
-                } else {
+                } else { 
                     $uncompleted_offer_letter = $current_assigned_offer_letter;
                 }
             }
@@ -3942,6 +3942,7 @@ class Hr_documents_management extends Public_Controller
                     $employeeDepartments
                 );
             //
+
             $confidential_sids = array();
             //
             $confidential_sids =  array_merge($confidential_sids, is_array($data['no_action_required_payroll_documents']) ? array_column($data['no_action_required_payroll_documents'],'document_sid') : []);
@@ -3986,7 +3987,6 @@ class Hr_documents_management extends Public_Controller
                 false,
                 $employeeDepartments
             );
-            
             //
             cleanDocumentsByPermission(
                 $data['active_groups'],
@@ -4001,7 +4001,7 @@ class Hr_documents_management extends Public_Controller
                 $data['session']['employer_detail'],
                 true,
                 $employeeDepartments
-            );
+            ); 
             // Get departments & teams
             $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
             $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
@@ -4095,7 +4095,7 @@ class Hr_documents_management extends Public_Controller
             //     $user_type
             // );
             //
-            
+  
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
@@ -10704,7 +10704,7 @@ class Hr_documents_management extends Public_Controller
     // Deprecated, need to remove it's functionlity
     // 
     function offer_letter_edit()
-    {
+    {_e($_POST,true,true);
         //
         if (!isset($_POST) || !sizeof($_POST))
             //
@@ -10752,7 +10752,6 @@ class Hr_documents_management extends Public_Controller
         $user_type,
         $user_sid
     ) {
-        // _e($_POST,true,true);
         //
         if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
         //
@@ -11840,7 +11839,7 @@ class Hr_documents_management extends Public_Controller
      * 4 - Assign Signers (For authorized people)
      */
     function update_assigned_document()
-    {_e($_POST,true,true);
+    {
         //
         $r = [
             'Status' => FALSE,

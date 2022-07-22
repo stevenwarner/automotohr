@@ -199,7 +199,8 @@
         });
         //
         // This is add new approver event
-        $(document).on('click', options['addEmployeeIdx'], function (event) {
+        // $(document).on('click', options['addEmployeeIdx'], function (event) {
+        $(options['addEmployeeIdx']).on('click', function (event) {
             //
             $(options['approverNoteIdx']).show();
             var rowId = options['prefix'] + 'js-employees-' + _this.getRandom();
