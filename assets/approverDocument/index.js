@@ -76,15 +76,17 @@
             $(options['containerIdx']).show();
             //
             obj.approversList.map(function (apId) {
-                var rowId = options['prefix'] + 'js-employees-' + _this.getRandom();
-                var row = _this.generateApproverRow(rowId, options['documentId'], apId);
-                //
-                $(options['intEmployeeBoxIdx']).append(row);
+                if (apId.length > 0) {
+                    var rowId = options['prefix'] + 'js-employees-' + _this.getRandom();
+                    var row = _this.generateApproverRow(rowId, options['documentId'], apId);
+                    //
+                    $(options['intEmployeeBoxIdx']).append(row);
 
-                $('#' + rowId).select2();
-                //
-                $('#' + rowId).select2('val', apId);
-                selectedApprovers[apId] = true;
+                    $('#' + rowId).select2();
+                    //
+                    $('#' + rowId).select2('val', apId);
+                    selectedApprovers[apId] = true;
+                }
             });
         };
         //
