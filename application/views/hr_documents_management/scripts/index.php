@@ -953,7 +953,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					}
 					//
 					$('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == "1" ? true : false);
-					$('#modify-assign-offer-letter-modal #confidentialSelectedEmployeesdiv').hide();
+					// 
 					$('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').select2({
 						closeOnSelect: false
 					});

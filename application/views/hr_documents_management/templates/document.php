@@ -716,20 +716,6 @@
         //
         $("#jsGenerateOfferLetter").documentApprovalFlow(approverSection);
         //
-        $("#confidentialSelectedEmployeesdiv").hide();
-
-        $("#setting_is_confidential").click(function() {
-            if ($(this).is(":checked")) {
-                $("#confidentialSelectedEmployeesdiv").show();
-
-            } else {
-                $("#confidentialSelectedEmployeesdiv").hide();
-                $("#confidentialSelectedEmployees").select2("val", "");
-            }
-        });
-
-
-        //
         $('#specific_document').mFileUploader({
             fileLimit: -1, // Default is '2MB', Use -1 for no limit (Optional)
             allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv'], //(Optional)
@@ -826,12 +812,10 @@
             }
             //
             $("#setting_is_confidential").prop('checked', false);
-            $("#confidentialSelectedEmployeesdiv").hide();
             $("#confidentialSelectedEmployees").select2("val", null);
             //
             if(d.is_confidential == 1){
                 $("#setting_is_confidential").prop('checked', true);
-                $("#confidentialSelectedEmployeesdiv").show();
                 $("#confidentialSelectedEmployees").select2("val", null);
                 //
                 if(d.confidential_employees){

@@ -2815,7 +2815,17 @@ class Hr_documents_management extends Public_Controller
                                     }
                                 }
                             }
-
+                            // Document Settings - Confidential
+                            $data_to_insert['is_confidential'] = $this->input->post('setting_is_confidential', true) && $this->input->post('setting_is_confidential', true) == 'on' ? 1 : 0;
+                            //
+                            $confidentialSelectedEmployees = $this->input->post('confidentialSelectedEmployees', true);
+                            //
+                            $data_to_insert['confidential_employees'] = NULL;
+                            //
+                            if ($confidentialSelectedEmployees) {
+                                $data_to_insert['confidential_employees'] = in_array("-1", $confidentialSelectedEmployees) ? "-1" : implode(",", $confidentialSelectedEmployees);
+                            }
+                            //
                             $insert_id = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
                             $this->hr_documents_management_model->add_update_categories_2_documents($insert_id, $this->input->post('categories'), "documents_assigned");
@@ -10979,6 +10989,7 @@ class Hr_documents_management extends Public_Controller
             // Also assign it in case of 
             // assignandsave
             $todo = isset($post['saveAndAssign']) ? $post['saveAndAssign'] : $post['submit'];
+            //
             if ($todo == 'saveandassign') {
                 // 
                 $documentId = $insert_id;
@@ -11004,6 +11015,12 @@ class Hr_documents_management extends Public_Controller
                 $a['document_sid'] = $documentId;
                 $a['status'] = 1;
                 $a['visible_to_payroll'] = $b['visible_to_payroll'];
+                //
+                $a['allowed_roles'] = isset($post['selected_roles']) ? implode(',', $post['selected_roles']) : NULL;
+                $a['allowed_employees'] = isset($post['selected_employees']) ? implode(',', $post['selected_employees']) : NULL;
+                $a['allowed_departments'] = isset($post['selected_departments']) ? implode(',', $post['selected_departments']) : NULL;
+                $a['allowed_teams'] = isset($post['selected_teams']) ? implode(',', $post['selected_teams']) : NULL;
+                //
                 $a['download_required'] = $post['download_required'];
                 $a['acknowledgment_required'] = $post['acknowledgment_required'];
                 $a['signature_required'] = $post['signature_required'];

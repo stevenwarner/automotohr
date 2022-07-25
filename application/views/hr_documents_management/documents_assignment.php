@@ -4757,6 +4757,10 @@
             onError: (errorCode, event) => {}, // errorCode will either 'size' or 'type' and event will be the actual event  (Optional)
             placeholderImage: '' // Default is empty ('') but can be set any image  (Optional)
         });
+
+        $('#confidentialSelectedEmployees').select2({
+            closeOnSelect: false
+        });
     }
 
     // $('#uploaded_document_modal').on('hidden.bs.modal', function () {
