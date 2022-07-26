@@ -75,19 +75,22 @@
             $(options['intEmployeeBoxIdx']).html('');
             $(options['containerIdx']).show();
             //
-            obj.approversList.map(function (apId) {
-                if (apId.length > 0) {
-                    var rowId = options['prefix'] + 'js-employees-' + _this.getRandom();
-                    var row = _this.generateApproverRow(rowId, options['documentId'], apId);
-                    //
-                    $(options['intEmployeeBoxIdx']).append(row);
+                console.log(obj.approversList)
+            if (obj.approversList.length > 0) {    
+                obj.approversList.map(function (apId) {
+                    if (apId.length > 0) {
+                        var rowId = options['prefix'] + 'js-employees-' + _this.getRandom();
+                        var row = _this.generateApproverRow(rowId, options['documentId'], apId);
+                        //
+                        $(options['intEmployeeBoxIdx']).append(row);
 
-                    $('#' + rowId).select2();
-                    //
-                    $('#' + rowId).select2('val', apId);
-                    selectedApprovers[apId] = true;
-                }
-            });
+                        $('#' + rowId).select2();
+                        //
+                        $('#' + rowId).select2('val', apId);
+                        selectedApprovers[apId] = true;
+                    }
+                });
+            }    
         };
         //
         // Only generate rendom keyword

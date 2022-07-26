@@ -103,6 +103,19 @@
 				<label>Sort Order</label>
 				<input type="text" class="form-control" id="js-template-sort-order" />
 			</div>
+			<!-- 7 -->
+			<div class="form-group js-for-generated">
+				<label>Authorized Management Signers</label>
+				<select id="js-template-signers" multiple="true">
+					<?php
+					if (sizeof($managers_list)) {
+						foreach ($managers_list as $k => $v) {
+							echo '<option value="' . ($v['sid']) . '">' . (remakeEmployeeName($v)) . '</option>';
+						}
+					}
+					?>
+				</select>
+			</div>
 			<!-- 8 -->
 			<div class="row">
 				<div class="col-sm-12">
@@ -223,19 +236,7 @@
 				'is_confidential' =>  $document_info['is_confidential']
 			]); ?>
 
-			<!-- 7 -->
-			<div class="form-group js-for-generated">
-				<label>Authorized Management Signers</label>
-				<select id="js-template-signers" multiple="true">
-					<?php
-					if (sizeof($managers_list)) {
-						foreach ($managers_list as $k => $v) {
-							echo '<option value="' . ($v['sid']) . '">' . (remakeEmployeeName($v)) . '</option>';
-						}
-					}
-					?>
-				</select>
-			</div>
+			
 			<!-- 8 -->
 			<div class="form-group">
 				<label>Send an email notification?</label>

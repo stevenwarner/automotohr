@@ -2122,17 +2122,35 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			$('.jsEmployeesadditionalBox').html('');
 			$('#js-popup [name="assigner_note"]').val();
 
+			var approverPrefill = {};
+            var approverSection = {
+                    appCheckboxIdx: '.jsHasApprovalFlowModal',
+                    containerIdx: '.jsApproverFlowContainerModal',
+                    addEmployeeIdx: '.jsAddDocumentApproversModal',
+                    intEmployeeBoxIdx: '.jsEmployeesadditionalBoxModal',
+                    extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxModal',
+                    approverNoteIdx: '.jsApproversNoteModal',
+                    employeesList: <?= json_encode($employeesList); ?>,
+                    documentId: 0
+                };
 
 
 			// Approval flow 
 			if (l.has_approval_flow == 1) {
-				$('#js-popup [name="has_approval_flow"]').prop('checked', l.has_approval_flow == 1 ? true : false);
-				$('.jsApproverFlowContainer').show();
-				$('#js-popup [name="assigner_note"]').val(l.document_approval_note);
-				DocumentApproverPrefill(l.document_approval_employees, 0, '#js-popup');
-
+				approverPrefill.isChecked = true;
+                approverPrefill.approverNote = l.document_approval_note;
+                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                //
+                approverSection.prefill = approverPrefill;
+			} else {
+				approverPrefill.isChecked = false;
+                approverPrefill.approverNote = "";
+                approverPrefill.approversList = ''; 
+                //
+                approverSection.prefill = approverPrefill;
 			}
-
+			//
+			$("#jsOfferLetterModal").documentApprovalFlow(approverSection);
 			//---------Automatically assign after Days
 			$('input[name="assign-in-days"]').val(0);
 			$('input[name="assign-in-months"]').val(0);
