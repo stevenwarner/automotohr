@@ -2007,6 +2007,8 @@ class Dashboard_model extends CI_Model
         $this->db->where('parent_sid', $parent_sid);
         $this->db->where('is_executive_admin', 0);
         $this->db->where('active', 1);
+        $this->db->order_by('first_name', 'ASC');
+        
         return $this->db->get('users')->result_array();
     }
 
