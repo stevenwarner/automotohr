@@ -11188,6 +11188,13 @@ class Hr_documents_management extends Public_Controller
                             $company_sid,
                             $employer_sid
                         );
+                        //
+                        $this->hr_documents_management_model->change_document_approval_status(
+                            $assignInsertId,
+                            [
+                                'managersList' => $post['managersList']
+                            ]
+                        );
                     }
                 }
             }
@@ -11683,15 +11690,9 @@ class Hr_documents_management extends Public_Controller
         //
         $a['confidential_employees'] = NULL;
         //
-        if ($post['confidentialSelectedEmployees']) {
-            if (strpos($post['confidentialSelectedEmployees'], "-1") !== false) {
-                $a['confidential_employees'] = "-1";
-            } else {
-                $a['confidential_employees'] = $post['confidentialSelectedEmployees'];
-            }
+        if ($post['confidentialSelectedEmployees'] != 'null') {
+            $a['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : $post['confidentialSelectedEmployees'];
         }
-
-        $company_name = getCompanyNameBySid($post['CompanySid']);
         //
         if (ASSIGNEDOCIMPL) {
             $a['signature_required'] = $post['isSignature'];
@@ -11703,9 +11704,8 @@ class Hr_documents_management extends Public_Controller
             $a['document_s3_name'] = $_SERVER['HTTP_HOST'] != 'localhost' ? putFileOnAWSBase64($post['file']) : '0057-test_latest_uploaded_document-58-Yo2.pdf';
             $a['document_original_name'] = $post['fileOrigName'];
         }
-
+        //
         if (sizeof($_FILES)) {
-
             //
             $uploaded_document_s3_name = '0057-test_latest_uploaded_document-58-Yo2.pdf';
             $uploaded_document_original_name = $post['documentTitle'];
@@ -11720,55 +11720,7 @@ class Hr_documents_management extends Public_Controller
                 $a['document_s3_name'] = $uploaded_document_s3_name;
             }
         }
-
-        // For email
-        if ($post['sendEmail'] == 'yes') {
-            // 
-            $hf = message_header_footer_domain($post['CompanySid'], $post['CompanyName']);
-            // Send Email and SMS
-            $replacement_array = array();
-            //
-            switch ($post['Type']) {
-                case 'employee':
-                    $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
-                    $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
-                    break;
-
-                case 'applicant':
-                    $user_info = $this->hr_documents_management_model->get_applicant_information($post['CompanySid'], $post['EmployeeSid']);
-                    break;
-            }
-            //
-            $applicant_sid = $user_info['sid'];
-            $applicant_email = $user_info['email'];
-            $applicant_name = $user_info['first_name'] . ' ' . $user_info['last_name'];
-
-            $url = base_url() . 'onboarding/my_offer_letter/' . $verification_key;
-
-            $emailTemplateBody = 'Dear ' . $applicant_name . ', <br>';
-            $emailTemplateBody = $emailTemplateBody . '<strong>Congratulations and Welcome to ' . $company_name . '</strong>' . '<br>';
-            $emailTemplateBody = $emailTemplateBody . 'We have attached an offer letter with this email for you.' . '<br>';
-            $emailTemplateBody = $emailTemplateBody . 'Please complete this offer letter by clicking on the link below.' . '<br>';
-            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Offer Letter</a>' . '<br>';
-            $emailTemplateBody = $emailTemplateBody . '<em>If you have any questions at all, please feel free to send us a note at any time and we will get back to you as quickly as we can.</em>' . '<br>';
-            $emailTemplateBody = $emailTemplateBody . '<strong>The HR Team at ' . $company_name . '</strong>' . '<br>';
-            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
-            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
-            $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email; Please Do Not reply!</strong>' . '<br>';
-            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
-
-            $from = TO_EMAIL_DEV;
-            $to = $applicant_email;
-            $subject = 'Offer Letter / Pay Plan';
-            $from_name = ucwords(STORE_DOMAIN);
-            $email_hf = message_header_footer_domain($post['CompanySid'], $company_name);
-            $body = $email_hf['header']
-                . $emailTemplateBody
-                . $email_hf['footer'];
-            sendMail($from, $to, $subject, $body, $from_name);
-        }
         //
-
         if ($assignInsertId == null)
          $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
         else
@@ -11799,52 +11751,71 @@ class Hr_documents_management extends Public_Controller
             
             //
             // Check if it's Authorize document
-            if ($post['sendEmail'] == 'yes') {
-                if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc) {
-                    // Managers handling
-                    $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                        $post['managerList'],
-                        $assignInsertId,
-                        $post['CompanySid'],
-                        $post['EmployerSid']
-                    );
-                    //
-                    $company_name = ucwords(getCompanyNameBySid($post['CompanySid']));
-                    //
-                    $hf = message_header_footer(
-                        $post['CompanySid'],
-                        $company_name
-                    );
-                    //
-                    $new_assign_manger = explode(',', $post['managerList']);
-                    //
-                    if (!empty($new_assign_manger)) {
-                        //
-                        foreach ($new_assign_manger as $k => $v) {
-                            $assign_to_info  = db_get_employee_profile($v);
-                            $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
-                            $assign_to_email = $assign_to_info[0]['email'];
-
-                            $assigned_by_info  = db_get_employee_profile($post['EmployerSid']);
-                            $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
-
-                            //Send Email
-                            $replacement_array = array();
-                            $replacement_array['baseurl']           = base_url();
-                            $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
-                            $replacement_array['company_name']  = $company_name;
-                            $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-                            $replacement_array['employee_name']  = ucwords($assigned_by_name);
-                            //
-                            $user_extra_info = array();
-                            $user_extra_info['user_sid'] = $v;
-                            $user_extra_info['user_type'] = "employee";
-                            //
-                            log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
-                        }
-                    }
-                }
+            if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc) {
+                // Managers handling
+                $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                    $post['managerList'],
+                    $assignInsertId,
+                    $post['CompanySid'],
+                    $post['EmployerSid']
+                );
+                //
+                $this->hr_documents_management_model->change_document_approval_status(
+                    $assignInsertId,
+                    [
+                        'managersList' => $post['managerList']
+                    ]
+                );
             }
+
+            // For email
+            if ($post['sendEmail'] == 'yes') {
+                $company_name = getCompanyNameBySid($post['CompanySid']);
+                // 
+                $hf = message_header_footer_domain($post['CompanySid'], $post['CompanyName']);
+                // Send Email and SMS
+                $replacement_array = array();
+                //
+                switch ($post['Type']) {
+                    case 'employee':
+                        $user_info = $this->hr_documents_management_model->get_employee_information($post['CompanySid'], $post['EmployeeSid']);
+                        $this->hr_documents_management_model->update_employee($post['EmployerSid'], array('document_sent_on' => date('Y-m-d H:i:s')));
+                        break;
+
+                    case 'applicant':
+                        $user_info = $this->hr_documents_management_model->get_applicant_information($post['CompanySid'], $post['EmployeeSid']);
+                        break;
+                }
+                //
+                $applicant_sid = $user_info['sid'];
+                $applicant_email = $user_info['email'];
+                $applicant_name = $user_info['first_name'] . ' ' . $user_info['last_name'];
+
+                $url = base_url() . 'onboarding/my_offer_letter/' . $verification_key;
+
+                $emailTemplateBody = 'Dear ' . $applicant_name . ', <br>';
+                $emailTemplateBody = $emailTemplateBody . '<strong>Congratulations and Welcome to ' . $company_name . '</strong>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . 'We have attached an offer letter with this email for you.' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . 'Please complete this offer letter by clicking on the link below.' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Offer Letter</a>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '<em>If you have any questions at all, please feel free to send us a note at any time and we will get back to you as quickly as we can.</em>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '<strong>The HR Team at ' . $company_name . '</strong>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email; Please Do Not reply!</strong>' . '<br>';
+                $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+
+                $from = TO_EMAIL_DEV;
+                $to = $applicant_email;
+                $subject = 'Offer Letter / Pay Plan';
+                $from_name = ucwords(STORE_DOMAIN);
+                $email_hf = message_header_footer_domain($post['CompanySid'], $company_name);
+                $body = $email_hf['header']
+                    . $emailTemplateBody
+                    . $email_hf['footer'];
+                sendMail($from, $to, $subject, $body, $from_name);
+            }
+            //
         }
         //
         echo 'success';
