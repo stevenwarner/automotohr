@@ -364,16 +364,7 @@
                                                 </div>
                                                 <br />
 
-                                                <!-- Payroll Check -->
-                                                <div class="row">
-                                                    <div class="col-xs-6">
-                                                        <label class="control control--checkbox font-normal">
-                                                            Visible To Payroll Plus
-                                                            <input class="disable_doc_checkbox js-visible-pp" name="visible_to_payroll" type="checkbox" value="1" <?php echo isset($document_info['document_description']) && $document_info['visible_to_payroll'] == 1 ? 'checked="checked"' : ''; ?> />
-                                                            <div class="control__indicator"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
+                                                <!-- Visibility Section -->
                                                 <br />
                                                 <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
                                                 <br />
