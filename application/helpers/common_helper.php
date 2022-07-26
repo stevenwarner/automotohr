@@ -11858,6 +11858,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
             }
         } else {
             //
+            // _e($data,true,true);
             foreach ($data as $k0 => $documents) {
                 //
                 if (!is_array($documents) || !isset($documents[0]) || !isset($documents[0]['document_title'])) continue;

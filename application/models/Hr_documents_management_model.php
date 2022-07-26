@@ -821,6 +821,7 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.document_type', 'offer_letter');
         $this->db->where('documents_assigned.archive', 0);
+        $this->db->where('documents_assigned.is_confidential', 0);
 
         if ($status) {
             $this->db->where('status', $status);
@@ -3632,7 +3633,16 @@ class Hr_documents_management_model extends CI_Model
             download_required,
             signature_required,
             archive,
-            sort_order
+            sort_order,
+            is_confidential,
+            has_approval_flow,
+            document_approval_note,
+            document_approval_employees,
+            confidential_employees,
+            automatic_assign_in,
+            automatic_assign_type,
+            managers_list as signers,
+            
         ')
             ->where('sid', $documentId)
             ->get('documents_management');
@@ -9125,4 +9135,22 @@ class Hr_documents_management_model extends CI_Model
 
         return $return_data;
     }
+
+    public function is_document_has_approval_flow_offer_letter ($document_sid) {
+        //
+        $this->db->select('has_approval_flow, document_approval_note');
+        $this->db->where('sid', $document_sid);
+        $record_obj = $this->db->get('offer_letter');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = array();
+        //
+        if (!empty($record_arr)) {
+            $return_data = $record_arr;
+        } 
+
+        return $return_data;
+    }
+
 }

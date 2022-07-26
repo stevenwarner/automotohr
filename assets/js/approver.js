@@ -5,7 +5,6 @@ function DocumentApproverPrefill(assigners, documentID, modal) {
 	}
 	//
 	assigners.split(',').map(function(sa) {
-
 		var rowId = Math.round((Math.random() * 10000) + 1);
 		var row = generateApproverRow(rowId, documentID, sa);
 		$(""+(modal !== undefined ? modal : '')+" .jsEmployeesadditionalBox").append(row);
@@ -28,7 +27,7 @@ function DocumentApproverPrefill(assigners, documentID, modal) {
 function generateApproverRow(rowId, documentID, approverID) {
 	//
 	var rows = '';
-	rows += '<div class="row js-employee-' + (rowId) + ' row_id" data-id="' + (rowId) + '">';
+	rows += '<div class="row js-employee-' + (rowId) + ' row_id jsSelectedEmployee" data-id="' + (rowId) + '">';
 	rows += '<br />';
 	rows += '    <div class="cs-employee js-employee csMT">';
 	rows += '        <div class="col-sm-10 col-sm-offset-0 text-left">';

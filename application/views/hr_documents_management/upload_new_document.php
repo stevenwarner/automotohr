@@ -47,6 +47,7 @@
                                             <?php echo form_error('document_title'); ?>
                                         </div>
                                     </div>
+
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <label>Instructions / Guidance </label>
@@ -61,6 +62,7 @@
                                             </textarea>
                                         </div>
                                     </div>
+
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <label>Browse Document<?php echo !isset($document_info) ? '<span class="staric">*</span>' : ''; ?></label>
@@ -267,6 +269,7 @@
                                             </div>
                                         </div>
                                     <?php } ?>
+
                                     <?php if (!empty($active_categories)) { ?>
                                         <div class="row">
                                             <div class="col-xs-12">
@@ -284,6 +287,7 @@
                                         </div>
                                         <br>
                                     <?php } ?>
+
                                     <?php if (isset($document_info['sid'])) { ?>
                                         <div class="row">
                                             <div class="col-xs-12">
@@ -296,8 +300,11 @@
                                         </div>
                                         <br />
                                     <?php } ?>
+
                                     <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
-                                    <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+
+                                    <?php $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowUD", "containerIdx" => "jsApproverFlowContainerUD", "addEmployeeIdx" => "jsAddDocumentApproversUD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxUD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxUD", "approverNoteIdx" => "jsApproversNoteUD", 'mainId' => 'testApproversUD']); ?>
+
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <div class="hr-box">
@@ -498,9 +505,35 @@
 
 <link rel="stylesheet" href="<?= base_url('assets/mFileUploader/index.css'); ?>" />
 <script src="<?= base_url('assets/mFileUploader/index.js'); ?>"></script>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
 
 <script>
     $(document).ready(function() {
+        var approverPrefill = {};
+        var approverSection = approverSection = {
+            appCheckboxIdx: '.jsHasApprovalFlowUD',
+            containerIdx: '.jsApproverFlowContainerUD',
+            addEmployeeIdx: '.jsAddDocumentApproversUD',
+            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxUD',
+            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxUD',
+            approverNoteIdx: '.jsApproversNoteUD',
+            employeesList: <?= json_encode($employeesList); ?>,
+            documentId: 0
+        };
+        //
+        <?php if (isset($document_info) && !empty($document_info)) { ?>
+            var l = <?= json_encode($document_info); ?>;
+            //
+            if (l.has_approval_flow == 1) {
+                approverPrefill.isChecked = true;
+                approverPrefill.approverNote = l.document_approval_note;
+                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                //
+                approverSection.prefill = approverPrefill;
+            }
+        <?php } ?>
+        //
+        $("#jsGenerateOfferLetter").documentApprovalFlow(approverSection);
 
         $('#jsFileUpload').mFileUploader({
             fileLimit: -1,
@@ -992,5 +1025,3 @@
         height: 30px;
     }
 </style>
-
-<?php $this->load->view('hr_documents_management/scripts/approvers'); ?>

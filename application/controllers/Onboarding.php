@@ -4543,7 +4543,7 @@ class Onboarding extends CI_Controller
                     $onboarding_instructions = str_replace('{{company_name}}', ucwords($data['session']['company_detail']['CompanyName']), $onboarding_instructions);
                     $data['onboarding_instructions'] = $onboarding_instructions;
 
-                    break;
+                     break;
                 case 'applicant':
 
                     $ats_params = $this->session->userdata('ats_params');
@@ -4653,6 +4653,9 @@ class Onboarding extends CI_Controller
                             $data_to_insert['signature_required'] = $document['signature_required'];
                             $data_to_insert['download_required'] = $document['download_required'];
                             $data_to_insert['is_confidential'] = $document['is_confidential'];
+                            $data_to_insert['confidential_employees'] = $document['confidential_employees'];
+                                                       
+
                             //
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
@@ -4670,6 +4673,7 @@ class Onboarding extends CI_Controller
                                 }
                             }
                             //
+                         
                             if ($document['has_approval_flow'] == 1) {
                                 $this->HandleApprovalFlow(
                                     $assignment_sid,
@@ -4891,7 +4895,6 @@ class Onboarding extends CI_Controller
                 $data['unique_sid'] = $unique_sid;
                 $data['email_sent_date'] = $email_sent_date;
 
-
                 $data['managers_list'] = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, $employer_sid);
 
                 $data['assigned_groups'] = $assigned_groups;
@@ -4909,7 +4912,7 @@ class Onboarding extends CI_Controller
                 $data['approval_documents'] = array_column($approval_documents, "document_sid");
                 $approval_offer_letters = $this->hr_documents_management_model->get_user_approval_pending_offer_letters($user_type, $user_sid);
                 $data['approval_offer_letters'] = array_column($approval_offer_letters, "document_sid");
-
+                //
                 $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
                 $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
                 //
@@ -4918,7 +4921,6 @@ class Onboarding extends CI_Controller
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
-
                 switch ($perform_action) {
                     case 'assign_document':
                         $document_type = $this->input->post('document_type');
@@ -4979,9 +4981,12 @@ class Onboarding extends CI_Controller
                             $data_to_insert['document_s3_name'] = $document['uploaded_document_s3_name'];
                             $data_to_insert['document_title'] = $document['document_title'];
                             $data_to_insert['document_description'] = $this->input->post('document_description');
+
+
                             $assignment_sid = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                         }
 
+                          
                         // Managers handling
                         $this->hr_documents_management_model->addManagersToAssignedDocuments(
                             $document['managers_list'],
@@ -5175,6 +5180,7 @@ class Onboarding extends CI_Controller
                         $offer_letter_sid = $this->input->post('letter_sid');
                         $letter_body = $this->input->post('letter_body');
                         $offer_letter_type = $this->input->post('letter_type');
+                        
 
                         if (!empty($letter_body) || $offer_letter_type == "uploaded") {
                             $offer_letter_title = $this->hr_documents_management_model->get_assigned_offer_letter_title($offer_letter_sid);
@@ -5216,9 +5222,25 @@ class Onboarding extends CI_Controller
                                 $data_to_insert['document_extension'] = $offer_letter_extension;
                                 $data_to_insert['document_s3_name'] = $upload_letter_description['uploaded_document_s3_name'];
                             } else {
+                            
+                                
                                 $data_to_insert['document_description'] = $letter_body;
+                                $data_to_insert['document_description'] = $letter_body;
+                              // Document Settings - Confidential
+                                $data_to_insert['is_confidential'] = isset($_POST['setting_is_confidential']) && $_POST['setting_is_confidential'] == 'on' ? 1 : 0;
+                               
+                                $data_to_insert['has_approval_flow'] = 0;
+                                $data_to_insert['document_approval_note'] = $data_to_insert['document_approval_employees'] = '';
+                                // Assigner handling
+                                if ($_POST['has_approval_flow'] == 'on') {
+                                    $data_to_insert['has_approval_flow'] = 1;
+                                    $data_to_insert['document_approval_employees'] = isset($_POST['document_approval_employees']) && $_POST['document_approval_employees'] ? $_POST['document_approval_employees'] : '';
+                                    $data_to_insert['document_approval_note'] = $_POST['document_approval_note'];
+                                }
+                             
                             }
-
+                            
+                           
                             $already_assigned = $this->onboarding_model->check_applicant_offer_letter_exist($company_sid, $user_type, $user_sid, 'offer_letter');
 
                             if (!empty($already_assigned)) {
@@ -5235,10 +5257,12 @@ class Onboarding extends CI_Controller
                             }
 
                             $this->onboarding_model->disable_all_previous_letter($company_sid, $user_type, $user_sid, 'offer_letter');
-
+                            
                             $data_to_insert['status'] = 1;
                             $verification_key = random_key(80);
                             $assignment_sid = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
+                               
+
                             $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
                             // Managers handling
                             $this->hr_documents_management_model->addManagersToAssignedDocuments(
@@ -5632,6 +5656,10 @@ class Onboarding extends CI_Controller
             $data['employer_sid'] = $employer_sid;
             $data['EmployeeSid'] = $user_sid;
             $data['Type'] = $user_type;
+
+           // Approval Flow
+            $data['employeesList'] = $this->hr_documents_management_model->fetch_all_company_managers($company_sid, '');
+          
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
 
             if ($this->form_validation->run() == false) {
@@ -5640,13 +5668,15 @@ class Onboarding extends CI_Controller
                 $this->load->view('main/footer');
             } else {
 
+            
                 $perform_action = $this->input->post('perform_action');
                 $offer_letter_sid = $this->input->post('offer_letter_select');
                 $letter_body = $this->input->post('letter_body');
                 $offer_letter_type = $this->input->post('letter_type');
-
+                //
                 $post = $this->input->post(NULL, TRUE);
-
+                //
+                $do_descpt='';
 
                 if (!empty($letter_body) || $offer_letter_type == "uploaded") {
                     $offer_letter_title = $this->hr_documents_management_model->get_assigned_offer_letter_title($offer_letter_sid);
@@ -5676,6 +5706,7 @@ class Onboarding extends CI_Controller
                         $data_to_insert['document_extension'] = $offer_letter_extension;
                         $data_to_insert['document_s3_name'] = $upload_letter_description['uploaded_document_s3_name'];
                         $data_to_insert['document_description'] = $letter_body;
+                        $do_descpt = $letter_body;
                     } else if ($offer_letter_type == "uploaded") {
                         $upload_letter_description = $this->onboarding_model->get_assign_offer_letter_info($offer_letter_sid);
                         $data_to_insert['document_description'] = $upload_letter_description['letter_body'];
@@ -5690,6 +5721,7 @@ class Onboarding extends CI_Controller
                         $data_to_insert['document_s3_name'] = $this->input->post('document_s3_name');
                     } else {
                         $data_to_insert['document_description'] = $letter_body;
+                        $do_descpt = $letter_body;
                     }
 
                     $already_assigned = $this->onboarding_model->check_applicant_offer_letter_exist($company_sid, $user_type, $user_sid, 'offer_letter');
@@ -5733,57 +5765,120 @@ class Onboarding extends CI_Controller
                         $data_to_insert['allowed_teams'] = implode(',', $post['teams']);
                     }
                     //
+           
+              // Document Settings - Confidential
+              $data_to_insert['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
+              //
+              $post['confidentialSelectedEmployees'] = $this->input->post('confidentialSelectedEmployees', true);
+              //
+              $data_to_insert['confidential_employees'] = NULL;
+              //
+              if ($post['confidentialSelectedEmployees']) {
+                  $data_to_insert['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
+              }
 
-                    $verification_key = random_key(80);
-                    $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
+            // Assigner handling
+            $data_to_insert['has_approval_flow'] = 0;
+            $data_to_insert['document_approval_note'] = $data_to_insert['document_approval_employees'] = '';
+            // Assigner handling
+            if ($post['has_approval_flow'] == 'on') {
+                $data_to_insert['has_approval_flow'] = 1;
+                $data_to_insert['document_approval_note'] = $post['approvers_note'];
+                $data_to_insert['document_approval_employees'] = isset($post['approvers_list']) && $post['approvers_list'] ? implode(',', $post['approvers_list']) : '';
+            }
+        
+                   $verification_key = random_key(80);
+                   $assignOfferLetterId = $this->onboarding_model->insert_documents_assignment_record($data_to_insert);
                     $this->onboarding_model->set_offer_letter_verification_key($user_sid, $verification_key, $user_type);
                     //
                     $signers = $this->input->post('js-signers');
-                    // Managers handling
-                    $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                        $signers,
-                        $assignOfferLetterId,
-                        $company_sid,
-                        $employer_sid
-                    );
-                }
+                    //
+                    if ($data_to_insert['has_approval_flow'] == 1) {
+                    
+                        $managersList = '';
+                       
+                        //
+                        if ($do_descpt && isset($signers) && $signers != null && str_replace('{{authorized_signature}}', '', $do_descpt) != $do_descpt) {
+                       
+                            $managersList =  implode(',', $signers);
+                        }
+                        //
+                        $approvers_list = $data_to_insert['document_approval_employees']; //isset($post['assigner']) ? implode(',', $post['assigner']) : "";
+                        $approvers_note = $data_to_insert['document_approval_note']; //isset($post['assigner_note']) ? $post['assigner_note'] : "";
+                        //
+                    
+                        $this->HandleApprovalFlow(
+                            $assignOfferLetterId,
+                            $approvers_note,
+                            $approvers_list,
+                            $post['sendEmail'],
+                            $managersList
+                        );
 
-                if ($perform_action == 'save_and_send_offer_letter') {
-                    $applicant_sid = $user_info['sid'];
-                    $applicant_email = $user_info['email'];
-                    $applicant_name = $user_info['first_name'] . ' ' . $user_info['last_name'];
-
-                    if ($user_type == 'applicant') {
-                        $url = base_url() . 'onboarding/my_offer_letter/' . $verification_key;
                     } else {
-                        $url = base_url() . 'onboarding/my_offer_letter/' . $verification_key . '/e';
+                       
+                        //
+                         if ($do_descpt && isset($signers) && $signers != null && str_replace('{{authorized_signature}}', '', $do_descpt) != $do_descpt) {
+                            // Managers handling
+                            $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                                $signers,
+                                $assignOfferLetterId,
+                                $company_sid,
+                                $employer_sid
+                            );
+                            //
+                            $managersList =  implode(',', $signers);
+                            //
+                            $this->hr_documents_management_model->change_document_approval_status(
+                                $assignOfferLetterId,
+                                [
+                                    'managersList' => $managersList
+                                ]
+                            );
+                        }
+                        //
+                        if ($perform_action == 'save_and_send_offer_letter') {
+                            $applicant_sid = $user_info['sid'];
+                            $applicant_email = $user_info['email'];
+                            $applicant_name = $user_info['first_name'] . ' ' . $user_info['last_name'];
+        
+                            if ($user_type == 'applicant') {
+                                $url = base_url() . 'onboarding/my_offer_letter/' . $verification_key;
+                            } else {
+                                $url = base_url() . 'onboarding/my_offer_letter/' . $verification_key . '/e';
+                            }
+        
+                            $emailTemplateBody = 'Dear ' . $applicant_name . ', <br>';
+                            $emailTemplateBody = $emailTemplateBody . '<strong>Congratulations and Welcome to ' . $company_name . '</strong>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . 'We have attached an offer letter with this email for you.' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . 'Please complete this offer letter by clicking on the link below.' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Offer Letter</a>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '<em>If you have any questions at all, please feel free to send us a note at any time and we will get back to you as quickly as we can.</em>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '<strong>The HR Team at ' . $company_name . '</strong>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email; Please Do Not reply!</strong>' . '<br>';
+                            $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
+        
+                            $from = TO_EMAIL_DEV;
+                            $to = $applicant_email;
+                            $subject = 'Offer Letter';
+                            $from_name = ucwords(STORE_DOMAIN);
+                            $email_hf = message_header_footer_domain($company_sid, $company_name);
+                            $body = $email_hf['header']
+                                . $emailTemplateBody
+                                . $email_hf['footer'];
+                            sendMail($from, $to, $subject, $body, $from_name);
+                            $this->session->set_flashdata('message', '<strong>Success: </strong> Offer letter / Pay plan assigned and sent successfully!');
+                        } else {
+                            $this->session->set_flashdata('message', '<strong>Success: </strong> Offer letter / Pay plan assigned successfully!');
+                        }
+
                     }
-
-                    $emailTemplateBody = 'Dear ' . $applicant_name . ', <br>';
-                    $emailTemplateBody = $emailTemplateBody . '<strong>Congratulations and Welcome to ' . $company_name . '</strong>' . '<br>';
-                    $emailTemplateBody = $emailTemplateBody . 'We have attached an offer letter with this email for you.' . '<br>';
-                    $emailTemplateBody = $emailTemplateBody . 'Please complete this offer letter by clicking on the link below.' . '<br>';
-                    $emailTemplateBody = $emailTemplateBody . '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . $url . '">Offer Letter</a>' . '<br>';
-                    $emailTemplateBody = $emailTemplateBody . '<em>If you have any questions at all, please feel free to send us a note at any time and we will get back to you as quickly as we can.</em>' . '<br>';
-                    $emailTemplateBody = $emailTemplateBody . '<strong>The HR Team at ' . $company_name . '</strong>' . '<br>';
-                    $emailTemplateBody = $emailTemplateBody . '&nbsp;' . '<br>';
-                    $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
-                    $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email; Please Do Not reply!</strong>' . '<br>';
-                    $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
-
-                    $from = TO_EMAIL_DEV;
-                    $to = $applicant_email;
-                    $subject = 'Offer Letter';
-                    $from_name = ucwords(STORE_DOMAIN);
-                    $email_hf = message_header_footer_domain($company_sid, $company_name);
-                    $body = $email_hf['header']
-                        . $emailTemplateBody
-                        . $email_hf['footer'];
-                    sendMail($from, $to, $subject, $body, $from_name);
-                    $this->session->set_flashdata('message', '<strong>Success: </strong> Offer letter / Pay plan assigned and sent successfully!');
-                } else {
-                    $this->session->set_flashdata('message', '<strong>Success: </strong> Offer letter / Pay plan assigned successfully!');
+                    
                 }
+
+        
 
                 redirect('onboarding/send_offer_letter/' . $user_type . '/' . $user_sid, 'refresh');
                 if ($user_type == 'applicant') {
@@ -10285,4 +10380,274 @@ class Onboarding extends CI_Controller
             redirect('login', 'refresh');
         }
     }
+
+
+
+
+// Approval Flow 
+
+
+
+
+    /**
+     * Handle document approval flow
+     * 
+     * @version 1.0
+     * @date    04/15/2022
+     * 
+     * @param number $document_sid
+     * @param string $initiator_note
+     * @param array  $approvers_list
+     * @param string $send_email
+     * @param array  $managers_list
+     * 
+     * @return
+     */
+    private function HandleApprovalFlow(
+        $document_sid,
+        $initiator_note,
+        $approvers_list,
+        $send_email,
+        $managers_list
+    ) {
+
+        $session = $this->session->userdata('logged_in');
+        $company_sid = $session['company_detail']['sid'];
+        $employer_sid = $session['employer_detail']['sid'];
+        //
+        // Set insert data array
+        //
+        $ins = [];
+        $ins['company_sid'] = $company_sid;
+        $ins['document_sid'] = $document_sid;
+        $ins['assigned_by'] = $employer_sid;
+        $ins['assigned_date'] = date('Y-m-d H:i:s', strtotime('now'));
+        $ins['assigner_note'] = $initiator_note;
+        $ins['status'] = 1;
+        $ins['is_pending'] = 0; // 0 = Pending, 1 = Accepted, 2 = Rejected
+        //
+        // Lets revoke all previous document flows if exist
+        $this->hr_documents_management_model->revoke_document_previous_flow($document_sid);
+
+        // Lets insert the record
+        $approvalInsertId = $this->hr_documents_management_model->insert_documents_assignment_flow($ins);
+        //
+        // Update user assigned document
+        $this->hr_documents_management_model->change_document_approval_status(
+            $document_sid,
+            [
+                'approval_process' => 1,
+                'approval_flow_sid' => $approvalInsertId,
+                'sendEmail' => $send_email,
+                'managersList' => $managers_list,
+                'has_approval_flow' => 1,
+                'document_approval_employees' => $approvers_list,
+                'document_approval_note' => $initiator_note,
+            ]
+        );
+        //
+        $this->AddAndSendNotificationsToApprovalEmployees(
+            $approvalInsertId,
+            $document_sid,
+            $approvers_list,
+            $initiator_note
+        );
+        //
+        return true;
+    }
+
+    /**
+     * Add and sends email notifications
+     * to selected approval employees
+     * 
+     * @version 1.0
+     * @date    04/15/2022
+     * 
+     * @param number $approval_flow_sid
+     * @param number $document_sid
+     * @param array  $approvers_list
+     * @param string $initiator_note
+     */
+    function AddAndSendNotificationsToApprovalEmployees(
+        $approval_flow_sid,
+        $document_sid,
+        $approvers_list,
+        $initiator_note
+    ) {
+
+        if (!empty($approvers_list)) {
+            $approvalEmployees = explode(",", $approvers_list);
+            //
+            foreach ($approvalEmployees as $key => $approver_sid) {
+                $is_default_approver = $this->hr_documents_management_model->is_default_approver($approver_sid);
+                //
+                if ($is_default_approver) {
+                    $data_to_insert = array();
+                    $data_to_insert['portal_document_assign_sid'] = $approval_flow_sid;
+                    $data_to_insert['assigner_sid'] = $approver_sid;
+                    //
+                    if ($key == 0) {
+                        $data_to_insert['assign_on'] = date('Y-m-d H:i:s', strtotime('now'));
+                        $data_to_insert['assigner_turn'] = 1;
+                    }
+                    //
+                    $this->hr_documents_management_model->insert_assigner_employee($data_to_insert);
+                    //
+                    if ($key == 0) {
+                        //
+                        // Send Email to first approver of this document
+                        $this->SendEmailToCurrentApprover($document_sid);
+                    }
+                }
+            }
+        } else {
+
+            $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
+            //
+            $default_approver = $this->hr_documents_management_model->getDefaultApprovers(
+                $document_info['company_sid'],
+                $document_info['approval_flow_sid'],
+                $document_info['has_approval_flow']
+            );
+
+            if (!empty($default_approver)) {
+                //
+                $approver_sid = 0;
+                $approver_email = "";
+                //
+                if (is_numeric($default_approver) && $default_approver > 0) {
+                    $approver_sid = $default_approver;
+                    //
+                    $this->hr_documents_management_model->change_document_approval_status(
+                        $document_sid,
+                        [
+                            'document_approval_employees' => $approver_sid
+                        ]
+                    );
+                } else {
+                    $approver_email = $default_approver;
+                }
+                //
+
+                $this->hr_documents_management_model->insert_assigner_employee(
+                    [
+                        'portal_document_assign_sid' =>  $document_info['approval_flow_sid'],
+                        'assigner_sid' => $approver_sid,
+                        'approver_email' => $approver_email,
+                        'assign_on' =>  date('Y-m-d H:i:s', strtotime('now')),
+                        'assigner_turn' => 1,
+                    ]
+                );
+                //
+                // Send Email to first approver of this document
+                $this->SendEmailToCurrentApprover($document_sid);
+            }
+        }
+    }
+
+    function SendEmailToCurrentApprover($document_sid)
+    {
+
+        //
+        $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
+        //
+        $current_approver_info = $this->hr_documents_management_model->get_document_current_approver_sid($document_info['approval_flow_sid']);
+        //
+        $approver_info = array();
+        $current_approver_reference = '';
+        //
+        if ($current_approver_info["assigner_sid"] == 0 && !empty($current_approver_info["approver_email"])) {
+            //
+            $default_approver = $this->hr_documents_management_model->get_default_outer_approver($document_info['company_sid'], $current_approver_info["approver_email"]);
+            //
+            $approver_name = explode(" ", $default_approver["contact_name"]);
+            //
+            $approver_info['first_name'] = isset($approver_name[0]) ? $approver_name[0] : "";
+            $approver_info['last_name'] = isset($approver_name[1]) ? $approver_name[1] : "";
+            $approver_info['email'] = $default_approver["email"];
+            //
+            $current_approver_reference = $default_approver["email"];
+        } else {
+            //
+            $approver_info = $this->hr_documents_management_model->get_employee_information($document_info['company_sid'], $current_approver_info["assigner_sid"]);
+            //
+            $current_approver_reference = $current_approver_info["assigner_sid"];
+        }
+
+        //
+        $approvers_flow_info = $this->hr_documents_management_model->get_approval_document_bySID($document_info['approval_flow_sid']);
+        //
+        // Get the initiator name
+        $document_initiator_name = getUserNameBySID($approvers_flow_info["assigned_by"]);
+        //
+        // Get the company name
+        $company_name = getCompanyNameBySid($document_info['company_sid']);
+        //
+        // Get assigned document user name
+        if ($document_info['user_type'] == 'employee') {
+            //
+            $t = $this->hr_documents_management_model->get_employee_information($document_info['company_sid'], $document_info['user_sid']);
+            //
+            $document_assigned_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        } else {
+            //
+            $t = $this->hr_documents_management_model->get_applicant_information($document_info['company_sid'], $document_info['user_sid']);
+            //
+            $document_assigned_user_name = ucwords($t['first_name'] . ' ' . $t['last_name']);
+        }
+        //
+        $hf = message_header_footer_domain($document_info['company_sid'], $company_name);
+        //
+        $this->load->library('encryption');
+        //
+        $this->encryption->initialize(
+            get_encryption_initialize_array()
+        );
+        //
+        $accept_code = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'accept')
+        );
+        //
+        $reject_code = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'reject')
+        );
+        //
+        $view_code = str_replace(
+            ['/', '+'],
+            ['$$ab$$', '$$ba$$'],
+            $this->encryption->encrypt($document_sid . '/' . $current_approver_reference . '/' . 'view')
+        );
+        //
+        $approval_public_link_accept = base_url("hr_documents_management/public_approval_document") . '/' . $accept_code;
+        $approval_public_link_reject = base_url("hr_documents_management/public_approval_document") . '/' . $reject_code;
+        $approval_public_link_view = base_url("hr_documents_management/public_approval_document") . '/' . $view_code;
+        // 
+        $replacement_array['initiator']             = $document_initiator_name;
+        $replacement_array['contact-name']          = $document_assigned_user_name;
+        $replacement_array['company_name']          = ucwords($company_name);
+        $replacement_array['username']              = $replacement_array['contact-name'];
+        $replacement_array['firstname']             = $approver_info['first_name'];
+        $replacement_array['lastname']              = $approver_info['last_name'];
+        $replacement_array['first_name']            = $approver_info['first_name'];
+        $replacement_array['last_name']             = $approver_info['last_name'];
+        $replacement_array['document_title']        = $document_info['document_title'];
+        $replacement_array['user_type']             = $document_info['user_type'];
+        $replacement_array['note']                  = $approvers_flow_info["assigner_note"];
+        $replacement_array['baseurl']               = base_url();
+        $replacement_array['accept_link']           = $approval_public_link_accept;
+        $replacement_array['reject_link']           = $approval_public_link_reject;
+        $replacement_array['view_link']             = $approval_public_link_view;
+        //
+        // Send email notification to approver with a private link
+        log_and_send_templated_email(HR_DOCUMENTS_APPROVAL_FLOW, $approver_info['email'], $replacement_array, $hf, 1);
+    }
+
+
+
+
+    
 }

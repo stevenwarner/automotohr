@@ -514,7 +514,7 @@ class Hr_documents_management extends Public_Controller
                 $this->load->view('main/footer');
             } else {
                 $perform_action = $this->input->post('perform_action');
-
+                
                 switch ($perform_action) {
                     case 'upload_document':
                         $document_title = $this->input->post('document_title');
@@ -673,13 +673,14 @@ class Hr_documents_management extends Public_Controller
                             if (in_array('-1', $aEmployees)) $data_to_insert['assigned_employee_list'] = 'all';
                             else $data_to_insert['assigned_employee_list'] = json_encode($aEmployees);
                         }
+                        // Approver Flow
                         $data_to_insert['has_approval_flow'] = 0;
                         $data_to_insert['document_approval_note'] = $data_to_insert['document_approval_employees'] = '';
-                        // Assigner handling
+                        //
                         if ($post['has_approval_flow'] == 'on') {
                             $data_to_insert['has_approval_flow'] = 1;
-                            $data_to_insert['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
-                            $data_to_insert['document_approval_note'] = $post['assigner_note'];
+                            $data_to_insert['document_approval_employees'] = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
+                            $data_to_insert['document_approval_note'] = isset($_POST['approvers_note']) && !empty($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
                         }
                         // Document Settings - Confidential
                         $data_to_insert['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
@@ -741,9 +742,10 @@ class Hr_documents_management extends Public_Controller
                         // Assigner handling
                         if ($post['has_approval_flow'] == 'on') {
                             $new_history_data['has_approval_flow'] = 1;
-                            $new_history_data['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
-                            $new_history_data['document_approval_note'] = $post['assigner_note'];
+                            $new_history_data['document_approval_employees'] = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
+                            $new_history_data['document_approval_note'] = isset($_POST['approvers_note']) && !empty($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
                         }
+                        //
                         $this->hr_documents_management_model->insert_document_management_history($new_history_data);
                         $this->session->set_flashdata('message', '<strong>Success:</strong> HR Document Upload Successful!');
                         redirect('hr_documents_management', 'refresh');
@@ -928,14 +930,14 @@ class Hr_documents_management extends Public_Controller
                         if ($managersList && sizeof($managersList)) {
                             $data_to_insert['managers_list'] = implode(',', $managersList);
                         }
-                        // Assigner handling
+                        // Approver Flow
                         $data_to_insert['has_approval_flow'] = 0;
                         $data_to_insert['document_approval_note'] = $data_to_insert['document_approval_employees'] = '';
-                        // Assigner handling
+                        //
                         if ($post['has_approval_flow'] == 'on') {
                             $data_to_insert['has_approval_flow'] = 1;
-                            $data_to_insert['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
-                            $data_to_insert['document_approval_note'] = $post['assigner_note'];
+                            $data_to_insert['document_approval_employees'] = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
+                            $data_to_insert['document_approval_note'] = isset($_POST['approvers_note']) && !empty($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
                         }
                         // Document Settings - Confidential
                         $data_to_insert['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
@@ -1189,7 +1191,14 @@ class Hr_documents_management extends Public_Controller
                         else
                             $offer_letter_data['sort_order'] = 1;
                         $offer_letter_data['created_date'] = date('Y-m-d H:i:s');
-                        $offer_letter_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
+                      
+                        //Automatically assign after Days
+                        $offer_letter_data['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
+                        if ($offer_letter_data == 'days') {
+                            $offer_letter_data['automatic_assign_in'] = !empty($this->input->post('assign-in-days')) ? $this->input->post('assign-in-days') : 0;
+                        } else {
+                            $offer_letter_data['automatic_assign_in'] = !empty($this->input->post('assign-in-months')) ? $this->input->post('assign-in-months') : 0;
+                        }
                         //
                         $offer_letter_data['signers'] = $assign_manager;
                         $offer_letter_data['allowed_teams'] = $assign_teams;
@@ -1197,20 +1206,48 @@ class Hr_documents_management extends Public_Controller
                         $offer_letter_data['allowed_employees'] = $assign_employees;
                         $offer_letter_data['is_available_for_na'] = $assign_roles;
                         $offer_letter_data['visible_to_payroll'] = $visible_to_payroll;
-                        $insert_id = $this->hr_documents_management_model->add_new_offer_letter($offer_letter_data);
+                        //
+                        // Approval Flow
+                        $offer_letter_data['has_approval_flow'] = 0;
+                        $offer_letter_data['document_approval_note'] = $data_to_insert['document_approval_employees'] = '';
+                        //
+                        if ($_POST['has_approval_flow'] == 'on') {
+                            $offer_letter_data['has_approval_flow'] = 1;
+                            $offer_letter_data['document_approval_employees'] = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
+                            $offer_letter_data['document_approval_note'] = isset($_POST['approvers_note']) && !empty($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
+                        }
 
+                        $post = $this->input->post(NULL, true);
+
+                        // Document Settings - Confidential
+                        $offer_letter_data['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
+                        //
+                        $post['confidentialSelectedEmployees'] = $this->input->post('confidentialSelectedEmployees', true);
+                        //
+                        $offer_letter_data['confidential_employees'] = NULL;
+                        //
+                        if ($post['confidentialSelectedEmployees']) {
+                            $offer_letter_data['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
+                        }
+                        //
+                        $insert_id = $this->hr_documents_management_model->add_new_offer_letter($offer_letter_data);
+                        //
                         // Tracking History For New Inserted Doc in new history table
                         $new_history_data['offer_letter_sid'] = $insert_id;
                         $new_history_data['company_sid'] = $company_sid;
                         $new_history_data['employer_sid'] = $employer_sid;
                         $new_history_data['letter_name'] = $letter_name;
+                        $new_history_data['is_confidential'] = $offer_letter_data['is_confidential'];
+                        $new_history_data['confidential_employees'] = $offer_letter_data['confidential_employees'];
                         $new_history_data['letter_body'] = htmlentities($letter_body);
                         $new_history_data['created_date'] = date('Y-m-d H:i:s');
                         $new_history_data['update_by_sid'] = $employer_sid;
                         $new_history_data['acknowledgment_required'] = $this->input->post('acknowledgment_required');
                         $new_history_data['download_required'] = $this->input->post('download_required');
                         $new_history_data['signature_required'] = $this->input->post('signature_required');
-                        $new_history_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
+                        $new_history_data['automatic_assign_type'] = $offer_letter_data['automatic_assign_type'];
+                        $new_history_data['automatic_assign_in'] = $offer_letter_data['automatic_assign_in'];
+                                        
                         //
                         $this->hr_documents_management_model->insert_offer_letter_history($new_history_data);
 
@@ -1475,15 +1512,16 @@ class Hr_documents_management extends Public_Controller
                             $data_to_update['uploaded_document_original_name'] = $this->input->post('document_name');
                             $data_to_update['uploaded_document_s3_name'] = $this->input->post('document_url');
                         }
-                        // Assigner handling
+                        // Approver Flow
                         $data_to_update['has_approval_flow'] = 0;
                         $data_to_update['document_approval_note'] = $data_to_update['document_approval_employees'] = '';
-                        // Assigner handling
+                        // 
                         if ($post['has_approval_flow'] == 'on') {
                             $data_to_update['has_approval_flow'] = 1;
-                            $data_to_update['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
-                            $data_to_update['document_approval_note'] = $post['assigner_note'];
+                            $data_to_update['document_approval_employees'] = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
+                            $data_to_update['document_approval_note'] = isset($_POST['approvers_note']) && !empty($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
                         }
+                        //
                         // Document Settings - Confidential
                         $data_to_update['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
                         //
@@ -1581,7 +1619,7 @@ class Hr_documents_management extends Public_Controller
                 }
             } else {
                 $perform_action = $this->input->post('perform_action');
-
+                //
                 switch ($perform_action) {
                     case 'update_offer_letter':
                         $assign_manager = '';
@@ -1634,7 +1672,38 @@ class Hr_documents_management extends Public_Controller
                         $offer_letter_data['download_required'] = $this->input->post('download_required');
                         $offer_letter_data['signature_required'] = $signature_required;
                         $offer_letter_data['sort_order'] = $this->input->post('sort_order');
-                        $offer_letter_data['automatic_assign_in'] = !empty($this->input->post('assign-in')) ? $this->input->post('assign-in') : 0;
+                       
+                        //Automatically assign after Days
+                        $offer_letter_data['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
+                        if ($offer_letter_data == 'days') {
+                            $offer_letter_data['automatic_assign_in'] = !empty($this->input->post('assign-in-days')) ? $this->input->post('assign-in-days') : 0;
+                        } else {
+                            $offer_letter_data['automatic_assign_in'] = !empty($this->input->post('assign-in-months')) ? $this->input->post('assign-in-months') : 0;
+                        }
+
+                        // Approval Flow
+                        $offer_letter_data['has_approval_flow'] = 0;
+                        $offer_letter_data['document_approval_note'] = $offer_letter_data['document_approval_employees'] = '';
+                        // Approval Flow
+                        if ($_POST['has_approval_flow'] == 'on') {
+                            $offer_letter_data['has_approval_flow'] = 1;
+                            $offer_letter_data['document_approval_employees'] = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
+                            $offer_letter_data['document_approval_note'] = isset($_POST['approvers_note']) && !empty($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
+                        }
+
+
+                        $post = $this->input->post(NULL, true);
+
+                        // Document Settings - Confidential
+                        $offer_letter_data['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
+                        //
+                        $post['confidentialSelectedEmployees'] = $this->input->post('confidentialSelectedEmployees', true);
+                        //
+                        $offer_letter_data['confidential_employees'] = NULL;
+                        //
+                        if ($post['confidentialSelectedEmployees']) {
+                            $offer_letter_data['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
+                        }
 
                         //
                         $offer_letter_data['signers'] = $assign_manager;
@@ -2746,7 +2815,17 @@ class Hr_documents_management extends Public_Controller
                                     }
                                 }
                             }
-
+                            // Document Settings - Confidential
+                            $data_to_insert['is_confidential'] = $this->input->post('setting_is_confidential', true) && $this->input->post('setting_is_confidential', true) == 'on' ? 1 : 0;
+                            //
+                            $confidentialSelectedEmployees = $this->input->post('confidentialSelectedEmployees', true);
+                            //
+                            $data_to_insert['confidential_employees'] = NULL;
+                            //
+                            if ($confidentialSelectedEmployees) {
+                                $data_to_insert['confidential_employees'] = in_array("-1", $confidentialSelectedEmployees) ? "-1" : implode(",", $confidentialSelectedEmployees);
+                            }
+                            //
                             $insert_id = $this->hr_documents_management_model->insert_documents_assignment_record($data_to_insert);
                             //
                             $this->hr_documents_management_model->add_update_categories_2_documents($insert_id, $this->input->post('categories'), "documents_assigned");
@@ -3221,6 +3300,7 @@ class Hr_documents_management extends Public_Controller
 
             $sendGroupEmail = 0;
             $assign_group_documents = $this->hr_documents_management_model->get_assign_group_documents($company_sid, $user_type, $user_sid);
+
             if (!empty($assign_group_documents)) {
                 foreach ($assign_group_documents as $key => $assign_group_document) {
                     $is_document_assign = $this->hr_documents_management_model->check_document_already_assigned($company_sid, $user_type, $user_sid, $assign_group_document['document_sid']);
@@ -3666,7 +3746,7 @@ class Hr_documents_management extends Public_Controller
             if (!empty($current_assigned_offer_letter)) {
                 if ($current_assigned_offer_letter[0]['user_consent'] == 1) {
                     $completed_offer_letter = $current_assigned_offer_letter;
-                } else {
+                } else { 
                     $uncompleted_offer_letter = $current_assigned_offer_letter;
                 }
             }
@@ -3792,7 +3872,6 @@ class Hr_documents_management extends Public_Controller
             $data['user_sid']                               = $user_sid;
             $data['job_list_sid']                           = $jobs_listing;
             $data['all_documents']                          = $this->hr_documents_management_model->get_total_documents($company_sid, $pp_flag, 1);
-
             $data['company_name']                           = $company_name;
             $data['employer_email']                         = $employer_email;
             $data['employer_first_name']                    = $employer_first_name;
@@ -3818,11 +3897,11 @@ class Hr_documents_management extends Public_Controller
             // 01/08/2021
 
             $data['assigned_documents'] =
-            cleanAssignedDocumentsByPermission(
-                $data['assigned_documents'],
-                $data['session']['employer_detail'],
-                $employeeDepartments
-            );
+                cleanAssignedDocumentsByPermission(
+                    $data['assigned_documents'],
+                    $data['session']['employer_detail'],
+                    $employeeDepartments
+                );
 
             $data['uncompleted_payroll_documents'] =
                 cleanAssignedDocumentsByPermission(
@@ -3865,6 +3944,7 @@ class Hr_documents_management extends Public_Controller
                     $data['session']['employer_detail'],
                     $employeeDepartments
                 );
+            //    
             $data['no_action_required_payroll_documents'] =
                 cleanAssignedDocumentsByPermission(
                     $data['no_action_required_payroll_documents'],
@@ -3872,9 +3952,9 @@ class Hr_documents_management extends Public_Controller
                     $employeeDepartments
                 );
             //
+
             $confidential_sids = array();
             //
-
             $confidential_sids =  array_merge($confidential_sids, is_array($data['no_action_required_payroll_documents']) ? array_column($data['no_action_required_payroll_documents'],'document_sid') : []);
             $confidential_sids =  array_merge($confidential_sids, is_array($data['no_action_required_documents']) ? array_column($data['no_action_required_documents'],'document_sid') : []);
             $confidential_sids =  array_merge($confidential_sids, is_array($data['assigned_documents']) ? array_column($data['assigned_documents'],'document_sid') : []);
@@ -3917,7 +3997,6 @@ class Hr_documents_management extends Public_Controller
                 false,
                 $employeeDepartments
             );
-
             //
             cleanDocumentsByPermission(
                 $data['active_groups'],
@@ -3932,7 +4011,7 @@ class Hr_documents_management extends Public_Controller
                 $data['session']['employer_detail'],
                 true,
                 $employeeDepartments
-            );
+            ); 
             // Get departments & teams
             $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
             $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
@@ -4026,6 +4105,7 @@ class Hr_documents_management extends Public_Controller
             //     $user_type
             // );
             //
+  
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
@@ -4229,7 +4309,6 @@ class Hr_documents_management extends Public_Controller
                 $this->load->view('hr_documents_management/manage_hr_document');
                 $this->load->view('main/footer');
             } else {
-                _e($_POST,true,true);
                 $perform_action = $this->input->post('perform_action');
 
                 switch ($perform_action) {
@@ -8671,6 +8750,7 @@ class Hr_documents_management extends Public_Controller
             $j['DocumentAssigmentId'],
             $j['DocumentAssignedId']
         );
+
         // Insert offer letter
         $insertId = $this->hr_documents_management_model->insertOfferLetter($j);
         // Convert document sids to offer letter sids
@@ -9308,14 +9388,14 @@ class Hr_documents_management extends Public_Controller
                 $data_to_insert['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
             }
 
-            // Assigner handling
+            // Approval Flow
             $data_to_insert['has_approval_flow'] = 0;
             $data_to_insert['document_approval_note'] = $data_to_insert['document_approval_employees'] = '';
-            // Assigner handling
+            // 
             if ($post['has_approval_flow'] == 'on') {
                 $data_to_insert['has_approval_flow'] = 1;
-                $data_to_insert['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
-                $data_to_insert['document_approval_note'] = $post['assigner_note'];
+                $data_to_insert['document_approval_employees'] = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
+                $data_to_insert['document_approval_note'] = isset($_POST['approvers_note']) && !empty($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
             }
             //
             $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
@@ -9372,7 +9452,7 @@ class Hr_documents_management extends Public_Controller
         }
 
         //
-        if (isset($_POST) && sizeof($_POST) && $type == 'edit') {
+        if (isset($_POST) && sizeof($_POST) && $type == 'edit') { 
             //
             $company_sid = $data['session']['company_detail']['sid'];
             $employer_sid = $data['session']['employer_detail']['sid'];
@@ -9539,6 +9619,16 @@ class Hr_documents_management extends Public_Controller
             // Document Settings - Confidential
             $data_to_update['is_confidential'] = $this->input->post('setting_is_confidential', true) && $this->input->post('setting_is_confidential', true) == 'on' ? 1 : 0;
             //
+            // Approval Flow
+            $data_to_update['has_approval_flow'] = 0;
+            $data_to_update['document_approval_note'] = $data_to_update['document_approval_employees'] = '';
+            // 
+            if ($post['has_approval_flow'] == 'on') {
+                $data_to_update['has_approval_flow'] = 1;
+                $data_to_update['document_approval_employees'] = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
+                $data_to_update['document_approval_note'] = isset($_POST['approvers_note']) && !empty($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
+            }
+            //
             $post['confidentialSelectedEmployees'] = $this->input->post('confidentialSelectedEmployees', true);
             //
             $data_to_update['confidential_employees'] = NULL;
@@ -9546,7 +9636,6 @@ class Hr_documents_management extends Public_Controller
             if ($post['confidentialSelectedEmployees']) {
                 $data_to_update['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
             }
-
 
             $this->hr_documents_management_model->update_documents($sid, $data_to_update, 'documents_management');
             $this->session->set_flashdata('message', '<strong>Success:</strong> Document Info Successfully Updated!');
@@ -10319,7 +10408,6 @@ class Hr_documents_management extends Public_Controller
     // 
     function offer_letter_add()
     {
-
         //
         $resp = array(
             'Status' => FALSE,
@@ -10334,6 +10422,8 @@ class Hr_documents_management extends Public_Controller
             $post['file'] =    json_decode($post['file'], true);
         }
         //
+        $authManagers = isset($_POST['signers']) && $_POST['signers'] ?  $_POST['signers'] : '';
+        //
         $msg = 'Offer Letter / Pay Plan is saved';
         //
         $ins = [];
@@ -10343,14 +10433,46 @@ class Hr_documents_management extends Public_Controller
         $ins['letter_name'] = $post['name'];
         $ins['letter_body'] = $post['body'];
         $ins['guidence'] = $post['guidence'];
-        $ins['signers'] = array_search('all', explode(',', $post['signers'])) !== false ? 'all' : $post['signers'];
+        $ins['signers'] = $authManagers;
         $ins['target_user_type'] = $post['Type'];
         $ins['acknowledgment_required'] = $post['acknowledgment'];
         $ins['download_required'] = $post['download'];
         $ins['signature_required'] = $post['signature'];
         $ins['sort_order'] = $post['sortOrder'] == '' ? 1 : $post['sortOrder'];
         $ins['is_specific'] = $post['EmployeeSid'];
+       
+      
+        // Assigner handling
+        $ins['has_approval_flow'] = 0;
+        $ins['document_approval_note'] = $ins['document_approval_employees'] = '';
+        // Assigner handling
+        $post = $this->input->post(NULL, true);
 
+        // Document Settings - Confidential
+        $ins['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
+        //
+        $post['confidentialSelectedEmployees'] = $this->input->post('confidentialSelectedEmployees', true);
+       
+        //
+        $ins['confidential_employees'] = NULL;
+        //
+        if ($post['confidentialSelectedEmployees']) {
+
+            if (strpos($post['confidentialSelectedEmployees'], "-1") !== false) {
+                $ins['confidential_employees'] = "-1";
+            } else {
+                $ins['confidential_employees'] = $post['confidentialSelectedEmployees'];
+            }
+
+        }
+       //Automatically assign after Days
+        $ins['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
+        if ($ins['automatic_assign_type'] == 'days') {
+            $ins['automatic_assign_in'] = !empty($this->input->post('assign_in_days')) ? $this->input->post('assign_in_days') : 0;
+        } else {
+            $ins['automatic_assign_in'] = !empty($this->input->post('assign_in_months')) ? $this->input->post('assign_in_months') : 0;
+        }
+      
         $company_name = getCompanyNameBySid($post['CompanySid']);
         //
         if (($post['type'] == 'uploaded' || $post['type'] == 'hybrid_document') && sizeof($_FILES)) {
@@ -10370,6 +10492,21 @@ class Hr_documents_management extends Public_Controller
             $ins['uploaded_document_s3_name'] = $s3Name;
             $ins['uploaded_document_original_name'] = $post['file']['name'];
         }
+        //
+        $hasApprovalFlow = 0;
+        $approvalList = "";
+        $approvalNote = "";
+        //
+        if ($_POST['has_approval_flow'] == 'on') {
+            $hasApprovalFlow = 1;
+            $approvalList = isset($_POST['approvers_list']) && $_POST['approvers_list'] ?  $_POST['approvers_list'] : '';
+            $approvalNote = isset($_POST['approvers_note']) ? $_POST['approvers_note'] : '';
+        }
+        //
+        $ins['has_approval_flow'] = $hasApprovalFlow;
+        $ins['document_approval_employees'] = $approvalList;
+        $ins['document_approval_note'] = $approvalNote;
+
         //
         $insertId = $this->hr_documents_management_model->insertOfferLetterSpecific($ins);
         //
@@ -10436,30 +10573,54 @@ class Hr_documents_management extends Public_Controller
                 $a['allowed_departments'] = $post['departments'];
                 $a['allowed_teams'] = $post['teams'];
                 $a['allowed_employees'] = $post['employees'];
+
+              
+
+
+                // Document Settings - Confidential
+                $a['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
+                //
+                $post['confidentialSelectedEmployees'] = $this->input->post('confidentialSelectedEmployees', true);
+
+                //
+                $a['confidential_employees'] = NULL;
+                //
+                if ($post['confidentialSelectedEmployees']) {
+
+                  if (strpos($post['confidentialSelectedEmployees'], "-1") !== false) {
+                    $a['confidential_employees'] = "-1";
+                } else {
+                    $a['confidential_employees'] = $post['confidentialSelectedEmployees'];
+                }
+
+                }
+
+                //Automatically assign after Days
+                $a['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
+                if ($a['automatic_assign_type'] == 'days') {
+                    $a['automatic_assign_in'] = !empty($this->input->post('assign_in_days')) ? $this->input->post('assign_in_days') : 0;
+                } else {
+                    $a['automatic_assign_in'] = !empty($this->input->post('assign_in_months')) ? $this->input->post('assign_in_months') : 0;
+                }
+                
                 //
                 $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
                 //
                 $verification_key = random_key(80);
                 $this->hr_documents_management_model->set_offer_letter_verification_key($a['user_sid'], $verification_key, $post['Type']);
-                //
-                $is_approval_document = $this->hr_documents_management_model->is_document_has_approval_flow($insertId);
-                //
-                if (isset($post["assigner"]) || $is_approval_document["has_approval_flow"] == 1) {
+                ///
+                if ($hasApprovalFlow == 1) {
                     //
                     $managersList = '';
                     //
-                    if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $ins['signers'] != null) {
-                        $managersList = implode(',', $ins['signers']);
+                    if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $authManagers != null) {
+                        $managersList = $authManagers;
                     }
-                    //
-                    $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
-                    $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : $is_approval_document["document_approval_note"];
-                    //
                     // When approval employees are selected
                     $this->HandleApprovalFlow(
                         $assignInsertId,
-                        $approvers_note,
-                        $approvers_list,
+                        $approvalNote,
+                        $approvalList,
                         $post['sendEmail'],
                         $managersList
                     );
@@ -10521,13 +10682,20 @@ class Hr_documents_management extends Public_Controller
                     }
 
                     // Check if it's Authorize document
-                    if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $ins['signers'] != null) {
+                    if (($ins['letter_type'] == 'generated' || $ins['letter_type'] == 'hybrid_document') && $authManagers != null) {
                         // Managers handling
                         $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                            $ins['signers'],
+                            $authManagers,
                             $assignInsertId,
                             $post['CompanySid'],
                             $post['EmployerSid']
+                        );
+                        //
+                        $this->hr_documents_management_model->change_document_approval_status(
+                            $assignInsertId,
+                            [
+                                'managersList' => $ins['signers']
+                            ]
                         );
                     }
                 }
@@ -10545,7 +10713,7 @@ class Hr_documents_management extends Public_Controller
     // Deprecated, need to remove it's functionlity
     // 
     function offer_letter_edit()
-    {
+    {_e($_POST,true,true);
         //
         if (!isset($_POST) || !sizeof($_POST))
             //
@@ -10623,7 +10791,7 @@ class Hr_documents_management extends Public_Controller
             $do_upload = $post['perform_action'] == 'uploaded' || $post['perform_action'] == 'hybrid_document' ? true : false;
             $do_descpt = $post['perform_action'] == 'generated' || $post['perform_action'] == 'hybrid_document' ? true : false;
 
-            $data_to_insert['isdoctolibrary'] = isset($post['isdoctolibrary']) ? $post['isdoctolibrary']: 0;
+            $data_to_insert['isdoctolibrary'] = isset($post['isdoctolibrary']) ? $post['isdoctolibrary'] : 0;
             $data_to_insert['visible_to_document_center'] = 0;
 
             // Fo uploaded file
@@ -10789,16 +10957,6 @@ class Hr_documents_management extends Public_Controller
                 $data_to_insert['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
             }
             //
-            $data_to_insert['has_approval_flow'] = 0;
-            $data_to_insert['document_approval_employees'] =
-            $data_to_insert['document_approval_note'] = '';
-            //
-            if ($post['has_approval_flow'] == 'on') {
-                $data_to_insert['has_approval_flow'] = 1;
-                $data_to_insert['document_approval_employees'] = isset($post['assigner']) && $post['assigner'] ? implode(',', $post['assigner']) : '';
-                $data_to_insert['document_approval_note'] = $post['assigner_note'];
-            }
-            //
             $insert_id = $this->hr_documents_management_model->insert_document_record($data_to_insert);
 
             if (isset($_POST['document_group_assignment'])) {
@@ -10830,6 +10988,7 @@ class Hr_documents_management extends Public_Controller
             // Also assign it in case of 
             // assignandsave
             $todo = isset($post['saveAndAssign']) ? $post['saveAndAssign'] : $post['submit'];
+            //
             if ($todo == 'saveandassign') {
                 // 
                 $documentId = $insert_id;
@@ -10855,6 +11014,12 @@ class Hr_documents_management extends Public_Controller
                 $a['document_sid'] = $documentId;
                 $a['status'] = 1;
                 $a['visible_to_payroll'] = $b['visible_to_payroll'];
+                //
+                $a['allowed_roles'] = isset($post['selected_roles']) ? implode(',', $post['selected_roles']) : NULL;
+                $a['allowed_employees'] = isset($post['selected_employees']) ? implode(',', $post['selected_employees']) : NULL;
+                $a['allowed_departments'] = isset($post['selected_departments']) ? implode(',', $post['selected_departments']) : NULL;
+                $a['allowed_teams'] = isset($post['selected_teams']) ? implode(',', $post['selected_teams']) : NULL;
+                //
                 $a['download_required'] = $post['download_required'];
                 $a['acknowledgment_required'] = $post['acknowledgment_required'];
                 $a['signature_required'] = $post['signature_required'];
@@ -10873,6 +11038,7 @@ class Hr_documents_management extends Public_Controller
                 if ($post['confidentialSelectedEmployees']) {
                     $a['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : implode(",", $post['confidentialSelectedEmployees']);
                 }
+
                 // print_r($a['confidential_employees']);
 
                 // When approval employees are selected
@@ -10887,8 +11053,8 @@ class Hr_documents_management extends Public_Controller
                         $managersList = implode(',', $post['managersList']);
                     }
                     //
-                    $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
-                    $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : "";
+                    $approvers_list = isset($_POST['approvers_list']) && !empty($_POST['approvers_list']) ? implode(',', array_filter($_POST['approvers_list'])) : '';
+                    $approvers_note = isset($post['approvers_note']) && !empty($_POST['approvers_note']) ? $post['approvers_note'] : "";
                     //
                     $this->HandleApprovalFlow(
                         $assignInsertId,
@@ -11293,7 +11459,7 @@ class Hr_documents_management extends Public_Controller
         //
         $is_manual = get_document_type($assignInsertId);
         //
-        if (isset($post["assigner"]) || $post["hasApprovalFlow"]) {
+        if (isset($post["has_approval_flow"]) && $post["has_approval_flow"] == "on") {
             //
             $managersList = '';
             //
@@ -11301,8 +11467,8 @@ class Hr_documents_management extends Public_Controller
                 $managersList = $post['managerList'];
             }
             //
-            $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
-            $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : $is_approval_document["document_approval_note"];
+            $approvers_list = isset($post['approvers_list']) ? $post['approvers_list'] : "";
+            $approvers_note = isset($post['approvers_note']) ? $post['approvers_note'] : "";
             //
             // When approval employees are selected
             $this->HandleApprovalFlow(
@@ -11505,6 +11671,26 @@ class Hr_documents_management extends Public_Controller
         $a['allowed_teams'] = $post['teams'];
         $a['allowed_employees'] = $post['employees'];
 
+        if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc) {
+            $a['managersList'] = $post['managerList'];
+        }
+
+
+        // Document Settings - Confidential
+        $a['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
+        //
+        $post['confidentialSelectedEmployees'] = $this->input->post('confidentialSelectedEmployees', true);
+        //
+        $a['confidential_employees'] = NULL;
+        //
+        if ($post['confidentialSelectedEmployees']) {
+            if (strpos($post['confidentialSelectedEmployees'], "-1") !== false) {
+                $a['confidential_employees'] = "-1";
+            } else {
+                $a['confidential_employees'] = $post['confidentialSelectedEmployees'];
+            }
+        }
+
         $company_name = getCompanyNameBySid($post['CompanySid']);
         //
         if (ASSIGNEDOCIMPL) {
@@ -11582,81 +11768,84 @@ class Hr_documents_management extends Public_Controller
             sendMail($from, $to, $subject, $body, $from_name);
         }
         //
+
         if ($assignInsertId == null)
-            $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
+         $assignInsertId = $this->hr_documents_management_model->insert_documents_assignment_record($a);
         else
-            $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
+          $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
         //
-        // if (isset($post["assigner"]) || $post["hasApprovalFlow"] == 1) {
-        //     //
-        //     $managersList = '';
-        //     //
-        //     if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc){
-        //         $managersList = $post['managerList'];
-        //     }
-        //     //
-        //     $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
-        //     $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : $is_approval_document["document_approval_note"];
-        //     //
-        //     // When approval employees are selected
-        //     $this->HandleApprovalFlow(
-        //         $assignInsertId,
-        //         $approvers_note,
-        //         $approvers_list,
-        //         $post['sendEmail'],
-        //         $managersList
-        //     );
-
-        // } else {
-        //
-        // Check if it's Authorize document
-        if ($post['sendEmail'] == 'yes') {
+     
+        if (isset($_POST['has_approval_flow']) && $_POST['has_approval_flow'] == 'on') {
+         
+            //
+            $managersList = '';
+            //
             if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc) {
-                // Managers handling
-                $this->hr_documents_management_model->addManagersToAssignedDocuments(
-                    $post['managerList'],
-                    $assignInsertId,
-                    $post['CompanySid'],
-                    $post['EmployerSid']
-                );
-                //
-                $company_name = ucwords(getCompanyNameBySid($post['CompanySid']));
-                //
-                $hf = message_header_footer(
-                    $post['CompanySid'],
-                    $company_name
-                );
-                //
-                $new_assign_manger = explode(',', $post['managerList']);
-                //
-                if (!empty($new_assign_manger)) {
+                $managersList = $post['managerList'];
+            }
+            //
+            $approvers_list = isset($post['approvers_list']) ? $post['approvers_list'] : "";
+            $approvers_note = isset($post['approvers_note']) ? $post['approvers_note'] : "";
+
+            //     // When approval employees are selected
+            $this->HandleApprovalFlow(
+                $assignInsertId,
+                $approvers_note,
+                $approvers_list,
+                $post['sendEmail'],
+                $managersList
+            );
+        } else {
+            
+            //
+            // Check if it's Authorize document
+            if ($post['sendEmail'] == 'yes') {
+                if (isset($post['desc']) && $post['managerList'] != null && str_replace('{{authorized_signature}}', '', $desc) != $desc) {
+                    // Managers handling
+                    $this->hr_documents_management_model->addManagersToAssignedDocuments(
+                        $post['managerList'],
+                        $assignInsertId,
+                        $post['CompanySid'],
+                        $post['EmployerSid']
+                    );
                     //
-                    foreach ($new_assign_manger as $k => $v) {
-                        $assign_to_info  = db_get_employee_profile($v);
-                        $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
-                        $assign_to_email = $assign_to_info[0]['email'];
-
-                        $assigned_by_info  = db_get_employee_profile($post['EmployerSid']);
-                        $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
-
-                        //Send Email
-                        $replacement_array = array();
-                        $replacement_array['baseurl']           = base_url();
-                        $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
-                        $replacement_array['company_name']  = $company_name;
-                        $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
-                        $replacement_array['employee_name']  = ucwords($assigned_by_name);
+                    $company_name = ucwords(getCompanyNameBySid($post['CompanySid']));
+                    //
+                    $hf = message_header_footer(
+                        $post['CompanySid'],
+                        $company_name
+                    );
+                    //
+                    $new_assign_manger = explode(',', $post['managerList']);
+                    //
+                    if (!empty($new_assign_manger)) {
                         //
-                        $user_extra_info = array();
-                        $user_extra_info['user_sid'] = $v;
-                        $user_extra_info['user_type'] = "employee";
-                        //
-                        log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
+                        foreach ($new_assign_manger as $k => $v) {
+                            $assign_to_info  = db_get_employee_profile($v);
+                            $assign_to_name  = $assign_to_info[0]['first_name'] . ' ' . $assign_to_info[0]['last_name'];
+                            $assign_to_email = $assign_to_info[0]['email'];
+
+                            $assigned_by_info  = db_get_employee_profile($post['EmployerSid']);
+                            $assigned_by_name  = $assigned_by_info[0]['first_name'] . ' ' . $assigned_by_info[0]['last_name'];
+
+                            //Send Email
+                            $replacement_array = array();
+                            $replacement_array['baseurl']           = base_url();
+                            $replacement_array['assigned_to_name']  = ucwords($assign_to_name);
+                            $replacement_array['company_name']  = $company_name;
+                            $replacement_array['assigned_by_name']  = ucwords($assigned_by_name);
+                            $replacement_array['employee_name']  = ucwords($assigned_by_name);
+                            //
+                            $user_extra_info = array();
+                            $user_extra_info['user_sid'] = $v;
+                            $user_extra_info['user_type'] = "employee";
+                            //
+                            log_and_send_templated_email(HR_AUTHORIZED_DOCUMENTS_NOTIFICATION, $assign_to_email, $replacement_array, $hf, 1, $user_extra_info);
+                        }
                     }
                 }
             }
         }
-        // }
         //
         echo 'success';
     }
@@ -11698,8 +11887,10 @@ class Hr_documents_management extends Public_Controller
         $a['allowed_employees'] = $post['selected_employees'];
         $a['allowed_departments'] = $post['selected_departments'];
         $a['allowed_teams'] = $post['selected_teams'];
+        $a['managersList '] = $post['managerList'];
         $a['is_confidential'] = $post['is_confidential'] == 'on' ? 1 : 0;
         $a['confidential_employees'] = null;
+
         //
         if($post['confidentialSelectedEmployees']) {
            $a['confidential_employees'] = in_array("-1", $post['confidentialSelectedEmployees']) ? "-1" : $post['confidentialSelectedEmployees'];
@@ -11733,7 +11924,7 @@ class Hr_documents_management extends Public_Controller
 
         $assignInsertId = $this->hr_documents_management_model->updateAssignedDocument($assignInsertId, $a); // If already exists then update
         $document_info = $this->hr_documents_management_model->get_approval_document_detail($assignInsertId, false);
-        if (isset($post["assigner"]) || $post["hasApprovalFlow"] == 1) {
+        if (isset($post["has_approval_flow"]) && $post["has_approval_flow"] == "on") {
 
             //
             $managersList = "";
@@ -11742,8 +11933,8 @@ class Hr_documents_management extends Public_Controller
                 $managersList = $post['managerList'];
             }
             //
-            $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
-            $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : $is_approval_document["document_approval_note"];
+            $approvers_list = isset($post['approvers_list']) ? $post['approvers_list'] : "";
+            $approvers_note = isset($post['approvers_note']) ? $post['approvers_note'] : "";
             //
             // When approval employees are selected
             $this->HandleApprovalFlow(
@@ -14547,7 +14738,7 @@ class Hr_documents_management extends Public_Controller
             } else {
                 $document_info = $this->hr_documents_management_model->get_approval_document_detail($document_sid);
             }
-            
+
             //
             if (!empty($document_info)) {
                 $current_approver_info = $this->hr_documents_management_model->get_document_current_approver_sid($document_info['approval_flow_sid']);
@@ -15042,5 +15233,11 @@ class Hr_documents_management extends Public_Controller
             'response' => 'Success',
             'id' => $id
         ]);
+    }
+
+    function test_approver_document () {
+        $data = array();
+        $data['employeesList'] = $this->hr_documents_management_model->fetch_all_company_managers(15708, '');
+        $this->load->view('hr_documents_management/templates/test_approver_document', $data);
     }
 }
