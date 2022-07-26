@@ -1033,6 +1033,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			obj.employees = $('#jsEmployees').val() || '';
 			obj.setting_is_confidential = $('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
 			obj.confidentialSelectedEmployees = '';
+			obj.action = 'assign_document';
 			//
 			obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
           	//
@@ -1066,7 +1067,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			$('.jsModifyModalLoader').fadeIn(300);
 			$.ajax({
-				url: "<?= base_url('hr_documents_management/assign_document'); ?>",
+				url: "<?= base_url('hr_documents_management_new/handler'); ?>",
 				type: 'POST',
 				processData: false,
 				contentType: false,
@@ -1439,7 +1440,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			rows += '    </div>';
 			rows += '</div>';
 			rows += '</div>';
-
 			//
 			return rows;
 		}

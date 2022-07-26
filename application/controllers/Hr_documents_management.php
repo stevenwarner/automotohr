@@ -11232,6 +11232,7 @@ class Hr_documents_management extends Public_Controller
             $a['document_sid'] = $post['documentSid'];
             $a['status'] = 1;
             $a['visible_to_payroll'] = $post['visibleToPayroll'];
+            
             if (ASSIGNEDOCIMPL) {
                 $a['signature_required'] = $post['isSignature'];
                 $a['download_required'] = $post['isDownload'];
@@ -11302,7 +11303,7 @@ class Hr_documents_management extends Public_Controller
             }
             //
             $approvers_list = isset($post['assigner']) ? $post['assigner'] : "";
-            $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : $is_approval_document["document_approval_note"];
+            $approvers_note = isset($post['assigner_note']) ? $post['assigner_note'] : "";
             //
             // When approval employees are selected
             $this->HandleApprovalFlow(

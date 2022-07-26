@@ -84,7 +84,7 @@ if (!function_exists('getDefaultApproverName')) {
         //
         if (!empty($record_arr)) {
             $return_data = ucwords($record_arr["contact_name"]);
-        } 
+        }
 
         return $return_data;
     }
@@ -4383,7 +4383,9 @@ if (!function_exists('log_and_send_templated_email')) {
 
     function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
-        if (empty($to) || $to == NULL) {return 0;}
+        if (empty($to) || $to == NULL) {
+            return 0;
+        }
 
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
@@ -11691,7 +11693,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11704,7 +11706,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             //
                             unset($data['categories_no_action_documents'][$k0]['documents'][$k2]);
                         }
@@ -11721,7 +11723,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11734,7 +11736,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             //
                             unset($v1['documents'][$k2]);
                         }
@@ -11751,7 +11753,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11764,7 +11766,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             //
                             unset($v1['documents'][$k2]);
                         }
@@ -11779,7 +11781,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['completed_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11792,7 +11794,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             unset($documents[$k2]);
                         }
                     }
@@ -11806,7 +11808,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['no_action_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11819,7 +11821,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             unset($documents[$k2]);
                         }
                     }
@@ -11833,7 +11835,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data as $k0 => $documents) {
                     //
                     foreach ($documents['documents'] as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11846,7 +11848,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             $documents['documents_count']--;
                             unset($documents['documents'][$k2]);
                         }
@@ -11863,7 +11865,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 if (!is_array($documents) || !isset($documents[0]) || !isset($documents[0]['document_title'])) continue;
                 //
                 foreach ($documents as $k1 => $document) {
-                    if(!hasPermissionToDocument(
+                    if (!hasPermissionToDocument(
                         $document['allowed_employees'],
                         $document['allowed_departments'],
                         $document['allowed_teams'],
@@ -11876,7 +11878,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                         $dt['Departments'],
                         $dt['Teams'],
                         $employerDetails['sid']
-                    )){
+                    )) {
                         unset($documents[$k1]);
                     }
                 }
@@ -11900,7 +11902,7 @@ if (!function_exists('cleanAssignedDocumentsByPermission')) {
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
         foreach ($documents as $k0 => $document) {
-            if(!hasPermissionToDocument(
+            if (!hasPermissionToDocument(
                 $document['allowed_employees'],
                 $document['allowed_departments'],
                 $document['allowed_teams'],
@@ -11913,7 +11915,7 @@ if (!function_exists('cleanAssignedDocumentsByPermission')) {
                 $dt['Departments'],
                 $dt['Teams'],
                 $employerDetails['sid']
-            )){
+            )) {
                 //
                 unset($documents[$k0]);
             }
@@ -12823,8 +12825,8 @@ if (!function_exists('getImageURL')) {
     function getImageURL($img)
     {
         //
-        $img = str_replace(AWS_S3_BUCKET_URL,"",$img);
-        $img = str_replace(AWS_S3_BUCKET_URL.'test.png',"",$img);
+        $img = str_replace(AWS_S3_BUCKET_URL, "", $img);
+        $img = str_replace(AWS_S3_BUCKET_URL . 'test.png', "", $img);
         //
         if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img))) {
             return AWS_S3_BUCKET_URL . $img;
@@ -13968,9 +13970,9 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
         $CI->db->where('company_sid', $company_sid);
         //
         $company_categories = $CI->db->get('documents_category_management')->result_array();
-      //  print_r($default_categories);
-      //  die();
-        
+        //  print_r($default_categories);
+        //  die();
+
         //
         if (empty($company_categories)) {
             // Only execute if company have no categories
@@ -13991,17 +13993,17 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
             }
         } else {
 
-           //  $default_category_sids = array_column($company_categories,'default_category_sid');
+            //  $default_category_sids = array_column($company_categories,'default_category_sid');
             // Only execute if company already have categories
             $process_catogeries = array();
             foreach ($default_categories as $default_category) {
                 //
                 $DCName = strtolower(str_replace(" ", "_", $default_category['name']));
                 $already_exist = array_column($company_categories, "name");
-               //
+                //
 
                 //  if (!in_array($default_category['name'], $already_exist) && !in_array($default_category['sid'], $default_category_sids) ) {
-                if (!in_array($default_category['name'], $already_exist) ) {
+                if (!in_array($default_category['name'], $already_exist)) {
 
                     if ($default_category['status'] == 1) {
                         $data_to_insert = array();
@@ -15481,10 +15483,9 @@ if (!function_exists('get_document_action_date')) {
         if ($assigned_document['status'] == 1) {
             if ($type == "assigned") {
                 $return_date = $assigned_document['assigned_date'];
-
             } else if ($type == "completed") {
                 $return_date = check_document_completed_date($assigned_document);
-            } 
+            }
         }
         //
         if (!empty($return_date) && $return_date != '0000-00-00 00:00:00') {
@@ -15496,7 +15497,7 @@ if (!function_exists('get_document_action_date')) {
     }
 }
 
-if(!function_exists('generateEmailButton')){
+if (!function_exists('generateEmailButton')) {
     /**
      * Generate button for email
      * 
@@ -15515,19 +15516,20 @@ if(!function_exists('generateEmailButton')){
         $link = '',
         $text = 'Click Here',
         $color = '#ffffff'
-    ){
-        return '<a style="color: '.($color).'; background-color: '.($bgColor).'; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url($link) . '">'.($text).'</a>';
+    ) {
+        return '<a style="color: ' . ($color) . '; background-color: ' . ($bgColor) . '; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url($link) . '">' . ($text) . '</a>';
     }
 }
 
-if(!function_exists('get_encryption_initialize_array')) {
+if (!function_exists('get_encryption_initialize_array')) {
     /**
      * CReturn encryption initialize array
      *
      * @return
      * 
      */
-    function get_encryption_initialize_array () {
+    function get_encryption_initialize_array()
+    {
         $CI = &get_instance();
         //
         return array(
@@ -15540,7 +15542,7 @@ if(!function_exists('get_encryption_initialize_array')) {
 }
 
 
-if(!function_exists('hasPermissionToDocument')){
+if (!function_exists('hasPermissionToDocument')) {
     /**
      * Check the document permission
      * 
@@ -15573,18 +15575,18 @@ if(!function_exists('hasPermissionToDocument')){
         $departments,
         $teams,
         $employeeId
-    ){
+    ) {
         // Check the confidential as priority
-        if($confidentialEmployees){
+        if ($confidentialEmployees) {
             //
-            if($confidentialEmployees == "-1" || in_array($employeeId, explode(',', $confidentialEmployees))){
+            if ($confidentialEmployees == "-1" || in_array($employeeId, explode(',', $confidentialEmployees))) {
                 return true;
             }
             //
             return false;
         }
         // Check for plus
-        if($isAdminPlus || $isPayPlan){
+        if ($isAdminPlus || $isPayPlan) {
             return true;
         }
         // Check for the role
@@ -15592,36 +15594,33 @@ if(!function_exists('hasPermissionToDocument')){
             return true;
         }
         // Check for the employee
-        if  (
-                !empty($allowedEmployees) &&
-                (
-                    in_array($employeeId, explode(',', $allowedEmployees)) || 
-                    in_array("-1", explode(',', $allowedEmployees))
-                )
-            ) {
-                return true;
+        if (
+            !empty($allowedEmployees) &&
+            (in_array($employeeId, explode(',', $allowedEmployees)) ||
+                in_array("-1", explode(',', $allowedEmployees))
+            )
+        ) {
+            return true;
         }
         // Check for the department
-        if  (
-                !empty($departments) && 
-                !empty($allowedDepartments) && 
-                (
-                    in_array("-1", explode(',', $allowedDepartments)) ||
-                    array_intersect($departments, $allowedDepartments)
-                )
-            ) {
-                return true;
+        if (
+            !empty($departments) &&
+            !empty($allowedDepartments) &&
+            (in_array("-1", explode(',', $allowedDepartments)) ||
+                array_intersect($departments, $allowedDepartments)
+            )
+        ) {
+            return true;
         }
         // Check for the teams
-        if  (
-                !empty($teams) && 
-                !empty($allowedTeams) && 
-                (
-                    in_array("-1", explode(',', $allowedTeams)) ||
-                    array_intersect($teams, $allowedTeams)
-                )
-            ) {
-                return true;
+        if (
+            !empty($teams) &&
+            !empty($allowedTeams) &&
+            (in_array("-1", explode(',', $allowedTeams)) ||
+                array_intersect($teams, $allowedTeams)
+            )
+        ) {
+            return true;
         }
         //
         return false;
@@ -15629,24 +15628,24 @@ if(!function_exists('hasPermissionToDocument')){
 }
 
 
-if(!function_exists('addColumnsForDocumentAssigned')){
+if (!function_exists('addColumnsForDocumentAssigned')) {
     /**
      * 
      */
     function addColumnsForDocumentAssigned(
         &$dataArray,
         $document = []
-    ){
+    ) {
         // Get CI instance
         $_this = &get_instance();
         //
         $data = $document ? $document : $_this->input->post(null, true);
         //
-        if(isset($data['setting_is_confidential'])){
+        if (isset($data['setting_is_confidential'])) {
             $data['is_confidential'] = $data['setting_is_confidential'];
         }
         //
-        if(isset($data['confidentialSelectedEmployees'])){
+        if (isset($data['confidentialSelectedEmployees'])) {
             $data['confidential_employees'] = $data['confidentialSelectedEmployees'];
         }
         //
@@ -15654,8 +15653,121 @@ if(!function_exists('addColumnsForDocumentAssigned')){
         //
         $dataArray['confidential_employees'] = NULL;
         //
-        if($data['confidential_employees']){
+        if ($data['confidential_employees']) {
             $dataArray['confidential_employees'] = $data['confidential_employees'];
+        }
+    }
+}
+
+
+
+if (!function_exists('getdocumenttabpagesbutton')) {
+    /**
+     * 
+     */
+    function getdocumenttabpagesbutton($document, $button_type, $extra = [])
+    {
+
+        if ($document['document_type'] == 'uploaded') {
+            $doc_s3_path='';
+
+             if($extra['document_tab'] == 'completed'){
+                $doc_s3_path  = $document['uploaded_file'];
+             } else if ($extra['document_tab']=='uncompleted' || $extra['document_tab']=='no_action'){
+                $doc_s3_path = $document['document_s3_name'];
+             } 
+
+            $listaction = getUploadedDocumentURL($doc_s3_path);
+        
+        }else{
+            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description'] );
+            $listaction = getGeneratedDocumentURL($document, $extra['document_tab'], $isAuthorized);
+        }
+
+
+       // 'print_url' => '',
+      //  'download_url' => '',
+
+          switch ($button_type) {
+                // 
+            case "print":
+                $printBTN = '<a href="' . $listaction['print_url'] . '" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>';
+                return   $printBTN;
+                break;
+                // 
+            case "download":
+                $downloadBTN = '<a href="' . $listaction['download_url'] . '" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>';
+                return   $downloadBTN;
+                break;
+            case "manage_category":
+                $manage_categoryBTN = '<a href="javascript:void(0);" class="btn btn-success btn-sm btn-block jsCategoryManagerBTN" title="Modify Category"  data-sid="' . $document['document_sid'] . '">Manage Category</a>';
+                return   $manage_categoryBTN;
+                break;
+            case "preview_assigned":
+                if($extra['hybrid_preview']==1){
+                    $preview_assignedBTN = '<button data-id="'.$document['sid'].'" data-document="assigned" class="btn btn-success btn-sm btn-block js-hybrid-preview">Preview Assigned</button>';
+                }else{
+                $preview_assignedBTN = '<button class="btn btn-success btn-sm btn-block"
+                onclick="preview_latest_generic_function(this);"
+                date-letter-type="generated"
+                data-doc-sid="' . $document['sid'] . '"
+                data-on-action="assigned"
+                data-from="assigned_document">
+                Preview Assigned
+                </button>';
+              
+                }
+                return   $preview_assignedBTN;
+                break;
+
+            case "modify":
+                $modifyBTN = '<button
+                class="btn btn-success btn-sm btn-block js-modify-assigned-document-btn"
+                data-id="' . $document['document_sid'] . '"
+                data-type="' . $extra['data_type'] . '"
+                title="Modify assigned document"
+            >Modify</button>';
+                return   $modifyBTN;
+                break;
+            case "manage_document":
+
+                if ($document['status'] == 1) {
+                    if ($extra['user_type'] == 'applicant') {
+                        $manage_document = '<a class="btn btn-success btn-sm btn-block" href="' . base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $extra['user_sid'] . '/' . $extra['job_list_sid']) . '">Manage Document</a>';
+                    } else {
+                        $manage_document = '<a class="btn btn-success btn-sm btn-block" href="' . base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $extra['user_sid']) . '">Manage Document</a>';
+                    }
+                } else {
+                    $manage_document = '<button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>';
+                }
+
+                return   $manage_document;
+                break;
+
+            case "employer_section":
+
+                $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block';
+                $authorized_signature = $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $extra['current_user_signature'];
+
+                $employer_sectionBTN = '<a class="' . $btn_show . '  manage_authorized_signature" href="javascript:;" data-auth-sid="' . $document['sid'] . '" data-auth-signature="' . $authorized_signature . '">';
+                if ($document['authorized_sign_status'] == 0) {
+                    $employer_sectionBTN = $employer_sectionBTN . " Employer Section - Not Completed";
+                } else if ($document['authorized_sign_status'] == 1) {
+                    $employer_sectionBTN = $employer_sectionBTN . " Employer Section - Completed";
+                }
+                $employer_sectionBTN = $employer_sectionBTN . '</a>';
+
+                return $employer_sectionBTN;
+                break;
+
+
+                case "view_approver":
+                    $view_approverBTN = '<button data-document_sid="'. $document['document_sid'].'" data-user_type="'.$extra['user_type'].'" data-user_sid="'.$extra['user_sid'].'" class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+                    View Approver(s)
+                   </button>';
+                    return   $view_approverBTN;
+                    break;
+
         }
     }
 }
