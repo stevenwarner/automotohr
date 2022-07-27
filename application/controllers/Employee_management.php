@@ -3444,12 +3444,6 @@ class Employee_management extends Public_Controller
                 //   
                 if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
                      //
-<<<<<<< HEAD
-=======
-                     echo $data;
-                      echo $form_data[$key];
->>>>>>> 98a74cd65679ee7e775f50687207cf96f835ceba
-
                     $dt[$key] = [
                         'old' => $data,
                         'new' => $form_data[$key]
