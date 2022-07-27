@@ -2256,17 +2256,20 @@ class Employee_management extends Public_Controller
                 $newCompareData['employee_number'] = $post['employee_number'];
                 $newCompareData['department'] = $post['department'];
                 $newCompareData['office_location'] = $post['office_location'];
+
                 // $newCompareData['interests'] = $post['interests'];
                 // $newCompareData['short_bio'] = $post['short_bio'];
                 // $newCompareData['video_source'] = $post['video_source'];
                 unset($newCompareData['video_type']);
                 unset($newCompareData['YouTubeVideo']);
+
                 //
                 $oldCompareData = array_merge($employee_detail, unserialize($employee_detail['extra_info']));
                 //
                 $this->dashboard_model->update_user($sid, $data);
                 //
                 $difference = $this->findDifference($oldCompareData, $newCompareData);
+                
                 //
                 if ($difference['profile_changed'] == 1) {
                     $notification_list = $this->employee_model->get_employee_profile_notification_list($company_id, 'employee_Profile', 'active');
@@ -3441,6 +3444,11 @@ class Employee_management extends Public_Controller
                 //   
                 if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
                      //
+<<<<<<< HEAD
+=======
+                     echo $data;
+                      echo $form_data[$key];
+>>>>>>> 98a74cd65679ee7e775f50687207cf96f835ceba
 
                     $dt[$key] = [
                         'old' => $data,
