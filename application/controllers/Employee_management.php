@@ -2256,8 +2256,8 @@ class Employee_management extends Public_Controller
                 $newCompareData['employee_number'] = $post['employee_number'];
                 $newCompareData['department'] = $post['department'];
                 $newCompareData['office_location'] = $post['office_location'];
-                $newCompareData['interests'] = $post['interests'];
-                $newCompareData['short_bio'] = $post['short_bio'];
+             //   $newCompareData['interests'] = $post['interests'];
+              //  $newCompareData['short_bio'] = $post['short_bio'];
                // $newCompareData['video_source'] = $post['video_source'];
                 //
                 $oldCompareData = array_merge($employee_detail, unserialize($employee_detail['extra_info']));
