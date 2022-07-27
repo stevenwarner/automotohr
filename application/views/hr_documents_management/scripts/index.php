@@ -768,7 +768,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
           	obj.approvers_note = "";
           	obj.approvers_list = "";
           	//
-          	console.log(approverInfo)
 			if (approverInfo.isChecked) {
 				obj.has_approval_flow = 'on';
 				obj.approvers_note = approverInfo.approverNote;
@@ -2068,7 +2067,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 		//
 		function UseTemplate(e) {
 			var l = getOfferLetter($(this).val());
-			if (Object.keys(l).length !== 0) console.log(l);
+			if (Object.keys(l).length !== 0) 
 			//
 			selectedTemplate = l;
 			$('#remove_image').hide(0);
@@ -2116,11 +2115,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('#js-popup #confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
 				}
 			}
-
-			$('#js-popup [name="has_approval_flow"]').prop('checked', false);
-			$('.jsApproverFlowContainer').hide();
-			$('.jsEmployeesadditionalBox').html('');
-			$('#js-popup [name="assigner_note"]').val();
+			
 
 			var approverPrefill = {};
             var approverSection = {

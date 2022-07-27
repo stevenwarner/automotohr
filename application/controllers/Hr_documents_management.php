@@ -3742,7 +3742,7 @@ class Hr_documents_management extends Public_Controller
             $data['history_doc_sids'] = $history_doc_sids;
             //
             $current_assigned_offer_letter = $this->hr_documents_management_model->get_current_assigned_offer_letter($company_sid, $user_type, $user_sid);
-
+            //
             if (!empty($current_assigned_offer_letter)) {
                 if ($current_assigned_offer_letter[0]['user_consent'] == 1) {
                     $completed_offer_letter = $current_assigned_offer_letter;

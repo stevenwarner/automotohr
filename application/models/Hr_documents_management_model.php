@@ -821,7 +821,6 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('user_sid', $user_sid);
         $this->db->where('documents_assigned.document_type', 'offer_letter');
         $this->db->where('documents_assigned.archive', 0);
-        $this->db->where('documents_assigned.is_confidential', 0);
 
         if ($status) {
             $this->db->where('status', $status);

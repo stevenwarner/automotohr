@@ -75,7 +75,6 @@
             $(options['intEmployeeBoxIdx']).html('');
             $(options['containerIdx']).show();
             //
-                console.log(obj.approversList)
             if (obj.approversList.length > 0) {    
                 obj.approversList.map(function (apId) {
                     if (apId.length > 0) {
@@ -246,7 +245,6 @@
                 __this.closest('.row_id').remove();
                 delete selectedApprovers[__this.closest('.row_id').find('.jsSelectedEmployee').val()];
                 _this.makeObj();
-                console.log(instances[_this.selector]);
             });
         });
 

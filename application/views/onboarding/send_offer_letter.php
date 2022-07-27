@@ -533,7 +533,7 @@ if (isset($assigned_offer_letter_sid)) {
                 approverSection.documentId = l.sid
             } 
             //
-            if (l.has_approval_flow == 1) {console.log("up")
+            if (l.has_approval_flow == 1) {
                 approverPrefill.isChecked = true;
                 approverPrefill.approverNote = l.document_approval_note;
                 approverPrefill.approversList = l.document_approval_employees.split(','); 
