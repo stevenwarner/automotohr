@@ -505,7 +505,7 @@
                             <span class="value-box no-border" id="">
                             	<?php if(!empty($pre_form)) { ?>
                                     <div >
-                                        <img  src="<?php echo isset($pre_form['section2_sig_emp_auth_rep']) && !empty($pre_form['section2_sig_emp_auth_rep']) ? $pre_form['section2_sig_emp_auth_rep'] : ''; ?>"  />
+                                        <img  src="<?php echo isset($pre_form['section2_sig_emp_auth_rep']) && !empty($pre_form['section2_sig_emp_auth_rep']) ? $pre_form['section2_sig_emp_auth_rep'] : ''; ?>" class="esignaturesize" />
                                     </div>
                                 <?php } ?>
                             </span>
