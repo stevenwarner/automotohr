@@ -114,6 +114,74 @@ class Financial_reports extends Admin_Controller
         }
     }
 
+    public function print_monthly_sales($year = null, $month = null)
+    {
+        
+
+            $year = ($year == null ? date('Y') : $year);
+            $month = ($month == null ? date('m') : $month);
+
+            $start_unix_date = mktime(0, 0, 0, $month, 1, $year);
+            $end_unix_date = mktime(23, 59, 59, $month, date('t', $start_unix_date), $year);
+
+            $month_first_date = intval(date('d', $start_unix_date));
+            $month_last_date = intval(date('d', $end_unix_date));
+
+            $months_sale_super_admin = array();
+            $months_sale_employer_portal = array();
+
+            for ($day = $month_first_date; $day <= $month_last_date; $day++) {
+                $start_unix_date = mktime(0, 0, 0, $month, $day, $year);
+                $end_unix_date = mktime(23, 59, 59, $month, $day, $year);
+
+                $start_date = date('Y-m-d H:i:s', $start_unix_date);
+                $end_date = date('Y-m-d H:i:s', $end_unix_date);
+
+                $months_sale_super_admin[$day] = $this->financial_reports_model->get_total_sales($start_date, $end_date, 'all', 'admin_invoice');
+                $months_sale_employer_portal[$day] = $this->financial_reports_model->get_total_sales($start_date, $end_date, 'all', 'market_place');
+            }
+
+            $months = [0, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+            $this->data['months_sale_super_admin'] = $months_sale_super_admin;
+            $this->data['months_sale_employer_portal'] = $months_sale_employer_portal;
+
+            $this->data['months'] = $months;
+            $this->data['month'] = intval($month);
+            $this->data['year'] = intval($year);
+
+            $this->data['month_start'] = $month_first_date;
+            $this->data['month_end'] = $month_last_date;
+
+            //Graph Data
+            $total_sale_super_admin = 0;
+            $total_sale_employer_portal = 0;
+
+
+            $days = array();
+            $days_sales_super_admin = array();
+            for ($day = $month_first_date; $day <= $month_last_date; $day++) {
+                $days[] = $day;
+                $days_sales_super_admin[] = $months_sale_super_admin[$day];
+                $days_sales_employer_portal[] = $months_sale_employer_portal[$day];
+
+                $total_sale_super_admin = $total_sale_super_admin + $months_sale_super_admin[$day];
+                $total_sale_employer_portal = $total_sale_employer_portal + $months_sale_employer_portal[$day];
+            }
+
+            $this->data['days'] = json_encode($days);
+            $this->data['days_sales_super_admin'] = json_encode($days_sales_super_admin);
+            $this->data['days_sales_employer_portal'] = json_encode($days_sales_employer_portal);
+
+            $this->data['total_sale_super_admin'] = $total_sale_super_admin;
+            $this->data['total_sale_employer_portal'] = $total_sale_employer_portal;
+
+
+            $this->data['page_title'] = 'Financial Reports - Monthly Sales';
+            $this->load->view('manage_admin/financial_reports/monthly_sales_print',$this->data);
+        
+    }
+
     public function daily_sales($year = null, $month = null, $day = null)
     {
         // ** Check Security Permissions Checks - Start ** //
@@ -233,6 +301,64 @@ class Financial_reports extends Admin_Controller
         }
     }
 
+    public function print_yearly_sales($year = null)
+    {
+        $year = ($year == null ? date('Y') : $year);
+
+        $yearly_sale_super_admin = array();
+        $yearly_sale_employer_portal = array();
+
+        $total_super_admin_sales = 0;
+        $total_employer_portal_sales = 0;
+
+        $chart_data_super_admin = array();
+        $chart_data_employer_portal = array();
+
+        for ($month = 1; $month <= 12; $month++) {
+            $start_date_unix = mktime(0, 0, 0, $month, 1, $year);
+            $end_date_unix = mktime(0, 0, 0, $month, intval(date('t', $start_date_unix)), $year);
+
+            $start_date = date('Y-m-d H:i:s', $start_date_unix);
+            $end_date = date('Y-m-d H:i:s', $end_date_unix);
+
+            $month_super_admin = $this->financial_reports_model->get_total_sales($start_date, $end_date, 'all', 'admin_invoice');
+            $month_employer_portal = $this->financial_reports_model->get_total_sales($start_date, $end_date, 'all', 'market_place');
+
+            $total_super_admin_sales = $total_super_admin_sales + $month_super_admin;
+            $total_employer_portal_sales = $total_employer_portal_sales + $month_employer_portal;
+
+            $yearly_sale_super_admin[$month] = $month_super_admin;
+            $yearly_sale_employer_portal[$month] = $month_employer_portal;
+
+            $chart_data_super_admin[] = $month_super_admin;
+            $chart_data_employer_portal[] = $month_employer_portal;
+        }
+
+        $months = [0, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $this->data['months'] = $months;
+
+        $this->data['year'] = $year;
+
+        $this->data['yearly_sale_super_admin'] = $yearly_sale_super_admin;
+        $this->data['yearly_sale_employer_portal'] = $yearly_sale_employer_portal;
+
+        $this->data['total_super_admin_sales'] = $total_super_admin_sales;
+        $this->data['total_employer_portal_sales'] = $total_employer_portal_sales;
+
+
+        //Chart Data
+        $chart_months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $this->data['chart_months'] = json_encode($chart_months);
+
+        $this->data['chart_data_super_admin'] = json_encode($chart_data_super_admin);
+        $this->data['chart_data_employer_portal'] = json_encode($chart_data_employer_portal);
+
+
+        $this->data['page_title'] = 'Financial Reports - Yearly Sales';
+        $this->load->view('manage_admin/financial_reports/yearly_sales_print',$this->data);
+
+    }
+
     public function yearly_sales_comparison($from_year = null, $to_year = null)
     {
         // ** Check Security Permissions Checks - Start ** //
@@ -300,6 +426,53 @@ class Financial_reports extends Admin_Controller
         } else {
 
         }
+    }
+
+    public function print_yearly_sales_comparison($from_year = null, $to_year = null)
+    {
+        
+            $from_year = $from_year == null ? 2016 : $from_year;
+            $to_year = $to_year == null ? date('Y') : $to_year;
+
+            for ($year = $from_year; $year <= $to_year; $year++) {
+                $start_date_unix = mktime(0, 0, 0, 1, 1, $year);
+                $end_date_unix = mktime(23, 59, 59, 12, 31, $year);
+
+                $start_date = date('Y-m-d H:i:s', $start_date_unix);
+                $end_date = date('Y-m-d H:i:s', $end_date_unix);
+
+                $super_admin_sale = $this->financial_reports_model->get_total_sales($start_date, $end_date, 'all', 'admin_invoice');
+                $employer_portal_sale = $this->financial_reports_model->get_total_sales($start_date, $end_date, 'all', 'market_place');
+
+                $super_admin_sales[$year] = $super_admin_sale;
+                $employer_portal_sales[$year] = $employer_portal_sale;
+
+                $chart_years[] = $year;
+                $chart_super_admin_sales[] = $super_admin_sale;
+                $chart_employer_portal_sales[] = $employer_portal_sale;
+
+                $total_super_admin = $total_super_admin + $super_admin_sale;
+                $total_employer_portal = $total_employer_portal + $employer_portal_sale;
+            }
+
+            $this->data['super_admin_sales'] = $super_admin_sales;
+            $this->data['employer_portal_sales'] = $employer_portal_sales;
+
+            $this->data['from_year'] = $from_year;
+            $this->data['to_year'] = $to_year;
+
+            $this->data['total_super_admin_sales'] = $total_super_admin;
+            $this->data['total_employer_portal_sales'] = $total_employer_portal;
+
+
+            //Chart Data
+            $this->data['chart_years'] = json_encode($chart_years);
+            $this->data['chart_super_admin_sales'] = json_encode($chart_super_admin_sales);
+            $this->data['chart_employer_portal_sales'] = json_encode($chart_employer_portal_sales);
+
+            $this->data['page_title'] = 'Financial Reports - Yearly Sales Comparison';
+            $this->load->view('manage_admin/financial_reports/yearly_sales_comparison_print',$this->data);
+        
     }
 
     public function monthly_marketplace_products_usage($vendor = 'all', $year = null, $month = null){
