@@ -223,7 +223,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                         <div class="form-group">
                                             <label>Signature of Employee <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_3_signature_of_employee"></i></label>
                                             <?php if ($signed_flag == true) { ?>
-                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>" />
+                                                <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>" class="esignaturesize" />
                                             <?php } else { ?>
                                                 <!-- the below loaded view add e-signature -->
                                                 <?php $this->load->view('static-pages/e_signature_button'); ?>
