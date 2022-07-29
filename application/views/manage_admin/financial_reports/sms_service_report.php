@@ -65,7 +65,7 @@
 
                                     <div class="row">
                                         <div class="col-xs-12 text-right">
-                                            <a class="btn btn-success" href="JavaScript:;" onclick="jsReportAction(this)" data-action="print_report">Print</a>
+                                            <a target="_blank" class="btn btn-success" href="<?php echo base_url('manage_admin/financial_reports/print_sms_service_report')."/". $companies . "/" . $start_date . "/" . $end_date; ?>">Print</a>
                                             <a class="btn btn-success" href="JavaScript:;" onclick="jsReportAction(this)" data-action="download_report">Download</a>
                                         </div>
                                     </div>
@@ -166,7 +166,6 @@
 
             var myUrl = '<?php echo base_url("manage_admin/financial_reports/sms_service_report") ?>' + '/' + company_sid + '/' + start_date + '/' + end_date;
 
-            console.log(myUrl);
             $('#search_btn').attr('href', myUrl);
         }
 

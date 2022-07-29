@@ -70,7 +70,7 @@
 
                                     <div class="row">
                                         <div class="col-xs-12 text-right">
-                                            <a class="btn btn-success" href="JavaScript:;" onclick="jsReportAction(this)" data-action="print_report">Print</a>
+                                            <a target="_blank" class="btn btn-success" href="<?php echo base_url('manage_admin/financial_reports/print_monthly_unpaid_invoices')."/". $year . "/" . $month; ?>">Print</a>
                                             <a class="btn btn-success" href="JavaScript:;" onclick="jsReportAction(this)" data-action="download_report">Download</a>
                                         </div>
                                     </div>
