@@ -642,6 +642,160 @@ class Financial_reports extends Admin_Controller
         }
     }
 
+    public function print_monthly_marketplace_products_usage($vendor = 'all', $year = null, $month = null){
+        
+        $year = ($year == null ? date('Y') : $year);
+        $month = ($month == null ? date('m') : $month);
+
+        $from_date_unix = mktime(0,0,0, $month, 1, $year);
+        $to_date_unix = mktime(23, 59, 59, $month, date('t', $from_date_unix), $year);
+
+        $from_date = date('Y-m-d H:i:s', $from_date_unix);
+        $to_date = date('Y-m-d H:i:s', $to_date_unix);
+
+
+        $indeed_products_sids = [1, 21];
+        $ziprecruiter_products_sids = [2];
+        $automotosocial_products_sids = [3, 4, 22];
+        $jobs2careers_products_sids = [5];
+        $juju_products_sids = [6];
+        $accuratebackground_products_sids = [7, 8, 9, 10, 11, 16, 17, 18, 19];
+        $sparkhire_products_sids = [12, 13, 14];
+
+        $products_sids = array();
+        switch($vendor){
+            case 'indeed':
+                $products_sids = $indeed_products_sids;
+                break;
+            case 'ziprecruiter':
+                $products_sids = $ziprecruiter_products_sids;
+                break;
+            case 'automotosocial':
+                $products_sids = $automotosocial_products_sids;
+                break;
+            case 'jobs2careers':
+                $products_sids = $jobs2careers_products_sids;
+                break;
+            case 'juju':
+                $products_sids = $juju_products_sids;
+                break;
+            case 'accuratebackground':
+                $products_sids = $accuratebackground_products_sids;
+                break;
+            case 'sparkhire':
+                $products_sids = $sparkhire_products_sids;
+                break;
+            default:
+                $products_sids = array_merge($indeed_products_sids, $ziprecruiter_products_sids, $automotosocial_products_sids, $jobs2careers_products_sids, $juju_products_sids, $accuratebackground_products_sids, $sparkhire_products_sids);
+                break;
+        }
+
+
+        $product_usage = array();
+
+        switch($vendor){
+            case 'indeed':
+            case 'ziprecruiter':
+            case 'automotosocial':
+            case 'jobs2careers':
+            case 'juju':
+            case 'sparkhire':
+                if(!empty($products_sids)){
+                    foreach($products_sids as $product_sid){
+                        $prod_data = $this->financial_reports_model->get_job_board_product_usage($product_sid, $from_date, $to_date);
+                        $product_usage = array_merge($product_usage, $prod_data);
+                    }
+                }
+                break;
+            case 'accuratebackground':
+                if(!empty($products_sids)){
+                    foreach($products_sids as $product_sid){
+                        $prod_data = $this->financial_reports_model->get_accurate_background_product_usage($product_sid, $from_date, $to_date);
+                        $product_usage = array_merge($product_usage, $prod_data);
+                    }
+                }
+                break;
+            default:
+                if(!empty($products_sids)){
+                    foreach($products_sids as $product_sid){
+                        $prod_data = $this->financial_reports_model->get_job_board_product_usage($product_sid, $from_date, $to_date);
+                        $product_usage = array_merge($product_usage, $prod_data);
+
+                        $prod_data = $this->financial_reports_model->get_accurate_background_product_usage($product_sid, $from_date, $to_date);
+                        $product_usage = array_merge($product_usage, $prod_data);
+                    }
+                }
+                break;
+        }
+
+
+        $total_sale = 0;
+        $total_cost = 0;
+        $total_profit = 0;
+
+        $excluded_companies = get_company_sids_excluded_from_reporting();
+
+
+        foreach($product_usage as $key => $product){
+            $unset_executed = false;
+
+            if($product['company_sid'] <= 0 || in_array($product['company_sid'], $excluded_companies))
+            {
+                unset($product_usage[$key]);
+                $unset_executed = true;
+            }
+
+            if($product['product_cost_price'] == 0 || $product['product_cost_price'] == null){
+                $product['product_cost_price'] = $product['product_price'];
+            }
+
+            $profit = $product['product_price'] - $product['product_cost_price'];
+
+            if($unset_executed == false) {
+                $product_usage[$key]['profit'] = $profit;
+
+                $total_sale = $total_sale + $product['product_price'];
+                $total_cost = $total_cost + $product['product_cost_price'];
+                $total_profit = $total_profit + $profit;
+
+            }
+        }
+
+        usort($product_usage, function ($item1, $item2) {
+            if ($item2['usage_date'] == $item1['usage_date']) return 0;
+            return $item2['usage_date'] < $item1['usage_date'] ? -1 : 1;
+        });
+
+
+        $this->data['product_usage'] = $product_usage;
+        $this->data['total_sale'] = $total_sale;
+        $this->data['total_cost'] = $total_cost;
+        $this->data['total_profit'] = $total_profit;
+
+        $months = [0, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $this->data['months'] = $months;
+
+        $vendors = array();
+        $vendors['indeed'] = 'Indeed.com';
+        $vendors['ziprecruiter'] = 'ZipRecruiter.com';
+        $vendors['automotosocial'] = 'AutomotoSocial.com';
+        $vendors['jobs2careers'] = 'Jobs2Careers.com';
+        $vendors['juju'] = 'JuJu.com';
+        $vendors['sparkhire'] = 'SparkHire.com';
+        $vendors['accuratebackground'] = 'AccurateBackground.com';
+
+        $this->data['vendors'] = $vendors;
+
+        $this->data['vendor'] = $vendor;
+        $this->data['month'] = $month;
+        $this->data['year'] = $year;
+
+
+        $this->data['page_title'] = 'Financial Reports - Monthly Marketplace Products Usage History';
+        $this->load->view('manage_admin/financial_reports/monthly_marketplace_products_usage_print',$this->data);
+
+    }
+
     public function monthly_marketplace_products_sales($vendor = 'all', $year = null, $month = null){
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin/financial_reports';
@@ -757,6 +911,106 @@ class Financial_reports extends Admin_Controller
         }
     }
 
+    public function print_monthly_marketplace_products_sales($vendor = 'all', $year = null, $month = null){
+        
+            $year = ($year == null ? date('Y') : $year);
+            $month = ($month == null ? date('m') : $month);
+
+            $from_date_unix = mktime(0,0,0, $month, 1, $year);
+            $to_date_unix = mktime(23, 59, 59, $month, date('t', $from_date_unix), $year);
+
+            $from_date = date('Y-m-d H:i:s', $from_date_unix);
+            $to_date = date('Y-m-d H:i:s', $to_date_unix);
+
+
+            $indeed_products_sids = [1, 21];
+            $ziprecruiter_products_sids = [2];
+            $automotosocial_products_sids = [3, 4, 22];
+            $jobs2careers_products_sids = [5];
+            $juju_products_sids = [6];
+            $accuratebackground_products_sids = [7, 8, 9, 10, 11, 16, 17, 18, 19];
+            $sparkhire_products_sids = [12, 13, 14];
+
+            $products_sids = array();
+            switch($vendor){
+                case 'indeed':
+                    $products_sids = $indeed_products_sids;
+                    break;
+                case 'ziprecruiter':
+                    $products_sids = $ziprecruiter_products_sids;
+                    break;
+                case 'automotosocial':
+                    $products_sids = $automotosocial_products_sids;
+                    break;
+                case 'jobs2careers':
+                    $products_sids = $jobs2careers_products_sids;
+                    break;
+                case 'juju':
+                    $products_sids = $juju_products_sids;
+                    break;
+                case 'accuratebackground':
+                    $products_sids = $accuratebackground_products_sids;
+                    break;
+                case 'sparkhire':
+                    $products_sids = $sparkhire_products_sids;
+                    break;
+                default:
+                    $products_sids = array_merge($indeed_products_sids, $ziprecruiter_products_sids, $automotosocial_products_sids, $jobs2careers_products_sids, $juju_products_sids, $accuratebackground_products_sids, $sparkhire_products_sids);
+                    break;
+            }
+
+
+            $products_sold = array();
+
+            foreach($products_sids as $product_sid){
+                $products = $this->financial_reports_model->get_invoices_by_products_sid($product_sid, $from_date, $to_date);
+
+                $products_sold = array_merge($products_sold, $products);
+            }
+
+
+
+
+            usort($products_sold, function ($item1, $item2) {
+                if ($item2['date'] == $item1['date']) return 0;
+                return $item2['date'] < $item1['date'] ? -1 : 1;
+            });
+
+            $excluded_companies = get_company_sids_excluded_from_reporting();
+
+            foreach($products_sold as $key => $products){
+                if(in_array($products['company_sid'], $excluded_companies)){
+                    unset($products[$key]);
+                }
+            }
+
+
+            $this->data['products_sold'] = $products_sold;
+
+
+            $months = [0, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            $this->data['months'] = $months;
+
+            $vendors = array();
+            $vendors['indeed'] = 'Indeed.com';
+            $vendors['ziprecruiter'] = 'ZipRecruiter.com';
+            $vendors['automotosocial'] = 'AutomotoSocial.com';
+            $vendors['jobs2careers'] = 'Jobs2Careers.com';
+            $vendors['juju'] = 'JuJu.com';
+            $vendors['sparkhire'] = 'SparkHire.com';
+            $vendors['accuratebackground'] = 'AccurateBackground.com';
+
+            $this->data['vendors'] = $vendors;
+
+            $this->data['vendor'] = $vendor;
+            $this->data['month'] = $month;
+            $this->data['year'] = $year;
+
+
+            $this->data['page_title'] = 'Financial Reports - Monthly Marketplace Products Sales History';
+            $this->load->view('manage_admin/financial_reports/monthly_marketplace_products_sales_print',$this->data);
+    }
+
     public function monthly_marketplace_product_statistics($vendor = 'all', $year = null, $month = null){
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin/financial_reports';
@@ -862,6 +1116,101 @@ class Financial_reports extends Admin_Controller
 
         }
     }
+
+    public function print_monthly_marketplace_product_statistics($vendor = 'all', $year = null, $month = null){
+       
+        $year = ($year == null ? date('Y') : $year);
+        $month = ($month == null ? date('m') : $month);
+
+        $from_date_unix = mktime(0,0,0, $month, 1, $year);
+        $to_date_unix = mktime(23, 59, 59, $month, date('t', $from_date_unix), $year);
+
+        $from_date = date('Y-m-d H:i:s', $from_date_unix);
+        $to_date = date('Y-m-d H:i:s', $to_date_unix);
+
+
+        $indeed_products_sids = [1, 21];
+        $ziprecruiter_products_sids = [2];
+        $automotosocial_products_sids = [3, 4, 22];
+        $jobs2careers_products_sids = [5];
+        $juju_products_sids = [6];
+        $accuratebackground_products_sids = [7, 8, 9, 10, 11, 16, 17, 18, 19];
+        $sparkhire_products_sids = [12, 13, 14];
+
+        $products_sids = array();
+        switch($vendor){
+            case 'indeed':
+                $products_sids = $indeed_products_sids;
+                break;
+            case 'ziprecruiter':
+                $products_sids = $ziprecruiter_products_sids;
+                break;
+            case 'automotosocial':
+                $products_sids = $automotosocial_products_sids;
+                break;
+            case 'jobs2careers':
+                $products_sids = $jobs2careers_products_sids;
+                break;
+            case 'juju':
+                $products_sids = $juju_products_sids;
+                break;
+            case 'accuratebackground':
+                $products_sids = $accuratebackground_products_sids;
+                break;
+            case 'sparkhire':
+                $products_sids = $sparkhire_products_sids;
+                break;
+            default:
+                $products_sids = array_merge($indeed_products_sids, $ziprecruiter_products_sids, $automotosocial_products_sids, $jobs2careers_products_sids, $juju_products_sids, $accuratebackground_products_sids, $sparkhire_products_sids);
+                break;
+        }
+
+
+
+        $all_invoices = array();
+
+        if(!empty($products_sids)){
+            foreach($products_sids as $product_sid){
+                $invoices = $this->financial_reports_model->get_invoices_by_products_sid($product_sid, $from_date, $to_date);
+
+                $all_invoices = array_merge($all_invoices, $invoices);
+            }
+        }
+
+
+        usort($all_invoices, function ($item1, $item2) {
+            if ($item2['date'] == $item1['date']) return 0;
+            return $item2['date'] < $item1['date'] ? -1 : 1;
+        });
+
+        $this->data['all_invoices'] = $all_invoices;
+
+        $months = [0, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $this->data['months'] = $months;
+
+        $vendors = array();
+        $vendors['indeed'] = 'Indeed.com';
+        $vendors['ziprecruiter'] = 'ZipRecruiter.com';
+        $vendors['automotosocial'] = 'AutomotoSocial.com';
+        $vendors['jobs2careers'] = 'Jobs2Careers.com';
+        $vendors['juju'] = 'JuJu.com';
+        $vendors['sparkhire'] = 'SparkHire.com';
+        $vendors['accuratebackground'] = 'AccurateBackground.com';
+
+        $this->data['vendors'] = $vendors;
+
+        $this->data['vendor'] = $vendor;
+        $this->data['month'] = $month;
+        $this->data['year'] = $year;
+
+
+        $this->data['page_title'] = 'Financial Reports - Monthly Marketplace Product Statistics';
+        $this->load->view('manage_admin/financial_reports/monthly_marketplace_product_statistics_print',$this->data);
+
+
+        
+    }
+
 
     public function monthly_profit_report($year = null, $month = null){
         // ** Check Security Permissions Checks - Start ** //
