@@ -320,24 +320,24 @@
 <script>
 
     $(document).ready(function () {
-        var draw = kendo.drawing;
-            draw.drawDOM($("#download_report"), {
-                avoidLinks: false,
-                paperSize: "auto",
-                multiPage: true,
-                margin: { bottom: "2cm" },
-                scale: 0.8
-            })
-            .then(function(root) {
-                return draw.exportPDF(root);
-            })
-            .done(function(data) {
-                setTimeout(function(){
+        setTimeout(function(){
+            var draw = kendo.drawing;
+                draw.drawDOM($("#download_report"), {
+                    avoidLinks: false,
+                    paperSize: "auto",
+                    multiPage: true,
+                    margin: { bottom: "2cm" },
+                    scale: 0.8
+                })
+                .then(function(root) {
+                    return draw.exportPDF(root);
+                })
+                .done(function(data) {
                     $('#download_report').hide();
                     $('#print_section').show();
                     $('#report_iframe').attr("src",data);
-                },9000)
-            });
+                });
+        },6000)
     });
 
 
