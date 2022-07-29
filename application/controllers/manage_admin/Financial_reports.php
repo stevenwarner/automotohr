@@ -228,6 +228,37 @@ class Financial_reports extends Admin_Controller
         }
     }
 
+    public function print_daily_sales($year = null, $month = null, $day = null)
+    {
+
+        $year = ($year == null ? date('Y') : $year);
+        $month = ($month == null ? date('m') : $month);
+        $day = ($day == null ? date('d') : $day);
+
+        $start_unix_date = mktime(0, 0, 0, $month, $day, $year);
+        $end_unix_date = mktime(23, 59, 59, $month, $day, $year);
+
+        $start_date = date('Y-m-d H:i:s', $start_unix_date);
+        $end_date = date('Y-m-d H:i:s', $end_unix_date);
+
+
+        $receipts_super_admin = $this->financial_reports_model->get_receipts($start_date, $end_date, 'all', 'admin_invoice');
+        $this->data['receipts_super_admin'] = $receipts_super_admin;
+
+        $receipts_employer_portal = $this->financial_reports_model->get_receipts($start_date, $end_date, 'all', 'market_place');
+        $this->data['receipts_employer_portal'] = $receipts_employer_portal;
+
+        $this->data['month'] = intval($month);
+        $this->data['year'] = intval($year);
+        $this->data['day'] = intval($day);
+
+        $months = [0, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $this->data['months'] = $months;
+
+        $this->data['page_title'] = 'Financial Reports - Daily Sales';
+        $this->load->view('manage_admin/financial_reports/daily_sales_print',$this->data);
+    }
+
     public function yearly_sales($year = null)
     {
         // ** Check Security Permissions Checks - Start ** //
@@ -1205,12 +1236,8 @@ class Financial_reports extends Admin_Controller
 
 
         $this->data['page_title'] = 'Financial Reports - Monthly Marketplace Product Statistics';
-        $this->load->view('manage_admin/financial_reports/monthly_marketplace_product_statistics_print',$this->data);
-
-
-        
+        $this->load->view('manage_admin/financial_reports/monthly_marketplace_product_statistics_print',$this->data);        
     }
-
 
     public function monthly_profit_report($year = null, $month = null){
         // ** Check Security Permissions Checks - Start ** //
@@ -1389,6 +1416,169 @@ class Financial_reports extends Admin_Controller
         }
     }
 
+    public function print_monthly_profit_report($year = null, $month = null){
+
+        $excluded_companies = get_company_sids_excluded_from_reporting();
+
+        $year = ($year == null ? date('Y') : $year);
+        $month = ($month == null ? date('m') : $month);
+
+        $start_unix_date = mktime(0, 0, 0, $month, 1, $year);
+        $end_unix_date = mktime(23, 59, 59, $month, date('t', $start_unix_date), $year);
+
+        $month_first_date = date('y-m-d H:i:s', $start_unix_date);
+        $month_last_date = date('y-m-d H:i:s', $end_unix_date);
+
+        $months_sale_super_admin = array();
+        $months_sale_employer_portal = array();
+
+        $super_admin_invoices = $this->financial_reports_model->get_invoices('super_admin', $month_first_date, $month_last_date);
+        $employer_portal_invoices = $this->financial_reports_model->get_invoices('employer_portal', $month_first_date, $month_last_date);
+
+
+        $sa_grand_total_sale = 0;
+        $sa_grand_total_cost = 0;
+        $sa_grand_total_profit = 0;
+        $sa_grand_total_discounted_profit = 0;
+        $sa_grand_total_paypal_fee = 0;
+        $sa_grand_total_profit_after_fee = 0;
+
+
+        $ep_grand_total_sale = 0;
+        $ep_grand_total_cost = 0;
+        $ep_grand_total_profit = 0;
+        $ep_grand_total_discounted_profit = 0;
+        $ep_grand_total_paypal_fee = 0;
+        $ep_grand_total_profit_after_fee = 0;
+
+
+
+
+
+        foreach($super_admin_invoices as $key => $invoice){
+            if(in_array($invoice['company_sid'], $excluded_companies) ){
+                unset($super_admin_invoices[$key]);
+            } else {
+
+                /*
+                if($invoice['is_discounted'] == 1){
+                    $amount = $invoice['total_after_discount'];
+                } else {
+                    $amount = $invoice['value'];
+                }
+                */
+                $amount = $invoice['total_after_discount'];
+
+                $paypal_fee_one = $amount * ( 2.9 / 100 );
+                $paypal_fee_two = 0.30;
+
+                if($amount > 0 && $invoice['payment_method'] == 'credit-card'){
+                    $paypal_fee = $paypal_fee_one + $paypal_fee_two;
+                } else {
+                    $paypal_fee = 0;
+                }
+
+                $super_admin_invoices[$key]['paypal_fee'] = $paypal_fee;
+
+                $profit = $invoice['total_actual_profit'];
+
+
+                $invoice_cost = $invoice['total_cost'];
+
+                $profit_after_paypal_fee = $profit - $paypal_fee;
+                $super_admin_invoices[$key]['total_profit_after_paypal_fee'] = $profit_after_paypal_fee;
+
+                //Grand Totals
+                $sa_grand_total_sale = $sa_grand_total_sale + $amount;
+                $sa_grand_total_cost = $sa_grand_total_cost + $invoice_cost;
+                $sa_grand_total_profit = $sa_grand_total_profit + $profit;
+                $sa_grand_total_paypal_fee = $sa_grand_total_paypal_fee + $paypal_fee;
+
+                $sa_grand_total_profit_after_fee  = $sa_grand_total_profit_after_fee + $profit_after_paypal_fee;
+
+            }
+        }
+
+        $this->data['sa_grand_total_sale'] = $sa_grand_total_sale;
+        $this->data['sa_grand_total_cost'] = $sa_grand_total_cost;
+        $this->data['sa_grand_total_profit'] = $sa_grand_total_profit;
+        $this->data['sa_grand_total_paypal_fee'] = $sa_grand_total_paypal_fee;
+
+        $this->data['sa_grand_total_profit_after_fee'] = $sa_grand_total_profit_after_fee;
+
+
+
+        foreach($employer_portal_invoices as $key => $invoice){
+            if(in_array($invoice['company_sid'], $excluded_companies) ){
+                unset($employer_portal_invoices[$key]);
+            } else {
+
+                $amount = $invoice['total'];
+
+
+                $paypal_fee_one = $amount * ( 2.9 / 100 );
+                $paypal_fee_two = 0.30;
+
+                if($amount > 0 && $invoice['payment_method'] == 'Paypal') {
+                    $paypal_fee = $paypal_fee_one + $paypal_fee_two;
+                } else {
+                    $paypal_fee = 0;
+                }
+
+                $employer_portal_invoices[$key]['paypal_fee'] = $paypal_fee;
+
+
+
+
+                $invoice_cost = $invoice['total_cost'];
+                $invoice_discount = $invoice['total_discount_percentage'];
+
+                $profit = $invoice['total_actual_profit'];
+
+
+
+                $profit_after_paypal_fee = $profit - $paypal_fee;
+                $employer_portal_invoices[$key]['total_profit_after_paypal_fee'] = $profit_after_paypal_fee;
+
+                //Grand Totals
+                $ep_grand_total_sale = $ep_grand_total_sale + $amount;
+                $ep_grand_total_cost = $ep_grand_total_cost + $invoice_cost;
+                $ep_grand_total_profit = $ep_grand_total_profit + $profit;
+                $ep_grand_total_paypal_fee = $ep_grand_total_paypal_fee + $paypal_fee;
+
+                $ep_grand_total_profit_after_fee  = $ep_grand_total_profit_after_fee + $profit_after_paypal_fee;
+            }
+        }
+
+
+
+        $this->data['ep_grand_total_sale'] = $ep_grand_total_sale;
+        $this->data['ep_grand_total_cost'] = $ep_grand_total_cost;
+        $this->data['ep_grand_total_profit'] = $ep_grand_total_profit;
+        $this->data['ep_grand_total_paypal_fee'] = $ep_grand_total_paypal_fee;
+
+        $this->data['ep_grand_total_profit_after_fee'] = $ep_grand_total_profit_after_fee;
+
+
+
+        $this->data['super_admin_invoices'] = $super_admin_invoices;
+        $this->data['employer_portal_invoices'] = $employer_portal_invoices;
+
+        $months = [0, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+        $this->data['months_sale_super_admin'] = $months_sale_super_admin;
+        $this->data['months_sale_employer_portal'] = $months_sale_employer_portal;
+
+        $this->data['months'] = $months;
+        $this->data['month'] = intval($month);
+        $this->data['year'] = intval($year);
+
+
+        $this->data['page_title'] = 'Financial Reports - Monthly Profit Report';
+        $this->load->view('manage_admin/financial_reports/monthly_profit_report_print',$this->data);  
+        
+    }
+
     public function monthly_unpaid_invoices($year = null, $month = null){
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin/financial_reports';
@@ -1551,6 +1741,142 @@ class Financial_reports extends Admin_Controller
         }
     }
 
+    public function print_monthly_unpaid_invoices($year = null, $month = null){
+
+        $excluded_companies = get_company_sids_excluded_from_reporting();
+
+        $year = ($year == null ? date('Y') : $year);
+        $month = ($month == null ? date('m') : $month);
+
+        $start_unix_date = mktime(0, 0, 0, $month, 1, $year);
+        $end_unix_date = mktime(23, 59, 59, $month, date('t', $start_unix_date), $year);
+
+        $month_first_date = date('y-m-d H:i:s', $start_unix_date);
+        $month_last_date = date('y-m-d H:i:s', $end_unix_date);
+
+
+        $super_admin_invoices = $this->financial_reports_model->get_invoices('super_admin', $month_first_date, $month_last_date, 'unpaid');
+        $employer_portal_invoices = $this->financial_reports_model->get_invoices('employer_portal', $month_first_date, $month_last_date, 'unpaid');
+
+
+        $sa_grand_total_sale = 0;
+        $sa_grand_total_cost = 0;
+        $sa_grand_total_profit = 0;
+        $sa_grand_total_discounted_profit = 0;
+        $sa_grand_total_paypal_fee = 0;
+        $sa_grand_total_profit_after_fee = 0;
+
+
+        $ep_grand_total_sale = 0;
+        $ep_grand_total_cost = 0;
+        $ep_grand_total_profit = 0;
+        $ep_grand_total_discounted_profit = 0;
+        $ep_grand_total_paypal_fee = 0;
+        $ep_grand_total_profit_after_fee = 0;
+
+
+
+        foreach($super_admin_invoices as $key => $invoice){
+            if(in_array($invoice['company_sid'], $excluded_companies) ){
+                unset($super_admin_invoices[$key]);
+            } else {
+
+                /*
+                if($invoice['is_discounted'] == 1){
+                    $amount = $invoice['total_after_discount'];
+                } else {
+                    $amount = $invoice['value'];
+                }
+                */
+
+                $amount = $invoice['total_after_discount'];
+
+                $paypal_fee_one = $amount * ( 2.9 / 100 );
+                $paypal_fee_two = 0.30;
+
+                if($amount > 0 && $invoice['payment_method'] == 'credit-card'){
+                    $paypal_fee = $paypal_fee_one + $paypal_fee_two;
+                } else {
+                    $paypal_fee = 0;
+                }
+
+                $super_admin_invoices[$key]['paypal_fee'] = $paypal_fee;
+
+                $profit = $invoice['total_actual_profit'];
+
+
+                $invoice_cost = $invoice['total_cost'];
+
+                $profit_after_paypal_fee = $profit - $paypal_fee;
+                $super_admin_invoices[$key]['total_profit_after_paypal_fee'] = $profit_after_paypal_fee;
+
+                //Grand Totals
+                $sa_grand_total_sale = $sa_grand_total_sale + $amount;
+                $sa_grand_total_cost = $sa_grand_total_cost + $invoice_cost;
+                $sa_grand_total_profit = $sa_grand_total_profit + $profit;
+                $sa_grand_total_paypal_fee = $sa_grand_total_paypal_fee + $paypal_fee;
+
+                $sa_grand_total_profit_after_fee  = $sa_grand_total_profit_after_fee + $profit_after_paypal_fee;
+
+            }
+        }
+
+        foreach($employer_portal_invoices as $key => $invoice){
+            if(in_array($invoice['company_sid'], $excluded_companies) ){
+                unset($employer_portal_invoices[$key]);
+            } else {
+
+                $amount = $invoice['total'];
+
+
+                $paypal_fee_one = $amount * ( 2.9 / 100 );
+                $paypal_fee_two = 0.30;
+
+                if($amount > 0 && $invoice['payment_method'] == 'Paypal') {
+                    $paypal_fee = $paypal_fee_one + $paypal_fee_two;
+                } else {
+                    $paypal_fee = 0;
+                }
+
+                $employer_portal_invoices[$key]['paypal_fee'] = $paypal_fee;
+
+
+
+
+                $invoice_cost = $invoice['total_cost'];
+                $invoice_discount = $invoice['total_discount_percentage'];
+
+                $profit = $invoice['total_actual_profit'];
+
+
+
+                $profit_after_paypal_fee = $profit - $paypal_fee;
+                $employer_portal_invoices[$key]['total_profit_after_paypal_fee'] = $profit_after_paypal_fee;
+
+                //Grand Totals
+                $ep_grand_total_sale = $ep_grand_total_sale + $amount;
+                $ep_grand_total_cost = $ep_grand_total_cost + $invoice_cost;
+                $ep_grand_total_profit = $ep_grand_total_profit + $profit;
+                $ep_grand_total_paypal_fee = $ep_grand_total_paypal_fee + $paypal_fee;
+
+                $ep_grand_total_profit_after_fee  = $ep_grand_total_profit_after_fee + $profit_after_paypal_fee;
+            }
+        }
+
+        $this->data['invoices_super_admin'] = $super_admin_invoices;
+        $this->data['invoices_employer_portal'] = $employer_portal_invoices;
+
+        $months = [0, 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        $this->data['months'] = $months;
+
+
+        $this->data['month'] = intval($month);
+        $this->data['year'] = intval($year);
+
+        $this->data['page_title'] = 'Financial Reports - Monthly Unpaid Invoices';
+        $this->load->view('manage_admin/financial_reports/monthly_unpaid_invoices_print',$this->data); 
+    }
+
     public function sms_service_report($company = 'all', $start_date = null, $end_date = null){
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin/financial_reports';
@@ -1637,6 +1963,8 @@ class Financial_reports extends Admin_Controller
             $this->data['sms_data'] = $data_to_show;
             $this->data['grand_total'] = $grand_total;
             $this->data['companies'] = $companies;
+            $this->data['start_date'] = $start_date;
+            $this->data['end_date'] = $end_date;
 
 
             $this->data['page_title'] = 'SMS Service Reports';
@@ -1645,5 +1973,85 @@ class Financial_reports extends Admin_Controller
         } else {
 
         }
+    }
+
+    public function print_sms_service_report($company = 'all', $start_date = null, $end_date = null){
+        $from_date = '';
+        $to_date = '';
+        $grand_total = '';
+        //
+        $current_date = date('Y-m-d H:i:s');
+        //
+        if ((empty($start_date) && empty($end_date)) || ($start_date == 'all' && $end_date == 'all')) {
+            // First day of the current month.
+            $from_date = date('Y-m-01', strtotime($current_date));
+            // Last day of the current month.
+            $to_date = date('Y-m-t', strtotime($current_date));
+        } else if ($start_date == 'all' && ($end_date != 'all' || !empty($end_date))) {
+            $from_date = date('Y-m-01', strtotime($end_date));
+            //
+            $to_date = date('Y-m-d', strtotime($end_date));
+
+        } else if (($start_date != 'all' || !empty($start_date)) && $end_date == 'all') {
+            // 
+            $from_date = date('Y-m-d', strtotime($start_date));
+            //
+            $to_date = date('Y-m-t', strtotime($current_date));
+        } else {
+            // 
+            $from_date = date('Y-m-d', strtotime($start_date));
+            //
+            $to_date = date('Y-m-d', strtotime($end_date));
+        }
+        
+        $sms_data = $this->financial_reports_model->get_sms_data($company, $from_date, $to_date);
+
+        $data_to_show = array();
+
+        if(!empty($sms_data)) {
+            $total_amount = 0;
+            foreach ($sms_data as $key => $sms) {
+                $company_name = getCompanyNameBySid($sms['company_id']);
+                //
+                $receiver_name = '';
+                $user_type = '';
+                //
+                if ($sms['module_slug'] == 'ats') {
+                    $receiver_name = get_applicant_name($sms['receiver_user_id']);
+                    $user_type = 'Applicant';
+                } else {
+                    $receiver_name = getUserNameBySID($sms['receiver_user_id']);
+                    $user_type = 'Employee';
+                }
+                //
+                $sender_name = getUserNameBySID($sms['sender_user_id']);
+                //
+                $data_to_show[$key]['company_name'] = $company_name;
+                $data_to_show[$key]['receiver_name'] = $receiver_name;
+                $data_to_show[$key]['sender_name'] = $sender_name;
+                $data_to_show[$key]['message'] = $sms['message_body'];
+                $data_to_show[$key]['sender_phone_number'] = $sms['sender_phone_number'];
+                $data_to_show[$key]['receiver_phone_number'] = $sms['receiver_phone_number'];
+                $data_to_show[$key]['user_type'] = $sms['receiver_phone_number'];
+
+                $data_to_show[$key]['sent'] = $sms['is_sent'] == 1 ? 'Sent' : 'Not Sent';
+                $data_to_show[$key]['read'] = $sms['is_read'] == 1 ? 'Delivered' : 'Sent';
+                $data_to_show[$key]['date'] = date_format(new DateTime($sms['created_at']), 'M d Y h:m a');
+                $data_to_show[$key]['amount'] = $sms['charged_amount'];
+
+                $total_amount = $total_amount + $sms['charged_amount'];
+            }
+
+            $grand_total =$total_amount;
+        }
+        //
+        $companies = $this->financial_reports_model->get_all_companies();
+
+        $this->data['sms_data'] = $data_to_show;
+        $this->data['grand_total'] = $grand_total;
+        $this->data['companies'] = $companies;
+
+        $this->data['page_title'] = 'SMS Service Reports';
+        $this->load->view('manage_admin/financial_reports/sms_service_report_print',$this->data); 
     }
 }
