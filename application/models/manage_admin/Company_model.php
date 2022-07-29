@@ -48,7 +48,7 @@ class Company_model extends CI_Model
         return $this->db->get()->num_rows();
     }
 
-    function get_all_companies_date($contact_name, $company_name, $company_type, $company_status, $start_date, $end_date, $limit = null, $start = null)
+    function get_all_companies_date($contact_name, $company_name, $company_type, $company_status, $start_date, $end_date, $limit = null, $start = null, $columns = '*')
     {
         if (!empty($contact_name) && $contact_name != 'all') {
             $this->db->like('ContactName', $contact_name);
@@ -68,7 +68,7 @@ class Company_model extends CI_Model
             $this->db->limit($limit, $start);
         }
 
-        $this->db->select('*');
+        $this->db->select($columns);
         $this->db->from('users');
 
         if ($company_status != 'all') {
