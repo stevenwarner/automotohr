@@ -1,48 +1,48 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/style.css">
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/font-awesome-animation.min.css">
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/font-awesome.css">
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/responsive.css">
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/jquery-ui-datepicker-custom.css">
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/css/jquery.datetimepicker.css">
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/star-rating.css">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/style.css">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/font-awesome-animation.min.css">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/bootstrap.css">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/font-awesome.css">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/responsive.css">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/jquery-ui-datepicker-custom.css">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/jquery.datetimepicker.css">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/star-rating.css">
         <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-        <link rel="shortcut icon" href="http://automotohr.local/assets/images/favi-icon.png" type="image/x-icon"/>
+        <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon"/>
 
-        <script src="http://automotohr.local/assets/manage_admin/js/jquery-1.11.3.min.js"></script>
-        <script type="text/javascript" src="http://automotohr.local/assets/js/jquery.datetimepicker.js"></script>
-        <script type="text/javascript" src="http://automotohr.local/assets/manage_admin/js/jquery-ui.js"></script>
-        <script src="http://automotohr.local/assets/manage_admin/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="http://automotohr.local/assets/manage_admin/js/functions.js"></script>
-        <script src="http://automotohr.local/assets/alertifyjs/alertify.min.js"></script>
+        <script src="<?= base_url() ?>assets/manage_admin/js/jquery-1.11.3.min.js"></script>
+        <script type="text/javascript" src="<?= base_url() ?>assets/js/jquery.datetimepicker.js"></script>
+        <script type="text/javascript" src="<?= base_url() ?>assets/manage_admin/js/jquery-ui.js"></script>
+        <script src="<?= base_url() ?>assets/manage_admin/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="<?= base_url() ?>assets/manage_admin/js/functions.js"></script>
+        <script src="<?= base_url() ?>assets/alertifyjs/alertify.min.js"></script>
         <!-- include the style -->
-        <link rel="stylesheet" href="http://automotohr.local/assets/alertifyjs/css/alertify.min.css" />
+        <link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/alertify.min.css" />
         <!-- include a theme -->
-        <link rel="stylesheet" href="http://automotohr.local/assets/alertifyjs/css/themes/default.min.css" />
-        <script src="http://automotohr.local/assets/ckeditor/ckeditor.js"></script>
+        <link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/themes/default.min.css" />
+        <script src="<?= base_url() ?>assets/ckeditor/ckeditor.js"></script>
         <link rel="stylesheet" href="<?= base_url(); ?>/assets/mFileUploader/index.css" />
 
         <!--select2-->
-                    <link href="http://automotohr.local/assets/manage_admin/css/select2.css" rel="stylesheet" />
-            <script src="http://automotohr.local/assets/manage_admin/js/select2.min.js"></script>
+                    <link href="<?= base_url() ?>assets/manage_admin/css/select2.css" rel="stylesheet" />
+            <script src="<?= base_url() ?>assets/manage_admin/js/select2.min.js"></script>
                 <!-- Include MultiSelect -->
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/chosen.css">
-        <script src="http://automotohr.local/assets/manage_admin/js/chosen.jquery.js"></script>
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/chosen.css">
+        <script src="<?= base_url() ?>assets/manage_admin/js/chosen.jquery.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/selectize.css">
-        <link rel="stylesheet" type="text/css" href="http://automotohr.local/assets/manage_admin/css/selectize.bootstrap3.css">
-        <script src="http://automotohr.local/assets/manage_admin/js/selectize.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/selectize.css">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/manage_admin/css/selectize.bootstrap3.css">
+        <script src="<?= base_url() ?>assets/manage_admin/js/selectize.min.js"></script>
 
         <!-- Include Jquery Validate -->
-        <script src="http://automotohr.local/assets/manage_admin/js/jquery.validate.js"></script>
-        <script src="http://automotohr.local/assets/manage_admin/js/additional-methods.js"></script>
-        <script type="text/javascript" src="http://automotohr.local/assets/manage_admin/js/tableHeadFixer.js"></script>
-        <script type="text/javascript" src="http://automotohr.local/assets/manage_admin/js/star-rating.js"></script>
-        <script type="text/javascript" src="http://automotohr.local/assets/manage_admin/js/Chart.bundle.min.js"></script>
+        <script src="<?= base_url() ?>assets/manage_admin/js/jquery.validate.js"></script>
+        <script src="<?= base_url() ?>assets/manage_admin/js/additional-methods.js"></script>
+        <script type="text/javascript" src="<?= base_url() ?>assets/manage_admin/js/tableHeadFixer.js"></script>
+        <script type="text/javascript" src="<?= base_url() ?>assets/manage_admin/js/star-rating.js"></script>
+        <script type="text/javascript" src="<?= base_url() ?>assets/manage_admin/js/Chart.bundle.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
 
