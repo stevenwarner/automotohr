@@ -177,7 +177,7 @@
                                 <div>
                                     <?php if(!empty($pre_form)) { ?>
                                         <div >
-                                            <img  src="<?php echo isset($pre_form['section1_emp_signature']) && !empty($pre_form['section1_emp_signature']) ? $pre_form['section1_emp_signature'] : ''; ?>"  />
+                                            <img  src="<?php echo isset($pre_form['section1_emp_signature']) && !empty($pre_form['section1_emp_signature']) ? $pre_form['section1_emp_signature'] : ''; ?>" class="esignaturesize" />
                                         </div>
                                     <?php } ?>
                                 </div>
@@ -221,7 +221,7 @@
                             <label>Signature of Preparer or Translator</label>
                             <?php if(!empty($pre_form)) { ?>
                                 <div >
-                                    <img  src="<?php echo isset($pre_form['section1_preparer_signature']) && !empty($pre_form['section1_preparer_signature']) ? $pre_form['section1_preparer_signature'] : ''; ?>"  />
+                                    <img  src="<?php echo isset($pre_form['section1_preparer_signature']) && !empty($pre_form['section1_preparer_signature']) ? $pre_form['section1_preparer_signature'] : ''; ?>" class="esignaturesize" />
                                 </div>
                             <?php } ?>
                         </td>
@@ -642,7 +642,7 @@
                             <span class="value-box no-border" id="">
                                 <?php if(!empty($pre_form)) { ?>
                                     <div >
-                                        <img  src="<?php echo isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign']) ? $pre_form['section3_emp_sign'] : ''; ?>"  />
+                                        <img  src="<?php echo isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign']) ? $pre_form['section3_emp_sign'] : ''; ?>" class="esignaturesize" />
                                     </div>
                                 <?php } ?>
                             </span>

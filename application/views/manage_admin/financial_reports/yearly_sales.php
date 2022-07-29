@@ -50,7 +50,7 @@
 
                                     <div class="row">
                                         <div class="col-xs-12 text-right">
-                                            <a class="btn btn-success" href="JavaScript:;" onclick="jsReportAction(this)" data-action="print_report">Print</a>
+                                            <a target="_blank" class="btn btn-success" href="<?php echo base_url('manage_admin/financial_reports/print_yearly_sales')."/". $year; ?>">Print</a>
                                             <a class="btn btn-success" href="JavaScript:;" onclick="jsReportAction(this)" data-action="download_report">Download</a>
                                         </div>
                                     </div>
@@ -151,6 +151,8 @@
     </div>
 </div>
 
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
 
@@ -224,8 +226,6 @@
             .done(function(data) {
                 var pdf;
                 pdf = data;
-
-                $('#myiframe').attr("src",data);
                 kendo.saveAs({
                     dataURI: pdf,
                     fileName: '<?php echo $report_name.".pdf"; ?>',
@@ -233,8 +233,11 @@
                 window.close();
             });
         } else { 
+
+
+            
             window.print();
-            //
+            // //
             window.onafterprint = function(){
                 window.close();
             }

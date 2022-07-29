@@ -240,7 +240,7 @@
                                                     <div class="form-group">
                                                         <label>Signature of Employee <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_3_signature_of_employee"></i></label>
                                                         <?php if($signed_flag == true) { ?>
-                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>"  />
+                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>" class="esignaturesize" />
                                                         <?php } ?>
                                                     </div>
                                                 </div>
@@ -310,7 +310,7 @@
                                                         <label>Signature of Preparer or Translator <i class="fa fa-question-circle-o modalShow" src="section_41_signature_of_preparer"></i></label>
                                                         <input type="hidden" name="section1_preparer_signature" id="section1_admin_preparer_signature">
                                                         <?php if(!empty($pre_form['section1_preparer_signature'])) { ?>
-                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_preparer_signature']; ?>"  />
+                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_preparer_signature']; ?>" class="esignaturesize" />
                                                         <?php } ?>
                                                     </div>
                                                 </div>
@@ -805,7 +805,7 @@
                                                             <div class="form-group">
                                                                 <label>Signature of Employer or Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_6_signature"></i></label>
                                                                 <?php if(isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
-                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>"  />
+                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize" />
                                                                 <?php } else { ?>
                                                                     <!-- the below loaded view add e-signature -->
                                                                     <a class="btn btn-success btn-sm sign_of_emp_or_aut_rep" href="javascript:;">Create E-Signature</a>
@@ -1166,7 +1166,7 @@
                                                                             <div class="form-group">
                                                                                 <label>Signature of Authorized Representative <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_8_signature"></i></label>
                                                                                 <?php if(isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
-                                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>"  />
+                                                                                    <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize"  />
                                                                                 <?php } else { ?>
                                                                                     <!-- the below loaded view add e-signature -->
                                                                                     <a class="btn btn-success btn-sm sign_of_aut_rep" href="javascript:;">Create E-Signature</a>

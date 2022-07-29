@@ -351,7 +351,7 @@
                                                     src="section_3_signature_of_employee"></i></label>
                                             <?php if ($signed_flag == true) {?>
                                             <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;"
-                                                src="<?php echo $pre_form['section1_emp_signature']; ?>" />
+                                                src="<?php echo $pre_form['section1_emp_signature']; ?>" class="esignaturesize" />
                                             <?php } else {?>
                                             <!-- the below loaded view add e-signature -->
                                             <?php $this->load->view('static-pages/e_signature_button');?>
@@ -448,7 +448,7 @@
                                                     src="section_41_signature_of_preparer"></i></label>
                                             <?php if ($signed_flag == true) {?>
                                             <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;"
-                                                src="<?php echo $pre_form['section1_preparer_signature']; ?>" />
+                                                src="<?php echo $pre_form['section1_preparer_signature']; ?>" class="esignaturesize" />
                                             <?php } else {?>
                                             <!-- the below loaded view add e-signature -->
                                             <a class="btn blue-button btn-sm get_prepare_signature_btn"
