@@ -1304,7 +1304,7 @@
 
                                                                 <div class="img-full">
                                                                     <img style="max-height: 150px;"
-                                                                        src="<?php echo isset($e_signature_data['signature_bas64_image']) && !empty($e_signature_data['signature_bas64_image']) ? $e_signature_data['signature_bas64_image'] : ''; ?>" />
+                                                                        src="<?php echo isset($e_signature_data['signature_bas64_image']) && !empty($e_signature_data['signature_bas64_image']) ? $e_signature_data['signature_bas64_image'] : ''; ?>" class="esignaturesize" />
                                                                 </div>
 
                                                                 <?php }?>

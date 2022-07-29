@@ -365,7 +365,7 @@
                         <div>
                             <?php if(!empty($pre_form)) { ?>
                                 <div >
-                                    <img style="max-height: 150px;" src="<?php echo isset($pre_form['signature_bas64_image']) && !empty($pre_form['signature_bas64_image']) ? $pre_form['signature_bas64_image'] : ''; ?>"  />
+                                    <img style="max-height: 150px;" src="<?php echo isset($pre_form['signature_bas64_image']) && !empty($pre_form['signature_bas64_image']) ? $pre_form['signature_bas64_image'] : ''; ?>" class="esignaturesize" />
                                 </div>
                             <?php } ?>
                         </div>

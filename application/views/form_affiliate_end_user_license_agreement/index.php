@@ -274,7 +274,7 @@
                                                 <div class="col-lg-9">
                                                     <?php if(isset($company_document['signature_bas64_image']) && !empty($company_document['signature_bas64_image'])) { ?>
                                                             <div class="img-full">
-                                                                <img style="max-height: 150px;" src="<?php echo isset($company_document['signature_bas64_image']) && !empty($company_document['signature_bas64_image']) ? $company_document['signature_bas64_image'] : ''; ?>"  />
+                                                                <img style="max-height: 150px;" src="<?php echo isset($company_document['signature_bas64_image']) && !empty($company_document['signature_bas64_image']) ? $company_document['signature_bas64_image'] : ''; ?>" class="esignaturesize" />
                                                             </div>
                                                     <?php } elseif (isset($company_document['client_signature']) && !empty($company_document['client_signature'])) { ?> 
                                                            <div class="img-full">
