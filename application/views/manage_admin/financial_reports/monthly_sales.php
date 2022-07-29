@@ -21,10 +21,10 @@
 
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <div class="hr-search-criteria">
+                                            <div class="hr-search-criteria" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                                                 <strong>Click to modify search criteria</strong>
                                             </div>
-                                            <div class="hr-search-main search-collapse-area">
+                                            <div class="hr-search-main search-collapse-area" id="collapseExample">
                                                 <div class="row">
                                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                         <div class="field-row">

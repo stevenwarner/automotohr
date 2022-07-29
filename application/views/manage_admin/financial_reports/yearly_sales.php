@@ -18,10 +18,10 @@
 
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            <div class="hr-search-criteria">
+                                            <div class="hr-search-criteria" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                                                 <strong>Click to modify search criteria</strong>
                                             </div>
-                                            <div class="hr-search-main search-collapse-area">
+                                            <div class="hr-search-main search-collapse-area collapse" id="collapseExample">
                                                 <div class="row">
                                                     <div claas="field-row field-row-autoheight">
                                                         <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 field-row field-row-autoheight">
