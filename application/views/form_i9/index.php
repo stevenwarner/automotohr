@@ -240,7 +240,7 @@
                                                     <div class="form-group">
                                                         <label>Signature of Employee <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_3_signature_of_employee"></i></label>
                                                         <?php if($signed_flag == true) { ?>
-                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>"  />
+                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT?>;" src="<?php echo $pre_form['section1_emp_signature']; ?>" class="esignaturesize" />
                                                         <?php } ?>
                                                     </div>
                                                 </div>
