@@ -1552,3 +1552,9 @@ $route['document_setting']['post'] = 'Hr_documents_management/updateAssignedDocu
  * @version 1.0
  */
 $route['assign_vd']['post'] = 'Hr_documents_management/assignVD';
+
+
+/**
+ * Print & Export routes
+ */
+$route['pd']['get'] = '2022/Print_export/manageCompanies';
