@@ -15669,26 +15669,25 @@ if (!function_exists('getdocumenttabpagesbutton')) {
     {
 
         if ($document['document_type'] == 'uploaded') {
-            $doc_s3_path='';
+            $doc_s3_path = '';
 
-             if($extra['document_tab'] == 'completed'){
+            if ($extra['document_tab'] == 'completed') {
                 $doc_s3_path  = $document['uploaded_file'];
-             } else if ($extra['document_tab']=='uncompleted' || $extra['document_tab']=='no_action'){
+            } else if ($extra['document_tab'] == 'uncompleted' || $extra['document_tab'] == 'no_action') {
                 $doc_s3_path = $document['document_s3_name'];
-             } 
+            }
 
             $listaction = getUploadedDocumentURL($doc_s3_path);
-        
-        }else{
-            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description'] );
+        } else {
+            $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
             $listaction = getGeneratedDocumentURL($document, $extra['document_tab'], $isAuthorized);
         }
 
 
-       // 'print_url' => '',
-      //  'download_url' => '',
+        // 'print_url' => '',
+        //  'download_url' => '',
 
-          switch ($button_type) {
+        switch ($button_type) {
                 // 
             case "print":
                 $printBTN = '<a href="' . $listaction['print_url'] . '" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>';
@@ -15704,10 +15703,10 @@ if (!function_exists('getdocumenttabpagesbutton')) {
                 return   $manage_categoryBTN;
                 break;
             case "preview_assigned":
-                if($extra['hybrid_preview']==1){
-                    $preview_assignedBTN = '<button data-id="'.$document['sid'].'" data-document="assigned" class="btn btn-success btn-sm btn-block js-hybrid-preview">Preview Assigned</button>';
-                }else{
-                $preview_assignedBTN = '<button class="btn btn-success btn-sm btn-block"
+                if ($extra['hybrid_preview'] == 1) {
+                    $preview_assignedBTN = '<button data-id="' . $document['sid'] . '" data-document="assigned" class="btn btn-success btn-sm btn-block js-hybrid-preview">Preview Assigned</button>';
+                } else {
+                    $preview_assignedBTN = '<button class="btn btn-success btn-sm btn-block"
                 onclick="preview_latest_generic_function(this);"
                 date-letter-type="generated"
                 data-doc-sid="' . $document['sid'] . '"
@@ -15715,7 +15714,6 @@ if (!function_exists('getdocumenttabpagesbutton')) {
                 data-from="assigned_document">
                 Preview Assigned
                 </button>';
-              
                 }
                 return   $preview_assignedBTN;
                 break;
@@ -15760,14 +15758,12 @@ if (!function_exists('getdocumenttabpagesbutton')) {
                 return $employer_sectionBTN;
                 break;
 
-
-                case "view_approver":
-                    $view_approverBTN = '<button data-document_sid="'. $document['document_sid'].'" data-user_type="'.$extra['user_type'].'" data-user_sid="'.$extra['user_sid'].'" class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
+            case "view_approver":
+                $view_approverBTN = '<button data-document_sid="' . $document['document_sid'] . '" data-user_type="' . $extra['user_type'] . '" data-user_sid="' . $extra['user_sid'] . '" class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
                     View Approver(s)
                    </button>';
-                    return   $view_approverBTN;
-                    break;
-
+                return   $view_approverBTN;
+                break;
         }
     }
 }

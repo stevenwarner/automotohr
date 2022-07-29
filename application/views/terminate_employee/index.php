@@ -101,7 +101,7 @@
                                                                 echo 'N/A';
                                                             }
                                                         } else {
-                                                            echo 'N/A';
+                                                                echo 'N/A';
                                                         } ?>
                                                     </td>
                                                     <td class="text-center" style="vertical-align: middle;">
@@ -119,7 +119,7 @@
                                                                 echo '<i class="fa fa-check fa-2x text-success"></i>';
                                                             }
                                                         } else {
-                                                            echo 'N/A';
+                                                                echo 'N/A';
                                                         } ?>
                                                     </td>
                                                     <td class="text-center" style="vertical-align: middle;">
@@ -160,7 +160,8 @@
                                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                                     <p><strong>Details :</strong> <?php echo $status_detail; ?></p>
                                                                 </div>
-                                                            <?php               } ?>
+
+                                                            <?php } ?>
 
                                                             <?php if (isset($record['changed_by']) && !empty($record['changed_by'])) {
                                                                 $changed_by = $record['changed_by'];

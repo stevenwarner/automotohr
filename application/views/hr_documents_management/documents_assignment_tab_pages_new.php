@@ -230,7 +230,6 @@ $noActionRequiredDocumentsList = [];
                                                 <?php echo 'Offer Letter / Pay Plan'; ?>
                                                 <div class="pull-right total-records"><b>&nbsp;Total: <?php echo count($uncompleted_offer_letter); ?></b></div>
                                             </a>
-
                                         </h4>
                                     </div>
 
@@ -320,8 +319,6 @@ $noActionRequiredDocumentsList = [];
                                                                             $document_type = $document['document_type'] == "confidential" ? true : false;
                                                                             $assign_date = isset($document['assigned_date']) ? date('m-d-Y', strtotime($document['assigned_date'])) : '';
                                                                             $sign_date = isset($document['signature_timestamp']) ?  date('m-d-Y', strtotime($document['signature_timestamp'])) : '';
-
-
                                                                             ?>
 
                                                                             <button class="btn btn-success btn-sm btn-block" onclick="no_action_req_edit_document_model(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>" data-print-type="assigned" data-download-sid="<?php echo $document['sid']; ?>" data-file-name="<?php echo $document['document_original_name']; ?>" data-document-title="<?php echo $document['document_title']; ?>" is-offer-letter="<?php echo $manual_document_type; ?>" data-categories='<?php echo $categories; ?>' data-update-accessible="<?php echo $document_type; ?>" assign-date="<?php echo $assign_date; ?>" sign-date="<?php echo $sign_date; ?>">Edit Document</button>
@@ -504,9 +501,6 @@ $noActionRequiredDocumentsList = [];
             </div>
             <!-- Not Completed Document End -->
 
-
-
-
             <!-- Offer Letter Document Start -->
             <div id="offer_letter_doc_details" class="tab-pane fade in hr-innerpadding">
                 <div class="panel-body">
@@ -634,7 +628,6 @@ $noActionRequiredDocumentsList = [];
                                                             <?php echo $category_document['name']; ?>
                                                             <div class="pull-right total-records"><b>&nbsp;Total: <?php echo count($category_document['documents']); ?></b></div>
                                                         </a>
-
                                                     </h4>
                                                 </div>
 
