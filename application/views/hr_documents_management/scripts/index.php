@@ -81,6 +81,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 </style>
 <?php $this->load->view("hr_documents_management/scripts/approvers"); ?>
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>assets/js/approver.js"></script>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
 <script>
 	//
 	function remakeEmployeeName(o, i) {
@@ -254,6 +255,269 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			}
 		}
 
+		// Modify and Assign
+		function StartModifyAndAssignProcess(
+			e
+		) {
+			//
+			e.preventDefault();
+			//
+			var
+				d = getDocument($(this).data('id')),
+				rows = '',
+				do_upload,
+				do_descpt;
+			//
+			selectedTemplate = d;
+			//
+			atarget = $(this).closest('td');
+			//
+			activeModalId = 'modify-assign-document-modal';
+			//
+			do_upload = d.document_type == 'uploaded' || d.document_type == 'hybrid_document' ? true : false;
+			do_descpt = d.document_type == 'generated' || d.document_type == 'hybrid_document' ? true : false;
+			//
+			rows += '<h4 id="gen_document_label">Are you sure you want to assign this document: [<b>' + (d.document_title) + '</b>]</h4>';
+			rows += '<b> Please review this document and make any necessary modifications.</b>';
+			rows += '<hr />';
+			//
+			// Check if the document type
+			if (do_upload) rows += getUploadContent();
+			if (do_descpt) rows += getGeneratedContent('js-modify-assign-document-description');
+			<?php if (ASSIGNEDOCIMPL) { ?>
+				rows += getConsentTypes(do_descpt);
+			<?php } ?>
+			if (do_descpt) rows += getSigners();
+			rows += getVisibilty(do_descpt);
+			//
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowAND", "containerIdx" => "jsApproverFlowContainerAND", "addEmployeeIdx" => "jsAddDocumentApproversAND", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAND", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAND", "approverNoteIdx" => "jsApproversNoteAND", 'mainId' => 'testApproversAND'] ,true); ?>`;
+			//
+			rows += getEmailContent();
+			rows += getRequiredRow();
+			rows += getSignatureRequiredRow();
+			rows += getSettings();
+			if (do_descpt) rows += getTags();
+			// if(do_descpt) {
+			//
+			if ($('#jsRoles').data('select2')) {
+				$('#jsRoles').data('select2').destroy()
+				$('#jsRoles').remove()
+			}
+			//
+			if ($('#jsDepartments').data('select2')) {
+				$('#jsDepartments').data('select2').destroy()
+				$('#jsDepartments').remove()
+			}
+			//
+			if ($('#jsTeams').data('select2')) {
+				$('#jsTeams').data('select2').destroy()
+				$('#jsTeams').remove()
+			}
+			//
+			if ($('#jsEmployees').data('select2')) {
+				$('#jsEmployees').data('select2').destroy()
+				$('#jsEmployees').remove()
+			}
+			// }
+			//
+			Modal(
+				'Modify & Assign This Document',
+				rows,
+				'<button class="btn btn-success js-modify-assign-submit-btn">Assign This Document</button>',
+				'modify-assign-document-modal',
+				do_descpt ? ['js-modify-assign-document-description'] : [],
+				do_descpt ? ['#js-modify-assign-document-signers'] : [],
+				function() {
+					//
+					do_descpt ? CKEDITOR.instances['js-modify-assign-document-description'].setData(d.document_description) : '';
+					$('#js-modify-assign-document-signature option[value="' + (d.signature_required) + '"]').prop('selected', true);
+					$('#js-modify-assign-document-download option[value="' + (d.download_required) + '"]').prop('selected', true);
+					$('#js-modify-assign-document-acknowledgment option[value="' + (d.acknowledgment_required) + '"]').prop('selected', true);
+					//
+
+					if (d.signers != null && d.signers != '') {
+						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.signers.split(',')) : '';
+					} else if (d.managers_list != null && d.managers_list != '') {
+						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.managers_list.split(',')) : '';
+					}
+					//
+					if (d.visible_to_payroll) {
+						$('#jsVisibleToPayroll').prop('checked', true);
+					}
+					//
+					// if(do_descpt) {
+					$('#jsRoles').select2({
+						closeOnSelect: false
+					});
+					$('#jsDepartments').select2({
+						closeOnSelect: false
+					});
+					$('#jsTeams').select2({
+						closeOnSelect: false
+					});
+					$('#jsEmployees').select2({
+						closeOnSelect: false
+					});
+					//
+					if (d.is_available_for_na) {
+						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
+					}
+					//
+					if (d.allowed_departments) {
+						$('#jsDepartments').select2('val', d.allowed_departments.split(','));
+					}
+					//
+					if (d.allowed_teams) {
+						$('#jsTeams').select2('val', d.allowed_teams.split(','));
+					}
+					//
+					if (d.allowed_employees) {
+						$('#jsEmployees').select2('val', d.allowed_employees.split(','));
+					}
+					// }
+
+					if (d.is_available_for_na) {
+						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
+					}
+					//
+					if (d.allowed_departments) {
+						$('#jsDepartments').select2('val', d.allowed_departments.split(','));
+					}
+					//
+					if (d.allowed_teams) {
+						$('#jsTeams').select2('val', d.allowed_teams.split(','));
+					}
+					//
+					if (d.allowed_employees) {
+						$('#jsEmployees').select2('val', d.allowed_employees.split(','));
+					}
+					//
+					$('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == '1' ? true : false);
+					//
+
+					$('#modify-assign-document-modal #confidentialSelectedEmployees').select2({ closeOnSelect: false });
+					//
+					if(d.confidential_employees){
+						$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
+					}
+					//
+					// Approver  Flow
+					var approverPrefill = {};
+			        var approverSection = approverSection = {
+			            appCheckboxIdx: '.jsHasApprovalFlowAND',
+			            containerIdx: '.jsApproverFlowContainerAND',
+			            addEmployeeIdx: '.jsAddDocumentApproversAND',
+			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAND',
+			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAND',
+			            approverNoteIdx: '.jsApproversNoteAND',
+			            employeesList: <?= json_encode($employeesList); ?>,
+			            documentId: 0
+			        };
+			        //
+			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+						approverPrefill.isChecked = true;
+		                approverPrefill.approverNote = d.document_approval_note;
+		                approverPrefill.approversList = d.document_approval_employees.split(','); 
+		                //
+		                approverSection.prefill = approverPrefill;
+					}
+			        //
+			        $("#jsModifyAndAssignNewDocument").documentApprovalFlow(approverSection);
+			        //
+					$('.jsModifyModalLoader').fadeOut(300);
+					//
+					$('#modify_assign_document').mFileUploader({
+						fileLimit: -1, // Default is '2MB', Use -1 for no limit (Optional)
+						allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv'], //(Optional)
+						placeholderImage: d.uploaded_document_s3_name // Default is empty ('') but can be set any image  (Optional)
+
+					});
+				}
+			);
+		}
+
+		//
+		function AssignDocument(
+			e
+		) {
+			//
+			e.preventDefault();
+			//
+			let file = $('#modify_assign_document').mFileUploader('get');
+			//
+			var obj = {};
+			//
+			obj.documentTitle = selectedTemplate.document_title;
+			obj.documentType = selectedTemplate.document_type;
+			obj.managerList = $('#js-modify-assign-document-signers').val();
+			obj.isSignature = $('#js-modify-assign-document-signature').val();
+			obj.isDownload = $('#js-modify-assign-document-download').val();
+			obj.isAcknowledged = $('#js-modify-assign-document-acknowledgment').val();
+			obj.specific = selectedTemplate.is_specific;
+			obj.documentSid = selectedTemplate.sid;
+			obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
+			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
+			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
+			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
+			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document')
+				obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
+			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document') {
+				obj.file = file.name === undefined ? selectedTemplate.uploaded_document_s3_name : file;
+				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
+			}
+			// Visibility
+			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
+			obj.roles = $('#jsRoles').val() || '';
+			obj.departments = $('#jsDepartments').val() || '';
+			obj.teams = $('#jsTeams').val() || '';
+			obj.employees = $('#jsEmployees').val() || '';
+			obj.setting_is_confidential = $('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
+			obj.confidentialSelectedEmployees = '';
+			//
+			obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
+          	//
+          	// approver flow
+			var approverInfo = $('#jsModifyAndAssignNewDocument').documentApprovalFlow('get');
+			$('#jsModifyAndAssignNewDocument').documentApprovalFlow('clear');
+			//
+          	obj.has_approval_flow = "off";
+          	obj.approvers_note = "";
+          	obj.approvers_list = "";
+          	//
+			if (approverInfo.isChecked) {
+				obj.has_approval_flow = 'on';
+				obj.approvers_note = approverInfo.approverNote;
+				obj.approvers_list = approverInfo.approversList.toString();
+			}
+			//
+			var post = new FormData();
+			//
+			$.each(megaOBJ, function(index, val) {
+				post.append(index, val);
+			});
+			$.each(obj, function(index, val) {
+				post.append(index, val);
+			});
+			//
+			$('.jsModifyModalLoader').fadeIn(300);
+			//
+			$.ajax({
+				url: "<?= base_url('hr_documents_management/assign_document'); ?>",
+				type: 'POST',
+				processData: false,
+				contentType: false,
+				data: post
+			}).done(function(resp) {
+				//
+				$('.jsModifyModalLoader').fadeOut(300);
+				alertify.alert('SUCCESS!', 'Document assigned successfully ' + (obj.sendEmail == 'yes' ? ' and an email notification is sent' : '') + '.', function() {
+					//
+					if (refreshPage == 1) window.location.reload();
+					//
+					resetView(undefined, obj.documentSid, 'assign');
+				});
+			});
+		}
 
 		// Modify Assigned Document
 		function StartModifyAssignedDocumentProcess(
@@ -284,10 +548,11 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						function(){}
 					)
 				}
-				
 			}
 			//
+
 			selectedTemplate = d;
+
 			//
 			do_upload = d.document_type == 'uploaded' || d.document_type == 'hybrid_document' || d.offer_letter_type == 'uploaded' || d.offer_letter_type == 'hybrid_document' ? true : false;
 			do_descpt = d.document_type == 'generated' || d.document_type == 'hybrid_document' || d.offer_letter_type == 'generated' || d.offer_letter_type == 'hybrid_document' ? true : false;
@@ -310,7 +575,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows += getApproversManager();
 			}
 			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section', true); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowMAD", "containerIdx" => "jsApproverFlowContainerMAD", "addEmployeeIdx" => "jsAddDocumentApproversMAD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxMAD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxMAD", "approverNoteIdx" => "jsApproversNoteMAD", 'mainId' => 'testApproversMAD'] ,true); ?>`;
 			//
 			rows += getEmailContent();
 			//
@@ -366,7 +631,8 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					$('#js-modify-assign-document-signature option[value="' + (d.signature_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-download option[value="' + (d.download_required) + '"]').prop('selected', true);
 					$('#js-modify-assign-document-acknowledgment option[value="' + (d.acknowledgment_required) + '"]').prop('selected', true);
-					do_descpt ? $('#js-modify-assigned-document-signers').select2('val', d.signers != null && d.signers != '' ? d.signers.split(',') : null) : '';
+					do_descpt ? $('#js-modify-assigned-document-signers').select2('val', d.managersList != null && d.managersList != '' ? d.managersList.split(',') : null) : '';
+
 					$('.js-modify-assign-document-required[value="' + (selectedTemplate.is_required) + '"]').prop('checked', true);
 					$('.js-modify-assign-document-signature-required[value="' + (selectedTemplate.is_signature_required) + '"]').prop('checked', true);
 					//
@@ -374,19 +640,31 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						$('#jsApprovalSection').hide();
 					}
 					//
-					refreshApprovalSection('#modify-assigned-document-modal');
-					//
-					if (d.has_approval_flow && d.has_approval_flow == 1 && d.document_type != "offer_letter") {
-						//
-						$('#modify-assigned-document-modal #jsHasApprovalFlow').prop('checked', true);
-						$('.jsApproverFlowContainer').show();
-
-						DocumentApproverPrefill(d.document_approval_employees, d.sid, '#modify-assigned-document-modal');
-						DocumentExternalApproverPrefill(d.sid);
-						$("#modify-assigned-document-modal #assigner_note").val(d.document_approval_note);
+					// Approver  Flow
+					var approverPrefill = {};
+			        var approverSection = approverSection = {
+			            appCheckboxIdx: '.jsHasApprovalFlowMAD',
+			            containerIdx: '.jsApproverFlowContainerMAD',
+			            addEmployeeIdx: '.jsAddDocumentApproversMAD',
+			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxMAD',
+			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxMAD',
+			            approverNoteIdx: '.jsApproversNoteMAD',
+			            employeesList: <?= json_encode($employeesList); ?>,
+			            documentId: d.sid
+			        };
+			        //
+			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+						approverPrefill.isChecked = true;
+		                approverPrefill.approverNote = d.document_approval_note;
+		                approverPrefill.approversList = d.document_approval_employees.split(','); 
+		                //
+		                approverSection.prefill = approverPrefill;
 					}
-
+			        //
+			        $("#jsModifyAssignedDocument").documentApprovalFlow(approverSection);
+			        //
 					$('#jsVisibleToPayroll').prop('checked', selectedTemplate.visible_to_payroll == 0 ? false : true);
+					//
 					if (do_descpt) {
 						$('#jsRoles').select2('val', []);
 						$('#jsEmployees').select2('val', []);
@@ -436,177 +714,89 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			});
 		}
 
-		// $(document).on('click', '#modify-assigned-document-modal [name="setting_is_confidential"]', function(){
-		// 	//
-		// 	if(!$(this).prop('checked')){
-		// 		$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').hide();
-		// 		$('#modify-assigned-document-modal #confidentialSelectedEmployees').select2('val', null);
-		// 	} else{
-		// 		$('#modify-assigned-document-modal #confidentialSelectedEmployeesdiv').show();
-		// 	}
-		// });
-		
-		// $(document).on('click', '#modify-assign-document-modal [name="setting_is_confidential"]', function(){
-		// 	//
-		// 	if(!$(this).prop('checked')){
-		// 		$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').hide();
-		// 		$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', null);
-		// 	} else{
-		// 		$('#modify-assign-document-modal #confidentialSelectedEmployeesdiv').show();
-		// 	}
-		// });
 
-
-		// Modify and Assign
-		function StartModifyAndAssignProcess(
+		//
+		function AssignedDocument(
 			e
 		) {
-
 			//
 			e.preventDefault();
 			//
-			var
-				d = getDocument($(this).data('id')),
-				rows = '',
-				do_upload,
-				do_descpt;
+			var obj = {};
 			//
-			selectedTemplate = d;
+			let file = $('#modify_assign_document').mFileUploader('get');
 			//
-			atarget = $(this).closest('td');
+			obj.reset = $('.js-modify-assigned-document-reset:checked').val();
 			//
-			activeModalId = 'modify-assign-document-modal';
-			//
-			do_upload = d.document_type == 'uploaded' || d.document_type == 'hybrid_document' ? true : false;
-			do_descpt = d.document_type == 'generated' || d.document_type == 'hybrid_document' ? true : false;
-			//
-			rows += '<h4 id="gen_document_label">Are you sure you want to assign this document: [<b>' + (d.document_title) + '</b>]</h4>';
-			rows += '<b> Please review this document and make any necessary modifications.</b>';
-			rows += '<hr />';
-			//
-			// Check if the document type
-			if (do_upload) rows += getUploadContent();
-			if (do_descpt) rows += getGeneratedContent('js-modify-assign-document-description');
-			<?php if (ASSIGNEDOCIMPL) { ?>
-				rows += getConsentTypes(do_descpt);
-			<?php } ?>
-			if (do_descpt) rows += getSigners();
-			rows += getVisibilty(do_descpt);
-			//
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/approvers_section', true); ?>`;
-			//
-			rows += getEmailContent();
-			rows += getRequiredRow();
-			rows += getSignatureRequiredRow();
-			rows += getSettings();
-			if (do_descpt) rows += getTags();
-			// if(do_descpt) {
-			//
-			if ($('#jsRoles').data('select2')) {
-				$('#jsRoles').data('select2').destroy()
-				$('#jsRoles').remove()
+			obj.documentTitle = selectedTemplate.document_title;
+			obj.documentType = selectedTemplate.document_type == 'offer_letter' ? selectedTemplate.offer_letter_type : selectedTemplate.document_type;
+			obj.managerList = $('#js-modify-assigned-document-signers').val();
+			obj.isSignature = $('#js-modify-assign-document-signature').val();
+			obj.isDownload = $('#js-modify-assign-document-download').val();
+			obj.isAcknowledged = $('#js-modify-assign-document-acknowledgment').val();
+			obj.documentSid = selectedTemplate.sid;
+			// obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
+			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
+			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'generated')
+				obj.desc = CKEDITOR.instances['js-modify-assigned-document-description'].getData();
+			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'uploaded') {
+				obj.file = file.name === undefined ? selectedTemplate.document_s3_name : file;
+				obj.fileOrigName = selectedTemplate.document_original_name;
 			}
 			//
-			if ($('#jsDepartments').data('select2')) {
-				$('#jsDepartments').data('select2').destroy()
-				$('#jsDepartments').remove()
+			obj.isSignature = obj.isSignature === undefined ? 0 : obj.isSignature;
+			obj.managerList = obj.managerList === undefined ? null : obj.managerList;
+			obj.reset = obj.reset === undefined ? null : obj.reset;
+			//
+			obj.mainDocumentId = selectedTemplate.document_sid;
+			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
+			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
+			// Visibility
+			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
+			obj.selected_roles = $('#jsRoles').val() || '';
+			obj.selected_departments = $('#jsDepartments').val() || '';
+			obj.selected_teams = $('#jsTeams').val() || '';
+			obj.selected_employees = $('#jsEmployees').val() || '';
+			obj.is_confidential = $('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
+			obj.confidentialSelectedEmployees = $('#modify-assigned-document-modal #confidentialSelectedEmployees').val() || '';
+			//
+          	// approver flow
+			var approverInfo = $('#jsModifyAssignedDocument').documentApprovalFlow('get');
+			$('#jsModifyAssignedDocument').documentApprovalFlow('clear');
+			//
+          	obj.has_approval_flow = "off";
+          	obj.approvers_note = "";
+          	obj.approvers_list = "";
+          	//
+			if (approverInfo.isChecked) {
+				obj.has_approval_flow = 'on';
+				obj.approvers_note = approverInfo.approverNote;
+				obj.approvers_list = approverInfo.approversList.toString();
 			}
 			//
-			if ($('#jsTeams').data('select2')) {
-				$('#jsTeams').data('select2').destroy()
-				$('#jsTeams').remove()
-			}
+			var post = new FormData();
 			//
-			if ($('#jsEmployees').data('select2')) {
-				$('#jsEmployees').data('select2').destroy()
-				$('#jsEmployees').remove()
-			}
-			// }
+			$.each(megaOBJ, function(index, val) {
+				post.append(index, val);
+			});
+			$.each(obj, function(index, val) {
+				post.append(index, val);
+			});
 			//
-			Modal(
-				'Modify & Assign This Document',
-				rows,
-				'<button class="btn btn-success js-modify-assign-submit-btn">Assign This Document</button>',
-				'modify-assign-document-modal',
-				do_descpt ? ['js-modify-assign-document-description'] : [],
-				do_descpt ? ['#js-modify-assign-document-signers'] : [],
-				function() {
-					//
-					do_descpt ? CKEDITOR.instances['js-modify-assign-document-description'].setData(d.document_description) : '';
-					$('#js-modify-assign-document-signature option[value="' + (d.signature_required) + '"]').prop('selected', true);
-					$('#js-modify-assign-document-download option[value="' + (d.download_required) + '"]').prop('selected', true);
-					$('#js-modify-assign-document-acknowledgment option[value="' + (d.acknowledgment_required) + '"]').prop('selected', true);
-					//
-
-					if (d.signers != null && d.signers != '') {
-						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.signers.split(',')) : '';
-					} else if (d.managers_list != null && d.managers_list != '') {
-						do_descpt ? $('#js-modify-assign-document-signers').select2('val', d.managers_list.split(',')) : '';
-					}
-					//
-					refreshApprovalSection("#modify-assign-document-modal");
-					//
-					if (d.has_approval_flow && d.has_approval_flow == 1) {
-						//
-						$('#modify-assign-document-modal #jsHasApprovalFlow').prop('checked', true);
-						$('.jsApproverFlowContainer').show();
-
-						DocumentApproverPrefill(d.document_approval_employees, 0, "#modify-assign-document-modal");
-						$("#modify-assign-document-modal #assigner_note").val(d.document_approval_note);
-					}
-					//
-					if (d.visible_to_payroll) {
-						$('#jsVisibleToPayroll').prop('checked', true);
-					}
-					//
-					// if(do_descpt) {
-					$('#jsRoles').select2({
-						closeOnSelect: false
-					});
-					$('#jsDepartments').select2({
-						closeOnSelect: false
-					});
-					$('#jsTeams').select2({
-						closeOnSelect: false
-					});
-					$('#jsEmployees').select2({
-						closeOnSelect: false
-					});
-					//
-					if (d.is_available_for_na) {
-						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
-					}
-					//
-					if (d.allowed_departments) {
-						$('#jsDepartments').select2('val', d.allowed_departments.split(','));
-					}
-					//
-					if (d.allowed_teams) {
-						$('#jsTeams').select2('val', d.allowed_teams.split(','));
-					}
-					//
-					if (d.allowed_employees) {
-						$('#jsEmployees').select2('val', d.allowed_employees.split(','));
-					}
-					//
-					$('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == '1' ? true : false);
-					//
-					$('#modify-assign-document-modal #confidentialSelectedEmployees').select2({ closeOnSelect: false });
-					//
-					if(d.confidential_employees){
-						$('#modify-assign-document-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
-					}
-					//
-					$('.jsModifyModalLoader').fadeOut(300);
-					//
-					$('#modify_assign_document').mFileUploader({
-						fileLimit: -1, // Default is '2MB', Use -1 for no limit (Optional)
-						allowedTypes: ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx', 'rtf', 'ppt', 'xls', 'xlsx', 'csv'], //(Optional)
-						placeholderImage: d.uploaded_document_s3_name // Default is empty ('') but can be set any image  (Optional)
-
-					});
-				}
-			);
+			$('.jsModifyModalLoader').fadeIn(300);
+			$.ajax({
+				url: "<?= base_url('hr_documents_management/update_assigned_document'); ?>",
+				type: 'POST',
+				processData: false,
+				contentType: false,
+				data: post
+			}).done(function(resp) {
+				//
+				$('.jsModifyModalLoader').fadeOut(300);
+				alertify.alert('SUCCESS!', '' + (selectedTemplate.document_type == 'offer_letter' ? 'Offer Letter / Pay Plan' : 'Document') + ' updated successfully ' + (obj.sendEmail == 'yes' ? ' and an email notification is sent' : '') + '.', function() {
+					window.location.reload();
+				});
+			});
 		}
 
 		// Modify and Assign
@@ -622,9 +812,9 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				rows = '',
 				do_upload,
 				do_descpt;
-
-			//
+			// 
 			selectedTemplate = d;
+			//
 			modelFor = 'offer_letter';
 			//
 			do_upload = d.letter_type == 'uploaded' || d.letter_type == 'hybrid_document' ? true : false;
@@ -643,8 +833,10 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			if (do_descpt) rows += getSigners('js-modify-assign-offer-letter-signers');
 			rows += getVisibilty(do_descpt);
 			//
-			//rows += `<?php //echo $this->load->view('hr_documents_management/partials/approvers_section',true); 
-						?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowAOL", "containerIdx" => "jsApproverFlowContainerAOL", "addEmployeeIdx" => "jsAddDocumentApproversAOL", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAOL", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAOL", "approverNoteIdx" => "jsApproversNoteAOL", 'mainId' => 'testApproversAOL'] ,true); ?>`;
+
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/settings', ['is_confidential' =>  $document_info['is_confidential']]); ?>`;
+
 			rows += getEmailContent();
 			if (do_descpt) rows += getTags();
 			//
@@ -705,6 +897,31 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						closeOnSelect: false
 					});
 
+
+					//Approval flow
+					//
+					// Approver  Flow
+					var approverPrefill = {};
+			        var approverSection = approverSection = {
+			            appCheckboxIdx: '.jsHasApprovalFlowAOL',
+			            containerIdx: '.jsApproverFlowContainerAOL',
+			            addEmployeeIdx: '.jsAddDocumentApproversAOL',
+			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+			            approverNoteIdx: '.jsApproversNoteAOL',
+			            employeesList: <?= json_encode($employeesList); ?>,
+			            documentId: 0
+			        };
+			        //
+			        if (d.has_approval_flow && d.has_approval_flow == 1) {
+						approverPrefill.isChecked = true;
+		                approverPrefill.approverNote = d.document_approval_note;
+		                approverPrefill.approversList = d.document_approval_employees.split(','); 
+		                //
+		                approverSection.prefill = approverPrefill;
+					}
+			        //
+			        $("#jsModifyAndAssignOfferLetter").documentApprovalFlow(approverSection);
 					//
 					if (d.is_available_for_na) {
 						$('#jsRoles').select2('val', d.is_available_for_na.split(','));
@@ -721,13 +938,127 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					if (d.allowed_employees) {
 						$('#jsEmployees').select2('val', d.allowed_employees.split(','));
 					}
-					// }
+					//
+					$('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').select2();
+					//
+					if (d.is_confidential == 1) {
+						$('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked', true);
 
+					}
+					//
+					$('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked', d.is_confidential == "1" ? true : false);
+					// 
+					$('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').select2({
+						closeOnSelect: false
+					});
+					//
+					if (d.is_confidential == "1") {
+						$('#modify-assign-offer-letter-modal #confidentialSelectedEmployeesdiv').show();
+						if (d.confidential_employees) {
+							$('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
+						}
+					}
+					//
+					$('.jsSelectedEmployee').select2();
+					//
 					$('.modify-assign-offer-letter-modal-loader').fadeOut(300);
+					
 				}
 			);
 		}
 
+		//
+		function AssignOfferLetter(
+			e
+		) {
+			//
+			e.preventDefault();
+			//
+			var obj = {};
+			//
+			obj.documentTitle = selectedTemplate.letter_name;
+			obj.documentType = selectedTemplate.letter_type;
+			obj.managerList = $('#js-modify-assign-offer-letter-signers').val();
+			obj.isSignature = $('#js-modify-assign-document-signature').val();
+			obj.isDownload = $('#js-modify-assign-document-download').val();
+			obj.isAcknowledged = $('#js-modify-assign-document-acknowledgment').val();
+			obj.documentSid = selectedTemplate.sid;
+			obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
+			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
+			if (selectedTemplate.letter_type == 'generated' || selectedTemplate.letter_type == 'hybrid_document')
+				obj.desc = CKEDITOR.instances['js-modify-assign-offer-letter-description'].getData();
+			if (selectedTemplate.letter_type == 'uploaded' || selectedTemplate.letter_type == 'hybrid_document') {
+				obj.file = file.name === undefined ? selectedTemplate.uploaded_document_s3_name : file;
+				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
+			}
+			// Visibility
+			//obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
+			obj.roles = $('#jsRoles').val() || '';
+			obj.departments = $('#jsDepartments').val() || '';
+			obj.teams = $('#jsTeams').val() || '';
+			obj.employees = $('#jsEmployees').val() || '';
+
+			//Document Settings
+			obj.setting_is_confidential = $('#modify-assign-offer-letter-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
+			obj.confidentialSelectedEmployees = $('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').val();
+
+			//
+			// approver flow
+			var approverInfo = $('#jsModifyAndAssignOfferLetter').documentApprovalFlow('get');
+			$('#jsModifyAndAssignOfferLetter').documentApprovalFlow('clear');
+			//
+          	obj.has_approval_flow = "off";
+          	obj.approvers_note = "";
+          	obj.approvers_list = "";
+          	//
+			if (approverInfo.isChecked) {
+				obj.has_approval_flow = 'on';
+				obj.approvers_note = approverInfo.approverNote;
+				obj.approvers_list = approverInfo.approversList.toString();
+			}
+
+
+			//
+			var assigners = new Array();
+			//
+			$('.jsSelectedEmployee').each(function(i) {
+				var approver_id = $(this).val();
+				//
+				if (approver_id != 0) {
+					assigners.push(approver_id);
+				}
+				//
+			});
+			//
+			if (assigners.length > 0) {
+				obj.assigner = assigners;
+				obj.assigner_note = $('#assigner_note').val();
+			}
+			//
+			var post = new FormData();
+			//
+			$.each(megaOBJ, function(index, val) {
+				post.append(index, val);
+			});
+			$.each(obj, function(index, val) {
+				post.append(index, val);
+			});
+			//
+			$('.jsModifyModalLoader').fadeIn(300);
+			$.ajax({
+				url: "<?= base_url('hr_documents_management/assign_offer_letter_new'); ?>",
+				type: 'POST',
+				processData: false,
+				contentType: false,
+				data: post
+			}).done(function(resp) {
+				//
+				$('.jsModifyModalLoader').fadeOut(300);
+				alertify.alert('SUCCESS!', 'Offer Letter / Pay Plan assigned successfully ' + (obj.sendEmail == 'yes' ? ' and an email notification is sent' : '') + '.', function() {
+					window.location.reload();
+				});
+			});
+		}
 
 		// Visibility
 		function getVisibilty(is_generated) {
@@ -900,259 +1231,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			}
 			//
 			return rows;
-		}
-
-
-		//
-		function AssignedDocument(
-			e
-		) {
-			//
-			e.preventDefault();
-			//
-			var obj = {};
-			//
-			let file = $('#modify_assign_document').mFileUploader('get');
-			//
-			obj.reset = $('.js-modify-assigned-document-reset:checked').val();
-			//
-			obj.documentTitle = selectedTemplate.document_title;
-			obj.documentType = selectedTemplate.document_type == 'offer_letter' ? selectedTemplate.offer_letter_type : selectedTemplate.document_type;
-			obj.managerList = $('#js-modify-assigned-document-signers').val();
-			obj.isSignature = $('#js-modify-assign-document-signature').val();
-			obj.isDownload = $('#js-modify-assign-document-download').val();
-			obj.isAcknowledged = $('#js-modify-assign-document-acknowledgment').val();
-			obj.documentSid = selectedTemplate.sid;
-			// obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
-			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
-			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'generated')
-				obj.desc = CKEDITOR.instances['js-modify-assigned-document-description'].getData();
-			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document' || selectedTemplate.offer_letter_type == 'uploaded') {
-				obj.file = file.name === undefined ? selectedTemplate.document_s3_name : file;
-				obj.fileOrigName = selectedTemplate.document_original_name;
-			}
-			//
-			obj.isSignature = obj.isSignature === undefined ? 0 : obj.isSignature;
-			obj.managerList = obj.managerList === undefined ? null : obj.managerList;
-			obj.reset = obj.reset === undefined ? null : obj.reset;
-			//
-			obj.mainDocumentId = selectedTemplate.document_sid;
-			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
-			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
-			// Visibility
-			if (selectedTemplate.document_type != "offer_letter") {
-				obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
-				obj.assigner_note = $('#modify-assigned-document-modal #assigner_note').val();
-			}
-			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
-			obj.selected_roles = $('#jsRoles').val() || '';
-			obj.selected_departments = $('#jsDepartments').val() || '';
-			obj.selected_teams = $('#jsTeams').val() || '';
-			obj.selected_employees = $('#jsEmployees').val() || '';
-			obj.is_confidential = $('#modify-assigned-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
-			obj.confidentialSelectedEmployees = $('#modify-assigned-document-modal #confidentialSelectedEmployees').val() || '';
-			
-
-			//
-			var assigners = new Array();
-			//
-			$('#modify-assigned-document-modal .jsSelectedEmployee').each(function(i) {
-				var approver_id = $(this).val();
-				//
-				if (approver_id != 0) {
-					assigners.push(approver_id);
-				}
-				//
-			});
-			//
-			if (assigners.length > 0) {
-				obj.assigner = assigners;
-				
-			}
-			//
-			var post = new FormData();
-			//
-			$.each(megaOBJ, function(index, val) {
-				post.append(index, val);
-			});
-			$.each(obj, function(index, val) {
-				post.append(index, val);
-			});
-			//
-			$('.jsModifyModalLoader').fadeIn(300);
-			$.ajax({
-				url: "<?= base_url('hr_documents_management/update_assigned_document'); ?>",
-				type: 'POST',
-				processData: false,
-				contentType: false,
-				data: post
-			}).done(function(resp) {
-				//
-				$('.jsModifyModalLoader').fadeOut(300);
-				alertify.alert('SUCCESS!', '' + (selectedTemplate.document_type == 'offer_letter' ? 'Offer Letter / Pay Plan' : 'Document') + ' updated successfully ' + (obj.sendEmail == 'yes' ? ' and an email notification is sent' : '') + '.', function() {
-					window.location.reload();
-				});
-			});
-		}
-
-
-		//
-		function AssignDocument(
-			e
-		) {
-			//
-			e.preventDefault();
-			//
-			let file = $('#modify_assign_document').mFileUploader('get');
-			//
-			var obj = {};
-			//
-			obj.documentTitle = selectedTemplate.document_title;
-			obj.documentType = selectedTemplate.document_type;
-			obj.managerList = $('#js-modify-assign-document-signers').val();
-			obj.isSignature = $('#js-modify-assign-document-signature').val();
-			obj.isDownload = $('#js-modify-assign-document-download').val();
-			obj.isAcknowledged = $('#js-modify-assign-document-acknowledgment').val();
-			obj.specific = selectedTemplate.is_specific;
-			obj.documentSid = selectedTemplate.sid;
-			obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
-			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
-			obj.isRequired = $('.js-modify-assign-document-required:checked').val();
-			obj.isSignatureRequired = $('.js-modify-assign-document-signature-required:checked').val();
-			if (selectedTemplate.document_type == 'generated' || selectedTemplate.document_type == 'hybrid_document')
-				obj.desc = CKEDITOR.instances['js-modify-assign-document-description'].getData();
-			if (selectedTemplate.document_type == 'uploaded' || selectedTemplate.document_type == 'hybrid_document') {
-				obj.file = file.name === undefined ? selectedTemplate.uploaded_document_s3_name : file;
-				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
-			}
-			// Visibility
-			obj.visibleToPayroll = $('#jsVisibleToPayroll').prop('checked') ? 1 : 0;
-			obj.roles = $('#jsRoles').val() || '';
-			obj.departments = $('#jsDepartments').val() || '';
-			obj.teams = $('#jsTeams').val() || '';
-			obj.employees = $('#jsEmployees').val() || '';
-			obj.setting_is_confidential = $('#modify-assign-document-modal [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
-			obj.confidentialSelectedEmployees = '';
-			//
-			obj.confidentialSelectedEmployees = $('#modify-assign-document-modal #confidentialSelectedEmployees').val() || '';
-          	//
-			if (selectedTemplate.document_type != "offer_letter") {
-				obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
-				obj.assigner_note = $('#modify-assign-document-modal #assigner_note').val();
-			}
-			var assigners = new Array();
-			//
-			$('#modify-assign-document-modal .jsSelectedEmployee').each(function(i) {
-				var approver_id = $(this).val();
-				//
-				if (approver_id != 0) {
-					assigners.push(approver_id);
-				}
-				//
-			});
-			//
-			if (assigners.length > 0) {
-				obj.assigner = assigners;
-			}
-			//
-			var post = new FormData();
-			//
-			$.each(megaOBJ, function(index, val) {
-				post.append(index, val);
-			});
-			$.each(obj, function(index, val) {
-				post.append(index, val);
-			});
-			//
-			$('.jsModifyModalLoader').fadeIn(300);
-			$.ajax({
-				url: "<?= base_url('hr_documents_management/assign_document'); ?>",
-				type: 'POST',
-				processData: false,
-				contentType: false,
-				data: post
-			}).done(function(resp) {
-				//
-				$('.jsModifyModalLoader').fadeOut(300);
-				alertify.alert('SUCCESS!', 'Document assigned successfully ' + (obj.sendEmail == 'yes' ? ' and an email notification is sent' : '') + '.', function() {
-					//
-					if (refreshPage == 1) window.location.reload();
-					//
-					resetView(undefined, obj.documentSid, 'assign');
-				});
-			});
-		}
-
-		//
-		function AssignOfferLetter(
-			e
-		) {
-			//
-			e.preventDefault();
-			//
-			var obj = {};
-			//
-			obj.documentTitle = selectedTemplate.letter_name;
-			obj.documentType = selectedTemplate.letter_type;
-			obj.managerList = $('#js-modify-assign-offer-letter-signers').val();
-			obj.isSignature = $('#js-modify-assign-document-signature').val();
-			obj.isDownload = $('#js-modify-assign-document-download').val();
-			obj.isAcknowledged = $('#js-modify-assign-document-acknowledgment').val();
-			obj.documentSid = selectedTemplate.sid;
-			obj.visibleToPayroll = selectedTemplate.visible_to_payroll;
-			obj.sendEmail = $('.js-modify-assign-document-send-email:checked').val();
-			if (selectedTemplate.letter_type == 'generated' || selectedTemplate.letter_type == 'hybrid_document')
-				obj.desc = CKEDITOR.instances['js-modify-assign-offer-letter-description'].getData();
-			if (selectedTemplate.letter_type == 'uploaded' || selectedTemplate.letter_type == 'hybrid_document') {
-				obj.file = file.name === undefined ? selectedTemplate.uploaded_document_s3_name : file;
-				obj.fileOrigName = selectedTemplate.uploaded_document_original_name;
-			}
-			// Visibility
-			//obj.hasApprovalFlow = $('#jsHasApprovalFlow').prop('checked') ? 1 : 0;
-			obj.roles = $('#jsRoles').val() || '';
-			obj.departments = $('#jsDepartments').val() || '';
-			obj.teams = $('#jsTeams').val() || '';
-			obj.employees = $('#jsEmployees').val() || '';
-			//
-			var assigners = new Array();
-			//
-			$('.jsSelectedEmployee').each(function(i) {
-				var approver_id = $(this).val();
-				//
-				if (approver_id != 0) {
-					assigners.push(approver_id);
-				}
-				//
-			});
-			//
-			if (assigners.length > 0) {
-				obj.assigner = assigners;
-				obj.assigner_note = $('#assigner_note').val();
-			}
-			//
-			var post = new FormData();
-			//
-			$.each(megaOBJ, function(index, val) {
-				post.append(index, val);
-			});
-			$.each(obj, function(index, val) {
-				post.append(index, val);
-			});
-			//
-			$('.jsModifyModalLoader').fadeIn(300);
-			$.ajax({
-				url: "<?= base_url('hr_documents_management/assign_offer_letter_new'); ?>",
-				type: 'POST',
-				processData: false,
-				contentType: false,
-				data: post
-			}).done(function(resp) {
-				//
-				$('.jsModifyModalLoader').fadeOut(300);
-				alertify.alert('SUCCESS!', 'Offer Letter / Pay Plan assigned successfully ' + (obj.sendEmail == 'yes' ? ' and an email notification is sent' : '') + '.', function() {
-					window.location.reload();
-				});
-			});
 		}
 
 		//
@@ -1513,16 +1591,20 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 					});
 
 					//
-					departmentList.map(function(v) {
-						//
-						departmentRows += '<option value="' + (v.sid) + '">' + (v.name) + '</option>';
-					});
+					if (departmentList) {
+						departmentList.map(function(v) {
+							//
+							departmentRows += '<option value="' + (v.sid) + '">' + (v.name) + '</option>';
+						});
+					}
 
 					//
-					teamList.map(function(v) {
-						//
-						teamsRows += '<option value="' + (v.sid) + '">' + (v.name) + '</option>';
-					});
+					if (teamList) {
+						teamList.map(function(v) {
+							//
+							teamsRows += '<option value="' + (v.sid) + '">' + (v.name) + '</option>';
+						});
+					}
 
 					//
 					employeeList.map(function(v) {
@@ -1557,9 +1639,42 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						.select2({
 							closeOnSelect: false
 						});
+
+					$('#js-popup  #confidentialSelectedEmployeesdiv').hide();
+					$("#js-popup #confidentialSelectedEmployees").select2();
+
+					$("#jsOfferLetterModal").documentApprovalFlow({
+			            appCheckboxIdx: '.jsHasApprovalFlowModal',
+			            containerIdx: '.jsApproverFlowContainerModal',
+			            addEmployeeIdx: '.jsAddDocumentApproversModal',
+			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxModal',
+			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxModal',
+			            approverNoteIdx: '.jsApproversNoteModal',
+			            employeesList: <?= json_encode($employeesList); ?>,
+			            documentId: 0
+			        });
 				}
 			);
 			//
+
+			//--- Automatically assign after Days:
+
+			$('input[name="assign-in-days"]').val(0);
+			$('input[name="assign-in-months"]').val(0);
+			$('.js-type').hide();
+			$('input[value="months"]').prop('checked', false);
+			$('input[value="days"]').prop('checked', true);
+			$('.js-type-days').show();
+
+			//
+			$('input[name="assign_type"]').click(function() {
+				$('.js-type').hide(0).val(0);
+				$('.js-type-' + ($(this).val()) + '').show(0);
+			});
+			//---------------------
+
+
+
 			$('.js-template-type[value="uploaded"]').click();
 			$('.js-template-send-email[value="no"]').click();
 			//
@@ -1572,11 +1687,13 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 		//
 		function StartOfferLetterEditProcess(e) {
 			//
+
 			e.preventDefault();
 			//
 			var d = getOfferLetter($(this).data('id'));
 			var o = getOfferLetterBody('edit');
 			//
+
 			currentOfferLetter = d;
 			modelFor = 'offer_letter';
 			//
@@ -1675,6 +1792,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 		function getOfferLetterBody(
 			type
 		) {
+
 			//
 			var obj = {
 				title: '',
@@ -1738,6 +1856,14 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				sendEmail: $('.js-template-send-email:checked').val(),
 				isRequired: $('.js-template-required:checked').val(),
 				isSignatureRequired: $('.js-template-signature-required:checked').val(),
+				setting_is_confidential: $('#js-popup [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off',
+				confidentialSelectedEmployees: $('#js-popup #confidentialSelectedEmployees').val(),
+
+				//Automatically assign after Days
+				assign_in_months: $('#js-popup [name="assign-in-months"]').val(),
+				assign_in_days: $('#js-popup [name="assign-in-days"]').val(),
+				assign_type: $('#js-popup [name="assign_type"]:checked').val(),
+
 				assign: $(this).data('value'),
 				fromTemplate: false,
 				// Visibility
@@ -1745,22 +1871,19 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				roles: $('#js-roles-offer-letter-add').val(),
 				departments: $('#js-department-offer-letter-add').val(),
 				teams: $('#js-teams-offer-letter-add').val(),
-				employees: $('#js-employees-offer-letter-add').val()
+				employees: $('#js-employees-offer-letter-add').val(),
+				// Approval flow
+				has_approval_flow: 'off',
+				approvers_note: '',
+				approvers_list: ''
 			};
-			//
-			$('.jsSelectedEmployee').each(function(i, obj) {
-				var approver_id = $(this).val();
-				//
-				if (approver_id != 0) {
-					assigners.push(approver_id);
-				}
-				//
-			});
-			//
-			if (assigners.length > 0) {
-				o.assigner = assigners;
-				o.assigner_note = $('#assigner_note').val();
-			}
+			var approverInfo = $("#jsOfferLetterModal").documentApprovalFlow("get");
+	        //
+	        if (approverInfo.isChecked === true) {
+	        	o.has_approval_flow = 'on';
+				o.approvers_note = approverInfo.approverNote;
+				o.approvers_list = approverInfo.approversList.toString();
+	        }
 			//
 			if (o.type == 'template') {
 				o.type = selectedTemplate.letter_type;
@@ -1944,7 +2067,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 		//
 		function UseTemplate(e) {
 			var l = getOfferLetter($(this).val());
-			if (Object.keys(l).length !== 0) console.log(l);
+			if (Object.keys(l).length !== 0) 
 			//
 			selectedTemplate = l;
 			$('#remove_image').hide(0);
@@ -1979,6 +2102,66 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			$('#js-template-sort-order').val(l.sort_order);
 			//
 			if (l.signers !== null) $('#js-template-signers').select2('val', l.signers.split(','));
+
+			$('#js-popup [name="setting_is_confidential"]').prop('checked', l.is_confidential == "1" ? true : false);
+			$('#js-popup #confidentialSelectedEmployeesdiv').hide();
+			$('#js-popup #confidentialSelectedEmployees').select2({
+				closeOnSelect: false
+			});
+			//
+			if (l.is_confidential == "1") {
+				$('#js-popup #confidentialSelectedEmployeesdiv').show();
+				if (l.confidential_employees) {
+					$('#js-popup #confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
+				}
+			}
+			
+
+			var approverPrefill = {};
+            var approverSection = {
+                    appCheckboxIdx: '.jsHasApprovalFlowModal',
+                    containerIdx: '.jsApproverFlowContainerModal',
+                    addEmployeeIdx: '.jsAddDocumentApproversModal',
+                    intEmployeeBoxIdx: '.jsEmployeesadditionalBoxModal',
+                    extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxModal',
+                    approverNoteIdx: '.jsApproversNoteModal',
+                    employeesList: <?= json_encode($employeesList); ?>,
+                    documentId: 0
+                };
+
+
+			// Approval flow 
+			if (l.has_approval_flow == 1) {
+				approverPrefill.isChecked = true;
+                approverPrefill.approverNote = l.document_approval_note;
+                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                //
+                approverSection.prefill = approverPrefill;
+			} else {
+				approverPrefill.isChecked = false;
+                approverPrefill.approverNote = "";
+                approverPrefill.approversList = ''; 
+                //
+                approverSection.prefill = approverPrefill;
+			}
+			//
+			$("#jsOfferLetterModal").documentApprovalFlow(approverSection);
+			//---------Automatically assign after Days
+			$('input[name="assign-in-days"]').val(0);
+			$('input[name="assign-in-months"]').val(0);
+			$('.js-type').hide();
+			$('input[value="days"]').prop('checked', false);
+			$('input[value="months"]').prop('checked', false);
+			$('.js-type-' + l.automatic_assign_type).show();
+			$('input[value="' + l.automatic_assign_type + '"').prop('checked', true);
+			$('.js-type-' + l.automatic_assign_type).find('input').val(l.automatic_assign_in);
+			//
+			$('input[name="assign_type"]').click(function() {
+				$('.js-type').hide(0).val(0);
+				$('.js-type-' + ($(this).val()) + '').show(0);
+			});
+			//---------------------
+
 		}
 
 		//

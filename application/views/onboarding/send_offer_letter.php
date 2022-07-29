@@ -1,14 +1,14 @@
 <?php
-    $currentOfferLetter = [];
-    //
-    if(isset($assigned_offer_letter_sid)){
-        foreach($offer_letters as $l){
-            if($l['sid'] == $assigned_offer_letter_sid){
-                $currentOfferLetter = $l;
-                break;
-            }
+$currentOfferLetter = [];
+//
+if (isset($assigned_offer_letter_sid)) {
+    foreach ($offer_letters as $l) {
+        if ($l['sid'] == $assigned_offer_letter_sid) {
+            $currentOfferLetter = $l;
+            break;
         }
     }
+}
 ?>
 <div class="main-content">
     <div class="container-fluid">
@@ -31,21 +31,21 @@
                                         <h2><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></h2>
                                         <div class="start-rating">
                                             <?php if ($user_type == 'applicant') { ?>
-                                                <input readonly="readonly" id="input-21b" value="<?php echo isset($user_average_rating) ? $user_average_rating : 0; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2  data-size="xs" />
+                                                <input readonly="readonly" id="input-21b" value="<?php echo isset($user_average_rating) ? $user_average_rating : 0; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs" />
                                             <?php } else if ($user_type == 'employee') { ?>
                                                 <?php if ($this->session->userdata('logged_in')['employer_detail']['access_level_plus']) { ?>
                                                     <a class="btn-employee-status btn-warning" href="<?php echo base_url('employee_status/' . $employer['sid']); ?>">Employee Status</a>
                                                 <?php } ?>
-                                            <?php } ?>     
+                                            <?php } ?>
                                         </div>
-                                        <?php if(isset($employee_terminate_status) && !empty($employee_terminate_status)){
-                                            echo '<h4>'.$employee_terminate_status.'</h4>';
+                                        <?php if (isset($employee_terminate_status) && !empty($employee_terminate_status)) {
+                                            echo '<h4>' . $employee_terminate_status . '</h4>';
                                         } else if (isset($employer['active'])) { ?>
                                             <h4>
                                                 <?php if ($employer['active']) { ?>
                                                     Active Employee
                                                 <?php } else { ?>
-                                                    <?php if($employer['archived']!='1') { ?>
+                                                    <?php if ($employer['archived'] != '1') { ?>
                                                         Onboarding or Deactivated Employee
                                                     <?php } else { ?>
                                                         Archived Employee
@@ -54,7 +54,7 @@
                                             </h4>
                                         <?php } else { ?>
                                             <span> <?php echo 'Applicant'; ?></span>
-                                        <?php } ?>    
+                                        <?php } ?>
                                     </div>
                                 </article>
                             </div>
@@ -83,12 +83,15 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div id="step_onboarding">
-                                <div id="getting_started" class="getting-started">                               
+                                <div id="getting_started" class="getting-started">
                                     <form id="form_offer_letter" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                         <input type="hidden" id="perform_action" name="perform_action" value="" />
                                         <input type="hidden" id="selected_letter_type" name="letter_type" value="" />
                                         <input type="hidden" id="selected_document_original_name" name="document_original_name" value="">
                                         <input type="hidden" id="selected_document_s3_name" name="document_s3_name" value="">
+                                        <!-- <input type="hidden" id="has_approval_flow" name="has_approval_flow" value="0">
+                                        <input type="hidden" id="approval_note" name="approval_note" value="">
+                                        <input type="hidden" id="approvers" name="approvers" value=""> -->
                                         <div id="offer_letter" class="offer-letter">
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -114,13 +117,13 @@
                                                         <input type="hidden" id="letter_body_<?php echo $offer_letter['sid']; ?>" value="<?php echo htmlentities(html_entity_decode($offer_letter['letter_body'])); ?>" />
                                                     <?php } ?>
                                                     <div class="form-group">
-                                                        <label>Offer Letter  / Pay Plan</label>
+                                                        <label>Offer Letter / Pay Plan</label>
                                                         <select id="offer_letter_select" name="offer_letter_select">
                                                             <option value="">Please Select</option>
-                                                            <?php foreach ($offer_letters as $offer_letter) { 
-                                                                    $offer_letter['letter_body'] = html_entity_decode($offer_letter['letter_body']);
-                                                                    $allOfferLetters[] = $offer_letter;
-                                                                ?>
+                                                            <?php foreach ($offer_letters as $offer_letter) {
+                                                                $offer_letter['letter_body'] = html_entity_decode($offer_letter['letter_body']);
+                                                                $allOfferLetters[] = $offer_letter;
+                                                            ?>
                                                                 <option value="<?php echo $offer_letter['sid']; ?>"><?php echo $offer_letter['letter_name']; ?> ( <?php echo $offer_letter['letter_type']; ?> )</option>
                                                             <?php } ?>
                                                         </select>
@@ -146,13 +149,11 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>        
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>        
-                                            </div>  
-                                            
-                                            
+                                                </div>
+                                            </div>
 
                                             <div id="generated_offer_letter" style="display: none">
                                                 <div class="row">
@@ -165,20 +166,20 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="generated_offer_letter" style="display: none">
                                                 <div class="row">
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <div class="form-group">
                                                             <label>Authorized Management Signers </label>
                                                             <select name="js-signers[]" id="js-signers" multiple="">
-                                                                <?php 
-                                                                    if(sizeof($managers_list)){
-                                                                        foreach ($managers_list as $key => $value) {
-                                                                            echo '<option value="'.( $value['sid'] ).'" '.( in_array($value['sid'], empty($currentOfferLetter['signers']) ? [] :  explode(',', $currentOfferLetter['signers'])) ? 'selected' : '' ).'>'.( remakeEmployeeName($value) ).'</option>';
-                                                                        }
+                                                                <?php
+                                                                if (sizeof($managers_list)) {
+                                                                    foreach ($managers_list as $key => $value) {
+                                                                        echo '<option value="' . ($value['sid']) . '" ' . (in_array($value['sid'], empty($currentOfferLetter['signers']) ? [] :  explode(',', $currentOfferLetter['signers'])) ? 'selected' : '') . '>' . (remakeEmployeeName($value)) . '</option>';
                                                                     }
-                                                                    ?>
+                                                                }
+                                                                ?>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -191,83 +192,99 @@
                                                     <div class="panel panel-default">
                                                         <div class="panel-heading">
                                                             <h5>
-                                                                <strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true"  data-target="visibilty"></i>
-                                                                <p class="jsHintBody" data-hint="visibilty"><br /><?=getUserHint('visibility_hint');?></p>
+                                                                <strong>Visibility</strong>&nbsp;<i class="fa fa-question-circle-o csClickable jsHintBtn" aria-hidden="true" data-target="visibilty"></i>
+                                                                <p class="jsHintBody" data-hint="visibilty"><br /><?= getUserHint('visibility_hint'); ?></p>
                                                             </h5>
                                                         </div>
                                                         <div class="panel-body">
                                                             <!-- Payroll -->
                                                             <label class="control control--checkbox">
                                                                 Visible To Payroll
-                                                                <input type="checkbox" name="visible_to_payroll" class="jsVisibleToPayroll" value="1"/>
+                                                                <input type="checkbox" name="visible_to_payroll" class="jsVisibleToPayroll" value="1" />
                                                                 <div class="control__indicator"></div>
                                                             </label>
                                                             <hr />
                                                             <!-- Roles -->
                                                             <label>Roles</label>
                                                             <select name="roles[]" id="jsRoles" multiple>
-                                                            <?php
+                                                                <?php
                                                                 //
-                                                                foreach(getRoles() as $k => $v){
-                                                                    ?>
-                                                                    <option value="<?=$k;?>"><?=$v;?></option>
-                                                                    <?php
+                                                                foreach (getRoles() as $k => $v) {
+                                                                ?>
+                                                                    <option value="<?= $k; ?>"><?= $v; ?></option>
+                                                                <?php
                                                                 }
-                                                            ?>
+                                                                ?>
                                                             </select>
                                                             <br />
                                                             <br />
                                                             <!-- Departments -->
                                                             <label>Departments</label>
                                                             <select name="departments[]" id="jsDepartment" multiple>
-                                                            <?php 
+                                                                <?php
                                                                 //
-                                                                if(!empty($departments)){
-                                                                    foreach($departments as $v){
-                                                                        ?>
-                                                                        <option value="<?=$v['sid'];?>"><?=$v['name'];?></option>
-                                                                        <?php
+                                                                if (!empty($departments)) {
+                                                                    foreach ($departments as $v) {
+                                                                ?>
+                                                                        <option value="<?= $v['sid']; ?>"><?= $v['name']; ?></option>
+                                                                <?php
                                                                     }
                                                                 }
-                                                            ?>
+                                                                ?>
                                                             </select>
                                                             <br />
                                                             <br />
                                                             <!-- Teams -->
                                                             <label>Teams</label>
                                                             <select name="teams[]" id="jsTeams" multiple>
-                                                            <?php 
+                                                                <?php
                                                                 //
-                                                                if(!empty($teams)){
-                                                                    foreach($teams as $v){
-                                                                        ?>
-                                                                        <option value="<?=$v['sid'];?>"><?=$v['name'];?></option>
-                                                                        <?php
+                                                                if (!empty($teams)) {
+                                                                    foreach ($teams as $v) {
+                                                                ?>
+                                                                        <option value="<?= $v['sid']; ?>"><?= $v['name']; ?></option>
+                                                                <?php
                                                                     }
                                                                 }
-                                                            ?>
+                                                                ?>
                                                             </select>
                                                             <br />
                                                             <br />
                                                             <!-- Employees -->
                                                             <label>Employees</label>
                                                             <select name="employees[]" id="jsEmployees" multiple>
-                                                            <?php 
+                                                                <?php
                                                                 //
-                                                                if(!empty($managers_list)){
-                                                                    foreach($managers_list as $v){
-                                                                        ?>
-                                                                        <option value="<?=$v['sid'];?>"><?=remakeEmployeeName($v);?></option>
-                                                                        <?php
+                                                                if (!empty($managers_list)) {
+                                                                    foreach ($managers_list as $v) {
+                                                                ?>
+                                                                        <option value="<?= $v['sid']; ?>"><?= remakeEmployeeName($v); ?></option>
+                                                                <?php
                                                                     }
                                                                 }
-                                                            ?>
+                                                                ?>
                                                             </select>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                                
+                                            <br>
+                                            <?php //$this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                            <?php $this->load->view(
+                                                'hr_documents_management/partials/test_approvers_section', 
+                                                [
+                                                    "appCheckboxIdx" => "jsHasApprovalFlowPage", 
+                                                    "containerIdx" => "jsApproverFlowContainerPage", 
+                                                    "addEmployeeIdx" => "jsAddDocumentApproversPage", 
+                                                    "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxPage", 
+                                                    "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxPage", 
+                                                    "approverNoteIdx" => "jsApproversNotePage"
+                                                ]
+                                            ); ?>
+                                            <br>
+
+                                            <?php $this->load->view('hr_documents_management/partials/settings', ['is_confidential' =>  $document_info['is_confidential']]); ?>
+
                                             <div class="generated_offer_letter" style="display: none">
 
                                                 <div class="row">
@@ -425,19 +442,17 @@
                                                 </div>
                                             </div>
 
-                                            
-                                            
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 text-right" style="top: 0;">
                                                     <div class="form-group">
                                                         <?php $offer_letter_status = count_offer_letter($user_type, $user_info['sid']); ?>
-                                                        <?php if(empty($user_assigned_offer_letter_sid)){ ?>
+                                                        <?php if (empty($user_assigned_offer_letter_sid)) { ?>
                                                             <a href="javascript:;" class="btn btn-success assign-offer-letter">Save</a>
                                                             <a href="javascript:;" class="btn btn-success assign-offer-letter">Save And Send Email</a>
-                                                        <?php } else if($user_assigned_offer_letter_sid > 0 && ($offer_letter_status == 'sent' || $offer_letter_status == 'sign')){
-                                                                $key = $user_type == 'applicant' ? base_url('onboarding/my_offer_letter').'/'.$user_info['verification_key'] : base_url('onboarding/my_offer_letter').'/'.$user_info['verification_key'] . '/e';
-                                                            ?>
-                                                            <a href="<?php echo $key;?>" class="btn btn-primary" target="_blank">Preview Offer Letter / Pay Plan</a>
+                                                        <?php } else if ($user_assigned_offer_letter_sid > 0 && ($offer_letter_status == 'sent' || $offer_letter_status == 'sign')) {
+                                                            $key = $user_type == 'applicant' ? base_url('onboarding/my_offer_letter') . '/' . $user_info['verification_key'] : base_url('onboarding/my_offer_letter') . '/' . $user_info['verification_key'] . '/e';
+                                                        ?>
+                                                            <a href="<?php echo $key; ?>" class="btn btn-primary" target="_blank">Preview Offer Letter / Pay Plan</a>
                                                             <a href="javascript:;" onclick="revoke_offer_letter(<?php echo $user_assigned_offer_letter_sid; ?>)" class="btn btn-danger">Revoke</a>
                                                             <a href="javascript:;" class="btn btn-warning assign-offer-letter">Reassign</a>
                                                             <a href="javascript:;" class="btn btn-warning assign-offer-letter">Reassign and Send Email</a>
@@ -446,15 +461,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <?php if ($user_type == 'applicant') { ?>
                     <?php $this->load->view('manage_employer/application_tracking_system/profile_right_menu_applicant'); ?>
-                <?php } elseif($user_type == 'employee'){
+                <?php } elseif ($user_type == 'employee') {
                     $this->load->view('manage_employer/employee_management/profile_right_menu_employee_new');
                 } ?>
             </div>
@@ -466,66 +481,117 @@
 <?php $this->load->view('iframeLoader'); ?>
 <?php $this->load->view('hr_documents_management/hybrid/scripts'); ?>
 <?php $this->load->view('hr_documents_management/scripts/index', ['offerLetters' => $allOfferLetters]); ?>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
 <!-- Main End -->
 <script type="text/javascript">
-    $(document).ready(function () {
-
-         //
+    $(document).ready(function() {
+        //
         $('#offer_letter_select').select2();
         //
-        var 
-            assignedOfferLetter = <?=json_encode($assignedOfferLetter);?>,
-            offerLetters = <?=json_encode($allOfferLetters);?>,
-            assignedSid = <?=$assigned_offer_letter_sid?>;
+        var
+            assignedOfferLetter = <?= json_encode($assignedOfferLetter); ?>,
+            offerLetters = <?= json_encode($allOfferLetters); ?>,
+            assignedSid = <?= $assigned_offer_letter_sid ?>;
         //
-        setTimeout(function(){
+        setTimeout(function() {
             $('#offer_letter_select').select2('val', assignedSid);
         }, 2000);
 
         //
         function loadOfferLetterView(
             sid
-        ){
-            var 
-            l = [],
-            i = 0,
-            il = offerLetters.length;
+        ) {
+            var
+                l = [],
+                i = 0,
+                approverPrefill = {},
+                approverSection = {
+                    appCheckboxIdx: '.jsHasApprovalFlowPage',
+                    containerIdx: '.jsApproverFlowContainerPage',
+                    addEmployeeIdx: '.jsAddDocumentApproversPage',
+                    intEmployeeBoxIdx: '.jsEmployeesadditionalBoxPage',
+                    extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxPage',
+                    approverNoteIdx: '.jsApproversNotePage',
+                    employeesList: <?= json_encode($employeesList); ?>,
+                    documentId: 0
+                },
+                il = offerLetters.length;
             for (i; i < il; i++) {
-                if(offerLetters[i]['sid'] == sid) l = offerLetters[i];
+                if (offerLetters[i]['sid'] == sid) l = offerLetters[i];
             }
+
             //
-            if( l.length === 0 ) return;
+            if (l.length === 0) return;
+
             //
-            if(sid == assignedSid){
+            if (sid == assignedSid) {
                 l = assignedOfferLetter;
                 l.letter_type = l.offer_letter_type;
                 l.letter_body = l.document_description;
                 l.uploaded_document_s3_name = l.document_s3_name;
                 l.uploaded_document_original_name = l.document_original_name;
+                approverSection.documentId = l.sid
+            } 
+            //
+            if (l.has_approval_flow == 1) {
+                approverPrefill.isChecked = true;
+                approverPrefill.approverNote = l.document_approval_note;
+                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                //
+                approverSection.prefill = approverPrefill;
+            } else {
+                approverPrefill.isChecked = false;
+                approverPrefill.approverNote = "";
+                approverPrefill.approversList = ""; 
+                //
+                approverSection.prefill = approverPrefill;
             }
-            console.log(l);
+            //
+            $("#jsOfferLetterPage").documentApprovalFlow(approverSection);
             //
             $('.jsVisibleToPayroll').prop('checked', l.visible_to_payroll);
-            $('#jsRoles').select2('val', l.allowed_roles && l.allowed_roles != 'null' ? l.allowed_roles.split(',') :  null);
-            $('#jsDepartment').select2('val', l.allowed_departments && l.allowed_departments != 'null' ? l.allowed_departments.split(',') :  null);
-            $('#jsTeams').select2('val', l.allowed_teams && l.allowed_teams != 'null' ? l.allowed_teams.split(',') :  null);
-            $('#jsEmployees').select2('val', l.allowed_employees && l.allowed_employees != 'null' ? l.allowed_employees.split(',') :  null);
+            $('#jsRoles').select2('val', l.allowed_roles && l.allowed_roles != 'null' ? l.allowed_roles.split(',') : null);
+            $('#jsDepartment').select2('val', l.allowed_departments && l.allowed_departments != 'null' ? l.allowed_departments.split(',') : null);
+            $('#jsTeams').select2('val', l.allowed_teams && l.allowed_teams != 'null' ? l.allowed_teams.split(',') : null);
+            $('#jsEmployees').select2('val', l.allowed_employees && l.allowed_employees != 'null' ? l.allowed_employees.split(',') : null);
             //
+            //Document Settings
+            //   $('#confidentialSelectedEmployees').select2();
+
+            $('[name="setting_is_confidential"]').prop('checked', l.is_confidential == "1" ? true : false);
+            $('#confidentialSelectedEmployeesdiv').show();
+            $('#confidentialSelectedEmployees').select2({
+                closeOnSelect: false
+            });
+            //
+            if (l.confidential_employees) {
+                $('#confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
+            }
+            
             $('#js-signers').select2({
                 closeOnSelect: false
             });
-            $('#js-signers').select2('val', l.signers != null ? l.signers.split(',') : null);
+            //
+            var authManagers = null;
+            //
+            if (l.managersList) {
+                authManagers = l.managersList != null ? l.managersList.split(',') : null;
+            } else {
+                authManagers = l.signers != null ? l.signers.split(',') : null;
+            }
+
+            $('#js-signers').select2('val', authManagers);
 
             $('#selected_letter_type').val(l.letter_type);
             //
-            var f = getUploadedFileAPIUrl( l.uploaded_document_s3_name, 'original' );
+            var f = getUploadedFileAPIUrl(l.uploaded_document_s3_name, 'original');
             //
             if (l.letter_type == 'hybrid_document') {
                 $("#uploaded_offer_letter").show();
                 $("#generated_offer_letter").show();
                 $(".generated_offer_letter").show();
                 //
-                $("#uploaded_offer_letter_iframe").html( f.getHTML() );
+                $("#uploaded_offer_letter_iframe").html(f.getHTML());
                 $('#selected_document_s3_name').val(l.uploaded_document_s3_name);
                 $('#selected_document_original_name').val(l.uploaded_document_original_name);
                 loadIframe(
@@ -548,32 +614,35 @@
                 $("#generated_offer_letter").hide();
                 $(".generated_offer_letter").hide();
                 //
-                $("#uploaded_offer_letter_iframe").html( f.getHTML() );
+                $("#uploaded_offer_letter_iframe").html(f.getHTML());
                 $('#selected_document_s3_name').val(l.uploaded_document_s3_name);
                 $('#selected_document_original_name').val(l.uploaded_document_original_name);
+
+
                 loadIframe(
                     f.URL,
                     f.Target
                 );
+
                 //
                 $('#letter_body').val('');
             }
         }
 
 
-        $('#offer_letter_select').on('change', function () {
-            loadOfferLetterView( $(this).val() );
+        $('#offer_letter_select').on('change', function() {
+            loadOfferLetterView($(this).val());
             return;
-            var selected_offer_letter_type      = $(this).find(':selected').attr('data-olt');
-            var selected_offer_letter_s3_url    = $(this).find(':selected').attr('data-s3-url');
-            var selected_offer_letter_name      = $(this).find(':selected').attr('data-file-name');
+            var selected_offer_letter_type = $(this).find(':selected').attr('data-olt');
+            var selected_offer_letter_s3_url = $(this).find(':selected').attr('data-s3-url');
+            var selected_offer_letter_name = $(this).find(':selected').attr('data-file-name');
             $('#selected_letter_type').val(selected_offer_letter_type);
 
             if (selected_offer_letter_type == 'generated') {
                 $("#generated_offer_letter").show();
                 $(".generated_offer_letter").show();
                 $("#uploaded_offer_letter").hide();
-                
+
                 var body = $('#letter_body_' + selected).val();
                 CKEDITOR.instances['letter_body'].setData(body);
                 $('#selected_document_s3_name').val('');
@@ -602,35 +671,43 @@
         //     $('#selected_letter_type').val(offer_letter_type);
         //     $("#uploaded_offer_letter").show();
         // }
-         
-    }); 
 
-    $('.assign-offer-letter').on('click', function () {
+    });
+
+    $('.assign-offer-letter').on('click', function() {
+        // var approverInfo = $("#jsOfferLetterPage").documentApprovalFlow("get");
+        // //
+        // if (approverInfo.isChecked === true) {
+        //     $('#has_approval_flow').val(1);
+        //     $('#approval_note').val(approverInfo.approverNote);
+        //     $('#approvers').val(approverInfo.approversList.toString());
+        // }
+        //
         var btn_type = $(this).text();
         if (btn_type == 'Save' || btn_type == 'Reassign') {
             $('#perform_action').val('save_offer_letter');
         } else if (btn_type == 'Save And Send Email' || btn_type == 'Reassign and Send Email') {
             $('#perform_action').val('save_and_send_offer_letter');
         }
-        
+
         var letter_body = CKEDITOR.instances['letter_body'].getData();
         var letter_type = $('#selected_letter_type').val();
-        
+
         if (letter_type == 'uploaded') {
             if (btn_type == 'Reassign' || btn_type == 'Reassign and Send Email') {
                 alertify.confirm(
                     'Are you sure?',
                     'Are you sure you want to Reassign the Offer Letter? <br> <strong>Note:</strong>This action will revoke any assigned Offer letter / Pay plan.',
-                    function () {
+                    function() {
                         $('#form_offer_letter').submit();
                     },
-                    function () {
+                    function() {
                         alertify.alert('Reassign Process Canceled!');
                     }
-                );  
+                );
             } else {
                 $('#form_offer_letter').submit();
-            }    
+            }
         } else {
             if (letter_body == '') {
                 $('#title_error').html('');
@@ -641,62 +718,73 @@
                     alertify.confirm(
                         'Are you sure?',
                         'Are you sure you want to Reassign the Offer Letter? <br> <strong>Note:</strong>This action will revoke any assigned Offer letter / Pay plan.',
-                        function () {
+                        function() {
                             $('#form_offer_letter').submit();
                         },
-                        function () {
+                        function() {
                             alertify.alert('Reassign Process Canceled!');
                         }
-                    );  
+                    );
                 } else {
                     $('#form_offer_letter').submit();
                 }
             }
         }
-        
-    });   
 
-    function revoke_offer_letter (offer_letter_sid) {
+    });
+
+    function revoke_offer_letter(offer_letter_sid) {
         alertify.confirm(
             'Are you sure?',
             'Are you sure you want to Revoke the Offer Letter / Pay Plan?',
-            function () {
-                var myurl = "<?php echo base_url() ?>onboarding/revoke_offer_letter/"+offer_letter_sid;
+            function() {
+                var myurl = "<?php echo base_url() ?>onboarding/revoke_offer_letter/" + offer_letter_sid;
 
                 $.ajax({
                     type: "GET",
                     url: myurl,
-                    async : false,
-                    success: function (data) {
+                    async: false,
+                    success: function(data) {
                         alertify.alert('Offer Letter / Pay Plan Revoke Successfully!');
                         location.reload();
                     },
-                    error: function (data) {
+                    error: function(data) {
 
                     }
                 });
             },
-            function () {
+            function() {
                 alertify.error('Canceled!');
             });
     };
-    
 
 
-    $(function(){
+    $('#confidentialSelectedEmployees').select2();
+
+
+    $(function() {
         // 
-        $('#jsRoles').select2({closeOnSelect: false});
-        $('#jsDepartment').select2({closeOnSelect: false});
-        $('#jsTeams').select2({closeOnSelect: false});
-        $('#jsEmployees').select2({closeOnSelect: false});
+        $('#jsRoles').select2({
+            closeOnSelect: false
+        });
+        $('#jsDepartment').select2({
+            closeOnSelect: false
+        });
+        $('#jsTeams').select2({
+            closeOnSelect: false
+        });
+        $('#jsEmployees').select2({
+            closeOnSelect: false
+        });
     });
 </script>
 <style>
-    .select2-container--default .select2-selection--single{
+    .select2-container--default .select2-selection--single {
         background-color: #fff !important;
         border: 1px solid #aaa !important;
     }
-    .select2-container .select2-selection--single{
+
+    .select2-container .select2-selection--single {
 
         height: 38px !important;
     }

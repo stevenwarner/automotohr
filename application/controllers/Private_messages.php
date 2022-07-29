@@ -980,7 +980,7 @@ class Private_messages extends Public_Controller
                 $this->message_model->save_message($message_data);
                 $employerData = $this->message_model->user_data_by_id($employer_id);
                 $employer_name = $employerData['username'];
-                $from = $employerData['email'];
+                // $from = $employerData['email'];
                 //getting email header and footer
                 $message_hf = (message_header_footer($company_detail['sid'], $company_detail['CompanyName']));
                 //send email
@@ -1001,6 +1001,17 @@ class Private_messages extends Public_Controller
                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                     . $secret_key . '</div>';
                 sendMail($from, $to, $subject, $body, $company_detail['CompanyName'], REPLY_TO);
+
+                $emailData = array(
+                                'date' => date('Y-m-d H:i:s'),
+                                'subject' => $subject,
+                                'email' => $to,
+                                'message' => $body,
+                                'username' => $employer_name,
+                                'temp_id' => 'nil'
+                            );
+                save_email_log_common($emailData);
+
                 $this->session->set_flashdata('message', 'Success! Messsage sent successfully!');
                 redirect('private_messages', 'refresh');
             }

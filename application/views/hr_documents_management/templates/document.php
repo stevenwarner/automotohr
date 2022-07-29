@@ -364,20 +364,11 @@
                                                 </div>
                                                 <br />
 
-                                                <!-- Payroll Check -->
-                                                <div class="row">
-                                                    <div class="col-xs-6">
-                                                        <label class="control control--checkbox font-normal">
-                                                            Visible To Payroll Plus
-                                                            <input class="disable_doc_checkbox js-visible-pp" name="visible_to_payroll" type="checkbox" value="1" <?php echo isset($document_info['document_description']) && $document_info['visible_to_payroll'] == 1 ? 'checked="checked"' : ''; ?> />
-                                                            <div class="control__indicator"></div>
-                                                        </label>
-                                                    </div>
-                                                </div>
+                                                <!-- Visibility Section -->
                                                 <br />
                                                 <?php $this->load->view('hr_documents_management/partials/visibility'); ?>
                                                 <br />
-                                                <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                                <?php $this->load->view('hr_documents_management/partials/test_approvers_section', ["appCheckboxIdx" => "jsHasApprovalFlowAD", "containerIdx" => "jsApproverFlowContainerAD", "addEmployeeIdx" => "jsAddDocumentApproversAD", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAD", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAD", "approverNoteIdx" => "jsApproversNoteAD", 'mainId' => 'testApproversAD']); ?>
                                                 <!-- Sign In -->
                                                 <div class="row hidden">
                                                     <div class="col-xs-12">
@@ -697,25 +688,24 @@
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/additional-methods.min.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>/assets/mFileUploader/index.js"></script>
-<?php $this->load->view("hr_documents_management/scripts/approvers"); ?>
+<script src="<?= base_url('assets/approverDocument/index.js'); ?>"></script>
+
 <script>
     var btnTypeO = 'saveandassign';
     $(document).ready(function() {
-
-
-        $("#confidentialSelectedEmployeesdiv").hide();
-
-        $("#setting_is_confidential").click(function() {
-            if ($(this).is(":checked")) {
-                $("#confidentialSelectedEmployeesdiv").show();
-
-            } else {
-                $("#confidentialSelectedEmployeesdiv").hide();
-                $("#confidentialSelectedEmployees").select2("val", "");
-            }
-        });
-
-
+        //
+        var approverSection = approverSection = {
+            appCheckboxIdx: '.jsHasApprovalFlowAD',
+            containerIdx: '.jsApproverFlowContainerAD',
+            addEmployeeIdx: '.jsAddDocumentApproversAD',
+            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAD',
+            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAD',
+            approverNoteIdx: '.jsApproversNoteAD',
+            employeesList: <?= json_encode($employeesList); ?>,
+            documentId: 0
+        };
+        //
+        $("#jsGenerateOfferLetter").documentApprovalFlow(approverSection);
         //
         $('#specific_document').mFileUploader({
             fileLimit: -1, // Default is '2MB', Use -1 for no limit (Optional)
@@ -813,12 +803,10 @@
             }
             //
             $("#setting_is_confidential").prop('checked', false);
-            $("#confidentialSelectedEmployeesdiv").hide();
             $("#confidentialSelectedEmployees").select2("val", null);
             //
             if(d.is_confidential == 1){
                 $("#setting_is_confidential").prop('checked', true);
-                $("#confidentialSelectedEmployeesdiv").show();
                 $("#confidentialSelectedEmployees").select2("val", null);
                 //
                 if(d.confidential_employees){

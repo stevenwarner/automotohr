@@ -970,6 +970,18 @@ if ($user_type == 'applicant') {
                                                     <span id="body_error" class="text-danger"></span>
                                                 </div>
                                             </div>
+                                          
+                                             <br>
+                                             <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+
+                                             <br>
+
+                                           
+                                            <?php $this->load->view('hr_documents_management/partials/settings', [
+                                            'is_confidential' =>  $document_info['is_confidential']
+                                        ]); ?>
+
+
 
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -2277,6 +2289,28 @@ if ($user_type == 'applicant') {
             $('#js-signers').select2('val', l.signers != null ? l.signers.split(',') : null);
             //
             $('#selected_letter_type').val(l.letter_type);
+
+            $('[name="setting_is_confidential"]').prop('checked', l.is_confidential == 1 ? true : false);
+            
+  
+           	 // Approval flow 
+                if(l.has_approval_flow == 1){
+           
+           $('.jsEmployeesadditionalBox').html('');
+		   $('#js-popup [name="has_approval_flow"]').prop('checked', l.has_approval_flow == 1 ? true : false);
+           $('.jsApproverFlowContainer').show();
+		   $('#js-popup [name="assigner_note"]').val(l.document_approval_note);
+		   DocumentApproverPrefill(l.document_approval_employees, 0);
+		   
+		   }else{
+			$('#js-popup [name="has_approval_flow"]').prop('checked',false);
+            $('.jsApproverFlowContainer').hide();
+		    $('#js-popup [name="assigner_note"]').val();
+          
+		   }
+
+
+
             //
             var f = getUploadedFileAPIUrl(l.uploaded_document_s3_name, 'original');
             //
@@ -2704,9 +2738,18 @@ if ($user_type == 'applicant') {
     });
 
     $(document).on('click', '#reassign-offer-letter', function() {
+ 
+
         var letter_sid = $('#offer_letter_select').val();
         var letter_type = $('#selected_letter_type').val();
+        var setting_is_confidential = $('[name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
         var letter_body = CKEDITOR.instances.letter_body.getData();
+
+         var  has_approval_flow = $('[name="has_approval_flow"]').prop('checked') ? 'on' : 'off';
+	     var  document_approval_employees = $('[name="assigner]').val();
+	     var  document_approval_note = $('[name="assigner_note"]').val();
+        
+                
 
         alertify.confirm(
             'Are you sure?',
@@ -2720,7 +2763,11 @@ if ($user_type == 'applicant') {
                         'letter_sid': letter_sid,
                         'letter_body': letter_body,
                         'letter_type': letter_type,
-                        'signers': $('#js-signers').val()
+                        'setting_is_confidential': setting_is_confidential,
+                        'signers': $('#js-signers').val(),
+                        'has_approval_flow': has_approval_flow,
+                        'document_approval_employees': document_approval_employees,
+                        'document_approval_note': document_approval_note
                     },
                     success: function() {
                         alertify.success('Re-Assigned Successfully!');
@@ -3790,6 +3837,21 @@ if ($user_type == 'applicant') {
             }
         );
     });
+
+    $('#confidentialSelectedEmployees').select2();
+   
+    $(document).on('click', '[name="setting_is_confidential"]', function() {
+        //
+        if (!$(this).prop('checked')) {
+            $('#confidentialSelectedEmployeesdiv').hide();
+            $('#confidentialSelectedEmployees').select2('val', null);
+        } else {
+            $('#confidentialSelectedEmployeesdiv').show();
+        }
+
+    });
+
+
 </script>
 
 <!--  -->
