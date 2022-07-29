@@ -2873,7 +2873,7 @@ if ($user_type == 'employee') {
                                                     <div class="form-group">
                                                         <label>Signature of Employer or Authorized Representative <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_signature"></i></label>
                                                         <?php if (isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
-                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" />
+                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize" />
                                                         <?php } else { ?>
                                                             <!-- the below loaded view add e-signature -->
                                                             <a class="btn btn-success btn-sm sign_of_emp_or_aut_rep" href="javascript:;">Create E-Signature</a>
@@ -3181,7 +3181,7 @@ if ($user_type == 'employee') {
                                                                     <div class="form-group">
                                                                         <label>Signature of Authorized Representative <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_signature"></i></label>
                                                                         <?php if (isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
-                                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" />
+                                                                            <img style="max-height: <?= SIGNATURE_MAX_HEIGHT ?>;" src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize" />
                                                                         <?php } else { ?>
                                                                             <!-- the below loaded view add e-signature -->
                                                                             <a class="btn btn-success btn-sm sign_of_aut_rep" href="javascript:;">Create E-Signature</a>
