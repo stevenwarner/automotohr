@@ -198,9 +198,12 @@
                 return draw.exportPDF(root);
             })
             .done(function(data) {
-                $('#download_report').hide();
-                $('#print_section').show();
-                $('#report_iframe').attr("src",data);
+                setTimeout(function(){
+                    $('#download_report').hide();
+                    $('#print_section').show();
+                    $('#report_iframe').attr("src",data);
+                },6000)
+                
             });
     });
 
