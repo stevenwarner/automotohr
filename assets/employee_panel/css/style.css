@@ -2861,3 +2861,9 @@ input[type='checkbox'].user_checkbox:checked:after {
   background-color: #068206 !important;
   border-color: #398439;
 }
+
+.esignaturesize{
+  width: 156px !important;
+  height: 44px !important;
+
+}
