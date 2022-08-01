@@ -15705,7 +15705,12 @@ if (!function_exists('getdocumenttabpagesbutton')) {
             case "preview_assigned":
                 if ($extra['hybrid_preview'] == 1) {
                     $preview_assignedBTN = '<button data-id="' . $document['sid'] . '" data-document="assigned" class="btn btn-success btn-sm btn-block js-hybrid-preview">Preview Assigned</button>';
-                } else {
+                } else if($extra['data_type']=='offer_letter'){
+                    $preview_assignedBTN = '<button data-id="'.$document['sid'].'" data-type="offer_letter" data-document="assigned" class="btn btn-success btn-sm btn-block js-hybrid-preview">
+                    Preview Assigned
+                </button>';
+                }
+                else {
                     $preview_assignedBTN = '<button class="btn btn-success btn-sm btn-block"
                 onclick="preview_latest_generic_function(this);"
                 date-letter-type="generated"
@@ -15736,7 +15741,7 @@ if (!function_exists('getdocumenttabpagesbutton')) {
                         $manage_document = '<a class="btn btn-success btn-sm btn-block" href="' . base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $extra['user_sid']) . '">Manage Document</a>';
                     }
                 } else {
-                    $manage_document = '<button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>';
+                        $manage_document = '<button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>';
                 }
 
                 return   $manage_document;
@@ -15762,6 +15767,19 @@ if (!function_exists('getdocumenttabpagesbutton')) {
                 $view_approverBTN = '<button data-document_sid="' . $document['document_sid'] . '" data-user_type="' . $extra['user_type'] . '" data-user_sid="' . $extra['user_sid'] . '" class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
                     View Approver(s)
                    </button>';
+                return   $view_approverBTN;
+                break;
+
+            case "view_I9":
+                $view_approverBTN = '<a href="javascript:;" data-type="I9_Form" data-status="' . $extra['form_status'] . '" data-doc_sid="' . $extra['form_sid'] . '" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View I9 form">View I9</a>';
+                return   $view_approverBTN;
+                break;
+            case "view_W9":
+                $view_approverBTN = '<a href="javascript:;" data-type="W9_Form" data-status="' . $extra['form_status'] . '" data-doc_sid="' . $extra['form_sid'] . '" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View W9 form">View W9</a>';
+                return   $view_approverBTN;
+                break;
+            case "view_W4":
+                $view_approverBTN = '<a href="javascript:;" data-type="W4_Form" data-status="'.$extra['form_status'].'" data-doc_sid="'.$extra['form_sid'].'" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View W4 form">View W4</a>';
                 return   $view_approverBTN;
                 break;
         }
