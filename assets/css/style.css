@@ -17866,3 +17866,8 @@ input[type='checkbox'].user_checkbox:checked:after {
 .email-notification-dropdown li a.btn-primary:hover {
     background-color: #0000FF !important;
 }
+
+.esignaturesize{
+    width: 150px !important; 
+    height: 50px !important;  
+}
