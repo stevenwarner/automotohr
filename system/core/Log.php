@@ -213,6 +213,15 @@ class CI_Log {
 		}
 
 		$message .= $level.' - AutomotoHR -  - '.$date.' --> '.$msg."\n";
+		// Notify on all internal server errors
+		if($level == 'ERROR' && isset($_SERVER)){
+			$errorInfo = 'Dear Admin, <br> An error occurred on AutomotoHR<br />';
+			$errorInfo .= 'Path: '.$_SERVER['REQUEST_URI'].'<br />';
+			$errorInfo .= 'Query: '.$_SERVER['QUERY_STRING'].'<br />';
+			$errorInfo .= 'Message: '.$msg;
+			//
+			@mail('mubashir.saleemi123@gmail.com', 'Internal Server Error', $errorInfo);
+		}
 		// $message .= $level.' - AutomotoHR - '.getUserIP().' - '.$date.' --> '.$msg."\n";
 
 		flock($fp, LOCK_EX);
