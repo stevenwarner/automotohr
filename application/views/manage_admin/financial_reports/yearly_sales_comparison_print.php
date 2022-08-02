@@ -45,9 +45,9 @@
         <script type="text/javascript" src="<?= base_url() ?>assets/manage_admin/js/Chart.bundle.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
+        <script src="<?php echo base_url('assets/js/html2canvas.min.js'); ?>"></script> 
 
-
-        <title>Financial Reports - Yearly Sales</title>
+        <title>Financial Reports - Yearly Sales Comparison</title>
         
         <style type="text/css" media="print">
            @media print { html, body { height: 99%; } }
@@ -129,7 +129,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="print_section" style="display:none width:100%; height:80em;">
+                                            <div id="print_section">
                                                 <iframe src="" id="report_iframe" class="uploaded-file-preview js-hybrid-iframe" style="width:100%; height:80em;" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                                             </div>
                                         </div>
@@ -143,41 +143,61 @@
         </div>
     </body>
 </html>   
-<script src="<?php echo base_url('assets/js/html2canvas.min.js'); ?>"></script>                 
+                
 <script>
 
     $(document).ready(function () {
-        
-        // var draw = kendo.drawing;
-        //     draw.drawDOM($("#download_report"), {
-        //         avoidLinks: false,
-        //         paperSize: "auto",
-        //         multiPage: true,
-        //         margin: { bottom: "2cm" },
-        //         scale: 0.8
-        //     })
-        //     .then(function(root) {
-        //         return draw.exportPDF(root);
-        //     })
-        //     .done(function(data) {
-                
-        //         // $('#download_report').hide();
-        //         // $('#print_section').show();
-        //         // $('#report_iframe').attr("src",data);
-        //     });
+        var useCanvas = "no";
+        var isChromium = window.chrome;
+        var winNav = window.navigator;
+        var vendorName = winNav.vendor;
+        var isOpera = typeof window.opr !== "undefined";
+        var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+        var isIOSChrome = winNav.userAgent.match("CriOS");
 
-        setTimeout(function(){
-            html2canvas(document.querySelector("#download_report")).then(canvas => {
+        if (isIOSChrome) {
+           useCanvas = "yes";
+        } else if(
+          isChromium !== null &&
+          typeof isChromium !== "undefined" &&
+          vendorName === "Google Inc." &&
+          isOpera === false &&
+          isIEedge === false
+        ) {
+           useCanvas = "yes";
+        }
+
+        if (useCanvas == "yes") {
+            setTimeout(function(){
+                html2canvas(document.querySelector("#download_report")).then(canvas => {
+                    $('#download_report').hide();
+                    $('#print_section').show();
+                    //
+                    $('#print_section').html(canvas);
+                    $('canvas').css("width","100%");
+                    $('canvas').css("height","80em"); 
+                    window.print();
+
+                }); 
+            },5000);
+        } else {
+            var draw = kendo.drawing;
+            draw.drawDOM($("#download_report"), {
+                avoidLinks: false,
+                paperSize: "auto",
+                multiPage: true,
+                margin: { bottom: "2cm" },
+                scale: 0.8
+            })
+            .then(function(root) {
+                return draw.exportPDF(root);
+            })
+            .done(function(data) {
                 $('#download_report').hide();
                 $('#print_section').show();
-                //
-                $('#print_section').html(canvas);
-                $('canvas').css("width","100%");
-                $('canvas').css("height","80em"); 
-                window.print();
-
-            }); 
-        },5000)
+                $('#report_iframe').attr("src",data);
+            });
+        }
     });
 
 
