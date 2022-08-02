@@ -50,9 +50,7 @@
         <title>Financial Reports - Yearly Sales</title>
         
         <style type="text/css" media="print">
-            @page{
-                size: landscape;
-            }
+           @media print { html, body { height: 99%; } }
         </style>
     </head>
     <body>       
@@ -131,7 +129,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div id="print_section" style="display:none">
+                                            <div id="print_section" style="display:none width:100%; height:80em;">
                                                 <iframe src="" id="report_iframe" class="uploaded-file-preview js-hybrid-iframe" style="width:100%; height:80em;" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
                                             </div>
                                         </div>
@@ -144,26 +142,42 @@
             </div>
         </div>
     </body>
-</html>                    
+</html>   
+<script src="<?php echo base_url('assets/js/html2canvas.min.js'); ?>"></script>                 
 <script>
 
     $(document).ready(function () {
-        var draw = kendo.drawing;
-            draw.drawDOM($("#download_report"), {
-                avoidLinks: false,
-                paperSize: "auto",
-                multiPage: true,
-                margin: { bottom: "2cm" },
-                scale: 0.8
-            })
-            .then(function(root) {
-                return draw.exportPDF(root);
-            })
-            .done(function(data) {
+        
+        // var draw = kendo.drawing;
+        //     draw.drawDOM($("#download_report"), {
+        //         avoidLinks: false,
+        //         paperSize: "auto",
+        //         multiPage: true,
+        //         margin: { bottom: "2cm" },
+        //         scale: 0.8
+        //     })
+        //     .then(function(root) {
+        //         return draw.exportPDF(root);
+        //     })
+        //     .done(function(data) {
+                
+        //         // $('#download_report').hide();
+        //         // $('#print_section').show();
+        //         // $('#report_iframe').attr("src",data);
+        //     });
+
+        setTimeout(function(){
+            html2canvas(document.querySelector("#download_report")).then(canvas => {
                 $('#download_report').hide();
                 $('#print_section').show();
-                $('#report_iframe').attr("src",data);
-            });
+                //
+                $('#print_section').html(canvas);
+                $('canvas').css("width","100%");
+                $('canvas').css("height","80em"); 
+                window.print();
+
+            }); 
+        },5000)
     });
 
 
