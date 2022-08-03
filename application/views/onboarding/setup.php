@@ -410,8 +410,6 @@ if ($user_type == 'applicant') {
                                                 </div>
                                             </div>
 
-
-
                                             <hr />
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -421,10 +419,7 @@ if ($user_type == 'applicant') {
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                     </div>
-
 
                                     <div id="office_locations" class="office-locations">
                                         <div class="row">
@@ -492,6 +487,7 @@ if ($user_type == 'applicant') {
                                             <?php } ?>
                                         </div>
                                     </div>
+
                                     <div id="office_hours" class="office-hours">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -565,6 +561,7 @@ if ($user_type == 'applicant') {
                                             <?php } ?>
                                         </div>
                                     </div>
+
                                     <div id="people_to_meet" class="people-to-meet">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -624,6 +621,7 @@ if ($user_type == 'applicant') {
                                             <?php } ?>
                                         </div>
                                     </div>
+
                                     <div id="what_to_bring" class="what-to-bring">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -698,6 +696,7 @@ if ($user_type == 'applicant') {
                                             <?php } ?>
                                         </div>
                                     </div>
+
                                     <div id="useful_links" class="useful-links">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -896,6 +895,7 @@ if ($user_type == 'applicant') {
                                         </div>
                                         <!-- Company useful link end -->
                                     </div>
+
                                     <div id="offer_letter" class="offer-letter">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -971,17 +971,14 @@ if ($user_type == 'applicant') {
                                                 </div>
                                             </div>
                                           
-                                             <br>
-                                             <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
-
-                                             <br>
+                                            <br>
+                                            <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                            <br>
 
                                            
                                             <?php $this->load->view('hr_documents_management/partials/settings', [
-                                            'is_confidential' =>  $document_info['is_confidential']
-                                        ]); ?>
-
-
+                                                'is_confidential' =>  $document_info['is_confidential']
+                                            ]); ?>
 
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -1170,7 +1167,7 @@ if ($user_type == 'applicant') {
                                         </div>
                                     </div>
 
-                                    <div id="documents" class="step-documents">
+                                    <div id="documents" >
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                 <div class="well well-sm">
@@ -1951,9 +1948,9 @@ if ($user_type == 'applicant') {
                                             </div>
                                         </div>
                                     <?php } ?>
+                                    </form>
                                 </div>
                             </div>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -3850,8 +3847,6 @@ if ($user_type == 'applicant') {
         }
 
     });
-
-
 </script>
 
 <!--  -->
