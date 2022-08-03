@@ -1659,7 +1659,7 @@ if ($user_type == 'applicant') {
                                     </div>
 
                                     <?php if ($user_type == 'applicant') { ?>
-                                        <div id="credentials_configuration" class="">
+                                        <div id="credentials_configuration" style="display: none;">
                                             <div class="row">
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                     <div class="well well-sm">
@@ -1770,6 +1770,45 @@ if ($user_type == 'applicant') {
                                                     <?php echo form_label('Instructions', $field_id); ?>
                                                     <?php echo form_textarea($field_id, set_value($field_id, html_entity_decode($instructions), false), 'class="form-control ckeditor" id="' . $field_id . '"'); ?>
                                                     <?php echo form_error($field_id); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="send_email_to_applicant" style="display: none;">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                    <div class="well well-sm">
+                                                        <strong style="font-size: 24px;">Instructions:</strong>
+                                                        <p style="font-size: 18px;">If you do not click send, the On-Boarding documentation will not be sent to the candidate.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="well well-sm">
+                                                        <?php if (empty($email_sent_date) || empty($unique_sid)) { ?>
+                                                            <p style="font-size: 20px; color: #b4052c;" id="date-sent-div"><strong>A Notification email has NOT been sent.</strong></p>
+                                                        <?php } else { ?>
+                                                            <p style="font-size: 20px; color: #518401;" id="date-sent-div"><strong>A Notification email has been sent at <?php echo $email_sent_date ?></strong></p>
+                                                        <?php } ?>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                            <h2 class="panel-title" style="line-height: 36px;">
+                                                                <a href="javascript:;" class="btn btn-xs blue-button pull-right <?= empty($unique_sid) ? ('disabled my-popover') : ''; ?>" <?= empty($unique_sid) ? '' : '' ?> id="<?= !empty($unique_sid) ? 'send_an_email_to_applicant' : ''; ?>" style="font-size: 18px;">
+                                                                    <i class="fa fa-paper-plane"></i>&nbsp;Send Onboarding Notification
+                                                                </a>
+                                                                <strong style="font-size: 24px;">Send Email</strong>
+                                                            </h2>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1906,46 +1945,6 @@ if ($user_type == 'applicant') {
                                                 </div>
                                             </div>
                                         </div>-->
-                                    <?php if ($user_type == 'applicant') { ?>
-                                        <div id="send_email_to_applicant" class="">
-                                            <div class="row">
-                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                    <div class="well well-sm">
-                                                        <strong style="font-size: 24px;">Instructions:</strong>
-                                                        <p style="font-size: 18px;">If you do not click send, the On-Boarding documentation will not be sent to the candidate.</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr />
-                                            <div class="row">
-                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                    <div class="well well-sm">
-                                                        <?php if (empty($email_sent_date) || empty($unique_sid)) { ?>
-                                                            <p style="font-size: 20px; color: #b4052c;" id="date-sent-div"><strong>A Notification email has NOT been sent.</strong></p>
-                                                        <?php } else { ?>
-                                                            <p style="font-size: 20px; color: #518401;" id="date-sent-div"><strong>A Notification email has been sent at <?php echo $email_sent_date ?></strong></p>
-                                                        <?php } ?>
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                    <div class="panel panel-default">
-                                                        <div class="panel-heading">
-                                                            <h2 class="panel-title" style="line-height: 36px;">
-                                                                <a href="javascript:;" class="btn btn-xs blue-button pull-right <?= empty($unique_sid) ? ('disabled my-popover') : ''; ?>" <?= empty($unique_sid) ? '' : '' ?> id="<?= !empty($unique_sid) ? 'send_an_email_to_applicant' : ''; ?>" style="font-size: 18px;">
-                                                                    <i class="fa fa-paper-plane"></i>&nbsp;Send Onboarding Notification
-                                                                </a>
-                                                                <strong style="font-size: 24px;">Send Email</strong>
-                                                            </h2>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php } ?>
                                     </form>
                                 </div>
                             </div>
