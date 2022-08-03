@@ -584,12 +584,10 @@ if ($user_type == 'applicant') {
                                                             <div class="img-thumbnail text-center package-info-box">
                                                                 <figure>
                                                                     <?php if (!empty($person['profile_picture'])) { ?>
-                                                                        <!--<div class="" style="width: 100%; height: 250px; background-repeat: no-repeat; background-size: 100%; background-image: url('<?php //echo AWS_S3_BUCKET_URL . $person['profile_picture'];  
-                                                                                                                                                                                                            ?>'); background-position: center center;"></div>-->
+                                                                        <!--<div class="" style="width: 100%; height: 250px; background-repeat: no-repeat; background-size: 100%; background-image: url('<?php //echo AWS_S3_BUCKET_URL . $person['profile_picture']; ?>'); background-position: center center;"></div>-->
                                                                         <img class="img-responsive img-thumbnail" src="<?php echo AWS_S3_BUCKET_URL . $person['profile_picture']; ?>" alt="Profile Picture" />
                                                                     <?php } else { ?>
-                                                                        <!--<div class="" style="width: 100%; height: 250px; background-repeat: no-repeat; background-size: 100%; background-image: url('<?php //echo base_url('assets/images/default_pic.jpg');  
-                                                                                                                                                                                                            ?>'); background-position: center center;"></div>-->
+                                                                        <!--<div class="" style="width: 100%; height: 250px; background-repeat: no-repeat; background-size: 100%; background-image: url('<?php //echo base_url('assets/images/default_pic.jpg'); ?>'); background-position: center center;"></div>-->
                                                                         <img class="img-responsive img-thumbnail" src="<?php echo base_url('assets/images/default_pic.jpg'); ?>" alt="Profile Picture" />
                                                                     <?php } ?>
                                                                 </figure>
@@ -1167,7 +1165,7 @@ if ($user_type == 'applicant') {
                                         </div>
                                     </div>
 
-                                    <div id="documents" >
+                                    <div id="documents" class="step-documents" style="display: none;">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                 <div class="well well-sm">
@@ -1526,7 +1524,7 @@ if ($user_type == 'applicant') {
                                         </div>
                                     </div>
 
-                                    <div id="learning" class="step-documents">
+                                    <div id="learning" class="step-documents" style="display: none;">
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                 <div class="well well-sm">
