@@ -24,16 +24,20 @@ class Cron_common extends CI_Controller
     function auto_email_reminder($verificationToken)
     {
         //
+
         if ($this->verifyToken != $verificationToken) {
             echo "Failed";
             exit(0);
         }
+
         //
         $records = $this->common_model->get_all_licenses();
+
         //
         if (empty($records)) {
             exit(0);
         }
+
         //
         $todaysDate = date('Y-m-d', strtotime('now'));
         //
@@ -54,7 +58,13 @@ class Cron_common extends CI_Controller
             if (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $expiryDate)) {
                 $format = 'm-d-Y';
             }
+
+            if (!preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $expiryDate)) {
+                continue;
+            }
+
             //
+
             $expiryDate = DateTime::createfromformat($format, $expiryDate)->format('Y-m-d');
             //
             $difference = dateDifferenceInDays($expiryDate, $todaysDate);
@@ -403,7 +413,7 @@ class Cron_common extends CI_Controller
         $this->load->model('Hr_documents_management_model', 'HRDMM');
         foreach ($toArray as $record) {
             //
-            if(!$this->HRDMM->isActiveUser($record['userId'])){
+            if (!$this->HRDMM->isActiveUser($record['userId'])) {
                 continue;
             }
             //
@@ -610,9 +620,10 @@ class Cron_common extends CI_Controller
     }
 
     //
-    public function applicant_fixer($date){
+    public function applicant_fixer($date)
+    {
         //
-        $folders = [ 
+        $folders = [
             [
                 'folder' => 'autocareers',
                 'link' => 'Auto_careers/add_applicant'
@@ -631,7 +642,7 @@ class Cron_common extends CI_Controller
             ]
         ];
         //
-        foreach($folders as $folder){
+        foreach ($folders as $folder) {
             //
             $this->putBackApplicants(
                 $date,
@@ -642,28 +653,29 @@ class Cron_common extends CI_Controller
             usleep(1);
         }
         //
-        die ('All Done');
+        die('All Done');
     }
 
     //
-    private function putBackApplicants($date, $folder, $link){
+    private function putBackApplicants($date, $folder, $link)
+    {
         //
-        $file_path = APPPATH.'../../applicant/'.($folder).'/';
+        $file_path = APPPATH . '../../applicant/' . ($folder) . '/';
         //
         $files = scandir($file_path, 1);
         //
-        foreach($files as $file){
+        foreach ($files as $file) {
             //
-            if(!preg_match("/$date/", $file)){
+            if (!preg_match("/$date/", $file)) {
                 continue;
             }
             //
-            $content = file_get_contents($file_path.$file);
+            $content = file_get_contents($file_path . $file);
             //
             $curl = curl_init();
             //
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://www.automotohr.com/'.$link,
+                CURLOPT_URL => 'https://www.automotohr.com/' . $link,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -673,7 +685,7 @@ class Cron_common extends CI_Controller
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => $content,
                 CURLOPT_HTTPHEADER => array(
-                  'Content-Type: application/json',
+                    'Content-Type: application/json',
                 ),
             ));
             //

@@ -1391,7 +1391,7 @@ if ($_ssv) {
                     </div>
                 </div>
                 <?php $this->load->view('manage_employer/application_tracking_system/profile_right_menu_applicant'); ?>
-            </div>
+                </div>
         </div>
     </div>
 </div>

@@ -141,7 +141,6 @@
                                 <?php } ?>
                                 <br />
                                 <a class="btn btn-success" href="<?php echo base_url('applicant_profile/downloadFile/' . $attachment); ?>">Download Attachment</a>
-
                             </div>
                         <?php } ?>
                     </div>
