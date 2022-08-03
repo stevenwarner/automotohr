@@ -66,7 +66,7 @@
                                     <div class="row">
                                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                             <div id="download_report">
-                                                <div class="hr-box">
+                                                <div class="hr-box" id="section1">
                                                     <div class="hr-box-header bg-header-green">
                                                         <span class="hr-registered">Admin Invoices Profit for Month of <?php echo $months[$month]; ?>, <?php echo $year; ?></span>
                                                     </div>
@@ -188,7 +188,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="hr-box">
+                                                <div class="hr-box" id="section2">
                                                     <div class="hr-box-header bg-header-green">
                                                         <span class="hr-registered">Marketplace Invoices Profit for Month of <?php echo $months[$month]; ?>, <?php echo $year; ?></span>
                                                     </div>
@@ -342,21 +342,21 @@
 
         if (useCanvas == "yes") {
             setTimeout(function(){
-                var html = $('#download_report').clone();
-                $('#download_report').hide();
-                $('#print_section').show();
-                $('#print_section').html(html);
-                window.print();
-                // html2canvas(document.querySelector("#download_report")).then(canvas => {
-                //     // $('#download_report').hide();
-                //     $('#print_section').show();
-                //     //
-                //     $('#print_section').html(canvas);
-                //     // $('canvas').css("width","100%");
-                //     // $('canvas').css("height","auto"); 
-                //     // window.print();
+                html2canvas(document.querySelector("#section1")).then(canvas => {
+                    $('#print_section').show();
+                    //
+                    $('#print_section').html(canvas);
+                }); 
 
-                // }); 
+                html2canvas(document.querySelector("#section2")).then(canvas => {
+                    $('#download_report').hide();
+                    $('#print_section').show();
+                    //
+                    $('#print_section').append(canvas);
+                    $('canvas').css("width","100%");
+                    $('canvas').css("height","auto"); 
+                    window.print();
+                });
             },9000);
         } else {
             setTimeout(function(){
