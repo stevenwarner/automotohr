@@ -10605,12 +10605,11 @@ class Hr_documents_management extends Public_Controller
 
                 //Automatically assign after Days
                 // $a['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'days';
-                $a['automatic_assign_type'] = !empty($this->input->post('assign_type')) ? $this->input->post('assign_type') : 'please_ignore';
-                if ($a['automatic_assign_type'] == 'days') {
-                    $a['automatic_assign_in'] = !empty($this->input->post('assign_in_days')) ? $this->input->post('assign_in_days') : 0;
-                } else {
-                    $a['automatic_assign_in'] = !empty($this->input->post('assign_in_months')) ? $this->input->post('assign_in_months') : 0;
-                }
+                // if ($a['automatic_assign_type'] == 'days') {
+                //     $a['automatic_assign_in'] = !empty($this->input->post('assign_in_days')) ? $this->input->post('assign_in_days') : 0;
+                // } else {
+                //     $a['automatic_assign_in'] = !empty($this->input->post('assign_in_months')) ? $this->input->post('assign_in_months') : 0;
+                // }
                 //
                 $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
                 //
