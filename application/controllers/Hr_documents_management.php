@@ -10577,10 +10577,10 @@ class Hr_documents_management extends Public_Controller
                 //
                 $a['visible_to_payroll'] = !isset($post['payroll']) ? $post['payroll'] : 0;
                 //
-                $a['allowed_roles'] = isset($post['roles']) ? implode(',', $post['roles']) : NULL;
-                $a['allowed_employees'] = isset($post['employees']) ? implode(',', $post['employees']) : NULL;
-                $a['allowed_departments'] = isset($post['departments']) ? implode(',', $post['departments']) : NULL;
-                $a['allowed_teams'] = isset($post['teams']) ? implode(',', $post['teams']) : NULL;
+                $a['allowed_roles'] = isset($post['roles']) ? $post['roles'] : NULL;
+                $a['allowed_employees'] = isset($post['employees']) ? $post['employees'] : NULL;
+                $a['allowed_departments'] = isset($post['departments']) ? $post['departments'] : NULL;
+                $a['allowed_teams'] = isset($post['teams']) ? $post['teams'] : NULL;
 
 
                 // Document Settings - Confidential
