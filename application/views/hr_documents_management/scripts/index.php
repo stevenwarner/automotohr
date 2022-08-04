@@ -1522,7 +1522,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			return rows;
 		}
 
-
 		// Get document
 		function getDocument(
 			sid
@@ -1552,9 +1551,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			}
 			return {};
 		}
-
-
-
 
 		// Offer letter create steps
 		// Step 1 = Generate View
@@ -1640,16 +1636,15 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 							closeOnSelect: false
 						});
 
-					$('#js-popup  #confidentialSelectedEmployeesdiv').hide();
 					$("#js-popup #confidentialSelectedEmployees").select2();
 
-					$("#jsOfferLetterModal").documentApprovalFlow({
-			            appCheckboxIdx: '.jsHasApprovalFlowModal',
-			            containerIdx: '.jsApproverFlowContainerModal',
-			            addEmployeeIdx: '.jsAddDocumentApproversModal',
-			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxModal',
-			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxModal',
-			            approverNoteIdx: '.jsApproversNoteModal',
+					$("#jsAddSpecificOfferLetter").documentApprovalFlow({
+			            appCheckboxIdx: '.jsHasApprovalFlowAOL',
+			            containerIdx: '.jsApproverFlowContainerAOL',
+			            addEmployeeIdx: '.jsAddDocumentApproversAOL',
+			            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+			            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+			            approverNoteIdx: '.jsApproversNoteAOL',
 			            employeesList: <?= json_encode($employeesList); ?>,
 			            documentId: 0
 			        });
@@ -1679,6 +1674,133 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			$('.js-template-send-email[value="no"]').click();
 			//
 			iLoader('hide', '.js-popup');
+		}
+
+		// Validate and save offer letter
+		function ValidateAndSaveOfferLetter(e) {
+			//
+			e.preventDefault();
+			var assigners = new Array();
+			//
+			$('.js-error').text('');
+			//
+			var upload_file = $('#upload_document').mFileUploader('get');
+			//
+			var o = {
+				name: $('#js-template-name').val().trim(),
+				body: CKEDITOR.instances['js-template-body'].getData().trim(),
+				guidence: CKEDITOR.instances['js-template-guidence'].getData().trim(),
+				// file : file,
+				file: upload_file,
+				type: $('.js-template-type:checked').val().trim(),
+				signers: $('#js-template-signers').val(),
+				signature: $('#js-template-signature').val(),
+				download: $('#js-template-download').val(),
+				acknowledgment: $('#js-template-acknowledgment').val(),
+				sortOrder: $('#js-template-sort-order').val().trim(),
+				sendEmail: $('.js-template-send-email:checked').val(),
+				isRequired: $('.js-template-required:checked').val(),
+				isSignatureRequired: $('.js-template-signature-required:checked').val(),
+				setting_is_confidential: $('#js-popup [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off',
+				confidentialSelectedEmployees: $('#js-popup #confidentialSelectedEmployees').val(),
+
+				//Automatically assign after Days
+				assign_in_months: $('#js-popup [name="assign-in-months"]').val(),
+				assign_in_days: $('#js-popup [name="assign-in-days"]').val(),
+				assign_type: $('#js-popup [name="assign_type"]:checked').val(),
+
+				assign: $(this).data('value'),
+				fromTemplate: false,
+				// Visibility
+				payroll: $('#js-payroll-offer-letter-add').prop('checked'),
+				roles: $('#js-roles-offer-letter-add').val(),
+				departments: $('#js-department-offer-letter-add').val(),
+				teams: $('#js-teams-offer-letter-add').val(),
+				employees: $('#js-employees-offer-letter-add').val(),
+				// Approval flow
+				has_approval_flow: 'off',
+				approvers_note: '',
+				approvers_list: ''
+			};
+			var approverInfo = $("#jsAddSpecificOfferLetter").documentApprovalFlow("get");
+	        //
+	        if (approverInfo.isChecked === true) {
+	        	o.has_approval_flow = 'on';
+				o.approvers_note = approverInfo.approverNote;
+				o.approvers_list = approverInfo.approversList.toString();
+	        }
+			//
+			if (o.type == 'template') {
+				o.type = selectedTemplate.letter_type;
+				o.fromTemplate = 1;
+			}
+			//
+			var proceed = true;
+			// Validate 
+			if (o.name == '') {
+				$('#js-template-name').parent().find('p.js-error').text('This field is required.');
+				proceed = false;
+			}
+			// For generated documents
+			if (o.type == 'generated' || o.type == 'hybrid_document') {
+				if (o.body == '') {
+					$('#js-template-body').parent().find('p.js-error').text('This field is required.');
+					proceed = false;
+				}
+			}
+			// For uploaded documents
+			if (o.type == 'uploaded' || o.type == 'hybrid_document') {
+				if (o.file.name === undefined) {
+					$('#js-offer-letter-file-add').parent().parent().find('p.js-error').text('This field is required.');
+					proceed = false;
+				}
+			}
+
+			if (o.type != 'generated') {
+				if ($.isEmptyObject(upload_file)) {
+					alertify.alert('ERROR!', 'Please select a file to upload.', () => {});
+					proceed = false;
+				} else if (upload_file.hasError === true) {
+					alertify.alert('ERROR!', 'Please select a valid file format.', () => {});
+					proceed = false;
+				}
+			}
+			//
+			if (o.file.s3Name !== undefined) o.file = JSON.stringify(o.file);
+			//
+			if (!proceed) return;
+			//
+			iLoader('show', '.js-popup');
+			//
+			// console.log(megaOBJ);
+			// console.log(o);
+			var post = new FormData();
+			$.each(megaOBJ, function(index, val) {
+				post.append(index, val);
+			});
+			$.each(o, function(index, val) {
+				post.append(index, val);
+			});
+			//
+			$.ajax({
+					url: '<?= base_url('hr_documents_management/offer_letter_add'); ?>',
+					type: 'POST',
+					processData: false,
+					contentType: false,
+					data: post,
+				})
+				.done(function(resp) {
+					iLoader('hide', '.js-popup');
+					//
+					if (resp.Status === false) {
+						alertify.alert('ERROR!', resp.Response);
+						return;
+					}
+					//
+					alertify.alert('SUCCESS!', resp.Response, function() {
+						window.location.reload();
+					});
+				});
 		}
 
 		// Offer letter edit steps
@@ -1788,176 +1910,6 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			iLoader('hide', '.js-popup-edit');
 		}
 
-		// Generate body for add offer letter
-		function getOfferLetterBody(
-			type
-		) {
-
-			//
-			var obj = {
-				title: '',
-				body: ''
-			};
-			//
-			obj.title += '<i class="fa fa-file-text-o"></i>&nbsp;&nbsp;';
-			obj.title += 'Upload/Generate an Offer Letter / Pay Plan';
-
-			//
-			if (type == 'add') {
-				//
-				obj.body += `<?php $this->load->view('hr_documents_management/templates/offer_letter', ['offer_letters' => $offerLetters]); ?>`;
-				//
-			} else if (type == 'edit') {
-				obj.body += `<?php $this->load->view('hr_documents_management/templates/offer_letter_edit', ['offer_letters' => $offerLetters]); ?>`;
-			}
-
-			return obj;
-		}
-
-		// Validate uploaded file
-		function ValidateUploadedFile(
-			e
-		) {
-			//
-			$(this).parent().parent().find('p.js-error').text('');
-			//
-			file = {};
-			//
-			file = e.target.files[0];
-			//
-			if ($.inArray(file.type, allowedTypes) === -1) {
-				file = {};
-				$(this).parent().parent().find('p.js-error').text('Invalid file format. Please upload the right format file.');
-			}
-		}
-
-		// Validate and save offer letter
-		function ValidateAndSaveOfferLetter(e) {
-			//
-			e.preventDefault();
-			var assigners = new Array();
-			//
-			$('.js-error').text('');
-			//
-			var upload_file = $('#upload_document').mFileUploader('get');
-			//
-			var o = {
-				name: $('#js-template-name').val().trim(),
-				body: CKEDITOR.instances['js-template-body'].getData().trim(),
-				guidence: CKEDITOR.instances['js-template-guidence'].getData().trim(),
-				// file : file,
-				file: upload_file,
-				type: $('.js-template-type:checked').val().trim(),
-				signers: $('#js-template-signers').val(),
-				signature: $('#js-template-signature').val(),
-				download: $('#js-template-download').val(),
-				acknowledgment: $('#js-template-acknowledgment').val(),
-				sortOrder: $('#js-template-sort-order').val().trim(),
-				sendEmail: $('.js-template-send-email:checked').val(),
-				isRequired: $('.js-template-required:checked').val(),
-				isSignatureRequired: $('.js-template-signature-required:checked').val(),
-				setting_is_confidential: $('#js-popup [name="setting_is_confidential"]').prop('checked') ? 'on' : 'off',
-				confidentialSelectedEmployees: $('#js-popup #confidentialSelectedEmployees').val(),
-
-				//Automatically assign after Days
-				assign_in_months: $('#js-popup [name="assign-in-months"]').val(),
-				assign_in_days: $('#js-popup [name="assign-in-days"]').val(),
-				assign_type: $('#js-popup [name="assign_type"]:checked').val(),
-
-				assign: $(this).data('value'),
-				fromTemplate: false,
-				// Visibility
-				payroll: $('#js-payroll-offer-letter-add').prop('checked'),
-				roles: $('#js-roles-offer-letter-add').val(),
-				departments: $('#js-department-offer-letter-add').val(),
-				teams: $('#js-teams-offer-letter-add').val(),
-				employees: $('#js-employees-offer-letter-add').val(),
-				// Approval flow
-				has_approval_flow: 'off',
-				approvers_note: '',
-				approvers_list: ''
-			};
-			var approverInfo = $("#jsOfferLetterModal").documentApprovalFlow("get");
-	        //
-	        if (approverInfo.isChecked === true) {
-	        	o.has_approval_flow = 'on';
-				o.approvers_note = approverInfo.approverNote;
-				o.approvers_list = approverInfo.approversList.toString();
-	        }
-			//
-			if (o.type == 'template') {
-				o.type = selectedTemplate.letter_type;
-				o.fromTemplate = 1;
-			}
-			//
-			var proceed = true;
-			// Validate 
-			if (o.name == '') {
-				$('#js-template-name').parent().find('p.js-error').text('This field is required.');
-				proceed = false;
-			}
-			// For generated documents
-			if (o.type == 'generated' || o.type == 'hybrid_document') {
-				if (o.body == '') {
-					$('#js-template-body').parent().find('p.js-error').text('This field is required.');
-					proceed = false;
-				}
-			}
-			// For uploaded documents
-			if (o.type == 'uploaded' || o.type == 'hybrid_document') {
-				if (o.file.name === undefined) {
-					$('#js-offer-letter-file-add').parent().parent().find('p.js-error').text('This field is required.');
-					proceed = false;
-				}
-			}
-
-			if (o.type != 'generated') {
-				if ($.isEmptyObject(upload_file)) {
-					alertify.alert('ERROR!', 'Please select a file to upload.', () => {});
-					proceed = false;
-				} else if (upload_file.hasError === true) {
-					alertify.alert('ERROR!', 'Please select a valid file format.', () => {});
-					proceed = false;
-				}
-			}
-			//
-			if (o.file.s3Name !== undefined) o.file = JSON.stringify(o.file);
-			//
-			if (!proceed) return;
-			//
-			iLoader('show', '.js-popup');
-			//
-			// console.log(megaOBJ);
-			// console.log(o);
-			var post = new FormData();
-			$.each(megaOBJ, function(index, val) {
-				post.append(index, val);
-			});
-			$.each(o, function(index, val) {
-				post.append(index, val);
-			});
-			//
-			$.ajax({
-					url: '<?= base_url('hr_documents_management/offer_letter_add'); ?>',
-					type: 'POST',
-					processData: false,
-					contentType: false,
-					data: post,
-				})
-				.done(function(resp) {
-					iLoader('hide', '.js-popup');
-					//
-					if (resp.Status === false) {
-						alertify.alert('ERROR!', resp.Response);
-						return;
-					}
-					//
-					alertify.alert('SUCCESS!', resp.Response, function() {
-						window.location.reload();
-					});
-				});
-		}
-
 		// Validate and update offer letter
 		function ValidateAndUpdateOfferLetter(e) {
 			//
@@ -2031,6 +1983,49 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						window.location.reload();
 					});
 				});
+		}
+
+		// Generate body for add offer letter
+		function getOfferLetterBody(
+			type
+		) {
+
+			//
+			var obj = {
+				title: '',
+				body: ''
+			};
+			//
+			obj.title += '<i class="fa fa-file-text-o"></i>&nbsp;&nbsp;';
+			obj.title += 'Upload/Generate an Offer Letter / Pay Plan';
+
+			//
+			if (type == 'add') {
+				//
+				obj.body += `<?php $this->load->view('hr_documents_management/templates/offer_letter', ['offer_letters' => $offerLetters]); ?>`;
+				//
+			} else if (type == 'edit') {
+				obj.body += `<?php $this->load->view('hr_documents_management/templates/offer_letter_edit', ['offer_letters' => $offerLetters]); ?>`;
+			}
+
+			return obj;
+		}
+
+		// Validate uploaded file
+		function ValidateUploadedFile(
+			e
+		) {
+			//
+			$(this).parent().parent().find('p.js-error').text('');
+			//
+			file = {};
+			//
+			file = e.target.files[0];
+			//
+			if ($.inArray(file.type, allowedTypes) === -1) {
+				file = {};
+				$(this).parent().parent().find('p.js-error').text('Invalid file format. Please upload the right format file.');
+			}
 		}
 
 		//

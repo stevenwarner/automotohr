@@ -10413,6 +10413,7 @@ class Hr_documents_management extends Public_Controller
             'Status' => FALSE,
             'Response' => 'Failed to add offer letter / pay plan'
         );
+
         //
         if (!isset($_POST) || !sizeof($_POST)) $this->res($resp);
         //
@@ -10713,7 +10714,7 @@ class Hr_documents_management extends Public_Controller
     // Deprecated, need to remove it's functionlity
     // 
     function offer_letter_edit()
-    {_e($_POST,true,true);
+    {
         //
         if (!isset($_POST) || !sizeof($_POST))
             //

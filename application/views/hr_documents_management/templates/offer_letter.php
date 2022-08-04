@@ -166,12 +166,12 @@
 			<?php $this->load->view(
                 'hr_documents_management/partials/test_approvers_section', 
                 [
-                    "appCheckboxIdx" => "jsHasApprovalFlowModal", 
-                    "containerIdx" => "jsApproverFlowContainerModal", 
-                    "addEmployeeIdx" => "jsAddDocumentApproversModal", 
-                    "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxModal", 
-                    "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxModal", 
-                    "approverNoteIdx" => "jsApproversNoteModal"
+                    "appCheckboxIdx" => "jsHasApprovalFlowAOL", 
+                    "containerIdx" => "jsApproverFlowContainerAOL", 
+                    "addEmployeeIdx" => "jsAddDocumentApproversAOL", 
+                    "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAOL", 
+                    "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAOL", 
+                    "approverNoteIdx" => "jsApproversNoteAOL"
                 ]
             ); ?>
 
@@ -233,7 +233,7 @@
 
 			<!--  Document Settings - Confidenti -->
 			<?php $this->load->view('hr_documents_management/partials/settings', [
-				'is_confidential' =>  $document_info['is_confidential']
+				'is_confidential' =>  0
 			]); ?>
 
 			
