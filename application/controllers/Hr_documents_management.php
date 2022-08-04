@@ -10577,7 +10577,7 @@ class Hr_documents_management extends Public_Controller
                 //
                 $a['visible_to_payroll'] = !isset($post['payroll']) ? $post['payroll'] : 0;
                 //
-                $a['is_available_for_na'] = isset($post['roles']) ? implode(',', $post['roles']) : NULL;
+                $a['allowed_roles'] = isset($post['roles']) ? implode(',', $post['roles']) : NULL;
                 $a['allowed_employees'] = isset($post['employees']) ? implode(',', $post['employees']) : NULL;
                 $a['allowed_departments'] = isset($post['departments']) ? implode(',', $post['departments']) : NULL;
                 $a['allowed_teams'] = isset($post['teams']) ? implode(',', $post['teams']) : NULL;
