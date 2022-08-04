@@ -1712,7 +1712,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 				assign: $(this).data('value'),
 				fromTemplate: false,
 				// Visibility
-				payroll: $('#js-payroll-offer-letter-add').prop('checked'),
+				payroll: $('#js-payroll-offer-letter-add').prop('checked') ? 1 : 0,
 				roles: $('#js-roles-offer-letter-add').val(),
 				departments: $('#js-department-offer-letter-add').val(),
 				teams: $('#js-teams-offer-letter-add').val(),
