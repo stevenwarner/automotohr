@@ -10603,7 +10603,7 @@ class Hr_documents_management extends Public_Controller
                 } else {
                     $a['automatic_assign_in'] = !empty($this->input->post('assign_in_months')) ? $this->input->post('assign_in_months') : 0;
                 }
-                
+                _e($a,true);
                 //
                 $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
                 //
