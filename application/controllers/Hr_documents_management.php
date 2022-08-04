@@ -10603,12 +10603,8 @@ class Hr_documents_management extends Public_Controller
                 } else {
                     $a['automatic_assign_in'] = !empty($this->input->post('assign_in_months')) ? $this->input->post('assign_in_months') : 0;
                 }
-                
-                error_reporting(E_ALL);
-                ini_set('display_errors', 1);
                 //
                 $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
-                _e($assignInsertId,true,true);
                 //
                 $verification_key = random_key(80);
                 $this->hr_documents_management_model->set_offer_letter_verification_key($a['user_sid'], $verification_key, $post['Type']);
