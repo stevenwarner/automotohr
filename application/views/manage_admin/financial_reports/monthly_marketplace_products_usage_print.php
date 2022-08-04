@@ -45,9 +45,9 @@
         <script type="text/javascript" src="<?= base_url() ?>assets/manage_admin/js/Chart.bundle.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
+        <script src="<?php echo base_url('assets/js/html2canvas.min.js'); ?>"></script> 
 
-
-        <title>Financial Reports - Yearly Sales</title>
+        <title>Financial Reports - Monthly Marketplace Products Usage History</title>
         
         <style type="text/css" media="print">
             @page{
@@ -176,17 +176,42 @@
 
     $(document).ready(function () {
 
-        $('select').on('change', function(){
-            var myYear = $('#year').val();
+        var useCanvas = "no";
+        var isChromium = window.chrome;
+        var winNav = window.navigator;
+        var vendorName = winNav.vendor;
+        var isOpera = typeof window.opr !== "undefined";
+        var isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+        var isIOSChrome = winNav.userAgent.match("CriOS");
 
-            var myUrl = '<?php echo base_url("manage_admin/financial_reports/yearly_sales")?>'+ '/' + myYear;
+        if (isIOSChrome) {
+           useCanvas = "yes";
+        } else if(
+          isChromium !== null &&
+          typeof isChromium !== "undefined" &&
+          vendorName === "Google Inc." &&
+          isOpera === false &&
+          isIEedge === false
+        ) {
+           useCanvas = "yes";
+        }
 
-           
-            $('#search_btn').attr('href', myUrl);
-        }).trigger('change');
+        if (useCanvas == "yes") {
+            setTimeout(function(){
+                html2canvas(document.querySelector("#download_report")).then(canvas => {
+                    $('#download_report').hide();
+                    $('#print_section').show();
+                    //
+                    $('#print_section').html(canvas);
+                    $('canvas').css("width","100%");
+                    $('canvas').css("height","80em"); 
+                    window.print();
 
-        setTimeout(function(){
-            var draw = kendo.drawing;
+                }); 
+            },5000);
+        } else {
+            setTimeout(function(){
+                var draw = kendo.drawing;
                 draw.drawDOM($("#download_report"), {
                     avoidLinks: false,
                     paperSize: "auto",
@@ -202,7 +227,9 @@
                     $('#print_section').show();
                     $('#report_iframe').attr("src",data);
                 });
-        },6000)        
+            },5000)
+        }
+                
     });
 
 
