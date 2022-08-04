@@ -10582,8 +10582,6 @@ class Hr_documents_management extends Public_Controller
                 $a['allowed_departments'] = isset($post['departments']) ? implode(',', $post['departments']) : NULL;
                 $a['allowed_teams'] = isset($post['teams']) ? implode(',', $post['teams']) : NULL;
 
-              
-
 
                 // Document Settings - Confidential
                 $a['is_confidential'] = isset($post['setting_is_confidential']) && $post['setting_is_confidential'] == 'on' ? 1 : 0;
