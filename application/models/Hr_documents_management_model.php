@@ -4837,6 +4837,8 @@ class Hr_documents_management_model extends CI_Model
         $a
     ) {
         $this->db->insert('documents_assigned', $a);
+        $str = $this->db->last_query();
+        echo $str;
         $insert_id = $this->db->insert_id();
         echo $insert_id."$insert_id<br>";
         return $insert_id;
