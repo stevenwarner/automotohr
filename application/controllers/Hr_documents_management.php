@@ -10608,6 +10608,7 @@ class Hr_documents_management extends Public_Controller
                 ini_set('display_errors', 1);
                 //
                 $assignInsertId = $this->hr_documents_management_model->assignOfferLetter($a);
+                _e($assignInsertId,true);
                 //
                 $verification_key = random_key(80);
                 $this->hr_documents_management_model->set_offer_letter_verification_key($a['user_sid'], $verification_key, $post['Type']);
