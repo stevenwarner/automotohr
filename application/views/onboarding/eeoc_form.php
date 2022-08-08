@@ -19,7 +19,7 @@ if (isset($applicant)) {
     $company_sid = $applicant['employer_sid'];
     $users_type = 'applicant';
     $users_sid = $applicant['sid'];
-    $back_url = base_url('onboarding/general_information/' . $unique_sid);
+    $back_url = base_url('onboarding/my_profile/' . $unique_sid);
     $next_btn = '<a href="javascript:;" class="btn btn-success btn-block go_next"> Proceed To Next <i class="fa fa-angle-right"></i></a>';
     
     if($enable_learbing_center) {
@@ -403,13 +403,19 @@ if (isset($applicant)) {
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-xs-12 col-sm-8 col-md-10 col-lg-10"></div>
-                                        <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
-
-                                            <?php echo $next_btn;?>
-                                        </div>
+                                </div>
+                            </div>
+                            
+                            <div class="btn-wrp full-width">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <a href="<?php echo $back_url; ?>" class="btn btn-info btn-block"><i class="fa fa-angle-left"></i>  <?= $back_btn;?></a>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <?php echo $center_btn;?>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                        <?php echo $next_btn;?>
                                     </div>
                                 </div>
                             </div>

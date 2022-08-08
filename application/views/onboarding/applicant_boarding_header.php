@@ -176,17 +176,19 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="arrow-links">
-                    <?php if ($enable_learbing_center && $company_eeoc_form_status == 1) {
-    $width = round(100 / 8, 4);
-} else if (!$enable_learbing_center && $company_eeoc_form_status == 0) {
-    $width = round(100 / 6, 3);
-} else if (!$enable_learbing_center || $company_eeoc_form_status == 0) {
-    $width = round(100 / 7, 4);
-} else {
-    $width = round(100 / 6, 3);
-}
+                    <?php 
+                        if ($enable_learbing_center && $company_eeoc_form_status == 1) {
+                            $width = round(100 / 7, 4);
+                        } else if (!$enable_learbing_center && $company_eeoc_form_status == 0) {
+                            $width = round(100 / 6, 3);
+                        } else if (!$enable_learbing_center || $company_eeoc_form_status == 0) {
+                            $width = round(100 / 6, 4);
+                        } else {
+                            $width = round(100 / 6, 3);
+                        }
 
-    $url_segment = $this->uri->segment(2);?>
+                        $url_segment = $this->uri->segment(2);
+                    ?>
                     <ul>
                         <li class="<?php echo $url_segment == 'getting_started' || $url_segment == 'colleague_profile' ? 'active' : ''; ?>"
                             style="width: <?php echo $width ?>%;">
@@ -220,14 +222,14 @@
                                     data-placement="left" title="Done!"></i>
                             </a>
                         </li>
-                        <li class="<?php echo $url_segment == 'general_information' || $url_segment == 'edit_dependant_information' || $url_segment == 'edit_emergency_contacts' ? 'active' : ''; ?> <?php echo $complete_steps['license_info'] > 0 ? 'done1' : ''; ?>"
-                            style="width: <?php echo $width ?>%">
-                            <a href="<?php echo base_url('onboarding/general_information/' . $unique_sid); ?>">
+                       <!--  <li class="<?php //echo $url_segment == 'general_information' || $url_segment == 'edit_dependant_information' || $url_segment == 'edit_emergency_contacts' ? 'active' : ''; ?> <?php //echo $complete_steps['license_info'] > 0 ? 'done1' : ''; ?>"
+                            style="width: <?php //echo $width ?>%">
+                            <a href="<?php //echo base_url('onboarding/general_information/' . $unique_sid); ?>">
                                 <span>Step 4</span>
                                 <div class="step-text">General Information</div> <i class="star" data-toggle="tooltip"
                                     data-placement="left" title="Done!"></i>
                             </a>
-                        </li>
+                        </li> -->
 
 
                         <!--                            <li class="--><?php //echo $url_segment == 'documents' || $url_segment == 'sign_u_document' || $url_segment == 'sign_g_document' || $url_segment == 'sign_offer_letter' || $url_segment == 'form_w4' || $url_segment == 'form_i9'? 'active' : ''; ?>

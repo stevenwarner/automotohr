@@ -1427,7 +1427,7 @@ class Onboarding extends CI_Controller
             //
             $this->session->set_flashdata('message', '<strong>Success:</strong> Profile Information Successfully Updated!');
             //Redirect to next step
-            redirect('onboarding/general_information/' . $unique_sid, 'refresh');
+            redirect('onboarding/eeoc_form/' . $unique_sid, 'refresh');
         }
     }
 
