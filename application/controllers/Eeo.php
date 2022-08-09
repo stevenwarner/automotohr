@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Eeo extends Public_Controller
 {
@@ -12,8 +12,9 @@ class Eeo extends Public_Controller
         $this->load->library('pagination');
     }
 
-    public function index($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null)
+    public function index($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null)
     {
+
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -44,25 +45,206 @@ class Eeo extends Public_Controller
                 $end_date = $end_date->format('Y-m-t 23:59:59');
             }
 
-            $records_per_page = PAGINATION_RECORDS_PER_PAGE;
-            $page = ($this->uri->segment(6)) ? $this->uri->segment(6) : 0;
+            $records_per_page = 5; //PAGINATION_RECORDS_PER_PAGE;
+            if ($keyword == 'employee') {
+                $page = ($this->uri->segment(7)) ? $this->uri->segment(7) : 0;
+            } else {
+                $page = ($this->uri->segment(6)) ? $this->uri->segment(6) : 0;
+            }
+
             $my_offset = 0;
 
             if ($page > 1) {
                 $my_offset = ($page - 1) * $records_per_page;
             }
 
+            $male_cout = 0;
+            $female_cout = 0;
+            $notdefined_cout = 0;
+            //
+            $male_cout_hispanic = 0;
+            $male_cout_white = 0;
+            $male_cout_black = 0;
+            $male_cout_native = 0;
+            $male_cout_asian = 0;
+            $male_cout_american = 0;
+            $male_cout_races = 0;
+            $male_cout_nogroup = 0;
+            //
+            $female_cout_hispanic = 0;
+            $female_cout_white = 0;
+            $female_cout_black = 0;
+            $female_cout_native = 0;
+            $female_cout_asian = 0;
+            $female_cout_american = 0;
+            $female_cout_races = 0;
+            $female_cout_nogroup = 0;
+            //
+            $notdefined_cout_hispanic = 0;
+            $notdefined_cout_white = 0;
+            $notdefined_cout_black = 0;
+            $notdefined_cout_native = 0;
+            $notdefined_cout_asian = 0;
+            $notdefined_cout_american = 0;
+            $notdefined_cout_races = 0;
+            $notdefined_cout_nogroup = 0;
 
-            $total_records = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, true);
-            $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset);
+
+            if ($keyword == 'employee') {
+
+                $total_records = '';
+                $eeo_candidates = '';
+
+                $segement6 = '/' . $employee_status;
+                $uri_segment = 7;
+
+                $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
+                $total_records = count($eeo_candidates);
+
+                foreach ($eeo_candidates as $employee_row) {
+
+                    if ($employee_row['gender'] == 'Male') {
+                        $male_cout++;
+                        if ($employee_row['group_status'] == 'Hispanic or Latino') {
+                            $male_cout_hispanic++;
+                        } else if ($employee_row['group_status'] == 'White') {
+                            $male_cout_white++;
+                        } else if ($employee_row['group_status'] == 'Black or African American') {
+                            $male_cout_black++;
+                        } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                            $male_cout_native++;
+                        } else if ($employee_row['group_status'] == 'Asian') {
+                            $male_cout_asian++;
+                        } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
+                            $male_cout_american++;
+                        } else if ($employee_row['group_status'] == 'Two or More Races') {
+                            $male_cout_races++;
+                        } else {
+                            $male_cout_nogroup++;
+                        }
+                    } elseif ($employee_row['gender'] == 'Female') {
+                        $female_cout++;
+                        if ($employee_row['group_status'] == 'Hispanic or Latino') {
+                            $female_cout_hispanic++;
+                        } else if ($employee_row['group_status'] == 'White') {
+                            $female_cout_white++;
+                        } else if ($employee_row['group_status'] == 'Black or African American') {
+                            $female_cout_black++;
+                        } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                            $female_cout_native++;
+                        } else if ($employee_row['group_status'] == 'Asian') {
+                            $female_cout_asian++;
+                        } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
+                            $female_cout_american++;
+                        } else if ($employee_row['group_status'] == 'Two or More Races') {
+                            $female_cout_races++;
+                        } else {
+                            $female_cout_nogroup++;
+                        }
+                    } else {
+                        $notdefined_cout++;
+                        if ($employee_row['group_status'] == 'Hispanic or Latino') {
+                            $notdefined_cout_hispanic++;
+                        } else if ($employee_row['group_status'] == 'White') {
+                            $notdefined_cout_white++;
+                        } else if ($employee_row['group_status'] == 'Black or African American') {
+                            $notdefined_cout_black++;
+                        } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                            $notdefined_cout_native++;
+                        } else if ($employee_row['group_status'] == 'Asian') {
+                            $notdefined_cout_asian++;
+                        } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
+                            $notdefined_cout_american++;
+                        } else if ($employee_row['group_status'] == 'Two or More Races') {
+                            $notdefined_cout_races++;
+                        } else {
+                            $notdefined_cout_nogroup++;
+                        }
+                    }
+                }
+
+                $eeo_candidates = array_slice($eeo_candidates, $my_offset, $records_per_page);
+                $data['totalrecords'] = $total_records;
+                $data['recordsfor'] = 'Employees';
+            } else {
+                $segement6 = '';
+                $uri_segment = 6;
+                $total_records = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, true);
+                $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset);
+
+                $eeo_candidates_graph = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id);
+
+
+                foreach ($eeo_candidates_graph as $employee_row) {
+                    if ($employee_row['gender'] == 'Male') {
+                        $male_cout++;
+                        if ($employee_row['group_status'] == 'Hispanic or Latino') {
+                            $male_cout_hispanic++;
+                        } else if ($employee_row['group_status'] == 'White') {
+                            $male_cout_white++;
+                        } else if ($employee_row['group_status'] == 'Black or African American') {
+                            $male_cout_black++;
+                        } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                            $male_cout_native++;
+                        } else if ($employee_row['group_status'] == 'Asian') {
+                            $male_cout_asian++;
+                        } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
+                            $male_cout_american++;
+                        } else if ($employee_row['group_status'] == 'Two or More Races') {
+                            $male_cout_races++;
+                        } else {
+                            $male_cout_nogroup++;
+                        }
+                    } elseif ($employee_row['gender'] == 'Female') {
+                        $female_cout++;
+                        if ($employee_row['group_status'] == 'Hispanic or Latino') {
+                            $female_cout_hispanic++;
+                        } else if ($employee_row['group_status'] == 'White') {
+                            $female_cout_white++;
+                        } else if ($employee_row['group_status'] == 'Black or African American') {
+                            $female_cout_black++;
+                        } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                            $female_cout_native++;
+                        } else if ($employee_row['group_status'] == 'Asian') {
+                            $female_cout_asian++;
+                        } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
+                            $female_cout_american++;
+                        } else if ($employee_row['group_status'] == 'Two or More Races') {
+                            $female_cout_races++;
+                        } else {
+                            $female_cout_nogroup++;
+                        }
+                    } else {
+                        $notdefined_cout++;
+                        if ($employee_row['group_status'] == 'Hispanic or Latino') {
+                            $notdefined_cout_hispanic++;
+                        } else if ($employee_row['group_status'] == 'White') {
+                            $notdefined_cout_white++;
+                        } else if ($employee_row['group_status'] == 'Black or African American') {
+                            $notdefined_cout_black++;
+                        } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                            $notdefined_cout_native++;
+                        } else if ($employee_row['group_status'] == 'Asian') {
+                            $notdefined_cout_asian++;
+                        } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
+                            $notdefined_cout_american++;
+                        } else if ($employee_row['group_status'] == 'Two or More Races') {
+                            $notdefined_cout_races++;
+                        } else {
+                            $notdefined_cout_nogroup++;
+                        }
+                    }
+                }
+
+
+                $data['totalrecords'] = $total_records;
+                $data['recordsfor'] = 'Applicants';
+            }
             $data['eeo_candidates'] = $eeo_candidates;
 
             $start_date = DateTime::createFromFormat('Y-m-d H:i:s', $start_date)->format('m-d-Y');
             $end_date = DateTime::createFromFormat('Y-m-d H:i:s', $end_date)->format('m-d-Y');
-
-            $baseUrl = base_url('eeo') . '/' . urlencode($keyword) . '/' . $opt_type . '/' . urlencode($start_date) . '/' . urlencode($end_date);
-
-            $uri_segment = 6;
+            $baseUrl = base_url('eeo') . '/' . urlencode($keyword) . '/' . $opt_type . '/' . urlencode($start_date) . '/' . urlencode($end_date) . $segement6;
 
             $config = array();
             $config['base_url'] = $baseUrl;
@@ -104,6 +286,39 @@ class Eeo extends Public_Controller
             $data['startdate'] = $display_start_day;
             $data['enddate'] = $display_end_day;
             $data['opt_type'] = $opt_type;
+            $data['employee_status'] = $employee_status;
+
+            $data['male_cout'] = $male_cout;
+            $data['female_cout'] = $female_cout;
+            $data['notdefined_cout'] = $notdefined_cout;
+            //
+            $data['male_cout_hispanic'] = $male_cout_hispanic;
+            $data['male_cout_white'] = $male_cout_white;
+            $data['male_cout_black'] = $male_cout_black;
+            $data['male_cout_native'] = $male_cout_native;
+            $data['male_cout_asian'] = $male_cout_asian;
+            $data['male_cout_american'] = $male_cout_american;
+            $data['male_cout_races'] = $male_cout_races;
+            $data['male_cout_nogroup'] = $male_cout_nogroup;
+            //
+            $data['female_cout_hispanic'] = $female_cout_hispanic;
+            $data['female_cout_white'] = $female_cout_white;
+            $data['female_cout_black'] = $female_cout_black;
+            $data['female_cout_native'] = $female_cout_native;
+            $data['female_cout_asian'] = $female_cout_asian;
+            $data['female_cout_american'] = $female_cout_american;
+            $data['female_cout_races'] = $female_cout_races;
+            $data['female_cout_nogroup'] = $female_cout_nogroup;
+
+            //
+            $data['notdefined_cout_hispanic'] = $notdefined_cout_hispanic;
+            $data['notdefined_cout_white'] = $notdefined_cout_white;
+            $data['notdefined_cout_black'] = $notdefined_cout_black;
+            $data['notdefined_cout_native'] = $notdefined_cout_native;
+            $data['notdefined_cout_asian'] = $notdefined_cout_asian;
+            $data['notdefined_cout_american'] = $notdefined_cout_american;
+            $data['notdefined_cout_races'] = $notdefined_cout_races;
+            $data['notdefined_cout_nogroup'] = $notdefined_cout_nogroup;
 
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/eeo_applicants_new');
@@ -115,6 +330,7 @@ class Eeo extends Public_Controller
 
     public function export_excel()
     {
+        
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -123,10 +339,16 @@ class Eeo extends Public_Controller
             check_access_permissions($security_details, 'my_settings', 'eeo'); // Param2: Redirect URL, Param3: Function Name
             $company_id = $data['session']['company_detail']['sid'];
 
-            $keyword = $_POST['keyword'];
             $start_date = $_POST['startdate'];
             $end_date = $_POST['enddate'];
-            $opt_type = $_POST['opt_type'];
+         
+            if($_POST['applicantoption']=='employee'){
+                $opt_type = $_POST['opt_type1'];
+                $keyword = '';
+            }else{
+                $opt_type = $_POST['opt_type'];
+                $keyword = $_POST['keyword'];
+            }
 
             $keyword = empty($keyword) ? 'all' : $keyword;
             $start_date = empty($start_date) ? 'all' : $start_date;
@@ -154,7 +376,16 @@ class Eeo extends Public_Controller
                 $end_date = $end_date->format('Y-m-t 23:59:59');
             }
 
-            $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, null, 0, false);
+            if($_POST['applicantoption']=='employee'){
+                $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
+
+            }else{
+                $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, null, 0, false);
+            }
+            
+
+
+
 
             header('Content-Type: text/csv; charset=utf-8');
             header('Content-Disposition: attachment; filename=eeoreport_' . $opt_type . '-' . date('Y-m-d-H-i-s') . '.csv');
@@ -221,7 +452,8 @@ class Eeo extends Public_Controller
                         "veteran" => $manual_row['veteran'],
                         "disability" => $manual_row['disability'],
                         "gender" => $manual_row['gender'],
-                        "date_applied" => $manual_row['date_applied']);
+                        "date_applied" => $manual_row['date_applied']
+                    );
                 } else {
                     $eeo_candidates[] = array(
                         "sid" => $manual_row['applicant_sid'],
@@ -230,7 +462,8 @@ class Eeo extends Public_Controller
                         "first_name" => $manual_row['first_name'],
                         "last_name" => $manual_row['last_name'],
                         "eeo_form" => $manual_row['eeo_form'],
-                        "date_applied" => $manual_row['date_applied']);
+                        "date_applied" => $manual_row['date_applied']
+                    );
                 }
             }
         }
@@ -265,7 +498,6 @@ class Eeo extends Public_Controller
 
                 $data["employer"] = $data['session']['employer_detail'];
                 $load_view = check_blue_panel_status(false, 'self');
-
             } elseif ($type == 'employee') {
                 check_access_permissions($security_details, 'employee_management', 'employee_eeoc_form');  // Param2: Redirect URL, Param3: Function Name
                 $data = employee_right_nav($sid);
@@ -347,9 +579,9 @@ class Eeo extends Public_Controller
                 //   $this->load->view('onboarding/eeoc_form');
                 //   $this->load->view('onboarding/on_boarding_footer');
                 // } else {
-                    $this->load->view('main/header', $data);
-                    $this->load->view('eeo/form');
-                    $this->load->view('main/footer');
+                $this->load->view('main/header', $data);
+                $this->load->view('eeo/form');
+                $this->load->view('main/footer');
                 // }
             } else {
                 $perform_action = $this->input->post('perform_action');
@@ -392,7 +624,6 @@ class Eeo extends Public_Controller
                             update_user_gender($users_sid, $users_type, $dataToUpdate);
                             //
                             $this->session->set_flashdata('message', '<strong>Success</strong> E.E.O.C. Form Updated!');
-
                         }
 
                         if ($sid == $employer_sid) {
@@ -427,14 +658,14 @@ class Eeo extends Public_Controller
                 if ($user_type == 'applicant') {
                     redirect('applicant_profile/' . $user_sid . '/' . $jobs_listing, 'refresh');
                 } else {
-                    redirect('employee_profile/'. $user_sid, 'refresh');
+                    redirect('employee_profile/' . $user_sid, 'refresh');
                 }
             }
             //
             switch ($user_type) {
                 case 'employee':
                     $user_info = $this->hr_documents_management_model->get_employee_information($company_sid, $user_sid);
-                    
+
                     if (empty($user_info)) {
                         $this->session->set_flashdata('message', '<strong>Error:</strong> Employee Not Found!');
                         redirect('employee_management', 'refresh');
@@ -464,7 +695,8 @@ class Eeo extends Public_Controller
                     $data['eeo_form_status'] = $eeo_form_status;
                     $data['eeo_form_info'] = $eeo_form_info;
 
-                    $data_employer = array('sid' => $applicant_info['sid'],
+                    $data_employer = array(
+                        'sid' => $applicant_info['sid'],
                         'first_name' => $applicant_info['first_name'],
                         'last_name' => $applicant_info['last_name'],
                         'email' => $applicant_info['email'],
@@ -475,9 +707,10 @@ class Eeo extends Public_Controller
                         'Location_ZipCode' => $applicant_info['zipcode'],
                         'PhoneNumber' => $applicant_info['phone_number'],
                         'profile_picture' => $applicant_info['pictures'],
-                        'user_type' => ucwords($user_type));
+                        'user_type' => ucwords($user_type)
+                    );
 
-                    $data["user_name"] = $applicant_info['first_name']." ".$applicant_info['last_name'];
+                    $data["user_name"] = $applicant_info['first_name'] . " " . $applicant_info['last_name'];
 
                     $data['applicant_average_rating'] = $this->hr_documents_management_model->getApplicantAverageRating($user_sid, 'applicant'); //getting average rating of applicant
                     $data['employer'] = $data_employer;
@@ -528,14 +761,15 @@ class Eeo extends Public_Controller
     }
 
     //
-    function change_form_status(){
+    function change_form_status()
+    {
         //
         if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
         //
         $data['session'] = $this->session->userdata('logged_in');
         $employee_sid = $data['session']['employer_detail']['sid'];
         //
-        if(!strtolower($this->input->method()) == 'post' || empty($this->input->post(NULL, TRUE))){
+        if (!strtolower($this->input->method()) == 'post' || empty($this->input->post(NULL, TRUE))) {
             exit(0);
         }
         //
@@ -561,11 +795,12 @@ class Eeo extends Public_Controller
 
 
     //
-    function get_trail($sid, $document_type){
+    function get_trail($sid, $document_type)
+    {
         //
         $eeoc_track = $this->hr_documents_management_model->fetch_track_record($sid, $document_type);
         //
-        if(empty($eeoc_track)){
+        if (empty($eeoc_track)) {
             echo '
                 <tr>
                     <td colspan="12">
@@ -577,34 +812,34 @@ class Eeo extends Public_Controller
         }
         //
         $html = '';
-        foreach($eeoc_track as $track){
+        foreach ($eeoc_track as $track) {
 
             $html .= '<tr>';
             $html .= '    <td class="col-lg-4">';
-                            if ($track['document_type'] == "eeoc") {
-            $html .= '               EEOC Fillable';
-                            } else if ($track['document_type'] == "w4") {
-            $html .= '                W4 Fillable';
-                            } else if ($track['document_type'] == "w9") {
-            $html .= '                W9 Fillable';
-                            } else if ($track['document_type'] == "i9") {
-            $html .= '                I9 Fillable';
-                            }
+            if ($track['document_type'] == "eeoc") {
+                $html .= '               EEOC Fillable';
+            } else if ($track['document_type'] == "w4") {
+                $html .= '                W4 Fillable';
+            } else if ($track['document_type'] == "w9") {
+                $html .= '                W9 Fillable';
+            } else if ($track['document_type'] == "i9") {
+                $html .= '                I9 Fillable';
+            }
             $html .= '    </td>';
             $html .= '    <td class="col-lg-4 text-right" colspan="4">';
             $html .=        getUserNameBySID($track['user_sid']);
             $html .= '    </td>';
             $html .= '    <td class="col-lg-4 text-right" colspan="4">';
-            $html .=         reset_datetime(array( 'datetime' => $track['created_at'], '_this' => $this));
+            $html .=         reset_datetime(array('datetime' => $track['created_at'], '_this' => $this));
             $html .= '    </td>';
             $html .= '    <td class="col-lg-4 text-right" colspan="4">';
-                            if ($track['action'] == "revoke") {
-            $html .= '              <strong class="text-danger">Revoked</strong>';
-                            } else if ($track['action'] == "assign") {
-            $html .= '              <strong class="text-success">Assigned</strong>';
-                            } else if ($track['action'] == "completed") {
-            $html .= '              <strong class="text-info">Completed</strong>';
-                            }
+            if ($track['action'] == "revoke") {
+                $html .= '              <strong class="text-danger">Revoked</strong>';
+            } else if ($track['action'] == "assign") {
+                $html .= '              <strong class="text-success">Assigned</strong>';
+            } else if ($track['action'] == "completed") {
+                $html .= '              <strong class="text-info">Completed</strong>';
+            }
             $html .= '    </td>';
             $html .= '</tr>';
         }
@@ -612,7 +847,8 @@ class Eeo extends Public_Controller
         echo $html;
     }
     //
-    function get_history($user_sid, $user_type, $document_type){
+    function get_history($user_sid, $user_type, $document_type)
+    {
         //
         $eeoc_history = $this->hr_documents_management_model->fetch_form_history($document_type, $user_type, $user_sid);
         //
@@ -622,12 +858,12 @@ class Eeo extends Public_Controller
         if (!empty($eeoc_history)) {
             foreach ($eeoc_history as $history) {
                 $history_array[$h_key]['sid'] = $history['sid'];
-                $history_array[$h_key]['type'] = strtoupper($document_type).'_Form';
-                $history_array[$h_key]['name'] = (strtoupper($document_type)).' Fillable Document';
+                $history_array[$h_key]['type'] = strtoupper($document_type) . '_Form';
+                $history_array[$h_key]['name'] = (strtoupper($document_type)) . ' Fillable Document';
                 $history_array[$h_key]['assign_on'] = reset_datetime(array('datetime' => $history['last_sent_at'], '_this' => $this));
                 $history_array[$h_key]['submitted_on'] = reset_datetime(array('datetime' => $history['last_completed_on'], '_this' => $this));
                 $history_array[$h_key]['status'] = !empty($history['is_expired']) && $history['is_expired'] == 1 ? "Completed" : "Not Completed";
-                
+
                 //
                 $h_key++;
             }
@@ -636,5 +872,130 @@ class Eeo extends Public_Controller
         header('content-type: application/json');
         echo json_encode($history_array);
         exit(0);
+    }
+
+
+    public function viewchart($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null)
+    {
+
+
+        if ($this->session->userdata('logged_in')) {
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'my_settings', 'eeo'); // Param2: Redirect URL, Param3: Function Name
+            $company_id = $data['session']['company_detail']['sid'];
+            $keyword = urldecode($keyword);
+
+            $display_start_day = '';
+            $display_end_day = '';
+
+            if ($start_date != null && $start_date != 'all') {
+                $display_start_day = $start_date;
+                $start_date = DateTime::createFromFormat('m-d-Y', $start_date)->format('Y-m-d 00:00:00');
+            } else {
+                $start_date = new DateTime();
+                $display_start_day = $start_date->format('m-01-Y');
+                $start_date = $start_date->format('Y-m-1 00:00:00');
+            }
+
+            if ($end_date != null && $end_date != 'all') {
+                $display_end_day = $end_date;
+                $end_date = DateTime::createFromFormat('m-d-Y', $end_date)->format('Y-m-d 23:59:59');
+            } else {
+                $end_date = new DateTime();
+                $display_end_day = $end_date->format('m-t-Y');
+                $end_date = $end_date->format('Y-m-t 23:59:59');
+            }
+
+            $records_per_page = 5; //PAGINATION_RECORDS_PER_PAGE;
+            if ($keyword == 'employee') {
+                $page = ($this->uri->segment(7)) ? $this->uri->segment(7) : 0;
+            } else {
+                $page = ($this->uri->segment(6)) ? $this->uri->segment(6) : 0;
+            }
+
+            $my_offset = 0;
+
+            if ($page > 1) {
+                $my_offset = ($page - 1) * $records_per_page;
+            }
+
+            if ($keyword == 'employee') {
+
+                $total_records = '';
+                $eeo_candidates = '';
+
+                $segement6 = '/' . $employee_status;
+                $uri_segment = 7;
+
+                $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
+                $total_records = count($eeo_candidates);
+                $eeo_candidates = array_slice($eeo_candidates, $my_offset, $records_per_page);
+            } else {
+                $segement6 = '';
+                $uri_segment = 6;
+                $total_records = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, true);
+                $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset);
+            }
+            $data['eeo_candidates'] = $eeo_candidates;
+
+            $start_date = DateTime::createFromFormat('Y-m-d H:i:s', $start_date)->format('m-d-Y');
+            $end_date = DateTime::createFromFormat('Y-m-d H:i:s', $end_date)->format('m-d-Y');
+            $baseUrl = base_url('eeo') . '/' . urlencode($keyword) . '/' . $opt_type . '/' . urlencode($start_date) . '/' . urlencode($end_date) . $segement6;
+
+            $config = array();
+            $config['base_url'] = $baseUrl;
+            $config['total_rows'] = $total_records;
+            $config['per_page'] = $records_per_page;
+            $config['uri_segment'] = $uri_segment;
+            $config['num_links'] = 4;
+            $config['use_page_numbers'] = true;
+            $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+            $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+            $config['first_link'] = '&laquo; First';
+            $config['first_tag_open'] = '<li class="prev page">';
+            $config['first_tag_close'] = '</li>';
+            $config['last_link'] = 'Last &raquo;';
+            $config['last_tag_open'] = '<li class="next page">';
+            $config['last_tag_close'] = '</li>';
+            $config['next_link'] = '<i class="fa fa-angle-right"></i>';
+            $config['next_tag_open'] = '<li class="next page">';
+            $config['next_tag_close'] = '</li>';
+            $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
+            $config['prev_tag_open'] = '<li class="prev page">';
+            $config['prev_tag_close'] = '</li>';
+            $config['cur_tag_open'] = '<li class="active"><a href="">';
+            $config['cur_tag_close'] = '</a></li>';
+            $config['num_tag_open'] = '<li class="page">';
+            $config['num_tag_close'] = '</li>';
+            $this->pagination->initialize($config);
+
+            $data['links'] = $this->pagination->create_links();
+
+            $data['current_page'] = $page;
+            $data['from_records'] = $my_offset == 0 ? 1 : $my_offset;
+            $data['to_records'] = $total_records < $records_per_page ? $total_records : $my_offset + $records_per_page;
+            $data['total_records'] = $total_records;
+
+            $data['title'] = 'EEO form Applicants';
+
+            $data['keyword'] = $keyword;
+            $data['startdate'] = $display_start_day;
+            $data['enddate'] = $display_end_day;
+            $data['opt_type'] = $opt_type;
+            $data['employee_status'] = $employee_status;
+
+
+
+
+
+            $this->load->view('main/header', $data);
+            $this->load->view('manage_employer/eeo_applicants_new_chart');
+            $this->load->view('main/footer');
+        } else {
+            redirect(base_url('login'), "refresh");
+        }
     }
 }

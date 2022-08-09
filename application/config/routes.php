@@ -835,7 +835,12 @@ $route['eeo/(:any)'] = 'eeo/index/$1';
 $route['eeo/(:any)/(:any)'] = 'eeo/index/$1/$2';
 $route['eeo/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3';
 $route['eeo/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4';
-$route['eeo/(:any)/(:any)/(:any)/(:any)/(:num)'] = 'eeo/index/$1/$2/$3/$4/$5';
+//$route['eeo/(:any)/(:any)/(:any)/(:any)/(:num)'] = 'eeo/index/$1/$2/$3/$4/$5';
+$route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5';
+$route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5/$6';
+
+$route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4/$5';
+$route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4/$5/$6';
 $route['eeo/export_excel'] = 'eeo/export_excel';
 $route['EEOC/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2';
 $route['EEOC/(:any)/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2/$3';
