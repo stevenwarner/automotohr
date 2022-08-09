@@ -297,9 +297,6 @@
 <script src="<?php echo base_url('assets/crop/fabric.js'); ?>"></script>
 <script src="<?php echo base_url('assets/crop/darkroom.js'); ?>"></script>
 <script type="text/javascript">
-    $("document").ready(function () {
-        console.log("love")
-    });
 
     $( "#authorized_e_Signature_Modal" ).on('shown.bs.modal', function(){
         var assign_doc_sid = $("#authorized_document_sid").val();
