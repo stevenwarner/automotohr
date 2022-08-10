@@ -263,10 +263,6 @@ class eeo_model extends CI_Model
     function get_all_eeo_employees($keyword, $opt_status, $start_date, $end_date, $company_id, $records_per_page = null, $my_offset = 0, $count_only = false, $type)
     {
 
-
-       
-
-
         $employes_records = $this->fetch_company_employees($company_id, $type);
 
         foreach ($employes_records as $ekey => $employees) {
@@ -344,7 +340,7 @@ class eeo_model extends CI_Model
     function fetch_company_employees($company_sid, $type)
     {
 
-        $this->db->select('sid, first_name, last_name, access_level_plus, pay_plan_flag, job_title, access_level, is_executive_admin, concat(first_name," ",last_name) as employee_name');
+        $this->db->select('sid, first_name, last_name, access_level_plus, pay_plan_flag, job_title, access_level, is_executive_admin, concat(first_name," ",last_name) as employee_name, applicant_sid');
         $this->db->where('parent_sid', $company_sid);
         if ($type == "active") {
             $this->db->where('terminated_status', 0);

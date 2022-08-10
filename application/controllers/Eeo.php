@@ -70,6 +70,15 @@ class Eeo extends Public_Controller
             $male_cout_american = 0;
             $male_cout_races = 0;
             $male_cout_nogroup = 0;
+
+            $male_cout_hispanic_hired = 0;
+            $male_cout_white_hired = 0;
+            $male_cout_black_hired = 0;
+            $male_cout_native_hired = 0;
+            $male_cout_asian_hired = 0;
+            $male_cout_american_hired = 0;
+            $male_cout_races_hired = 0;
+            $male_cout_nogroup_hired = 0;
             //
             $female_cout_hispanic = 0;
             $female_cout_white = 0;
@@ -79,6 +88,15 @@ class Eeo extends Public_Controller
             $female_cout_american = 0;
             $female_cout_races = 0;
             $female_cout_nogroup = 0;
+            //
+            $female_cout_hispanic_hired = 0;
+            $female_cout_white_hired = 0;
+            $female_cout_black_hired = 0;
+            $female_cout_native_hired = 0;
+            $female_cout_asian_hired = 0;
+            $female_cout_american_hired = 0;
+            $female_cout_races_hired = 0;
+            $female_cout_nogroup_hired = 0;
             //
             $notdefined_cout_hispanic = 0;
             $notdefined_cout_white = 0;
@@ -107,39 +125,88 @@ class Eeo extends Public_Controller
                         $male_cout++;
                         if ($employee_row['group_status'] == 'Hispanic or Latino') {
                             $male_cout_hispanic++;
+
+                            if ($employee_row['applicant_sid'] != '') {
+                                $male_cout_hispanic_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'White') {
                             $male_cout_white++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $male_cout_white_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'Black or African American') {
                             $male_cout_black++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $male_cout_black_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
                             $male_cout_native++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $male_cout_native_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'Asian') {
                             $male_cout_asian++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $male_cout_asian_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
                             $male_cout_american++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $male_cout_american_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'Two or More Races') {
                             $male_cout_races++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $male_cout_races_hired++;
+                            }
                         } else {
                             $male_cout_nogroup++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $male_cout_nogroup_hired++;
+                            }
                         }
                     } elseif ($employee_row['gender'] == 'Female') {
                         $female_cout++;
                         if ($employee_row['group_status'] == 'Hispanic or Latino') {
                             $female_cout_hispanic++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $female_cout_hispanic_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'White') {
                             $female_cout_white++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $female_cout_white_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'Black or African American') {
                             $female_cout_black++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $female_cout_black_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
                             $female_cout_native++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $female_cout_native_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'Asian') {
                             $female_cout_asian++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $female_cout_asian_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
                             $female_cout_american++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $female_cout_american_hired++;
+                            }
                         } else if ($employee_row['group_status'] == 'Two or More Races') {
                             $female_cout_races++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $female_cout_races_hired++;
+                            }
                         } else {
                             $female_cout_nogroup++;
+                            if ($employee_row['applicant_sid'] != '') {
+                                $female_cout_nogroup_hired++;
+                            }
                         }
                     } else {
                         $notdefined_cout++;
@@ -301,6 +368,15 @@ class Eeo extends Public_Controller
             $data['male_cout_races'] = $male_cout_races;
             $data['male_cout_nogroup'] = $male_cout_nogroup;
             //
+            $data['male_cout_hispanic_hired'] = $male_cout_hispanic_hired;
+            $data['male_cout_white_hired'] = $male_cout_white_hired;
+            $data['male_cout_black_hired'] = $male_cout_black_hired;
+            $data['male_cout_native_hired'] = $male_cout_native_hired;
+            $data['male_cout_asian_hired'] = $male_cout_asian_hired;
+            $data['male_cout_american_hired'] = $male_cout_american_hired;
+            $data['male_cout_races_hired'] = $male_cout_races_hired;
+            $data['male_cout_nogroup_hired'] = $male_cout_nogroup_hired;
+            //
             $data['female_cout_hispanic'] = $female_cout_hispanic;
             $data['female_cout_white'] = $female_cout_white;
             $data['female_cout_black'] = $female_cout_black;
@@ -309,6 +385,15 @@ class Eeo extends Public_Controller
             $data['female_cout_american'] = $female_cout_american;
             $data['female_cout_races'] = $female_cout_races;
             $data['female_cout_nogroup'] = $female_cout_nogroup;
+            //
+            $data['female_cout_hispanic_hired'] = $female_cout_hispanic_hired;
+            $data['female_cout_white_hired'] = $female_cout_white_hired;
+            $data['female_cout_black_hired'] = $female_cout_black_hired;
+            $data['female_cout_native_hired'] = $female_cout_native_hired;
+            $data['female_cout_asian_hired'] = $female_cout_asian_hired;
+            $data['female_cout_american_hired'] = $female_cout_american_hired;
+            $data['female_cout_races_hired'] = $female_cout_races_hired;
+            $data['female_cout_nogroup_hired'] = $female_cout_nogroup_hired;
 
             //
             $data['notdefined_cout_hispanic'] = $notdefined_cout_hispanic;
@@ -330,7 +415,7 @@ class Eeo extends Public_Controller
 
     public function export_excel()
     {
-        
+
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -341,11 +426,11 @@ class Eeo extends Public_Controller
 
             $start_date = $_POST['startdate'];
             $end_date = $_POST['enddate'];
-         
-            if($_POST['applicantoption']=='employee'){
+
+            if ($_POST['applicantoption'] == 'employee') {
                 $opt_type = $_POST['opt_type1'];
                 $keyword = '';
-            }else{
+            } else {
                 $opt_type = $_POST['opt_type'];
                 $keyword = $_POST['keyword'];
             }
@@ -376,13 +461,12 @@ class Eeo extends Public_Controller
                 $end_date = $end_date->format('Y-m-t 23:59:59');
             }
 
-            if($_POST['applicantoption']=='employee'){
+            if ($_POST['applicantoption'] == 'employee') {
                 $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
-
-            }else{
+            } else {
                 $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, null, 0, false);
             }
-            
+
 
 
 
