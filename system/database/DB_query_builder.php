@@ -1394,6 +1394,11 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 			$this->_reset_select();
 		}
 
+		//
+		if(!$result){
+			return 0;
+		}
+
 		if ($result->num_rows() === 0)
 		{
 			return 0;
