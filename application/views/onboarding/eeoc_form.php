@@ -19,7 +19,7 @@ if (isset($applicant)) {
     $company_sid = $applicant['employer_sid'];
     $users_type = 'applicant';
     $users_sid = $applicant['sid'];
-    $back_url = base_url('onboarding/my_profile/' . $unique_sid);
+    $back_url = base_url('onboarding/general_information/' . $unique_sid);
     $next_btn = '<a href="javascript:;" class="btn btn-success btn-block go_next"> Proceed To Next <i class="fa fa-angle-right"></i></a>';
     
     if($enable_learbing_center) {

@@ -222,14 +222,14 @@
                                     data-placement="left" title="Done!"></i>
                             </a>
                         </li>
-                       <!--  <li class="<?php //echo $url_segment == 'general_information' || $url_segment == 'edit_dependant_information' || $url_segment == 'edit_emergency_contacts' ? 'active' : ''; ?> <?php //echo $complete_steps['license_info'] > 0 ? 'done1' : ''; ?>"
-                            style="width: <?php //echo $width ?>%">
-                            <a href="<?php //echo base_url('onboarding/general_information/' . $unique_sid); ?>">
+                       <li class="<?php echo $url_segment == 'general_information' || $url_segment == 'edit_dependant_information' || $url_segment == 'edit_emergency_contacts' ? 'active' : ''; ?> <?php echo $complete_steps['license_info'] > 0 ? 'done1' : ''; ?>"
+                            style="width: <?php echo $width ?>%">
+                            <a href="<?php echo base_url('onboarding/general_information/' . $unique_sid); ?>">
                                 <span>Step 4</span>
                                 <div class="step-text">General Information</div> <i class="star" data-toggle="tooltip"
                                     data-placement="left" title="Done!"></i>
                             </a>
-                        </li> -->
+                        </li>
 
 
                         <!--                            <li class="--><?php //echo $url_segment == 'documents' || $url_segment == 'sign_u_document' || $url_segment == 'sign_g_document' || $url_segment == 'sign_offer_letter' || $url_segment == 'form_w4' || $url_segment == 'form_i9'? 'active' : ''; ?>

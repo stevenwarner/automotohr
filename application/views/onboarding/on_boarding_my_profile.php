@@ -65,7 +65,7 @@ if($_ssv){
                             <a href="<?php echo $back_url; ?>" class="btn btn-info btn-block"><i class="fa fa-angle-left"></i> Review Previous Step</a>
                         </div>
                         <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                            <a href="<?= base_url('onboarding/eeoc_form/' . $unique_sid);?>" class="btn btn-warning btn-block"> Bypass This Step <i class="fa fa-angle-right"></i></a>
+                            <a href="<?= base_url('onboarding/general_information/' . $unique_sid);?>" class="btn btn-warning btn-block"> Bypass This Step <i class="fa fa-angle-right"></i></a>
                         </div>
                         <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
                             <a href="javascript:;" class="btn btn-success btn-block" id="go_next"> Save And Proceed Next <i class="fa fa-angle-right"></i></a>
@@ -471,7 +471,7 @@ if($_ssv){
                                     <a class="btn btn-info btn-block mb-2" href="<?php echo $back_url; ?>">Review Previous Step</a>
                                 </div>
                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
-                                    <a href="<?= base_url('onboarding/eeoc_form/' . $unique_sid);?>" class="btn btn-warning btn-block mb-2"> Bypass This Step <i class="fa fa-angle-right"></i></a>
+                                    <a href="<?= base_url('onboarding/general_information/' . $unique_sid);?>" class="btn btn-warning btn-block mb-2"> Bypass This Step <i class="fa fa-angle-right"></i></a>
                                 </div>
                                 <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                     <input class="btn btn-success btn-block mb-2" id="add_edit_submit" value="Save And Proceed Next" type="submit">
