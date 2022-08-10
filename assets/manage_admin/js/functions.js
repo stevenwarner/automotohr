@@ -6,7 +6,7 @@ $(document).ready(function () {
     });
     var activeTab = localStorage.getItem('activeTab');
     if(activeTab){
-        $('#tabs a[href="' + activeTab + '"]').tab('show');
+        // $('#tabs a[href="' + activeTab + '"]').tab('show');
     }
 
     var url = window.location;
