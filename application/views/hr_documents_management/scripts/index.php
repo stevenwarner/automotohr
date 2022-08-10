@@ -952,11 +952,8 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 						closeOnSelect: false
 					});
 					//
-					if (d.is_confidential == "1") {
-						$('#modify-assign-offer-letter-modal #confidentialSelectedEmployeesdiv').show();
-						if (d.confidential_employees) {
-							$('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
-						}
+					if (d.confidential_employees) {
+						$('#modify-assign-offer-letter-modal #confidentialSelectedEmployees').select2('val', d.confidential_employees.split(','));
 					}
 					//
 					$('.jsSelectedEmployee').select2();
@@ -2099,27 +2096,49 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			if (l.signers !== null) $('#js-template-signers').select2('val', l.signers.split(','));
 
 			$('#js-popup [name="setting_is_confidential"]').prop('checked', l.is_confidential == "1" ? true : false);
-			$('#js-popup #confidentialSelectedEmployeesdiv').hide();
+			//
 			$('#js-popup #confidentialSelectedEmployees').select2({
 				closeOnSelect: false
 			});
 			//
-			if (l.is_confidential == "1") {
-				$('#js-popup #confidentialSelectedEmployeesdiv').show();
-				if (l.confidential_employees) {
-					$('#js-popup #confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
-				}
+			if (l.confidential_employees) {
+				$('#js-popup #confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
+			} else {
+				$('#js-popup #confidentialSelectedEmployees').select2('val', "");
 			}
-			
-
+			//
+			if (l.is_available_for_na) {
+				$('#js-roles-offer-letter-add').select2('val', l.is_available_for_na.split(','));
+			} else {
+				$('#js-roles-offer-letter-add').select2('val', "");
+			}
+			//
+			if (l.allowed_departments) {
+				$('#js-department-offer-letter-add').select2('val', l.allowed_departments.split(','));
+			} else {
+				$('#js-department-offer-letter-add').select2('val', "");
+			}
+			//
+			if (l.allowed_teams) {
+				$('#js-teams-offer-letter-add').select2('val', l.allowed_teams.split(','));
+			} else {
+				$('#js-teams-offer-letter-add').select2('val', "");
+			}
+			//
+			if (l.allowed_employees) {
+				$('#js-employees-offer-letter-add').select2('val', l.allowed_employees.split(','));
+			} else {
+				$('#js-employees-offer-letter-add').select2('val', "");
+			}
+			//
 			var approverPrefill = {};
             var approverSection = {
-                    appCheckboxIdx: '.jsHasApprovalFlowModal',
-                    containerIdx: '.jsApproverFlowContainerModal',
-                    addEmployeeIdx: '.jsAddDocumentApproversModal',
-                    intEmployeeBoxIdx: '.jsEmployeesadditionalBoxModal',
-                    extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxModal',
-                    approverNoteIdx: '.jsApproversNoteModal',
+                    appCheckboxIdx: '.jsHasApprovalFlowAOL',
+		            containerIdx: '.jsApproverFlowContainerAOL',
+		            addEmployeeIdx: '.jsAddDocumentApproversAOL',
+		            intEmployeeBoxIdx: '.jsEmployeesadditionalBoxAOL',
+		            extEmployeeBoxIdx: '.jsEmployeesadditionalExternalBoxAOL',
+		            approverNoteIdx: '.jsApproversNoteAOL',
                     employeesList: <?= json_encode($employeesList); ?>,
                     documentId: 0
                 };
@@ -2140,7 +2159,8 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
                 approverSection.prefill = approverPrefill;
 			}
 			//
-			$("#jsOfferLetterModal").documentApprovalFlow(approverSection);
+			// $("#jsOfferLetterModal").documentApprovalFlow(approverSection);
+			$("#jsAddSpecificOfferLetter").documentApprovalFlow(approverSection);
 			//---------Automatically assign after Days
 			$('input[name="assign-in-days"]').val(0);
 			$('input[name="assign-in-months"]').val(0);

@@ -550,10 +550,30 @@ if (isset($assigned_offer_letter_sid)) {
             $("#jsOfferLetterPage").documentApprovalFlow(approverSection);
             //
             $('.jsVisibleToPayroll').prop('checked', l.visible_to_payroll);
-            $('#jsRoles').select2('val', l.allowed_roles && l.allowed_roles != 'null' ? l.allowed_roles.split(',') : null);
-            $('#jsDepartment').select2('val', l.allowed_departments && l.allowed_departments != 'null' ? l.allowed_departments.split(',') : null);
-            $('#jsTeams').select2('val', l.allowed_teams && l.allowed_teams != 'null' ? l.allowed_teams.split(',') : null);
-            $('#jsEmployees').select2('val', l.allowed_employees && l.allowed_employees != 'null' ? l.allowed_employees.split(',') : null);
+            //
+            if (l.is_available_for_na) {
+                $('#jsRoles').select2('val', l.is_available_for_na.split(','));
+            } else {
+                $('#jsRoles').select2('val', "");
+            }
+            //
+            if (l.allowed_departments) {
+                $('#jsDepartment').select2('val', l.allowed_departments.split(','));
+            } else {
+                $('#jsDepartment').select2('val', "");
+            }
+            //
+            if (l.allowed_teams) {
+                $('#jsTeams').select2('val', l.allowed_teams.split(','));
+            } else {
+                $('#jsTeams').select2('val', "");
+            }
+            //
+            if (l.allowed_employees) {
+                $('#jsEmployees').select2('val', l.allowed_employees.split(','));
+            } else {
+                $('#jsEmployees').select2('val', "");
+            }
             //
             //Document Settings
             //   $('#confidentialSelectedEmployees').select2();
@@ -566,6 +586,8 @@ if (isset($assigned_offer_letter_sid)) {
             //
             if (l.confidential_employees) {
                 $('#confidentialSelectedEmployees').select2('val', l.confidential_employees.split(','));
+            } else {
+                $('#confidentialSelectedEmployees').select2('val', "");
             }
             
             $('#js-signers').select2({
