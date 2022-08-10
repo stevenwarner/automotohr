@@ -268,12 +268,12 @@ $tab_data['document_offer_letter_base'] = $document_offer_letter_base;
 
 <?php if(isset($GID)) { ?>
 <!--  -->
-<?php $this->load->view('hr_documents_management/general_document_assignment_blue', [
-    'company_sid' => $GID['company_sid'],
-    'user_sid' => $GID['user_sid'],
-    'user_type' => $GID['user_type'],
-    'GID' => true
-]); ?>
+<?php //$this->load->view('hr_documents_management/general_document_assignment_blue', [
+    //'company_sid' => $GID['company_sid'],
+   // 'user_sid' => $GID['user_sid'],
+    //'user_type' => $GID['user_type'],
+    //'GID' => true
+//]); ?>
 <?php } ?>
 
 <script>

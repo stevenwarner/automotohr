@@ -178,11 +178,11 @@
                 <div class="arrow-links">
                     <?php 
                         if ($enable_learbing_center && $company_eeoc_form_status == 1) {
-                            $width = round(100 / 7, 4);
+                            $width = round(100 / 8, 4);
                         } else if (!$enable_learbing_center && $company_eeoc_form_status == 0) {
                             $width = round(100 / 6, 3);
                         } else if (!$enable_learbing_center || $company_eeoc_form_status == 0) {
-                            $width = round(100 / 6, 4);
+                            $width = round(100 / 7, 4);
                         } else {
                             $width = round(100 / 6, 3);
                         }
