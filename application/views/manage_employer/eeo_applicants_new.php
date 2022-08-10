@@ -1,92 +1,5 @@
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript">
-    google.charts.load("current", {
-        packages: ["corechart"]
-    });
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-            ['Task', 'Hours per Day'],
-            ['Male', <?php echo $male_cout; ?>],
-            ['Female', <?php echo $female_cout; ?>],
-            ['Not Available', <?php echo $notdefined_cout; ?>],
-
-        ]);
-
-        var options = {
-            title: 'Total Job <?php echo $recordsfor; ?> <?php echo $totalrecords; ?>',
-            pieHole: 0.3,
-            height: 300,
-            colors: ['#3366cc', '#81b431', '#fd7a2a'],
-            pieSliceText: 'value',
-            sliceVisibilityThreshold: 0,
-            fontSize: 14,
-            backgroundColor: {
-                fill: '#eeedee'
-            },
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-        chart.draw(data, options);
-
-
-        var data = google.visualization.arrayToDataTable([
-            ['EEOC Detail Summery', 'Male', 'Female', 'Not Available', {
-                role: 'annotation'
-            }],
-            <?php //if ($male_cout_hispanic != 0 || $female_cout_hispanic != 0 || $female_cout_hispanic != 0 || $notdefined_cout_hispanic != 0) { 
-            ?>['Hispanic', <?php echo $male_cout_hispanic; ?>, <?php echo $female_cout_hispanic; ?>, <?php echo $notdefined_cout_hispanic; ?>, ''], <?php //} 
-                                                                                                                                                    ?>
-            <?php //if ($male_cout_white != 0 || $female_cout_white != 0 || $female_cout_white != 0 || $notdefined_cout_white != 0) { 
-            ?>['White', <?php echo $male_cout_white; ?>, <?php echo $female_cout_white; ?>, <?php echo $notdefined_cout_white; ?>, ''], <?php //} 
-                                                                                                                                        ?>
-            <?php //if ($male_cout_black != 0 || $female_cout_black != 0 || $female_cout_black != 0 || $notdefined_cout_black != 0) { 
-            ?>['Black', <?php echo $male_cout_black; ?>, <?php echo $female_cout_black; ?>, <?php echo $notdefined_cout_black; ?>, ''], <?php //} 
-                                                                                                                                        ?>
-            <?php //if ($male_cout_native != 0 || $female_cout_native != 0 || $female_cout_native != 0 || $notdefined_cout_native != 0) { 
-            ?>['Native Hawaiian', <?php echo $male_cout_native; ?>, <?php echo $female_cout_native; ?>, <?php echo $notdefined_cout_native; ?>, ''], <?php //} 
-                                                                                                                                                        ?>
-            <?php //if ($male_cout_asian != 0 || $female_cout_asian != 0 || $female_cout_asian != 0 || $notdefined_cout_asian != 0) { 
-            ?>['Asian', <?php echo $male_cout_asian; ?>, <?php echo $female_cout_asian; ?>, <?php echo $notdefined_cout_asian; ?>, ''], <?php //} 
-                                                                                                                                        ?>
-            <?php //if ($male_cout_american != 0 || $female_cout_american != 0 || $female_cout_american != 0 || $notdefined_cout_american != 0) { 
-            ?>['American Indian', <?php echo $male_cout_american; ?>, <?php echo $female_cout_american; ?>, <?php echo $notdefined_cout_american; ?>, ''], <?php //} 
-                                                                                                                                                            ?>
-            <?php //if ($male_cout_races != 0 || $female_cout_races != 0 || $female_cout_races != 0 || $notdefined_cout_races != 0) { 
-            ?>['Races', <?php echo $male_cout_races; ?>, <?php echo $female_cout_races; ?>, <?php echo $notdefined_cout_races; ?>, ''], <?php //} 
-                                                                                                                                        ?>
-            <?php //if ($male_cout_nogroup != 0 || $female_cout_nogroup != 0 || $female_cout_nogroup != 0 || $notdefined_cout_nogroup != 0) { 
-            ?>['Not Available', <?php echo $male_cout_nogroup; ?>, <?php echo $female_cout_nogroup; ?>, <?php echo $notdefined_cout_nogroup; ?>, ''], <?php //} 
-                                                                                                                                                        ?>
-
-        ]);
-
-        var barchart_options = {
-            title: 'EEO Detail Summery',
-            //  width: 600,
-            height: 300,
-            colors: ['#3366cc', '#81b431', '#fd7a2a'],
-            legend: {
-                position: 'top',
-                maxLines: 3
-            },
-            bars: 'horizontal',
-            isStacked: true,
-            hAxis: {
-                gridlines: {
-                    interval: 0
-                }
-
-            }
-        };
-
-        var barchart = new google.visualization.BarChart(document.getElementById('barchart_material'));
-        barchart.draw(data, barchart_options);
-
-    }
-</script>
-
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.4.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -97,7 +10,7 @@
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow">EEO form Candidates</span>
+                        <span class="page-heading down-arrow">EEO form Report</span>
                     </div>
                     <div class="row">
                         <div class="applicant-reg-date">
@@ -108,7 +21,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
                                             <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <label class="control control--radio">Applicant
                                                         <input type="radio" name="applicantoption" value="applicant" id="applicant" <?php echo $keyword != 'employee' ? 'checked' : ''; ?>>
                                                         <div class="control__indicator"></div>
@@ -130,7 +43,7 @@
                                                 <?php $keyword = $keyword != 'all' ? $keyword : ''; ?>
                                                 <input type="text" id="keyword" class="invoice-fields" name="keyword" value="<?php echo $keyword != 'employee' ? $keyword : ''; ?>">
 
-                                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="div_employee_status">
+                                                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6" id="div_employee_status" style="padding-left: 0px;">
                                                     <label for="employeestatus">Employee Status</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="employee_status" id="employee_status">
@@ -145,9 +58,11 @@
                                                     <label for="enddate">Opt Type</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="opt_type1" id="opt_type1">
-                                                            <option value="all" <?php echo $opt_type == 'all' ? 'selected="selected"' : "" ?>>All</option>
+                                                            <!-- <option value="all" <?php //echo $opt_type == 'all' ? 'selected="selected"' : "" 
+                                                                                        ?>>All</option>-->
                                                             <option value="completed" <?php echo $opt_type == 'completed' ? 'selected="selected"' : "" ?>>Completed</option>
-                                                            <option value="notcompleted" <?php echo $opt_type == 'notcompleted' ? 'selected="selected"' : "" ?>>Not completed</option>
+                                                            <!---<option value="notcompleted" <?php //echo $opt_type == 'notcompleted' ? 'selected="selected"' : "" 
+                                                                                                ?>>Not completed</option>-->
                                                         </select>
                                                     </div>
                                                 </div>
@@ -195,12 +110,11 @@
                                                         <button type="submit" class="form-btn">Export CSV</button>
                                                     </div>
                                                     <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                                                        <button type="button" class="form-btn" onclick="fApplyDateFilters();">Apply Filter</button>
+                                                        <button type="button" class="form-btn-orange" onclick="fApplyDateFilters();">Apply Filter</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
 
                                     </form>
 
@@ -209,143 +123,137 @@
                         </div>
                     </div>
 
-
                     <?php if ($totalrecords != 0) { ?>
                         <div class="row">
                             <div class="col-xs-12 col-sm-7 col-md-7 col-lg-7">
-                                <div id="barchart_material"></div>
+                                <canvas id="myChart" width="400" height="220"></canvas>
                             </div>
 
                             <div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
-                                <div id="donutchart"></div>
+                                <canvas id="myChartdonut" width="400" height="300"></canvas>
                             </div>
-
                         </div>
 
-                        <div class="hr-innerpadding">
-                        <div class="row">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                    <thead style="background-color: #eeedee;">
-                                        <tr>
-                                            <th>Race/Ethnicty</th>
-                                            <th colspan="2">Male</th>
-                                            <th colspan="2">Female</th>
-                                            <!--   <th colspan="2">Decline to Answer</th>-->
-                                            <th colspan="2">Total</th>
-                                        </tr>
-                                        <tr>
-                                            <th>All Job Openings</th>
-                                            <th>Total</th>
-                                            <th>Hired</th>
-                                            <th>Total</th>
-                                            <th>Hired</th>
+                        <div class="hr-box">
+                            <div class="hr-innerpadding">
 
-                                            <!--  <th>Total</th>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover table-striped">
+                                        <thead style="background-color: #fd7a2a;">
+                                            <tr>
+                                                <th>Race/Ethnicty</th>
+                                                <th colspan="2">Male</th>
+                                                <th colspan="2">Female</th>
+                                                <!--   <th colspan="2">Decline to Answer</th>-->
+                                                <th colspan="2">Total</th>
+                                            </tr>
+                                            <tr>
+                                                <th>All Job Openings</th>
+                                                <th>Total</th>
+                                                <th>Hired</th>
+                                                <th>Total</th>
+                                                <th>Hired</th>
+
+                                                <!--  <th>Total</th>
                                             <th>Hired</th> -->
 
-                                            <th>Total</th>
-                                            <th>Hired</th>
+                                                <th>Total</th>
+                                                <th>Hired</th>
 
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><b>Hispanic</b></td>
+                                                <td><?php echo $male_cout_hispanic; ?></td>
+                                                <td><?php echo $male_cout_hispanic_hired; ?></td>
+                                                <td><?php echo $female_cout_hispanic; ?></td>
+                                                <td><?php echo $female_cout_hispanic_hired; ?></td>
+                                                <td><?php echo $male_cout_hispanic + $female_cout_hispanic; ?></td>
+                                                <td><?php echo $male_cout_hispanic_hired + $female_cout_hispanic_hired; ?></td>
 
-                                        <tr>
-                                            <td><b>Hispanic</b></td>
-                                            <td><?php echo $male_cout_hispanic; ?></td>
-                                            <td><?php echo $male_cout_hispanic_hired; ?></td>
-                                            <td><?php echo $female_cout_hispanic; ?></td>
-                                            <td><?php echo $female_cout_hispanic_hired; ?></td>
-                                            <td><?php echo $male_cout_hispanic + $female_cout_hispanic; ?></td>
-                                            <td><?php echo $male_cout_hispanic_hired + $female_cout_hispanic_hired; ?></td>
+                                            </tr>
 
-                                        </tr>
+                                            <tr>
+                                                <td><b>White</b></td>
+                                                <td><?php echo $male_cout_white; ?></td>
+                                                <td><?php echo $male_cout_white_hired; ?></td>
+                                                <td><?php echo $female_cout_white; ?></td>
+                                                <td><?php echo $female_cout_white_hired; ?></td>
+                                                <td><?php echo $male_cout_white + $male_cout_white_hired; ?></td>
+                                                <td><?php echo $male_cout_white_hired + $female_cout_white_hired; ?></td>
 
-                                        <tr>
-                                            <td><b>White</b></td>
-                                            <td><?php echo $male_cout_white; ?></td>
-                                            <td><?php echo $male_cout_white_hired; ?></td>
-                                            <td><?php echo $female_cout_white; ?></td>
-                                            <td><?php echo $female_cout_white_hired; ?></td>
-                                            <td><?php echo $male_cout_white + $male_cout_white_hired; ?></td>
-                                            <td><?php echo $male_cout_white_hired + $female_cout_white_hired; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Black</b></td>
+                                                <td><?php echo $male_cout_black; ?></td>
+                                                <td><?php echo $male_cout_black_hired; ?></td>
+                                                <td><?php echo $female_cout_black; ?></td>
+                                                <td><?php echo $female_cout_black_hired; ?></td>
+                                                <td><?php echo $male_cout_black + $female_cout_black; ?></td>
+                                                <td><?php echo $male_cout_black_hired + $female_cout_black_hired; ?></td>
 
-                                        </tr>
-                                        <tr>
-                                            <td><b>Black</b></td>
-                                            <td><?php echo $male_cout_black; ?></td>
-                                            <td><?php echo $male_cout_black_hired; ?></td>
-                                            <td><?php echo $female_cout_black; ?></td>
-                                            <td><?php echo $female_cout_black_hired; ?></td>
-                                            <td><?php echo $male_cout_black + $female_cout_black; ?></td>
-                                            <td><?php echo $male_cout_black_hired + $female_cout_black_hired; ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td><b>Native Hawaiian</b></td>
+                                                <td><?php echo $male_cout_native; ?></td>
+                                                <td><?php echo $male_cout_native_hired; ?></td>
+                                                <td><?php echo $female_cout_native; ?></td>
+                                                <td><?php echo $female_cout_native_hired; ?></td>
+                                                <td><?php echo $male_cout_native + $female_cout_native; ?></td>
+                                                <td><?php echo $male_cout_native_hired + $female_cout_native_hired; ?></td>
 
-                                        </tr>
-                                        <tr>
-                                            <td><b>Native Hawaiian</b></td>
-                                            <td><?php echo $male_cout_native; ?></td>
-                                            <td><?php echo $male_cout_native_hired; ?></td>
-                                            <td><?php echo $female_cout_native; ?></td>
-                                            <td><?php echo $female_cout_native_hired; ?></td>
-                                            <td><?php echo $male_cout_native + $female_cout_native; ?></td>
-                                            <td><?php echo $male_cout_native_hired + $female_cout_native_hired; ?></td>
+                                            </tr>
 
-                                        </tr>
+                                            <tr>
+                                                <td><b>Asian</b></td>
+                                                <td><?php echo $male_cout_asian; ?></td>
+                                                <td><?php echo $male_cout_asian_hired; ?></td>
+                                                <td><?php echo $female_cout_asian; ?></td>
+                                                <td><?php echo $female_cout_asian_hired; ?></td>
+                                                <td><?php echo $male_cout_asian + $female_cout_asian; ?></td>
+                                                <td><?php echo $male_cout_asian_hired + $female_cout_asian_hired; ?></td>
 
-                                        <tr>
-                                            <td><b>Asian</b></td>
-                                            <td><?php echo $male_cout_asian; ?></td>
-                                            <td><?php echo $male_cout_asian_hired; ?></td>
-                                            <td><?php echo $female_cout_asian; ?></td>
-                                            <td><?php echo $female_cout_asian_hired; ?></td>
-                                            <td><?php echo $male_cout_asian + $female_cout_asian; ?></td>
-                                            <td><?php echo $male_cout_asian_hired + $female_cout_asian_hired; ?></td>
+                                            </tr>
 
-                                        </tr>
+                                            <tr>
+                                                <td><b>American Indian</b></td>
+                                                <td><?php echo $male_cout_american; ?></td>
+                                                <td><?php echo $male_cout_american_hired; ?></td>
+                                                <td><?php echo $female_cout_american; ?></td>
+                                                <td><?php echo $female_cout_american_hired; ?></td>
+                                                <td><?php echo $male_cout_american + $female_cout_american; ?></td>
+                                                <td><?php echo $male_cout_american_hired + $female_cout_american_hired; ?></td>
+                                            </tr>
 
-                                        <tr>
-                                            <td><b>American Indian</b></td>
-                                            <td><?php echo $male_cout_american; ?></td>
-                                            <td><?php echo $male_cout_american_hired; ?></td>
-                                            <td><?php echo $female_cout_american; ?></td>
-                                            <td><?php echo $female_cout_american_hired; ?></td>
-                                            <td><?php echo $male_cout_american + $female_cout_american; ?></td>
-                                            <td><?php echo $male_cout_american_hired + $female_cout_american_hired; ?></td>
-                                        </tr>
+                                            <tr>
+                                                <td><b>Races</b></td>
+                                                <td><?php echo $male_cout_races; ?></td>
+                                                <td><?php echo $male_cout_races_hired; ?></td>
+                                                <td><?php echo $female_cout_races; ?></td>
+                                                <td><?php echo $female_cout_races_hired; ?></td>
+                                                <td><?php echo $male_cout_races + $female_cout_races; ?></td>
+                                                <td><?php echo $male_cout_races_hired + $female_cout_races_hired; ?></td>
+                                            </tr>
 
-                                        <tr>
-                                            <td><b>Races</b></td>
-                                            <td><?php echo $male_cout_races; ?></td>
-                                            <td><?php echo $male_cout_races_hired; ?></td>
-                                            <td><?php echo $female_cout_races; ?></td>
-                                            <td><?php echo $female_cout_races_hired; ?></td>
-                                            <td><?php echo $male_cout_races + $female_cout_races; ?></td>
-                                            <td><?php echo $male_cout_races_hired + $female_cout_races_hired; ?></td>
-                                        </tr>
+                                            <tr style="background-color: #eeedee;">
+                                                <td><b>Total</b></td>
+                                                <td><b><?php echo $male_cout_hispanic + $male_cout_white + $male_cout_black + $male_cout_native + $male_cout_asian + $male_cout_american + $male_cout_races; ?></b></td>
+                                                <td><b><?php echo $male_cout_hispanic_hired + $male_cout_white_hired + $male_cout_black_hired + $male_cout_native_hired + $male_cout_asian_hired + $male_cout_american_hired + $male_cout_races_hired; ?></b></td>
+                                                <td><b><?php echo $female_cout_hispanic + $female_cout_white + $female_cout_black + $female_cout_native + $female_cout_asian + $female_cout_american + $female_cout_races; ?></b></td>
+                                                <td><b><?php echo $female_cout_hispanic_hired + $female_cout_white_hired + $female_cout_black_hired + $female_cout_native_hired + $female_cout_asian_hired + $female_cout_american_hired + $female_cout_races_hired; ?></b></td>
+                                                <td><b><?php echo $male_cout_hispanic + $female_cout_hispanic + $male_cout_white + $male_cout_white_hired + $male_cout_black + $female_cout_black + $male_cout_asian + $female_cout_asian + $male_cout_american + $female_cout_american + $male_cout_races + $female_cout_races; ?></b></td>
+                                                <td><b><?php echo $male_cout_hispanic_hired + $female_cout_hispanic_hired + $male_cout_white_hired + $female_cout_white_hired + $male_cout_black_hired + $female_cout_black_hired + $male_cout_native_hired + $female_cout_native_hired + $male_cout_asian_hired + $female_cout_asian_hired + $male_cout_american_hired + $female_cout_american_hired + $male_cout_races_hired + $female_cout_races_hired; ?></b></td>
+                                            </tr>
 
-                                        <tr style="background-color: #eeedee;">
-                                            <td><b>Total</b></td>
-                                            <td><b><?php echo $male_cout_hispanic + $male_cout_white + $male_cout_black + $male_cout_native + $male_cout_asian + $male_cout_american + $male_cout_races; ?></b></td>
-                                            <td><b><?php echo $male_cout_hispanic_hired + $male_cout_white_hired + $male_cout_black_hired + $male_cout_native_hired + $male_cout_asian_hired + $male_cout_american_hired + $male_cout_races_hired; ?></b></td>
-                                            <td><b><?php echo $female_cout_hispanic + $female_cout_white + $female_cout_black + $female_cout_native + $female_cout_asian + $female_cout_american + $female_cout_races; ?></b></td>
-                                            <td><b><?php echo $female_cout_hispanic_hired + $female_cout_white_hired + $female_cout_black_hired + $female_cout_native_hired + $female_cout_asian_hired + $female_cout_american_hired + $female_cout_races_hired; ?></b></td>
-                                            <td><b><?php echo $male_cout_hispanic + $female_cout_hispanic + $male_cout_white + $male_cout_white_hired + $male_cout_black + $female_cout_black + $male_cout_asian + $female_cout_asian + $male_cout_american + $female_cout_american + $male_cout_races + $female_cout_races; ?></b></td>
-                                            <td><b><?php echo $male_cout_hispanic_hired + $female_cout_hispanic_hired + $male_cout_white_hired + $female_cout_white_hired + $male_cout_black_hired + $female_cout_black_hired + $male_cout_native_hired + $female_cout_native_hired + $male_cout_asian_hired + $female_cout_asian_hired + $male_cout_american_hired + $female_cout_american_hired + $male_cout_races_hired + $female_cout_races_hired; ?></b></td>
-                                        </tr>
-
-                                    </tbody>
-                                </table>
-
+                                        </tbody>
+                                    </table>
+                                </div>
 
                             </div>
-
                         </div>
-                    </div>
-
 
                     <?php } ?>
-
 
 
                     <div class="hr-box">
@@ -546,9 +454,6 @@
     }
 
 
-
-
-
     function excel_export() {
 
         console.log('i am in ajx');
@@ -601,5 +506,111 @@
         $('#div_employee').show();
         $('#div_employee_status').show();
         $('#div_opt_type_space').show();
+    });
+</script>
+
+<script>
+    //horizontalBar
+    var ctx = document.getElementById("myChart").getContext("2d");
+    var data = {
+        labels: ["Hispanic", "White", "Black", "Native Hawaiian", "Asian", "American Indian", "Races"],
+        datasets: [{
+            label: "Male",
+            backgroundColor: "blue",
+            data: [<?php echo $male_cout_hispanic; ?>, <?php echo $male_cout_white; ?>, <?php echo $male_cout_black; ?>, <?php echo $male_cout_native; ?>, <?php echo $male_cout_asian; ?>, <?php echo $male_cout_american; ?>, <?php echo $male_cout_races; ?>]
+        }, {
+            label: "Female",
+            backgroundColor: "#fd7a2a",
+            data: [<?php echo $female_cout_hispanic; ?>, <?php echo $female_cout_white; ?>, <?php echo $female_cout_black; ?>, <?php echo $female_cout_native; ?>, <?php echo $female_cout_asian; ?>, <?php echo $female_cout_american; ?>, <?php echo $female_cout_races; ?>]
+        }]
+    };
+
+    var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            barValueSpacing: 20,
+
+            title: {
+                display: true,
+                position: "top",
+                text: "EEO Form Report Detailed Summary",
+                fontSize: 18,
+                fontColor: "#111"
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                    }
+                }]
+            },
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {},
+                    color: '#fff',
+                }
+            }
+
+
+        }
+    });
+
+
+    //============ doughnut =====
+
+    var ctx = document.getElementById("myChartdonut").getContext("2d");
+    var data = {
+        datasets: [{
+            data: [<?php echo $male_cout; ?>, <?php echo $female_cout; ?>],
+            backgroundColor: [
+                "#3366cc",
+                "#fd7a2a"
+                //"#fd7a2a"
+            ],
+        }],
+
+        labels: [
+            'Male: <?php echo $male_cout; ?>',
+            'Female: <?php echo $female_cout; ?>'
+            // 'Not Available'
+        ]
+    };
+
+    //options
+    var options = {
+        title: {
+            display: true,
+            position: "top",
+            text: "EEO Form Report <?php echo $recordsfor; ?> <?php echo $male_cout + $female_cout; ?>",
+            fontSize: 18,
+            fontColor: "#111"
+        },
+        tooltips: {
+            enabled: false
+        },
+        plugins: {
+            datalabels: {
+                formatter: (value, ctx) => {
+                    let datasets = ctx.chart.data.datasets;
+                    if (datasets.indexOf(ctx.dataset) === datasets.length - 1) {
+                        let sum = datasets[0].data.reduce((a, b) => a + b, 0);
+                        let percentage = Math.round((value / sum) * 100) + '%';
+                        return percentage;
+                    } else {
+                        return percentage;
+                    }
+                },
+                color: '#fff',
+            }
+        }
+    };
+
+
+
+    var myDoughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        options: options
     });
 </script>
