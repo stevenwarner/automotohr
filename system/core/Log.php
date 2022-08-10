@@ -220,7 +220,7 @@ class CI_Log {
 			$errorInfo .= 'Query: '.$_SERVER['QUERY_STRING'].'<br />';
 			$errorInfo .= 'Message: '.$msg;
 			//
-			@mail('mubashir.saleemi123@gmail.com', 'Internal Server Error', $errorInfo);
+			//@mail('mubashir.saleemi123@gmail.com', 'Internal Server Error', $errorInfo);
 		}
 		// $message .= $level.' - AutomotoHR - '.getUserIP().' - '.$date.' --> '.$msg."\n";
 
