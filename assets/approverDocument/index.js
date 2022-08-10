@@ -65,6 +65,8 @@
         options['employeesList'] = opt.employeesList !== undefined ? opt.employeesList : [];
         options['documentId'] = opt.documentId !== undefined ? opt.documentId : 0;
         //
+        $(options['addEmployeeIdx']).unbind('click');
+        //
         // makeView is a function which is used to prefill previous approver data
         this.makeView = function () {
             //
@@ -135,7 +137,7 @@
             rows += '           </select>';
             rows += '        </div>';
             rows += '        <div class="col-sm-2 col-sm-offset-0 text-right">';
-            rows += '            <a href="javascript:;" class="btn btn-danger js-employee-delete-btn"><i class="fa fa-trash"></i>delete </a>';
+            rows += '            <a href="javascript:;" class="btn btn-danger js-employee-delete-btn"><i class="fa fa-trash"></i> Delete</a>';
             rows += '        </div>';
             rows += '    </div>';
             rows += '<br />';
