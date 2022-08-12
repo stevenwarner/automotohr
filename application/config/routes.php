@@ -1558,3 +1558,12 @@ $route['assign_vd']['post'] = 'Hr_documents_management/assignVD';
  * Print & Export routes
  */
 $route['pd']['get'] = '2022/Print_export/manageCompanies';
+
+//document Listing Categories Super Admin
+$route['manage_admin/document_categories_manager'] = 'manage_admin/document_categories_manager/index';
+$route['manage_admin/document_categories_manager/(:num)'] = 'manage_admin/document_categories_manager/index/$1';
+$route['manage_admin/document_categories_manager/add_job_category'] = 'manage_admin/document_categories_manager/add_job_category';
+$route['manage_admin/document_categories_manager/edit_job_category/(:num)'] = 'manage_admin/document_categories_manager/edit_job_category/$1';
+
+// Delete docuemnt category industry
+$route['manage_admin/docuemnt_categories_manager/document_category_industries/(:num)']['delete'] = 'manage_admin/document_categories_manager/delete_industry/$1';
