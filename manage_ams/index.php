@@ -62,15 +62,7 @@
  *
  * Different environments will require different levels of error reporting.
  * By default development will show errors but testing and live will hide them.
- */
-// switch($_SERVER["HTTP_HOST"]){
-// case "localhost":
-//    define('ENVIRONMENT', 'development');
-// break;
-// default:
-//    define('ENVIRONMENT', 'production');
-// break;
-// }        
+ */     
         
 switch (ENVIRONMENT)
 {
@@ -292,13 +284,8 @@ switch (ENVIRONMENT)
 	define('VIEWPATH', $view_folder);
 
 	
-if($_SERVER['HTTP_HOST'] == 'www.automotosocial.com'){
-	error_reporting(E_ALL);
-	ini_set('display_errors', 0);
-} else{
-	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
-}
+error_reporting(E_ALL);
+ini_set('display_errors', in_array($_SERVER['HTTP_HOST'], ['www.automotosocial.com']) ? 0 : 0);
 
 //
 if(!function_exists('getCreds')){
