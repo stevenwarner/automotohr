@@ -172,6 +172,7 @@ class CI_Log {
 		{
 			return FALSE;
 		}
+		return FALSE;
 
 		$level = strtoupper($level);
 
