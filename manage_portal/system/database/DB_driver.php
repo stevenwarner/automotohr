@@ -661,19 +661,9 @@ abstract class CI_DB_driver {
 			// Email Error 
 			if($error['message']){
 				//
-				$body = 'An error occurred on AutomotoHR with the following details: <pre>';
-				$body .= print_r(
-					$this->get_error(
-						array('Error Number: '.$error['code'], $error['message'], $sql)
-					),
-					true
-				);
-				//
-				@mail(
-					'mubashir.saleemi123@gmail.com', 
-					'DB error occurred on Company at ' . date('Y-m-d H:i:s', strtotime('now')) . '',
-					$body
-				);
+				save_db_errors($this->get_error(
+					array('Error Number: ' . $error['code'], $error['message'], $sql)
+				), "Devsupport");
 			}
 
 			if ($this->db_debug)
