@@ -116,6 +116,29 @@ $hasAccess = checkIfAppIsEnabled(ASSUREHIRE_SLUG, false);
                                                                                     $current_status = isset($product['order_response']['orderStatus']['status']) ? $product['order_response']['orderStatus']['status'] : '';
                                                                                     $status = strtolower($current_status);
                                                                                 ?>
+                                                                                <tr>
+                                                                                    <?php
+                                                                                        $package_id = '';
+                                                                                        $search_id = '';
+                                                                                        $order_status = isset($product['order_response']['orderStatus']) ? $product['order_response']['orderStatus'] : '';
+                                                                                        // 
+                                                                                        $order_response_order_info = isset($product['order_response']['orderInfo']) ? $product['order_response']['orderInfo'] : '';
+                                                                                        //
+                                                                                        $package_response_order_info = isset($product['package_response']['orderInfo']) ? $product['package_response']['orderInfo'] : '';
+                                                                                        //
+                                                                                        if ($order_response_order_info != '') {
+                                                                                            $package_id = $order_response_order_info['packageId']; 
+                                                                                            $search_id = isset($order_response_order_info['searchId']) ? $order_response_order_info['searchId'] : $product['external_id']; 
+                                                                                        } else if ($package_response_order_info != '') { 
+                                                                                            $package_id = $package_response_order_info['packageId']; 
+                                                                                            $search_id = isset($package_response_order_info['searchId']) ? $package_response_order_info['searchId'] : $product['external_id'];
+                                                                                        } else {
+                                                                                            $package_id = isset($product['package_id']) ? $product['package_id'] : '';
+                                                                                        }
+                                                                                    ?>
+                                                                                    <th class="col-xs-4">Accu. Background Search Id</th>
+                                                                                    <td class="text-left"><?php echo $search_id; ?></td>
+                                                                                </tr>
                                                                                 <th class="col-xs-4">Status</th>
                                                                                 <td class="text-left">
                                                                                     <?php
