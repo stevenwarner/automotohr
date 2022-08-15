@@ -1,23 +1,7 @@
 <?php
+// 
+require_once(dirname(__FILE__).'/../protected_files/bootstrap.php');
 
-/**
- * Redirect http to https
- */
-function redirect_traffic()
-{
-	$file_name = '../ahr_jsons/http_urls.json';
-	$file = fopen($file_name, 'r');
-	$allowedHTTPUrls =  json_decode(fread($file, filesize($file_name)), true);
-	//
-	if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] != 'https') {
-		$original_url = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
-		$url = strtolower(preg_replace('/^www\./i', '', parse_url($original_url)['path']));
-		//
-		if (!isset($allowedHTTPUrls[strtolower($url)])) {
-			return header("Location: https://{$original_url}", true);
-		}
-	}
-}
 //
 redirect_traffic();
 //
@@ -159,7 +143,6 @@ $application_folder = 'application';
  */
 $view_folder = '';
 
-
 /*
  * --------------------------------------------------------------------
  * DEFAULT CONTROLLER
@@ -256,9 +239,6 @@ define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
 // Root Path
 define('ROOTPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
-define('OFFSITE_DEV_EMAIL', 'mubashir.saleemi123@gmail.com');
-
-
 // The path to the "application" folder
 if (is_dir($application_folder)) {
 	if (($_temp = realpath($application_folder)) !== FALSE) {
@@ -314,49 +294,10 @@ if (in_array($_SERVER['HTTP_HOST'], ['automotohr.local'])) {
 	ini_set('display_errors', 0);
 	define('MINIFIED', '.min');
 }
-//
-if (!function_exists('getCreds')) {
-	function getCreds($index = false)
-	{
-		//
-		$file = APPPATH . '../../creds.json';
-		if ($_SERVER['HTTP_HOST'] == 'staging.automotohr.com') {
-			$file = APPPATH . '../../../creds-staging.json';
-		}
-		//
-		$h = fopen($file, 'r');
-		//
-		$data = json_decode(fread($h, filesize($file)));
-		//
-		fclose($h);
-		//
-		return $index ? $data->$index : $data;
-	}
-}
+
 
 // Setting GLOBAL minified version and time
 $GLOBALS['minified_version'] = ENVIRONMENT == 'development' ? '' : '.min';
 $GLOBALS['asset_version'] = time();
 //
-
-// Backup Log file if file size is 25 MB 
-if (!function_exists('backuplog')) {
-	function backuplog($filepath)
-	{
-		$filepath_backup = str_replace('.txt', strtotime('now') . '_backup.txt', $filepath);
-		if (file_exists($filepath)) {
-			$bytes = filesize($filepath);
-			if ($bytes >= (1000000 * 25)) {
-				if (copy($filepath, $filepath_backup)) {
-					unlink($filepath);
-				} else {
-					@mail(OFFSITE_DEV_EMAIL, 'Log file back failed', 'Log file backup failed  file size is ' . $bytes);
-				}
-			}
-		}
-	}
-}
-
-
-
 require_once BASEPATH . 'core/CodeIgniter.php';

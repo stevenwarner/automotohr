@@ -56,6 +56,8 @@
  */
 define('ENVIRONMENT', preg_match('/staging/i', $_SERVER['HTTP_HOST']) ? "testing" : "production");
 
+require_once(dirname(__FILE__).'/../../protected_files/bootstrap.php');
+
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
@@ -227,8 +229,6 @@ define('FCPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 // Name of the "system" directory
 define('SYSDIR', basename(BASEPATH));
 
-define('OFFSITE_DEV_EMAIL', 'mubashir.saleemi123@gmail.com');
-
 // The path to the "application" directory
 if (is_dir($application_folder)) {
 	if (($_temp = realpath($application_folder)) !== FALSE) {
@@ -284,28 +284,6 @@ define('VIEWPATH', $view_folder . DIRECTORY_SEPARATOR);
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
-//
-if (!function_exists('getCreds')) {
-	function getCreds($index = false)
-	{
-		//
-		$file = APPPATH . '../../../creds.json';
-		//
-		if (ENVIRONMENT === 'testing') {
-			//
-			$file = APPPATH . '../../../../creds.json';
-		}
-		//
-		$h = fopen($file, 'r');
-		//
-		$data = json_decode(fread($h, filesize($file)));
-		//
-		fclose($h);
-		//
-		return $index ? $data->$index : $data;
-	}
-}
-
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE
@@ -313,45 +291,4 @@ if (!function_exists('getCreds')) {
  *
  * And away we go...
  */
-// Backup Log file if file size is 25 MB 
-if (!function_exists('backuplog')) {
-	function backuplog($filepath)
-	{
-		$filepath_backup = str_replace('.txt', strtotime('now') . '_backup.txt', $filepath);
-		if (file_exists($filepath)) {
-			$bytes = filesize($filepath);
-			if ($bytes >= (1000000 * 25)) {
-				if (copy($filepath, $filepath_backup)) {
-					unlink($filepath);
-				} else {
-					@mail(OFFSITE_DEV_EMAIL, 'Log file back failed', 'Log file backup failed  file size is ' . $bytes);
-				}
-			}
-		}
-	}
-}
-
-if (!function_exists('getUserIP')) {
-
-	function getUserIP()
-	{
-		$ipaddress = '';
-		if (getenv('HTTP_CLIENT_IP'))
-			$ipaddress = getenv('HTTP_CLIENT_IP');
-		else if (getenv('HTTP_X_FORWARDED_FOR'))
-			$ipaddress = getenv('HTTP_X_FORWARDED_FOR');
-		else if (getenv('HTTP_X_FORWARDED'))
-			$ipaddress = getenv('HTTP_X_FORWARDED');
-		else if (getenv('HTTP_FORWARDED_FOR'))
-			$ipaddress = getenv('HTTP_FORWARDED_FOR');
-		else if (getenv('HTTP_FORWARDED'))
-			$ipaddress = getenv('HTTP_FORWARDED');
-		else if (getenv('REMOTE_ADDR'))
-			$ipaddress = getenv('REMOTE_ADDR');
-		else
-			$ipaddress = 'UNKNOWN';
-		return strpos($ipaddress, ',') !== FALSE ? explode(',', $ipaddress)[0] : $ipaddress;
-	}
-}
-
 require_once BASEPATH . 'core/CodeIgniter.php';
