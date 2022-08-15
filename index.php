@@ -1,20 +1,22 @@
 <?php
+
 /**
  * Redirect http to https
  */
-function redirect_traffic(){
-    $file_name = '../ahr_jsons/http_urls.json';
-    $file = fopen($file_name, 'r');
-    $allowedHTTPUrls =  json_decode(fread($file, filesize($file_name)), true);
+function redirect_traffic()
+{
+	$file_name = '../ahr_jsons/http_urls.json';
+	$file = fopen($file_name, 'r');
+	$allowedHTTPUrls =  json_decode(fread($file, filesize($file_name)), true);
 	//
-    if(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO']!= 'https') {
-        $original_url = $_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
-        $url = strtolower(preg_replace('/^www\./i', '', parse_url($original_url)['path']));
-        //
-        if(!isset($allowedHTTPUrls[strtolower($url)])){
-            return header("Location: https://{$original_url}", true);
+	if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] != 'https') {
+		$original_url = $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+		$url = strtolower(preg_replace('/^www\./i', '', parse_url($original_url)['path']));
+		//
+		if (!isset($allowedHTTPUrls[strtolower($url)])) {
+			return header("Location: https://{$original_url}", true);
 		}
-    }
+	}
 }
 //
 redirect_traffic();
@@ -74,7 +76,7 @@ $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 
 /*
  *---------------------------------------------------------------
@@ -92,27 +94,23 @@ $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
 //    define('ENVIRONMENT', 'production');
 // break;
 // }
- 
-switch (ENVIRONMENT)
-{
+
+switch (ENVIRONMENT) {
 	case 'development':
 		error_reporting(0);
 		ini_set('display_errors', 0);
-	break;
+		break;
 
 	case 'testing':
 	case 'production':
 		error_reporting(0);
 		ini_set('display_errors', 0);
-		if (version_compare(PHP_VERSION, '5.3', '>='))
-		{
+		if (version_compare(PHP_VERSION, '5.3', '>=')) {
 			error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_USER_NOTICE & ~E_USER_DEPRECATED);
-		}
-		else
-		{
+		} else {
 			error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_USER_NOTICE);
 		}
-	break;
+		break;
 
 	default:
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
@@ -129,7 +127,7 @@ switch (ENVIRONMENT)
  * Include the path if the folder is not in the same directory
  * as this file.
  */
-	$system_path = 'system';
+$system_path = 'system';
 
 /*
  *---------------------------------------------------------------
@@ -144,7 +142,7 @@ switch (ENVIRONMENT)
  *
  * NO TRAILING SLASH!
  */
-	$application_folder = 'application';
+$application_folder = 'application';
 
 /*
  *---------------------------------------------------------------
@@ -159,7 +157,7 @@ switch (ENVIRONMENT)
  *
  * NO TRAILING SLASH!
  */
-	$view_folder = '';
+$view_folder = '';
 
 
 /*
@@ -181,15 +179,15 @@ switch (ENVIRONMENT)
  *
  * Un-comment the $routing array below to use this feature
  */
-	// The directory name, relative to the "controllers" folder.  Leave blank
-	// if your controller is not in a sub-folder within the "controllers" folder
-	// $routing['directory'] = '';
+// The directory name, relative to the "controllers" folder.  Leave blank
+// if your controller is not in a sub-folder within the "controllers" folder
+// $routing['directory'] = '';
 
-	// The controller class file name.  Example:  mycontroller
-	// $routing['controller'] = '';
+// The controller class file name.  Example:  mycontroller
+// $routing['controller'] = '';
 
-	// The controller function you wish to be called.
-	// $routing['function']	= '';
+// The controller function you wish to be called.
+// $routing['function']	= '';
 
 
 /*
@@ -206,7 +204,7 @@ switch (ENVIRONMENT)
  *
  * Un-comment the $assign_to_config array below to use this feature
  */
-	// $assign_to_config['name_of_config_item'] = 'value of config item';
+// $assign_to_config['name_of_config_item'] = 'value of config item';
 
 
 
@@ -220,101 +218,84 @@ switch (ENVIRONMENT)
  * ---------------------------------------------------------------
  */
 
-	// Set the current directory correctly for CLI requests
-	if (defined('STDIN'))
-	{
-		chdir(dirname(__FILE__));
-	}
+// Set the current directory correctly for CLI requests
+if (defined('STDIN')) {
+	chdir(dirname(__FILE__));
+}
 
-	if (($_temp = realpath($system_path)) !== FALSE)
-	{
-		$system_path = $_temp.'/';
-	}
-	else
-	{
-		// Ensure there's a trailing slash
-		$system_path = rtrim($system_path, '/').'/';
-	}
+if (($_temp = realpath($system_path)) !== FALSE) {
+	$system_path = $_temp . '/';
+} else {
+	// Ensure there's a trailing slash
+	$system_path = rtrim($system_path, '/') . '/';
+}
 
-	// Is the system path correct?
-	if ( ! is_dir($system_path))
-	{
-		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-		echo 'Your system folder path does not appear to be set correctly. Please open the following file and correct this: '.pathinfo(__FILE__, PATHINFO_BASENAME);
-		exit(3); // EXIT_CONFIG
-	}
+// Is the system path correct?
+if (!is_dir($system_path)) {
+	header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+	echo 'Your system folder path does not appear to be set correctly. Please open the following file and correct this: ' . pathinfo(__FILE__, PATHINFO_BASENAME);
+	exit(3); // EXIT_CONFIG
+}
 
 /*
  * -------------------------------------------------------------------
  *  Now that we know the path, set the main path constants
  * -------------------------------------------------------------------
  */
-	// The name of THIS file
-	define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
+// The name of THIS file
+define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
 
-	// Path to the system folder
-	define('BASEPATH', str_replace('\\', '/', $system_path));
+// Path to the system folder
+define('BASEPATH', str_replace('\\', '/', $system_path));
 
-	// Path to the front controller (this file)
-	define('FCPATH', dirname(__FILE__).'/');
+// Path to the front controller (this file)
+define('FCPATH', dirname(__FILE__) . '/');
 
-	// Name of the "system folder"
-	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
-        // Root Path
-	define('ROOTPATH', dirname(__FILE__).DIRECTORY_SEPARATOR);
+// Name of the "system folder"
+define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
+// Root Path
+define('ROOTPATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
+
+define('OFFSITE_DEV_EMAIL', 'mubashir.saleemi123@gmail.com');
 
 
-	// The path to the "application" folder
-	if (is_dir($application_folder))
-	{
-		if (($_temp = realpath($application_folder)) !== FALSE)
-		{
-			$application_folder = $_temp;
-		}
-
-		define('APPPATH', $application_folder.DIRECTORY_SEPARATOR);
-	}
-	else
-	{
-		if ( ! is_dir(BASEPATH.$application_folder.DIRECTORY_SEPARATOR))
-		{
-			header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-			echo 'Your application folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
-			exit(3); // EXIT_CONFIG
-		}
-
-		define('APPPATH', BASEPATH.$application_folder.DIRECTORY_SEPARATOR);
+// The path to the "application" folder
+if (is_dir($application_folder)) {
+	if (($_temp = realpath($application_folder)) !== FALSE) {
+		$application_folder = $_temp;
 	}
 
-	// The path to the "views" folder
-	if ( ! is_dir($view_folder))
-	{
-		if ( ! empty($view_folder) && is_dir(APPPATH.$view_folder.DIRECTORY_SEPARATOR))
-		{
-			$view_folder = APPPATH.$view_folder;
-		}
-		elseif ( ! is_dir(APPPATH.'views'.DIRECTORY_SEPARATOR))
-		{
-			header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-			echo 'Your view folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
-			exit(3); // EXIT_CONFIG
-		}
-		else
-		{
-			$view_folder = APPPATH.'views';
-		}
+	define('APPPATH', $application_folder . DIRECTORY_SEPARATOR);
+} else {
+	if (!is_dir(BASEPATH . $application_folder . DIRECTORY_SEPARATOR)) {
+		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+		echo 'Your application folder path does not appear to be set correctly. Please open the following file and correct this: ' . SELF;
+		exit(3); // EXIT_CONFIG
 	}
 
-	if (($_temp = realpath($view_folder)) !== FALSE)
-	{
-		$view_folder = $_temp.DIRECTORY_SEPARATOR;
-	}
-	else
-	{
-		$view_folder = rtrim($view_folder, '/\\').DIRECTORY_SEPARATOR;
-	}
+	define('APPPATH', BASEPATH . $application_folder . DIRECTORY_SEPARATOR);
+}
 
-	define('VIEWPATH', $view_folder);
+// The path to the "views" folder
+if (!is_dir($view_folder)) {
+	if (!empty($view_folder) && is_dir(APPPATH . $view_folder . DIRECTORY_SEPARATOR)) {
+		$view_folder = APPPATH . $view_folder;
+	} elseif (!is_dir(APPPATH . 'views' . DIRECTORY_SEPARATOR)) {
+		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
+		echo 'Your view folder path does not appear to be set correctly. Please open the following file and correct this: ' . SELF;
+		exit(3); // EXIT_CONFIG
+	} else {
+		$view_folder = APPPATH . 'views';
+	}
+}
+
+if (($_temp = realpath($view_folder)) !== FALSE) {
+	$view_folder = $_temp . DIRECTORY_SEPARATOR;
+} else {
+	$view_folder = rtrim($view_folder, '/\\') . DIRECTORY_SEPARATOR;
+}
+
+define('VIEWPATH', $view_folder);
 
 /*
  * --------------------------------------------------------------------
@@ -324,22 +305,23 @@ switch (ENVIRONMENT)
  * And away we go...
  */
 
-if(in_array($_SERVER['HTTP_HOST'], ['automotohr.local'])){
+if (in_array($_SERVER['HTTP_HOST'], ['automotohr.local'])) {
 	error_reporting(E_ALL);
 	ini_set('display_errors', 0);
 	define('MINIFIED', '');
-} else{
+} else {
 	error_reporting(E_ALL);
 	ini_set('display_errors', 0);
 	define('MINIFIED', '.min');
-}	
+}
 //
-if(!function_exists('getCreds')){
-	function getCreds($index = false){
+if (!function_exists('getCreds')) {
+	function getCreds($index = false)
+	{
 		//
-		$file = APPPATH.'../../creds.json';
-		if($_SERVER['HTTP_HOST'] == 'staging.automotohr.com'){
-			$file = APPPATH.'../../../creds-staging.json';
+		$file = APPPATH . '../../creds.json';
+		if ($_SERVER['HTTP_HOST'] == 'staging.automotohr.com') {
+			$file = APPPATH . '../../../creds-staging.json';
 		}
 		//
 		$h = fopen($file, 'r');
@@ -353,7 +335,28 @@ if(!function_exists('getCreds')){
 }
 
 // Setting GLOBAL minified version and time
-$GLOBALS['minified_version'] = ENVIRONMENT == 'development' ? '' : '.min' ;
+$GLOBALS['minified_version'] = ENVIRONMENT == 'development' ? '' : '.min';
 $GLOBALS['asset_version'] = time();
 //
-require_once BASEPATH.'core/CodeIgniter.php';
+
+// Backup Log file if file size is 25 MB 
+if (!function_exists('backuplog')) {
+	function backuplog($filepath)
+	{
+		$filepath_backup = str_replace('.txt', strtotime('now') . '_backup.txt', $filepath);
+		if (file_exists($filepath)) {
+			$bytes = filesize($filepath);
+			if ($bytes >= (1000000 * 25)) {
+				if (copy($filepath, $filepath_backup)) {
+					unlink($filepath);
+				} else {
+					@mail(OFFSITE_DEV_EMAIL, 'Log file back failed', 'Log file backup failed  file size is ' . $bytes);
+				}
+			}
+		}
+	}
+}
+
+
+
+require_once BASEPATH . 'core/CodeIgniter.php';

@@ -239,6 +239,8 @@ switch (ENVIRONMENT)
 	// Name of the "system folder"
 	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
 
+	define('OFFSITE_DEV_EMAIL', 'mubashir.saleemi123@gmail.com');
+
 	// The path to the "application" folder
 	if (is_dir($application_folder))
 	{
@@ -323,4 +325,46 @@ if(!function_exists('getCreds')){
  *
  * And away we go...
  */
+
+// Backup Log file if file size is 25 MB 
+if (!function_exists('backuplog')) {
+	function backuplog($filepath)
+	{
+		$filepath_backup = str_replace('.txt', strtotime('now') . '_backup.txt', $filepath);
+		if (file_exists($filepath)) {
+			$bytes = filesize($filepath);
+			if ($bytes >= (1000000 * 25)) {
+				if (copy($filepath, $filepath_backup)) {
+					unlink($filepath);
+				} else {
+					@mail(OFFSITE_DEV_EMAIL, 'Log file back failed', 'Log file backup failed  file size is ' . $bytes);
+				}
+			}
+		}
+	}
+}
+
+
+if (!function_exists('getUserIP')) {
+
+	function getUserIP()
+	{
+		$ipaddress = '';
+		if (getenv('HTTP_CLIENT_IP'))
+			$ipaddress = getenv('HTTP_CLIENT_IP');
+		else if (getenv('HTTP_X_FORWARDED_FOR'))
+			$ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+		else if (getenv('HTTP_X_FORWARDED'))
+			$ipaddress = getenv('HTTP_X_FORWARDED');
+		else if (getenv('HTTP_FORWARDED_FOR'))
+			$ipaddress = getenv('HTTP_FORWARDED_FOR');
+		else if (getenv('HTTP_FORWARDED'))
+			$ipaddress = getenv('HTTP_FORWARDED');
+		else if (getenv('REMOTE_ADDR'))
+			$ipaddress = getenv('REMOTE_ADDR');
+		else
+			$ipaddress = 'UNKNOWN';
+		return strpos($ipaddress, ',') !== FALSE ? explode(',', $ipaddress)[0] : $ipaddress;
+	}
+}
 require_once BASEPATH.'core/CodeIgniter.php';

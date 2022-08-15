@@ -186,6 +186,8 @@ class CI_Log {
 		$filepath = $this->_log_path.$this->_log_name.'.'.$this->_file_ext;
 		$message = '';
 
+		  backuplog($filepath);
+
 		if ( ! file_exists($filepath))
 		{
 			$newfile = TRUE;

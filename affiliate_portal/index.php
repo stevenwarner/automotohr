@@ -237,6 +237,8 @@ switch (ENVIRONMENT)
 	// Name of the "system" directory
 	define('SYSDIR', basename(BASEPATH));
 
+	define('OFFSITE_DEV_EMAIL', 'mubashir.saleemi123@gmail.com');
+
 	// The path to the "application" directory
 	if (is_dir($application_folder))
 	{
@@ -333,4 +335,23 @@ switch (ENVIRONMENT)
  *
  * And away we go...
  */
+
+// Backup Log file if file size is 25 MB 
+if (!function_exists('backuplog')) {
+	function backuplog($filepath)
+	{
+		$filepath_backup = str_replace('.txt', strtotime('now') . '_backup.txt', $filepath);
+		if (file_exists($filepath)) {
+			$bytes = filesize($filepath);
+			if ($bytes >= (1000000 * 25)) {
+				if (copy($filepath, $filepath_backup)) {
+					unlink($filepath);
+				} else{
+					@mail(OFFSITE_DEV_EMAIL, 'Log file back failed', 'Log file backup failed  file size is '.$bytes);
+				}
+			}
+		}
+	}
+}
+
 require_once BASEPATH.'core/CodeIgniter.php';
