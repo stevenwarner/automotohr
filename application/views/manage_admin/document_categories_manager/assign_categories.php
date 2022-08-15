@@ -32,7 +32,7 @@
                                                                     $cat_name = 'categories'; ?>
                                                                     <div class="col-xs-6">
                                                                         <label class="control control--checkbox font-normal">
-                                                                            <?php echo $category['name']; ?>
+                                                                            <?php echo $category['category_name']; ?>
                                                                             <?php $default_selected = in_array($category['sid'], $industry_specific_cat_sids) ? true : false; ?>
                                                                             <input <?php echo set_radio('categories', $category['sid'], $default_selected) ?> id="category_<?php echo $category['sid']; ?>" class="ej_checkbox" name="<?php echo $cat_name;?>[]" value="<?php echo $category['sid']; ?>" type="checkbox">
                                                                             <div class="control__indicator"></div>

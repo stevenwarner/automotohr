@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class document_categories_manager extends Admin_Controller
+class Document_categories_manager extends Admin_Controller
 {
     function __construct()
     {
@@ -21,52 +21,46 @@ class document_categories_manager extends Admin_Controller
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
-        $this->form_validation->set_rules('perform_action', 'Perform Action', 'required|xss_clean|trim');
+        $this->data['page_title'] = 'Document Categories Manager';
+        $this->data['letter'] = '';
+        $total_categories = $this->document_categories_manager_model->get_all_system_document_categories(null);
+        $per_page = 50;
 
-        if ($this->form_validation->run() == false) {
-            $this->data['page_title'] = 'Document Categories Manager';
-            $this->data['letter'] = '';
-            $categories = $this->document_categories_manager_model->get_all_system_document_categories();
-            $total_categories = count($categories);
-            $per_page = 50;
-
-            if ($page_number > 1) {
-                $page_number = $page_number - 1;
-            }
-
-            $offset = $page_number * $per_page;
-            $categories = $this->document_categories_manager_model->get_all_system_document_categories($per_page, $offset);
-            $this->data['categories'] = $categories;
-            $config = array(); //Pagination
-            $config['base_url'] = base_url('manage_admin/document_categories_manager');
-            $config['total_rows'] = $total_categories;
-            $config['per_page'] = $per_page;
-            $config['uri_segment'] = 3;
-            $config['num_links'] = 9;
-            $config['use_page_numbers'] = true;
-            //pagination style
-            $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
-            $config['full_tag_close'] = '</ul></nav><!--pagination-->';
-            $config['first_link'] = '&laquo;';
-            $config['first_tag_open'] = '<li class="prev page">';
-            $config['first_tag_close'] = '</li>';
-            $config['last_link'] = '&raquo;';
-            $config['last_tag_open'] = '<li class="next page">';
-            $config['last_tag_close'] = '</li>';
-            $config['next_link'] = '<i class="fa fa-angle-right"></i>';
-            $config['next_tag_open'] = '<li class="next page">';
-            $config['next_tag_close'] = '</li>';
-            $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
-            $config['prev_tag_open'] = '<li class="prev page">';
-            $config['prev_tag_close'] = '</li>';
-            $config['cur_tag_open'] = '<li class="active"><a href="javascript:void(0);">';
-            $config['cur_tag_close'] = '</a></li>';
-            $config['num_tag_open'] = '<li class="page">';
-            $config['num_tag_close'] = '</li>';
-            $this->pagination->initialize($config);
-            $this->data['page_links'] = $this->pagination->create_links();
-            $this->render('manage_admin/document_categories_manager/index', 'admin_master');
+        if ($page_number > 1) {
+            $page_number = $page_number - 1;
         }
+        $offset = $page_number * $per_page;
+        $categories = $this->document_categories_manager_model->get_all_system_document_categories($per_page, $offset);
+        $this->data['categories'] = $categories;
+        $config = array(); //Pagination
+        $config['base_url'] = base_url('manage_admin/document_categories_manager');
+        $config['total_rows'] = $total_categories;
+        $config['per_page'] = $per_page;
+        $config['uri_segment'] = 3;
+        $config['num_links'] = 9;
+        $config['use_page_numbers'] = true;
+        //pagination style
+        $config['full_tag_open'] = '<nav class="hr-pagination"><ul>';
+        $config['full_tag_close'] = '</ul></nav><!--pagination-->';
+        $config['first_link'] = '&laquo;';
+        $config['first_tag_open'] = '<li class="prev page">';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = '&raquo;';
+        $config['last_tag_open'] = '<li class="next page">';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '<i class="fa fa-angle-right"></i>';
+        $config['next_tag_open'] = '<li class="next page">';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '<i class="fa fa-angle-left"></i>';
+        $config['prev_tag_open'] = '<li class="prev page">';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="javascript:void(0);">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li class="page">';
+        $config['num_tag_close'] = '</li>';
+        $this->pagination->initialize($config);
+        $this->data['page_links'] = $this->pagination->create_links();
+        $this->render('manage_admin/document_categories_manager/index', 'admin_master');
     }
 
     public function appendix($latter = 'a')
@@ -228,15 +222,12 @@ class document_categories_manager extends Admin_Controller
         if ($this->form_validation->run() == false) {
             $industry = $this->document_categories_manager_model->get_docuemnt_category_industries($industry_sid);
             $this->data['industry'] = $industry;
-            $categories = $this->document_categories_manager_model->get_all_system_document_categories();
+            $categories = $this->document_categories_manager_model->get_all_system_document_categories(0);
             $this->data['categories'] = $categories;
-            $industry_specific_categories = $this->document_categories_manager_model->document_industry_categories($industry_sid, 0);
+            $industry_specific_categories = $this->document_categories_manager_model->getPreselectedIndustryCategories($industry_sid);
+
+            $industry_specific_cat_sids = array_column($industry_specific_categories, 'category_sid');
             $this->data['industry_specific_categories'] = $industry_specific_categories;
-            $industry_specific_cat_sids = array();
-           
-            foreach ($industry_specific_categories as $category) {
-                $industry_specific_cat_sids[] = $category['sid'];
-            }
 
             $this->data['industry_specific_cat_sids'] = $industry_specific_cat_sids;
             $this->data['page_title'] = 'Job Categories Manager';
@@ -293,58 +284,59 @@ class document_categories_manager extends Admin_Controller
     function handler()
     {
         //
-        $post = $this->input->post();
+        $post = $this->input->post(NULL, TRUE);
         //
         switch ($post['action']) {
             case 'add_document_category':
                 //
-                $insert_array = array();
-                $insert_array['company_sid']  = 0;
-                $insert_array['name'] = $post['documentCategoryName'];
-                $insert_array['description'] = $post['categorydescription'];
-                $insert_array['created_by_sid']  = 0;
-                $insert_array['created_date'] = date('Y-m-d H:i:s');
-
-                $category_exists = $this->document_categories_manager_model->check_if_document_category_exists($insert_array['name']);
-
-                if($category_exists==1){
+                $category_exists = $this->document_categories_manager_model->check_if_document_category_exists($post['documentCategoryName']);
+                //
+                if ($category_exists == 1) {
                     $this->res['Status'] = False;
-                    $this->res['Message'] = "Category Already Exist Please Enter a Different Name ";
+                    $this->res['Message'] = "Category already exists.";
                     $this->resp();
                     break;
                 }
+                //
+                $insert_array = array();
+                $insert_array['category_name'] = $post['documentCategoryName'];
+                $insert_array['description'] = $post['categorydescription'];
+                $insert_array['updated_at'] = $insert_array['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+
                 $this->document_categories_manager_model->add_category($insert_array);
                 $this->res['Status'] = TRUE;
-                $this->res['Message'] = "Category Added Successfuly";
+                $this->res['Message'] = "Category Added Successfully";
                 $this->resp();
                 break;
             case "edit_document_category":
                 //
                 $sid = $post['sid'];
                 $data_to_update = array();
-                $data_to_update['name'] =  $post['documentCategoryName'];
+                $data_to_update['category_name'] =  $post['documentCategoryName'];
                 $data_to_update['description'] = $post['categorydescription'];
                 $this->document_categories_manager_model->update_category($sid, $data_to_update);
                 $this->res['Status'] = TRUE;
-                $this->res['Message'] = "Category Updated Successfuly";
+                $this->res['Message'] = "Category updated successfully";
                 $this->resp();
                 break;
             case "add_industry":
+                //
+                $industry_exists = $this->document_categories_manager_model->check_if_document_category_industry_exists($post['industryname']);
+                //
+                if ($industry_exists == 1) {
+                    $this->res['Status'] = False;
+                    $this->res['Message'] = "Industry already exists.";
+                    $this->resp();
+                    break;
+                }
                 //
                 $data_to_save = array();
                 $data_to_save['industry_name'] = $post['industryname'];
                 $data_to_save['short_description'] = $post['shortdescription'];
                 $data_to_save['status'] = 1;
-                $industry_exists = $this->document_categories_manager_model->check_if_document_category_industry_exists($data_to_save['industry_name']);
-                if($industry_exists==1){
-                    $this->res['Status'] = False;
-                    $this->res['Message'] = "Industry Already Exist Please Enter a Different Name ";
-                    $this->resp();
-                    break;
-                }
                 $this->document_categories_manager_model->add_job_category_industry($data_to_save);
                 $this->res['Status'] = TRUE;
-                $this->res['Message'] = "Industry Added Successfuly";
+                $this->res['Message'] = "Industry added successfully";
                 $this->resp();
                 break;
             case "edit_industry":
@@ -356,7 +348,7 @@ class document_categories_manager extends Admin_Controller
                 $this->document_categories_manager_model->update_job_category_industry($sid, $data_to_update);
 
                 $this->res['Status'] = TRUE;
-                $this->res['Message'] = "Industry Updated Successfuly";
+                $this->res['Message'] = "Industry updated successfully";
                 $this->resp();
                 break;
         }

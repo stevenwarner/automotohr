@@ -84,7 +84,7 @@ if (!function_exists('getDefaultApproverName')) {
         //
         if (!empty($record_arr)) {
             $return_data = ucwords($record_arr["contact_name"]);
-        } 
+        }
 
         return $return_data;
     }
@@ -4383,7 +4383,9 @@ if (!function_exists('log_and_send_templated_email')) {
 
     function log_and_send_templated_email($template_id, $to, $replacement_array = array(), $message_hf = array(), $log_email = 1, $extra_user_info = array())
     {
-        if (empty($to) || $to == NULL) {return 0;}
+        if (empty($to) || $to == NULL) {
+            return 0;
+        }
 
         $emailTemplateData = is_array($template_id) ? $template_id :  get_email_template($template_id);
         $emailTemplateBody = $emailTemplateData['text'];
@@ -11691,7 +11693,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11704,7 +11706,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             //
                             unset($data['categories_no_action_documents'][$k0]['documents'][$k2]);
                         }
@@ -11721,7 +11723,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11734,7 +11736,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             //
                             unset($v1['documents'][$k2]);
                         }
@@ -11751,7 +11753,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                     if (!isset($v1['documents']) || !is_array($v1['documents']) || !count($v1['documents'])) continue;
                     //
                     foreach ($v1['documents'] as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11764,7 +11766,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             //
                             unset($v1['documents'][$k2]);
                         }
@@ -11779,7 +11781,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['completed_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11792,7 +11794,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             unset($documents[$k2]);
                         }
                     }
@@ -11806,7 +11808,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data['no_action_documents'] as $k0 => $documents) {
                     //
                     foreach ($documents as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11819,7 +11821,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             unset($documents[$k2]);
                         }
                     }
@@ -11833,7 +11835,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 foreach ($data as $k0 => $documents) {
                     //
                     foreach ($documents['documents'] as $k2 => $document) {
-                        if(!hasPermissionToDocument(
+                        if (!hasPermissionToDocument(
                             $document['allowed_employees'],
                             $document['allowed_departments'],
                             $document['allowed_teams'],
@@ -11846,7 +11848,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                             $dt['Departments'],
                             $dt['Teams'],
                             $employerDetails['sid']
-                        )){
+                        )) {
                             $documents['documents_count']--;
                             unset($documents['documents'][$k2]);
                         }
@@ -11864,7 +11866,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                 if (!is_array($documents) || !isset($documents[0]) || !isset($documents[0]['document_title'])) continue;
                 //
                 foreach ($documents as $k1 => $document) {
-                    if(!hasPermissionToDocument(
+                    if (!hasPermissionToDocument(
                         $document['allowed_employees'],
                         $document['allowed_departments'],
                         $document['allowed_teams'],
@@ -11877,7 +11879,7 @@ if (!function_exists('cleanDocumentsByPermission')) {
                         $dt['Departments'],
                         $dt['Teams'],
                         $employerDetails['sid']
-                    )){
+                    )) {
                         unset($documents[$k1]);
                     }
                 }
@@ -11901,7 +11903,7 @@ if (!function_exists('cleanAssignedDocumentsByPermission')) {
         $role = preg_replace('/\s+/', '_', strtolower($employerDetails['access_level']));
         //
         foreach ($documents as $k0 => $document) {
-            if(!hasPermissionToDocument(
+            if (!hasPermissionToDocument(
                 $document['allowed_employees'],
                 $document['allowed_departments'],
                 $document['allowed_teams'],
@@ -11914,7 +11916,7 @@ if (!function_exists('cleanAssignedDocumentsByPermission')) {
                 $dt['Departments'],
                 $dt['Teams'],
                 $employerDetails['sid']
-            )){
+            )) {
                 //
                 unset($documents[$k0]);
             }
@@ -12824,8 +12826,8 @@ if (!function_exists('getImageURL')) {
     function getImageURL($img)
     {
         //
-        $img = str_replace(AWS_S3_BUCKET_URL,"",$img);
-        $img = str_replace(AWS_S3_BUCKET_URL.'test.png',"",$img);
+        $img = str_replace(AWS_S3_BUCKET_URL, "", $img);
+        $img = str_replace(AWS_S3_BUCKET_URL . 'test.png', "", $img);
         //
         if (!empty($img) && !preg_match('/pdf|doc|docx|xls|xlxs/i', strtolower($img))) {
             return AWS_S3_BUCKET_URL . $img;
@@ -13954,25 +13956,49 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
         //
         $CI = &get_instance();
         //
-        $CI->db->select('*');
+        $CI->db->select('
+            name, 
+            description,
+            status,
+            sort_order,
+            sid
+        ');
         $CI->db->where('company_sid', 0);
         //
         $default_categories = $CI->db->get('documents_category_management')->result_array();
+
+        // Get company industry
+        $industryId = $CI->db->select('job_category_industries_sid')->where('sid', $company_sid)->get('users')->row_array()['job_category_industries_sid'];
+        //
+        if($industryId != 0){
+            //
+            $default_categories2 = 
+            $CI->db
+            ->select('
+                default_categories.category_name as name,
+                default_categories.description,
+                "1" as status,
+                "1" as sort_order,
+                categories_document_industry.category_sid as sid
+            ')
+            ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
+            ->where('categories_document_industry.industry_sid', $industryId)
+            ->get('categories_document_industry')->result_array();
+            
+            //
+            $default_categories = array_merge($default_categories, $default_categories2);
+        }
         //
         if (empty($default_categories)) {
             return;
         }
-        //
         // Only execute below code if system have default categories
         //
-        $CI->db->select('sid, name, status, created_by_sid, updated_by_sid,default_category_sid');
+        $CI->db->select('sid, name, status, created_by_sid, updated_by_sid, default_category_sid');
         $CI->db->where('company_sid', $company_sid);
         //
         $company_categories = $CI->db->get('documents_category_management')->result_array();
-      //  print_r($default_categories);
-      //  die();
-        
-        //
+        // When company doesn't have any categories
         if (empty($company_categories)) {
             // Only execute if company have no categories
             foreach ($default_categories as $category) {
@@ -13990,49 +14016,42 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
                     $CI->db->insert('documents_category_management', $data_to_insert);
                 }
             }
-        } else {
-
-           //  $default_category_sids = array_column($company_categories,'default_category_sid');
-            // Only execute if company already have categories
-            $process_catogeries = array();
-            foreach ($default_categories as $default_category) {
+            //
+            return true;
+        }
+        // Get all company categories names
+        $already_exist = array_column($company_categories, "name");
+        // Only execute if company already have categories
+        foreach ($default_categories as $default_category) {
+            //
+            $DCName = strtolower(str_replace(" ", "_", $default_category['name']));
+            // Check if not already added
+            if (!in_array($default_category['name'], $already_exist) && $default_category['status'] == 1) {
+                $data_to_insert = array();
+                $data_to_insert['company_sid']  = $company_sid;
+                $data_to_insert['name'] = $default_category['name'];
+                $data_to_insert['status']  = $default_category['status'];
+                $data_to_insert['description']  = $default_category['description'];
+                $data_to_insert['sort_order']  = $default_category['sort_order'];
+                $data_to_insert['created_by_sid']  = 0;
+                $data_to_insert['created_date'] = date('Y-m-d H:i:s', strtotime('now'));
+                $data_to_insert['default_category_sid'] = $default_category['sid'];
                 //
-                $DCName = strtolower(str_replace(" ", "_", $default_category['name']));
-                $already_exist = array_column($company_categories, "name");
-               //
-
-                //  if (!in_array($default_category['name'], $already_exist) && !in_array($default_category['sid'], $default_category_sids) ) {
-                if (!in_array($default_category['name'], $already_exist) ) {
-
-                    if ($default_category['status'] == 1) {
-                        $data_to_insert = array();
-                        $data_to_insert['company_sid']  = $company_sid;
-                        $data_to_insert['name'] = $default_category['name'];
-                        $data_to_insert['status']  = $default_category['status'];
-                        $data_to_insert['description']  = $default_category['description'];
-                        $data_to_insert['sort_order']  = $default_category['sort_order'];
-                        $data_to_insert['created_by_sid']  = 0;
-                        $data_to_insert['created_date'] = date('Y-m-d H:i:s');
-                        $data_to_insert['default_category_sid'] = $default_category['sid'];
-                        //
-                        $CI->db->insert('documents_category_management', $data_to_insert);
-                    }
-                } else {
+                $CI->db->insert('documents_category_management', $data_to_insert);
+            } else {
+                //
+                foreach ($company_categories as $company_category) {
                     //
-                    foreach ($company_categories as $company_category) {
-                        //
-                        $CCName = strtolower(str_replace(" ", "_", $company_category['name']));
-                        //
-                        if ($DCName == $CCName && $company_category['created_by_sid'] == 0 && $company_category['updated_by_sid'] == 0) {
-                            if ($default_category['status'] != $company_category['status']) {
-                                $data_to_update = array();
-                                // $data_to_update['status']  = $default_category['status'];
-                                $data_to_update['updated_by_sid']  = 0;
-                                $data_to_update['updated_date']  = date('Y-m-d');
-                                //
-                                $CI->db->where('sid', $company_category['sid']);
-                                $CI->db->update('documents_category_management', $data_to_update);
-                            }
+                    $CCName = strtolower(str_replace(" ", "_", $company_category['name']));
+                    //
+                    if ($DCName == $CCName && $company_category['created_by_sid'] == 0 && $company_category['updated_by_sid'] == 0) {
+                        if ($default_category['status'] != $company_category['status']) {
+                            $data_to_update = array();
+                            $data_to_update['updated_by_sid']  = 0;
+                            $data_to_update['updated_date']  = date('Y-m-d', strtotime('now'));
+                            //
+                            $CI->db->where('sid', $company_category['sid']);
+                            $CI->db->update('documents_category_management', $data_to_update);
                         }
                     }
                 }
@@ -15482,10 +15501,9 @@ if (!function_exists('get_document_action_date')) {
         if ($assigned_document['status'] == 1) {
             if ($type == "assigned") {
                 $return_date = $assigned_document['assigned_date'];
-
             } else if ($type == "completed") {
                 $return_date = check_document_completed_date($assigned_document);
-            } 
+            }
         }
         //
         if (!empty($return_date) && $return_date != '0000-00-00 00:00:00') {
@@ -15497,7 +15515,7 @@ if (!function_exists('get_document_action_date')) {
     }
 }
 
-if(!function_exists('generateEmailButton')){
+if (!function_exists('generateEmailButton')) {
     /**
      * Generate button for email
      * 
@@ -15516,19 +15534,20 @@ if(!function_exists('generateEmailButton')){
         $link = '',
         $text = 'Click Here',
         $color = '#ffffff'
-    ){
-        return '<a style="color: '.($color).'; background-color: '.($bgColor).'; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url($link) . '">'.($text).'</a>';
+    ) {
+        return '<a style="color: ' . ($color) . '; background-color: ' . ($bgColor) . '; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" target="_blank" href="' . base_url($link) . '">' . ($text) . '</a>';
     }
 }
 
-if(!function_exists('get_encryption_initialize_array')) {
+if (!function_exists('get_encryption_initialize_array')) {
     /**
      * CReturn encryption initialize array
      *
      * @return
      * 
      */
-    function get_encryption_initialize_array () {
+    function get_encryption_initialize_array()
+    {
         $CI = &get_instance();
         //
         return array(
@@ -15541,7 +15560,7 @@ if(!function_exists('get_encryption_initialize_array')) {
 }
 
 
-if(!function_exists('hasPermissionToDocument')){
+if (!function_exists('hasPermissionToDocument')) {
     /**
      * Check the document permission
      * 
@@ -15574,18 +15593,18 @@ if(!function_exists('hasPermissionToDocument')){
         $departments,
         $teams,
         $employeeId
-    ){
+    ) {
         // Check the confidential as priority
-        if($confidentialEmployees){
+        if ($confidentialEmployees) {
             //
-            if($confidentialEmployees == "-1" || in_array($employeeId, explode(',', $confidentialEmployees))){
+            if ($confidentialEmployees == "-1" || in_array($employeeId, explode(',', $confidentialEmployees))) {
                 return true;
             }
             //
             return false;
         }
         // Check for plus
-        if($isAdminPlus || $isPayPlan){
+        if ($isAdminPlus || $isPayPlan) {
             return true;
         }
         // Check for the role
@@ -15593,36 +15612,33 @@ if(!function_exists('hasPermissionToDocument')){
             return true;
         }
         // Check for the employee
-        if  (
-                !empty($allowedEmployees) &&
-                (
-                    in_array($employeeId, explode(',', $allowedEmployees)) || 
-                    in_array("-1", explode(',', $allowedEmployees))
-                )
-            ) {
-                return true;
+        if (
+            !empty($allowedEmployees) &&
+            (in_array($employeeId, explode(',', $allowedEmployees)) ||
+                in_array("-1", explode(',', $allowedEmployees))
+            )
+        ) {
+            return true;
         }
         // Check for the department
-        if  (
-                !empty($departments) && 
-                !empty($allowedDepartments) && 
-                (
-                    in_array("-1", explode(',', $allowedDepartments)) ||
-                    array_intersect($departments, $allowedDepartments)
-                )
-            ) {
-                return true;
+        if (
+            !empty($departments) &&
+            !empty($allowedDepartments) &&
+            (in_array("-1", explode(',', $allowedDepartments)) ||
+                array_intersect($departments, $allowedDepartments)
+            )
+        ) {
+            return true;
         }
         // Check for the teams
-        if  (
-                !empty($teams) && 
-                !empty($allowedTeams) && 
-                (
-                    in_array("-1", explode(',', $allowedTeams)) ||
-                    array_intersect($teams, $allowedTeams)
-                )
-            ) {
-                return true;
+        if (
+            !empty($teams) &&
+            !empty($allowedTeams) &&
+            (in_array("-1", explode(',', $allowedTeams)) ||
+                array_intersect($teams, $allowedTeams)
+            )
+        ) {
+            return true;
         }
         //
         return false;
@@ -15630,24 +15646,24 @@ if(!function_exists('hasPermissionToDocument')){
 }
 
 
-if(!function_exists('addColumnsForDocumentAssigned')){
+if (!function_exists('addColumnsForDocumentAssigned')) {
     /**
      * 
      */
     function addColumnsForDocumentAssigned(
         &$dataArray,
         $document = []
-    ){
+    ) {
         // Get CI instance
         $_this = &get_instance();
         //
         $data = $document ? $document : $_this->input->post(null, true);
         //
-        if(isset($data['setting_is_confidential'])){
+        if (isset($data['setting_is_confidential'])) {
             $data['is_confidential'] = $data['setting_is_confidential'];
         }
         //
-        if(isset($data['confidentialSelectedEmployees'])){
+        if (isset($data['confidentialSelectedEmployees'])) {
             $data['confidential_employees'] = $data['confidentialSelectedEmployees'];
         }
         //
@@ -15655,7 +15671,7 @@ if(!function_exists('addColumnsForDocumentAssigned')){
         //
         $dataArray['confidential_employees'] = NULL;
         //
-        if($data['confidential_employees']){
+        if ($data['confidential_employees']) {
             $dataArray['confidential_employees'] = $data['confidential_employees'];
         }
     }

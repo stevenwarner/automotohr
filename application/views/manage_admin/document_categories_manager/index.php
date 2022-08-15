@@ -1,6 +1,4 @@
 <style>
-    .editdocumentcategory {}
-
     .red {
         float: none !important;
     }
@@ -26,7 +24,7 @@
                                             <div class="col-xs-12">
                                                 <div class="heading-title">
                                                     <?php if (check_access_permissions_for_view($security_details, 'add_job_category')) { ?>
-                                                        <button type="button" onclick="open_uploaded_model();" class="btn btn-success">Add New Document Category</button>
+                                                        <button type="button" onclick="open_uploaded_model();" class="btn btn-success">Add Category</button>
                                                     <?php } ?>
                                                     &nbsp;
                                                     <a href="<?php echo base_url('manage_admin/document_categories_manager/document_category_industries'); ?>" class="btn btn-success">Industries</a>
@@ -34,10 +32,9 @@
                                                         <a href="<?php echo base_url('manage_admin/document_categories_manager'); ?>" class="black-btn text-right">All Categories</a>
                                                     <?php } ?>
                                                 </div>
-                                                <!--                                                <div class="row">-->
-                                                <div class="col-xs-12">
+                                                <div class="col-xs-12 text-center">
                                                     <nav class="hr-pagination">
-                                                        <ul>
+                                                        <ul class="text-center">
                                                             <?php for ($i = 65; $i < 91; $i++) {
                                                                 $class = '';
 
@@ -50,7 +47,6 @@
                                                         </ul>
                                                     </nav>
                                                 </div>
-                                                <!--                                                </div>-->
                                                 <div class="row">
                                                     <div class="col-xs-12">
                                                         <!--                                                        <h2 class="page-title text-center"><?php echo isset($appendix) ? 'Categories List' : 'All Job Listing Categories'; ?></h2>-->
@@ -66,7 +62,7 @@
                                                                 <tr>
                                                                     <th class="col-xs-5">Category Name</th>
                                                                     <th class="col-xs-7">Description</th>
-                                                                    
+
                                                                     <?php if (check_access_permissions_for_view($security_details, 'add_job_category')) { ?>
                                                                         <th class="text-center col-xs-1" colspan="2">Actions</th>
                                                                     <?php } ?>
@@ -76,25 +72,23 @@
                                                                 <?php if (!empty($categories)) { ?>
                                                                     <?php foreach ($categories as $key => $category) { ?>
                                                                         <tr>
-                                                                            <td><?php echo $category['name'] ?></td>
+                                                                            <td><?php echo $category['category_name'] ?></td>
                                                                             <td><?php echo $category['description'] ?></td>
-                                                                            <?php if (check_access_permissions_for_view($security_details, 'add_job_category')) { ?>
-                                                                                <td class="text-center">
-                                                                                    <button title="Edit" data-toggle="tooltip" data-categorysid="<?php echo $category['sid']; ?>" data-categoryname="<?php echo $category['name'] ?>" data-categorydesc="<?php echo $category['description'] ?>" data-placement="top" class="btn btn-success btn-sm editdocumentcategory"><i class="fa fa-pencil"></i></button>
-                                                                                </td>
-                                                                                <td class="text-center">
-                                                                                    <form id="form_delete_category_<?php echo $category['sid']; ?>" method="post" enctype="multipart/form-data" action="document_categories_manager/delete_document_category">
-                                                                                        <input type="hidden" id="perform_action" name="perform_action" value="delete_category" />
-                                                                                        <input type="hidden" id="category_sid" name="category_sid" value="<?php echo $category['sid']; ?>" />
-                                                                                        <button onclick="func_delete_category(<?php echo $category['sid']; ?>, '<?php echo $category['name']; ?>');" type="button" title="Delete" data-toggle="tooltip" data-placement="top" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                                                                                    </form>
-                                                                                </td>
-                                                                            <?php } ?>
+                                                                            <td class="text-center">
+                                                                                <button title="Edit" data-toggle="tooltip" data-categorysid="<?php echo $category['sid']; ?>" data-categoryname="<?php echo $category['category_name'] ?>" data-categorydesc="<?php echo $category['description'] ?>" data-placement="top" class="btn btn-success btn-sm editdocumentcategory"><i class="fa fa-pencil"></i></button>
+                                                                            </td>
+                                                                            <td class="text-center">
+                                                                                <form id="form_delete_category_<?php echo $category['sid']; ?>" method="post" enctype="multipart/form-data" action="document_categories_manager/delete_document_category">
+                                                                                    <input type="hidden" id="perform_action" name="perform_action" value="delete_category" />
+                                                                                    <input type="hidden" id="category_sid" name="category_sid" value="<?php echo $category['sid']; ?>" />
+                                                                                    <button onclick="func_delete_category(<?php echo $category['sid']; ?>, '<?php echo $category['category_name']; ?>');" type="button" title="Delete" data-toggle="tooltip" data-placement="top" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                                                                                </form>
+                                                                            </td>
                                                                         </tr>
                                                                     <?php } ?>
                                                                 <?php } else { ?>
                                                                     <tr>
-                                                                        <td class="text-center col-xs-1" colspan="2">No Document Categories Found!</td>
+                                                                        <td class="text-center col-xs-1" colspan="4">No Document Categories Found!</td>
                                                                     </tr>
                                                                 <?php } ?>
                                                             </tbody>
@@ -125,7 +119,7 @@
         <div class="modal-content">
             <div class="modal-header modal-header-bg">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Add New Document Category</h4>
+                <h4 class="modal-title">Add a new document category</h4>
             </div>
             <div class="modal-body">
                 <div class="compose-message">
@@ -133,7 +127,7 @@
                         <ul>
                             <li class="form-col-100 autoheight">
                                 <div class="row">
-                                    <div class="col-md-4"><b>Document Category Name </b><span class="hr-required red"> * </span></div>
+                                    <div class="col-md-4"><b>Name </b><span class="hr-required red"> * </span></div>
                                     <div class="col-md-8">
                                         <input type='text' class="hr-form-fileds invoice-fields" name='category_name' id="category_name" />
                                         <input type="hidden" value="" id="categoryaction" />
@@ -176,7 +170,6 @@
     <div id="file_loader" class="file_loader" style="display:block; height:1353px;"></div>
     <div class="loader-icon-box">
         <i aria-hidden="true" class="fa fa-refresh fa-spin my_spinner" style="visibility: visible;"></i>
-        <div class="loader-text" id="loader_text_div" style="display:block; margin-top: 35px;"></div>
     </div>
 </div>
 
@@ -194,9 +187,7 @@
                 function() {
                     $('#form_delete_category_' + category_sid).submit();
                 },
-                function() {
-                    alertify.warning('Cancelled');
-                });
+                function() {});
         }
     </script>
 <?php } ?>
@@ -230,8 +221,8 @@
     }
 
     function document_category_form_validate() {
-        var catagoryName = $('#category_name').val();
-        if (catagoryName.trim() == "" || catagoryName == undefined) {
+        var catagoryName = $('#category_name').val().trim();
+        if (catagoryName == "" || catagoryName == undefined) {
             alertify.alert("Notice", "Please enter category name.");
             return;
         } else {
@@ -255,7 +246,6 @@
             }).done(function(resp) {
                 //
                 $('#document_loader').hide();
-                //  $('.jsModifyModalLoader').fadeOut(300);
                 alertify.alert('SUCCESS!', resp.Message, function() {
                     if (resp.Status == true) {
                         window.location.reload();
