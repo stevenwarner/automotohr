@@ -2971,56 +2971,8 @@ class Reports extends Public_Controller
 
     function error_report()
     {
-        
-        $alertpages = ["assign_bulk_documents", "add_history_documents"];
-        $page = str_replace(base_url(), "", $_POST["OnPage"]);
-        $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
-        $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
-        if (str_replace($alertpages, '', $page) != $page) {
-               sendMail(
-                FROM_EMAIL_NOTIFICATIONS,
-                'mubashir.saleemi123@gmail.com',
-                'Bulk Upload Documents Error',
-                @json_encode($_POST)
-            );
-        }else{
-            sendMail(
-                FROM_EMAIL_NOTIFICATIONS,
-                'mubashir.saleemi123@gmail.com',
-                'Error On '.$page,
-                @json_encode($_POST)
-            );
-
-        }
-      
-        $folder = APPPATH . '../../error_logs';
-        //
-        if (!is_dir($folder)) {
-            mkdir($folder, 0777, true);
-        }
-
-        $file_name = $folder . "/error_log_report" . date('Y_m_d') . ".json";
-        // 
-        if (!file_exists($file_name)) {
-            $error_file = fopen($file_name, 'w');
-            fwrite($error_file, json_encode($_POST));
-            fclose($error_file);
-        } else {
-            $file = fopen($file_name, 'r');
-            // read data from file
-            $file_data =  fread($file, filesize($file_name));
-            fclose($file);
-            //
-            $new_file_data = json_encode($_POST) . ',' . $file_data;
-            //
-            $error_file = fopen($file_name, 'w');
-            fwrite($error_file, $new_file_data);
-            fclose($error_file);
-        }
-        //  
-        echo "error repoted and send email";
+        js_error_report();
     }
-
 
 
     function employee_document()
@@ -3058,19 +3010,21 @@ class Reports extends Public_Controller
                     "Export Date", date('m/d/Y H:i:s ', strtotime('now')) . STORE_DEFAULT_TIMEZONE_ABBR
                 ));
 
-                fputcsv($output, 
-                array(
-                    'Employee',
-                    'Document Title', 
-                    'Is Confidential?', 
-                    'Confidential Employees', 
-                    'Authorize Signers', 
-                    'Visible To Payroll', 
-                    'Allowed Departments', 
-                    'Allowed Teams', 
-                    'Allowed Employees', 
-                    'Approval Flow'
-                ));
+                fputcsv(
+                    $output,
+                    array(
+                        'Employee',
+                        'Document Title',
+                        'Is Confidential?',
+                        'Confidential Employees',
+                        'Authorize Signers',
+                        'Visible To Payroll',
+                        'Allowed Departments',
+                        'Allowed Teams',
+                        'Allowed Employees',
+                        'Approval Flow'
+                    )
+                );
 
                 //
                 $rows = $employeedocument['Data'];
@@ -3079,103 +3033,103 @@ class Reports extends Public_Controller
                 //
                 $us = array_column($rows, 'user_sid');
                 //
-                if($us){
-                    $employeeList .= implode(',', $us).',';
+                if ($us) {
+                    $employeeList .= implode(',', $us) . ',';
                 }
                 //
                 $ce = array_column($rows, 'confidential_employees');
                 //
-                if($ce){
-                    $employeeList .= implode(',', $ce).',';
+                if ($ce) {
+                    $employeeList .= implode(',', $ce) . ',';
                 }
                 $as = array_column($rows, 'authorize_signers');
                 //
-                if($as){
-                    $employeeList .= implode(',', $as).',';
+                if ($as) {
+                    $employeeList .= implode(',', $as) . ',';
                 }
                 $ae = array_column($rows, 'allowed_employees');
                 //
-                if($ae){
-                    $employeeList .= implode(',', $ae).',';
+                if ($ae) {
+                    $employeeList .= implode(',', $ae) . ',';
                 }
                 $ae = array_column($rows, 'document_approval_employees');
                 //
-                if($ae){
-                    $employeeList .= implode(',', $ae).',';
+                if ($ae) {
+                    $employeeList .= implode(',', $ae) . ',';
                 }
                 //
                 $employeeList = array_values(array_unique(explode(',', rtrim($employeeList, ','))));
                 $employeeOBJ = $this->reports_model->getEmployeeByIdsOBJ($employeeList);
                 //
-                foreach($rows as $row){
+                foreach ($rows as $row) {
                     //
                     $a = [];
                     $a[] = $employeeOBJ[$row['user_sid']];
                     $a[] = $row['document_title'];
                     $a[] = $row['is_confidential'] == '1' ? "YES" : "NO";
                     //
-                    if($row['confidential_employees']){
+                    if ($row['confidential_employees']) {
                         //
                         $tmp = explode(',', $row['confidential_employees']);
                         //
                         $b = '';
-                        foreach($tmp as $t){
-                            $b .= $employeeOBJ[$t]."\n\n";
+                        foreach ($tmp as $t) {
+                            $b .= $employeeOBJ[$t] . "\n\n";
                         }
                         //
                         $a[] = $b;
-                    } else{
+                    } else {
                         $a[] = '-';
                     }
                     //
-                    if($row['authorize_signers']){
+                    if ($row['authorize_signers']) {
                         //
                         $tmp = explode(',', $row['authorize_signers']);
                         //
                         $b = '';
-                        foreach($tmp as $t){
-                            $b .= $employeeOBJ[$t]."\n\n";
+                        foreach ($tmp as $t) {
+                            $b .= $employeeOBJ[$t] . "\n\n";
                         }
                         //
                         $a[] = $b;
-                    } else{
+                    } else {
                         $a[] = '-';
                     }
                     $a[] = $row['visible_to_payroll'] == '1' ? "YES" : "NO";
                     $a[] = $row['allowed_departments'] ? implode("\n\n", $row['allowed_departments']) : '-';
                     $a[] = $row['allowed_teams'] ? implode("\n\n", $row['allowed_teams']) : '-';
                     //
-                    if($row['allowed_employees']){
+                    if ($row['allowed_employees']) {
                         //
                         $tmp = explode(',', $row['allowed_employees']);
                         //
                         $b = '';
-                        foreach($tmp as $t){
-                            $b .= $employeeOBJ[$t]."\n\n";
+                        foreach ($tmp as $t) {
+                            $b .= $employeeOBJ[$t] . "\n\n";
                         }
                         //
                         $a[] = $b;
-                    } else{
+                    } else {
                         $a[] = '-';
                     }
                     //
-                    if($row['document_approval_employees']){
+                    if ($row['document_approval_employees']) {
                         //
                         $tmp = explode(',', $row['document_approval_employees']);
                         //
                         $b = '';
-                        foreach($tmp as $t){
-                            $b .= $employeeOBJ[$t]."\n\n";
+                        foreach ($tmp as $t) {
+                            $b .= $employeeOBJ[$t] . "\n\n";
                         }
                         //
                         $a[] = $b;
-                    } else{
+                    } else {
                         $a[] = '-';
                     }
                     //
                     fputcsv($output, $a);
                 }
-                
+
                 fclose($output);
                 exit;
             }
