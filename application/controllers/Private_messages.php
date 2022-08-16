@@ -1001,7 +1001,14 @@ class Private_messages extends Public_Controller
                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                     . $secret_key . '</div>';
                 sendMail($from, $to, $subject, $body, $company_detail['CompanyName'], REPLY_TO);
-
+                //
+                $body = $message_hf['header']
+                                . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
+                                . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
+                                . $message_hf['footer']
+                                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                . $secret_key . '</div>';
+                //
                 $emailData = array(
                                 'date' => date('Y-m-d H:i:s'),
                                 'subject' => $subject,
