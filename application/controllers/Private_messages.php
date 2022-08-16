@@ -1002,22 +1002,24 @@ class Private_messages extends Public_Controller
                     . $secret_key . '</div>';
                 sendMail($from, $to, $subject, $body, $company_detail['CompanyName'], REPLY_TO);
                 //
-                $body = $message_hf['header']
-                                . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                                . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
-                                . $message_hf['footer']
-                                . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                . $secret_key . '</div>';
-                //
-                $emailData = array(
-                                'date' => date('Y-m-d H:i:s'),
-                                'subject' => $subject,
-                                'email' => $to,
-                                'message' => $body,
-                                'username' => $employer_name,
-                                'temp_id' => 'nil'
-                            );
-                save_email_log_common($emailData);
+                if (getnotifications_emails_configuration($company_detail['sid'], 'private_message') > 0) {
+                    $body = $message_hf['header']
+                                    . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
+                                    . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
+                                    . $message_hf['footer']
+                                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+                                    . $secret_key . '</div>';
+                    //
+                    $emailData = array(
+                                    'date' => date('Y-m-d H:i:s'),
+                                    'subject' => $subject,
+                                    'email' => $to,
+                                    'message' => $body,
+                                    'username' => $employer_name,
+                                    'temp_id' => 'nil'
+                                );
+                    save_email_log_common($emailData);
+                }    
 
                 $this->session->set_flashdata('message', 'Success! Messsage sent successfully!');
                 redirect('private_messages', 'refresh');
