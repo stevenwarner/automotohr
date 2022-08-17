@@ -138,6 +138,7 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
     $this->uri->segment(2) == 'job_templates' ||
     $this->uri->segment(2) == 'job_template_groups' ||
     $this->uri->segment(2) == 'job_categories_manager' ||
+    $this->uri->segment(2) == 'document_categories_manager' ||
     $this->uri->segment(2) == 'logs' ||
     $this->uri->segment(2) == 'interview_questionnaires' ||
     $this->uri->segment(2) == 'system_notification_emails' ||
@@ -504,7 +505,7 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                     </div>
                 </li>
             <?php } ?>
-            <?php $functions_names = array('system_settings', 'social_settings', 'demo_affiliate_configurations', 'admin_status_bar', 'security_settings', 'email_templates', 'free_demo_enquiries', 'email_enquiries_log', 'notification_email_log', 'notification_email_log_view','private_messages', 'job_listing_templates', 'job_categories_manager', 'interview_questionnaires', 'system_notification_emails', 'blocked_applicants', 'block_ips','modules'); ?>
+            <?php $functions_names = array('system_settings', 'social_settings', 'demo_affiliate_configurations', 'admin_status_bar', 'security_settings', 'email_templates', 'free_demo_enquiries', 'email_enquiries_log', 'notification_email_log', 'notification_email_log_view','private_messages', 'job_listing_templates', 'job_categories_manager', 'interview_questionnaires', 'system_notification_emails', 'blocked_applicants', 'block_ips','modules','document_categories_manager'); ?>
             <?php if (check_access_permissions_for_view($security_details, $functions_names)) { ?>
                 <li>
                     <a class="<?php echo $system_configuration_menu ? 'hr-opened-menu' : 'hr-closed-menu'; ?>" href="javascript:;">System Configuration</a>
@@ -652,6 +653,18 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                                 ?> href="<?php echo site_url('manage_admin/job_categories_manager'); ?>">Job Categories Manager</a>
                             </div>
                         <?php } ?>
+
+
+                        <?php if (check_access_permissions_for_view($security_details, 'job_categories_manager')) { ?>
+                            <div class="menu-item">
+                                <a <?php
+                                if (base_url(uri_string()) == site_url('manage_admin/document_categories_manager') || $this->uri->segment(2) == 'document_categories_manager') {
+                                    echo 'class="active"';
+                                }
+                                ?> href="<?php echo site_url('manage_admin/document_categories_manager'); ?>">Document Categories Manager</a>
+                            </div>
+                        <?php } ?>
+
                         <?php if (check_access_permissions_for_view($security_details, 'interview_questionnaires')) { ?>
                         <div class="menu-item">
                             <a <?php
@@ -1207,9 +1220,6 @@ if (base_url(uri_string()) == site_url('manage_admin/users') ||
                                 <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/documents_library')) !== false ) {
                                     echo 'class="active"';
                                 } ?> href="<?php echo site_url('manage_admin/documents_library'); ?>">Document Center Management</a>
-                                <a <?php if(strpos(base_url(uri_string()), site_url('manage_admin/default_categories')) !== false ) {
-                                    echo 'class="active"';
-                                } ?> href="<?php echo site_url('manage_admin/default_categories'); ?>">Document Default Categories</a>
                             </div>
                         <?php } ?>
                     </div>

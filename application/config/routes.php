@@ -811,10 +811,6 @@ $route['manage_admin/documents/regenerate_company_contacts_document/(:any)'] = '
 $route['manage_admin/documents/(:any)/(:any)'] = 'manage_admin/documents/index/$1/$2';
 $route['manage_admin/documents'] = 'manage_admin/documents';
 $route['manage_admin/documents/check_signed_forms'] = 'manage_admin/documents/check_signed_forms';
-$route['manage_admin/default_categories'] = 'manage_admin/documents/default_categories_listing';
-$route['manage_admin/default_categories/add'] = 'manage_admin/documents/add_default_category';
-$route['manage_admin/default_categories/edit/(:num)'] = 'manage_admin/documents/edit_default_category/$1';
-$route['manage_admin/default_categories/change_status/(:num)'] = 'manage_admin/documents/change_status/$1';
 //Marketing Agency Documents
 $route['manage_admin/marketing_agency_documents/assign_w9_form/(:any)'] = 'manage_admin/marketing_agency_documents/assign_w9_form/$1';
 $route['manage_admin/marketing_agency_documents/send/(:any)'] = 'manage_admin/marketing_agency_documents/send/$1';
@@ -1558,3 +1554,12 @@ $route['assign_vd']['post'] = 'Hr_documents_management/assignVD';
  * Print & Export routes
  */
 $route['pd']['get'] = '2022/Print_export/manageCompanies';
+
+//document Listing Categories Super Admin
+$route['manage_admin/document_categories_manager'] = 'manage_admin/document_categories_manager/index';
+$route['manage_admin/document_categories_manager/(:num)'] = 'manage_admin/document_categories_manager/index/$1';
+$route['manage_admin/document_categories_manager/add_job_category'] = 'manage_admin/document_categories_manager/add_job_category';
+$route['manage_admin/document_categories_manager/edit_job_category/(:num)'] = 'manage_admin/document_categories_manager/edit_job_category/$1';
+
+// Delete docuemnt category industry
+$route['manage_admin/docuemnt_categories_manager/document_category_industries/(:num)']['delete'] = 'manage_admin/document_categories_manager/delete_industry/$1';
