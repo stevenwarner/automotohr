@@ -260,6 +260,10 @@ class Document_categories_manager_model extends CI_Model
         $this->db->like('category_name', $latter, 'after');
         $this->db->order_by('sid', 'ASC');
         $records_obj = $this->db->get('default_categories');
+        //
+        if(!$records_obj){
+            return [];
+        }
         $categories = $records_obj->result_array();
         $records_obj->free_result();
 
