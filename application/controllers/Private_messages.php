@@ -72,11 +72,11 @@ class Private_messages extends Public_Controller
             $employer_email = $employer_detail['email'];
             $access_level = $employer_detail['access_level'];
             $data['messages'] = $this->message_model->get_employer_messages($employer_id, $employer_email, $between, $company_id);
-            //            $data['messages']                                                   = $db_data->result_array();
+            //
             $data['employee'] = $employer_detail;
 
             $this->load->helper('email');
-            //            echo '<pre>'; print_r($data['messages']); echo '</pre>';
+            // 
             foreach ($data['messages'] as $myKey => $message) {
                 if (is_numeric($message['username'])) {
                     $result_data = $this->message_model->get_name_by_id($message['username'], $message['users_type']);
@@ -152,23 +152,17 @@ class Private_messages extends Public_Controller
                 $data['messages'] = $return_messages;
             }
 
-            //echo '<pre>'; print_r($data['messages']); echo '</pre>';
+            //
             $data['total_messages'] = $this->message_model->get_employer_messages_total($employer_id, $employer_email, $between, $company_id);
             $data['total'] = $this->message_model->get_messages_total_inbox($employer_id, $employer_email, $between, NULL);
             $data['page'] = 'inbox';
 
             $load_view = check_blue_panel_status(false, 'self');
             $data['load_view'] = $load_view;
-
-            //            if(strtolower($access_level) == 'employee') {
-            //                $this->load->view('onboarding/on_boarding_header', $data);
-            //                $this->load->view('manage_employer/my_messages_ems');
-            //                $this->load->view('onboarding/on_boarding_footer');
-            //            } else {
+     
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/my_messages_new');
             $this->load->view('main/footer');
-            //            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -321,15 +315,10 @@ class Private_messages extends Public_Controller
             $load_view = check_blue_panel_status(false, 'self');
             $data['load_view'] = $load_view;
 
-            //            if(strtolower($access_level) == 'employee') {
-            //                $this->load->view('onboarding/on_boarding_header', $data);
-            //                $this->load->view('manage_employer/my_messages_ems');
-            //                $this->load->view('onboarding/on_boarding_footer');
-            //            } else {
+            
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/my_messages_new');
             $this->load->view('main/footer');
-            //            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -483,7 +472,6 @@ class Private_messages extends Public_Controller
                 $this->load->helper('email');
 
                 if ($formpost['send_invoice'] == 'to_admin') {
-
                     foreach ($formpost as $key => $value) {
                         if ($key != 'send_invoice' && $key != 'toemail' && $key != 'employees' && $key != 'applicants') { // exclude these values from array
                             if (is_array($value)) {
@@ -511,21 +499,20 @@ class Private_messages extends Public_Controller
                     $subject = 'Private Message Notification'; //send email
                     $body = $message_hf['header']
                         . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                        . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
+                        . '<br><br>'
+                        . $employer_name . '</b> has sent you a private message.'
+                        . '<br><br><b>'
+                        . 'Date:</b> '
+                        . $message_date
+                        . '<br><br><b>'
+                        . 'Subject:</b> '
+                        . $formpost["subject"]
+                        . '<br><hr>'
+                        . $formpost["message"] . '<br><br>'
                         . $message_hf['footer']
                         . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                         . $secret_key . '</div>';
 
-
-                    $emailData = array(
-                        'date' => date('Y-m-d H:i:s'),
-                        'subject' => $formpost['subject'],
-                        'email' => $to,
-                        'message' => $body,
-                        'username' => $employer_name,
-                        'temp_id' => 'nil'
-                    );
-                  
                     if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
                         $file = explode(".", $_FILES['message_attachment']['name']);
                         $file_name = str_replace(" ", "-", $file[0]);
@@ -539,36 +526,27 @@ class Private_messages extends Public_Controller
                         $aws = new AwsSdk();
                         $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
                         $message_data['attachment'] = $messageFile;
-                        if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
-
-                            sendMailWithAttachment($from, $to, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
-                            save_email_log_common($emailData);
-                        }
+                        sendMailWithAttachment($from, $to, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
                     } else {
-                        if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                        sendMail($from, $to, $subject, $body, $company_name, REPLY_TO);
+                    }
 
-                            sendMail($from, $to, $subject, $body, $company_name, REPLY_TO);
-                            save_email_log_common($emailData);
-                        }
+                    if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                        $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to);
                     }
 
                     $this->message_model->save_message($message_data);
                     $this->session->set_flashdata('message', 'Success! Message sent successfully!');
                     redirect('private_messages', 'refresh');
                 } else if ($formpost['send_invoice'] == 'to_email') {
-
-
                     $employerData = $this->message_model->user_data_by_id($employer_id);
                     $employer_name = $employerData['username'];
                     $message_hf = (message_header_footer($company_id, $company_name));
                     $emails = explode(',', $formpost['toemail']);
                     $message_date = date('Y-m-d H:i:s');
 
-
                     foreach ($emails as $email) {
-
                         if (valid_email(trim($email))) {
-
                             foreach ($formpost as $key => $value) {
                                 if ($key != 'send_invoice' && $key != 'toemail' && $key != 'employees' && $key != 'applicants') { // exclude these values from array
                                     if (is_array($value)) {
@@ -598,21 +576,20 @@ class Private_messages extends Public_Controller
                                 $secret_key = $message_data['identity_key'] . "__";
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                                    . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
+                                    . '<br><br>'
+                                    . $employer_name . '</b> has sent you a private message.'
+                                    . '<br><br><b>'
+                                    . 'Date:</b> '
+                                    . $message_date
+                                    . '<br><br><b>'
+                                    . 'Subject:</b> '
+                                    . $subject
+                                    . '<br><hr>'
+                                    . $formpost['message'] . '<br><br>'
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
 
-                                $emailData = array(
-                                    'date' => date('Y-m-d H:i:s'),
-                                    'subject' => $formpost['subject'],
-                                    'email' => $to_email,
-                                    'message' => $body,
-                                    'username' => $employer_name,
-                                    'temp_id' => 'nil'
-                                );
-
-                              
                                 if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
                                     $file = explode(".", $_FILES['message_attachment']['name']);
                                     $file_name = str_replace(" ", "-", $file[0]);
@@ -626,18 +603,13 @@ class Private_messages extends Public_Controller
                                     $aws = new AwsSdk();
                                     $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
                                     $message_data['attachment'] = $messageFile;
-                                    if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
-                                        sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
-                                        //
-                                        save_email_log_common($emailData);
-                                    }
+                                    sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
                                 } else {
+                                    sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
+                                }
 
-                                    if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
-                                        sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
-                                        //
-                                        save_email_log_common($emailData);
-                                    }
+                                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                                    $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to_email);
                                 }
 
                                 $this->message_model->save_message($message_data);
@@ -661,20 +633,20 @@ class Private_messages extends Public_Controller
                                 $secret_key = $message_data['identity_key'] . "__";
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                                    . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
+                                    . '<br><br>'
+                                    . $employer_name . '</b> has sent you a private message.'
+                                    . '<br><br><b>'
+                                    . 'Date:</b> '
+                                    . $message_date
+                                    . '<br><br><b>'
+                                    . 'Subject:</b> '
+                                    . $subject
+                                    . '<br><hr>'
+                                    . $formpost['message'] . '<br><br>'
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
-                                 
-                                    $emailData = array(
-                                        'date' => date('Y-m-d H:i:s'),
-                                        'subject' => $formpost['subject'],
-                                        'email' => $to_email,
-                                        'message' => $body,
-                                        'username' => $employer_name,
-                                        'temp_id' => 'nil'
-                                    );
-                                   
+
                                 if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
                                     $file = explode(".", $_FILES['message_attachment']['name']);
                                     $file_name = str_replace(" ", "-", $file[0]);
@@ -689,10 +661,12 @@ class Private_messages extends Public_Controller
                                     $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
                                     $message_data['attachment'] = $messageFile;
                                     sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
-                                    save_email_log_common($emailData);
                                 } else {
                                     sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
-                                    save_email_log_common($emailData);
+                                }
+
+                                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                                    $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to_email);
                                 }
 
                                 $this->message_model->save_message($message_data);
@@ -712,22 +686,21 @@ class Private_messages extends Public_Controller
                                 $secret_key = $message_data['identity_key'] . "__";
                                 $body = $message_hf['header']
                                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                                    . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
+                                    . '<br><br>'
+                                    . $employer_name . '</b> has sent you a private message.'
+                                    . '<br><br><b>'
+                                    . 'Date:</b> '
+                                    . $message_date
+                                    . '<br><br><b>'
+                                    . 'Subject:</b> '
+                                    . $subject
+                                    . '<br><hr>'
+                                    . $formpost['message'] . '<br><br>'
                                     . $message_hf['footer']
                                     . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                     . $secret_key . '</div>';
 
-                                    $emailData = array(
-                                        'date' => date('Y-m-d H:i:s'),
-                                        'subject' => $formpost['subject'],
-                                        'email' => $to_email,
-                                        'message' => $body,
-                                        'username' => $employer_name,
-                                        'temp_id' => 'nil'
-                                    );
-
-                                    
-                                if (isset($_FILES['message_attachment']) && trim($_FILES['message_attachment']['name']) != '') {
+                                if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
                                     $file = explode(".", $_FILES['message_attachment']['name']);
                                     $file_name = str_replace(" ", "-", $file[0]);
                                     $messageFile = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
@@ -736,16 +709,19 @@ class Private_messages extends Public_Controller
                                         $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                                         redirect('private_messages', 'refresh');
                                     }
+
                                     $aws = new AwsSdk();
                                     $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
                                     $message_data['attachment'] = $messageFile;
                                     sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
-                                    save_email_log_common($emailData);
                                 } else {
-                               
                                     sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
-                                    save_email_log_common($emailData);
                                 }
+                                //
+                                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                                    $this->send_email_notification($company_id, $company_name, $name, $employer_name, $to_email);
+                                }
+                                //
                                 $this->message_model->save_message($message_data);
                             }
                         }
@@ -810,19 +786,19 @@ class Private_messages extends Public_Controller
                             $subject = $formpost['subject'];
                             $body = $message_hf['header']
                                 . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $message_data['contact_name'] . ',</h2>'
-                                . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
+                                . '<br><br>'
+                                . $employer_name . '</b> has sent you a private message.'
+                                . '<br><br><b>'
+                                . 'Date:</b> '
+                                . $message_date
+                                . '<br><br><b>'
+                                . 'Subject:</b> '
+                                . $subject
+                                . '<br><hr>'
+                                . $formpost['message'] . '<br><br>'
                                 . $message_hf['footer']
                                 . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
                                 . $secret_key . '</div>';
-
-                            $emailData = array(
-                                'date' => date('Y-m-d H:i:s'),
-                                'subject' => $formpost['subject'],
-                                'email' => $to_email,
-                                'message' => $body,
-                                'username' => $employer_name,
-                                'temp_id' => 'nil'
-                            );
 
                             if (isset($_FILES['message_attachment']) && $_FILES['message_attachment']['name'] != '') {
                                 $file = explode(".", $_FILES['message_attachment']['name']);
@@ -837,17 +813,13 @@ class Private_messages extends Public_Controller
                                 $aws = new AwsSdk();
                                 $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
                                 $message_data['attachment'] = $messageFile;
-                                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
-
-                                    sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
-                                    save_email_log_common($emailData);
-                                }
+                                sendMailWithAttachment($from, $to_email, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
                             } else {
-                                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                                sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
+                            }
 
-                                    sendMail($from, $to_email, $subject, $body, $company_name, REPLY_TO);
-                                    save_email_log_common($emailData);
-                                }
+                            if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                                $this->send_email_notification($company_id, $company_name, $message_data['contact_name'], $employer_name, $to_email);
                             }
 
                             $this->message_model->save_message($message_data);
@@ -1002,24 +974,9 @@ class Private_messages extends Public_Controller
                     . $secret_key . '</div>';
                 sendMail($from, $to, $subject, $body, $company_detail['CompanyName'], REPLY_TO);
                 //
-                if (getnotifications_emails_configuration($company_detail['sid'], 'private_message') > 0) {
-                    $body = $message_hf['header']
-                                    . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
-                                    . '</br> You have a message in your AutomotoHR inbox from <strong>'.$employer_name .'</strong>'
-                                    . $message_hf['footer']
-                                    . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-                                    . $secret_key . '</div>';
-                    //
-                    $emailData = array(
-                                    'date' => date('Y-m-d H:i:s'),
-                                    'subject' => $subject,
-                                    'email' => $to,
-                                    'message' => $body,
-                                    'username' => $employer_name,
-                                    'temp_id' => 'nil'
-                                );
-                    save_email_log_common($emailData);
-                }    
+                if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                    $this->send_email_notification($company_id, $company_detail['CompanyName'], $name, $employer_name, $to);
+                }   
 
                 $this->session->set_flashdata('message', 'Success! Messsage sent successfully!');
                 redirect('private_messages', 'refresh');
@@ -1059,5 +1016,27 @@ class Private_messages extends Public_Controller
         echo $this->db->last_query() . '<pre>';
         print_r($contact_details);
         echo '</pre>';
+    }
+
+    function send_email_notification ($company_sid, $company_name, $to_name, $from_name, $to_email) {
+        $message_hf = message_header_footer($company_sid, $company_name);
+        //
+        $notification_body = $message_hf['header']
+            . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $to_name . ',</h2>'
+            . '</br> You have a message in your AutomotoHR inbox from <strong>'.$from_name .'</strong>'
+            . $message_hf['footer']
+            . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+            . $secret_key . '</div>';
+        //
+        $emailData = array(
+            'date' => date('Y-m-d H:i:s'),
+            'subject' => 'Private Message Notification',
+            'email' => $to_email,
+            'message' => $notification_body,
+            'username' => $from_name,
+            'temp_id' => 'nil'
+        );
+        //
+        save_email_log_common($emailData);
     }
 }
