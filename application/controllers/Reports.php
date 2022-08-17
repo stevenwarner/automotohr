@@ -2971,7 +2971,29 @@ class Reports extends Public_Controller
 
     function error_report()
     {
-        js_error_report();
+        $alertpages = ["assign_bulk_documents", "add_history_documents"];
+		$page = str_replace(base_url(), "", $_POST["OnPage"]);
+		$_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
+		$_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
+		if (str_replace($alertpages, '', $page) != $page) {
+			sendMail(
+				FROM_EMAIL_NOTIFICATIONS,
+				OFFSITE_DEV_EMAIL,
+				'Bulk Upload Documents Error',
+				@json_encode($_POST)
+			);
+		} else {
+			sendMail(
+				FROM_EMAIL_NOTIFICATIONS,
+				OFFSITE_DEV_EMAIL,
+				'Error On ' . $page,
+				@json_encode($_POST)
+			);
+		}
+        //
+        jsErrorHandler($_POST);
+		//  
+		echo "error repoted and send email";
     }
 
 
