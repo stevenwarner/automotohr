@@ -72,8 +72,14 @@ class AwsSdk {
         $plainUrl = $this->client->getObjectUrl($bucket, $key);
         return $plainUrl;
     }
-    
-    
+
+    public function getFileSize($key, $bucket){
+        $filesize = $this->client->headObject([
+            'Bucket' => $bucket,
+            'Key'    => $key
+         ]);
+        return $filesize;
+    }
     
 }
 
