@@ -490,6 +490,7 @@ class Private_messages extends Public_Controller
                     $message_data['to_type'] = 'admin';
                     $message_date = date('Y-m-d H:i:s');
                     $message_data['date'] = $message_date;
+                    $message_data['company_sid'] = $company_id;
                     $from = REPLY_TO;
                     $message_data['identity_key'] = generateRandomString(48);
                     $secret_key = $message_data['identity_key'] . "__";
@@ -565,6 +566,7 @@ class Private_messages extends Public_Controller
                                 $message_data['from_type'] = 'employer';
                                 $message_data['date'] = $message_date;
                                 $message_data['identity_key'] = generateRandomString(50);
+                                $message_data['company_sid'] = $company_id;
                                 $employee_data = $email_result['employee'][0];
                                 $message_data['to_id'] = $employee_data['sid'];
                                 $message_data['to_type'] = 'employer';
@@ -621,6 +623,7 @@ class Private_messages extends Public_Controller
                                 $message_data['from_type'] = 'employer';
                                 $message_data['date'] = $message_date;
                                 $message_data['identity_key'] = generateRandomString(50);
+                                $message_data['company_sid'] = $company_id;
                                 $applicant_data = $email_result['applicant'][0];
                                 $message_data['to_id'] = $email;
                                 $message_data['to_type'] = 'applicant';
@@ -679,6 +682,8 @@ class Private_messages extends Public_Controller
                                 $message_data['identity_key'] = generateRandomString(50);
                                 $message_data['to_id'] = trim($email);
                                 $message_data['to_type'] = 'employer';
+                                $message_data['company_sid'] = $company_id;
+                                //
                                 $name = trim($email);
                                 $to_email = $email;
                                 $subject = $formpost['subject'];
@@ -756,6 +761,7 @@ class Private_messages extends Public_Controller
                             $message_data['from_type'] = 'employer';
                             $message_data['date'] = $message_date;
                             $message_data['identity_key'] = generateRandomString(49);
+                            $message_data['company_sid'] = $company_id;
 
                             if ($type == 'employee') {
                                 foreach ($data['employees'] as $employee) {
@@ -923,6 +929,7 @@ class Private_messages extends Public_Controller
                 $message_data['from_type'] = 'employer';
                 $message_data['to_type'] = 'admin';
                 $message_data['date'] = date('Y-m-d H:i:s');
+                $message_data['company_sid'] = $company_id;
 
                 if ($formpost['send_invoice'] == 'to_admin') {
                     $message_data['to_id'] = '1';
@@ -1021,22 +1028,29 @@ class Private_messages extends Public_Controller
     function send_email_notification ($company_sid, $company_name, $to_name, $from_name, $to_email) {
         $message_hf = message_header_footer($company_sid, $company_name);
         //
-        $notification_body = $message_hf['header']
+        $notification_email = $message_hf['header']
             . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $to_name . ',</h2>'
             . '</br> You have a message in your AutomotoHR inbox from <strong>'.$from_name .'</strong>'
-            . $message_hf['footer']
-            . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
-            . $secret_key . '</div>';
+            . $message_hf['footer'];
         //
-        $emailData = array(
-            'date' => date('Y-m-d H:i:s'),
-            'subject' => 'Private Message Notification',
-            'email' => $to_email,
-            'message' => $notification_body,
-            'username' => $from_name,
-            'temp_id' => 'nil'
+        log_and_sendEmail(
+            FROM_EMAIL_NOTIFICATIONS,
+            $to_email,
+            'Private Message Notification',
+            $notification_email,
+            $company_name
         );
-        //
-        save_email_log_common($emailData);
+        //    
+        // $emailData = array(
+        //     'date' => date('Y-m-d H:i:s'),
+        //     'subject' => 'Private Message Notification',
+        //     'email' => $to_email,
+        //     'message' => $notification_email,
+        //     'username' => $from_name,
+        //     'temp_id' => 'nil'
+        // );
+        // //
+        // save_email_log_common($emailData);
+
     }
 }
