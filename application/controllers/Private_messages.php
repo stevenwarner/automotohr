@@ -982,6 +982,10 @@ class Private_messages extends Public_Controller
                 sendMail($from, $to, $subject, $body, $company_detail['CompanyName'], REPLY_TO);
                 //
                 if (getnotifications_emails_configuration($company_id, 'private_message') > 0) {
+                    if (!empty($message_data['contact_name'])) {
+                        $name = $message_data['contact_name'];
+                    }
+                    //
                     $this->send_email_notification($company_id, $company_detail['CompanyName'], $name, $employer_name, $to);
                 }   
 
