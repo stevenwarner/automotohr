@@ -8298,6 +8298,13 @@ class Hr_documents_management_model extends CI_Model
         $this->db->update('portal_document_assign_flow');
     }
 
+    public function requiredDocumentLibrary($document_sid)
+    {
+        $this->db->where('sid', $document_sid);
+        $this->db->set('status', 0);
+        $this->db->update('documents_assigned');
+    }
+
     public function get_approver_detail($approver_sid)
     {
         $this->db->select('*');

@@ -255,6 +255,14 @@
                                                                         data-asid="<?=$document['sid'];?>"
                                                                         data-sid="<?=$document['document_sid'];?>"
                                                                     >Manage Category</a>
+                                                                    <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                        <a 
+                                                                            href="javascript:void(0);"
+                                                                            class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                            title="Revoke Library Document"
+                                                                            data-asid="<?=$document['sid'];?>"
+                                                                        >Revoke</a>
+                                                                    <?php } ?>
                                                                 <?php } ?>    
                                                                 <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
                                                                     <?php if ($document['is_document_authorized'] == 1) { ?> 
@@ -603,6 +611,15 @@
                                                                             data-asid="<?=$document['sid'];?>"
                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                         >Manage Category</a>
+
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                     <?php } ?>
                                                                         
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
@@ -1110,6 +1127,15 @@
                                                                                             data-asid="<?=$document['sid'];?>"
                                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                                         >Manage Category</a>
+
+                                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                                            <a 
+                                                                                                href="javascript:void(0);"
+                                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                                title="Revoke Library Document"
+                                                                                                data-asid="<?=$document['sid'];?>"
+                                                                                            >Revoke</a>
+                                                                                        <?php } ?>
                                                                                     <?php } ?>    
                                                                                 </td>
                                                                             </tr>
@@ -1384,6 +1410,14 @@
                                                                 <?php } ?>
                                                                 <td>
                                                                     <?php if ($document_all_permission) { ?>
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
                                                                         <?php if ($user_type == 'applicant') { ?>
                                                                             <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
                                                                         <?php } else { ?>
@@ -2076,6 +2110,14 @@
                                                                                             data-asid="<?=$document['sid'];?>"
                                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                                         >Manage Category</a>
+                                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                                            <a 
+                                                                                                href="javascript:void(0);"
+                                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                                title="Revoke Library Document"
+                                                                                                data-asid="<?=$document['sid'];?>"
+                                                                                            >Revoke</a>
+                                                                                        <?php } ?>
                                                                                     <?php } ?>
                                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                                         <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/'.($user_type).'/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
@@ -2304,6 +2346,15 @@
                                                                             data-sid="<?=$document['document_sid'];?>"
                                                                         >Manage Category</a>
 
+                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
+                                                                            <a 
+                                                                                href="javascript:void(0);"
+                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
+                                                                                title="Revoke Library Document"
+                                                                                data-asid="<?=$document['sid'];?>"
+                                                                            >Revoke</a>
+                                                                        <?php } ?>
+
                                                                     <?php } ?>
                                                                     <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
                                                                         <?php 
@@ -2386,6 +2437,48 @@
         ).set('labels', {
             ok: 'YES',
             cancel: 'NO'
+        });
+    });
+
+    //
+    $('.jsRevokeDocumentLibrary').click((e) => {
+        //
+        e.preventDefault();
+        //
+        let sid = $(e.target).data('asid');
+        //
+        alertify.confirm(
+            'Are you Sure?',
+            'Do you really want to revoke this library document?',
+            function() {
+                $('#loader').show();
+                var myRequest;
+                var myData = {
+                    'action': 'revoke_library_document',
+                    'document_sid': sid 
+                };
+                var myUrl = '<?php echo base_url("hr_documents_management/handler"); ?>';
+
+
+
+                myRequest = $.ajax({
+                    url: myUrl,
+                    type: 'POST',
+                    data: myData,
+                    dataType: 'json'
+                });
+
+                myRequest.done(function(response) {
+                    alertify.alert("Success", 'Document Library Revoke Successfully', function () {
+                        window.location.reload();
+                    });
+                });
+            },
+            function() {
+                alertify.alert("Warning", 'Cancelled!');
+            }).set('labels', {
+            ok: 'I Consent and Accept!',
+            cancel: 'Cancel'
         });
     });
 

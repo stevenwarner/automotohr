@@ -10338,6 +10338,15 @@ class Hr_documents_management extends Public_Controller
                 //
                 $this->resp();
                 break;
+            case "revoke_library_document":
+                $this->hr_documents_management_model->requiredDocumentLibrary(
+                    $post['document_sid']
+                );
+                //
+                $this->res['Status'] = true;
+                //
+                $this->resp();
+                break;    
         }
         //
         $this->resp();
