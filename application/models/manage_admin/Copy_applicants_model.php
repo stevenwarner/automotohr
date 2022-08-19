@@ -952,7 +952,7 @@ class Copy_applicants_model extends CI_Model {
         ->where('portal_applicant_jobs_list.archived', 0)
         ->order_by('Title', 'ASC');
         //
-        if($applicantsStatus != -1) {$this->db->where('if(
+        if($applicantsStatus != -1) {$this->db->where_in('if(
                 portal_applicant_jobs_list.job_sid = 0, 
                 "1", 
                 portal_job_listings.active
