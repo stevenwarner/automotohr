@@ -37,6 +37,8 @@ class E_signature extends CI_Controller
                 $form_post = $this->input->post();
                 $insert_signature = $this->e_signature_model->set_e_signature($form_post);
 
+                $this->e_signature_model->apply_e_signature($data['exadminId']);
+
                 if ($insert_signature != 'error') {
                     $this->session->set_flashdata('message', '<strong>Success</strong> E-Signature Updated!');
                     redirect('e_signature', 'refresh');
@@ -49,6 +51,8 @@ class E_signature extends CI_Controller
             redirect('login', "refresh");
         }
     }
+
+
 
     function get_signature($user_sid, $company_sid, $user_type)
     {
@@ -129,6 +133,8 @@ class E_signature extends CI_Controller
         $insert_signature = set_agent_e_signature($form_post);
     }
 
+
+    //
     function regenerate_e_signature($user_sid)
     {
         $data_to_update = array();
@@ -136,4 +142,15 @@ class E_signature extends CI_Controller
         $this->e_signature_model->regenerate_e_signature($user_sid, $data_to_update);
         echo true;
     }
+
+      //
+      function apply_e_signature()
+      {
+        $form_post = $this->input->post();
+         $executive_sid =  $form_post['executive_sid'];
+          $this->e_signature_model->apply_e_signature($executive_sid);
+         echo true;
+      }
+
+
 }

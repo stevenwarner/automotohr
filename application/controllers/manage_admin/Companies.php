@@ -1,9 +1,11 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Companies extends Admin_Controller {
+class Companies extends Admin_Controller
+{
     private $indeedProductIds;
     private $ziprecruiterProductIds;
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('users_model');
@@ -25,7 +27,8 @@ class Companies extends Admin_Controller {
         $this->ziprecruiterProductIds = array(2);
     }
 
-    public function index() {
+    public function index()
+    {
         $redirect_url = 'manage_admin';
         $function_name = 'list_companies';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -67,7 +70,7 @@ class Companies extends Admin_Controller {
         $this->data['total'] = $this->company_model->total_companies_date($contact_name, $company_name, $company_type, $company_status, $start_date_applied, $end_date_applied);
         $this->data['flag'] = false;
 
-        if($contact_name != 'all' || $company_name != 'all' || $company_type != 1 || $company_status != 'all' || $start_date != 'all' || $end_date != 'all' || $page != 1){
+        if ($contact_name != 'all' || $company_name != 'all' || $company_type != 1 || $company_status != 'all' || $start_date != 'all' || $end_date != 'all' || $page != 1) {
             $this->data['flag'] = true;
         }
 
@@ -112,9 +115,9 @@ class Companies extends Admin_Controller {
         $this->data['links'] = $this->pagination->create_links();
         $this->data['page_title'] = 'Manage Companies';
 
-        if($company_status=='all') {
-            $this->data['companies'] = $this->company_model->get_all_companies_date($contact_name, $company_name, $company_type,'all', $start_date_applied, $end_date_applied, $config['per_page'], $my_offset);
-        } elseif($company_status==1) {
+        if ($company_status == 'all') {
+            $this->data['companies'] = $this->company_model->get_all_companies_date($contact_name, $company_name, $company_type, 'all', $start_date_applied, $end_date_applied, $config['per_page'], $my_offset);
+        } elseif ($company_status == 1) {
             $this->data['companies'] = $this->company_model->get_all_companies_date($contact_name, $company_name, $company_type, $company_status, $start_date_applied, $end_date_applied, $config['per_page'], $my_offset);
         } else {
             $this->data['companies'] = $this->company_model->get_all_companies_date($contact_name, $company_name, $company_type, $company_status, $start_date_applied, $end_date_applied, $config['per_page'], $my_offset);
@@ -123,7 +126,8 @@ class Companies extends Admin_Controller {
         $this->render('manage_admin/company/listings_view', 'admin_master');
     }
 
-    public function edit_company($sid = NULL) {
+    public function edit_company($sid = NULL)
+    {
         $redirect_url                                                           = 'manage_admin';
         $function_name                                                          = 'edit_company';
         $admin_id                                                               = $this->ion_auth->user()->row()->id;
@@ -174,9 +178,9 @@ class Companies extends Admin_Controller {
         $this->data['facebook_api_date']                                        = $fb_api_data['expiry_date'];
 
         if ($fb_api_data['expiry_date'] != NULL) {
-                $fb_db_date                                                     = explode(' ', $fb_api_data['expiry_date']);
-                $fb_db_date                                                     = explode('-', $fb_db_date[0]);
-                $this->data['facebook_api_date']                                = $fb_db_date[1] . '-' . $fb_db_date[2] . '-' . $fb_db_date[0];
+            $fb_db_date                                                     = explode(' ', $fb_api_data['expiry_date']);
+            $fb_db_date                                                     = explode('-', $fb_db_date[0]);
+            $this->data['facebook_api_date']                                = $fb_db_date[1] . '-' . $fb_db_date[2] . '-' . $fb_db_date[0];
         }
 
         $is_purchased_facebook_api                                              = $fb_api_data['purchased'];
@@ -188,13 +192,13 @@ class Companies extends Admin_Controller {
         }
 
         $company_detail                                                         = $this->company_model->get_details($sid, 'company'); // get company detailes
-        $parent_sid                                                             = 0 ;
+        $parent_sid                                                             = 0;
 
         if ($company_detail) {
             $this->data['data']                                                 = $company_detail[0];
             $parent_sid                                                         = $company_detail[0]['parent_sid'];
 
-            if($parent_sid == 0) {
+            if ($parent_sid == 0) {
                 $portal_detail                                                  = $this->company_model->get_details($sid, 'portal'); // get company detailes
                 $this->data['portal_detail']                                    = $portal_detail[0];
             }
@@ -251,18 +255,17 @@ class Companies extends Admin_Controller {
             $has_job_approval_rights = 0;
             $is_paid = 0;
 
-            if(IS_TIMEZONE_ACTIVE) {
+            if (IS_TIMEZONE_ACTIVE) {
                 // Load dashboard model
                 $this->load->model('dashboard_model');
-                if($this->input->post('company_timezone', true)){
+                if ($this->input->post('company_timezone', true)) {
                     $this->dashboard_model->set_new_timezone_in_old_calendar_events_by_company_id($sid,  $this->input->post('company_timezone', true));
                 }
                 //
-                if($parent_sid == 0){
+                if ($parent_sid == 0) {
                     $company_timezone = $this->input->post('company_timezone', true);
                     $this->company_model->update_company_timezone($sid, $company_timezone);
                 }
-
             }
 
             if ($this->input->post('has_job_approval_rights') != null) {
@@ -274,34 +277,35 @@ class Companies extends Admin_Controller {
             }
 
 
-            $data = array(  'CompanyName' => $this->input->post('CompanyName'),
-                            'ContactName' => $this->input->post('ContactName'),
-                            'number_of_rooftops' => $this->input->post('number_of_rooftops'),
-                            'Location_Country' => $this->input->post('Location_Country'),
-                            'Location_State' => $this->input->post('Location_State'),
-                            'Location_City' => $this->input->post('Location_City'),
-                            'Location_ZipCode' => $this->input->post('Location_ZipCode'),
-                            'Location_Address' => $this->input->post('Location_Address'),
-                            'PhoneNumber' => $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('PhoneNumber'),
-                            'CompanyDescription' => $this->input->post('CompanyDescription'),
-                            'job_listing_template_group' => $this->input->post('job_listing_template_group'),
-                            //'discount_amount' => $this->input->post('discount_amount'),
-                            //'discount_type' => $this->input->post('discount_type'),
-                            'has_job_approval_rights' => $has_job_approval_rights,
-                            'is_paid' => $is_paid,
-                            'WebSite' => $this->input->post('WebSite'),
-                            'accounts_contact_person' => $this->input->post('accounts_contact_person'),
-                            'accounts_contact_number' => $this->input->post('accounts_contact_number'),
-                            'full_billing_address' => $this->input->post('full_billing_address'),
-                            'marketing_agency_sid' => ($this->input->post('marketing_agency_sid')>0)?$this->input->post('marketing_agency_sid'):0,
-                            'job_category_industries_sid' => ($this->input->post('job_category_industries_sid')>0)?$this->input->post('job_category_industries_sid'):0,
-                            'payment_type' => $this->input->post('payment_type'),
-                            'past_due' => $this->input->post('past_due'),
-                             'user_shift_minutes' => $this->input->post('shift_mins'),
-                            'user_shift_hours' => $this->input->post('shift_hours')
-                        );
+            $data = array(
+                'CompanyName' => $this->input->post('CompanyName'),
+                'ContactName' => $this->input->post('ContactName'),
+                'number_of_rooftops' => $this->input->post('number_of_rooftops'),
+                'Location_Country' => $this->input->post('Location_Country'),
+                'Location_State' => $this->input->post('Location_State'),
+                'Location_City' => $this->input->post('Location_City'),
+                'Location_ZipCode' => $this->input->post('Location_ZipCode'),
+                'Location_Address' => $this->input->post('Location_Address'),
+                'PhoneNumber' => $this->input->post('txt_phonenumber') ? $this->input->post('txt_phonenumber') : $this->input->post('PhoneNumber'),
+                'CompanyDescription' => $this->input->post('CompanyDescription'),
+                'job_listing_template_group' => $this->input->post('job_listing_template_group'),
+                //'discount_amount' => $this->input->post('discount_amount'),
+                //'discount_type' => $this->input->post('discount_type'),
+                'has_job_approval_rights' => $has_job_approval_rights,
+                'is_paid' => $is_paid,
+                'WebSite' => $this->input->post('WebSite'),
+                'accounts_contact_person' => $this->input->post('accounts_contact_person'),
+                'accounts_contact_number' => $this->input->post('accounts_contact_number'),
+                'full_billing_address' => $this->input->post('full_billing_address'),
+                'marketing_agency_sid' => ($this->input->post('marketing_agency_sid') > 0) ? $this->input->post('marketing_agency_sid') : 0,
+                'job_category_industries_sid' => ($this->input->post('job_category_industries_sid') > 0) ? $this->input->post('job_category_industries_sid') : 0,
+                'payment_type' => $this->input->post('payment_type'),
+                'past_due' => $this->input->post('past_due'),
+                'user_shift_minutes' => $this->input->post('shift_mins'),
+                'user_shift_hours' => $this->input->post('shift_hours')
+            );
             //
-            if(IS_TIMEZONE_ACTIVE) $data['timezone'] = $this->input->post('company_timezone', true);
+            if (IS_TIMEZONE_ACTIVE) $data['timezone'] = $this->input->post('company_timezone', true);
 
             $company_sid = $sid; //Add Company Portal Templates Information - Start
             $company_name = $this->input->post('CompanyName');
@@ -319,7 +323,7 @@ class Companies extends Admin_Controller {
             $company_details['sid'] = $sid;
             $this->company_model->sync_company_details_to_remarket($company_details);
             if ($action == 'Save') {
-                
+
                 redirect('manage_admin/companies/manage_company/' . $sid, 'refresh');
             } else {
                 redirect('manage_admin/companies/edit_company/' . $sid, 'refresh');
@@ -327,7 +331,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    public function send_company_activation_email() {
+    public function send_company_activation_email()
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin';
         $function_name = 'edit_company';
@@ -389,7 +394,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    public function add_company() {
+    public function add_company()
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin/companies';
         $function_name = 'add_new_company';
@@ -427,7 +433,7 @@ class Companies extends Admin_Controller {
         if ($this->form_validation->run() === FALSE) {
             $data_countries = $this->company_model->get_active_countries(); //get all active `countries`
 
-            foreach ($data_countries as $value) {//get all active `states`
+            foreach ($data_countries as $value) { //get all active `states`
                 $data_states[$value['sid']] = $this->company_model->get_active_states($value['sid']);
             }
 
@@ -465,14 +471,14 @@ class Companies extends Admin_Controller {
             $company_data['accounts_contact_person'] = $this->input->post('accounts_contact_person');
             $company_data['accounts_contact_number'] = $this->input->post('accounts_contact_number');
             $company_data['full_billing_address'] = $this->input->post('full_billing_address');
-            $company_data['marketing_agency_sid'] = ($this->input->post('marketing_agency_sid')>0)?$this->input->post('marketing_agency_sid'):0;
-            $company_data['job_category_industries_sid'] = ($this->input->post('job_category_industries_sid')>0)?$this->input->post('job_category_industries_sid'):0;
+            $company_data['marketing_agency_sid'] = ($this->input->post('marketing_agency_sid') > 0) ? $this->input->post('marketing_agency_sid') : 0;
+            $company_data['job_category_industries_sid'] = ($this->input->post('job_category_industries_sid') > 0) ? $this->input->post('job_category_industries_sid') : 0;
             $company_data['number_of_rooftops'] = $this->input->post('number_of_rooftops');
 
             //Employer Admin Information
             $registration_date = $this->input->post('registration_date');
 
-            if($registration_date !=NULL) {
+            if ($registration_date != NULL) {
                 $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
             } else {
                 $registration_date = date('Y-m-d H:i:s');
@@ -494,7 +500,7 @@ class Companies extends Admin_Controller {
             $employer_data['first_name'] = $first_name;
             $employer_data['last_name'] = $last_name;
             $employer_data['username'] = $username;
-//            $employer_data['password'] = do_hash($this->input->post('password'), 'md5');
+            //            $employer_data['password'] = do_hash($this->input->post('password'), 'md5');
             $employer_data['email'] = $email;
             $employer_data['alternative_email'] = $this->input->post('alternative_email');
             $employer_data['job_title'] = $this->input->post('job_title');
@@ -543,10 +549,10 @@ class Companies extends Admin_Controller {
                 $json_client->password_auth($auth_user, $auth_pass);
 
                 $args = array(
-                                'dir' => 'public_html/manage_portal/',
-                                'rootdomain' => STORE_DOMAIN,
-                                'domain' => $company_username
-                            );
+                    'dir' => 'public_html/manage_portal/',
+                    'rootdomain' => STORE_DOMAIN,
+                    'domain' => $company_username
+                );
 
                 if ($_SERVER['SERVER_NAME'] != 'localhost') {
                     $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
@@ -574,21 +580,22 @@ class Companies extends Admin_Controller {
         }
     }
 
-//    public function remove_admin_company($sid, $admin_id)
-//    {
-//        if($sid == 0 || $sid == NULL)
-//        {
-//            $this->session->set_flashdata('message', 'Company for administrator does not exist');
-//            redirect('manage_admin/companies/executive_administrators');
-//        }
-//
-//        $this->company_model->remove_admin_company($sid);
-//
-//        $this->session->set_flashdata('message', 'Company removed successfully.');
-//        redirect('manage_admin/companies/executive_admin/manage_executive_administrators/'.$admin_id);
-//    }
+    //    public function remove_admin_company($sid, $admin_id)
+    //    {
+    //        if($sid == 0 || $sid == NULL)
+    //        {
+    //            $this->session->set_flashdata('message', 'Company for administrator does not exist');
+    //            redirect('manage_admin/companies/executive_administrators');
+    //        }
+    //
+    //        $this->company_model->remove_admin_company($sid);
+    //
+    //        $this->session->set_flashdata('message', 'Company removed successfully.');
+    //        redirect('manage_admin/companies/executive_admin/manage_executive_administrators/'.$admin_id);
+    //    }
 
-    public function executive_admin_company_remove_ajax() {
+    public function executive_admin_company_remove_ajax()
+    {
         $sid = $this->input->post('sid');
         $logged_in_sid = $this->input->post('logged_in_sid');
 
@@ -601,7 +608,8 @@ class Companies extends Admin_Controller {
         echo json_encode($result);
     }
 
-    public function executive_admin_delete_ajax() {
+    public function executive_admin_delete_ajax()
+    {
         $administrator_sid = $this->input->post('administrator_sid');
 
         if ($administrator_sid == NULL || $administrator_sid == 0) {
@@ -613,7 +621,8 @@ class Companies extends Admin_Controller {
         echo json_encode($result);
     }
 
-    public function executive_admin_activation_ajax() {
+    public function executive_admin_activation_ajax()
+    {
         $administrator_sid = $this->input->post('administrator_sid');
 
         if ($administrator_sid == NULL || $administrator_sid == 0) {
@@ -659,7 +668,8 @@ class Companies extends Admin_Controller {
         $this->render('manage_admin/company/executive_admin/admin_add_company');
     }*/
 
-    public function executive_administrators($name = null, $email = null) {
+    public function executive_administrators($name = null, $email = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'executive_administrators';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -668,7 +678,7 @@ class Companies extends Admin_Controller {
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         $name = $name == null ? 'all' : urldecode($name);
         $email = $email == null ? 'all' : urldecode($email);
-        $this->data['administrators'] = $this->company_model->get_executive_administrators($name,$email);
+        $this->data['administrators'] = $this->company_model->get_executive_administrators($name, $email);
         $this->data['page_title'] = 'Manage Company Executive Admins';
         $this->form_validation->set_rules('executive_admin_sid', 'executive_admin_sid', 'required|xss_clean|trim');
         $this->data['flag'] = true;
@@ -700,7 +710,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    public function manage_executive_administrators($exec_admin_id) {
+    public function manage_executive_administrators($exec_admin_id)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'manage_executive_admins';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -727,16 +738,16 @@ class Companies extends Admin_Controller {
             $this->data['administrator'] = $exec_admin_details[0];
             $has_access_to_companies = $this->company_model->get_admin_companies($exec_admin_id);
 
-            if(!empty($has_access_to_companies)){
-               foreach($has_access_to_companies as $access_company){
-                   $access_companies[] = $access_company['company_sid'];
-               }
+            if (!empty($has_access_to_companies)) {
+                foreach ($has_access_to_companies as $access_company) {
+                    $access_companies[] = $access_company['company_sid'];
+                }
             }
 
             $all_companies = $this->company_model->get_all_executive_admin_companies();
 
-            foreach($all_companies as $company_data){
-                if($company_data['career_page_type']=='standard_career_site'){
+            foreach ($all_companies as $company_data) {
+                if ($company_data['career_page_type'] == 'standard_career_site') {
                     $standard_companies[] = $company_data;
                 } else {
                     $corporate_companies[] = $company_data;
@@ -752,11 +763,12 @@ class Companies extends Admin_Controller {
 
             switch ($perform_action) {
                 case 'enable_company_access':
+
                     $company_sid = $this->input->post('company_sid');
                     $executive_admin_sid = $this->input->post('executive_admin_sid');
                     $company_name = $this->company_model->get_company_name($company_sid);
                     $admin_details = $this->company_model->get_administrator($executive_admin_sid);
-
+                    $e_signature = $this->company_model->apply_e_signature($executive_admin_sid);
                     if (!empty($admin_details)) {
                         $data = array(
                             'executive_admin_sid' => $executive_admin_sid,
@@ -800,9 +812,9 @@ class Companies extends Admin_Controller {
                         );
                     }
 
-                    if(intval($has_corporate_company_access) == 1){
-                        if(intval($executive_admin_already_registered) == 1){
-                            if($corporate_password != ''){
+                    if (intval($has_corporate_company_access) == 1) {
+                        if (intval($executive_admin_already_registered) == 1) {
+                            if ($corporate_password != '') {
                                 $this->company_model->add_company($data, $company_sid, $corporate_username, $corporate_password, 'corporate_career_site');
                             } else {
                                 $this->company_model->add_company($data, $company_sid, $corporate_username, null, 'corporate_career_site');
@@ -810,7 +822,6 @@ class Companies extends Admin_Controller {
                         } else {
                             $this->company_model->add_company($data, $company_sid, $corporate_username, $corporate_password, 'corporate_career_site');
                         }
-
                     } else {
                         $executive_admin_company_details = $this->company_model->get_executive_admin_company_details($executive_admin_sid, $company_sid);
 
@@ -833,7 +844,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    public function edit_executive_administrator($exec_admin_id) {
+    public function edit_executive_administrator($exec_admin_id)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'manage_executive_admins';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -849,7 +861,7 @@ class Companies extends Admin_Controller {
         $this->data['page_title'] = 'Edit Executive Administrator';
         $admin = $this->company_model->get_administrator($exec_admin_id);
         $this->data['administrator'] = $admin[0];
-        $this->data['cancel_url'] = base_url('manage_admin/companies/manage_executive_administrators/'.$exec_admin_id);
+        $this->data['cancel_url'] = base_url('manage_admin/companies/manage_executive_administrators/' . $exec_admin_id);
         $previous_automotive_group_sid = $admin[0]['automotive_group_sid'];
         $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
         $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
@@ -869,7 +881,7 @@ class Companies extends Admin_Controller {
         //$this->form_validation->set_rules('automotive_group_sid', 'Automotive Group', 'required|trim|xss_clean');
 
         if ($this->form_validation->run() === FALSE) {
-//            $automotive_groups = $this->company_model->get_automotive_groups();
+            //            $automotive_groups = $this->company_model->get_automotive_groups();
             $this->data['automotive_groups'] = array();
             $this->data['access_levels'] = $this->company_model->get_security_access_levels();
             $this->render('manage_admin/company/executive_admin/admin_edit');
@@ -888,22 +900,22 @@ class Companies extends Admin_Controller {
             $admin_data['access_level'] = $this->input->post('access_level');
             $admin_data['ip_address'] = getUserIP();
 
-            if(IS_PTO_ENABLED == 1){
+            if (IS_PTO_ENABLED == 1) {
                 $admin_data['user_shift_hours'] = $this->input->post('shift_hours', true);
                 $admin_data['user_shift_minutes'] = $this->input->post('shift_mins', true);
             }
 
-            if(IS_NOTIFICATION_ENABLED == 1){
-                if(!sizeof($this->input->post('notified_by', true))) $admin_data['notified_by'] = 'email';
+            if (IS_NOTIFICATION_ENABLED == 1) {
+                if (!sizeof($this->input->post('notified_by', true))) $admin_data['notified_by'] = 'email';
                 else $admin_data['notified_by'] = implode(',', $this->input->post('notified_by', true));
             }
 
-            if($this->input->post('txt_phonenumber', true)) $admin_data['cell_number'] = $this->input->post('txt_phonenumber', true);
+            if ($this->input->post('txt_phonenumber', true)) $admin_data['cell_number'] = $this->input->post('txt_phonenumber', true);
             else $admin_data['cell_number'] = '';
             //$automotive_group_sid = $this->input->post('automotive_group_sid');
-//            if (!empty($automotive_group_sid)) {
-//                $admin_data['automotive_group_sid'] = $automotive_group_sid;
-//            }
+            //            if (!empty($automotive_group_sid)) {
+            //                $admin_data['automotive_group_sid'] = $automotive_group_sid;
+            //            }
             $profile_picture = $this->upload_file_to_aws('profile_picture', $exec_admin_id, 'profile_picture');
 
             if ($this->input->post('active') == '1') {
@@ -918,38 +930,39 @@ class Companies extends Admin_Controller {
 
             if ($profile_picture != 'error') {
                 $admin_data['profile_picture'] = $profile_picture;
-            } else{
+            } else {
                 $admin_data['profile_picture'] = $admin[0]['profile_picture'];
             }
 
-            if(IS_TIMEZONE_ACTIVE){
+            if (IS_TIMEZONE_ACTIVE) {
                 // Added on: 25-06-2019
                 $new_timezone = $this->input->post('timezone', true);
-                if($new_timezone != '') $admin_data['timezone'] = $new_timezone;
+                if ($new_timezone != '') $admin_data['timezone'] = $new_timezone;
             }
 
             $this->company_model->edit_admin($exec_admin_id, $admin_data);
 
-//            if($previous_automotive_group_sid != $automotive_group_sid){
-//                $executive_member_companies = $this->company_model->get_executive_admin_companies($exec_admin_id);
-//                //$executive_admin_company_details = $this->company_model->get_executive_admin_company_details($exec_admin_id, $previous_automotive_group_sid);
-//                if (!empty($executive_member_companies)) {
-//                    foreach($executive_member_companies as $company) {
-//
-//                        $logged_in_sid = $company['logged_in_sid'];
-//                        $admin_company_sid = $company['sid'];
-//
-//                        $result = $this->company_model->executive_admin_company_remove($admin_company_sid, $logged_in_sid);
-//                    }
-//                }
-//            }
+            //            if($previous_automotive_group_sid != $automotive_group_sid){
+            //                $executive_member_companies = $this->company_model->get_executive_admin_companies($exec_admin_id);
+            //                //$executive_admin_company_details = $this->company_model->get_executive_admin_company_details($exec_admin_id, $previous_automotive_group_sid);
+            //                if (!empty($executive_member_companies)) {
+            //                    foreach($executive_member_companies as $company) {
+            //
+            //                        $logged_in_sid = $company['logged_in_sid'];
+            //                        $admin_company_sid = $company['sid'];
+            //
+            //                        $result = $this->company_model->executive_admin_company_remove($admin_company_sid, $logged_in_sid);
+            //                    }
+            //                }
+            //            }
 
             $this->session->set_flashdata('message', 'Administrator updated successfully');
-            redirect('manage_admin/companies/manage_executive_administrators/'.$exec_admin_id);
+            redirect('manage_admin/companies/manage_executive_administrators/' . $exec_admin_id);
         }
     }
 
-    public function add_executive_administrator() {
+    public function add_executive_administrator()
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'manage_executive_admins';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -960,7 +973,7 @@ class Companies extends Admin_Controller {
         $this->form_validation->set_rules('first_name', 'First Name', 'required|trim|xss_clean');
         $this->form_validation->set_rules('last_name', 'Last Name', 'required|trim|xss_clean');
         $this->form_validation->set_rules('username', 'Username', 'required|trim|xss_clean|is_unique[executive_users.username]');
-//        $this->form_validation->set_rules('password', 'Password', 'required|trim|xss_clean');
+        //        $this->form_validation->set_rules('password', 'Password', 'required|trim|xss_clean');
         $this->form_validation->set_rules('email', 'Email', 'required|trim|xss_clean|valid_email|is_unique[executive_users.email]');
         $this->form_validation->set_rules('alternative_email', 'Alternative Email', 'trim|xss_clean|valid_email');
         $this->form_validation->set_rules('job_title', 'Job Title', 'trim|xss_clean');
@@ -969,7 +982,7 @@ class Companies extends Admin_Controller {
         //$this->form_validation->set_rules('automotive_group_sid', 'Automotive Group', 'required|trim|xss_clean');
 
         if ($this->form_validation->run() === FALSE) {
-//            $automotive_groups = $this->company_model->get_automotive_groups();
+            //            $automotive_groups = $this->company_model->get_automotive_groups();
             $this->data['automotive_groups'] = array();
             $this->data['access_levels'] = $this->company_model->get_security_access_levels();
             $this->render('manage_admin/company/executive_admin/add_executive_admin');
@@ -978,7 +991,7 @@ class Companies extends Admin_Controller {
             $employer_data['first_name'] = $this->input->post('first_name');
             $employer_data['last_name'] = $this->input->post('last_name');
             $employer_data['username'] = $this->input->post('username');
-//            $employer_data['password'] = do_hash($this->input->post('password'), 'md5');
+            //            $employer_data['password'] = do_hash($this->input->post('password'), 'md5');
             $employer_data['salt'] = generateRandomString(48);
             $employer_data['email'] = $this->input->post('email');
             $employer_data['alternative_email'] = $this->input->post('alternative_email');
@@ -992,56 +1005,57 @@ class Companies extends Admin_Controller {
             $send_link = $this->input->post('send');
             //$automotive_group_sid = $this->input->post('automotive_group_sid');
 
-//            if (!empty($automotive_group_sid)) {
-//                $employer_data['automotive_group_sid'] = $automotive_group_sid;
-//            }
+            //            if (!empty($automotive_group_sid)) {
+            //                $employer_data['automotive_group_sid'] = $automotive_group_sid;
+            //            }
 
-            if(IS_PTO_ENABLED == 1){
+            if (IS_PTO_ENABLED == 1) {
                 $employer_data['user_shift_hours'] = $this->input->post('shift_hours', true);
                 $employer_data['user_shift_minutes'] = $this->input->post('shift_mins', true);
             }
 
-            if(IS_NOTIFICATION_ENABLED == 1){
-                if(!sizeof($this->input->post('notified_by', true))) $employer_data['notified_by'] = 'email';
+            if (IS_NOTIFICATION_ENABLED == 1) {
+                if (!sizeof($this->input->post('notified_by', true))) $employer_data['notified_by'] = 'email';
                 else $employer_data['notified_by'] = implode(',', $this->input->post('notified_by', true));
             }
 
-            if($this->input->post('txt_phonenumber', true)) $employer_data['cell_number'] = $this->input->post('txt_phonenumber', true);
+            if ($this->input->post('txt_phonenumber', true)) $employer_data['cell_number'] = $this->input->post('txt_phonenumber', true);
             else $employer_data['cell_number'] = '';
 
 
-            if(IS_TIMEZONE_ACTIVE){
+            if (IS_TIMEZONE_ACTIVE) {
                 // Added on: 25-06-2019
                 $new_timezone = $this->input->post('timezone', true);
-                if($new_timezone != '') $employer_data['timezone'] = $new_timezone;
+                if ($new_timezone != '') $employer_data['timezone'] = $new_timezone;
             }
 
             $result = $this->company_model->add_exec_admin($employer_data);
             $profile_picture = $this->upload_file_to_aws('profile_picture', $result, 'profile_picture');
 
             if ($profile_picture != 'error') {
-                $pictures = array('profile_picture'=>$profile_picture);
-                $this->company_model->edit_admin($result,$pictures);
+                $pictures = array('profile_picture' => $profile_picture);
+                $this->company_model->edit_admin($result, $pictures);
             } else {
                 $pictures = NULL;
             }
 
             $this->session->set_flashdata('message', 'New Executive Administrator added successfully');
 
-            if($send_link && $result){
+            if ($send_link && $result) {
                 $salt = $this->company_model->get_administrator($result);
                 $replacement_array['firstname'] = $this->input->post('first_name');
                 $replacement_array['lastname'] = $this->input->post('last_name');
                 $replacement_array['username'] = $this->input->post('username');
-                $replacement_array['create_password_link'] = '<a style="'.DEF_EMAIL_BTN_STYLE_DANGER.'" target="_blank" href="'. base_url() . "executive_admin/generate-password/" . $salt[0]['salt'].'">Create Your Password</a>';
-                log_and_send_templated_email(NEW_EXECUTIVE_ADMIN_INFO,$this->input->post('email'),$replacement_array);
+                $replacement_array['create_password_link'] = '<a style="' . DEF_EMAIL_BTN_STYLE_DANGER . '" target="_blank" href="' . base_url() . "executive_admin/generate-password/" . $salt[0]['salt'] . '">Create Your Password</a>';
+                log_and_send_templated_email(NEW_EXECUTIVE_ADMIN_INFO, $this->input->post('email'), $replacement_array);
             }
 
             redirect('manage_admin/companies/executive_administrators');
         }
     }
 
-    public function manage_packages($company_sid = null) {
+    public function manage_packages($company_sid = null)
+    {
         // ** Check Security Permissions Checks - Start ** //
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
@@ -1080,14 +1094,14 @@ class Companies extends Admin_Controller {
                 //Create Admin Invoice
                 $admin_invoice_sid = $this->admin_invoices_model->Save_invoice($created_by, $company_sid, array($package_id), $id_to_rooftops, $id_to_quantity, null, $custom_price, $cost_price);
                 //Create Commission Invoice
-//                echo $package_id.'<br>';
-//                echo $custom_price.'<br>';
-//                echo $cost_price.'<br>';
-//                die();
+                //                echo $package_id.'<br>';
+                //                echo $custom_price.'<br>';
+                //                echo $cost_price.'<br>';
+                //                die();
                 $commission_invoice_sid = $this->admin_invoices_model->Save_commission_invoice($created_by, $company_sid, array($package_id), $id_to_rooftops, $id_to_quantity, 'manual', 'super_admin', $custom_price, $cost_price);
                 $secondary_invoice = 0;
 
-                if(isset($commission_invoice_sid['secondary'])) {
+                if (isset($commission_invoice_sid['secondary'])) {
                     $secondary_invoice = $commission_invoice_sid['secondary'];
                 }
 
@@ -1098,7 +1112,7 @@ class Companies extends Admin_Controller {
                 //Re Calculate Commission
                 $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['primary']);
 
-                if(isset($commission_invoice_sid['secondary'])){
+                if (isset($commission_invoice_sid['secondary'])) {
                     //Re Calculate Commission
                     $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['secondary']);
                 }
@@ -1110,7 +1124,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    public function generate_commisson_invoice($company_sid = null, $admin_invoice_sid = null) {
+    public function generate_commisson_invoice($company_sid = null, $admin_invoice_sid = null)
+    {
         if ($company_sid != null) {
             $created_by = $this->ion_auth->user()->row()->id;
             $invoice_details = $this->admin_invoices_model->Get_admin_invoice($admin_invoice_sid, true);
@@ -1120,7 +1135,7 @@ class Companies extends Admin_Controller {
             $id_to_quantity = array();
             $number_of_rooftops = 1;
 
-            foreach($my_packages as $my_key => $my_value) {
+            foreach ($my_packages as $my_key => $my_value) {
                 $product_id = $my_value['item_sid'];
                 $number_of_rooftops = $my_value['number_of_rooftops'];
                 $quantity = $my_value['quantity'];
@@ -1132,7 +1147,7 @@ class Companies extends Admin_Controller {
             $commission_invoice_sid = $this->admin_invoices_model->Save_commission_invoice($created_by, $company_sid, $package_id, $id_to_rooftops, $id_to_quantity);
             $secondary_invoice = 0;
 
-            if(isset($commission_invoice_sid['secondary'])) {
+            if (isset($commission_invoice_sid['secondary'])) {
                 $secondary_invoice = $commission_invoice_sid['secondary'];
             }
             //Update Primary Commission Invoice Sid in Admin Invoices Table
@@ -1142,7 +1157,7 @@ class Companies extends Admin_Controller {
             //Re Calculate Primary Commission
             $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['primary']);
 
-            if(isset($commission_invoice_sid['secondary'])){
+            if (isset($commission_invoice_sid['secondary'])) {
                 //Re Calculate Commission
                 $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['secondary']);
             }
@@ -1153,7 +1168,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    public function manage_addons($company_sid = null) {
+    public function manage_addons($company_sid = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1198,7 +1214,7 @@ class Companies extends Admin_Controller {
                 $commission_invoice_sid = $this->admin_invoices_model->Save_commission_invoice($created_by, $company_sid, $package_ids, $id_to_rooftops, $id_to_quantity);
                 $secondary_invoice = 0;
 
-                if(isset($commission_invoice_sid['secondary'])) {
+                if (isset($commission_invoice_sid['secondary'])) {
                     $secondary_invoice = $commission_invoice_sid['secondary'];
                 }
                 //Update Commission Invoice Sid in Admin Invoices Table
@@ -1208,11 +1224,11 @@ class Companies extends Admin_Controller {
                 //Re Calculate Commission
                 $this->marketing_agencies_model->recalculate_commission($commission_invoice_sid['primary']);
 
-                if(isset($commission_invoice_sid['secondary'])){
+                if (isset($commission_invoice_sid['secondary'])) {
                     //Re Calculate Commission
                     $this->marketing_agencies_model->recalculate_commission($secondary_invoice);
                 }
-                
+
                 $this->session->set_flashdata('message', 'Invoice Successfully Generated!');
                 redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
             }
@@ -1221,7 +1237,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function check_username($username) {
+    function check_username($username)
+    {
         $result = $this->users_model->check_user($username);
         if ($result) {
             return TRUE;
@@ -1231,7 +1248,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function check_email($email) {
+    function check_email($email)
+    {
         $result = $this->users_model->check_email($email);
         if ($result) {
             return TRUE;
@@ -1259,12 +1277,12 @@ class Companies extends Admin_Controller {
                         $sid = $this->input->post('sid');
                         $admin_details = $this->company_model->get_administrator($sid);
 
-                        if(!empty($admin_details)) {
+                        if (!empty($admin_details)) {
                             $exec_admin = $admin_details[0];
                             $salt = $exec_admin['salt'];
                             $email = $exec_admin['email'];
 
-                            if($salt == NULL || $salt == '') {
+                            if ($salt == NULL || $salt == '') {
                                 $salt = generateRandomString(48);
                                 $data = array('salt' => $salt);
                                 $this->company_model->update_excetive_admin($sid, $data);
@@ -1273,7 +1291,7 @@ class Companies extends Admin_Controller {
                             $replacement_array['firstname'] = $exec_admin['first_name'];
                             $replacement_array['lastname'] = $exec_admin['last_name'];
                             $replacement_array['username'] = $exec_admin['username'];
-                            $replacement_array['create_password_link'] = '<a style="'.DEF_EMAIL_BTN_STYLE_DANGER.'" target="_blank" href="'. base_url() . "executive_admin/generate-password/" . $salt.'">Create Your Password</a>';
+                            $replacement_array['create_password_link'] = '<a style="' . DEF_EMAIL_BTN_STYLE_DANGER . '" target="_blank" href="' . base_url() . "executive_admin/generate-password/" . $salt . '">Create Your Password</a>';
                             log_and_send_templated_email(NEW_EXECUTIVE_ADMIN_INFO, $email, $replacement_array);
                             echo 'success';
                         } else {
@@ -1284,22 +1302,22 @@ class Companies extends Admin_Controller {
                     case 'mark_training_completed':
                         $company_sid = $this->input->post('company_sid');
                         $key = $this->input->post('key');
-                        if($key == '1'){
+                        if ($key == '1') {
                             $key = 1;
-                        }else{
+                        } else {
                             $key = 0;
                         }
                         $update_data = array('training_session_status' => $key);
                         $this->company_model->update_user_status($company_sid, $update_data);
                         echo 'success';
                         break;
-
                 }
             }
         }
     }
 
-    function manage_company($company_sid = null) {
+    function manage_company($company_sid = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1311,7 +1329,7 @@ class Companies extends Admin_Controller {
             $this->data['page_title'] = 'Manage Company Dashboard';
             $company_info = $this->company_model->get_company_details($company_sid);
 
-            if(sizeof($company_info)<1){
+            if (sizeof($company_info) < 1) {
                 $this->session->set_flashdata('message', 'Company not found!');
                 redirect('manage_admin/companies/', 'refresh');
             }
@@ -1386,7 +1404,7 @@ class Companies extends Admin_Controller {
                     }
                 }
 
-                if(isset($company_info['job_category_industries_sid']) && !empty($company_info['job_category_industries_sid'])){
+                if (isset($company_info['job_category_industries_sid']) && !empty($company_info['job_category_industries_sid'])) {
                     $job_category_industry = $this->company_model->get_industry_category($company_info['job_category_industries_sid']);
                     $this->data['job_category_industry'] = $job_category_industry[0];
                 }
@@ -1406,8 +1424,8 @@ class Companies extends Admin_Controller {
                 $this->data['company_billing_contacts'] = $company_billing_contacts;
                 $this->data['company_portal_email_templates'] = $company_portal_email_templates;
                 $this->data['automotive_groups'] = $this->company_model->get_groups_by_company($company_sid);
-    //            $this->data['company_card'] = $company_card;
-                
+                //            $this->data['company_card'] = $company_card;
+
                 //
                 $this->data['CompanyIndeedDetails'] = $this->company_model->GetCompanyIndeedDetails($company_sid);
 
@@ -1456,24 +1474,24 @@ class Companies extends Admin_Controller {
                         $this->company_model->set_eeo_footer_text_status($company_sid, $eeo_footer_text_status);
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
                         break;
-                    // Set SMS module check
+                        // Set SMS module check
                     case 'set_company_sms_status':
                         $company_sid = $this->input->post('company_sid');
                         $this->company_model->set_sms_module_status($company_sid, $this->input->post('sms_module_status', TRUE));
-                        if($this->input->post('sms_module_status', TRUE) == 1){
+                        if ($this->input->post('sms_module_status', TRUE) == 1) {
                             // $response = $this->sms_buy_process($company_sid);
                             $this->session->set_flashdata('message', "You have successfully activated the SMS module.");
                         }
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
 
-                    break;
-                    // Set Phone Regex module check
+                        break;
+                        // Set Phone Regex module check
                     case 'set_company_phone_pattern_status':
                         $company_sid = $this->input->post('company_sid', true);
                         $this->company_model->set_phone_pattern_module($company_sid, $this->input->post('phone_pattern_module', TRUE));
                         redirect('manage_admin/companies/manage_company/' . $company_sid, 'refresh');
 
-                    break;
+                        break;
                 }
             }
         } else {
@@ -1481,7 +1499,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function company_brands($company_sid = NULL) {
+    function company_brands($company_sid = NULL)
+    {
         if ($company_sid == NULL || $company_sid == '' || $company_sid == 0) {
             $this->session->set_flashdata('message', 'Company not found!');
             redirect('manage_admin/companies/', 'refresh');
@@ -1493,7 +1512,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function activate_trial_period($company_sid = null) {
+    function activate_trial_period($company_sid = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1546,7 +1566,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function list_company_notes($note_type = null, $company_sid = null) {
+    function list_company_notes($note_type = null, $company_sid = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1564,7 +1585,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function add_edit_company_note($company_sid = null, $note_sid = null) {
+    function add_edit_company_note($company_sid = null, $note_sid = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
 
@@ -1597,7 +1619,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function delete_admin_company_note() {
+    function delete_admin_company_note()
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1619,7 +1642,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function manage_maintenance_mode($company_sid = null) {
+    function manage_maintenance_mode($company_sid = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1683,28 +1707,29 @@ class Companies extends Admin_Controller {
         }
     }
 
-//    public function manage_products() {
-//        $admin_id = $this->session->userdata('user_id');
-//        $security_details = db_get_admin_access_level_details($admin_id);
-//        $this->data['security_details'] = $security_details;
-//        check_access_permissions($security_details, 'manage_admin', 'private_messages'); // Param2: Redirect URL, Param3: Function Name
-//
-//        $this->data['page_title'] = 'Manage Company Products';
-//        $this->data['groups'] = $this->ion_auth->groups()->result();
-//        //$admin_id = $this->ion_auth->user()->row()->id;
-//
-//        $db_data = $this->message_model->get_admin_messages(1);
-//        $this->data['messages'] = $db_data->result_array();
-//        //unread
-//        $this->data['total_messages'] = $this->message_model->get_admin_messages_total(1);
-//        //total
-//        $this->data['total'] = $this->message_model->get_messages_total_inbox(1);
-//
-//        $this->data['page'] = 'inbox';
-//        $this->render('manage_admin/private_messages/listing_view');
-//    }
+    //    public function manage_products() {
+    //        $admin_id = $this->session->userdata('user_id');
+    //        $security_details = db_get_admin_access_level_details($admin_id);
+    //        $this->data['security_details'] = $security_details;
+    //        check_access_permissions($security_details, 'manage_admin', 'private_messages'); // Param2: Redirect URL, Param3: Function Name
+    //
+    //        $this->data['page_title'] = 'Manage Company Products';
+    //        $this->data['groups'] = $this->ion_auth->groups()->result();
+    //        //$admin_id = $this->ion_auth->user()->row()->id;
+    //
+    //        $db_data = $this->message_model->get_admin_messages(1);
+    //        $this->data['messages'] = $db_data->result_array();
+    //        //unread
+    //        $this->data['total_messages'] = $this->message_model->get_admin_messages_total(1);
+    //        //total
+    //        $this->data['total'] = $this->message_model->get_messages_total_inbox(1);
+    //
+    //        $this->data['page'] = 'inbox';
+    //        $this->render('manage_admin/private_messages/listing_view');
+    //    }
 
-    function job_fairs_recruitment($company_sid = null) {
+    function job_fairs_recruitment($company_sid = null)
+    {
         if ($company_sid == NULL || $company_sid == '' || $company_sid == 0) {
             $this->session->set_flashdata('message', 'Company not found!');
             redirect('manage_admin/companies/', 'refresh');
@@ -1723,14 +1748,14 @@ class Companies extends Admin_Controller {
         $this->data['company_sid'] = $company_sid;
         $company_name = $this->company_model->get_company_name($company_sid);
 
-        if($company_name == '') { // company might not exists, need to verify
+        if ($company_name == '') { // company might not exists, need to verify
 
         }
 
         $this->data['company_name'] = $company_name;
         $job_fair_data = $this->company_model->get_job_fair_data($company_sid);
 
-        if(empty($job_fair_data)) {
+        if (empty($job_fair_data)) {
             $job_fair_page_status = $this->company_model->get_job_fair_status($company_sid);
             $job_fair_data = $this->company_model->get_job_fair_data($company_sid);
         }
@@ -1777,7 +1802,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function footer_logo ($company_sid = null) {
+    function footer_logo($company_sid = null)
+    {
         if ($company_sid == NULL || $company_sid == '' || $company_sid == 0) {
             $this->session->set_flashdata('message', 'Company not found!');
             redirect('manage_admin/companies/', 'refresh');
@@ -1821,7 +1847,6 @@ class Companies extends Admin_Controller {
 
                 $text = $formpost['logo_text'];
                 $dataToUpdate['footer_logo_text'] = $text;
-
             } else if ($type == 'logo') {
 
                 if (isset($_FILES['logo_upload']) && $_FILES['logo_upload']['name'] != '') {
@@ -1847,7 +1872,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function manage_contact_info($company_sid = null) {
+    function manage_contact_info($company_sid = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'edit_company';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1855,12 +1881,12 @@ class Companies extends Admin_Controller {
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
 
-        if($company_sid!=null){
+        if ($company_sid != null) {
             $this->data['page_title'] = 'Manage Contact Info';
             $this->data['company_sid'] = $company_sid;
             $contact_info = $this->company_model->get_contact_info($company_sid);
 
-            if(sizeof($contact_info)==0){
+            if (sizeof($contact_info) == 0) {
                 $contact_info[0]['exec_sales_phone_no'] = '';
                 $contact_info[0]['exec_sales_email'] = '';
                 $contact_info[0]['tech_support_phone_no'] = '';
@@ -1889,7 +1915,8 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME) {
+    function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME)
+    {
         require_once(APPPATH . 'libraries/aws/aws.php');
 
         if (isset($_FILES[$file_input_id]) && $_FILES[$file_input_id]['name'] != '') {
@@ -1900,7 +1927,7 @@ class Companies extends Admin_Controller {
             $file_name = strtolower($file_name);
             $prefix = str_pad($company_sid, 4, '0', STR_PAD_LEFT);
             $new_file_name = $prefix . '-' . $file_name . '-' . generateRandomString(3) . '.' . $file_ext;
-            if($_FILES[$file_input_id]['size'] == 0){
+            if ($_FILES[$file_input_id]['size'] == 0) {
                 $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                 return 'error';
             }
@@ -1912,8 +1939,9 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function additional_content_boxes($sid) {
-//        echo $sid; exit;
+    function additional_content_boxes($sid)
+    {
+        //        echo $sid; exit;
         $redirect_url = 'manage_admin';
         $function_name = 'list_companies';
         $admin_id = $this->ion_auth->user()->row()->id;
@@ -1921,122 +1949,124 @@ class Companies extends Admin_Controller {
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         $additional_boxes = $this->company_model->get_additional_content_boxes($sid);
-//        echo '<pre>';
-//        print_r($additional_boxes);
-//        exit;
+        //        echo '<pre>';
+        //        print_r($additional_boxes);
+        //        exit;
         $this->data['page_title'] = 'Add Additional Content Boxes';
         $this->render('manage_admin/company/additional_content_boxes_view', 'admin_master');
     }
 
-    function change_applicant_status(){
+    function change_applicant_status()
+    {
         $sid = $this->input->post("sid");
         $status = $this->input->post("status");
-        if($status){
-            $data = array('enable_applicant_status_bar'=>0);
+        if ($status) {
+            $data = array('enable_applicant_status_bar' => 0);
             $return_data = array(
                 'btnValue' => 'Disable',
                 'label'     => 'Enabled',
                 'value'     =>  1
             );
-        }
-        else{
-            $data = array('enable_applicant_status_bar'=>1);
+        } else {
+            $data = array('enable_applicant_status_bar' => 1);
             $return_data = array(
                 'btnValue' => 'Enable',
                 'label'     => 'Disabled',
                 'value'     =>  0
             );
         }
-        $this->company_model->update_user_status($sid,$data);
+        $this->company_model->update_user_status($sid, $data);
 
         print_r(json_encode($return_data));
     }
 
-    function ajax_change_status() {
+    function ajax_change_status()
+    {
         $sid = $this->input->post('sid');
         $status = $this->input->post('status');
         $db_field = $this->input->post('db_field');
-        $data = array($db_field=>$status);
+        $data = array($db_field => $status);
 
-        if($sid>0){
-            $this->company_model->update_user_status($sid,$data);
-//            $this->handleXmlJobsByCompanyId($sid, $status); // enable it once the optimized indeed and zip feeds are activated
+        if ($sid > 0) {
+            $this->company_model->update_user_status($sid, $data);
+            //            $this->handleXmlJobsByCompanyId($sid, $status); // enable it once the optimized indeed and zip feeds are activated
         }
     }
 
-    function change_resource_center(){
+    function change_resource_center()
+    {
         $sid = $this->input->post("sid");
         $status = $this->input->post("status");
-        if($status){
-            $data = array('enable_resource_center'=>0);
+        if ($status) {
+            $data = array('enable_resource_center' => 0);
             $return_data = array(
                 'btnValue' => 'Disable',
                 'label'     => 'Enabled',
                 'value'     =>  1
             );
-        }
-        else{
-            $data = array('enable_resource_center'=>1);
+        } else {
+            $data = array('enable_resource_center' => 1);
             $return_data = array(
                 'btnValue' => 'Enable',
                 'label'     => 'Disabled',
                 'value'     =>  0
             );
         }
-        $this->company_model->update_user_status($sid,$data);
+        $this->company_model->update_user_status($sid, $data);
 
         print_r(json_encode($return_data));
     }
 
-    function change_ems_status(){
+    function change_ems_status()
+    {
         $sid = $this->input->post("sid");
         $status = $this->input->post("status");
-        if($status){
-            $data = array('ems_status'=>0);
+        if ($status) {
+            $data = array('ems_status' => 0);
             $return_data = array(
                 'btnValue' => 'Disable',
                 'label'     => 'Enabled',
                 'value'     =>  1
             );
-        }
-        else{
-            $data = array('ems_status'=>1);
+        } else {
+            $data = array('ems_status' => 1);
             $return_data = array(
                 'btnValue' => 'Enable',
                 'label'     => 'Disabled',
                 'value'     =>  0
             );
         }
-        $this->company_model->update_user_status($sid,$data);
+        $this->company_model->update_user_status($sid, $data);
 
         print_r(json_encode($return_data));
     }
 
-    function change_comply_status(){
+    function change_comply_status()
+    {
         $sid = $this->input->post("sid");
         $status = $this->input->post("status");
-        if($status){
-            $data = array('complynet_status'=>0);
+        if ($status) {
+            $data = array('complynet_status' => 0);
             $return_data = array(
                 'btnValue' => 'Disable',
                 'label'     => 'Enabled',
                 'value'     =>  1
             );
-        }
-        else{
-            $data = array('complynet_status'=>1);
+        } else {
+            $data = array('complynet_status' => 1);
             $return_data = array(
                 'btnValue' => 'Enable',
                 'label'     => 'Disabled',
                 'value'     =>  0
             );
         }
-        $this->company_model->update_user_status($sid,$data);
+        $this->company_model->update_user_status($sid, $data);
 
         print_r(json_encode($return_data));
     }
 
-    function change_captcha_status(){
+    function change_captcha_status()
+    {
         $sid = $this->input->post("sid", true);
         $data = array('enable_captcha' => (int)$this->input->post("status", true));
         //
@@ -2045,15 +2075,16 @@ class Companies extends Admin_Controller {
         exit(0);
     }
 
-    function manage_incident_configuration($company_sid = null) {
+    function manage_incident_configuration($company_sid = null)
+    {
         $redirect_url = 'manage_admin/companies';
         $function_name = 'manage_incident_configuration';
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
-//        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+        //        check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
 
-        if($company_sid != null) {
+        if ($company_sid != null) {
             $this->data['page_title'] = 'Manage Incident Reporting Configurations';
             $this->data['company_sid'] = $company_sid;
             $incident_types = $this->Incident_report_model->get_incident_types_company_specific($company_sid);
@@ -2070,18 +2101,19 @@ class Companies extends Admin_Controller {
         }
     }
 
-    public function access_level_plus($company_sid = null){
+    public function access_level_plus($company_sid = null)
+    {
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
-        if($company_sid != null) {
+        if ($company_sid != null) {
             $this->data['page_title'] = 'Manage Access Level Plus';
             $this->data['company_sid'] = $company_sid;
             $all_employees = $this->company_model->get_company_employers($company_sid);
             $this->data['all_employees'] = $all_employees;
             $configured_employees = $this->company_model->get_configured_access_level_plus_employers($company_sid);
             $this->data['configured_employees'] = array();
-            foreach($configured_employees as $config){
+            foreach ($configured_employees as $config) {
                 $this->data['configured_employees'][] = $config['sid'];
             }
             $configured_employees = $this->data['configured_employees'];
@@ -2089,8 +2121,8 @@ class Companies extends Admin_Controller {
 
             if ($this->form_validation->run() === FALSE) {
                 $this->render('manage_admin/company/access_level_plus');
-            }else{
-                $form = $this->input->post(NULL,true);
+            } else {
+                $form = $this->input->post(NULL, true);
                 // echo '<pre>';
                 // print_r($form);
                 // print_r($configured_employees);
@@ -2100,41 +2132,42 @@ class Companies extends Admin_Controller {
                 $configured_pp = isset($form['config-pp']) ? json_decode($form['config-pp']) : array();
                 $selected_DPO = isset($form['doc_preview']) ? $form['doc_preview'] : array(); // DPO Document Preview Only users
                 //
-                foreach($selected_emp as $emp){
-                    if(!in_array($emp,$configured_employees)){
+                foreach ($selected_emp as $emp) {
+                    if (!in_array($emp, $configured_employees)) {
                         $this->company_model->add_configured_access_level_plus_employers($emp);
                     }
                 }
-                foreach($configured_employees as $emp){
-                    if(!in_array($emp,$selected_emp)){
+                foreach ($configured_employees as $emp) {
+                    if (!in_array($emp, $selected_emp)) {
                         $this->company_model->delete_configured_access_level_plus_employers($emp);
                     }
                 }
 
-                foreach($selected_pp as $emp){
-                    if(!in_array($emp,$configured_pp)){
+                foreach ($selected_pp as $emp) {
+                    if (!in_array($emp, $configured_pp)) {
                         $this->company_model->update_configured_pay_plan_employers($emp, 1);
                     }
                 }
-                foreach($configured_pp as $emp){
-                    if(!in_array($emp,$selected_pp)){
+                foreach ($configured_pp as $emp) {
+                    if (!in_array($emp, $selected_pp)) {
                         $this->company_model->update_configured_pay_plan_employers($emp, 0);
                     }
                 }
 
                 $this->session->set_flashdata('message', 'Access Level Plus Updated');
-                redirect('manage_admin/companies/access_level_plus/'.$company_sid, 'refresh');
+                redirect('manage_admin/companies/access_level_plus/' . $company_sid, 'refresh');
             }
         } else {
             redirect('manage_admin/companies', 'refresh');
         }
     }
 
-    public function manage_complynet($company_sid = null){
+    public function manage_complynet($company_sid = null)
+    {
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
-        if($company_sid != null) {
+        if ($company_sid != null) {
             $this->data['page_title'] = 'Manage ComplyNet Credentials';
             $this->data['company_sid'] = $company_sid;
             $company_info = $this->company_model->get_company_details($company_sid);
@@ -2147,19 +2180,20 @@ class Companies extends Admin_Controller {
 
             if ($this->form_validation->run() === FALSE) {
                 $this->render('manage_admin/company/manage_complynet');
-            }else{
+            } else {
                 $link = $this->input->post('complynet_link');
                 $insert_data = array('complynet_dashboard_link' => $link);
                 $this->company_model->update_user($company_sid, $insert_data, 'ComplyNet dashboard link');
-                redirect('manage_admin/companies/manage_complynet/'.$company_sid, 'refresh');
+                redirect('manage_admin/companies/manage_complynet/' . $company_sid, 'refresh');
             }
         } else {
             redirect('manage_admin/companies', 'refresh');
         }
     }
 
-    public function save_complynet_cred(){
-        if($this->input->is_ajax_request()){
+    public function save_complynet_cred()
+    {
+        if ($this->input->is_ajax_request()) {
             $username = $this->input->post('user');
             $password = $this->input->post('key');
             $sid = $this->input->post('emp');
@@ -2167,15 +2201,16 @@ class Companies extends Admin_Controller {
             $insert_data = array('complynet_credentials' => serialize($comply_cred));
             $this->company_model->update_user($sid, $insert_data, 'Employee');
             echo 'updated';
-        } else{
+        } else {
             echo 'Not Authentic';
         }
     }
 
-    public function save_exec_complynet_cred(){
-        if($this->input->is_ajax_request()){
+    public function save_exec_complynet_cred()
+    {
+        if ($this->input->is_ajax_request()) {
             $action = $this->input->post('action');
-            if($action == 'credential'){
+            if ($action == 'credential') {
                 $username = $this->input->post('user');
                 $password = $this->input->post('key');
                 $link = $this->input->post('link');
@@ -2186,24 +2221,24 @@ class Companies extends Admin_Controller {
                     'complynet_dashboard_link' => $link
                 );
                 $this->company_model->update_excetive_admin($sid, $insert_data);
-                echo $password.' '.$username.' '.$sid.'<pre>';
+                echo $password . ' ' . $username . ' ' . $sid . '<pre>';
                 print_r($insert_data);
-
             }
             echo 'updated';
-        } else{
+        } else {
             echo 'Not Authentic';
         }
     }
 
-    public function update_exec_comply_status(){
-        if($this->input->is_ajax_request()){
+    public function update_exec_comply_status()
+    {
+        if ($this->input->is_ajax_request()) {
             $status = $this->input->post('status');
             $id = $this->input->post('id');
             $insert_data = array('complynet_status' => !$status);
             $this->company_model->update_excetive_admin($id, $insert_data);
             echo $status;
-        } else{
+        } else {
             echo 'Not Authentic';
         }
     }
@@ -2216,7 +2251,8 @@ class Companies extends Admin_Controller {
      *
      * @return VOID
      */
-    public function get_Phone_number_list ($zip = null) {
+    public function get_Phone_number_list($zip = null)
+    {
         // Load twilio library
         $this->load->library('twilio/Twilioapp', null, 'twilio');
         //
@@ -2240,7 +2276,7 @@ class Companies extends Admin_Controller {
         //
         header('Content-Type: application/json');
         echo json_encode($res);
-        exit(0);     
+        exit(0);
     }
 
     /**
@@ -2252,7 +2288,8 @@ class Companies extends Admin_Controller {
      *
      * @return VOID
      */
-    public function purchase_phone_number () {
+    public function purchase_phone_number()
+    {
 
         // Load twilio library
         $this->load->library('twilio/Twilioapp', null, 'twilio');
@@ -2269,23 +2306,23 @@ class Companies extends Admin_Controller {
             ->setReservePhone($actual_phone_number)
             ->incomingPhoneNumbers();
 
-        $response = array();    
+        $response = array();
 
-        if(!isset($resp['Error'])) {
-            $PhoneSid = $resp['Sid'];    
+        if (!isset($resp['Error'])) {
+            $PhoneSid = $resp['Sid'];
 
             $check_row = $this->company_model->check_company_row_exist($company_sid);
 
-            if(!$check_row){
+            if (!$check_row) {
                 $this
-                ->company_model
-                ->save_company_phone_number(array(
-                    'company_sid' => $company_sid,
-                    'phone_sid' => $PhoneSid,
-                    'phone_number' => $actual_phone_number,
-                    'purchaser_type' => 'admin',
-                    'purchaser_id' => $this->ion_auth->user()->row()->id
-                ));
+                    ->company_model
+                    ->save_company_phone_number(array(
+                        'company_sid' => $company_sid,
+                        'phone_sid' => $PhoneSid,
+                        'phone_number' => $actual_phone_number,
+                        'purchaser_type' => 'admin',
+                        'purchaser_id' => $this->ion_auth->user()->row()->id
+                    ));
             } else {
                 $data_to_update = array();
                 $data_to_update['phone_sid'] = $PhoneSid;
@@ -2294,22 +2331,22 @@ class Companies extends Admin_Controller {
                 $data_to_update['purchaser_id'] = $this->ion_auth->user()->row()->id;
                 //
                 $this
-                ->company_model
-                ->update_company_phone_number($company_sid, $data_to_update);
+                    ->company_model
+                    ->update_company_phone_number($company_sid, $data_to_update);
             }
 
-            
+
 
             $response['Status'] = true;
-            $response['Response'] = 'You have successfully purchased this number ('.$number_to_buy.').';
+            $response['Response'] = 'You have successfully purchased this number (' . $number_to_buy . ').';
         } else {
             $response['Status'] = false;
             $response['Response'] = $resp['Error'];
-        } 
+        }
         //
         header('Content-Type: application/json');
         echo json_encode($response);
-        exit(0);     
+        exit(0);
     }
 
     /**
@@ -2321,7 +2358,8 @@ class Companies extends Admin_Controller {
      *
      * @return VOID
      */
-    public function create_message_service () {
+    public function create_message_service()
+    {
         $response = array();
         // Load twilio library
         $this->load->library('twilio/Twilioapp', null, 'twilio');
@@ -2337,7 +2375,7 @@ class Companies extends Admin_Controller {
             //
             $service_code = $_POST['service_code'];
             //
-            $service_sid = $_POST['service_sid'];            
+            $service_sid = $_POST['service_sid'];
             //
             if ($service_sid != 'no') {
                 // $this->twilio->deleteMessageService($service_sid);
@@ -2354,8 +2392,8 @@ class Companies extends Admin_Controller {
                 )
                 ->setMessageServicePhoneSid($service_code)
                 ->createMessageService();
-                        
-            if(!isset($resp['Error'])) {
+
+            if (!isset($resp['Error'])) {
                 $data_to_update = array();
                 $data_to_update['alfa_sender_sid'] = $resp['AlfaSid'];
                 $data_to_update['message_service_sid'] = $resp['Sid'];
@@ -2363,8 +2401,8 @@ class Companies extends Admin_Controller {
                 $data_to_update['alfa_sender_name'] = $resp['AlfaName'];
                 //
                 $this
-                ->company_model
-                ->update_company_phone_number($company_sid, $data_to_update);
+                    ->company_model
+                    ->update_company_phone_number($company_sid, $data_to_update);
 
                 $response['Status'] = true;
                 $response['Response'] = 'You have successfully created message service.';
@@ -2376,7 +2414,7 @@ class Companies extends Admin_Controller {
         //
         header('Content-Type: application/json');
         echo json_encode($response);
-        exit(0);     
+        exit(0);
     }
 
 
@@ -2388,113 +2426,113 @@ class Companies extends Admin_Controller {
      *
      * @return VOID
      */
-    private function sms_buy_process($company_sid){
+    private function sms_buy_process($company_sid)
+    {
         // Load twilio library
         $this->load->library('twilio/Twilioapp', null, 'twilio');
         // For Sandbox mode
-        if(SMS_MODE == 'sandbox'){
-            if(IS_SANDBOX) {
+        if (SMS_MODE == 'sandbox') {
+            if (IS_SANDBOX) {
                 $is_record = $this
-                ->company_model
-                ->get_company_phone_by_sid($company_sid);
-                if(!$is_record){
-                    $this
                     ->company_model
-                    ->save_company_phone_number(array(
-                        'company_sid' => $company_sid,
-                        'phone_sid' => 'MG2798b7fc2bce2a1c7121f5aaf809c298',
-                        'message_service_sid' => 'MG359e34ef1e42c763d3afc96c5ff28eaf',
-                        'message_service_name' => 'Development',
-                        'phone_number' => '+15005550006',
-                        'purchaser_type' => 'admin',
-                        'purchaser_id' => $this->ion_auth->user()->row()->id
-                    ));
+                    ->get_company_phone_by_sid($company_sid);
+                if (!$is_record) {
+                    $this
+                        ->company_model
+                        ->save_company_phone_number(array(
+                            'company_sid' => $company_sid,
+                            'phone_sid' => 'MG2798b7fc2bce2a1c7121f5aaf809c298',
+                            'message_service_sid' => 'MG359e34ef1e42c763d3afc96c5ff28eaf',
+                            'message_service_name' => 'Development',
+                            'phone_number' => '+15005550006',
+                            'purchaser_type' => 'admin',
+                            'purchaser_id' => $this->ion_auth->user()->row()->id
+                        ));
                 }
                 return true;
             }
         }
         // For development mode
-        if(SMS_MODE == 'staging'){
+        if (SMS_MODE == 'staging') {
             $number_list['Number'] = '+1 909 757 0288';
             $MessageServiceCode = 'PNcd41479c6145ecb0eab1dcdcf608360e';
-        }
-        else{
+        } else {
             // Check db for phone number
             $is_record = $this
-            ->company_model
-            ->get_company_phone_by_sid($company_sid);
+                ->company_model
+                ->get_company_phone_by_sid($company_sid);
             $h = fopen('step1.txt', 'w');
             fwrite($h, json_encode($is_record));
             fclose($h);
             //
-            if($is_record) return;
+            if ($is_record) return;
             // Buy a new number
             // Fetch numbers list
             $number_list = $this
-            ->twilio
-            ->setMode('production')
-            ->setCountryISO('US')
-            // ->availableLocalPhoneNumbers(array());
-            ->availableLocalPhoneNumbers(array('areacode' => 951));
+                ->twilio
+                ->setMode('production')
+                ->setCountryISO('US')
+                // ->availableLocalPhoneNumbers(array());
+                ->availableLocalPhoneNumbers(array('areacode' => 951));
             // _e($number_list, true, true);
             // ->availablePhoneNumbers();
             // Check for error
             $h = fopen('step2.txt', 'w');
             fwrite($h, json_encode($number_list));
             fclose($h);
-            if(isset($number_list['Error'])) return $number_list;
-            if(!isset($number_list['FriendlyName'])) return $number_list;
+            if (isset($number_list['Error'])) return $number_list;
+            if (!isset($number_list['FriendlyName'])) return $number_list;
             $number_to_buy = $number_list['FriendlyName'];
             //
-            if($number_to_buy == '') return $number_list;
+            if ($number_to_buy == '') return $number_list;
             // Reserve numbers list
             $resp = $this
-            ->twilio
-            ->setReservePhone($number_to_buy)
-            ->incomingPhoneNumbers();
+                ->twilio
+                ->setReservePhone($number_to_buy)
+                ->incomingPhoneNumbers();
             $h = fopen('step3.txt', 'w');
             fwrite($h, json_encode($resp));
             fclose($h);
             //
-            if(isset($resp['Error'])) return $resp;
+            if (isset($resp['Error'])) return $resp;
             // Let's create a messag service
             $MessageServiceCode = $resp['Sid'];
         }
 
         // Link number to MessageService
         $resp2 =
-        $this
-        ->twilio
-        ->setMode('production')
-        ->setAlfaSenderName($this->company_model->get_company_column($company_sid, 'CompanyName'))
-        ->setMessageServiceCode(
-            array(
-                'company_id' => $company_sid
+            $this
+            ->twilio
+            ->setMode('production')
+            ->setAlfaSenderName($this->company_model->get_company_column($company_sid, 'CompanyName'))
+            ->setMessageServiceCode(
+                array(
+                    'company_id' => $company_sid
+                )
             )
-        )
-        ->setMessageServicePhoneSid($MessageServiceCode)
-        // _e($this->twilio->debug(), true);
-        ->createMessageService();
+            ->setMessageServicePhoneSid($MessageServiceCode)
+            // _e($this->twilio->debug(), true);
+            ->createMessageService();
         $h = fopen('step4.txt', 'w');
         fwrite($h, json_encode($resp2));
         fclose($h);
         // _e($resp2, true, true);
         // Check for errors
-        if(isset($resp2['Error'])) return false;
+        if (isset($resp2['Error'])) return false;
         // Save number to db
         $this
-        ->company_model
-        ->save_company_phone_number(array(
-            'company_sid' => $company_sid,
-            'phone_sid' => $MessageServiceCode,
-            'alfa_sender_sid' => $resp2['AlfaSid'],
-            'alfa_sender_name' => $resp2['AlfaName'],
-            'message_service_sid' => $resp2['Sid'],
-            'message_service_name' => $resp2['MessageServiceCode'],
-            'phone_number' => $number_list['Number'],
-            'purchaser_type' => 'admin',
-            'purchaser_id' => $this->ion_auth->user()->row()->id
-        ));
+            ->company_model
+            ->save_company_phone_number(array(
+                'company_sid' => $company_sid,
+                'phone_sid' => $MessageServiceCode,
+                'alfa_sender_sid' => $resp2['AlfaSid'],
+                'alfa_sender_name' => $resp2['AlfaName'],
+                'message_service_sid' => $resp2['Sid'],
+                'message_service_name' => $resp2['MessageServiceCode'],
+                'phone_number' => $number_list['Number'],
+                'purchaser_type' => 'admin',
+                'purchaser_id' => $this->ion_auth->user()->row()->id
+            ));
 
         return true;
     }
@@ -2509,7 +2547,8 @@ class Companies extends Admin_Controller {
      *
      * @return VOID
      */
-    function handleXmlJobsByCompanyId($companyId, $status){
+    function handleXmlJobsByCompanyId($companyId, $status)
+    {
         // Load model
         $this->load->model('all_feed_model');
         $this->load->model('job_listings_visibility_model');
@@ -2518,25 +2557,28 @@ class Companies extends Admin_Controller {
         // Check if company is active etc
         $companyDetails = $this->all_feed_model->checkCompanyStatusByCompanyId($companyId, $status);
         //
-        if(!$companyDetails) return;
+        if (!$companyDetails) return;
         //
-        $jobs = $this->all_feed_model->jobsByCompanyId( $companyId, $status === 1 ? true : false );
+        $jobs = $this->all_feed_model->jobsByCompanyId($companyId, $status === 1 ? true : false);
         $jobRows = '';
         foreach ($jobs as $job) {
             $formpost = array();
-            if($status == 1){
+            if ($status == 1) {
                 // Fetch PPJ Jobs
-                $exp_date = date('Y-m-d' ,strtotime($job['ppj_activation_date']. ' + '.$job['ppj_expiry_days'].' days '));
-                if(strtotime(date('Y-m-d')) > strtotime($exp_date)) continue;
+                $exp_date = date('Y-m-d', strtotime($job['ppj_activation_date'] . ' + ' . $job['ppj_expiry_days'] . ' days '));
+                if (strtotime(date('Y-m-d')) > strtotime($exp_date)) continue;
             } else {
                 // Fetch Organic Jobs
-                if($companyDetails['has_job_approval_rights'] ==  1) if($job['approval_status'] != 'approved') continue;
+                if ($companyDetails['has_job_approval_rights'] ==  1) if ($job['approval_status'] != 'approved') continue;
             }
             $formpost['publish_date'] = $job['activation_date'];
             $result = $this->job_listings_visibility_model->getUidOfJob($companyId, $job['sid']);
             //
-            if($result === 0) $uid = $job['sid'];
-            else{ $uid = $result['uid']; $formpost['publish_date'] = $result['publish_date']; }
+            if ($result === 0) $uid = $job['sid'];
+            else {
+                $uid = $result['uid'];
+                $formpost['publish_date'] = $result['publish_date'];
+            }
             //
 
             $formpost['Title'] = $job['Title'];
@@ -2573,16 +2615,16 @@ class Companies extends Admin_Controller {
 
             $this->job_listings_visibility_model->insertXmlJob($insertDataArray);
 
-            if($status == 0){
+            if ($status == 0) {
                 $indeed = $this->indeedOrganicDB($formpost, $uid, $companyId, $companyDetails, $job['sid']);
                 $ziprec = $this->zipRecruiterOrganicDB($formpost, $uid, $companyId, $companyDetails, $job['sid']);
-                if($indeed === 0 && $ziprec === 0){
-                    $this->job_listings_visibility_model->updateXmlJob( array(
+                if ($indeed === 0 && $ziprec === 0) {
+                    $this->job_listings_visibility_model->updateXmlJob(array(
                         'is_indeed_job' => 1,
                         'is_ziprecruiter_job' => 1
                     ), array(
                         'job_sid' => $job['sid']
-                    ) );
+                    ));
                 }
             }
         }
@@ -2606,22 +2648,22 @@ class Companies extends Admin_Controller {
         $companySid,
         $companyPortal,
         $jobSid
-    ){
+    ) {
         // Check if product is active
         $is_product_purchased = $this->job_listings_visibility_model->isPurchasedJob($jobSid, $this->indeedProductIds);
-        if((int)$is_product_purchased === 0){
+        if ((int)$is_product_purchased === 0) {
             // Update xml job indeed check to 0
             $this->job_listings_visibility_model->updateXmlJob(
-                array( 'is_indeed_job' => 0 ),
-                array( 'job_sid' => $jobSid )
+                array('is_indeed_job' => 0),
+                array('job_sid' => $jobSid)
             );
             return 0;
         }
         // Check if job exists in database
         $xmlJobId = $this->job_listings_visibility_model->getXmlJobId($jobSid);
         // If not found then insert
-        if(!$xmlJobId){
-            $insertDataArray = array( 'job_sid' => $jobSid, 'company_sid' => $companySid, 'is_indeed_job' => 1 );
+        if (!$xmlJobId) {
+            $insertDataArray = array('job_sid' => $jobSid, 'company_sid' => $companySid, 'is_indeed_job' => 1);
             $xmlJobId = $this->job_listings_visibility_model->insertXmlJob($insertDataArray);
         }
         //
@@ -2636,7 +2678,7 @@ class Companies extends Admin_Controller {
             $this
         );
         // Update
-        $this->job_listings_visibility_model->updateXmlJob( array( 'company_sid' => $companySid, 'job_content' => $job, 'is_indeed_job' => 1, 'is_ziprecruiter_job' => 0 ), array( 'sid' => $xmlJobId ) );
+        $this->job_listings_visibility_model->updateXmlJob(array('company_sid' => $companySid, 'job_content' => $job, 'is_indeed_job' => 1, 'is_ziprecruiter_job' => 0), array('sid' => $xmlJobId));
         return 1;
     }
 
@@ -2658,22 +2700,22 @@ class Companies extends Admin_Controller {
         $companySid,
         $companyPortal,
         $jobSid
-    ){
+    ) {
         // Check if product is active
         $is_product_purchased = $this->job_listings_visibility_model->isPurchasedJob($jobSid, $this->ziprecruiterProductIds);
-        if((int)$is_product_purchased === 0){
+        if ((int)$is_product_purchased === 0) {
             // Update xml job indeed check to 0
             $this->job_listings_visibility_model->updateXmlJob(
-                array( 'is_ziprecruiter_job' => 0 ),
-                array( 'job_sid' => $jobSid )
+                array('is_ziprecruiter_job' => 0),
+                array('job_sid' => $jobSid)
             );
             return 0;
         }
         // Check if job exists in database
         $xmlJobId = $this->job_listings_visibility_model->getXmlJobId($jobSid);
         // If not found then insert
-        if(!$xmlJobId){
-            $insertDataArray = array( 'job_sid' => $jobSid, 'company_sid' => $companySid, 'is_ziprecruiter_job' => 1 );
+        if (!$xmlJobId) {
+            $insertDataArray = array('job_sid' => $jobSid, 'company_sid' => $companySid, 'is_ziprecruiter_job' => 1);
             $xmlJobId = $this->job_listings_visibility_model->insertXmlJob($insertDataArray);
         }
         //
@@ -2688,14 +2730,15 @@ class Companies extends Admin_Controller {
             $this
         );
         // Update
-        $this->job_listings_visibility_model->updateXmlJob( array( 'company_sid' => $companySid, 'job_content' => $job, 'is_ziprecruiter_job' => 1, 'is_indeed_job' => 0  ), array( 'sid' => $xmlJobId ) );
+        $this->job_listings_visibility_model->updateXmlJob(array('company_sid' => $companySid, 'job_content' => $job, 'is_ziprecruiter_job' => 1, 'is_indeed_job' => 0), array('sid' => $xmlJobId));
         return 1;
     }
-    
+
     /**
      * 
      */
-    public function manage_sms($sid) {
+    public function manage_sms($sid)
+    {
         //
         $admin_id = $this->ion_auth->user()->row()->id;
         //
@@ -2703,7 +2746,7 @@ class Companies extends Admin_Controller {
         //
         check_access_permissions($this->data['security_details'], 'manage_admin', 'edit_employers'); // Param2: Redirect URL, Param3: Function Name
         //
-        $this->data['security_access_levels'] =$this->company_model->get_security_access_levels();
+        $this->data['security_access_levels'] = $this->company_model->get_security_access_levels();
         //
         $this->data['sid'] = $sid;
         //
@@ -2712,14 +2755,14 @@ class Companies extends Admin_Controller {
         $this->data['phoneNumber'] = $this->company_model->getPhoneNumber($sid);
         //
         if ($this->form_validation->run() === FALSE) {
-          
+
             $this->load->helper('form');
             $this->render('manage_admin/company/manage_sms');
-
         }
     }
 
-    function customize_career_site ($company_sid = null) {
+    function customize_career_site($company_sid = null)
+    {
         if ($company_sid == NULL || $company_sid == '' || $company_sid == 0) {
             $this->session->set_flashdata('message', 'Company not found!');
             redirect('manage_admin/companies/', 'refresh');
@@ -2757,7 +2800,7 @@ class Companies extends Admin_Controller {
             ],
         ];
 
-        $this->data['career_site_pages'] = array_merge($static_pages,$career_site_pages);
+        $this->data['career_site_pages'] = array_merge($static_pages, $career_site_pages);
 
 
         if ($this->form_validation->run() == false) {
@@ -2773,31 +2816,33 @@ class Companies extends Admin_Controller {
         }
     }
 
-    function update_module_status(){
+    function update_module_status()
+    {
         $r = array();
         $r['Status'] = FALSE;
         $r['Response'] = 'Failed to update module';
         //
         $statusUpdated = $this->company_model->update_module_status();
         //
-        if($statusUpdated){
+        if ($statusUpdated) {
             $r['Status'] = TRUE;
             $r['Response'] = 'Proceed';
             //
             $post = $this->input->post(NULL, TRUE);
             // For Gusto
-            if($post['Id'] == 7 && $post['Status'] == 0){
+            if ($post['Id'] == 7 && $post['Status'] == 0) {
                 // Load Payroll Model
                 $this->load->model('Payroll_model', 'pm');
                 // Check if company exists on Gusto
                 $exists = $this->pm->GetCompany($post['CompanyId'], 'sid');
                 //
-                if(empty($exists)){
+                if (empty($exists)) {
                     // Load Curl Helper
                     $this->load->helper('curl');
                     //
                     SendRequest(
-                        base_url('create_partner_company'), [
+                        base_url('create_partner_company'),
+                        [
                             CURLOPT_CUSTOMREQUEST => 'POST',
                             CURLOPT_POSTFIELDS => array(
                                 'center' => '2',
@@ -2844,7 +2889,7 @@ class Companies extends Admin_Controller {
         $this->data['total'] = $this->company_model->getCompanyApprovers(
             $companySid,
             $approver,
-            $status, 
+            $status,
             true
         );
         $this->data['flag'] = $approver != 'all' || $status != 'all' ? true : false;
@@ -2893,7 +2938,7 @@ class Companies extends Admin_Controller {
         $this->data['companies'] = $this->company_model->getCompanyApprovers(
             $companySid,
             $approver,
-            $status, 
+            $status,
             false,
             $config['per_page'],
             $my_offset
@@ -2918,13 +2963,13 @@ class Companies extends Admin_Controller {
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
-       
+
         $this->data['page_title'] = 'Edit Time Off Approver';
         // Get approver
         $this->data['approver'] = $this->company_model->getSingleApprover($approverSid);
 
-        if(!sizeof($this->data['approver'])){
-            redirect('manage_admin/companies/timeoff_approvers/'.( $companySid ).'', 'refresh');
+        if (!sizeof($this->data['approver'])) {
+            redirect('manage_admin/companies/timeoff_approvers/' . ($companySid) . '', 'refresh');
             return;
         }
 
@@ -2946,9 +2991,9 @@ class Companies extends Admin_Controller {
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
-       
+
         $this->data['page_title'] = 'Add Time Off Approver';
-        
+
 
         // Get company employee list
         $this->data['employees'] = $this->company_model->getCompanyActiveEmployees($companySid);
@@ -2958,11 +3003,12 @@ class Companies extends Admin_Controller {
     }
 
     //
-    function activate_approver(){
-        $res = array('Status' => false, 'Response' => 'Invalid request!' );
+    function activate_approver()
+    {
+        $res = array('Status' => false, 'Response' => 'Invalid request!');
         $post = $this->input->post(NULL, TRUE);
         header('Content-Type: application/json');
-        if(!sizeof($post) || !isset($post['approverSid'])) {
+        if (!sizeof($post) || !isset($post['approverSid'])) {
             echo json_encode($res);
             exit(0);
         }
@@ -2976,11 +3022,12 @@ class Companies extends Admin_Controller {
     }
 
     //
-    function deactivate_approver(){
-        $res = array('Status' => false, 'Response' => 'Invalid request!' );
+    function deactivate_approver()
+    {
+        $res = array('Status' => false, 'Response' => 'Invalid request!');
         $post = $this->input->post(NULL, TRUE);
         header('Content-Type: application/json');
-        if(!sizeof($post) || !isset($post['approverSid'])) {
+        if (!sizeof($post) || !isset($post['approverSid'])) {
             echo json_encode($res);
             exit(0);
         }
@@ -2994,19 +3041,20 @@ class Companies extends Admin_Controller {
     }
 
     //
-    function edit_approver_process(){
-        $res = array('Status' => false, 'Response' => 'Invalid request!' );
+    function edit_approver_process()
+    {
+        $res = array('Status' => false, 'Response' => 'Invalid request!');
         $post = $this->input->post(NULL, TRUE);
         //
         header('Content-Type: application/json');
         //
-        if(!sizeof($post)) {
+        if (!sizeof($post)) {
             echo json_encode($res);
             exit(0);
         }
         // Check if it already exists
         $exists = $this->company_model->checkApprover($post);
-        if($exists){
+        if ($exists) {
             $res['Response'] = 'Approver already exists for the selected department.';
             echo json_encode($res);
             exit(0);
@@ -3020,19 +3068,20 @@ class Companies extends Admin_Controller {
     }
 
     //
-    function add_approver_process(){
-        $res = array('Status' => false, 'Response' => 'Invalid request!' );
+    function add_approver_process()
+    {
+        $res = array('Status' => false, 'Response' => 'Invalid request!');
         $post = $this->input->post(NULL, TRUE);
         //
         header('Content-Type: application/json');
         //
-        if(!sizeof($post)) {
+        if (!sizeof($post)) {
             echo json_encode($res);
             exit(0);
         }
         // Check if it already exists
         $exists = $this->company_model->checkApprover($post);
-        if($exists){
+        if ($exists) {
             $res['Response'] = 'Approver already exists for the selected department.';
             echo json_encode($res);
             exit(0);
@@ -3046,7 +3095,8 @@ class Companies extends Admin_Controller {
     }
 
 
-    function update_company_email(){
+    function update_company_email()
+    {
         //
         $this->company_model->UpdateCompanyIndeed(
             $_POST['name'],
@@ -3057,8 +3107,9 @@ class Companies extends Admin_Controller {
 
         echo 'success';
     }
-    
-    public function manage_payroll ($company_sid) {
+
+    public function manage_payroll($company_sid)
+    {
         //
         $this->load->helper('common_helper');
         //
@@ -3071,8 +3122,8 @@ class Companies extends Admin_Controller {
         $this->data['page_title'] = 'Company Payroll Module';
         //
         $this->load->model('Payroll_model', 'pm');
-        $this->data['company_info']=$this->pm->GetGustoCompanyData($company_sid);
-        $this->data['companyPayrollStatus']=$this->pm->GetCompanyPayrollStatus($company_sid);
+        $this->data['company_info'] = $this->pm->GetGustoCompanyData($company_sid);
+        $this->data['companyPayrollStatus'] = $this->pm->GetCompanyPayrollStatus($company_sid);
         //
         $company_status = array();
         $onboarding_link = "";
@@ -3095,27 +3146,28 @@ class Companies extends Admin_Controller {
     }
 
 
-    function default_document_category_listing ($company_sid = null) {
-     //
-   $this->data['page_title'] = "Document Default Categories";
-   $this->data['company_sid'] = $company_sid;
+    function default_document_category_listing($company_sid = null)
+    {
+        //
+        $this->data['page_title'] = "Document Default Categories";
+        $this->data['company_sid'] = $company_sid;
 
-   $default_categories = $this->company_model->get_company_all_default_categories($company_sid);
-   $this->data['default_categories'] = $default_categories;
-   
-   //
-   $this->render('manage_admin/documents/default_companies_categories');
+        $default_categories = $this->company_model->get_company_all_default_categories($company_sid);
+        $this->data['default_categories'] = $default_categories;
 
+        //
+        $this->render('manage_admin/documents/default_companies_categories');
     }
 
 
 
 
-    function add_default_category ($company_sid = null) { 
+    function add_default_category($company_sid = null)
+    {
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
-     
+
         $this->data['page_title'] = "Add a Default Category";
         $this->data['page_sub_title'] = "Add a New Category";
         $this->data['company_sid'] = $company_sid;
@@ -3134,7 +3186,7 @@ class Companies extends Admin_Controller {
             $this->data['default_category'] = array();
             //
             $this->render('manage_admin/documents/companies_default_category_form');
-        } else{
+        } else {
             $formpost = $this->input->post(NULL, TRUE);
             $insert_array = array();
             $insert_array['company_sid']  = $company_sid;
@@ -3149,20 +3201,21 @@ class Companies extends Admin_Controller {
             $this->load->model('manage_admin/documents_model');
             $check = $this->documents_model->check_unique_with_name(0, $formpost['category_name']);
 
-            if($check > 0){
+            if ($check > 0) {
                 $this->session->set_flashdata('message', '<b>Warning:</b>Category name is already Exists!');
-                redirect(base_url('manage_admin/companies/default_document_category_listing/'.$company_sid));
+                redirect(base_url('manage_admin/companies/default_document_category_listing/' . $company_sid));
             }
             $this->documents_model->add_category($insert_array);
-            redirect(base_url('manage_admin/companies/default_document_category_listing/'.$company_sid));
+            redirect(base_url('manage_admin/companies/default_document_category_listing/' . $company_sid));
         }
     }
 
 
-    function edit_default_category ($sid) {
+    function edit_default_category($sid)
+    {
         $company_sid = $this->uri->segment('5');
         $this->load->model('manage_admin/documents_model');
-         //
+        //
         $this->data['page_title'] = "Edit a Default Category";
         $this->data['page_sub_title'] = "Edit Category";
         //
@@ -3190,7 +3243,7 @@ class Companies extends Admin_Controller {
             $this->data['company_sid'] = $company_sid;
             //
             $this->render('manage_admin/documents/companies_default_category_form');
-        } else{
+        } else {
             $formpost = $this->input->post(NULL, TRUE);
             $data_to_update = array();
             $data_to_update['name'] = $formpost['category_name'];
@@ -3200,19 +3253,14 @@ class Companies extends Admin_Controller {
             //
             $check = $this->documents_model->check_unique_with_name(0, $formpost['category_name'], $sid);
             //
-            if($check > 0){
+            if ($check > 0) {
                 $this->session->set_flashdata('message', '<b>Warning:</b>Category name is already Exists!');
-                redirect(base_url('manage_admin/companies/default_document_category_listing/'.$company_sid));
+                redirect(base_url('manage_admin/companies/default_document_category_listing/' . $company_sid));
             }
             //
             $this->documents_model->update_category($sid, $data_to_update);
             //
-            redirect(base_url('manage_admin/companies/default_document_category_listing/'.$company_sid));
+            redirect(base_url('manage_admin/companies/default_document_category_listing/' . $company_sid));
         }
     }
-
-
-
-
-
 }

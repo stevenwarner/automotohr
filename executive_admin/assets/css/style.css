@@ -1730,3 +1730,52 @@ span.required {
     font-style: italic;
     color: #cc0000;
   }
+
+  .file-loader,
+    .my_loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 99;
+    }
+
+    .loader-icon-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: auto;
+        z-index: 9999;
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .loader-icon-box i {
+        font-size: 14em;
+        color: #81b431;
+    }
+
+    .loader-text {
+        display: inline-block;
+        padding: 10px;
+        color: #000;
+        background-color: #fff;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: 600;
+    } 
+
+    body .alertify .ajs-header {
+        background-color: #81b431;
+        color: #fff;
+    }
+    
+    body .alertify .ajs-commands button.ajs-close {
+        background-color: #fff;
+        border-radius: 100%;
+    }
+    

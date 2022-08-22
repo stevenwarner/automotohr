@@ -1,40 +1,4 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<div class="emp-info-strip">
-    <div class="container">
-        <div class="emp-info-box">
-            <div class="figure">
-                <?php if (isset($executive_user['profile_picture']) && !empty($executive_user['profile_picture'])) { ?>
-                    <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $executive_user['profile_picture']; ?>">
-                <?php   } else { ?>
-                    <span><?php echo substr($executive_user['first_name'], 0, 1) . substr($executive_user['last_name'], 0, 1); ?></span>
-                <?php   } ?>
-            </div>
-            <div class="text text-white">
-                <h3><?php echo $executive_user['first_name'] . ' ' . $executive_user['last_name']; ?>
-                    <br><span>Executive Admin</span>
-                </h3>
-                <ul class="contact-info">
-                    <?php if ($executive_user['direct_business_number']) { ?>
-                        <li><i class="fa fa-phone"></i> <?php echo $executive_user['direct_business_number']; ?></li>
-                    <?php   }
-
-                    if ($executive_user['cell_number']) { ?>
-                        <li><i class="fa fa-phone"></i> <?php echo $executive_user['cell_number']; ?></li>
-                    <?php   } ?>
-                    <li><i class="fa fa-envelope"></i>&nbsp;<?php echo $executive_user['email']; ?></li>
-                </ul>
-            </div>
-            <div class="btn-link-wrp">
-                <a href="<?php echo base_url('dashboard/my_profile'); ?>"><i class="fa fa-pencil"></i> my profile</a> <br>
-                <?php if ($executive_user['complynet_status']) {
-                    echo '<a href="javascript:;" id="admin-complynet-btn" class="btn btn-success btn-block" style="font-size: 18px; color:#fff; margin-top: 10px" > Complynet Dashboard</a>';
-                    echo '<a href="javascript:;" id="simple-admin-btn" class="btn btn-success btn-block" style="font-size: 18px;color:#fff; margin-top: 10px; display: none;"> Dashboard</a>';
-                } ?>
-
-            </div>
-        </div>
-    </div>
-</div>
 <div class="main">
     <div class="container">
         <div class="row">
@@ -69,19 +33,23 @@
                         <?php } ?>
 
 
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
 
+                        <div class="heading-title page-title">
+                    <a class="black-btn pull-right" href="http://automotohr.local/executive_admin/dashboard"><i class="fa fa-long-arrow-left"></i> Back to Dashboard</a>
+                </div>
+                        </div>
 
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header">
-                                <h1 class="section-ttile">E-Signatures
+                                <h1 class="section-ttile">E-Signature
                                     <?php if (isset($consent) && $consent == 1) { ?>
-                                        <button onclick="func_regenerate_e_signature();" type="button" class="btn blue-button break-word-text">
+                                        <button onclick="func_regenerate_e_signature();" type="button" class="btn btn-success break-word-text">
                                             Regenerate Signature
                                         </button>
                                     <?php } ?>
                                 </h1>
                             </div>
-
 
 
                             <?php if (isset($consent) && $consent == 1) { ?>
@@ -94,8 +62,6 @@
                             <?php if ($this->uri->segment(1) != 'onboarding') { ?>
                                 <p class="red-paragragh"><b><i>We suggest that you only use Google Chrome to access your account and use its Features. Internet Explorer is not supported and may cause certain feature glitches and security issues.</i></b></p>
                             <?php } ?>
-
-
 
 
                             <div class="form-wrp">
@@ -484,13 +450,6 @@
                         </div>
                     </div>
 
-
-                    <br>
-
-
-
-
-
                 </div>
 
             </div>
@@ -499,14 +458,8 @@
 </div>
 
 
-
 <script src="<?php echo base_url('assets/js/html2canvas.min.js'); ?>"></script>
 <script src="<?php echo base_url('assets/crop/fabric.js'); ?>"></script>
-<script src="<?php echo base_url('assets/crop/darkroom.js'); ?>"></script>
-
-
-
-
 
 <script>
     //Draw Signature - Start
@@ -875,7 +828,7 @@
         if ($('#form_e_signature').valid()) {
             alertify.confirm(
                 'Are you Sure?',
-                'Are you sure you want to Consent And Accept Electronic Signature Agreement?',
+                'Are you sure you want to Consent And Accept Electronic Signature Agreement?  Note: The current signature will apply to all companies  ',
                 function() {
                     $('#my_loader').show();
                     var f_sign = true;
@@ -1101,7 +1054,6 @@
     //  This function have ajax call to update user_consent from
     //  1 to 0 and allow user to generate e_signature again.
     function func_regenerate_e_signature() {
-       
         var user_sid = '<?php echo $exadminId; ?>';
         var myurl = "<?= base_url() ?>E_signature/regenerate_e_signature/" + user_sid;
 
@@ -1109,15 +1061,16 @@
             'Are you Sure?',
             'Are you sure you want to regenerate your E-Signature?',
             function() {
+                $('#my_loader').show();
                 $.ajax({
                     type: "GET",
                     url: myurl,
                     async: false,
                     success: function(data) {
+                        $('#my_loader').hide();
                         location.reload();
                     },
                     error: function(data) {
-
                     }
                 });
             },
