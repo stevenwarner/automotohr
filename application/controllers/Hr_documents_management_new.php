@@ -339,7 +339,6 @@ class Hr_documents_management_new extends Public_Controller
 
     public function check_document_history($post)
     {
-
         $assignInsertId = null;
         $assigned = $this->hr_documents_management_model_new->getAssignedDocumentByIdAndEmployeeId(
             $post['documentSid'],
