@@ -78,44 +78,60 @@ class E_signature_model extends CI_Model
 
     public function apply_e_signature($executive_user_sid)
     {
-
         $executive_user_signature = $this->get_e_signature($executive_user_sid, 1);
-        if (empty($executive_user_signature)) {
-            return array();
-        }
 
+        if (empty($executive_user_signature)) {
+            return false;
+        }
+        
         $this->db->select('executive_admin_sid,company_sid,logged_in_sid');
         $this->db->where('executive_admin_sid', $executive_user_sid);
-
         $this->db->from('executive_user_companies');
         $records_obj = $this->db->get();
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        if (!empty($records_arr)) {
-
-            foreach ($records_arr  as $companies_row) {
-                $data_to_save = array();
-
+        //
+        if (empty($records_arr)) {
+            return false;
+        }
+        //
+        foreach ($records_arr  as $companies_row) {
+            //
+            $data_to_save = array();
+            $data_to_save['first_name'] = $executive_user_signature['first_name'];
+            $data_to_save['last_name'] =  $executive_user_signature['last_name'];
+            $data_to_save['email_address'] = $executive_user_signature['email_address'];
+            $data_to_save['signature'] = $executive_user_signature['signature'];
+            $data_to_save['init_signature'] = $executive_user_signature['init_signature'];
+            $data_to_save['signature_hash'] = $executive_user_signature['signature_hash'];
+            $data_to_save['signature_timestamp'] = $executive_user_signature['signature_timestamp'];
+            $data_to_save['signature_bas64_image'] = $executive_user_signature['signature_bas64_image'];
+            $data_to_save['init_signature_bas64_image'] = $executive_user_signature['init_signature_bas64_image'];
+            $data_to_save['active_signature'] = $executive_user_signature['active_signature'];
+            $data_to_save['ip_address'] = $executive_user_signature['ip_address'];
+            $data_to_save['user_agent'] = $executive_user_signature['user_agent'];
+            $data_to_save['user_consent'] = $executive_user_signature['user_consent'];
+            //
+            $whereArray = [
+                'company_sid' => $companies_row['company_sid'],
+                'user_sid' => $companies_row['logged_in_sid'],
+                'user_type' => 'employee'
+            ];
+            // Check if the e signature is already been assigned
+            if($this->db->where($whereArray)->count_all_results('e_signatures_data')){
+                //
+                $this->db->where($whereArray)->update('e_signatures_data', $data_to_save);
+            } else{
+                //
                 $data_to_save['company_sid'] = $companies_row['company_sid'];
-                $data_to_save['first_name'] = $executive_user_signature['first_name'];
-                $data_to_save['last_name'] =  $executive_user_signature['last_name'];
-                $data_to_save['email_address'] = $executive_user_signature['email_address'];
                 $data_to_save['user_sid'] = $companies_row['logged_in_sid'];
-                $data_to_save['signature'] = $executive_user_signature['signature'];
-                $data_to_save['init_signature'] = $executive_user_signature['init_signature'];
-                $data_to_save['signature_hash'] = $executive_user_signature['signature_hash'];
-                $data_to_save['signature_timestamp'] = $executive_user_signature['signature_timestamp'];
-                $data_to_save['signature_bas64_image'] = $executive_user_signature['signature_bas64_image'];
-                $data_to_save['init_signature_bas64_image'] = $executive_user_signature['init_signature_bas64_image'];
-                $data_to_save['active_signature'] = $executive_user_signature['active_signature'];
-                $data_to_save['ip_address'] = $executive_user_signature['ip_address'];
-                $data_to_save['user_agent'] = $executive_user_signature['user_agent'];
-                $data_to_save['user_consent'] = $executive_user_signature['user_consent'];
+                $data_to_save['user_type'] = 'employee';
                 $data_to_save['is_active'] = 1;
+                //
                 $this->db->insert('e_signatures_data', $data_to_save);
             }
-        } else {
-            return array();
         }
+
+        return true;
     }
 }

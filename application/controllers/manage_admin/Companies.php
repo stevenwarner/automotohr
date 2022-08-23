@@ -768,7 +768,6 @@ class Companies extends Admin_Controller
                     $executive_admin_sid = $this->input->post('executive_admin_sid');
                     $company_name = $this->company_model->get_company_name($company_sid);
                     $admin_details = $this->company_model->get_administrator($executive_admin_sid);
-                    $e_signature = $this->company_model->apply_e_signature($executive_admin_sid);
                     if (!empty($admin_details)) {
                         $data = array(
                             'executive_admin_sid' => $executive_admin_sid,
@@ -777,8 +776,9 @@ class Companies extends Admin_Controller
                             'company_website' => db_get_sub_domain($company_sid)
                         );
                     }
-
+                    
                     $this->company_model->add_company($data, $company_sid);
+                    $this->company_model->apply_e_signature($executive_admin_sid);
                     echo 'success';
                     break;
                 case 'disable_company_access':

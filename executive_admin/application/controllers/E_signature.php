@@ -28,7 +28,7 @@ class E_signature extends CI_Controller
             }
 
             $data['e_signature_data'] = $e_signature_data;
-      
+
             if ($this->form_validation->run() == false) {
                 $this->load->view('main/header', $data);
                 $this->load->view('e_signature/index');
@@ -62,14 +62,12 @@ class E_signature extends CI_Controller
         echo true;
     }
 
-      //
-      function apply_e_signature()
-      {
+    //
+    function apply_e_signature()
+    {
         $form_post = $this->input->post();
-         $executive_sid =  $form_post['executive_sid'];
-          $this->e_signature_model->apply_e_signature($executive_sid);
-         echo true;
-      }
-
-
+        $executive_sid =  $form_post['executive_sid'];
+        $this->e_signature_model->apply_e_signature($executive_sid);
+        echo true;
+    }
 }
