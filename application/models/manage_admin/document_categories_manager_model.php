@@ -8,7 +8,6 @@ class Document_categories_manager_model extends CI_Model
     }
 
 
-
     function get_all_system_job_categories_through_index($latter = 'a')
     {
         $this->db->select('*');
@@ -139,6 +138,7 @@ class Document_categories_manager_model extends CI_Model
     function add_job_category_industry($data_row)
     {
         $this->db->insert('job_category_industries', $data_row);
+        return $this->db->insert_id();
     }
 
     function update_job_category_industry($sid, $data_row)
@@ -210,7 +210,7 @@ class Document_categories_manager_model extends CI_Model
     function get_all_system_document_categories($limit = 0, $offset = 0)
     {
         //
-        if($limit === null){
+        if ($limit === null) {
             return $this->db->count_all_results('default_categories');
         }
         if ($limit > 0 && $offset >= 0) {
@@ -220,7 +220,7 @@ class Document_categories_manager_model extends CI_Model
         $this->db->select('sid, category_name, description');
         $records_obj = $this->db->get('default_categories');
         //
-        if(!$records_obj){
+        if (!$records_obj) {
             return [];
         }
         $categories = $records_obj->result_array();
@@ -261,7 +261,7 @@ class Document_categories_manager_model extends CI_Model
         $this->db->order_by('sid', 'ASC');
         $records_obj = $this->db->get('default_categories');
         //
-        if(!$records_obj){
+        if (!$records_obj) {
             return [];
         }
         $categories = $records_obj->result_array();
@@ -307,8 +307,6 @@ class Document_categories_manager_model extends CI_Model
         }
     }
 
-
-
     function document_industry_categories($industry_sid, $company_sid)
     {
         $this->db->select('categories_document_industry.category_sid');
@@ -350,4 +348,28 @@ class Document_categories_manager_model extends CI_Model
         $records_obj->free_result();
         return $categories;
     }
+
+
+    //
+    function insert_industry_to_categories($data)
+    {
+        if (!empty($data)) {
+            $this->db->insert('categories_document_industry', $data);
+        }
+    }
+    //
+    function delete_industry_to_categories($category_sid)
+    {
+        $this->db->where('category_sid', $category_sid);
+        $this->db->delete('categories_document_industry');
+    }
+   //
+   function delete_categories_documents_management($category_sid,$category_name)
+   {
+       $this->db->where('default_category_sid', $category_sid);
+       $this->db->where('name', $category_name);
+       $this->db->delete('documents_category_management');
+   }
+
+
 }

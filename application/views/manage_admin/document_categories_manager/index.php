@@ -81,6 +81,7 @@
                                                                                 <form id="form_delete_category_<?php echo $category['sid']; ?>" method="post" enctype="multipart/form-data" action="document_categories_manager/delete_document_category">
                                                                                     <input type="hidden" id="perform_action" name="perform_action" value="delete_category" />
                                                                                     <input type="hidden" id="category_sid" name="category_sid" value="<?php echo $category['sid']; ?>" />
+                                                                                    <input type="hidden"  name="category_name" value="<?php echo $category['category_name']; ?>" />
                                                                                     <button onclick="func_delete_category(<?php echo $category['sid']; ?>, '<?php echo $category['category_name']; ?>');" type="button" title="Delete" data-toggle="tooltip" data-placement="top" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
                                                                                 </form>
                                                                             </td>

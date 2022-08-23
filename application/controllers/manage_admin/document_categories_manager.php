@@ -303,7 +303,17 @@ class Document_categories_manager extends Admin_Controller
                 $insert_array['description'] = $post['categorydescription'];
                 $insert_array['updated_at'] = $insert_array['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
 
-                $this->document_categories_manager_model->add_category($insert_array);
+                $job_category_industries = $this->document_categories_manager_model->get_all_document_category_industries();
+                $category_sid = $this->document_categories_manager_model->add_category($insert_array);
+                if (!empty($category_sid) && !empty($job_category_industries)) {
+                    foreach ($job_category_industries as $row_industries) {
+                        $insert_array = array();
+                        $insert_array['industry_sid'] = $row_industries['sid'];
+                        $insert_array['category_sid'] = $category_sid;
+                        $this->document_categories_manager_model->insert_industry_to_categories($insert_array);
+                    }
+                }
+
                 $this->res['Status'] = TRUE;
                 $this->res['Message'] = "Category Added Successfully";
                 $this->resp();
@@ -334,7 +344,20 @@ class Document_categories_manager extends Admin_Controller
                 $data_to_save['industry_name'] = $post['industryname'];
                 $data_to_save['short_description'] = $post['shortdescription'];
                 $data_to_save['status'] = 1;
-                $this->document_categories_manager_model->add_job_category_industry($data_to_save);
+
+                $all_categories = $this->document_categories_manager_model->get_all_system_document_categories();
+                $industry_id = $this->document_categories_manager_model->add_job_category_industry($data_to_save);
+
+                if (!empty($industry_id) && !empty($all_categories)) {
+                    foreach ($all_categories as $row_category) {
+                        $insert_array = array();
+                        $insert_array['category_sid'] = $row_category['sid'];
+                        $insert_array['industry_sid'] = $industry_id;
+                        $this->document_categories_manager_model->insert_industry_to_categories($insert_array);
+                    }
+                }
+
+
                 $this->res['Status'] = TRUE;
                 $this->res['Message'] = "Industry added successfully";
                 $this->resp();
@@ -358,9 +381,13 @@ class Document_categories_manager extends Admin_Controller
 
 
     public function delete_document_category()
-    {
+    { 
         $category_sid = $this->input->post('category_sid');
+        $category_name = $this->input->post('category_name');
         $this->document_categories_manager_model->delete_document_category($category_sid);
+        $this->document_categories_manager_model->delete_industry_to_categories($category_sid);
+        $this->document_categories_manager_model->delete_industry_to_categories($category_sid);
+        $this->document_categories_manager_model->delete_categories_documents_management($category_sid,$category_name);
         $this->session->set_flashdata('message', '<strong>Success: </strong>Document Listing Category Successfully Deleted!');
         redirect('manage_admin/document_categories_manager', 'refresh');
     }
