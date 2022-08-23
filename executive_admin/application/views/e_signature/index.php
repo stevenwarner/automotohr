@@ -77,7 +77,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
 
                         <div class="heading-title page-title">
-                    <a class="black-btn pull-right" href="http://automotohr.local/executive_admin/dashboard"><i class="fa fa-long-arrow-left"></i> Back to Dashboard</a>
+                    <a class="black-btn pull-right" href="<?=base_url('dashboard');?>"><i class="fa fa-long-arrow-left"></i> Back to Dashboard</a>
                 </div>
                         </div>
 
