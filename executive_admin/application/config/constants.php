@@ -111,6 +111,18 @@ define('TALENT_NETWORK_SALES_EMAIL', 'Accounts@AutomotoHR.com'); // Talent netwo
 define('TALENT_NETWORK_SUPPORT_CONTACTNO', ' 888-794-0794 ext 2'); // Talent network support contact No
 define('TALENT_NETOWRK_SUPPORT_EMAIL', 'Support@AutomotoHR.com'); // Talent network support email address
 
+
+//
+define('SIGNATURE_CONSENT_HEADING', '<strong>CONSENT AND NOTICE REGARDING ELECTRONIC COMMUNICATIONS</strong> FOR <strong>{{company_name}}</strong><br/>'); // Signature consent heading text
+define('SIGNATURE_CONSENT_TITLE', '1. Electronic Signature Agreement.'); // Signature consent title text
+define('SIGNATURE_CONSENT_DESCRIPTION', "By selecting the &quot;I Accept&quot; button, you are signing this Agreement electronically. You agree your electronic signature is the legal equivalent of your manual signature on this Agreement. By selecting &quot;I Accept&quot; you consent to be legally bound by this Agreement's terms and conditions. You further agree that your use of a key pad, mouse or other device to select an item, button, icon or similar act/action, or to otherwise provide {{company_name}}, or in accessing or making any transaction regarding any agreement, acknowledgement, consent terms, disclosures or conditions constitutes your signature (hereafter referred to as &quot;E-Signature&quot;), acceptance and agreement as if actually signed by you in writing. You also agree that no certification authority or other third party verification is necessary to validate your E-Signature and that the lack of such certification or third party verification will not in any way affect the enforceability of your E-Signature or any resulting contract between you and {{company_name}}. You also represent that you are authorized to enter into this Agreement for all persons who own or are authorized to access any of your accounts and that such persons will be bound by the terms of this Agreement. You further agree that each use of your E-Signature in obtaining a {{company_name}} service constitutes your agreement to be bound by the terms and conditions of the {{company_name}} Disclosures and Agreements as they exist on the date of your E-Signature."); // Signature consent discription text
+define('SIGNATURE_CONSENT_CHECKBOX', 'I understand that checking this box constitutes a legal signature confirming that I acknowledge and agree to the below Terms of Acceptance.'); // Signature consent checkbox label text
+define('SIGNATURE_CONSENT_BUTTON', 'I Consent and Accept the Terms of this Electronic Signature Agreement'); // Signature consent submit button text
+
+
+
+
+
 $email_header = '';
 $email_header .= '<div class="content" style="font-size: 100%; line-height: 1.6em; display: block; max-width: 1000px; margin: 0 auto; padding: 0; position:relative">';
 $email_header .= '<div style="width: calc(100% - 40px); padding:20px; text-align:center; box-sizing:border-box; background:url(' . STORE_FULL_URL_SSL . 'assets/images/bg-body.jpg); opacity:0.9;  top:0; left:0;">';

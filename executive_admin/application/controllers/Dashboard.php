@@ -10,7 +10,7 @@ class Dashboard extends CI_Controller {
         parent::__construct();
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         $this->load->model('Users_model');
-
+        
         $this->resp['Status'] = false;
         $this->resp['Response'] = 'Invalid Request!';
     }
@@ -24,7 +24,17 @@ class Dashboard extends CI_Controller {
             $executive_user_companies                                           = $this->Users_model->get_executive_users_companies($data['executive_user']['sid'], $keyword);
             $deleted_companies                                                  = array();
             $this->load->model('message_model');
-            
+            $this->load->model('e_signature_model');
+
+            $e_signature_data = $this->e_signature_model->get_e_signature($data['exadminId']);
+
+            if (!empty($e_signature_data)) {
+                $data['applysignature'] = 1;
+            } else {
+                $data['applysignature'] = 0;
+            }
+           
+
             if(!empty($executive_user_companies)){ // check for deleted companies
                foreach($executive_user_companies as $key => $value) {
                    $company_details                                             = $this->Users_model->get_company_details($value['company_sid']);

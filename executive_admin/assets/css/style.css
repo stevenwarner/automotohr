@@ -1,4 +1,36 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic&subset=latin,cyrillic-ext,greek-ext,greek,vietnamese,latin-ext,cyrillic);
+
+
+@import url("https://fonts.googleapis.com/css?family=Sofia");
+@import url("https://fonts.googleapis.com/css?family=Lobster&subset=cyrillic,cyrillic-ext,latin-ext,vietnamese");
+@import url("https://fonts.googleapis.com/css?family=Pacifico&subset=cyrillic,latin-ext,vietnamese");
+@import url("https://fonts.googleapis.com/css?family=Vibur");
+@import url("https://fonts.googleapis.com/css?family=Herr+Von+Muellerhoff");
+@import url("https://fonts.googleapis.com/css?family=Alex+Brush");
+@import url("https://fonts.googleapis.com/css?family=Sacramento");
+@import url("https://fonts.googleapis.com/css?family=Galada");
+@import url("https://fonts.googleapis.com/css?family=Great+Vibes");
+@font-face {
+  font-family: "Montserrat-Regular";
+  src: url("../fonts/Montserrat-Regular.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/Montserrat-Regular.woff") format("woff"),
+    url("../fonts/Montserrat-Regular.ttf") format("truetype"),
+    url("../fonts/Montserrat-Regular.svg#Montserrat-Regular") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Conv_SCRIPTIN";
+  src: url("../fonts/SCRIPTIN.eot");
+  src: local("☺"), url("../fonts/SCRIPTIN.woff") format("woff"),
+    url("../fonts/SCRIPTIN.ttf") format("truetype"),
+    url("../fonts/SCRIPTIN.svg") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 *{
     margin: 0;
     padding: 0;
@@ -1000,7 +1032,6 @@ label .hr-required {
 
 
 
-
 .contacts_label{
     font-family: arial;
     color: white;
@@ -1611,4 +1642,181 @@ span.required {
 }
 .img-inlineblock {
     display: inline-block !important;
+}
+
+
+
+
+
+
+.signature-variations .control {
+    font-size: 20px;
+  }
+  .signature-variations .control .control__indicator {
+    top: 9px;
+  }
+  .e_signature_font_family_1 {
+    font-family: "Conv_SCRIPTIN";
+    letter-spacing: 5px;
+    word-spacing: 8px;
+    font-weight: bold;
+  }
+  .e_signature_font_family_2 {
+    font-family: "Herr Von Muellerhoff", cursive;
+    word-spacing: 8px;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .e_signature_font_family_3 {
+    font-family: "Alex Brush", cursive;
+    word-spacing: 8px;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .e_signature_font_family_4 {
+    font-family: "Sacramento", cursive;
+    word-spacing: 8px;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .e_signature_font_family_5 {
+    font-family: "Great Vibes", cursive;
+    word-spacing: 8px;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .e_signature_font_family_6 {
+    font-family: "Sofia", cursive;
+    word-spacing: 8px;
+    font-size: 28px;
+  }
+  .e_signature_font_family_7 {
+    font-family: "Lobster", cursive;
+    word-spacing: 8px;
+    font-weight: bold;
+    font-size: 28px;
+  }
+  .e_signature_font_family_8 {
+    font-family: "Pacifico", cursive;
+    word-spacing: 8px;
+    font-weight: bold;
+    font-size: 28px;
+  }
+  .e_signature_font_family_9 {
+    font-family: "Vibur", cursive;
+    word-spacing: 8px;
+    font-size: 28px;
+  }
+  .e_signature_font_family_11 {
+    font-family: "Galada", cursive;
+    word-spacing: 8px;
+    font-size: 28px;
+  }
+  .e_signature_control__indicator {
+    top: 2px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background: #c6c6c6;
+    border-radius: 3px;
+  }
+  .e_signature_type_fixed_p {
+    height: 48px !important;
+    padding-left: 16px;
+    padding-right: 16px;
+    display: inline-block;
+  }
+
+  .red-paragragh {
+    font-style: italic;
+    color: #cc0000;
+  }
+
+  .file-loader,
+    .my_loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 99;
+    }
+
+    .loader-icon-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: auto;
+        z-index: 9999;
+        -webkit-transform: translate(-50%, -50%);
+        -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        -o-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .loader-icon-box i {
+        font-size: 14em;
+        color: #81b431;
+    }
+
+    .loader-text {
+        display: inline-block;
+        padding: 10px;
+        color: #000;
+        background-color: #fff;
+        border-radius: 5px;
+        text-align: center;
+        font-weight: 600;
+    } 
+
+    body .alertify .ajs-header {
+        background-color: #81b431;
+        color: #fff;
+    }
+    
+    body .alertify .ajs-commands button.ajs-close {
+        background-color: #fff;
+        border-radius: 100%;
+    }
+
+
+    .signature-canvas {
+        border: 1px dashed #666;
+        border-radius: 5px;
+    }
+
+
+    .wrapper-outer .btn-danger {
+        background-color: #c10000;
+    }
+    .wrapper-outer .btn {
+        border-radius: 0;
+        text-transform: capitalize;
+        border: none;
+        transition: all 0.3s ease-in 0s;
+        -webkit-transition: all 0.3s ease-in 0s;
+        -moz-transition: all 0.3s ease-in 0s;
+        -ms-transition: all 0.3s ease-in 0s;
+        -o-transition: all 0.3s ease-in 0s;
+    }
+
+.del-signature {
+    position: absolute;
+    top: 14px;
+    left: 17px;
+}
+    
+
+.btn-sm, .btn-group-sm > .btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
 }
