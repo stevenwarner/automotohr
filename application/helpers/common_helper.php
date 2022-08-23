@@ -15659,14 +15659,47 @@ if (!function_exists('addColumnsForDocumentAssigned')) {
     }
 }
 
+if (!function_exists('getDocumentReadableInfo')) {
+    function getDocumentReadableInfo($document, $type) {
+        //
+        $return_text = '';
+        //
+        switch ($type) {
+            // 
+            case "not_completed":
+                $return_text = $document['document_title']. '&nbsp;';
+                // $return_text = $return_text . $document['status'] ? '' : '<b>(revoked)</b>';
+                // $return_text = $return_text . $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
+                // $return_text = $return_text . $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
+                // $return_text = $return_text . $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
+                $return_text = $return_text . ($document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '');
+
+                if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
+                    $CI = &get_instance();
+                    $return_text = $return_text . "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $CI));
+                }
+
+                if ($document['approval_process'] == 1) {
+                    $return_text = $return_text . '<br><b class="text-danger">(Document Approval Pending)</b>';
+                }
+                break;
+                // 
+            case "download":
+                
+                break;
+
+            case "manage_category":
+                
+                break;
+        }  
+        //
+        return $return_text;    
+    }
+}    
 
 
-if (!function_exists('getdocumenttabpagesbutton')) {
-    /**
-     * 
-     */
-    function getdocumenttabpagesbutton($document, $button_type, $extra = [])
-    {
+if (!function_exists('getDocumentTabPagesButton')) {
+    function getDocumentTabPagesButton($document, $button_type, $extra = []) {
 
         if ($document['document_type'] == 'uploaded') {
             $doc_s3_path = '';
@@ -15682,102 +15715,138 @@ if (!function_exists('getdocumenttabpagesbutton')) {
             $isAuthorized = preg_match('/{{authorized_signature}}|{{authorized_signature_date}}/i', $document['document_description']);
             $listaction = getGeneratedDocumentURL($document, $extra['document_tab'], $isAuthorized);
         }
-
-
-        // 'print_url' => '',
-        //  'download_url' => '',
-
+        //
         switch ($button_type) {
-                // 
+            // 
             case "print":
-                $printBTN = '<a href="' . $listaction['print_url'] . '" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>';
-                return   $printBTN;
+                $print_btn = '<a href="' . $listaction['print_url'] . '" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>';
+                //
+                return   $print_btn;
                 break;
                 // 
             case "download":
-                $downloadBTN = '<a href="' . $listaction['download_url'] . '" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>';
-                return   $downloadBTN;
+                $download_btn = '<a href="' . $listaction['download_url'] . '" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>';
+                //
+                return   $download_btn;
                 break;
+
             case "manage_category":
-                $manage_categoryBTN = '<a href="javascript:void(0);" class="btn btn-success btn-sm btn-block jsCategoryManagerBTN" title="Modify Category"  data-sid="' . $document['document_sid'] . '">Manage Category</a>';
-                return   $manage_categoryBTN;
+                //
+                $manage_category_btn = '';
+                //
+                if ($extra['permissions']) {
+                    $manage_category_btn = '<a href="javascript:void(0);" class="btn btn-success btn-sm btn-block jsCategoryManagerBTN" title="Modify Category"  data-asid="' . $document['sid'] . '" data-sid="' . $document['document_sid'] . '">Manage Category</a>';
+                }    
+                //
+                return   $manage_category_btn;
                 break;
+
             case "preview_assigned":
-                if ($extra['hybrid_preview'] == 1) {
-                    $preview_assignedBTN = '<button data-id="' . $document['sid'] . '" data-document="assigned" class="btn btn-success btn-sm btn-block js-hybrid-preview">Preview Assigned</button>';
-                } else if($extra['data_type']=='offer_letter'){
-                    $preview_assignedBTN = '<button data-id="'.$document['sid'].'" data-type="offer_letter" data-document="assigned" class="btn btn-success btn-sm btn-block js-hybrid-preview">
-                    Preview Assigned
-                </button>';
-                }
-                else {
-                    $preview_assignedBTN = '<button class="btn btn-success btn-sm btn-block"
-                onclick="preview_latest_generic_function(this);"
-                date-letter-type="generated"
-                data-doc-sid="' . $document['sid'] . '"
-                data-on-action="assigned"
-                data-from="assigned_document">
-                Preview Assigned
-                </button>';
-                }
-                return   $preview_assignedBTN;
-                break;
-
-            case "modify":
-                $modifyBTN = '<button
-                class="btn btn-success btn-sm btn-block js-modify-assigned-document-btn"
-                data-id="' . $document['document_sid'] . '"
-                data-type="' . $extra['data_type'] . '"
-                title="Modify assigned document"
-            >Modify</button>';
-                return   $modifyBTN;
-                break;
-            case "manage_document":
-
-                if ($document['status'] == 1) {
-                    if ($extra['user_type'] == 'applicant') {
-                        $manage_document = '<a class="btn btn-success btn-sm btn-block" href="' . base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $extra['user_sid'] . '/' . $extra['job_list_sid']) . '">Manage Document</a>';
-                    } else {
-                        $manage_document = '<a class="btn btn-success btn-sm btn-block" href="' . base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $extra['user_sid']) . '">Manage Document</a>';
-                    }
+                //
+                $preview_assigned_btn = '';
+                //
+                if ($document['document_type'] == "hybrid_document") {
+                    $preview_assigned_btn = '<button data-id="' . $document['sid'] . '" data-document="assigned" class="btn btn-success btn-sm btn-block js-hybrid-preview"> Preview Assigned </button>';
+                } else if ($document['document_type'] == 'offer_letter') {
+                    $preview_assigned_btn = '<button data-id="'.$document['sid'].'" data-type="offer_letter" data-document="assigned" class="btn btn-success btn-sm btn-block js-hybrid-preview"> Preview Assigned </button>';
+                } else if ($document['document_type'] == 'uploaded') {
+                    $btn_show = empty($document['document_s3_name']) ? 'disabled' : '';
+                    //
+                    $preview_assigned_btn = '<button class="btn btn-success btn-sm btn-block" onclick="preview_latest_generic_function(this);" date-letter-type="uploaded" data-on-action="assigned" data-preview-url="'. AWS_S3_BUCKET_URL . $document['document_s3_name'] .'" data-s3-name="'. $document['document_s3_name'].'" '.$btn_show.'> Preview Assigned </button>';
                 } else {
-                        $manage_document = '<button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>';
+                    $preview_assigned_btn = '<button class="btn btn-success btn-sm btn-block" onclick="preview_latest_generic_function(this);" date-letter-type="generated" data-doc-sid="' . $document['sid'] . '" data-on-action="assigned" data-from="assigned_document"> Preview Assigned </button>';
                 }
+                //
+                return   $preview_assigned_btn;
+                break;
 
-                return   $manage_document;
+            case "modify_document":
+                //
+                $modify_btn = '';
+                //
+                if ($extra['permissions'] && $document['isdoctolibrary'] == 0) {
+                    $modify_btn = '<button class="btn btn-success btn-sm btn-block js-modify-assigned-document-btn" data-id="' . $document['document_sid'] . '" data-type="' . $extra['data_type'] . '" title="Modify assigned document">Modify</button>';
+                }
+                //
+                return $modify_btn;
+                break;
+
+            case "manage_document":
+                //
+                $manage_document_btn = "";
+                //
+                if ($extra['permissions'] && $document['isdoctolibrary'] == 0) {
+                    if ($extra['user_type'] == 'applicant') {
+                        $manage_document_btn = '<a class="btn btn-success btn-sm btn-block" href="' . base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $extra['user_sid'] . '/' . $extra['job_list_sid']) . '">Manage Document</a>';
+                    } else {
+                        $manage_document_btn = '<a class="btn btn-success btn-sm btn-block" href="' . base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $extra['user_sid']) . '">Manage Document</a>';
+                    }
+                }    
+                //
+                return $manage_document_btn;
                 break;
 
             case "employer_section":
-
-                $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block';
-                $authorized_signature = $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $extra['current_user_signature'];
-
-                $employer_sectionBTN = '<a class="' . $btn_show . '  manage_authorized_signature" href="javascript:;" data-auth-sid="' . $document['sid'] . '" data-auth-signature="' . $authorized_signature . '">';
-                if ($document['authorized_sign_status'] == 0) {
-                    $employer_sectionBTN = $employer_sectionBTN . " Employer Section - Not Completed";
-                } else if ($document['authorized_sign_status'] == 1) {
-                    $employer_sectionBTN = $employer_sectionBTN . " Employer Section - Completed";
-                }
-                $employer_sectionBTN = $employer_sectionBTN . '</a>';
-
-                return $employer_sectionBTN;
+                //
+                $employer_section_btn = '';
+                //
+                if ($extra['permissions'] && $document['isdoctolibrary'] == 0 && $document['is_document_authorized'] == 1) {
+                    $btn_style = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block';
+                    $btn_text = $document['authorized_sign_status'] == 1 ? " Employer Section - Completed" : " Employer Section - Not Completed";
+                    $authorized_signature = $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $extra['current_user_signature'];
+                    //
+                    $employer_section_btn = '<a class="' . $btn_style . '  manage_authorized_signature" href="javascript:;" data-auth-sid="' . $document['sid'] . '" data-auth-signature="' . $authorized_signature . '">'. $btn_text . '</a>';
+                }    
+                //
+                return $employer_section_btn;
                 break;
 
             case "view_approver":
-                $view_approverBTN = '<button data-document_sid="' . $document['document_sid'] . '" data-user_type="' . $extra['user_type'] . '" data-user_sid="' . $extra['user_sid'] . '" class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                    View Approver(s)
-                   </button>';
-                return   $view_approverBTN;
+                //
+                $view_approver_btn = '';
+                //
+                if ($extra['permissions'] && $document['approval_process'] == 1) {
+                    $view_approver_btn = '<button data-document_sid="' . $document['document_sid'] . '" data-user_type="' . $extra['user_type'] . '" data-user_sid="' . $extra['user_sid'] . '" class="btn btn-success btn-block btn-sm jsViewDocumentApprovares"> View Approver(s) </button>';
+                }
+                //
+                return $view_approver_btn;
+                break;
+            case "revoke_library_document":
+                //
+                $revoke_library_btn = '';
+                //
+                if ($extra['permissions'] && $document['isdoctolibrary'] == 1) {
+                    $revoke_library_btn = '<a href="javascript:void(0);" class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary" title="Revoke Library Document" data-asid="'.$document['sid'].'"> Revoke </a>';
+                }
+                //
+                return $revoke_library_btn;
+                break;
+
+            case "email_reminder":
+                //
+                $email_reminder_btn = '';
+                //
+                if ($extra['permissions'] && $document['isdoctolibrary'] == 0 && $extra['user_type'] == "applicant") {
+                    $employee = $extra['employee_info'];
+                    $content = 'Send <strong>' . ($document['document_title']) . '</strong> to <strong>' . ($employee['first_name'] . ' ' . $employee['last_name']) . '</strong> by email';
+                    $content = 'Send document by email to complete without going through OnBoarding process.';
+                    //
+                    $email_reminder_btn = '<button class="btn btn-success btn-sm btn-block js-send-document" data-id="' . ($document['sid']) . '" data-placement="left"  title="Send Document By Email" data-content="' . ($content) . '">Send Document</button>';
+                }
+                //
+                return $email_reminder_btn;
                 break;
 
             case "view_I9":
                 $view_approverBTN = '<a href="javascript:;" data-type="I9_Form" data-status="' . $extra['form_status'] . '" data-doc_sid="' . $extra['form_sid'] . '" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View I9 form">View I9</a>';
                 return   $view_approverBTN;
                 break;
+
             case "view_W9":
                 $view_approverBTN = '<a href="javascript:;" data-type="W9_Form" data-status="' . $extra['form_status'] . '" data-doc_sid="' . $extra['form_sid'] . '" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View W9 form">View W9</a>';
                 return   $view_approverBTN;
                 break;
+
             case "view_W4":
                 $view_approverBTN = '<a href="javascript:;" data-type="W4_Form" data-status="'.$extra['form_status'].'" data-doc_sid="'.$extra['form_sid'].'" class="btn btn-success btn-block jsShowVarificationDocument" title="" placement="top" data-original-title="View W4 form">View W4</a>';
                 return   $view_approverBTN;

@@ -59,7 +59,7 @@ $assignIdObj = $confidential_sids;
                                 </span>
                             </div>
 
-                            <?php $this->load->view('hr_documents_management/documents_assignment_tab_pages_new'); ?>
+                            <?php $this->load->view('hr_documents_management/documents_assignment_tab_pages'); ?>
 
                             <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
                                 <div class="row">
