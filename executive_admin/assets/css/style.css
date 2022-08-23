@@ -1032,7 +1032,6 @@ label .hr-required {
 
 
 
-
 .contacts_label{
     font-family: arial;
     color: white;
@@ -1648,6 +1647,8 @@ span.required {
 
 
 
+
+
 .signature-variations .control {
     font-size: 20px;
   }
@@ -1778,4 +1779,44 @@ span.required {
         background-color: #fff;
         border-radius: 100%;
     }
+
+
+    .signature-canvas {
+        border: 1px dashed #666;
+        border-radius: 5px;
+    }
+
+
+    .wrapper-outer .btn-danger {
+        background-color: #c10000;
+    }
+    .wrapper-outer .btn {
+        border-radius: 0;
+        text-transform: capitalize;
+        border: none;
+        transition: all 0.3s ease-in 0s;
+        -webkit-transition: all 0.3s ease-in 0s;
+        -moz-transition: all 0.3s ease-in 0s;
+        -ms-transition: all 0.3s ease-in 0s;
+        -o-transition: all 0.3s ease-in 0s;
+    }
+
+.del-signature {
+    position: absolute;
+    top: 14px;
+    left: 17px;
+}
     
+
+.btn-sm, .btn-group-sm > .btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+.btn-danger {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}

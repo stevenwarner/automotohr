@@ -3,7 +3,7 @@
 	<meta charset="utf-8">
 	<title>Executive Admin Panel</title>	
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css??v=11" />
 	<link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/responsive.css" />
 	<link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/font-awesome.css" />
     <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/alertifyjs/css/alertify.min.css" />

@@ -1,6 +1,47 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+
+
+<div class="emp-info-strip">
+    <div class="container">
+        <div class="emp-info-box">
+            <div class="figure">
+                <?php if (isset($executive_user['profile_picture']) && !empty($executive_user['profile_picture'])) { ?>
+                    <img class="img-responsive" src="<?php echo AWS_S3_BUCKET_URL . $executive_user['profile_picture']; ?>">
+                <?php   } else { ?>
+                    <span><?php echo substr($executive_user['first_name'], 0, 1) . substr($executive_user['last_name'], 0, 1); ?></span>
+                <?php   } ?>
+            </div>
+            <div class="text text-white">
+                <h3><?php echo $executive_user['first_name'] . ' ' . $executive_user['last_name']; ?>
+                    <br><span>Executive Admin</span>
+                </h3>
+                <ul class="contact-info">
+                    <?php if ($executive_user['direct_business_number']) { ?>
+                        <li><i class="fa fa-phone"></i> <?php echo $executive_user['direct_business_number']; ?></li>
+                    <?php   }
+
+                    if ($executive_user['cell_number']) { ?>
+                        <li><i class="fa fa-phone"></i> <?php echo $executive_user['cell_number']; ?></li>
+                    <?php   } ?>
+                    <li><i class="fa fa-envelope"></i>&nbsp;<?php echo $executive_user['email']; ?></li>
+                </ul>
+            </div>
+            <div class="btn-link-wrp">
+                <a href="<?php echo base_url('dashboard/my_profile'); ?>"><i class="fa fa-pencil"></i> my profile</a> <br>
+                <?php if ($executive_user['complynet_status']) {
+                    echo '<a href="javascript:;" id="admin-complynet-btn" class="btn btn-success btn-block" style="font-size: 18px; color:#fff; margin-top: 10px" > Complynet Dashboard</a>';
+                    echo '<a href="javascript:;" id="simple-admin-btn" class="btn btn-success btn-block" style="font-size: 18px;color:#fff; margin-top: 10px; display: none;"> Dashboard</a>';
+                } ?>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="main">
     <div class="container">
+
+    
         <div class="row">
             <div class="col-lg-12">
 
@@ -114,6 +155,7 @@
                                             </label>
                                         </div>
                                     </div>
+                                    <br>
 
 
                                     <?php if ($consent != 1) { ?>
@@ -445,6 +487,7 @@
                                             <button onclick="func_save_e_signature();" type="button" class="btn btn-success  break-word-text" <?php echo $consent == 1 ? 'disabled="disabled"' : '' ?>><?php echo SIGNATURE_CONSENT_BUTTON; ?></button>
                                         </div>
                                     </div>
+                                    <br>
                                 </form>
                             </div>
                         </div>
