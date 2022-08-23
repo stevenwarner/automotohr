@@ -505,6 +505,8 @@ class employers extends Admin_Controller
                 $insert_data['email'] = $email;
                 $insert_data['first_name'] = $first_name;
                 $insert_data['last_name'] = $last_name;
+                $insert_data['nick_name'] = $this->input->post('nick_name');
+                $insert_data['middle_name'] = $this->input->post('middle_name');
                 $insert_data['job_title'] = $job_title;
                 $insert_data['cell_number'] = $cell_number;
                 $insert_data['registration_date'] = $registration_date;

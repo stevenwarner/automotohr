@@ -84,7 +84,8 @@
                                         <li class="form-col-50-right">
                                             <label>last name:</label>
                                             <p><?php echo $employer["last_name"] ?></p>
-                                        </li>								
+                                        </li>
+                                      
                                         <li class="form-col-50-left">
                                             <label>email:</label>
                                             <p><?php echo $employer["email"] ?></p>
@@ -256,7 +257,21 @@
                                                 <label>last name:<samp class="red"> * </samp></label>
                                                 <input class="invoice-fields  <?php if (form_error('last_name') !== "") { ?> error <?php } ?>"  value="<?php echo set_value('last_name', $employer["last_name"]); ?>"  type="text" name="last_name">
                                                 <?php echo form_error('last_name'); ?>
-                                            </li>								
+                                            </li>
+                                            
+                                            
+                                            <li class="form-col-50-left">
+                                                <label>Nick Name:<span class="staric">*</span></label>
+                                                <input type="text" class="invoice-fields" name="nick_name" id="nick_name" value="<?php
+                                                if (isset($employer['nick_name'])) { echo $employer['nick_name']; } ?>">
+                                            </li>
+                                            <li class="form-col-50-right">
+                                                <label>Middle Name / Initial:<samp class="red"> * </samp></label>
+                                                <input class="invoice-fields"   type="text" name="middle_name" id="middle_name" value="<?php
+                                                if (isset($employer['middle_name'])) { echo $employer['middle_name']; } ?>">
+                                            </li>	
+
+
                                             <li class="form-col-50-left">
                                                 <label>email: <!--<samp class="red"> * </samp>--></label>
                                                 <input <?php if($employer['is_executive_admin'] == '1') { echo 'readonly'; }?> class="invoice-fields <?php if (form_error('email') !== "") { ?> error <?php } ?>"  value="<?php echo set_value('email', $employer["email"]); ?>"  type="email" name="email">

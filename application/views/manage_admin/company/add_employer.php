@@ -39,6 +39,23 @@
                                                         </div>
                                                     </div>
 
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                            <?php echo form_label('Nick Name', 'nick_name'); ?>
+                                                            <?php echo form_input('nick_name', set_value('nick_name'), 'class="hr-form-fileds"'); ?>
+                                                           
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
+                                                            <?php echo form_label('Middle Name', 'last_name'); ?>
+                                                            <?php echo form_input('middle_name', set_value('middle_name'), 'class="hr-form-fileds"'); ?>
+                                                        </div>
+                                                    </div>
+
+
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
                                                             <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?> 

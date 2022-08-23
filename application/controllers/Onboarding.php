@@ -1375,6 +1375,9 @@ class Onboarding extends CI_Controller
             $primary_info = array();
             $primary_info['first_name'] = $first_name;
             $primary_info['last_name'] = $last_name;
+            $primary_info['nick_name'] = $this->input->post('nick_name');
+            $primary_info['middle_name'] = $this->input->post('middle_name');
+
             // $primary_info['email'] = $email;
             $primary_info['address'] = $address;
             $primary_info['phone_number'] = $phone_number;

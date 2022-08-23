@@ -399,6 +399,8 @@ class Employee_management extends Public_Controller
                 $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
                 $user_information['last_name'] = $last_name;
+                $user_information['nick_name'] = $this->input->post('nick_name');
+                $user_information['middle_name'] = $this->input->post('middle_name');
                 $user_information['email'] = $email;
                 $user_information['job_title'] = $job_title;
                 $user_information['access_level'] = $access_level;
@@ -430,6 +432,8 @@ class Employee_management extends Public_Controller
                     $replacement_array['lastname'] = $last_name;
                     $replacement_array['first_name'] = $first_name;
                     $replacement_array['last_name'] = $last_name;
+                    $user_information['nick_name'] = $this->input->post('nick_name');
+                    $user_information['middle_name'] = $this->input->post('middle_name');
                     $replacement_array['email'] = $email;
                     $replacement_array['username'] = $username;
                     $replacement_array['company_name'] = $company_name;
@@ -439,8 +443,8 @@ class Employee_management extends Public_Controller
                     $employee_sid = $this->employee_model->add_employee($user_information);
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;
-                    $replacement_array['first_name'] = $first_name;
-                    $replacement_array['last_name'] = $last_name;
+                    $user_information['nick_name'] = $this->input->post('nick_name');
+                    $user_information['middle_name'] = $this->input->post('middle_name');
                     $replacement_array['email'] = $email;
                     $replacement_array['username'] = $username;
                     $replacement_array['company_name'] = $company_name;
@@ -1661,7 +1665,7 @@ class Employee_management extends Public_Controller
                     $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                     $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                     $data_to_insert['full_employment_application'] = serialize($full_emp_app);
-                 
+
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
                     if (isset($_POST['policies']) && !empty($_POST['policies'])) {
@@ -2181,6 +2185,8 @@ class Employee_management extends Public_Controller
                 $data = array(
                     'first_name' => $this->input->post('first_name'),
                     'last_name' => $this->input->post('last_name'),
+                    'nick_name' => $this->input->post('nick_name'),
+                    'middle_name' => $this->input->post('middle_name'),
                     'email' => $this->input->post('email'),
                     'Location_Country' => $this->input->post('Location_Country'),
                     'Location_State' => $this->input->post('Location_State'),
@@ -2269,7 +2275,7 @@ class Employee_management extends Public_Controller
                 $this->dashboard_model->update_user($sid, $data);
                 //
                 $difference = $this->findDifference($oldCompareData, $newCompareData);
-                
+
                 //
                 if ($difference['profile_changed'] == 1) {
                     $notification_list = $this->employee_model->get_employee_profile_notification_list($company_id, 'employee_Profile', 'active');
@@ -2287,11 +2293,11 @@ class Employee_management extends Public_Controller
                     $changedData .= '        </tr>';
                     $changedData .= '    </thead>';
                     $changedData .= '    <tbody>';
-                 
+
                     foreach ($difference['data'] as $k => $v) :
-                       
-                            if ($k != "ssn" ) {
-                        
+
+                        if ($k != "ssn") {
+
                             $changedData .= '        <tr>';
                             $changedData .= '            <th>' . (ucwords(str_replace('_', ' ', $k))) . '</th>';
                             if ($k == "dob") {
@@ -2312,24 +2318,22 @@ class Employee_management extends Public_Controller
                         }
 
                         $changedData .= '        </tr>';
-                   
-                     
+
+
                     endforeach;
                     $changedData .= '    </tbody>';
                     $changedData .= '</table>';
-                 
+
                     foreach ($notification_list as $notify_user) {
                         $replacement_array = array();
                         $replacement_array['company_name'] = ucwords($company_name);
                         $replacement_array['user-name'] = ucwords($notify_user['contact_name']);
                         $replacement_array['employee_name'] = $employee_name;
                         $replacement_array['changed_data'] = $changedData;
-                  
+
                         $message_hf = message_header_footer_domain($company_id, $company_name);
                         log_and_send_templated_email(EMPLOYEE_PROFILE_UPDATE, $notify_user['email'], $replacement_array, $message_hf);
                     }
-            
-
                 }
                 //
                 $employer = $this->dashboard_model->get_company_detail($sid);
@@ -3443,19 +3447,18 @@ class Employee_management extends Public_Controller
                 }
                 //   
                 if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
-                     //
+                    //
                     $dt[$key] = [
                         'old' => $data,
                         'new' => $form_data[$key]
                     ];
                     //
                     $profile_changed = 1;
-               
                 }
             }
         }
         //
-          
+
         return ['profile_changed' => $profile_changed, 'data' => $dt];
     }
 

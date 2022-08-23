@@ -189,6 +189,8 @@ class Hire_onboarding_applicant extends CI_Controller
         $employer_data = array();
         $employer_data['first_name'] = $applicant_profile_info['first_name'];
         $employer_data['last_name'] = $applicant_profile_info['last_name'];
+        $employer_data['middle_name'] = $applicant_profile_info['middle_name'];
+        $employer_data['nick_name'] = $applicant_profile_info['nick_name'];
         $employer_data['active'] = $employee_status;
         $employer_data['registration_date'] = $joining_date . date(' H:i:s');
         // $employer_data['registration_date'] = date('Y-m-d H:i:s', strtotime('+3 days'));
@@ -344,6 +346,8 @@ class Hire_onboarding_applicant extends CI_Controller
         if ($session['employer_detail']['access_level_plus'] != 1) {
             check_access_permissions($security_details, 'dashboard', 'hire_applicant_manually');
         }
+
+        
         //
         $company_sid        = $this->input->post('company_sid');
         $applicant_sid      = $this->input->post('applicant_sid');
@@ -365,7 +369,6 @@ class Hire_onboarding_applicant extends CI_Controller
         $first_name         = strtolower($applicant_detail['first_name']);
         $last_name          = strtolower($applicant_detail['last_name']);
         $username           = str_replace(' ', '', $first_name) . str_replace(' ', '', $last_name);
-
         $is_exist           = $this->hire_onboarding_applicant_model->is_username_exist($username);
 
         if ($is_exist == 1) {

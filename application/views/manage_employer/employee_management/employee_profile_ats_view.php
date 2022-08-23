@@ -110,7 +110,6 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
                                                     <label>Middle name / initial:</label>
                                                     <input class="invoice-fields  <?php if (form_error('middle_name') !== "") { ?> error <?php } ?>" value="<?php echo set_value('middle_name', $employer["middle_name"]); ?>" type="text" name="middle_name">
-                                                    <?php echo form_error('middle_name'); ?>
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 form-group">
                                                     <label>last name:</label>

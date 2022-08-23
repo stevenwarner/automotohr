@@ -1411,7 +1411,7 @@ class Hire_onboarding_applicant_model extends CI_Model
 
     function get_details_by_applicant_sid($applicant_sid)
     {
-        $this->db->select('first_name, last_name, email');
+        $this->db->select('first_name, last_name, email ,nick_name,middle_name');
         $this->db->where('sid', $applicant_sid);
 
         $records_obj = $this->db->get('portal_job_applications');

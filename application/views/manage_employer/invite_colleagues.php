@@ -42,6 +42,18 @@
                                                                                                                                                             ?>">
                                                     <?php echo form_error('last_name'); ?>
                                                 </li>
+
+
+
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Nick Name</label>
+                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="nick_name" id="nick_name" value="<?php if (isset($formpost['nick_name'])) { echo $formpost['nick_name'];  }  ?>">
+                                                </li>
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Middle Name / Initial</label>
+                                                    <input type="text" autocomplete="nope" class="invoice-fields" name="middle_name" id="middle_name" value="<?php if (isset($formpost['middle_name'])) {  echo $formpost['middle_name'];  }?>"> </li>
+
+
                                                 <li class="form-col-100 autoheight">
                                                     <label>E-Mail<span class="staric">*</span></label>
                                                     <input type="email" autocomplete="nope" class="invoice-fields" name="email" id="email" value="<?php
@@ -381,7 +393,7 @@
     $('.startdate').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
     }).val();
 </script>
