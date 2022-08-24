@@ -56,7 +56,8 @@
  */
 define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 
-require_once(dirname(__FILE__) . '/../../protected_files/bootstrap.php');
+require_once(dirname(__FILE__).'/../../protected_files/main.php');
+
 
 /*
  *---------------------------------------------------------------

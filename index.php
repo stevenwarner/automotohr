@@ -1,9 +1,9 @@
 <?php
 // 
-require_once(dirname(__FILE__).'/../protected_files/bootstrap.php');
+require_once(dirname(__FILE__).'/../protected_files/main.php');
 
 //
-redirect_traffic();
+//redirect_traffic();
 //
 $GLOBALS['BENCHMARKSTARTTIME'] = microtime(true);
 /**
