@@ -1,5 +1,6 @@
 <?php
 // 
+require_once(dirname(__FILE__).'/../protected_files/redirection.php');
 require_once(dirname(__FILE__).'/../protected_files/bootstrap.php');
 
 //

@@ -55,7 +55,7 @@
  * NOTE: If you change these, also change the error_reporting() code below
  */
 define('ENVIRONMENT', preg_match('/staging/i', $_SERVER['HTTP_HOST']) ? "testing" : "production");
-
+require_once(dirname(__FILE__).'/../../protected_files/redirection.php');
 require_once(dirname(__FILE__).'/../../protected_files/bootstrap.php');
 
 /*

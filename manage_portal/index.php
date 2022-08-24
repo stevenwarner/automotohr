@@ -1,8 +1,10 @@
 <?php
+/*
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] != 'https') {
 	$redirect = 'https://' . $_SERVER[HTTP_HOST] . $_SERVER[REQUEST_URI];
 	header("Location:$redirect");
 }
+*/
 
 /**
  * CodeIgniter
@@ -61,6 +63,7 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
 
 // 
+require_once(dirname(__FILE__).'/../../protected_files/redirection.php');
 require_once(dirname(__FILE__).'/../../protected_files/bootstrap.php');
 /*
  *---------------------------------------------------------------
