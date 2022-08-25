@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CodeIgniter
  *
@@ -7,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
+ * Copyright (c) 2019 - 2022, CodeIgniter Foundation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,14 +28,15 @@
  *
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
- * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
- * @license	http://opensource.org/licenses/MIT	MIT License
- * @link	http://codeigniter.com
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
+ * @copyright	Copyright (c) 2014 - 2019, British Columbia Institute of Technology (https://bcit.ca/)
+ * @copyright	Copyright (c) 2019 - 2022, CodeIgniter Foundation (https://codeigniter.com/)
+ * @license	https://opensource.org/licenses/MIT	MIT License
+ * @link	https://codeigniter.com
  * @since	Version 1.0.0
  * @filesource
  */
-defined('BASEPATH') or exit('No direct script access allowed');
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Database Driver Class
@@ -49,10 +49,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @subpackage	Drivers
  * @category	Database
  * @author		EllisLab Dev Team
- * @link		http://codeigniter.com/user_guide/database/
+ * @link		https://codeigniter.com/userguide3/database/
  */
-abstract class CI_DB_driver
-{
+abstract class CI_DB_driver {
 
 	/**
 	 * Data Source Name / Connect string
@@ -144,7 +143,7 @@ abstract class CI_DB_driver
 	 *
 	 * @var	int
 	 */
-	public $port			= '';
+	public $port			= NULL;
 
 	/**
 	 * Persistent connection flag
@@ -356,20 +355,6 @@ abstract class CI_DB_driver
 	 */
 	protected $_count_string = 'SELECT COUNT(*) AS ';
 
-	/**
-	 * table to save query logs
-	 *
-	 * @var string
-	 */
-	private $table = 'query_logs';
-
-	/**
-	 * use to save query logs
-	 *
-	 * @var array
-	 */
-	private $log_array = [];
-
 	// --------------------------------------------------------------------
 
 	/**
@@ -380,8 +365,10 @@ abstract class CI_DB_driver
 	 */
 	public function __construct($params)
 	{
-		if (is_array($params)) {
-			foreach ($params as $key => $val) {
+		if (is_array($params))
+		{
+			foreach ($params as $key => $val)
+			{
 				$this->$key = $val;
 			}
 		}
@@ -404,7 +391,8 @@ abstract class CI_DB_driver
 		 * Depending on the database driver, conn_id can be either
 		 * boolean TRUE, a resource or an object.
 		 */
-		if ($this->conn_id) {
+		if ($this->conn_id)
+		{
 			return TRUE;
 		}
 
@@ -414,13 +402,17 @@ abstract class CI_DB_driver
 		$this->conn_id = $this->db_connect($this->pconnect);
 
 		// No connection resource? Check if there is a failover else throw an error
-		if (!$this->conn_id) {
+		if ( ! $this->conn_id)
+		{
 			// Check if there is a failover set
-			if (!empty($this->failover) && is_array($this->failover)) {
+			if ( ! empty($this->failover) && is_array($this->failover))
+			{
 				// Go over all the failovers
-				foreach ($this->failover as $failover) {
+				foreach ($this->failover as $failover)
+				{
 					// Replace the current settings with those of the failover
-					foreach ($failover as $key => $val) {
+					foreach ($failover as $key => $val)
+					{
 						$this->$key = $val;
 					}
 
@@ -428,17 +420,20 @@ abstract class CI_DB_driver
 					$this->conn_id = $this->db_connect($this->pconnect);
 
 					// If a connection is made break the foreach loop
-					if ($this->conn_id) {
+					if ($this->conn_id)
+					{
 						break;
 					}
 				}
 			}
 
 			// We still don't have a connection?
-			if (!$this->conn_id) {
+			if ( ! $this->conn_id)
+			{
 				log_message('error', 'Unable to connect to the database');
 
-				if ($this->db_debug) {
+				if ($this->db_debug)
+				{
 					$this->display_error('db_unable_to_connect');
 				}
 
@@ -511,6 +506,18 @@ abstract class CI_DB_driver
 	// --------------------------------------------------------------------
 
 	/**
+	 * Last error
+	 *
+	 * @return	array
+	 */
+	public function error()
+	{
+		return array('code' => NULL, 'message' => NULL);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Set client character set
 	 *
 	 * @param	string
@@ -518,10 +525,12 @@ abstract class CI_DB_driver
 	 */
 	public function db_set_charset($charset)
 	{
-		if (method_exists($this, '_db_set_charset') && !$this->_db_set_charset($charset)) {
-			log_message('error', 'Unable to set database connection charset: ' . $charset);
+		if (method_exists($this, '_db_set_charset') && ! $this->_db_set_charset($charset))
+		{
+			log_message('error', 'Unable to set database connection charset: '.$charset);
 
-			if ($this->db_debug) {
+			if ($this->db_debug)
+			{
 				$this->display_error('db_unable_to_set_charset', $charset);
 			}
 
@@ -555,11 +564,13 @@ abstract class CI_DB_driver
 	 */
 	public function version()
 	{
-		if (isset($this->data_cache['version'])) {
+		if (isset($this->data_cache['version']))
+		{
 			return $this->data_cache['version'];
 		}
 
-		if (FALSE === ($sql = $this->_version())) {
+		if (FALSE === ($sql = $this->_version()))
+		{
 			return ($this->db_debug) ? $this->display_error('db_unsupported_function') : FALSE;
 		}
 
@@ -595,71 +606,45 @@ abstract class CI_DB_driver
 	 * @param	bool	$return_object = NULL
 	 * @return	mixed
 	 */
-	public function query($sql, $binds = FALSE, $return_object = NULL, $save_log = true)
+	public function query($sql, $binds = FALSE, $return_object = NULL)
 	{
-		// get the instance of CI
-		$_this = &get_instance();
-		//
-		$logged_in_user_id = 0;
-		//
-		if (!is_array($_this->session)) {
-			if ($_this->session->userdata('logged_in')) {
-				$logged_in_user_id = $_this->session->userdata('logged_in')['employer_detail']['sid'];
-			} else if ($_this->session->userdata('user_id')) {
-				$logged_in_user_id = $_this->session->userdata('user_id');
-			}
-		}
-		// check if $save_log is set
-		// log array
-		$this->log_array = [
-			'ip' => getUserIP(),
-			'error' => NULL,
-			'from_cache' => 0,
-			'start_time' => 0,
-			'end_time' => 0,
-			'benchmark' => 0,
-			'result' => 1,
-			'login_user_id' => $logged_in_user_id
-		];
-
-		if ($sql === '') {
-			// check if $save_log is set
-			$this->log_array['query_type'] = 'Empty';
-			$this->log_array['query_string'] = 'Empty Query';
-			$this->log_array['error'] = 'Empty';
-			$this->SaveLogQuery($sql);
-			log_message('error', 'Invalid query: ' . $sql);
+		if ($sql === '')
+		{
+			log_message('error', 'Invalid query: '.$sql);
 			return ($this->db_debug) ? $this->display_error('db_invalid_query') : FALSE;
-		} elseif (!is_bool($return_object)) {
-			$return_object = !$this->is_write_type($sql);
+		}
+		elseif ( ! is_bool($return_object))
+		{
+			$return_object = ! $this->is_write_type($sql);
 		}
 
 		// Verify table prefix and replace if necessary
-		if ($this->dbprefix !== '' && $this->swap_pre !== '' && $this->dbprefix !== $this->swap_pre) {
-			$sql = preg_replace('/(\W)' . $this->swap_pre . '(\S+?)/', '\\1' . $this->dbprefix . '\\2', $sql);
+		if ($this->dbprefix !== '' && $this->swap_pre !== '' && $this->dbprefix !== $this->swap_pre)
+		{
+			$sql = preg_replace('/(\W)'.$this->swap_pre.'(\S+?)/', '\\1'.$this->dbprefix.'\\2', $sql);
 		}
 
 		// Compile binds if needed
-		if ($binds !== FALSE) {
+		if ($binds !== FALSE)
+		{
 			$sql = $this->compile_binds($sql, $binds);
 		}
 
 		// Is query caching enabled? If the query is a "read type"
 		// we will load the caching class and return the previously
 		// cached query if it exists
-		if ($this->cache_on === TRUE && $return_object === TRUE && $this->_cache_init()) {
+		if ($this->cache_on === TRUE && $return_object === TRUE && $this->_cache_init())
+		{
 			$this->load_rdriver();
-			if (FALSE !== ($cache = $this->CACHE->read($sql))) {
-				// check if $save_log is set
-				$this->log_array['from_cache'] = 1;
-				$this->SaveLogQuery($sql);
-				// return response
+			if (FALSE !== ($cache = $this->CACHE->read($sql)))
+			{
 				return $cache;
 			}
 		}
 
 		// Save the query for debugging
-		if ($this->save_queries === TRUE) {
+		if ($this->save_queries === TRUE)
+		{
 			$this->queries[] = $sql;
 		}
 
@@ -667,46 +652,44 @@ abstract class CI_DB_driver
 		$time_start = microtime(TRUE);
 
 		// Run the Query
-		if (FALSE === ($this->result_id = $this->simple_query($sql))) {
-			if ($this->save_queries === TRUE) {
+		if (FALSE === ($this->result_id = $this->simple_query($sql)))
+		{
+			if ($this->save_queries === TRUE)
+			{
 				$this->query_times[] = 0;
 			}
 
 			// This will trigger a rollback if transactions are being used
-			if ($this->_trans_depth !== 0) {
+			if ($this->_trans_depth !== 0)
+			{
 				$this->_trans_status = FALSE;
 			}
 
 			// Grab the error now, as we might run some additional queries before displaying the error
 			$error = $this->error();
-			// check if $save_log is set
-			$this->log_array['error'] = $error['message'];
-			$this->SaveLogQuery($sql);
 
 			// Log errors
-			log_message('error', 'Query error: ' . $error['message'] . ' - Invalid query: ' . $sql);
+			log_message('error', 'Query error: '.$error['message'].' - Invalid query: '.$sql);
 
-			// Email Error 
-			if ($error['message']) {
-				//
-				save_db_errors($this->get_error(
-					array('Error Number: ' . $error['code'], $error['message'], $sql)
-				), "AutomotoHR");
-			}
-
-			if ($this->db_debug) {
+			if ($this->db_debug)
+			{
 				// We call this function in order to roll-back queries
 				// if transactions are enabled. If we don't call this here
 				// the error message will trigger an exit, causing the
 				// transactions to remain in limbo.
-				if ($this->_trans_depth !== 0) {
-					do {
-						$this->trans_complete();
-					} while ($this->_trans_depth !== 0);
+				while ($this->_trans_depth !== 0)
+				{
+					$trans_depth = $this->_trans_depth;
+					$this->trans_complete();
+					if ($trans_depth === $this->_trans_depth)
+					{
+						log_message('error', 'Database: Failure during an automated transaction commit/rollback!');
+						break;
+					}
 				}
 
 				// Display errors
-				return $this->display_error(array('Error Number: ' . $error['code'], $error['message'], $sql));
+				return $this->display_error(array('Error Number: '.$error['code'], $error['message'], $sql));
 			}
 
 			return FALSE;
@@ -716,12 +699,8 @@ abstract class CI_DB_driver
 		$time_end = microtime(TRUE);
 		$this->benchmark += $time_end - $time_start;
 
-		// check if $save_log is set
-		$this->log_array['start_time'] = $time_start;
-		$this->log_array['end_time'] = $time_end;
-		$this->log_array['benchmark'] = $this->benchmark;
-
-		if ($this->save_queries === TRUE) {
+		if ($this->save_queries === TRUE)
+		{
 			$this->query_times[] = $time_end - $time_start;
 		}
 
@@ -729,11 +708,11 @@ abstract class CI_DB_driver
 		$this->query_count++;
 
 		// Will we have a result object instantiated? If not - we'll simply return TRUE
-		if ($return_object !== TRUE) {
-			// check if $save_log is set
-			$this->SaveLogQuery($sql);
+		if ($return_object !== TRUE)
+		{
 			// If caching is enabled we'll auto-cleanup any existing files related to this particular URI
-			if ($this->cache_on === TRUE && $this->cache_autodel === TRUE && $this->_cache_init()) {
+			if ($this->cache_on === TRUE && $this->cache_autodel === TRUE && $this->_cache_init())
+			{
 				$this->CACHE->delete();
 			}
 
@@ -746,7 +725,8 @@ abstract class CI_DB_driver
 
 		// Is query caching enabled? If so, we'll serialize the
 		// result object and save it to a cache file.
-		if ($this->cache_on === TRUE && $this->_cache_init()) {
+		if ($this->cache_on === TRUE && $this->_cache_init())
+		{
 			// We'll create a new instance of the result object
 			// only without the platform specific driver since
 			// we can't use it with cached data (the query result
@@ -765,9 +745,6 @@ abstract class CI_DB_driver
 			$this->CACHE->write($sql, $CR);
 		}
 
-		// check if $save_log is set
-		$this->SaveLogQuery($sql);
-
 		return $RES;
 	}
 
@@ -780,11 +757,12 @@ abstract class CI_DB_driver
 	 */
 	public function load_rdriver()
 	{
-		$driver = 'CI_DB_' . $this->dbdriver . '_result';
+		$driver = 'CI_DB_'.$this->dbdriver.'_result';
 
-		if (!class_exists($driver, FALSE)) {
-			require_once(BASEPATH . 'database/DB_result.php');
-			require_once(BASEPATH . 'database/drivers/' . $this->dbdriver . '/' . $this->dbdriver . '_result.php');
+		if ( ! class_exists($driver, FALSE))
+		{
+			require_once(BASEPATH.'database/DB_result.php');
+			require_once(BASEPATH.'database/drivers/'.$this->dbdriver.'/'.$this->dbdriver.'_result.php');
 		}
 
 		return $driver;
@@ -803,8 +781,12 @@ abstract class CI_DB_driver
 	 */
 	public function simple_query($sql)
 	{
-		if (!$this->conn_id) {
-			$this->initialize();
+		if ( ! $this->conn_id)
+		{
+			if ( ! $this->initialize())
+			{
+				return FALSE;
+			}
 		}
 
 		return $this->_execute($sql);
@@ -827,10 +809,13 @@ abstract class CI_DB_driver
 
 	/**
 	 * Enable/disable Transaction Strict Mode
+	 *
 	 * When strict mode is enabled, if you are running multiple groups of
-	 * transactions, if one group fails all groups will be rolled back.
-	 * If strict mode is disabled, each group is treated autonomously, meaning
-	 * a failure of one group will not affect any others
+	 * transactions, if one group fails all subsequent groups will be
+	 * rolled back.
+	 *
+	 * If strict mode is disabled, each group is treated autonomously,
+	 * meaning a failure of one group will not affect any others
 	 *
 	 * @param	bool	$mode = TRUE
 	 * @return	void
@@ -846,22 +831,16 @@ abstract class CI_DB_driver
 	 * Start Transaction
 	 *
 	 * @param	bool	$test_mode = FALSE
-	 * @return	void
+	 * @return	bool
 	 */
 	public function trans_start($test_mode = FALSE)
 	{
-		if (!$this->trans_enabled) {
-			return;
+		if ( ! $this->trans_enabled)
+		{
+			return FALSE;
 		}
 
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if ($this->_trans_depth > 0) {
-			$this->_trans_depth += 1;
-			return;
-		}
-
-		$this->trans_begin($test_mode);
-		$this->_trans_depth += 1;
+		return $this->trans_begin($test_mode);
 	}
 
 	// --------------------------------------------------------------------
@@ -873,26 +852,21 @@ abstract class CI_DB_driver
 	 */
 	public function trans_complete()
 	{
-		if (!$this->trans_enabled) {
+		if ( ! $this->trans_enabled)
+		{
 			return FALSE;
 		}
 
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if ($this->_trans_depth > 1) {
-			$this->_trans_depth -= 1;
-			return TRUE;
-		} else {
-			$this->_trans_depth = 0;
-		}
-
 		// The query() function will set this flag to FALSE in the event that a query failed
-		if ($this->_trans_status === FALSE or $this->_trans_failure === TRUE) {
+		if ($this->_trans_status === FALSE OR $this->_trans_failure === TRUE)
+		{
 			$this->trans_rollback();
 
 			// If we are NOT running in strict mode, we will reset
-			// the _trans_status flag so that subsequent groups of transactions
-			// will be permitted.
-			if ($this->trans_strict === FALSE) {
+			// the _trans_status flag so that subsequent groups of
+			// transactions will be permitted.
+			if ($this->trans_strict === FALSE)
+			{
 				$this->_trans_status = TRUE;
 			}
 
@@ -900,8 +874,7 @@ abstract class CI_DB_driver
 			return FALSE;
 		}
 
-		$this->trans_commit();
-		return TRUE;
+		return $this->trans_commit();
 	}
 
 	// --------------------------------------------------------------------
@@ -919,6 +892,100 @@ abstract class CI_DB_driver
 	// --------------------------------------------------------------------
 
 	/**
+	 * Returns TRUE if a transaction is currently active
+	 *
+	 * @return	bool
+	 */
+	public function trans_active()
+	{
+		return (bool) $this->_trans_depth;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Begin Transaction
+	 *
+	 * @param	bool	$test_mode
+	 * @return	bool
+	 */
+	public function trans_begin($test_mode = FALSE)
+	{
+		if ( ! $this->trans_enabled)
+		{
+			return FALSE;
+		}
+		// When transactions are nested we only begin/commit/rollback the outermost ones
+		elseif ($this->_trans_depth > 0)
+		{
+			$this->_trans_depth++;
+			return TRUE;
+		}
+
+		// Reset the transaction failure flag.
+		// If the $test_mode flag is set to TRUE transactions will be rolled back
+		// even if the queries produce a successful result.
+		$this->_trans_failure = ($test_mode === TRUE);
+
+		if ($this->_trans_begin())
+		{
+			$this->_trans_status = TRUE;
+			$this->_trans_depth++;
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Commit Transaction
+	 *
+	 * @return	bool
+	 */
+	public function trans_commit()
+	{
+		if ( ! $this->trans_enabled OR $this->_trans_depth === 0)
+		{
+			return FALSE;
+		}
+		// When transactions are nested we only begin/commit/rollback the outermost ones
+		elseif ($this->_trans_depth > 1 OR $this->_trans_commit())
+		{
+			$this->_trans_depth--;
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Rollback Transaction
+	 *
+	 * @return	bool
+	 */
+	public function trans_rollback()
+	{
+		if ( ! $this->trans_enabled OR $this->_trans_depth === 0)
+		{
+			return FALSE;
+		}
+		// When transactions are nested we only begin/commit/rollback the outermost ones
+		elseif ($this->_trans_depth > 1 OR $this->_trans_rollback())
+		{
+			$this->_trans_depth--;
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Compile Bindings
 	 *
 	 * @param	string	the sql statement
@@ -927,12 +994,17 @@ abstract class CI_DB_driver
 	 */
 	public function compile_binds($sql, $binds)
 	{
-		if (empty($binds) or empty($this->bind_marker) or strpos($sql, $this->bind_marker) === FALSE) {
+		if (empty($this->bind_marker) OR strpos($sql, $this->bind_marker) === FALSE)
+		{
 			return $sql;
-		} elseif (!is_array($binds)) {
+		}
+		elseif ( ! is_array($binds))
+		{
 			$binds = array($binds);
 			$bind_count = 1;
-		} else {
+		}
+		else
+		{
 			// Make sure we're using numeric keys
 			$binds = array_values($binds);
 			$bind_count = count($binds);
@@ -942,35 +1014,36 @@ abstract class CI_DB_driver
 		$ml = strlen($this->bind_marker);
 
 		// Make sure not to replace a chunk inside a string that happens to match the bind marker
-		if ($c = preg_match_all("/'[^']*'/i", $sql, $matches)) {
-			$c = preg_match_all(
-				'/' . preg_quote($this->bind_marker, '/') . '/i',
-				str_replace(
-					$matches[0],
+		if ($c = preg_match_all("/'[^']*'|\"[^\"]*\"/i", $sql, $matches))
+		{
+			$c = preg_match_all('/'.preg_quote($this->bind_marker, '/').'/i',
+				str_replace($matches[0],
 					str_replace($this->bind_marker, str_repeat(' ', $ml), $matches[0]),
-					$sql,
-					$c
-				),
-				$matches,
-				PREG_OFFSET_CAPTURE
-			);
+					$sql, $c),
+				$matches, PREG_OFFSET_CAPTURE);
 
 			// Bind values' count must match the count of markers in the query
-			if ($bind_count !== $c) {
+			if ($bind_count !== $c)
+			{
 				return $sql;
 			}
-		} elseif (($c = preg_match_all('/' . preg_quote($this->bind_marker, '/') . '/i', $sql, $matches, PREG_OFFSET_CAPTURE)) !== $bind_count) {
+		}
+		elseif (($c = preg_match_all('/'.preg_quote($this->bind_marker, '/').'/i', $sql, $matches, PREG_OFFSET_CAPTURE)) !== $bind_count)
+		{
 			return $sql;
 		}
 
-		do {
+		do
+		{
 			$c--;
 			$escaped_value = $this->escape($binds[$c]);
-			if (is_array($escaped_value)) {
-				$escaped_value = '(' . implode(',', $escaped_value) . ')';
+			if (is_array($escaped_value))
+			{
+				$escaped_value = '('.implode(',', $escaped_value).')';
 			}
 			$sql = substr_replace($sql, $escaped_value, $matches[0][$c][1], $ml);
-		} while ($c !== 0);
+		}
+		while ($c !== 0);
 
 		return $sql;
 	}
@@ -985,7 +1058,7 @@ abstract class CI_DB_driver
 	 */
 	public function is_write_type($sql)
 	{
-		return (bool) preg_match('/^\s*"?(SET|INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD|COPY|ALTER|RENAME|GRANT|REVOKE|LOCK|UNLOCK|REINDEX)\s/i', $sql);
+		return (bool) preg_match('/^\s*"?(SET|INSERT|UPDATE|DELETE|REPLACE|CREATE|DROP|TRUNCATE|LOAD|COPY|ALTER|RENAME|GRANT|REVOKE|LOCK|UNLOCK|REINDEX|MERGE)\s/i', $sql);
 	}
 
 	// --------------------------------------------------------------------
@@ -1038,14 +1111,21 @@ abstract class CI_DB_driver
 	 */
 	public function escape($str)
 	{
-		if (is_array($str)) {
+		if (is_array($str))
+		{
 			$str = array_map(array(&$this, 'escape'), $str);
 			return $str;
-		} elseif (is_string($str) or (is_object($str) && method_exists($str, '__toString'))) {
-			return "'" . $this->escape_str($str) . "'";
-		} elseif (is_bool($str)) {
+		}
+		elseif (is_string($str) OR (is_object($str) && method_exists($str, '__toString')))
+		{
+			return "'".$this->escape_str($str)."'";
+		}
+		elseif (is_bool($str))
+		{
 			return ($str === FALSE) ? 0 : 1;
-		} elseif ($str === NULL) {
+		}
+		elseif ($str === NULL)
+		{
 			return 'NULL';
 		}
 
@@ -1063,8 +1143,10 @@ abstract class CI_DB_driver
 	 */
 	public function escape_str($str, $like = FALSE)
 	{
-		if (is_array($str)) {
-			foreach ($str as $key => $val) {
+		if (is_array($str))
+		{
+			foreach ($str as $key => $val)
+			{
 				$str[$key] = $this->escape_str($val, $like);
 			}
 
@@ -1074,10 +1156,11 @@ abstract class CI_DB_driver
 		$str = $this->_escape_str($str);
 
 		// escape LIKE condition wildcards
-		if ($like === TRUE) {
+		if ($like === TRUE)
+		{
 			return str_replace(
 				array($this->_like_escape_chr, '%', '_'),
-				array($this->_like_escape_chr . $this->_like_escape_chr, $this->_like_escape_chr . '%', $this->_like_escape_chr . '_'),
+				array($this->_like_escape_chr.$this->_like_escape_chr, $this->_like_escape_chr.'%', $this->_like_escape_chr.'_'),
 				$str
 			);
 		}
@@ -1104,14 +1187,14 @@ abstract class CI_DB_driver
 	// --------------------------------------------------------------------
 
 	/**
-	 * Platform-dependant string escape
+	 * Platform-dependent string escape
 	 *
 	 * @param	string
 	 * @return	string
 	 */
 	protected function _escape_str($str)
 	{
-		return str_replace("'", "''", remove_invisible_characters($str));
+		return str_replace("'", "''", remove_invisible_characters($str, FALSE));
 	}
 
 	// --------------------------------------------------------------------
@@ -1144,12 +1227,14 @@ abstract class CI_DB_driver
 	 */
 	public function count_all($table = '')
 	{
-		if ($table === '') {
+		if ($table === '')
+		{
 			return 0;
 		}
 
-		$query = $this->query($this->_count_string . $this->escape_identifiers('numrows') . ' FROM ' . $this->protect_identifiers($table, TRUE, NULL, FALSE));
-		if ($query->num_rows() === 0) {
+		$query = $this->query($this->_count_string.$this->escape_identifiers('numrows').' FROM '.$this->protect_identifiers($table, TRUE, NULL, FALSE));
+		if ($query->num_rows() === 0)
+		{
 			return 0;
 		}
 
@@ -1169,25 +1254,34 @@ abstract class CI_DB_driver
 	public function list_tables($constrain_by_prefix = FALSE)
 	{
 		// Is there a cached result?
-		if (isset($this->data_cache['table_names'])) {
+		if (isset($this->data_cache['table_names']))
+		{
 			return $this->data_cache['table_names'];
 		}
 
-		if (FALSE === ($sql = $this->_list_tables($constrain_by_prefix))) {
+		if (FALSE === ($sql = $this->_list_tables($constrain_by_prefix)))
+		{
 			return ($this->db_debug) ? $this->display_error('db_unsupported_function') : FALSE;
 		}
 
 		$this->data_cache['table_names'] = array();
 		$query = $this->query($sql);
 
-		foreach ($query->result_array() as $row) {
+		foreach ($query->result_array() as $row)
+		{
 			// Do we know from which column to get the table name?
-			if (!isset($key)) {
-				if (isset($row['table_name'])) {
+			if ( ! isset($key))
+			{
+				if (isset($row['table_name']))
+				{
 					$key = 'table_name';
-				} elseif (isset($row['TABLE_NAME'])) {
+				}
+				elseif (isset($row['TABLE_NAME']))
+				{
 					$key = 'TABLE_NAME';
-				} else {
+				}
+				else
+				{
 					/* We have no other choice but to just get the first element's key.
 					 * Due to array_shift() accepting its argument by reference, if
 					 * E_STRICT is on, this would trigger a warning. So we'll have to
@@ -1227,35 +1321,38 @@ abstract class CI_DB_driver
 	 */
 	public function list_fields($table)
 	{
-		// Is there a cached result?
-		if (isset($this->data_cache['field_names'][$table])) {
-			return $this->data_cache['field_names'][$table];
-		}
-
-		if (FALSE === ($sql = $this->_list_columns($table))) {
+		if (FALSE === ($sql = $this->_list_columns($table)))
+		{
 			return ($this->db_debug) ? $this->display_error('db_unsupported_function') : FALSE;
 		}
 
 		$query = $this->query($sql);
-		$this->data_cache['field_names'][$table] = array();
+		$fields = array();
 
-		foreach ($query->result_array() as $row) {
+		foreach ($query->result_array() as $row)
+		{
 			// Do we know from where to get the column's name?
-			if (!isset($key)) {
-				if (isset($row['column_name'])) {
+			if ( ! isset($key))
+			{
+				if (isset($row['column_name']))
+				{
 					$key = 'column_name';
-				} elseif (isset($row['COLUMN_NAME'])) {
+				}
+				elseif (isset($row['COLUMN_NAME']))
+				{
 					$key = 'COLUMN_NAME';
-				} else {
+				}
+				else
+				{
 					// We have no other choice but to just get the first element's key.
 					$key = key($row);
 				}
 			}
 
-			$this->data_cache['field_names'][$table][] = $row[$key];
+			$fields[] = $row[$key];
 		}
 
-		return $this->data_cache['field_names'][$table];
+		return $fields;
 	}
 
 	// --------------------------------------------------------------------
@@ -1298,43 +1395,54 @@ abstract class CI_DB_driver
 	 */
 	public function escape_identifiers($item)
 	{
-		if ($this->_escape_char === '' or empty($item) or in_array($item, $this->_reserved_identifiers)) {
+		if ($this->_escape_char === '' OR empty($item) OR in_array($item, $this->_reserved_identifiers))
+		{
 			return $item;
-		} elseif (is_array($item)) {
-			foreach ($item as $key => $value) {
+		}
+		elseif (is_array($item))
+		{
+			foreach ($item as $key => $value)
+			{
 				$item[$key] = $this->escape_identifiers($value);
 			}
 
 			return $item;
 		}
 		// Avoid breaking functions and literal values inside queries
-		elseif (ctype_digit($item) or $item[0] === "'" or ($this->_escape_char !== '"' && $item[0] === '"') or strpos($item, '(') !== FALSE) {
+		elseif (ctype_digit($item) OR $item[0] === "'" OR ($this->_escape_char !== '"' && $item[0] === '"') OR strpos($item, '(') !== FALSE)
+		{
 			return $item;
 		}
 
 		static $preg_ec = array();
 
-		if (empty($preg_ec)) {
-			if (is_array($this->_escape_char)) {
+		if (empty($preg_ec))
+		{
+			if (is_array($this->_escape_char))
+			{
 				$preg_ec = array(
 					preg_quote($this->_escape_char[0], '/'),
 					preg_quote($this->_escape_char[1], '/'),
 					$this->_escape_char[0],
 					$this->_escape_char[1]
 				);
-			} else {
+			}
+			else
+			{
 				$preg_ec[0] = $preg_ec[1] = preg_quote($this->_escape_char, '/');
 				$preg_ec[2] = $preg_ec[3] = $this->_escape_char;
 			}
 		}
 
-		foreach ($this->_reserved_identifiers as $id) {
-			if (strpos($item, '.' . $id) !== FALSE) {
-				return preg_replace('/' . $preg_ec[0] . '?([^' . $preg_ec[1] . '\.]+)' . $preg_ec[1] . '?\./i', $preg_ec[2] . '$1' . $preg_ec[3] . '.', $item);
+		foreach ($this->_reserved_identifiers as $id)
+		{
+			if (strpos($item, '.'.$id) !== FALSE)
+			{
+				return preg_replace('/'.$preg_ec[0].'?([^'.$preg_ec[1].'\.]+)'.$preg_ec[1].'?\./i', $preg_ec[2].'$1'.$preg_ec[3].'.', $item);
 			}
 		}
 
-		return preg_replace('/' . $preg_ec[0] . '?([^' . $preg_ec[1] . '\.]+)' . $preg_ec[1] . '?(\.)?/i', $preg_ec[2] . '$1' . $preg_ec[3] . '$2', $item);
+		return preg_replace('/'.$preg_ec[0].'?([^'.$preg_ec[1].'\.]+)'.$preg_ec[1].'?(\.)?/i', $preg_ec[2].'$1'.$preg_ec[3].'$2', $item);
 	}
 
 	// --------------------------------------------------------------------
@@ -1350,7 +1458,8 @@ abstract class CI_DB_driver
 	{
 		$fields = $values = array();
 
-		foreach ($data as $key => $val) {
+		foreach ($data as $key => $val)
+		{
 			$fields[] = $this->escape_identifiers($key);
 			$values[] = $this->escape($val);
 		}
@@ -1372,7 +1481,7 @@ abstract class CI_DB_driver
 	 */
 	protected function _insert($table, $keys, $values)
 	{
-		return 'INSERT INTO ' . $table . ' (' . implode(', ', $keys) . ') VALUES (' . implode(', ', $values) . ')';
+		return 'INSERT INTO '.$table.' ('.implode(', ', $keys).') VALUES ('.implode(', ', $values).')';
 	}
 
 	// --------------------------------------------------------------------
@@ -1387,14 +1496,16 @@ abstract class CI_DB_driver
 	 */
 	public function update_string($table, $data, $where)
 	{
-		if (empty($where)) {
+		if (empty($where))
+		{
 			return FALSE;
 		}
 
 		$this->where($where);
 
 		$fields = array();
-		foreach ($data as $key => $val) {
+		foreach ($data as $key => $val)
+		{
 			$fields[$this->protect_identifiers($key)] = $this->escape($val);
 		}
 
@@ -1416,14 +1527,15 @@ abstract class CI_DB_driver
 	 */
 	protected function _update($table, $values)
 	{
-		foreach ($values as $key => $val) {
-			$valstr[] = $key . ' = ' . $val;
+		foreach ($values as $key => $val)
+		{
+			$valstr[] = $key.' = '.$val;
 		}
 
-		return 'UPDATE ' . $table . ' SET ' . implode(', ', $valstr)
-			. $this->_compile_wh('qb_where')
-			. $this->_compile_order_by()
-			. ($this->qb_limit ? ' LIMIT ' . $this->qb_limit : '');
+		return 'UPDATE '.$table.' SET '.implode(', ', $valstr)
+			.$this->_compile_wh('qb_where')
+			.$this->_compile_order_by()
+			.($this->qb_limit !== FALSE ? ' LIMIT '.$this->qb_limit : '');
 	}
 
 	// --------------------------------------------------------------------
@@ -1451,27 +1563,30 @@ abstract class CI_DB_driver
 	{
 		static $_operators;
 
-		if (empty($_operators)) {
+		if (empty($_operators))
+		{
 			$_les = ($this->_like_escape_str !== '')
-				? '\s+' . preg_quote(trim(sprintf($this->_like_escape_str, $this->_like_escape_chr)), '/')
+				? '\s+'.preg_quote(trim(sprintf($this->_like_escape_str, $this->_like_escape_chr)), '/')
 				: '';
 			$_operators = array(
-				'\s*(?:<|>|!)?=\s*',		// =, <=, >=, !=
-				'\s*<>?\s*',			// <, <>
-				'\s*>\s*',			// >
-				'\s+IS NULL',			// IS NULL
-				'\s+IS NOT NULL',		// IS NOT NULL
-				'\s+EXISTS\s*\([^\)]+\)',	// EXISTS(sql)
-				'\s+NOT EXISTS\s*\([^\)]+\)',	// NOT EXISTS(sql)
-				'\s+BETWEEN\s+\S+\s+AND\s+\S+',	// BETWEEN value AND value
-				'\s+IN\s*\([^\)]+\)',		// IN(list)
-				'\s+NOT IN\s*\([^\)]+\)',	// NOT IN (list)
-				'\s+LIKE\s+\S+' . $_les,		// LIKE 'expr'[ ESCAPE '%s']
-				'\s+NOT LIKE\s+\S+' . $_les	// NOT LIKE 'expr'[ ESCAPE '%s']
+				'\s*(?:<|>|!)?=\s*',             // =, <=, >=, !=
+				'\s*<>?\s*',                     // <, <>
+				'\s*>\s*',                       // >
+				'\s+IS NULL',                    // IS NULL
+				'\s+IS NOT NULL',                // IS NOT NULL
+				'\s+EXISTS\s*\(.*\)',        // EXISTS(sql)
+				'\s+NOT EXISTS\s*\(.*\)',    // NOT EXISTS(sql)
+				'\s+BETWEEN\s+',                 // BETWEEN value AND value
+				'\s+NOT BETWEEN\s+',             // NOT BETWEEN value AND value
+				'\s+IN\s*\(.*\)',            // IN(list)
+				'\s+NOT IN\s*\(.*\)',        // NOT IN (list)
+				'\s+LIKE\s+\S.*('.$_les.')?',    // LIKE 'expr'[ ESCAPE '%s']
+				'\s+NOT LIKE\s+\S.*('.$_les.')?' // NOT LIKE 'expr'[ ESCAPE '%s']
 			);
+
 		}
 
-		return preg_match('/' . implode('|', $_operators) . '/i', $str, $match)
+		return preg_match('/'.implode('|', $_operators).'/i', $str, $match)
 			? $match[0] : FALSE;
 	}
 
@@ -1485,13 +1600,15 @@ abstract class CI_DB_driver
 	 */
 	public function call_function($function)
 	{
-		$driver = ($this->dbdriver === 'postgre') ? 'pg_' : $this->dbdriver . '_';
+		$driver = ($this->dbdriver === 'postgre') ? 'pg_' : $this->dbdriver.'_';
 
-		if (FALSE === strpos($driver, $function)) {
-			$function = $driver . $function;
+		if (FALSE === strpos($driver, $function))
+		{
+			$function = $driver.$function;
 		}
 
-		if (!function_exists($function)) {
+		if ( ! function_exists($function))
+		{
 			return ($this->db_debug) ? $this->display_error('db_unsupported_function') : FALSE;
 		}
 
@@ -1576,9 +1693,12 @@ abstract class CI_DB_driver
 	 */
 	protected function _cache_init()
 	{
-		if (!class_exists('CI_DB_Cache', FALSE)) {
-			require_once(BASEPATH . 'database/DB_cache.php');
-		} elseif (is_object($this->CACHE)) {
+		if ( ! class_exists('CI_DB_Cache', FALSE))
+		{
+			require_once(BASEPATH.'database/DB_cache.php');
+		}
+		elseif (is_object($this->CACHE))
+		{
 			return TRUE;
 		}
 
@@ -1595,7 +1715,8 @@ abstract class CI_DB_driver
 	 */
 	public function close()
 	{
-		if ($this->conn_id) {
+		if ($this->conn_id)
+		{
 			$this->_close();
 			$this->conn_id = FALSE;
 		}
@@ -1627,14 +1748,17 @@ abstract class CI_DB_driver
 	 */
 	public function display_error($error = '', $swap = '', $native = FALSE)
 	{
-		$LANG = &load_class('Lang', 'core');
+		$LANG =& load_class('Lang', 'core');
 		$LANG->load('db');
 
 		$heading = $LANG->line('db_error_heading');
 
-		if ($native === TRUE) {
+		if ($native === TRUE)
+		{
 			$message = (array) $error;
-		} else {
+		}
+		else
+		{
 			$message = is_array($error) ? $error : array(str_replace('%s', $swap, $LANG->line($error)));
 		}
 
@@ -1642,23 +1766,27 @@ abstract class CI_DB_driver
 		// the backtrace until the source file is no longer in the
 		// database folder.
 		$trace = debug_backtrace();
-		foreach ($trace as $call) {
-			if (isset($call['file'], $call['class'])) {
+		foreach ($trace as $call)
+		{
+			if (isset($call['file'], $call['class']))
+			{
 				// We'll need this on Windows, as APPPATH and BASEPATH will always use forward slashes
-				if (DIRECTORY_SEPARATOR !== '/') {
+				if (DIRECTORY_SEPARATOR !== '/')
+				{
 					$call['file'] = str_replace('\\', '/', $call['file']);
 				}
 
-				if (strpos($call['file'], BASEPATH . 'database') === FALSE && strpos($call['class'], 'Loader') === FALSE) {
+				if (strpos($call['file'], BASEPATH.'database') === FALSE && strpos($call['class'], 'Loader') === FALSE)
+				{
 					// Found it - use a relative path for safety
-					$message[] = 'Filename: ' . str_replace(array(APPPATH, BASEPATH), '', $call['file']);
-					$message[] = 'Line Number: ' . $call['line'];
+					$message[] = 'Filename: '.str_replace(array(APPPATH, BASEPATH), '', $call['file']);
+					$message[] = 'Line Number: '.$call['line'];
 					break;
 				}
 			}
 		}
 
-		$error = &load_class('Exceptions', 'core');
+		$error =& load_class('Exceptions', 'core');
 		echo $error->show_error($heading, $message, 'error_db');
 		exit(8); // EXIT_DATABASE
 	}
@@ -1674,7 +1802,7 @@ abstract class CI_DB_driver
 	 * the table prefix onto it. Some logic is necessary in order to deal with
 	 * column names that include the path. Consider a query like this:
 	 *
-	 * SELECT * FROM hostname.database.table.column AS c FROM hostname.database.table
+	 * SELECT hostname.database.table.column AS c FROM hostname.database.table
 	 *
 	 * Or a query with aliasing:
 	 *
@@ -1693,13 +1821,16 @@ abstract class CI_DB_driver
 	 */
 	public function protect_identifiers($item, $prefix_single = FALSE, $protect_identifiers = NULL, $field_exists = TRUE)
 	{
-		if (!is_bool($protect_identifiers)) {
+		if ( ! is_bool($protect_identifiers))
+		{
 			$protect_identifiers = $this->_protect_identifiers;
 		}
 
-		if (is_array($item)) {
+		if (is_array($item))
+		{
 			$escaped_array = array();
-			foreach ($item as $k => $v) {
+			foreach ($item as $k => $v)
+			{
 				$escaped_array[$this->protect_identifiers($k)] = $this->protect_identifiers($v, $prefix_single, $protect_identifiers, $field_exists);
 			}
 
@@ -1713,42 +1844,56 @@ abstract class CI_DB_driver
 		//
 		// Added exception for single quotes as well, we don't want to alter
 		// literal strings. -- Narf
-		if (strcspn($item, "()'") !== strlen($item)) {
+		if (strcspn($item, "()'") !== strlen($item))
+		{
 			return $item;
 		}
 
 		// Convert tabs or multiple spaces into single spaces
-		$item = preg_replace('/\s+/', ' ', $item);
+		$item = preg_replace('/\s+/', ' ', trim($item));
 
 		// If the item has an alias declaration we remove it and set it aside.
 		// Note: strripos() is used in order to support spaces in table names
-		if ($offset = strripos($item, ' AS ')) {
+		if ($offset = strripos($item, ' AS '))
+		{
 			$alias = ($protect_identifiers)
-				? substr($item, $offset, 4) . $this->escape_identifiers(substr($item, $offset + 4))
+				? substr($item, $offset, 4).$this->escape_identifiers(substr($item, $offset + 4))
 				: substr($item, $offset);
 			$item = substr($item, 0, $offset);
-		} elseif ($offset = strrpos($item, ' ')) {
+		}
+		elseif ($offset = strrpos($item, ' '))
+		{
 			$alias = ($protect_identifiers)
-				? ' ' . $this->escape_identifiers(substr($item, $offset + 1))
+				? ' '.$this->escape_identifiers(substr($item, $offset + 1))
 				: substr($item, $offset);
 			$item = substr($item, 0, $offset);
-		} else {
+		}
+		else
+		{
 			$alias = '';
 		}
 
 		// Break the string apart if it contains periods, then insert the table prefix
 		// in the correct location, assuming the period doesn't indicate that we're dealing
 		// with an alias. While we're at it, we will escape the components
-		if (strpos($item, '.') !== FALSE) {
-			$parts	= explode('.', $item);
+		if (strpos($item, '.') !== FALSE)
+		{
+			$parts = explode('.', $item);
 
 			// Does the first segment of the exploded item match
 			// one of the aliases previously identified? If so,
 			// we have nothing more to do other than escape the item
-			if (in_array($parts[0], $this->qb_aliased_tables)) {
-				if ($protect_identifiers === TRUE) {
-					foreach ($parts as $key => $val) {
-						if (!in_array($val, $this->_reserved_identifiers)) {
+			//
+			// NOTE: The ! empty() condition prevents this method
+			//       from breaking when QB isn't enabled.
+			if ( ! empty($this->qb_aliased_tables) && in_array($parts[0], $this->qb_aliased_tables))
+			{
+				if ($protect_identifiers === TRUE)
+				{
+					foreach ($parts as $key => $val)
+					{
+						if ( ! in_array($val, $this->_reserved_identifiers))
+						{
 							$parts[$key] = $this->escape_identifiers($val);
 						}
 					}
@@ -1756,71 +1901,87 @@ abstract class CI_DB_driver
 					$item = implode('.', $parts);
 				}
 
-				return $item . $alias;
+				return $item.$alias;
 			}
 
 			// Is there a table prefix defined in the config file? If not, no need to do anything
-			if ($this->dbprefix !== '') {
+			if ($this->dbprefix !== '')
+			{
 				// We now add the table prefix based on some logic.
 				// Do we have 4 segments (hostname.database.table.column)?
 				// If so, we add the table prefix to the column name in the 3rd segment.
-				if (isset($parts[3])) {
+				if (isset($parts[3]))
+				{
 					$i = 2;
 				}
 				// Do we have 3 segments (database.table.column)?
 				// If so, we add the table prefix to the column name in 2nd position
-				elseif (isset($parts[2])) {
+				elseif (isset($parts[2]))
+				{
 					$i = 1;
 				}
 				// Do we have 2 segments (table.column)?
 				// If so, we add the table prefix to the column name in 1st segment
-				else {
+				else
+				{
 					$i = 0;
 				}
 
 				// This flag is set when the supplied $item does not contain a field name.
 				// This can happen when this function is being called from a JOIN.
-				if ($field_exists === FALSE) {
+				if ($field_exists === FALSE)
+				{
 					$i++;
 				}
 
+				// dbprefix may've already been applied, with or without the identifier escaped
+				$ec = '(?<ec>'.preg_quote(is_array($this->_escape_char) ? $this->_escape_char[0] : $this->_escape_char).')?';
+				isset($ec[0]) && $ec .= '?'; // Just in case someone has disabled escaping by forcing an empty escape character
+
 				// Verify table prefix and replace if necessary
-				if ($this->swap_pre !== '' && strpos($parts[$i], $this->swap_pre) === 0) {
-					$parts[$i] = preg_replace('/^' . $this->swap_pre . '(\S+?)/', $this->dbprefix . '\\1', $parts[$i]);
+				if ($this->swap_pre !== '' && preg_match('#^'.$ec.preg_quote($this->swap_pre).'#', $parts[$i]))
+				{
+					$parts[$i] = preg_replace('#^'.$ec.preg_quote($this->swap_pre).'(\S+?)#', '\\1'.$this->dbprefix.'\\2', $parts[$i]);
 				}
 				// We only add the table prefix if it does not already exist
-				elseif (strpos($parts[$i], $this->dbprefix) !== 0) {
-					$parts[$i] = $this->dbprefix . $parts[$i];
+				else
+				{
+					preg_match('#^'.$ec.preg_quote($this->dbprefix).'#', $parts[$i]) OR $parts[$i] = $this->dbprefix.$parts[$i];
 				}
 
 				// Put the parts back together
 				$item = implode('.', $parts);
 			}
 
-			if ($protect_identifiers === TRUE) {
+			if ($protect_identifiers === TRUE)
+			{
 				$item = $this->escape_identifiers($item);
 			}
 
-			return $item . $alias;
+			return $item.$alias;
 		}
 
 		// Is there a table prefix? If not, no need to insert it
-		if ($this->dbprefix !== '') {
+		if ($this->dbprefix !== '')
+		{
 			// Verify table prefix and replace if necessary
-			if ($this->swap_pre !== '' && strpos($item, $this->swap_pre) === 0) {
-				$item = preg_replace('/^' . $this->swap_pre . '(\S+?)/', $this->dbprefix . '\\1', $item);
+			if ($this->swap_pre !== '' && strpos($item, $this->swap_pre) === 0)
+			{
+				$item = preg_replace('/^'.$this->swap_pre.'(\S+?)/', $this->dbprefix.'\\1', $item);
 			}
 			// Do we prefix an item with no segments?
-			elseif ($prefix_single === TRUE && strpos($item, $this->dbprefix) !== 0) {
-				$item = $this->dbprefix . $item;
+			elseif ($prefix_single === TRUE && strpos($item, $this->dbprefix) !== 0)
+			{
+				$item = $this->dbprefix.$item;
 			}
 		}
 
-		if ($protect_identifiers === TRUE && !in_array($item, $this->_reserved_identifiers)) {
+		if ($protect_identifiers === TRUE && ! in_array($item, $this->_reserved_identifiers))
+		{
 			$item = $this->escape_identifiers($item);
 		}
 
-		return $item . $alias;
+		return $item.$alias;
 	}
 
 	// --------------------------------------------------------------------
@@ -1835,81 +1996,4 @@ abstract class CI_DB_driver
 	{
 	}
 
-
-	/**
-	 * Save the query to the log file
-	 * 
-	 * @param string $sql
-	 */
-	private function SaveLogQuery($sql)
-	{
-		//
-		// $_this = get_instance();
-		// //
-		// $file_name = getCreds('AHR')->LOG_PATH.'db_log.txt';
-		// // Check if file exists
-		// if(!is_file($file_name)){
-		//     //
-		//     $handler = fopen($file_name, 'w');
-		//     fclose($handler);
-		// }
-		// //
-		// $this->log_array['query_string'] = addslashes($sql);
-		// $this->log_array['created_at'] = date('c', strtotime('now'));
-		// //
-		// $data = '';
-		// //
-		// $data .= "[{$this->log_array['created_at']}] ";
-		// $data .= 'Id="'.($this->log_array['login_user_id']).'" ';
-		// $data .= 'Benchmark="'.($this->log_array['benchmark']).'" ';
-		// $data .= 'Query="'.(trim(preg_replace('~[\r\n]+~', ' ', $this->log_array['query_string']))).'" ';
-		// $data .= 'IP="'.(getUserIp()).'" ';
-		// $data .= 'URI="'.($_this->uri->uri_string()).'"';
-		// // Save data to file		
-		// $handler = fopen($file_name, "a"); 
-		// fwrite($handler, "\n".$data);
-		// fclose($handler);
-	}
-
-	/**
-	 * Display an error message
-	 *
-	 * @param	string	the error message
-	 * @param	string	any "swap" values
-	 * @param	bool	whether to localize the message
-	 * @return	string	sends the application/views/errors/error_db.php template
-	 */
-	public function get_error($error = '', $swap = '', $native = FALSE)
-	{
-		$LANG = &load_class('Lang', 'core');
-		$LANG->load('db');
-
-		if ($native === TRUE) {
-			$message = (array) $error;
-		} else {
-			$message = is_array($error) ? $error : array(str_replace('%s', $swap, $LANG->line($error)));
-		}
-
-		// Find the most likely culprit of the error by going through
-		// the backtrace until the source file is no longer in the
-		// database folder.
-		$trace = debug_backtrace();
-		foreach ($trace as $call) {
-			if (isset($call['file'], $call['class'])) {
-				// We'll need this on Windows, as APPPATH and BASEPATH will always use forward slashes
-				if (DIRECTORY_SEPARATOR !== '/') {
-					$call['file'] = str_replace('\\', '/', $call['file']);
-				}
-
-				if (strpos($call['file'], BASEPATH . 'database') === FALSE && strpos($call['class'], 'Loader') === FALSE) {
-					// Found it - use a relative path for safety
-					$message[] = 'Filename: ' . str_replace(array(APPPATH, BASEPATH), '', $call['file']);
-					$message[] = 'Line Number: ' . $call['line'];
-					break;
-				}
-			}
-		}
-
-		return $message;
-	}
 }
