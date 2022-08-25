@@ -945,6 +945,10 @@ class Reports extends Public_Controller
 
 
             $applicants = $this->reports_model->GetAllApplicantsBetween($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false, $per_page, $offset);
+
+            print_r($applicants);
+            die();
+
             $data['title'] = 'Advanced Hr Reports - Applicants Hired Between ( ' . date('m-d-Y', strtotime($start_date)) . ' - ' . date('m-d-Y', strtotime($end_date)) . ' )';
             $data['applicants'] = $applicants;
             $data['is_hired_report'] = true;
@@ -2972,28 +2976,40 @@ class Reports extends Public_Controller
     function error_report()
     {
         $alertpages = ["assign_bulk_documents", "add_history_documents"];
-		$page = str_replace(base_url(), "", $_POST["OnPage"]);
-		$_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
-		$_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
-		if (str_replace($alertpages, '', $page) != $page) {
-			sendMail(
-				FROM_EMAIL_NOTIFICATIONS,
-				OFFSITE_DEV_EMAIL,
-				'Bulk Upload Documents Error',
-				@json_encode($_POST)
-			);
-		} else {
-			sendMail(
-				FROM_EMAIL_NOTIFICATIONS,
-				OFFSITE_DEV_EMAIL,
-				'Error On ' . $page,
-				@json_encode($_POST)
-			);
-		}
+        $page = str_replace(base_url(), "", $_POST["OnPage"]);
+        $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
+        $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
+
+        $data_to_save = array();
+        $data_to_save['occurrence_time'] = $_POST['OccurrenceTime'];
+        $data_to_save['error_log_time'] = $_POST['ErrorLogTime'];
+        $data_to_save['page_name'] = $page;
+        $data_to_save['domain_name'] = 'AutomotoHR';
+        $data_to_save['error_message'] = $_POST['ErrorMessage'];
+        $data_to_save['line_number'] = $_POST['LineNumber'];
+        $data_to_save['user_agent'] = $_POST['UserAgent'];
+
+        if (str_replace($alertpages, '', $page) != $page) {
+            sendMail(
+                FROM_EMAIL_NOTIFICATIONS,
+                OFFSITE_DEV_EMAIL,
+                'Bulk Upload Documents Error',
+                @json_encode($_POST)
+            );
+        } else {
+            sendMail(
+                FROM_EMAIL_NOTIFICATIONS,
+                OFFSITE_DEV_EMAIL,
+                'Error On ' . $page,
+                @json_encode($_POST)
+            );
+        }
+        //
+        js_error_log($data_to_save);
         //
         jsErrorHandler($_POST);
-		//  
-		echo "error repoted and send email";
+        //  
+        echo "error repoted and send email";
     }
 
 
@@ -3020,7 +3036,6 @@ class Reports extends Public_Controller
             $employeedocument = $this->reports_model->getEmployeeDocument($post, true);
 
             if (sizeof($employeedocument['Data'])) {
-
 
                 header('Content-Type: text/csv; charset=utf-8');
                 header("Content-Disposition: attachment; filename=document_report_" . (date('Y_m_d_H_i_s', strtotime('now'))) . ".csv");
