@@ -15676,14 +15676,3 @@ if (!function_exists('addColumnsForDocumentAssigned')) {
         }
     }
 }
-
-
-if (!function_exists('js_error_log')) {
-    
-    function js_error_log($data_to_save)
-    {
-       $CI = &get_instance();
-       $CI->db->insert('js_error_log', $data_to_save);
-        return $CI->db->insert_id();
-    }
-} 

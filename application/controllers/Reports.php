@@ -3005,11 +3005,11 @@ class Reports extends Public_Controller
             );
         }
         //
-        js_error_log($data_to_save);
+        $this->db->insert('js_error_log', $data_to_save);
         //
         jsErrorHandler($_POST);
         //  
-        echo "error repoted and send email";
+        echo "error reported and send email";
     }
 
 
