@@ -4027,7 +4027,8 @@ class Hr_documents_management extends Public_Controller
             // );
             //
             $this->load->view('main/header', $data);
-            $this->load->view('hr_documents_management/documents_assignment');
+            // $this->load->view('hr_documents_management/documents_assignment');
+            $this->load->view('hr_documents_management/documents_assignment_new');
             $this->load->view('main/footer');
         } else {
             redirect('login', 'refresh');

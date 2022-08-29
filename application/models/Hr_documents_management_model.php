@@ -525,7 +525,7 @@ class Hr_documents_management_model extends CI_Model
         $payroll_sids = $this->get_payroll_documents_sids();
         $documents_assigned_sids = $payroll_sids['documents_assigned_sids'];
 
-        $this->db->select('sid, document_type, document_sid, document_title, assigned_date, document_original_name, visible_to_payroll, document_s3_name');
+        $this->db->select('sid, document_type, document_sid, document_title, assigned_date, document_original_name, visible_to_payroll, document_s3_name, status, manual_document_type, signature_timestamp');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_type', $user_type);
         $this->db->where('user_sid', $user_sid);

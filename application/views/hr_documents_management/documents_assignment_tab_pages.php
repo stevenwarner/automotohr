@@ -12,18 +12,6 @@
         $document_all_permission = true;
     } 
 
-    // Modify Assigned document
-    // only available for Access_level_plus
-    // employees.
-    // Added in Not Completed, Completed
-    // and Not Required tabs
-    $modifyBTN = '<button
-        class="btn btn-success btn-sm btn-block js-modify-assigned-document-btn"
-        data-id="{{sid}}"
-        data-type="{{type}}"
-        title="Modify assigned document"
-    >Modify</button>' ;
-
     //
     $completedDocumentsList = [];
     $notCompletedDocumentsList = [];
@@ -76,7 +64,7 @@
 
                                                                 <?=getDocumentTabPagesButton($document, 'download', ['document_tab' => 'uncompleted']) ?>
                                                             </td>
-                                                            <td class="col-lg-2">
+                                                            <td class="col-lg-1">
                                                                 <?=getDocumentTabPagesButton($document, 'preview_assigned') ?>
 
                                                                 <?=getDocumentTabPagesButton($document, 'modify_document', ['data_type' => 'notCompletedDocuments','permissions' => $document_all_permission]) ?>   
@@ -88,7 +76,7 @@
 
                                                                 <?=getDocumentTabPagesButton($document, 'view_approver', ['user_type' => $user_type, 'user_sid' => $user_sid, 'permissions' => $document_all_permission]) ?>  
                                                             </td>    
-                                                            <td>
+                                                            <td class="col-lg-1">
                                                                 <?=getDocumentTabPagesButton($document, 'manage_category', ['permissions' => $document_all_permission]) ?>
 
                                                                 <?=getDocumentTabPagesButton($document, 'revoke_library_document', ['permissions' => $document_all_permission]) ?> 
@@ -133,7 +121,6 @@
                                         <h4 class="panel-title">
                                             <a class="accordion-toggle open_not_completed_doc" data-toggle="collapse" data-parent="#accordion" href="#collapse_uncompleted_offer_letter">
                                                 <span class="glyphicon glyphicon-plus"></span>
-                                                <?php //echo $category_document['name']; ?>
                                                 <?php echo 'Offer Letter / Pay Plan'; ?>
                                                 <div class="pull-right total-records"><b>&nbsp;Total: <?php echo count($uncompleted_offer_letter); ?></b></div>
                                             </a>
@@ -159,136 +146,29 @@
                                                             $ncd++; ?>
                                                             <tr>
                                                                 <td class="col-lg-8">
-                                                                    <?php
-                                                                        echo $document['document_title'] . '&nbsp;';
-                                                                        echo $document['status'] ? '' : '<b>(revoked)&nbsp;</b>';
-                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
-                                                                        if ($document['manual_document_type'] == 'offer_letter') {
-                                                                            echo '<b>(Manual Upload)</b>';
-                                                                        }
-
-                                                                        if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
-                                                                        }
-
-                                                                        if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
-                                                                        } else {
-                                                                            echo "<br><b>Signed On: </b> N/A";
-                                                                        }
-
-                                                                        if ($document['approval_process'] == 1) {
-                                                                        echo '<br><b class="text-danger">(Document Approval Pending)</b>';
-                                                                    }
-                                                                    ?>
+                                                                    <?=getDocumentReadableInfo($document, 'not_completed') ?>
                                                                 </td>
-                                                                <?php if ($document['letter_type'] == 'hybrid_document') { ?>
-                                                                    <td></td>
-                                                                    <td>
-                                                                        <button 
-                                                                            data-id="<?=$document['sid']?>"
-                                                                            data-type="offer_letter"
-                                                                            data-document="assigned"
-                                                                            class="btn btn-success btn-sm btn-block js-hybrid-preview"
-                                                                        >
-                                                                        Preview Assigned    
-                                                                        </button>
-                                                                        <?php if ($document_all_permission) { ?> 
-                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'notCompletedOfferLetters'], $modifyBTN);?>
-                                                                        <?php } ?>    
-                                                                    </td>
-                                                                <?php } else if ($document['document_type'] == 'offer_letter') { ?>
-                                                                    <td></td>
-                                                                    <td class="col-lg-2">
-                                                                    <?php if($document['document_s3_name'] != ''){ ?>
-                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="preview_latest_generic_function(this);"
-                                                                            date-letter-type="uploaded"
-                                                                            data-on-action="assigned"
-                                                                            data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                            data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
-                                                                            Preview Assigned
-                                                                        </button>
-                                                                        <?php if ($document_all_permission) { ?> 
-                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'notCompletedOfferLetters'], $modifyBTN);?>
-                                                                        <?php } ?>    
-                                                                    <?php } else { ?>
-                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="preview_latest_generic_function(this);"
-                                                                            date-letter-type="generated"
-                                                                            data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                            data-on-action="assigned"
-                                                                            data-from="assigned_document">
-                                                                            Preview Assigned
-                                                                        </button>
-                                                                        <?php if ($document_all_permission) { ?> 
-                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'notCompletedOfferLetters'], $modifyBTN);?>
-                                                                            <?=getAuthorizedDocument($document);?>
-                                                                        <?php } ?>
-                                                                    <?php } ?>
-                                                                    </td>
-                                                                <?php } else{ ?>
-                                                                    <td class="col-lg-2">
-                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                        onclick="preview_document_model(this);"
-                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>"
-                                                                        data-print-type="assigned"
-                                                                        data-download-sid="<?php echo $document['sid']; ?>"
-                                                                        data-file-name="<?php echo $document['document_original_name']; ?>"
-                                                                        data-document-title="<?php echo $document['document_title']; ?>"
-                                                                        >Preview Document</button>
-                                                                        <?php if ($document_all_permission) { ?> 
-                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'notCompletedOfferLetters'], $modifyBTN);?>
-                                                                        <?php } ?>    
-                                                                    </td>
-                                                                    <td class="col-lg-2">
-                                                                        <?php if ($document_all_permission) { ?> 
-                                                                            <?php
-                                                                                $categories = isset($no_action_document_categories[$document['sid']]) ? json_encode($no_action_document_categories[$document['sid']]) : "[]";
-                                                                                $manual_document_type = $document['manual_document_type'] == "offer_letter" ? true : false;
-                                                                                $document_type = $document['document_type'] == "confidential" ? true : false;
-                                                                                $assign_date = isset($document['assigned_date']) ? date('m-d-Y',strtotime($document['assigned_date'])) : '';
-                                                                                $sign_date = isset($document['signature_timestamp']) ?  date('m-d-Y',strtotime($document['signature_timestamp'])) : '';
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'print', ['document_tab' => 'uncompleted']) ?>
 
-
-                                                                            ?>
-
-                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="no_action_req_edit_document_model(this);"
-                                                                            data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>"
-                                                                            data-print-type="assigned"
-                                                                            data-download-sid="<?php echo $document['sid']; ?>"
-                                                                            data-file-name="<?php echo $document['document_original_name']; ?>"
-                                                                            data-document-title="<?php echo $document['document_title']; ?>"
-                                                                            is-offer-letter="<?php echo $manual_document_type; ?>"
-                                                                            data-categories='<?php echo $categories; ?>'
-                                                                            data-update-accessible="<?php echo $document_type; ?>"
-                                                                            assign-date="<?php echo $assign_date; ?>"
-                                                                            sign-date="<?php echo $sign_date; ?>"
-                                                                            >Edit Document</button>
-                                                                        <?php } ?>
-                                                                        
-                                                                    </td>
-                                                                <?php } ?>
-                                                                <td>
-                                                                    <?php if ($document_all_permission) { ?> 
-                                                                        <?php if ($user_type == 'applicant') { ?>
-                                                                            <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                        <?php } else { ?>
-                                                                            <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                        <?php } ?>
-                                                                        <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
-                                                                        <?php if ($document['approval_process'] == 1) { ?>
-                                                                            <button 
-                                                                                data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                data-user_type="<?=$user_type;?>"
-                                                                                data-user_sid="<?=$user_sid;?>"
-                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                View Approver(s)
-                                                                            </button>
-                                                                        <?php } ?>
-                                                                    <?php } ?>    
+                                                                    <?=getDocumentTabPagesButton($document, 'download', ['document_tab' => 'uncompleted']) ?>
                                                                 </td>
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'preview_assigned') ?>
+
+                                                                    <?=getDocumentTabPagesButton($document, 'modify_document', ['data_type' => 'notCompletedOfferLetters','permissions' => $document_all_permission]) ?>   
+                                                                </td>
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'manage_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?>
+
+                                                                    <?=getDocumentTabPagesButton($document, 'view_approver', ['user_type' => $user_type, 'user_sid' => $user_sid, 'permissions' => $document_all_permission]) ?>  
+                                                                </td>
+                                                                <td class="col-lg-1">
+
+                                                                    <?=getDocumentTabPagesButton($document, 'archive_offer_letter', ['permissions' => $document_all_permission]) ?> 
+
+                                                                    <?=getDocumentTabPagesButton($document, 'employer_section', ['current_user_signature' => $current_user_signature, 'permissions' => $document_all_permission]) ?>    
+                                                                </td> 
                                                             </tr>
                                                             <?php //} ?>
                                                         <?php } ?>
@@ -344,130 +224,30 @@
                                                         ?>
                                                             <tr>
                                                                 <td class="col-lg-8">
-                                                                    <?php
-                                                                        echo $document['document_title'] . '&nbsp;';
-                                                                        echo $document['status'] ? '' : '<b>(revoked)&nbsp;</b>';
-                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
-                                                                        if ($document['manual_document_type'] == 'offer_letter') {
-                                                                            echo '<b>(Manual Upload)</b>';
-                                                                        }
-                                                                        echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
+                                                                    <?=getDocumentReadableInfo($document, 'not_completed') ?>
+                                                                </td> 
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'print', ['document_tab' => 'uncompleted']) ?>
 
-                                                                        if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], 'format' => 'M d Y, D', '_this' => $this));
-                                                                        }
-
-                                                                        if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
-                                                                        } else {
-                                                                            echo "<br><b>Signed On: </b> N/A";
-                                                                        }
-
-                                                                        if ($document['approval_process'] == 1) {
-                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
-                                                                        }
-                                                                    ?>
+                                                                    <?=getDocumentTabPagesButton($document, 'download', ['document_tab' => 'uncompleted']) ?>
                                                                 </td>
-                                                                <td class="col-lg-2">
-                                                                    <?php if($document['document_s3_name'] != ''){ ?>
-                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="preview_latest_generic_function(this);"
-                                                                            date-letter-type="uploaded"
-                                                                            data-on-action="assigned"
-                                                                            data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                            data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
-                                                                            Preview Assigned
-                                                                        </button>
-                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
-                                                                            <?=str_replace(['{{sid}}','{{type}}'], [$document['document_sid'], 'notCompletedDocuments'], $modifyBTN);?>
-                                                                        <?php } ?>    
-                                                                    <?php } else { ?>
-                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="preview_latest_generic_function(this);"
-                                                                            date-letter-type="generated"
-                                                                            data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                            data-on-action="assigned"
-                                                                            data-from="assigned_document">
-                                                                            Preview Assigned
-                                                                        </button>
-                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
-                                                                            <?=str_replace(['{{sid}}','{{type}}'], [$document['document_sid'], 'notCompletedDocuments'], $modifyBTN);?>
-                                                                        <?php } ?>
-                                                                    <?php } ?>
-                                                                </td>
-                                                                <td class="col-lg-2">
-                                                                    <?php if ($document_all_permission) { ?> 
-                                                                        <?php if (isset($document['uploaded_file']) && !empty($document['uploaded_file'])) { ?>
-                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="preview_latest_generic_function(this);"
-                                                                            date-letter-type="uploaded"
-                                                                            data-on-action="submitted"
-                                                                            data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
-                                                                            data-s3-name="<?php echo $document['uploaded_file']; ?>"
-                                                                            <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                Preview Submitted
-                                                                            </button>
-                                                                        <?php } else { ?>
-                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="preview_latest_generic_function(this);"
-                                                                            date-letter-type="generated"
-                                                                            data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                            data-on-action="submitted"
-                                                                            data-from="assigned_document"
-                                                                            <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                Preview Submitted
-                                                                            </button>
-                                                                        <?php } ?>
-                                                                    <?php } ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?php if ($document_all_permission) { ?>
-                                                                        <a 
-                                                                            href="javascript:void(0);"
-                                                                            class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
-                                                                            title="Modify Category"
-                                                                            data-asid="<?=$document['sid'];?>"
-                                                                            data-sid="<?=$document['document_sid'];?>"
-                                                                        >Manage Category</a>
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'preview_assigned') ?>
 
-                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
-                                                                            <a 
-                                                                                href="javascript:void(0);"
-                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
-                                                                                title="Revoke Library Document"
-                                                                                data-asid="<?=$document['sid'];?>"
-                                                                            >Revoke</a>
-                                                                        <?php } ?>
-                                                                    <?php } ?>
-                                                                        
-                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                        <?php 
-                                                                            //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
-                                                                            if (true) {
-                                                                        ?>
-                                                                            <?php if ($document['document_sid'] != 0) { ?>
-                                                                                <?php if ($document['status'] == 1) { ?>
-                                                                                    <?php if ($user_type == 'applicant') { ?>
-                                                                                        <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                                    <?php } else { ?>
-                                                                                        <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                    <?php } ?>
-                                                                                <?php } else { ?>
-                                                                                    <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
-                                                                                <?php } ?>
-                                                                            <?php } ?>
-                                                                        <?php } ?>
-                                                                        <?php if ($document['approval_process'] == 1) { ?>
-                                                                            <button 
-                                                                                data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                data-user_type="<?=$user_type;?>"
-                                                                                data-user_sid="<?=$user_sid;?>"
-                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                View Approver(s)
-                                                                            </button>
-                                                                        <?php } ?>
-                                                                    <?php } ?>  
-                                                                </td>  
+                                                                    <?=getDocumentTabPagesButton($document, 'modify_document', ['data_type' => 'notCompletedDocuments','permissions' => $document_all_permission]) ?>   
+                                                                </td>
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'manage_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?>
+
+                                                                    <?=getDocumentTabPagesButton($document, 'view_approver', ['user_type' => $user_type, 'user_sid' => $user_sid, 'permissions' => $document_all_permission]) ?>  
+                                                                </td>    
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'manage_category', ['permissions' => $document_all_permission]) ?>
+
+                                                                    <?=getDocumentTabPagesButton($document, 'revoke_library_document', ['permissions' => $document_all_permission]) ?> 
+
+                                                                    <?=getDocumentTabPagesButton($document, 'employer_section', ['current_user_signature' => $current_user_signature, 'permissions' => $document_all_permission]) ?>    
+                                                                </td>
                                                             </tr>
                                                         <?php } ?>
                                                     <?php } else { ?>
@@ -490,17 +270,12 @@
             <!-- Signed Document Start -->
             <div id="signed_doc_details" class="tab-pane fade in hr-innerpadding">
                 <div class="panel-body">
-                    <?php if ($document_all_permission) { ?> 
-                        <?php if ($downloadDocumentData && count($downloadDocumentData) && $downloadDocumentData['user_type'] == $user_type && $downloadDocumentData['download_type'] == 'single_download' && file_exists(APPPATH.'../temp_files/employee_export/'.$downloadDocumentData['folder_name'])) { ?>
-                            <div class="alert alert-success">Last export was generated at <?=DateTime::createFromFormat('Y-m-d H:i:s', $downloadDocumentData['created_at'])->format('m/d/Y H:i');?>. <a class="btn btn-success" href="<?=base_url('hr_documents_management/generate_zip/'.($downloadDocumentData['folder_name']).'');?>">Download</a></div>
-                        <?php } ?>    
-                    <?php } ?>    
+                    <!-- Zip download button -->
+                    <?=getDocumentTabPagesButton($document, 'download_previous_zip', ['user_type' => $user_type, 'downloadDocumentData' => $downloadDocumentData, 'permissions' => $document_all_permission]) ?>   
                     <!-- Category Completed Document Start -->
                     <h2 class="tab-title">Completed Document Detail
                         <span class="pull-right">
-                            <?php if ($document_all_permission) { ?> 
-                                <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/completed');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
-                            <?php } ?>
+                            <?=getDocumentTabPagesButton($document, 'download_all_documents', ['user_type' => $user_type, 'user_sid' => $user_sid, 'type' => "completed", 'permissions' => $document_all_permission]) ?>
                         </span>
                         <hr /> 
                     </h2>
@@ -543,283 +318,35 @@
                                                                         <?php if ($document["is_history"] == 0) { ?>
                                                                             <tr>
                                                                                 <td class="col-lg-8">
-                                                                                    <?php
-                                                                                        echo $document['document_title'] . '&nbsp;';
-                                                                                        echo $document['is_document_authorized'] == 1 && $document['authorized_sign_status'] == 0  ? '( <b style="color:red;"> Awaiting Authorized Signature </b> )' : '';
-                                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
-                                                                                        echo $document['status'] ? '' : '<b>(revoked)</b>';
-                                                                                        echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
-                                                                                        echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
-                                                                                        echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
-
-                                                                                        if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
-                                                                                        }
-
-                                                                                        if ($document['approval_process'] == 1) {
-                                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
-                                                                                        }
-                                                                                    ?>
+                                                                                    <?=getDocumentReadableInfo($document, 'completed') ?>
                                                                                 </td>
+                                                                                <td class="col-lg-1">
+                                                                                    <?=getDocumentTabPagesButton($document, 'print', ['document_tab' => 'completed']) ?>
 
-                                                                                <?php if ($document['document_type'] == 'hybrid_document') { ?>
-                                                                                    <td>
-                                                                                        <button 
-                                                                                            data-id="<?=$document['sid'];?>"
-                                                                                            data-type="document"
-                                                                                            data-document="assigned"
-                                                                                            class="btn btn-success btn-sm btn-block js-hybrid-preview"
-                                                                                        >
-                                                                                            Preview Assigned
-                                                                                        </button>
-                                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?> 
-                                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedDocuments'], $modifyBTN);?>
-                                                                                        <?php } ?>    
-                                                                                        <?php if ($document_all_permission) { ?> 
-                                                                                           
-                                                                                            <?php if ($document['is_document_authorized'] == 1) { ?>
-                                                                                                <?php
-                                                                                                    $authorized_signature_url = '';
+                                                                                    <?=getDocumentTabPagesButton($document, 'download', ['document_tab' => 'completed']) ?>
 
-                                                                                                    if ($user_type == 'applicant') {
-                                                                                                        $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid);
-                                                                                                    } else {
-                                                                                                        $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/employee/' . $document['sid'] . '/' . $user_sid);
-                                                                                                    }
-                                                                                                ?> 
-
-                                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo $authorized_signature_url; ?>">
-                                                                                                    View Doc
-                                                                                                </a> 
-                                                                                            <?php } ?>
-                                                                                        <?php } ?> 
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        <button 
-                                                                                            data-id="<?=$document['sid'];?>"
-                                                                                            data-type="document"
-                                                                                            data-document="submitted"
-                                                                                            class="btn btn-success btn-sm btn-block js-hybrid-preview"
-                                                                                        >
-                                                                                            Preview Submitted
-                                                                                        </button>
-                                                                                        <?php if ($document_all_permission) { ?>
-                                                                                            <?php if ($document['is_document_authorized'] == 1) { ?> 
-                                                                                                <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                                <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
-                                                                                                    <?php if ($document['authorized_sign_status'] == 0) { ?>
-                                                                                                        Employer Section - Not Completed
-                                                                                                    <?php } else if ($document['authorized_sign_status'] == 1) { ?>
-                                                                                                        Employer Section - Completed  
-                                                                                                    <?php } ?>     
-                                                                                                </a>
-                                                                                            <?php } ?>
-                                                                                        <?php } ?>
-
-                                                                                        <?php if ($document_all_permission  && $document['isdoctolibrary'] == 0) { ?>
-                                                                                            <?php 
-                                                                                                //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
-                                                                                                if (true) {
-                                                                                            ?>
-                                                                                                <?php if ($document['document_sid'] != 0) { ?>
-                                                                                                    <?php if ($document['status'] == 1) { ?>
-                                                                                                        <?php if ($user_type == 'applicant') { ?>
-                                                                                                            <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                                                        <?php } else { ?>
-                                                                                                            <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                                        <?php } ?>
-                                                                                                    <?php } else { ?>
-                                                                                                        <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
-                                                                                                    <?php } ?>
-                                                                                                <?php } ?>
-                                                                                            <?php } ?> 
-                                                                                            <?php if ($document['approval_process'] == 1) { ?>
-                                                                                                <button 
-                                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                                    data-user_type="<?=$user_type;?>"
-                                                                                                    data-user_sid="<?=$user_sid;?>"
-                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                                    View Approver(s)
-                                                                                                </button>
-                                                                                            <?php } ?>
-                                                                                        <?php } ?> 
-                                                                                    </td>
-                                                                                <?php } else if ($document['document_type'] == 'uploaded') { ?>
-                                                                                    <?php if ($document['document_sid'] != 0) { ?>
-                                                                                        <td class="col-lg-2">
-                                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                                                onclick="preview_latest_generic_function(this);"
-                                                                                                date-letter-type="uploaded"
-                                                                                                data-on-action="assigned"
-                                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                                                data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
-                                                                                                Preview Assigned
-                                                                                            </button>
-                                                                                            <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                                <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedDocuments'], $modifyBTN);?>
-                                                                                            <?php } ?>    
-                                                                                        </td>
-                                                                                    <?php } ?>
-                                                                                    <td class="col-lg-2">
-                                                                                        <?php if ($document_all_permission) { ?>
-                                                                                            <?php if (in_array($document['document_sid'], $signed_document_sids)) { ?>
-                                                                                                <button class="btn btn-success btn-sm btn-block"
-                                                                                                    onclick="preview_latest_generic_function(this);"
-                                                                                                    date-letter-type="uploaded"
-                                                                                                    data-on-action="submitted"
-                                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
-                                                                                                    data-s3-name="<?php echo $document['uploaded_file']; ?>"
-                                                                                                    <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                                    Preview Submitted
-                                                                                                </button>
-                                                                                            <?php } ?>
-                                                                                        <?php } ?>
-
-                                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                            <?php 
-                                                                                                //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
-                                                                                                if (true) {
-                                                                                            ?>
-                                                                                                <?php if ($document['document_sid'] != 0) { ?>
-                                                                                                    <?php if ($document['status'] == 1) { ?>
-                                                                                                        <?php if ($user_type == 'applicant') { ?>
-                                                                                                            <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                                                        <?php } else { ?>
-                                                                                                            <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                                        <?php } ?>
-                                                                                                    <?php } else { ?>
-                                                                                                        <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
-                                                                                                    <?php } ?>
-                                                                                                <?php } ?>
-                                                                                            <?php } ?> 
-                                                                                            <?php if ($document['approval_process'] == 1) { ?>
-                                                                                                <button 
-                                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                                    data-user_type="<?=$user_type;?>"
-                                                                                                    data-user_sid="<?=$user_sid;?>"
-                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                                    View Approver(s)
-                                                                                                </button>
-                                                                                            <?php } ?>
-                                                                                        <?php } ?> 
-                                                                                    </td>
-                                                                                <?php } else { ?>
-                                                                                    <td class="col-lg-2">
-                                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                                            onclick="preview_latest_generic_function(this);"
-                                                                                            date-letter-type="generated"
-                                                                                            data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                                            data-on-action="assigned"
-                                                                                            data-from="assigned_document">
-                                                                                            Preview Assigned
-                                                                                        </button>
-                                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedDocuments'], $modifyBTN);?>   
-                                                                                        <?php } ?>
-                                                                                            
-                                                                                        <?php if ($document_all_permission) { ?>
-                                                                                            <?php if ($document['is_document_authorized'] == 1) { ?>
-                                                                                                <?php
-                                                                                                    $authorized_signature_url = '';
-
-                                                                                                    if ($user_type == 'applicant') {
-                                                                                                        $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid);
-                                                                                                    } else {
-                                                                                                        $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/employee/' . $document['sid'] . '/' . $user_sid);
-                                                                                                    }
-                                                                                                ?> 
-
-                                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo $authorized_signature_url; ?>">
-                                                                                                    View Doc
-                                                                                                </a> 
-                                                                                            <?php } ?>
-                                                                                        <?php } ?>    
-                                                                                    </td>
-                                                                                    <td class="col-lg-2">
-                                                                                        <?php if ($document_all_permission) { ?>
-                                                                                            <?php if (in_array($document['document_sid'], $signed_document_sids)) { ?>
-                                                                                                <?php if ($document['is_document_authorized'] == 1) { ?>
-                                                                                                    <button class="btn btn-success btn-sm btn-block"
-                                                                                                        onclick="preview_latest_generic_function(this);"
-                                                                                                        date-letter-type="generated"
-                                                                                                        data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                                                        data-on-action="submitted"
-                                                                                                        data-from="assigned_document">
-                                                                                                        Preview Submitted
-                                                                                                    </button>
-                                                                                                <?php } else { ?>
-                                                                                                    <button class="btn btn-success btn-sm btn-block"
-                                                                                                        onclick="preview_latest_generic_function(this);"
-                                                                                                        date-letter-type="generated"
-                                                                                                        data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                                                        data-on-action="submitted"
-                                                                                                        data-from="assigned_document">
-                                                                                                        Preview Submitted
-                                                                                                    </button>
-                                                                                                <?php } ?>
-                                                                                            <?php } else { ?>
-                                                                                                <button onclick="generated_document_original_preview(<?php echo $document['sid']; ?>);" class="btn btn-success btn-sm btn-block">Preview Submitted</button>
-                                                                                            <?php } ?>
-
-                                                                                            <?php if ($document['is_document_authorized'] == 1) { ?> 
-                                                                                                <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                                <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
-                                                                                                    <?php if ($document['authorized_sign_status'] == 0) { ?>
-                                                                                                        Employer Section - Not Completed
-                                                                                                    <?php } else if ($document['authorized_sign_status'] == 1) { ?>
-                                                                                                        Employer Section - Completed  
-                                                                                                    <?php } ?>     
-                                                                                                </a>
-                                                                                            <?php } ?> 
-
-                                                                                            <?php 
-                                                                                                //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
-                                                                                                if (true) {
-                                                                                            ?>
-                                                                                                <?php if ($document['document_sid'] != 0 && $document['isdoctolibrary'] == 0) { ?>
-                                                                                                    <?php if ($document['status'] == 1) { ?>
-                                                                                                        <?php if ($user_type == 'applicant') { ?>
-                                                                                                            <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                                                        <?php } else { ?>
-                                                                                                            <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                                        <?php } ?>
-                                                                                                    <?php } else { ?>
-                                                                                                        <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
-                                                                                                    <?php } ?>
-                                                                                                <?php } ?>
-                                                                                            <?php } ?> 
-                                                                                            <?php if ($document['approval_process'] == 1) { ?>
-                                                                                                <button 
-                                                                                                    data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                                    data-user_type="<?=$user_type;?>"
-                                                                                                    data-user_sid="<?=$user_sid;?>"
-                                                                                                    class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                                    View Approver(s)
-                                                                                                </button>
-                                                                                            <?php } ?>
-                                                                                        <?php } ?> 
-                                                                                    </td>
-                                                                                <?php } ?>
-                                                                                <td>
-                                                                                    <?php if ($document_all_permission) { ?>
-                                                                                        <a 
-                                                                                            href="javascript:void(0);"
-                                                                                            class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
-                                                                                            title="Modify Category"
-                                                                                            data-asid="<?=$document['sid'];?>"
-                                                                                            data-sid="<?=$document['document_sid'];?>"
-                                                                                        >Manage Category</a>
-
-                                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
-                                                                                            <a 
-                                                                                                href="javascript:void(0);"
-                                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
-                                                                                                title="Revoke Library Document"
-                                                                                                data-asid="<?=$document['sid'];?>"
-                                                                                            >Revoke</a>
-                                                                                        <?php } ?>
-                                                                                    <?php } ?>    
+                                                                                    <?=getDocumentTabPagesButton($document, 'view_auth_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?> 
                                                                                 </td>
+                                                                                <td class="col-lg-1">
+                                                                                    <?=getDocumentTabPagesButton($document, 'preview_assigned') ?>
+
+                                                                                    <?=getDocumentTabPagesButton($document, 'modify_document', ['data_type' => 'completedDocuments','permissions' => $document_all_permission]) ?>   
+                                                                                </td>
+                                                                                <td class="col-lg-1">
+                                                                                    <?=getDocumentTabPagesButton($document, 'preview_submitted') ?>
+
+                                                                                    <?=getDocumentTabPagesButton($document, 'manage_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?>
+
+                                                                                    <?=getDocumentTabPagesButton($document, 'view_approver', ['user_type' => $user_type, 'user_sid' => $user_sid, 'permissions' => $document_all_permission]) ?>  
+                                                                                </td>
+                                                                                <td class="col-lg-1">
+
+                                                                                    <?=getDocumentTabPagesButton($document, 'manage_category', ['permissions' => $document_all_permission]) ?>
+
+                                                                                    <?=getDocumentTabPagesButton($document, 'revoke_library_document', ['permissions' => $document_all_permission]) ?>
+
+                                                                                    <?=getDocumentTabPagesButton($document, 'employer_section', ['current_user_signature' => $current_user_signature, 'permissions' => $document_all_permission]) ?>    
+                                                                                </td> 
                                                                             </tr>
                                                                         <?php } else { ?>
                                                                             <?php $this->load->view('hr_documents_management/document_assign_history_row', ['user_sid' => $user_sid, 'user_type' => $user_type, 'history_document' => $document, "document_all_permission" => $document_all_permission]); ?>
@@ -896,226 +423,32 @@
                                                         <?php $GLOBALS['uofl'][] = $document; $cd++; ?>
                                                             <tr>
                                                                 <td class="col-lg-8">
-                                                                    <?php
-                                                                        echo $document['document_title'] . '&nbsp;';
-                                                                        echo $document['is_document_authorized'] == 1 && $document['authorized_sign_status'] == 0  ? '( <b style="color:red;"> Awaiting Authorized Signature </b> )' : '';
-                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
-                                                                        echo $document['status'] ? '' : '<b>(revoked)&nbsp;</b>';
-                                                                        if ($document['manual_document_type'] == 'offer_letter') {
-                                                                            echo '<b>(Manual Upload)</b>';
-                                                                        }
-
-                                                                        if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Assigned On: </b>" . date('M d Y, D', strtotime($document['assigned_date']));
-                                                                        }
-
-                                                                        if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Signed On: </b>" . date('M d Y, D', strtotime($document['signature_timestamp']));
-                                                                        } else {
-                                                                            echo "<br><b>Signed On: </b> N/A";
-                                                                        }
-
-                                                                        if ($document['approval_process'] == 1) {
-                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
-                                                                        }
-                                                                    ?>
+                                                                    <?=getDocumentReadableInfo($document, 'completed') ?>
                                                                 </td>
-                                                                <?php if ($document['letter_type'] == 'hybrid_document') { ?>
-                                                                    <td>
-                                                                        <button 
-                                                                            data-id="<?=$document['sid'];?>"
-                                                                            data-type="offer_letter"
-                                                                            data-document="assigned"
-                                                                            class="btn btn-success btn-sm btn-block js-hybrid-preview"
-                                                                        >
-                                                                            Preview Assigned
-                                                                        </button>
-                                                                        <?php if ($document_all_permission) { ?>
-                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedOfferLetters'], $modifyBTN);?>
-                                                                            <?php if ($document['is_document_authorized'] == 1) { ?> 
-                                                                            <?php
-                                                                                $authorized_signature_url = '';
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'print', ['document_tab' => 'completed']) ?>
 
-                                                                                if ($user_type == 'applicant') {
-                                                                                    $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid);
-                                                                                } else {
-                                                                                    $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/employee/' . $document['sid'] . '/' . $user_sid);
-                                                                                }
-                                                                            ?> 
-                                                                            <a class="btn btn-success btn-sm btn-block" href="<?php echo $authorized_signature_url; ?>">
-                                                                                View Doc
-                                                                            </a> 
-                                                                            <?php } ?>
-                                                                        <?php } ?>
-                                                                    </td>
-                                                                    <td>
-                                                                        <?php if ($document_all_permission) { ?>
-                                                                            <button 
-                                                                                data-id="<?=$document['sid'];?>"
-                                                                                data-type="offer_letter"
-                                                                                data-document="submitted"
-                                                                                class="btn btn-success btn-sm btn-block <?= $document['submitted_description'] != '' ? 'js-hybrid-preview' : 'disabled';?>"
-                                                                            >
-                                                                                Preview Submitted
-                                                                            </button>
-                                                                            <?php if ($document['is_document_authorized'] == 1) { ?> 
-                                                                                <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
-                                                                                    <?php if ($document['authorized_sign_status'] == 0) { ?>
-                                                                                        Employer Section - Not Completed
-                                                                                    <?php } else if ($document['authorized_sign_status'] == 1) { ?>
-                                                                                        Employer Section - Completed  
-                                                                                    <?php } ?>     
-                                                                                </a>
-                                                                            <?php } ?> 
-                                                                        <?php } ?> 
-                                                                    </td>
-                                                                <?php } else if ($document['document_type'] == 'offer_letter') { ?>
-                                                                    <td class="col-lg-2">
-                                                                    <?php if($document['document_s3_name'] != ''){ ?>
-                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="preview_latest_generic_function(this);"
-                                                                            date-letter-type="uploaded"
-                                                                            data-on-action="assigned"
-                                                                            data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                            data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
-                                                                            Preview Assigned
-                                                                        </button>
-                                                                        <?php if ($document_all_permission) { ?>
-                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedOfferLetters'], $modifyBTN);?>
-                                                                        <?php } ?>    
-                                                                    <?php } else { ?>
-                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="preview_latest_generic_function(this);"
-                                                                            date-letter-type="generated"
-                                                                            data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                            data-on-action="assigned"
-                                                                            data-from="assigned_document">
-                                                                            Preview Assigned
-                                                                        </button>
-                                                                        <?php if ($document_all_permission) { ?>
-                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedOfferLetters'], $modifyBTN);?>
-                                                                            <?php if ($document['is_document_authorized'] == 1) { ?>
-                                                                                <?php
-                                                                                    $authorized_signature_url = '';
+                                                                    <?=getDocumentTabPagesButton($document, 'download', ['document_tab' => 'completed']) ?>
 
-                                                                                    if ($user_type == 'applicant') {
-                                                                                        $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid);
-                                                                                    } else {
-                                                                                        $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/employee/' . $document['sid'] . '/' . $user_sid);
-                                                                                    }
-                                                                                ?> 
+                                                                    <?=getDocumentTabPagesButton($document, 'view_auth_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?>
+                                                                </td>
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'preview_assigned') ?>
 
-                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo $authorized_signature_url; ?>">
-                                                                                    View Doc
-                                                                                </a> 
-                                                                            <?php } ?>
-                                                                        <?php } ?>
-                                                                    <?php } ?>
-                                                                    </td>
-                                                                    <td class="col-lg-2">
-                                                                        <?php if ($document_all_permission) { ?>
-                                                                            <?php if (isset($document['uploaded_file']) && !empty($document['uploaded_file'])) { ?>
-                                                                                <button class="btn btn-success btn-sm btn-block"
-                                                                                onclick="preview_latest_generic_function(this);"
-                                                                                date-letter-type="uploaded"
-                                                                                data-on-action="submitted"
-                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
-                                                                                data-s3-name="<?php echo $document['uploaded_file']; ?>"
-                                                                                <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                    Preview Submitted
-                                                                                </button>
-                                                                            <?php } else { ?>
-                                                                                <button class="btn btn-success btn-sm btn-block"
-                                                                                onclick="preview_latest_generic_function(this);"
-                                                                                date-letter-type="generated"
-                                                                                data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                                data-on-action="submitted"
-                                                                                data-from="assigned_document"
-                                                                                <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                    Preview Submitted
-                                                                                </button>
-                                                                            <?php if ($document['is_document_authorized'] == 1) { ?> 
-                                                                                <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
-                                                                                    <?php if ($document['authorized_sign_status'] == 0) { ?>
-                                                                                        Employer Section - Not Completed
-                                                                                    <?php } else if ($document['authorized_sign_status'] == 1) { ?>
-                                                                                        Employer Section - Completed  
-                                                                                    <?php } ?>     
-                                                                                </a>
-                                                                            <?php } ?> 
-                                                                            <?php } ?>
-                                                                        <?php } ?>
-                                                                    </td>
-                                                                <?php } else{ ?>
-                                                                    <td class="col-lg-2">
-                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                        onclick="preview_document_model(this);"
-                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>"
-                                                                        data-print-type="assigned"
-                                                                        data-download-sid="<?php echo $document['sid']; ?>"
-                                                                        data-file-name="<?php echo $document['document_original_name']; ?>"
-                                                                        data-document-title="<?php echo $document['document_title']; ?>"
-                                                                        >Preview Document</button>
-                                                                        <?php if ($document_all_permission) { ?>
-                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'completedOfferLetters'], $modifyBTN);?>
-                                                                        <?php } ?>    
-                                                                    </td>
-                                                                    <td class="col-lg-2">
-                                                                        <?php if ($document_all_permission) { ?>
-                                                                            <?php
-                                                                                $categories = isset($no_action_document_categories[$document['sid']]) ? json_encode($no_action_document_categories[$document['sid']]) : "[]";
-                                                                                $manual_document_type = $document['manual_document_type'] == "offer_letter" ? true : false;
-                                                                                $document_type = $document['document_type'] == "confidential" ? true : false;
-                                                                                $assign_date = isset($document['assigned_date']) ? date('m-d-Y',strtotime($document['assigned_date'])) : '';
-                                                                                $sign_date = isset($document['signature_timestamp']) ?  date('m-d-Y',strtotime($document['signature_timestamp'])) : '';
+                                                                    <?=getDocumentTabPagesButton($document, 'modify_document', ['data_type' => 'completedOfferLetters','permissions' => $document_all_permission]) ?>   
+                                                                </td>
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'preview_submitted') ?>
 
+                                                                    <?=getDocumentTabPagesButton($document, 'manage_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?>
 
-                                                                            ?>
+                                                                    <?=getDocumentTabPagesButton($document, 'view_approver', ['user_type' => $user_type, 'user_sid' => $user_sid, 'permissions' => $document_all_permission]) ?>  
+                                                                </td>
+                                                                <td class="col-lg-1">
 
-                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="no_action_req_edit_document_model(this);"
-                                                                            data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>"
-                                                                            data-print-type="assigned"
-                                                                            data-download-sid="<?php echo $document['sid']; ?>"
-                                                                            data-file-name="<?php echo $document['document_original_name']; ?>"
-                                                                            data-document-title="<?php echo $document['document_title']; ?>"
-                                                                            is-offer-letter="<?php echo $manual_document_type; ?>"
-                                                                            data-categories='<?php echo $categories; ?>'
-                                                                            data-update-accessible="<?php echo $document_type; ?>"
-                                                                            assign-date="<?php echo $assign_date; ?>"
-                                                                            sign-date="<?php echo $sign_date; ?>"
-                                                                            >Edit Documents</button>
-                                                                        <?php } ?>
-                                                                    </td>
-                                                                <?php } ?>
-                                                                <td>
-                                                                    <?php if ($document_all_permission) { ?>
-                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
-                                                                            <a 
-                                                                                href="javascript:void(0);"
-                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
-                                                                                title="Revoke Library Document"
-                                                                                data-asid="<?=$document['sid'];?>"
-                                                                            >Revoke</a>
-                                                                        <?php } ?>
-                                                                        <?php if ($user_type == 'applicant') { ?>
-                                                                            <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                        <?php } else { ?>
-                                                                            <a class="btn btn-success  btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                        <?php } ?>
-                                                                        <button class="btn btn-warning btn-sm btn-block" onclick="offer_letter_archive(<?php echo $document['sid']; ?>)">Archive</button>
-                                                                        <?php if ($document['approval_process'] == 1) { ?>
-                                                                            <button 
-                                                                                data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                data-user_type="<?=$user_type;?>"
-                                                                                data-user_sid="<?=$user_sid;?>"
-                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                View Approver(s)
-                                                                            </button>
-                                                                        <?php } ?>
-                                                                    <?php } ?>    
+                                                                    <?=getDocumentTabPagesButton($document, 'archive_offer_letter', ['permissions' => $document_all_permission]) ?> 
+
+                                                                    <?=getDocumentTabPagesButton($document, 'employer_section', ['current_user_signature' => $current_user_signature, 'permissions' => $document_all_permission]) ?>    
                                                                 </td>
                                                             </tr>
                                                             <?php //} ?>
@@ -1169,295 +502,35 @@
                                                                 $cd++; 
                                                             ?>
                                                             <?php if ($document["is_history"] == 0) { ?>
-                                                                <?php if($document['document_sid'] == 0) { ?>
-                                                                    <tr>
-                                                                        <td class="col-lg-6">
-                                                                            <?php
-                                                                                echo $document['document_title'] . '&nbsp;';
-                                                                                echo $document['status'] ? '' : '<b>(revoked)</b>';
-                                                                                echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
-                                                                                echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
-                                                                                echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
+                                                                <tr>
+                                                                    <td class="col-lg-8">
+                                                                        <?=getDocumentReadableInfo($document, 'completed') ?>
+                                                                    </td>
+                                                                    <td class="col-lg-1">
+                                                                        <?=getDocumentTabPagesButton($document, 'print', ['document_tab' => 'completed']) ?>
 
-                                                                                if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'],'format' => 'M d Y, D', '_this' => $this));
-                                                                                }
+                                                                        <?=getDocumentTabPagesButton($document, 'download', ['document_tab' => 'completed']) ?>
 
-                                                                                if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                                    echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
-                                                                                } else {
-                                                                                    echo "<br><b>Signed On: </b> N/A";
-                                                                                }
+                                                                        <?=getDocumentTabPagesButton($document, 'view_auth_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?>
+                                                                    </td>
+                                                                    <td class="col-lg-1">
+                                                                        <?=getDocumentTabPagesButton($document, 'preview_assigned') ?>
+                                                                    </td>
+                                                                    <td class="col-lg-1">
+                                                                        <?=getDocumentTabPagesButton($document, 'preview_submitted') ?>
 
-                                                                                if ($document['approval_process'] == 1) {
-                                                                                    echo '<br><b class="text-danger">(Document Approval Pending)</b>';
-                                                                                }
-                                                                            ?>
-                                                                        </td>
+                                                                        <?=getDocumentTabPagesButton($document, 'manage_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?>
 
-                                                                        <?php if ($document['document_type'] == 'uploaded' || $document['document_type'] == 'confidential') { ?>
-                                                                            <!-- Print Download by Adil-->
-                                                                            <td class="col-lg-1">
-                                                                                <?php
-                                                                                $document_filename = $document['document_s3_name'];
-                                                                                $document_file = pathinfo($document_filename);
-                                                                                $document_extension = $document_file['extension'];
-                                                                                $name = explode(".",$document_filename);
-                                                                                $url_segment_original = $name[0];
-                                                                                ?>
-                                                                                <?php if ($document_extension == 'pdf') { ?>
-                                                                                    <a target="_blank" href="<?php echo 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$url_segment_original.'.pdf' ?>" class="btn btn-success btn-sm btn-block">Print</a>
+                                                                        <?=getDocumentTabPagesButton($document, 'view_approver', ['user_type' => $user_type, 'user_sid' => $user_sid, 'permissions' => $document_all_permission]) ?>  
+                                                                    </td>    
+                                                                    <td class="col-lg-1">
+                                                                        <?=getDocumentTabPagesButton($document, 'manage_category', ['permissions' => $document_all_permission]) ?>
 
-                                                                                <?php } else if ($document_extension == 'docx') { ?>
-                                                                                    <a target="_blank" href="<?php echo 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$url_segment_original.'%2Edocx&wdAccPdf=0' ?>" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                                <?php } else if ($document_extension == 'doc') { ?>
-                                                                                    <a target="_blank" href="<?php echo 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$url_segment_original.'%2Edoc&wdAccPdf=0' ?>" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                                <?php } else if ($document_extension == 'xls') { ?>
-                                                                                    <a target="_blank" href="<?php echo 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$url_segment_original.'%2Exls' ?>" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                                <?php } else if ($document_extension == 'xlsx') { ?>
-                                                                                    <a target="_blank" href="<?php echo 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$url_segment_original.'%2Exlsx' ?>" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                                <?php } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { ?>
-                                                                                    <a target="_blank" href="<?php echo base_url('hr_documents_management/print_assign_document/' . $user_type . '/' . $user_sid . '/' . $document_sid . '/original'); ?>" class="btn btn-success btn-sm btn-block">
-                                                                                        Print
-                                                                                    </a>
-                                                                                <?php } else { ?>
-                                                                                    <a class="btn btn-success btn-sm btn-block"
-                                                                                       href="javascript:void(0);"
-                                                                                       onclick="fLaunchModal(this);"
-                                                                                       data-preview-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>"
-                                                                                       data-download-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>"
-                                                                                       data-file-name="<?php echo $document_filename; ?>"
-                                                                                       data-document-title="<?php echo $document_filename; ?>"
-                                                                                       data-preview-ext="<?php echo $document_extension ?>">Print</a>
-                                                                                <?php } ?>
-                                                                            </td>
+                                                                        <?=getDocumentTabPagesButton($document, 'revoke_library_document', ['permissions' => $document_all_permission]) ?> 
 
-                                                                            <td class="col-lg-1">
-                                                                                <a href="<?= base_url('hr_documents_management/download_upload_document/' . $document['document_s3_name']);?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
-                                                                            </td>
-                                                                            <td class="col-lg-2">
-                                                                                <button class="btn btn-success btn-sm btn-block"
-                                                                                    onclick="preview_latest_generic_function(this);"
-                                                                                    date-letter-type="uploaded"
-                                                                                    data-on-action="assigned"
-                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                                    data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
-                                                                                    Preview Assigned
-                                                                                </button>
-                                                                                <?php if ($action_btn_flag == true && $document['isdoctolibrary'] == 0) { ?>
-                                                                                    <?php
-                                                                                        $categories = isset($no_action_document_categories[$document['sid']]) ? json_encode($no_action_document_categories[$document['sid']]) : "[]";
-                                                                                        $manual_document_type = $document['manual_document_type'] == "offer_letter" ? true : false;
-                                                                                        $document_type = $document['document_type'] == "confidential" ? true : false;
-                                                                                        $assign_date = isset($document['assigned_date']) ? date('m-d-Y',strtotime($document['assigned_date'])) : '';
-                                                                                        $sign_date = isset($document['signature_timestamp']) ?  date('m-d-Y',strtotime($document['signature_timestamp'])) : '';
-                                                                                    ?>
-                                                                                    <button class="btn btn-success btn-sm btn-block"
-                                                                                    onclick="no_action_req_edit_document_model(this);"
-                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>"
-                                                                                    data-print-type="assigned"
-                                                                                    data-download-sid="<?php echo $document['sid']; ?>"
-                                                                                    data-file-name="<?php echo $document['document_original_name']; ?>" 
-                                                                                    data-document-title="<?php echo $document['document_title']; ?>"
-                                                                                    is-offer-letter="<?php echo $manual_document_type; ?>"
-                                                                                    is-payroll-visible="<?php echo $document['visible_to_payroll'] == 1 ? true : false; ?>"
-                                                                                    data-categories='<?php echo $categories; ?>'
-                                                                                    data-update-accessible="<?php echo $document_type; ?>"
-                                                                                    assign-date="<?php echo $assign_date; ?>"
-                                                                                    sign-date="<?php echo $sign_date; ?>"
-                                                                                    >Edit Document</button>
-                                                                                    <?php if (check_access_permissions_for_view($security_details, 'archive_document')) { ?>
-                                                                                        <form id="form_archive_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                            <input type="hidden" id="perform_action" name="perform_action" value="archive_uploaded_document" />
-                                                                                            <input type="hidden" id="document_type" name="document_type" value="<?= $document['document_type']?>" />
-                                                                                            <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
-                                                                                        </form>
-                                                                                        <button class="btn btn-warning btn-sm btn-block" onclick="func_archive_uploaded_document(<?php echo $document['sid']; ?>)">Archive</button>
-                                                                                    <?php } ?>
-                                                                                <?php } ?>
-                                                                            </td>
-                                                                        <?php } else { ?>
-                                                                            <td class="col-lg-1">
-                                                                                <a href="<?= base_url('hr_documents_management/print_generated_doc/original/' . $document['sid'] . '/' . $user_sid . '/' . $user_type);?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                            </td>
-
-                                                                            <td class="col-lg-1">
-                                                                                <a href="<?= base_url('hr_documents_management/print_generated_doc/original/' . $document['sid'] . '/' . $user_sid . '/' . $user_type . '/download');?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
-                                                                            </td>
-                                                                            <td class="col-lg-2"><button onclick="generated_document_original_preview(<?php echo $document['sid']; ?>);" class="btn btn-success btn-sm btn-block">Preview Document</button></td>
-                                                                        <?php } ?>
-                                                                        <td>
-                                                                            <?php if ($document_all_permission) { ?>
-                                                                                <a 
-                                                                                    href="javascript:void(0);"
-                                                                                    class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
-                                                                                    title="Modify Category"
-                                                                                    data-asid="<?=$document['sid'];?>"
-                                                                                    data-sid="<?=$document['document_sid'];?>"
-                                                                                >Manage Category</a>
-                                                                            <?php } ?>
-
-                                                                            <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                <?php 
-                                                                                    // if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
-                                                                                    if (true) {
-                                                                                ?>
-                                                                                    <?php if ($document['document_sid'] != 0) { ?>
-                                                                                        <?php if ($document['status'] == 1) { ?>
-                                                                                            <?php if ($user_type == 'applicant') { ?>
-                                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                                            <?php } else { ?>
-                                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                            <?php } ?>
-                                                                                        <?php } else { ?>
-                                                                                            <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
-                                                                                        <?php } ?>
-                                                                                    <?php } ?>
-                                                                                <?php } ?>
-                                                                                <?php if ($document['approval_process'] == 1) { ?>
-                                                                                    <button 
-                                                                                        data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                        data-user_type="<?=$user_type;?>"
-                                                                                        data-user_sid="<?=$user_sid;?>"
-                                                                                        class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                        View Approver(s)
-                                                                                    </button>
-                                                                                <?php } ?>
-                                                                            <?php } ?>    
-                                                                        </td>
-                                                                    </tr>
-                                                                <?php } else { ?>
-                                                                    <tr>
-                                                                        <td class="col-lg-6">
-                                                                            <?php
-                                                                                echo $document['document_title'] . '&nbsp;';
-                                                                                echo $document['is_document_authorized'] == 1 && $document['authorized_sign_status'] == 0  ? '( <b style="color:red;"> Awaiting Authorized Signature </b> )' : '';
-                                                                                echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
-                                                                                echo $document['status'] ? '' : '<b>(revoked)</b>';
-                                                                                echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
-
-                                                                                if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                    echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'], '_this' => $this));
-                                                                                }
-                                                                            ?>
-                                                                        </td>
-                                                                        <?php if ($document['document_type'] == 'uploaded') { ?>
-                                                                            <td class="col-lg-2">
-                                                                                <button class="btn btn-success btn-sm btn-block"
-                                                                                    onclick="preview_latest_generic_function(this);"
-                                                                                    date-letter-type="uploaded"
-                                                                                    data-on-action="assigned"
-                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                                    data-s3-name="<?php echo $document['document_s3_name']; ?>" <?= !$document['document_s3_name'] ? 'disabled' : ''; ?>>
-                                                                                    Preview Assigned
-                                                                                </button>
-                                                                            </td>
-                                                                            <td class="col-lg-2">
-                                                                                <?php if ($document_all_permission) { ?>
-                                                                                    <button class="btn btn-success btn-sm btn-block"
-                                                                                        onclick="preview_latest_generic_function(this);"
-                                                                                        date-letter-type="uploaded"
-                                                                                        data-on-action="submitted"
-                                                                                        data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['uploaded_file']; ?>"
-                                                                                        data-s3-name="<?php echo $document['uploaded_file']; ?>"
-                                                                                        <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                        Preview Submitted
-                                                                                    </button>
-                                                                                <?php } ?>
-                                                                            </td>  
-                                                                        <?php } else { ?>
-                                                                            <td class="col-lg-2">
-                                                                                <button class="btn btn-success btn-sm btn-block"
-                                                                                    onclick="preview_latest_generic_function(this);"
-                                                                                    date-letter-type="generated"
-                                                                                    data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                                    data-on-action="assigned"
-                                                                                    data-from="assigned_document">
-                                                                                    Preview Assigned
-                                                                                </button>
-                                                                                <?php if ($document_all_permission) { ?>
-                                                                                    <?php if ($document['is_document_authorized'] == 1) { ?>
-                                                                                        <?php
-                                                                                            $authorized_signature_url = '';
-
-                                                                                            if ($user_type == 'applicant') {
-                                                                                                $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid);
-                                                                                            } else {
-                                                                                                $authorized_signature_url = base_url('hr_documents_management/sign_authorized_signature_document/employee/' . $document['sid'] . '/' . $user_sid);
-                                                                                            }
-                                                                                        ?> 
-
-                                                                                        <a class="btn btn-success btn-sm btn-block" href="<?php echo $authorized_signature_url; ?>">
-                                                                                            View Doc
-                                                                                        </a> 
-                                                                                    <?php } ?>
-                                                                                <?php } ?>
-                                                                            </td>
-                                                                            <td class="col-lg-2">
-                                                                                <?php if ($document_all_permission) { ?>
-                                                                                    <button class="btn btn-success btn-sm btn-block"
-                                                                                    onclick="preview_latest_generic_function(this);"
-                                                                                    date-letter-type="generated"
-                                                                                    data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                                    data-on-action="submitted"
-                                                                                    data-from="assigned_document"
-                                                                                    <?php echo $document['user_consent'] != 1 ? 'disabled' : ''; ?>>
-                                                                                        Preview Submitted
-                                                                                    </button>
-                                                                                    <?php if ($document['is_document_authorized'] == 1) { ?> 
-                                                                                        <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                        <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
-                                                                                            <?php if ($document['authorized_sign_status'] == 0) { ?>
-                                                                                                Employer Section - Not Completed
-                                                                                            <?php } else if ($document['authorized_sign_status'] == 1) { ?>
-                                                                                                Employer Section - Completed  
-                                                                                            <?php } ?>     
-                                                                                        </a>
-                                                                                    <?php } ?> 
-                                                                                <?php } ?> 
-                                                                            </td>    
-                                                                        <?php } ?>
-                                                                        <td>
-                                                                            <?php if ($document_all_permission) { ?>
-                                                                                <a 
-                                                                                    href="javascript:void(0);"
-                                                                                    class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
-                                                                                    title="Modify Category"
-                                                                                    data-asid="<?=$document['sid'];?>"
-                                                                                    data-sid="<?=$document['document_sid'];?>"
-                                                                                >Manage Category</a>
-
-                                                                            <?php } ?>
-                                                                            <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                <?php 
-                                                                                    //if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) { 
-                                                                                    if (true) {
-                                                                                ?>
-                                                                                    <?php if ($document['document_sid'] != 0) { ?>
-                                                                                        <?php if ($document['status'] == 1) { ?>
-                                                                                            <?php if ($user_type == 'applicant') { ?>
-                                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                                            <?php } else { ?>
-                                                                                                <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                            <?php } ?>
-                                                                                        <?php } else { ?>
-                                                                                            <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
-                                                                                        <?php } ?>
-                                                                                    <?php } ?>
-                                                                                <?php } ?>
-                                                                                <?php if ($document['approval_process'] == 1) { ?>
-                                                                                    <button 
-                                                                                        data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                        data-user_type="<?=$user_type;?>"
-                                                                                        data-user_sid="<?=$user_sid;?>"
-                                                                                        class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                        View Approver(s)
-                                                                                    </button>
-                                                                                <?php } ?>
-                                                                            <?php } ?>  
-                                                                        </td>
-                                                                    </tr>
-                                                                <?php } ?>  
+                                                                        <?=getDocumentTabPagesButton($document, 'employer_section', ['current_user_signature' => $current_user_signature, 'permissions' => $document_all_permission]) ?>    
+                                                                    </td>
+                                                                </tr>
                                                             <?php } else { ?>
                                                                 <?php $this->load->view('hr_documents_management/document_assign_history_row', ['user_sid' => $user_sid, 'user_type' => $user_type, 'history_document' => $document, "document_all_permission" => $document_all_permission]); ?>
                                                             <?php } ?>
@@ -1530,14 +603,7 @@
                                                                 <?php echo $w4_form['form_status']; ?>
                                                             </td>
                                                             <td class="col-lg-2">
-                                                                <a href="javascript:;" 
-                                                                data-type="W4_Form" 
-                                                                data-status="<?php echo $w4_form['form_status']; ?>" 
-                                                                data-doc_sid="<?php echo $w4_form['sid']; ?>" 
-                                                                class="btn btn-success btn-block jsShowVarificationDocument" 
-                                                                title="" 
-                                                                placement="top" 
-                                                                data-original-title="View W4 form">View W4</a>
+                                                                <?= getdocumenttabpagesbutton('', 'view_W4', ['form_status' => $w4_form['form_status'], 'form_sid' => $w4_form['sid']]) ?>
                                                             </td>
                                                         </tr>
                                                         <?php } ?>
@@ -1557,14 +623,7 @@
                                                                 <?php echo $w9_form['form_status']; ?>
                                                             </td>
                                                             <td class="col-lg-2">
-                                                                <a href="javascript:;" 
-                                                                data-type="W9_Form" 
-                                                                data-status="<?php echo $w9_form['form_status']; ?>" 
-                                                                data-doc_sid="<?php echo $w9_form['sid']; ?>" 
-                                                                class="btn btn-success btn-block jsShowVarificationDocument" 
-                                                                title="" 
-                                                                placement="top" 
-                                                                data-original-title="View W9 form">View W9</a>
+                                                                <?= getdocumenttabpagesbutton('', 'view_W9', ['form_status' => $w9_form['form_status'], 'form_sid' => $w9_form['sid']]) ?>
                                                             </td>
                                                         </tr>
                                                         <?php } ?>
@@ -1584,16 +643,8 @@
                                                                 <?php echo $i9_form['form_status']; ?>
                                                             </td>
                                                             <td class="col-lg-2">
-                                                                <a href="javascript:;" 
-                                                                data-type="I9_Form" 
-                                                                data-status="<?php echo $i9_form['form_status']; ?>" 
-                                                                data-doc_sid="<?php echo $i9_form['sid']; ?>" 
-                                                                class="btn btn-success btn-block jsShowVarificationDocument" 
-                                                                title="" 
-                                                                placement="top" 
-                                                                data-original-title="View I9 form">View I9</a>
+                                                                <?= getdocumenttabpagesbutton('', 'view_I9', ['form_status' => $i9_form['form_status'], 'form_sid' => $i9_form['sid']]) ?>
                                                             </td>
-                                                            
                                                         </tr>
                                                         <?php } ?>
                                                     <?php } ?>
@@ -1616,7 +667,7 @@
                     <?php if (!empty($categories_no_action_documents)) { ?>
                         <h2 class="tab-title">No Action Required Document Detail
                         <span class="pull-right">
-                            <a href="<?=base_url('download/'.($user_type).'/'.($user_sid).'/noActionRequired');?>" target="_blank" class="btn btn-success">Download Document(s)</a>
+                            <?=getDocumentTabPagesButton($document, 'download_all_documents', ['user_type' => $user_type, 'user_sid' => $user_sid, 'type' => "noActionRequired", 'permissions' => true]) ?>
                         </span>
                         <hr /> 
                     </h2>
@@ -1664,163 +715,31 @@
                                                                             <?php $noActionRequiredDocumentsList[] = $document; ?>
                                                                             <?php $nad++; ?>
                                                                             <tr>
-                                                                                <td class="col-lg-6">
-                                                                                    <?php
-                                                                                        echo $document['document_title'] . '&nbsp;';
-                                                                                        echo $document['status'] ? '' : '<b>(revoked)</b>';
-                                                                                        echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
-                                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
-                                                                                        echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
-                                                                                        echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
-
-                                                                                        if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'],'format' => 'M d Y, D', '_this' => $this));
-                                                                                        }
-
-                                                                                        if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                                            echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
-                                                                                        } else {
-                                                                                            echo "<br><b>Signed On: </b> N/A";
-                                                                                        }
-
-                                                                                        if ($document['approval_process'] == 1) {
-                                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
-                                                                                        }
-                                                                                    ?>
+                                                                                <td class="col-lg-8">
+                                                                                    <?=getDocumentReadableInfo($document, 'completed') ?>
                                                                                 </td>
+                                                                                <td class="col-lg-1">
+                                                                                    <?=getDocumentTabPagesButton($document, 'print', ['document_tab' => 'no_action']) ?>
 
-                                                                                <?php if ($document['document_type'] == 'uploaded' || $document['document_type'] == 'confidential') { ?>
-                                                                                    <?php
-                                                                                        $no_action_document_url = $document['document_s3_name'];
-                                                                                        $no_action_document_info = get_required_url($no_action_document_url);
-                                                                                        $no_action_print_url = $no_action_document_info['print_url'];
-                                                                                        $no_action_download_url = $no_action_document_info['download_url'];
-                                                                                    ?>
-                                                                                    <!-- Print Download by Adil-->
-                                                                                    <td class="col-lg-1">
-                                                                                        <a target="_blank" href="<?php echo $no_action_print_url; ?>" class="btn btn-success btn-sm btn-block">
-                                                                                            Print
-                                                                                        </a>
-                                                                                    
-                                                                                        <a href="<?php echo $no_action_download_url; ?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
-                                                                                    </td>
-                                                                                    <td class="col-lg-2">
+                                                                                    <?=getDocumentTabPagesButton($document, 'download', ['document_tab' => 'no_action']) ?>
+                                                                                </td>
+                                                                                <td class="col-lg-1">
+                                                                                    <?=getDocumentTabPagesButton($document, 'preview_assigned') ?>
 
-                                                                                        <?php if ($document['document_sid'] != 0) { ?>
-                                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                                                onclick="preview_latest_generic_function(this);"
-                                                                                                date-letter-type="uploaded"
-                                                                                                data-on-action="assigned"
-                                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                                                data-s3-name="<?php echo $document['document_s3_name']; ?>">Preview Document
-                                                                                            </button> 
-                                                                                            <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                                <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'noActionDocuments'], $modifyBTN);?>
-                                                                                            <?php } ?>    
+                                                                                    <?=getDocumentTabPagesButton($document, 'view_approver', ['user_type' => $user_type, 'user_sid' => $user_sid, 'permissions' => $document_all_permission]) ?>  
 
-                                                                                        <?php } else if ($document['document_sid'] == 0) { ?>
-                                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                                                onclick="preview_latest_generic_function(this);"
-                                                                                                date-letter-type="uploaded"
-                                                                                                data-on-action="assigned"
-                                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                                                data-s3-name="<?php echo $document['document_s3_name']; ?>">Preview Document
-                                                                                            </button> 
-                                                                                            <?php if ($action_btn_flag == true) { ?>
-                                                                                                <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                                    <?php
-                                                                                                        $categories = isset($no_action_document_categories[$document['sid']]) ? json_encode($no_action_document_categories[$document['sid']]) : "[]";
-                                                                                                        $manual_document_type = $document['manual_document_type'] == "offer_letter" ? true : false;
-                                                                                                        $document_type = $document['document_type'] == "confidential" ? true : false;
-                                                                                                        $assign_date = isset($document['assigned_date']) ? date('m-d-Y',strtotime($document['assigned_date'])) : '';
-                                                                                                        $sign_date = isset($document['signature_timestamp']) ?  date('m-d-Y',strtotime($document['signature_timestamp'])) : '';
-                                                                                                    ?>
-                                                                                                    <button class="btn btn-success btn-sm btn-block"
-                                                                                                    onclick="no_action_req_edit_document_model(this);"
-                                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>"
-                                                                                                    data-print-type="assigned"
-                                                                                                    data-download-sid="<?php echo $document['sid']; ?>"
-                                                                                                    data-file-name="<?php echo $document['document_original_name']; ?>" 
-                                                                                                    data-document-title="<?php echo $document['document_title']; ?>"
-                                                                                                    is-offer-letter="<?php echo $manual_document_type; ?>"
-                                                                                                    is-payroll-visible="<?php echo $document['visible_to_payroll'] == 1 ? true : false; ?>"
-                                                                                                    data-categories='<?php echo $categories; ?>'
-                                                                                                    data-update-accessible="<?php echo $document_type; ?>"
-                                                                                                    assign-date="<?php echo $assign_date; ?>"
-                                                                                                    sign-date="<?php echo $sign_date; ?>"
-                                                                                                    >Edit Document</button>
-                                                                                                    <?php if (check_access_permissions_for_view($security_details, 'archive_document')) { ?>
-                                                                                                        <form id="form_archive_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                                            <input type="hidden" id="perform_action" name="perform_action" value="archive_uploaded_document" />
-                                                                                                            <input type="hidden" id="document_type" name="document_type" value="<?= $document['document_type']?>" />
-                                                                                                            <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
-                                                                                                        </form>
-                                                                                                        <button class="btn btn-warning btn-sm btn-block" onclick="func_archive_uploaded_document(<?php echo $document['sid']; ?>)">Archive</button>
-                                                                                                    <?php } ?>
-                                                                                                <?php } ?>
-                                                                                            <?php } ?>
-                                                                                        <?php } ?>
-                                                                                    </td>
-                                                                                <?php } else { ?>
-                                                                                    <td class="col-lg-1">
-                                                                                        <a href="<?= base_url('hr_documents_management/print_generated_doc/original/' . $document['sid'] . '/' . $user_sid . '/' . $user_type);?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                                    
-                                                                                        <a href="<?= base_url('hr_documents_management/print_generated_doc/original/' . $document['sid'] . '/' . $user_sid . '/' . $user_type . '/download');?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
-                                                                                    </td>
-                                                                                    <td class="col-lg-2">
-                                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                                            onclick="preview_latest_generic_function(this);"
-                                                                                            date-letter-type="generated"
-                                                                                            data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                                            data-on-action="assigned"
-                                                                                            data-from="assigned_document">
-                                                                                            Preview Assigned
-                                                                                        </button>
-                                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'noActionDocuments'], $modifyBTN);?>
-                                                                                        <?php } ?>     
-                                                                                    </td>
-                                                                                <?php } ?>
-                                                                                <td>
-                                                                                    <?php if ($document_all_permission) { ?>
-                                                                                        <a 
-                                                                                            href="javascript:void(0);"
-                                                                                            class="btn btn-sm btn-success jsCategoryManagerBTN"
-                                                                                            title="Modify Category"
-                                                                                            data-asid="<?=$document['sid'];?>"
-                                                                                            data-sid="<?=$document['document_sid'];?>"
-                                                                                        >Manage Category</a>
-                                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
-                                                                                            <a 
-                                                                                                href="javascript:void(0);"
-                                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
-                                                                                                title="Revoke Library Document"
-                                                                                                data-asid="<?=$document['sid'];?>"
-                                                                                            >Revoke</a>
-                                                                                        <?php } ?>
-                                                                                    <?php } ?>
-                                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                        <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/'.($user_type).'/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                        <?php if ($document['is_document_authorized'] == 1) { ?> 
-                                                                                            <?php $btn_show = empty($document['authorized_signature']) ?  'btn blue-button btn-sm btn-block' : 'btn btn-success btn-sm btn-block'; ?>
-                                                                                            <a class="<?php echo $btn_show; ?> manage_authorized_signature" href="javascript:;" data-auth-sid="<?php echo $document['sid']; ?>" data-auth-signature="<?php echo $document['authorized_sign_status'] == 1 ? $document['authorized_signature'] : $current_user_signature; ?>">
-                                                                                                <?php if ($document['authorized_sign_status'] == 0) { ?>
-                                                                                                    Employer Section - Not Completed
-                                                                                                <?php } else if ($document['authorized_sign_status'] == 1) { ?>
-                                                                                                    Employer Section - Completed  
-                                                                                                <?php } ?>     
-                                                                                            </a>
-                                                                                        <?php } ?>
-                                                                                        <?php if ($document['approval_process'] == 1) { ?>
-                                                                                            <button 
-                                                                                                data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                                data-user_type="<?=$user_type;?>"
-                                                                                                data-user_sid="<?=$user_sid;?>"
-                                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                                View Approver(s)
-                                                                                            </button>
-                                                                                        <?php } ?>
-                                                                                    <?php } ?>
+                                                                                </td>
+                                                                                <td class="col-lg-1">
+                                                                                    <?=getDocumentTabPagesButton($document, 'manage_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?>
+
+                                                                                    <?=getDocumentTabPagesButton($document, 'manage_category', ['permissions' => $document_all_permission]) ?>
+                                                                                </td> 
+                                                                                <td class="col-lg-1">
+                                                                                    <?=getDocumentTabPagesButton($document, 'edit_manual_document', ['action_btn_flag' => $action_btn_flag, 'permissions' => $document_all_permission, 'data_type' => 'noActionDocuments', 'no_action_document_categories' => $no_action_document_categories]) ?>
+
+                                                                                    <?=getDocumentTabPagesButton($document, 'archive_manual_upload_document', ['action_btn_flag' => $action_btn_flag, 'permissions' => $document_all_permission, 'security_details' => $security_details, "current_url" => current_url()]) ?>
+
+                                                                                    <?=getDocumentTabPagesButton($document, 'revoke_library_document', ['permissions' => $document_all_permission]) ?> 
                                                                                 </td>
                                                                             </tr>
                                                                         <?php } ?>
@@ -1877,190 +796,30 @@
                                                         <?php foreach ($no_action_required_payroll_documents as $document) { ?>
                                                         <?php $nad++; $noActionRequiredDocumentsList[] = $document; ?>
                                                             <tr>
-                                                                <td class="col-lg-6">
-                                                                    <?php
-                                                                        echo $document['document_title'] . '&nbsp;';
-                                                                        echo $document['status'] ? '' : '<b>(revoked)</b>';
-                                                                        echo $document['isdoctolibrary'] == 1 ? '( <b style="color:red;"> Document Library </b> )' : '';
-                                                                        echo $document['document_sid'] == 0 ? '<b> (Manual Upload)</b>' : '';
-                                                                        echo $document['document_type'] == 'offer_letter' ? '<b> (Offer Letter)</b>' : '';
-                                                                        echo $document['is_confidential'] ? '<br/><b> (Confidential)</b>' : '';
-
-                                                                        if (isset($document['assigned_date']) && $document['assigned_date'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Assigned On: </b>" . reset_datetime(array('datetime' => $document['assigned_date'],'format' => 'M d Y, D', '_this' => $this));
-                                                                        }
-
-                                                                        if (isset($document['signature_timestamp']) && $document['signature_timestamp'] != '0000-00-00 00:00:00') {
-                                                                            echo "<br><b>Signed On: </b>" . reset_datetime(array('datetime' => $document['signature_timestamp'], 'format' => 'M d Y, D',  '_this' => $this));
-                                                                        } else {
-                                                                            echo "<br><b>Signed On: </b> N/A";
-                                                                        }
-
-                                                                        if ($document['approval_process'] == 1) {
-                                                                            echo '<br><b class="text-danger">(Document Approval Pending)</b>';
-                                                                        }
-                                                                    ?>
+                                                                <td class="col-lg-8">
+                                                                    <?=getDocumentReadableInfo($document, 'completed') ?>
                                                                 </td>
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'print', ['document_tab' => 'no_action']) ?>
 
-                                                                <?php if ($document['document_type'] == 'uploaded' || $document['document_type'] == 'confidential') { ?>
-                                                                    <!-- Print Download by Adil-->
-                                                                    <td class="col-lg-1">
-                                                                        <?php
-                                                                        $document_filename = $document['document_s3_name'];
-                                                                        $document_file = pathinfo($document_filename);
-                                                                        $document_extension = $document_file['extension'];
-                                                                        $name = explode(".",$document_filename);
-                                                                        $url_segment_original = $name[0];
-                                                                        ?>
-                                                                        <?php if ($document_extension == 'pdf') { ?>
-                                                                            <a target="_blank" href="<?php echo 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/'.$url_segment_original.'.pdf' ?>" class="btn btn-success btn-sm btn-block">Print</a>
+                                                                    <?=getDocumentTabPagesButton($document, 'download', ['document_tab' => 'no_action']) ?>
+                                                                </td>
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'preview_assigned') ?>
 
-                                                                        <?php } else if ($document_extension == 'docx') { ?>
-                                                                            <a target="_blank" href="<?php echo 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$url_segment_original.'%2Edocx&wdAccPdf=0' ?>" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                        <?php } else if ($document_extension == 'doc') { ?>
-                                                                            <a target="_blank" href="<?php echo 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$url_segment_original.'%2Edoc&wdAccPdf=0' ?>" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                        <?php } else if ($document_extension == 'xls') { ?>
-                                                                            <a target="_blank" href="<?php echo 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$url_segment_original.'%2Exls' ?>" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                        <?php } else if ($document_extension == 'xlsx') { ?>
-                                                                            <a target="_blank" href="<?php echo 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F'.$url_segment_original.'%2Exlsx' ?>" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                        <?php } else if (in_array($document_extension, ['jpe', 'jpg', 'jpeg', 'png', 'bmp', 'gif', 'svg'])) { ?>
-                                                                            <a target="_blank" href="<?php echo base_url('hr_documents_management/print_assign_document/' . $user_type . '/' . $user_sid . '/' . $document_sid . '/original'); ?>" class="btn btn-success btn-sm btn-block">
-                                                                                Print
-                                                                            </a>
-                                                                        <?php } else { ?>
-                                                                            <a class="btn btn-success btn-sm btn-block"
-                                                                               href="javascript:void(0);"
-                                                                               onclick="fLaunchModal(this);"
-                                                                               data-preview-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>"
-                                                                               data-download-url="<?= AWS_S3_BUCKET_URL . $document_filename; ?>"
-                                                                               data-file-name="<?php echo $document_filename; ?>"
-                                                                               data-document-title="<?php echo $document_filename; ?>"
-                                                                               data-preview-ext="<?php echo $document_extension ?>">Print</a>
-                                                                        <?php } ?>
-                                                                    </td>
+                                                                    <?=getDocumentTabPagesButton($document, 'view_approver', ['user_type' => $user_type, 'user_sid' => $user_sid, 'permissions' => $document_all_permission]) ?>  
+                                                                </td>
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'manage_document', ['user_type' => $user_type, 'user_sid' => $user_sid, 'job_list_sid' => $job_list_sid, 'permissions' => $document_all_permission]) ?>
 
-                                                                    <td class="col-lg-1">
-                                                                        <a href="<?= base_url('hr_documents_management/download_upload_document/' . $document['document_s3_name']);?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
-                                                                    </td>
-                                                                    <td class="col-lg-2">
+                                                                    <?=getDocumentTabPagesButton($document, 'manage_category', ['permissions' => $document_all_permission]) ?>
+                                                                </td> 
+                                                                <td class="col-lg-1">
+                                                                    <?=getDocumentTabPagesButton($document, 'edit_manual_document', ['action_btn_flag' => $action_btn_flag, 'permissions' => $document_all_permission, 'data_type' => 'noActionDocuments', 'no_action_document_categories' => $no_action_document_categories]) ?>
 
-                                                                        <?php if ($document['document_sid'] != 0) { ?>
-                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                                onclick="preview_latest_generic_function(this);"
-                                                                                date-letter-type="uploaded"
-                                                                                data-on-action="assigned"
-                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                                data-s3-name="<?php echo $document['document_s3_name']; ?>">Preview Document
-                                                                            </button> 
-                                                                        <?php } else if ($document['document_sid'] == 0) { ?>
-                                                                            <button class="btn btn-success btn-sm btn-block"
-                                                                                onclick="preview_latest_generic_function(this);"
-                                                                                date-letter-type="uploaded"
-                                                                                data-on-action="assigned"
-                                                                                data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>"
-                                                                                data-s3-name="<?php echo $document['document_s3_name']; ?>">Preview Document
-                                                                            </button> 
-                                                                            <?php if ($action_btn_flag == true) { ?>
-                                                                                <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                                    <?php
-                                                                                        $categories = isset($no_action_document_categories[$document['sid']]) ? json_encode($no_action_document_categories[$document['sid']]) : "[]";
-                                                                                        $manual_document_type = $document['manual_document_type'] == "offer_letter" ? true : false;
-                                                                                        $document_type = $document['document_type'] == "confidential" ? true : false;
-                                                                                        $assign_date = isset($document['assigned_date']) ? date('m-d-Y',strtotime($document['assigned_date'])) : '';
-                                                                                        $sign_date = isset($document['signature_timestamp']) ?  date('m-d-Y',strtotime($document['signature_timestamp'])) : '';
-                                                                                    ?>
-                                                                                    <button class="btn btn-success btn-sm btn-block"
-                                                                                    onclick="no_action_req_edit_document_model(this);"
-                                                                                    data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-print-url="<?php echo $document['document_s3_name']; ?>"
-                                                                                    data-print-type="assigned"
-                                                                                    data-download-sid="<?php echo $document['sid']; ?>"
-                                                                                    data-file-name="<?php echo $document['document_original_name']; ?>" 
-                                                                                    data-document-title="<?php echo $document['document_title']; ?>"
-                                                                                    is-offer-letter="<?php echo $manual_document_type; ?>"
-                                                                                    is-payroll-visible="<?php echo $document['visible_to_payroll'] == 1 ? true : false; ?>"
-                                                                                    data-categories='<?php echo $categories; ?>'
-                                                                                    data-update-accessible="<?php echo $document_type; ?>"
-                                                                                    assign-date="<?php echo $assign_date; ?>"
-                                                                                    sign-date="<?php echo $sign_date; ?>"
-                                                                                    >Edit Document</button>
-                                                                                    <?php if (check_access_permissions_for_view($security_details, 'archive_document')) { ?>
-                                                                                        <form id="form_archive_hr_document_<?php echo $document['sid']; ?>" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
-                                                                                            <input type="hidden" id="perform_action" name="perform_action" value="archive_uploaded_document" />
-                                                                                            <input type="hidden" id="document_type" name="document_type" value="<?= $document['document_type']?>" />
-                                                                                            <input type="hidden" id="document_sid" name="document_sid" value="<?php echo $document['sid']; ?>" />
-                                                                                        </form>
-                                                                                        <button class="btn btn-warning btn-sm btn-block" onclick="func_archive_uploaded_document(<?php echo $document['sid']; ?>)">Archive</button>
-                                                                                    <?php } ?>
-                                                                                <?php } ?>
-                                                                            <?php } ?>
-                                                                        <?php } ?>
-                                                                    </td>
-                                                                <?php } else { ?>
-                                                                    <td class="col-lg-1">
-                                                                        <a href="<?= base_url('hr_documents_management/print_generated_doc/original/' . $document['sid'] . '/' . $user_sid . '/' . $user_type);?>" target="_blank" class="btn btn-success btn-sm btn-block">Print</a>
-                                                                    </td>
+                                                                    <?=getDocumentTabPagesButton($document, 'archive_manual_upload_document', ['action_btn_flag' => $action_btn_flag, 'permissions' => $document_all_permission, 'security_details' => $security_details, "current_url" => current_url()]) ?>
 
-                                                                    <td class="col-lg-1">
-                                                                        <a href="<?= base_url('hr_documents_management/print_generated_doc/original/' . $document['sid'] . '/' . $user_sid . '/' . $user_type . '/download');?>" target="_blank" class="btn btn-success btn-sm btn-block">Download</a>
-                                                                    </td>
-                                                                    <td class="col-lg-2">
-                                                                        <button class="btn btn-success btn-sm btn-block"
-                                                                            onclick="preview_latest_generic_function(this);"
-                                                                            date-letter-type="generated"
-                                                                            data-doc-sid="<?php echo $document['sid']; ?>"
-                                                                            data-on-action="assigned"
-                                                                            data-from="assigned_document">
-                                                                            Preview Document
-                                                                        </button>
-                                                                        <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                            <?=str_replace(['{{sid}}', '{{type}}'], [$document['document_sid'], 'noActionDocuments'], $modifyBTN);?></td>
-                                                                        <?php } ?>
-                                                                <?php } ?>
-                                                                <td>
-                                                                    <?php if ($document_all_permission) { ?>
-                                                                        <a 
-                                                                            href="javascript:void(0);"
-                                                                            class="btn btn-success btn-sm btn-block jsCategoryManagerBTN"
-                                                                            title="Modify Category"
-                                                                            data-asid="<?=$document['sid'];?>"
-                                                                            data-sid="<?=$document['document_sid'];?>"
-                                                                        >Manage Category</a>
-
-                                                                        <?php if ($document['isdoctolibrary'] == 1) { ?>
-                                                                            <a 
-                                                                                href="javascript:void(0);"
-                                                                                class="btn btn-danger btn-sm btn-block jsRevokeDocumentLibrary"
-                                                                                title="Revoke Library Document"
-                                                                                data-asid="<?=$document['sid'];?>"
-                                                                            >Revoke</a>
-                                                                        <?php } ?>
-
-                                                                    <?php } ?>
-                                                                    <?php if ($document_all_permission && $document['isdoctolibrary'] == 0) { ?>
-                                                                        <?php 
-                                                                            // if (($user_type == 'applicant' && check_access_permissions_for_view($security_details, 'app_manage_doc')) || ($user_type == 'employee' && check_access_permissions_for_view($security_details, 'emp_manage_doc'))) {
-                                                                            if (true) {
-                                                                        ?>
-                                                                            <?php if ($document['status'] == 1) { ?>
-                                                                                <?php if ($user_type == 'applicant') { ?>
-                                                                                    <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/applicant/' . $document['sid'] . '/' . $user_sid . '/' . $job_list_sid); ?>">Manage Document</a>
-                                                                                <?php } else { ?>
-                                                                                    <a class="btn btn-success btn-sm btn-block" href="<?php echo base_url('hr_documents_management/manage_document/employee/' . $document['sid'] . '/' . $user_sid); ?>">Manage Document</a>
-                                                                                <?php } ?>
-                                                                            <?php } else { ?>
-                                                                                <button class="btn btn-warning btn-sm btn-block" onclick="func_document_revoked();">Manage Document</button>
-                                                                            <?php } ?>
-                                                                        <?php } ?>
-                                                                        <?php if ($document['approval_process'] == 1) { ?>
-                                                                            <button 
-                                                                                data-document_sid="<?=$document['document_sid'];?>" 
-                                                                                data-user_type="<?=$user_type;?>"
-                                                                                data-user_sid="<?=$user_sid;?>"
-                                                                                class="btn btn-success btn-block btn-sm jsViewDocumentApprovares">
-                                                                                View Approver(s)
-                                                                            </button>
-                                                                        <?php } ?>
-                                                                    <?php } ?> 
+                                                                    <?=getDocumentTabPagesButton($document, 'revoke_library_document', ['permissions' => $document_all_permission]) ?> 
                                                                 </td>
                                                             </tr>   
                                                         <?php } ?>
