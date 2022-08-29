@@ -293,7 +293,7 @@ class Import_csv extends Public_Controller {
             }
 
             $this->load->view('main/header', $data);
-            $this->load->view('import_csv/index');
+        $this->load->view('import_csv/index');
             $this->load->view('main/footer');
         } else {
             redirect('login', "refresh");
@@ -341,6 +341,14 @@ class Import_csv extends Public_Controller {
                     }
                     // Clean
                     $insertArray['email'] = isset($v0['email']) ? trim(strtolower($v0['email'])) : NULL;
+                    //
+                    if(empty($insertArray['email'])){
+                        if(isset($v0['secondary_email']) && !empty($v0['secondary_email'])){
+                            $insertArray['email'] = trim(strtolower($v0['secondary_email']));
+                        } else if(isset($v0['other_email']) && !empty($v0['other_email'])){
+                            $insertArray['email'] = trim(strtolower($v0['other_email']));
+                        }
+                    }
                     //
                     $ssn = isset($v0['ssn']) && !empty($v0['ssn']) && $v0['ssn'] != NULL ? $v0['ssn'] : '';
                     $emp_no = isset($v0['employee_number']) && !empty($v0['employee_number']) && $v0['employee_number'] != NULL ? $v0['employee_number'] : '';
@@ -459,7 +467,7 @@ class Import_csv extends Public_Controller {
                     $insertArray['video_type'] = 'no_video';
                     $insertArray['verification_key'] = random_key() . '_csvImport';
                     // Check joining date
-                    if (isset($v0['joined_at']) && !empty($v0['joined_at']) && $v0['joined_at'] != NULL) {
+                    if (isset($v0['joined_at']) && !empty($v0['joined_at']) && $v0['joined_at'] != NULL && preg_match('/[0-9]{2}/', $v0['joined_at'])) {
                         //
                         $formatForDate = 'm/d/Y';
                         //
@@ -488,7 +496,7 @@ class Import_csv extends Public_Controller {
                         $insertArray['notified_by'] = trim($v0['notified_by']);
                     }
                     // Check dob
-                    if (isset($v0['dob']) && !empty($v0['dob']) && $v0['dob'] != NULL) {
+                    if (isset($v0['dob']) && !empty($v0['dob']) && $v0['dob'] != NULL && preg_match('/[0-9]{2}/', $v0['dob'])) {
                         //
                         $formatForDate = 'm/d/Y';
                         //

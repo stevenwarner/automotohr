@@ -231,7 +231,7 @@
         //
         function formHandler(e){
             e.preventDefault();
-            var fileData = file.target.result.split(/\n/g);
+            var fileData = file.target.result.split(/\r\n|\n/g);
             //Check if is it right format
             var format_index = fileData[0].toLowerCase().replace(/[^a-z]/g, '').trim();
             if(!format_index.includes("firstname") && !format_index.includes("first-name") && !format_index.includes("fname") && !format_index.includes("first_name")){
@@ -247,6 +247,30 @@
             });
             // Remove head
             fileData.splice(0,1);
+            //
+            var errorRows = "";
+            //
+            fileData.map((row, index) => {
+                var er = row.split(',');
+                //
+                if(er.length != indexes.length && er.length !== 1){
+                    errorRows += '<p>';
+                    errorRows += '  <strong>Row #: </strong>'+(index+2)+'<br />';
+                    errorRows += '  <strong>Name: </strong>'+(er[0] + er[1])+'';
+                    errorRows += '</p>';
+                }
+            });
+            //
+            if(errorRows.length){
+                //
+                return alertify.alert(
+                    "Error!",
+                    "<p>Please make sure there are no <strong>','</strong> in values.</p><br />"+
+                    "<p><strong>For instance </strong>422 Street, 3rd floor -> 422 Street 3rd floor</p><br />"+
+                    errorRows,
+                    function(){}
+                );
+            }
             //
             var records = [];
             //
