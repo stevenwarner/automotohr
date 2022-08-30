@@ -1808,7 +1808,7 @@ class Hr_documents_management_model extends CI_Model
         $employeeList = 'all',
         $documentList = 'all'
     ) {
-        $this->db->select('user_sid');
+        $this->db->select('user_sid,sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('user_consent', 0);
         $this->db->where('status', 1);
@@ -1939,7 +1939,7 @@ class Hr_documents_management_model extends CI_Model
                         }
                     }
                 } else {
-                    unset($assigned_documents[$emp_key]);
+                    unset($assigned_documents[$document_key]);
                 }
             }
 
@@ -1947,7 +1947,7 @@ class Hr_documents_management_model extends CI_Model
             $pending_w4         = $this->is_employee_w4_document_pending('employee', $employee_sid);
             $pending_w9         = $this->is_employee_w9_document_pending('employee', $employee_sid);
             $pending_i9         = $this->is_employee_i9_document_pending('employee', $employee_sid);
-            $pending_eeoc         = $this->is_eeoc_form_assign('employee', $employee_sid);
+            $pending_eeoc       = $this->is_eeoc_form_assign('employee', $employee_sid);
 
             // Get General Documents
             $this->addGeneralDocuments(
@@ -1955,7 +1955,6 @@ class Hr_documents_management_model extends CI_Model
                 $employee['user_sid'],
                 $employee_sids[$emp_key]['Documents']
             );
-
 
             // 
             if ($pending_w4 != 0) {
@@ -2012,6 +2011,69 @@ class Hr_documents_management_model extends CI_Model
             } else {
                 $r[$employee_sid]['Documents'] = $employee_sids[$emp_key]['Documents'];
             }
+        }
+
+        if ($documentList == 'all') {
+            $ignore = array_column($employee_sids, 'user_sid');
+            $this->db->select('sid');
+            $this->db->where('parent_sid', $company_sid);
+            $this->db->where('terminated_status', 0);
+            $this->db->where('active', 1);
+            $this->db->where_not_in('sid', $ignore);
+
+            $record_obj = $this->db->get('users');
+            $other_employees = $record_obj->result_array();
+            $record_obj->free_result();
+
+            if (!empty($other_employees)) {
+                foreach ($other_employees as $other_key => $other_employee) {
+                    $pending_w4         = $this->is_employee_w4_document_pending('employee', $other_employee['sid']);
+                    $pending_w9         = $this->is_employee_w9_document_pending('employee', $other_employee['sid']);
+                    $pending_i9         = $this->is_employee_i9_document_pending('employee', $other_employee['sid']);
+                    // 
+                    if ($pending_w4 != 0) {
+                        $w4_info = $this->get_w4_document_assign_date('employee', $other_employee['sid']);
+                        //
+                        $other_employees[$other_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'W4 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $w4_info['assigned_on'],
+                            'Days' => $w4_info['days']
+                        );
+                    }
+
+                    if ($pending_w9 != 0) {
+                        $w9_info = $this->get_w9_document_assign_date('employee', $other_employee['sid']);
+                        //
+                        $other_employees[$other_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'W9 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $w9_info['assigned_on'],
+                            'Days' => $w9_info['days']
+                        );
+                    }
+
+                    if ($pending_i9 != 0) {
+                        $i9_info = $this->get_i9_document_assign_date('employee', $other_employee['sid']);
+                        //
+                        $other_employees[$other_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'I9 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $i9_info['assigned_on'],
+                            'Days' => $i9_info['days']
+                        );
+                    }
+
+                    if ($pending_w4 == 0 && $pending_w9 == 0 && $pending_i9 == 0) {
+                        unset($employee_sids[$emp_key]);
+                    } else {
+                        $r[$other_employee['sid']]['Documents'] = $other_employees[$other_key]['Documents'];
+                    }
+                }
+            } 
         }
 
         return $r;
