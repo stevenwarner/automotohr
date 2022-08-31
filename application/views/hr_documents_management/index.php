@@ -38,6 +38,7 @@
                                     <?php } ?>
                                     <?php if (check_access_permissions_for_view($security_details, 'pending_document')) { ?>
                                     <a href="<?php echo base_url('hr_documents_management/people_with_pending_documents'); ?>" class="btn btn-success">Employees With Pending <i class="fa fa-files-o" aria-hidden="true"></i></a>
+                                    <a href="<?php echo base_url('hr_documents_management/people_with_pending_federal_fillable'); ?>" class="btn btn-success">Employees With Pending Federal Fillable <i class="fa fa-files-o" aria-hidden="true"></i></a>
                                     <?php } ?>
                                     <?php if (check_access_permissions_for_view($security_details, 'pending_document')) { ?>
                                     <a href="<?php echo base_url('hr_documents_management/people_with_pending_employer_documents'); ?>" class="btn btn-success">Managers With Pending <i class="fa fa-files-o" aria-hidden="true"></i></a>

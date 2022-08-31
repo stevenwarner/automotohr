@@ -2079,6 +2079,74 @@ class Hr_documents_management_model extends CI_Model
         return $r;
     }
 
+    function getEmployeesWithPendingFederalFillable(
+        $company_sid,
+        $employeeList = 'all',
+        $documentList = 'all'
+    ) {
+
+        $r = array();
+
+        $this->db->select('sid');
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->where('terminated_status', 0);
+        $this->db->where('active', 1);
+        if ($employeeList != 'all') $this->db->where_in('sid', explode(':', $employeeList));
+
+        $record_obj = $this->db->get('users');
+        $employees = $record_obj->result_array();
+        $record_obj->free_result();
+        //      
+
+        if (!empty($employees)) {
+            foreach ($employees as $emp_key => $employee) {
+                if ($documentList == 'all' || $documentList == 'w4') {
+                    $pending_w4 = $this->is_employee_w4_document_pending('employee', $employee['sid']);
+                } else {
+                    $pending_w4 = 0;
+                }
+                //
+                if ($documentList == 'all' || $documentList == 'i9') {
+                    $pending_i9 = $this->is_employee_i9_document_pending('employee', $employee['sid']);
+                } else {
+                    $pending_i9 = 0;
+                }
+                // 
+                if ($pending_w4 != 0) {
+                    $w4_info = $this->get_w4_document_assign_date('employee', $employee['sid']);
+                    //
+                    $employees[$emp_key]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => 'W4 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $w4_info['assigned_on'],
+                        'Days' => $w4_info['days']
+                    );
+                }
+
+                if ($pending_i9 != 0) {
+                    $i9_info = $this->get_i9_document_assign_date('employee', $employee['sid']);
+                    //
+                    $employees[$emp_key]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => 'I9 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $i9_info['assigned_on'],
+                        'Days' => $i9_info['days']
+                    );
+                }
+
+                if ($pending_w4 == 0 && $pending_i9 == 0) {
+                    unset($employee_sids[$emp_key]);
+                } else {
+                    $r[$employee['sid']]['Documents'] = $employees[$emp_key]['Documents'];
+                }
+            }
+        } 
+
+        return $r;
+    }
+
     function get_employee_assigned_documents($company_sid, $user_type, $user_sid = null)
     {
 
