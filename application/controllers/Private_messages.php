@@ -841,7 +841,7 @@ class Private_messages extends Public_Controller
         }
     }
 
-    public function reply_message($edit_id = NULL)
+  public function reply_message($edit_id = NULL)
     {
         if ($edit_id == NULL) { //If parameter not exist 
             redirect('manage_admin/products', 'refresh');
@@ -860,7 +860,9 @@ class Private_messages extends Public_Controller
             $data['message_type'] = $user_id = $this->message_model->get_message_type($edit_id);
             //            echo $this->db->last_query().'<br>'.$data['message_type']; 
             $data['backbtn'] = base_url('private_messages');
-
+            //
+            $type_flag = '';
+            //
             if ($data['message_type'] != 1) {
                 if (is_numeric($data['message_type'])) {
                     $this->load->model('dashboard_model');
@@ -868,11 +870,14 @@ class Private_messages extends Public_Controller
                     $data['message_type'] = $employerData['email'];
                     //                    echo '<br>'.$data['message_type']; exit;
                     $data['messgae_type_flag'] = 'employer';
+                    $type_flag = 'employer';
                 } else {
                     $data['messgae_type_flag'] = 'email';
+                    $type_flag = 'email';
                 }
             } else {
                 $data['messgae_type_flag'] = 'admin';
+                $type_flag = 'admin';
             }
 
             $this->load->library('form_validation');
@@ -895,18 +900,29 @@ class Private_messages extends Public_Controller
                 $message = $this->message_model->get_message($edit_id);
 
                 if (isset($message[0])) {
-                    $user_type = $message[0]['users_type'];
+                    $user_type = $message[0]['to_type'];
 
-                    if ($user_type == 'employee') { // employee
+                    if ($type_flag == 'employer') { // employee
                         $from_id = $message[0]['from_id'];
                         $user = $this->message_model->get_user($from_id);
+                        //
                         $first_name = $user[0]['first_name'];
                         $last_name = $user[0]['last_name'];
+                    } else if ($user_type == 'admin') {  
+                        $first_name = 'Admin';
+                        $last_name = '';  
                     } else {  // applicant
                         $job_id = $message[0]['job_id'];
-                        $applicant = $this->message_model->get_applicant($job_id);
-                        $first_name = $applicant[0]['first_name'];
-                        $last_name = $applicant[0]['last_name'];
+                        //
+                        if (!empty($job_id) || is_numeric($job_id)) {
+                            $applicant = $this->message_model->get_applicant($job_id);
+                            $first_name = $applicant[0]['first_name'];
+                            $last_name = $applicant[0]['last_name'];
+                        } else {
+                            $first_name = $message[0]['from_id'];
+                            $last_name = '';
+                        }
+                        
                     }
                 } else {
                     $first_name = '';
@@ -994,6 +1010,10 @@ class Private_messages extends Public_Controller
             }
         }
     }
+
+
+
+
 
     function message_task()
     {
