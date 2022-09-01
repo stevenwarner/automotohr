@@ -159,7 +159,7 @@ class Private_messages extends Public_Controller
 
             $load_view = check_blue_panel_status(false, 'self');
             $data['load_view'] = $load_view;
-     
+
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/my_messages_new');
             $this->load->view('main/footer');
@@ -315,7 +315,7 @@ class Private_messages extends Public_Controller
             $load_view = check_blue_panel_status(false, 'self');
             $data['load_view'] = $load_view;
 
-            
+
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/my_messages_new');
             $this->load->view('main/footer');
@@ -529,6 +529,7 @@ class Private_messages extends Public_Controller
                         $message_data['attachment'] = $messageFile;
                         sendMailWithAttachment($from, $to, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
                     } else {
+
                         sendMail($from, $to, $subject, $body, $company_name, REPLY_TO);
                     }
 
@@ -841,7 +842,7 @@ class Private_messages extends Public_Controller
         }
     }
 
-  public function reply_message($edit_id = NULL)
+    public function reply_message($edit_id = NULL)
     {
         if ($edit_id == NULL) { //If parameter not exist 
             redirect('manage_admin/products', 'refresh');
@@ -908,9 +909,9 @@ class Private_messages extends Public_Controller
                         //
                         $first_name = $user[0]['first_name'];
                         $last_name = $user[0]['last_name'];
-                    } else if ($user_type == 'admin') {  
+                    } else if ($user_type == 'admin') {
                         $first_name = 'Admin';
-                        $last_name = '';  
+                        $last_name = '';
                     } else {  // applicant
                         $job_id = $message[0]['job_id'];
                         //
@@ -922,7 +923,6 @@ class Private_messages extends Public_Controller
                             $first_name = $message[0]['from_id'];
                             $last_name = '';
                         }
-                        
                     }
                 } else {
                     $first_name = '';
@@ -1003,7 +1003,7 @@ class Private_messages extends Public_Controller
                     }
                     //
                     $this->send_email_notification($company_id, $company_detail['CompanyName'], $name, $employer_name, $to);
-                }   
+                }
 
                 $this->session->set_flashdata('message', 'Success! Messsage sent successfully!');
                 redirect('private_messages', 'refresh');
@@ -1049,32 +1049,27 @@ class Private_messages extends Public_Controller
         echo '</pre>';
     }
 
-    function send_email_notification ($company_sid, $company_name, $to_name, $from_name, $to_email) {
+    function send_email_notification($company_sid, $company_name, $to_name, $from_name, $to_email)
+    {
         $message_hf = message_header_footer($company_sid, $company_name);
+
         //
-        $notification_email = $message_hf['header']
-            . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $to_name . ',</h2>'
-            . '</br> You have a message in your AutomotoHR inbox from <strong>'.$from_name .'</strong>'
-            . $message_hf['footer'];
+        $template = get_email_template(PRIVATE_MESSAGE_NOTIFICATION);
+        $replacement_array = array();
+        $replacement_array['contact_name'] = $to_name;
+        $replacement_array['from_name'] = $from_name;
+        $subject = $template['subject'];
+        $message = convert_email_template($template['text'], $replacement_array);
+        //
+        $notification_email = $message_hf['header'] . $message . $message_hf['footer'];
         //
         log_and_sendEmail(
             FROM_EMAIL_NOTIFICATIONS,
             $to_email,
-            'Private Message Notification',
+            $subject,
             $notification_email,
             $company_name
         );
-        //    
-        // $emailData = array(
-        //     'date' => date('Y-m-d H:i:s'),
-        //     'subject' => 'Private Message Notification',
-        //     'email' => $to_email,
-        //     'message' => $notification_email,
-        //     'username' => $from_name,
-        //     'temp_id' => 'nil'
-        // );
-        // //
-        // save_email_log_common($emailData);
-
+       
     }
 }

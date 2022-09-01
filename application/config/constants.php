@@ -660,3 +660,5 @@ define('GUSTO_PAYROLL_TIME', '03:30 pm PDT');
 
 //
 define("WORK_WEEK_HOURS", 40);
+//
+define('PRIVATE_MESSAGE_NOTIFICATION', 424);
