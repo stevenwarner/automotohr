@@ -819,7 +819,7 @@ $assignIdObj = $confidential_sids;
                                                                                         <?php } ?>
                                                                                         <td>
                                                                                             <?php if ($document['document_type'] == 'hybrid_document') { ?>
-                                                                                                <button data-id="<?= $document['sid']; ?>" class="btn btn-success btn-sm btn-block js-hybrid-preview">View Doc</button>
+                                                                                                <button data-id="<?= $document['sid']; ?>" data-from="company" class="btn btn-success btn-sm btn-block js-hybrid-preview">View Doc</button>
                                                                                             <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                                                 <?php
                                                                                                 $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
@@ -1036,7 +1036,7 @@ $assignIdObj = $confidential_sids;
                                                                                         </td>
                                                                                         <td class="col-lg-1">
                                                                                             <?php if ($document['document_type'] == 'hybrid_document') { ?>
-                                                                                                <button data-id="<?= $document['sid']; ?>" data-document="assigned" data-type="document" class="btn btn-success btn-sm btn-block js-hybrid-preview">View Doc</button>
+                                                                                                <button data-id="<?= $document['sid']; ?>" data-from="company" data-document="assigned" data-type="document" class="btn btn-success btn-sm btn-block js-hybrid-preview">View Doc</button>
                                                                                             <?php } else if ($document['document_type'] == 'uploaded' || $document['document_type'] == 'confidential') { ?>
                                                                                                 <button class="btn btn-success btn-sm btn-block" onclick="preview_latest_generic_function(this);" date-letter-type="uploaded" data-on-action="assigned" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $document['document_s3_name']; ?>" data-s3-name="<?php echo $document['document_s3_name']; ?>">View Doc</button>
                                                                                             <?php } else { ?>
@@ -1411,7 +1411,7 @@ $assignIdObj = $confidential_sids;
                                                                                             </td>
                                                                                             <td class="col-xs-1">
                                                                                                 <?php if ($offer_letter['letter_type'] == 'hybrid_document') { ?>
-                                                                                                    <button data-id="<?= $offer_letter['sid']; ?>" data-document="original" data-type="offer_letter" class="btn btn-success btn-sm btn-block js-hybrid-preview">View Doc</button>
+                                                                                                    <button data-id="<?= $offer_letter['sid']; ?>" data-document="original" data-type="offer_letter" class="btn btn-success btn-sm btn-block js-hybrid-preview" data-from="company_offer_letter">View Doc</button>
                                                                                                 <?php } else if ($offer_letter['letter_type'] == 'uploaded') { ?>
                                                                                                     <button class="btn btn-success btn-sm btn-block" onclick="show_uploaded_offer_letter(this);" data-preview-url="<?php echo $offer_letter_iframe_url; ?>" data-file-name="<?php echo $offer_letter['letter_name']; ?>" data-print-url="<?php echo $offer_letter_print_url; ?>" data-download-url="<?php echo $offer_letter_download_url; ?>">View Doc</button>
                                                                                                 <?php } else { ?>
@@ -1537,7 +1537,7 @@ $assignIdObj = $confidential_sids;
                                                                                         <?php } ?>
                                                                                         <td>
                                                                                             <?php if ($document['document_type'] == 'hybrid_document') { ?>
-                                                                                                <button data-id="<?= $document['sid']; ?>" class="btn btn-success btn-sm btn-block js-hybrid-preview">View Doc</button>
+                                                                                                <button data-id="<?= $document['sid']; ?>" data-from="company" class="btn btn-success btn-sm btn-block js-hybrid-preview">View Doc</button>
                                                                                             <?php } else if ($document['document_type'] == 'uploaded') { ?>
                                                                                                 <?php
                                                                                                 $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';

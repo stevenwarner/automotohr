@@ -128,6 +128,7 @@
                                                                                     <?php if($document['document_type'] == 'hybrid_document') { ?>
                                                                                         <button 
                                                                                             data-id="<?=$document['sid'];?>"
+                                                                                            data-from="company"
                                                                                             class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
                                                                                      <?php } else if($document['document_type'] == 'uploaded') {
                                                                                             $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';
@@ -488,6 +489,7 @@
                                                                                 <button 
                                                                                     data-id="<?=$offer_letter['sid'];?>" 
                                                                                     data-type="offer_letter" 
+                                                                                    data-from="company_offer_letters"
                                                                                     class="btn btn-info btn-block btn-sm js-hybrid-preview">Preview</button>
                                                                             <?php } else if($offer_letter['letter_type'] == 'uploaded') {
                                                                                     $document_filename = !empty($offer_letter['uploaded_document_s3_name']) ? $offer_letter['uploaded_document_s3_name'] : '';
@@ -612,6 +614,7 @@
                                                                             <?php if($document['document_type'] == 'hybrid_document') { ?>
                                                                                 <button 
                                                                                     data-id="<?=$document['sid'];?>"
+                                                                                    data-from="company"
                                                                                     class="btn btn-info btn-sm btn-block js-hybrid-preview">Preview</button>
                                                                              <?php } else if($document['document_type'] == 'uploaded') {
                                                                                     $document_filename = !empty($document['uploaded_document_s3_name']) ? $document['uploaded_document_s3_name'] : '';

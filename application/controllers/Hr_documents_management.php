@@ -9181,6 +9181,21 @@ class Hr_documents_management extends Public_Controller
         $data['perform_action'] = $perform_action;
         $data['form_input_data'] = $form_input_data;
         $data['is_iframe_preview'] = $is_iframe_preview;
+        $data['is_hybrid'] = "no";
+
+        if ($document["document_type"] == "hybrid_document") {
+            $document_path = "";
+            if ($request_type == 'submitted') {
+                $document_path = $document["uploaded_file"];
+            } else {
+                $document_path = $request_from == "company_document" ? $document["uploaded_document_s3_name"] : $document["document_s3_name"];
+            }
+            //
+            
+            $data['document_path'] = base_url("hr_documents_management/download_upload_document").'/'.$document_path;
+            $data['perform_action'] = "download";
+            $data['is_hybrid'] = "yes";
+        }
 
         $this->load->view('hr_documents_management/new_generated_document_action_page', $data);
     }

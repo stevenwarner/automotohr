@@ -316,6 +316,7 @@ input[type='checkbox'].user_checkbox:checked:after {
                 }
                 
                 function download_document () {
+                    var document_type = '<?php echo $is_hybrid; ?>';
                     var draw = kendo.drawing;
                     draw.drawDOM($("#download_generated_document"), {
                         avoidLinks: false,
@@ -342,6 +343,11 @@ input[type='checkbox'].user_checkbox:checked:after {
                         });
                         //
                         setTimeout(() => {
+                            if (document_type == "yes") {
+                                var document_path = '<?php echo $document_path; ?>';
+                                // window.location.replace(document_path);
+                                window.open(document_path, '_blank');
+                            }
                             window.close();
                         }, 5000);
                     });
