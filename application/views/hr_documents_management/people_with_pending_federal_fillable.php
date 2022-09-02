@@ -167,11 +167,11 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-<!--                                    <div class="row">-->
-<!--                                        <div class="col-xs-12">-->
-<!--                                            <h3 class="">Employees</h3>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+                                    <!--  <div class="row">-->
+                                        <!-- <div class="col-xs-12">-->
+                                            <!-- <h3 class="">Employees</h3> -->
+                                        <!-- </div>-->
+                                    <!-- </div>-->
 
 
                                     <?php
@@ -199,8 +199,8 @@
                                                             </label>
                                                         </th>
                                                         <th scope="col">Employee Name</th>
-                                                        <th scope="col">Email</th>
-                                                        <th scope="col">Document(s)</th>
+                                                        <th scope="col">W4 Status</th>
+                                                        <th scope="col">I9 Status</th>
                                                         <th scope="col" style="text-align: right" >View Document(s)</th>
                                                     </tr>
                                                     </thead>
@@ -218,6 +218,20 @@
                                                             foreach ($employee['Documents'] as $ke => $v) {
                                                                 //
                                                                 $assignedByText = '';
+                                                                $w4_status = '<strong>Not Assigned</strong>';
+                                                                $i9_status = '<strong>Not Assigned</strong>';
+                                                                //
+                                                                if ($v['Title'] == "W4 Fillable") {
+                                                                    if ($v['Status'] == "pending") {
+                                                                        $w4_status = '<strong>Pending</strong>';
+                                                                    }
+                                                                }
+                                                                //
+                                                                if ($v['Title'] == "I9 Fillable") {
+                                                                    if ($v['Status'] == "pending") {
+                                                                        $i9_status = '<strong>Pending</strong>';
+                                                                    }
+                                                                }
                                                                 //
                                                                 if(isset($v['AssignedBy'])){
                                                                     $assignedBy = getUserNameBySID($v['AssignedBy']);
@@ -243,7 +257,7 @@
                                                                     <div class="control__indicator" style="top: -7px;"></div>
                                                                 </label>
                                                             </td>
-                                                            <td><?=remakeEmployeeName($employee);?></td>
+                                                            <td><?=remakeEmployeeName($employee);?><br><?php echo $employee['email']; ?></td>
                                                             <td><?php echo $employee['email']; ?></td>
                                                             <td
                                                                 style="cursor: pointer"
