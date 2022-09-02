@@ -345,10 +345,14 @@ input[type='checkbox'].user_checkbox:checked:after {
                         setTimeout(() => {
                             if (document_type == "yes") {
                                 var document_path = '<?php echo $document_path; ?>';
-                                // window.location.replace(document_path);
                                 window.open(document_path, '_blank');
+                                setTimeout(() => {
+                                    window.close();
+                                },5000)
+                            } else {
+                                window.close();
                             }
-                            window.close();
+                            
                         }, 5000);
                     });
                 }
