@@ -3,59 +3,58 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/style.css'); ?>">
-        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/font-awesome-animation.min.css'); ?>">
-        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/bootstrap.css'); ?>">
-        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/font-awesome.css'); ?>">
-        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/responsive.css'); ?>">
-        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/jquery-ui-datepicker-custom.css'); ?>">
-        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/css/jquery.datetimepicker.css'); ?>">
-        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/star-rating.css'); ?>">
+        
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/style", 'css', '1.0.1')); ?>"> <!-- done-->
+        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/2022/manage_admin/css/font-awesome-animation.min.css'); ?>"> 
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/bootstrap", 'css', '1.0.1')); ?>"> <!-- done-->
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/font-awesome", 'css', '1.0.1')); ?>"> <!-- done-->
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/responsive", 'css', '1.0.1')); ?>"> <!-- done-->
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/jquery-ui-datepicker-custom", 'css', '1.0.1')); ?>"> <!-- done-->
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/css/jquery.datetimepicker", 'css', '1.0.1')); ?>">
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/star-rating", 'css', '1.0.1')); ?>"> <!-- done-->
         <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="shortcut icon" href="<?= base_url() ?>assets/2022/images/favi-icon.png" type="image/x-icon"/>
 
-        <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon"/>
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/jquery-1.11.3.min", 'js', '1.0.1')); ?>"></script> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/js/jquery.datetimepicker", 'js', '1.0.1')); ?>"></script> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/jquery-ui", 'js', '1.0.1')); ?>"></script> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/bootstrap.min", 'js', '1.0.1')); ?>"></script> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/functions", 'js', '1.0.1')); ?>"></script>  <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/alertifyjs/alertify.min", 'js', '1.0.1')); ?>"></script> <!-- done-->
 
-        <script src="<?php echo site_url('assets/manage_admin/js/jquery-1.11.3.min.js'); ?>"></script>
-        <script type="text/javascript" src="<?= base_url() ?>assets/js/jquery.datetimepicker.js"></script>
-        <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/jquery-ui.js'); ?>"></script>
-        <script src="<?php echo site_url('assets/manage_admin/js/bootstrap.min.js'); ?>"></script>
-        <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/functions.js'); ?>"></script>
-        <script src="<?= base_url() ?>assets/alertifyjs/alertify.min.js"></script>
         <!-- include the style -->
-        <link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/alertify.min.css" />
+        <link rel="stylesheet" href="<?= base_url() ?>assets/2022/alertifyjs/css/alertify.min.css" /> <!-- done-->
         <!-- include a theme -->
-        <link rel="stylesheet" href="<?= base_url() ?>assets/alertifyjs/css/themes/default.min.css" />
-        <script src="<?= base_url() ?>assets/ckeditor/ckeditor.js"></script>
+        <link rel="stylesheet" href="<?= base_url() ?>assets/2022/alertifyjs/css/themes/default.min.css" /> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/ckeditor/ckeditor", 'js', '1.0.1')); ?>"></script> <!-- done-->
 
         <!--select2-->
         <?php 
             if (strpos($_SERVER['REQUEST_URI'], "manage_admin/my-events") !== false){
         ?>
-            <link href="<?php echo site_url('assets/css/select2.css'); ?>" rel="stylesheet" />
-            <script src="<?php echo site_url('assets/js/select2.js'); ?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/css/select2", 'css', '1.0.1')); ?>">  <!-- done-->
+            <script src="<?= base_url(_m("assets/2022/js/select2", 'js', '1.0.1')); ?>"></script> <!-- done-->
+
         <?php
             }else{
         ?>
-            <link href="<?php echo site_url('assets/manage_admin/css/select2.css'); ?>" rel="stylesheet" />
-            <script src="<?php echo site_url('assets/manage_admin/js/select2.min.js'); ?>"></script>
+            <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/select2", 'css', '1.0.1')); ?>"> <!-- done-->
+            <script src="<?= base_url(_m("assets/2022/manage_admin/js/select2.min", 'js', '1.0.1')); ?>"></script> <!-- done-->
         <?php        
             }
         ?>
         <!-- Include MultiSelect -->
-        <link rel="stylesheet" type="text/css" href="<?php echo site_url('assets/manage_admin/css/chosen.css'); ?>">
-        <script src="<?php echo site_url('assets/manage_admin/js/chosen.jquery.js'); ?>"></script>
-
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/manage_admin/css')?>/selectize.css">
-        <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/manage_admin/css')?>/selectize.bootstrap3.css">
-        <script src="<?php echo base_url('assets/manage_admin/js')?>/selectize.min.js"></script>
-
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/chosen", 'css', '1.0.1')); ?>"> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/chosen.jquery", 'js', '1.0.1')); ?>"></script> <!-- done-->
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/selectize", 'css', '1.0.1')); ?>"> <!-- done-->
+        <link rel="stylesheet" type="text/css" href="<?= base_url(_m("assets/2022/manage_admin/css/selectize.bootstrap3", 'css', '1.0.1')); ?>"> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/selectize.min", 'js', '1.0.1')); ?>"></script> <!-- done-->
         <!-- Include Jquery Validate -->
-        <script src="<?php echo site_url('assets/manage_admin/js/jquery.validate.js'); ?>"></script>
-        <script src="<?php echo site_url('assets/manage_admin/js/additional-methods.js'); ?>"></script>
-        <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/tableHeadFixer.js');?>"></script>
-        <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/star-rating.js');?>"></script>
-        <script type="text/javascript" src="<?php echo site_url('assets/manage_admin/js/Chart.bundle.min.js');?>"></script>
-
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/jquery.validate", 'js', '1.0.1')); ?>"></script> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/additional-methods", 'js', '1.0.1')); ?>"></script> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/tableHeadFixer", 'js', '1.0.1')); ?>"></script>  <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/star-rating", 'js', '1.0.1')); ?>"></script> <!-- done-->
+        <script src="<?= base_url(_m("assets/2022/manage_admin/js/Chart.bundle.min", 'js', '1.0.1')); ?>"></script> <!-- done-->
 
         <title><?php echo $page_title; ?></title>
         <?php echo $before_head; ?>
@@ -89,7 +88,6 @@
                                                 <span class="notification-count <?php if($header_notifications['awaiting_response'] > 0 || $header_notifications['feedback_required'] > 0 || $header_notifications['pending_jobs_to_feed'] > 0 || sizeof($header_notifications['affiliations']) > 0 || $header_notifications['unpaid_commissions_count'] > 0 || $header_notifications['end_user_license_signed'] > 0 || $header_notifications['client_refer_by_affiliate'] > 0 || $header_notifications['form_document_credit_card_authorization'] > 0 || sizeof($header_notifications['form_affiliate_end_user_license_agreement']) > 0 || $header_notifications['private_messages'] > 0 || $header_notifications['pending_incidents'] > 0){ echo 'count-increament'; } ?>">
                                                     <?php
                                                         $notifications_count = 0;
-
 
                                                         if($header_notifications['awaiting_response'] > 0) {
                                                             $notifications_count++;
