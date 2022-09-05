@@ -2133,6 +2133,17 @@ class Hr_documents_management_model extends CI_Model
                             'Status' => 'not_assigned'
                         );
                     }   
+                } else if ($pending_w4_status == "completed") {
+                    $w4_info = $this->get_w4_completed_document_assign_date('employee', $employee['sid']);
+                    //
+                    $employees[$emp_key]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => 'W4 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $w4_info['assigned_on'],
+                        'Days' => $w4_info['days'],
+                        'Status' => 'completed'
+                    );
                 }
 
                 if ($pending_i9_status == "not_assigned" || $pending_i9_status == "pending") {
@@ -2157,6 +2168,17 @@ class Hr_documents_management_model extends CI_Model
                             'Status' => 'not_assigned'
                         );
                     }    
+                } else if ($pending_i9_status == "completed") {
+                    $i9_info = $this->get_i9_completed_document_assign_date('employee', $employee['sid']);
+                    //
+                    $employees[$emp_key]['Documents'][] = array(
+                        'ID' => 0,
+                        'Title' => 'I9 Fillable',
+                        'Type' => 'Verification',
+                        'AssignedOn' => $i9_info['assigned_on'],
+                        'Days' => $i9_info['days'],
+                        'Status' => 'completed'
+                    );
                 }
 
                 if ($pending_w4_status === 0 && $pending_i9_status === 0) {
@@ -2166,7 +2188,7 @@ class Hr_documents_management_model extends CI_Model
                 }
            
             }
-        } _e($r,true,true);
+        }
 
         return $r;
     }
@@ -2185,7 +2207,7 @@ class Hr_documents_management_model extends CI_Model
 
         if (!empty($records_arr)) {
             if ($records_arr['user_consent'] == 1) {
-                return 0;
+                return 'completed';
             } else {
                 return "pending";
             }
@@ -2208,12 +2230,70 @@ class Hr_documents_management_model extends CI_Model
 
         if (!empty($records_arr)) {
             if ($records_arr['user_consent'] == 1) {
-                return 0;
+                return 'completed';
             } else {
                 return "pending";
             }
         } else {
             return "not_assigned";
+        }
+    }
+
+    function get_w4_completed_document_assign_date($user_type, $user_sid)
+    {
+        $this->db->select('sent_date');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('employer_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('form_w4_original');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['sent_date']));
+            //
+            $now = time();
+            $datediff = $now - strtotime($record_arr['sent_date']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
+        }
+    }
+
+    function get_i9_completed_document_assign_date($user_type, $user_sid)
+    {
+        $this->db->select('sent_date');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('applicant_i9form');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['sent_date']));
+            //
+            $now = time();
+            $datediff = $now - strtotime($record_arr['sent_date']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
         }
     }
 
