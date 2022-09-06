@@ -900,7 +900,7 @@ class Reports extends Public_Controller
                 $offset = ($page_number - 1) * $per_page;
             }
 
-            $total_records = $this->reports_model->GetAllApplicantsBetween($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, true);
+            $total_records = $this->reports_model->GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, true);
             $this->load->library('pagination');
             $pagination_base = base_url('reports/generate_new_hires_report') . '/' . urlencode($start_date) . '/' . urlencode($end_date) . '/' . urlencode($keyword) . '/' . urlencode($job_sid) . '/' . urlencode($applicant_type) . '/' . urlencode($applicant_status);
             $config = array();
@@ -944,19 +944,19 @@ class Reports extends Public_Controller
             $data['applicant_statuses'] = $applicant_statuses;
 
 
-            $applicants = $this->reports_model->GetAllApplicantsBetween($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false, $per_page, $offset);
+            $applicants = $this->reports_model->GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false, $per_page, $offset);
             $data['title'] = 'Advanced Hr Reports - Applicants Hired Between ( ' . date('m-d-Y', strtotime($start_date)) . ' - ' . date('m-d-Y', strtotime($end_date)) . ' )';
             $data['applicants'] = $applicants;
             $data['is_hired_report'] = true;
 
             //** excel sheet file **//
             if (isset($_POST['submit']) && $_POST['submit'] == 'Export') {
-                $applicants = $this->reports_model->GetAllApplicantsBetween($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false);
+                $applicants = $this->reports_model->GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword, 1, $job_sid, $applicant_type, $applicant_status, false);
 
                 if (isset($applicants) && sizeof($applicants) > 0) {
 
                     header('Content-Type: text/csv; charset=utf-8');
-                    header('Content-Disposition: attachment; filename=data.csv');
+                    header('Content-Disposition: attachment; filename=New Hires data.csv');
                     $output = fopen('php://output', 'w');
 
                     if (isset($data['is_hired_report']) && $data['is_hired_report'] == true) {

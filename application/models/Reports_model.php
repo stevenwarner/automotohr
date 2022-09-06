@@ -2291,4 +2291,158 @@ class Reports_model extends CI_Model
         }
         return $obj;
     }
+
+
+
+
+
+      //
+      function GetAllEmployeesBetweenNew($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
+      {
+          $this->db->select('first_name,last_name,job_title as Title, joined_at as hired_date, Location_City , Location_State');
+          $this->db->where('users.applicant_sid', null);
+          $this->db->where('users.parent_sid', $company_sid);
+  
+          if ($start_date != null && $end_date != null) {
+              $this->db->where('users.joined_at BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
+          }
+  
+  
+          if (!empty($keyword) && $keyword != 'all') {
+              $multiple_keywords = explode(' ', $keyword);
+           
+  
+              if (count($multiple_keywords) == 1) {
+                  $this->db->group_start();
+                  $this->db->like('first_name', $keyword);
+                  $this->db->or_like('last_name', $keyword);
+                  $this->db->group_end();
+              } else {
+                  
+                  foreach ($multiple_keywords as $keywrd) {
+                      $this->db->group_start();
+                      $this->db->like('first_name', $keywrd);
+                      $this->db->or_like('last_name', $keywrd);
+                      $this->db->group_end();
+                  }
+                  
+              }
+          }https://www.youtube.com/watch?v=s0A56zmIsUo
+  
+  
+          if ($limit !== null && $offset !== null) {
+              $limit = $limit / 2;
+              $offset = $offset / 2;
+              $this->db->limit($limit, $offset);
+          }
+  
+          $this->db->order_by('hired_date', 'DESC');
+  
+          if ($count_only == false) {
+              return  $this->db->get('users')->result_array();
+           
+          } else {
+              return  $this->db->get('users')->num_rows();
+         
+          }
+          
+      }
+
+
+   //
+   function GetAllApplicantsBetweenNew($company_sid, $start_date, $end_date, $keyword = 'all', $hired_status = null, $job_sid = 'all', $applicant_type, $applicant_status, $count_only = false, $limit = null, $offset = null)
+   {
+
+       $employeeCount = $this->GetAllEmployeesBetweenNew($company_sid, $start_date, $end_date, $keyword, $hired_status, $job_sid, $applicant_type, $applicant_status, $count_only, $limit, $offset);
+
+       $this->db->select('portal_applicant_jobs_list.date_applied,portal_applicant_jobs_list.job_sid,portal_applicant_jobs_list.desired_job_title,portal_applicant_jobs_list.applicant_type,portal_job_applications.first_name,portal_job_applications.last_name,portal_job_applications.hired_date,portal_job_applications.sid');
+       //        $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
+       $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
+       $this->db->where('portal_applicant_jobs_list.archived', 0);
+
+       if (!empty($keyword) && $keyword != 'all') {
+           $multiple_keywords = explode(' ', $keyword);
+
+           if (count($multiple_keywords) == 1) {
+               $this->db->group_start();
+               $this->db->like('portal_job_applications.first_name', $keyword);
+               $this->db->or_like('portal_job_applications.last_name', $keyword);
+               $this->db->group_end();
+           } else {
+               foreach ($multiple_keywords as $keywrd) {
+                   $this->db->group_start();
+                   $this->db->like('portal_job_applications.first_name', $keywrd);
+                   $this->db->or_like('portal_job_applications.last_name', $keywrd);
+                   $this->db->group_end();
+               }
+           }
+       }
+
+       $check_jobs_exists = explode(',', $job_sid);
+
+       if (!in_array('all', $check_jobs_exists)) {
+           if (is_array($check_jobs_exists)) {
+               $this->db->where_in('portal_applicant_jobs_list.job_sid', $check_jobs_exists);
+           } else {
+               $this->db->where('portal_applicant_jobs_list.job_sid', $job_sid);
+           }
+       }
+
+       if (!empty($applicant_status) && $applicant_status != 'all') {
+           $this->db->like('portal_applicant_jobs_list.status', $applicant_status);
+       }
+
+       if (!empty($applicant_type) && $applicant_type != 'all') {
+           $this->db->where('portal_applicant_jobs_list.applicant_type', $applicant_type);
+       }
+
+       if ($hired_status != null) {
+           $this->db->where('portal_job_applications.hired_status', $hired_status);
+       }
+
+       if ($start_date != null && $end_date != null) {
+           $this->db->where('portal_job_applications.hired_date BETWEEN "' . date('Y-m-d', strtotime($start_date)) . '" and "' . date('Y-m-d', strtotime($end_date)) . '"');
+       }
+
+       if ($limit !== null && $offset !== null) {
+           $limit = $limit / 2;
+           $offset = $offset / 2;
+           $this->db->limit($limit, $offset);
+       }
+
+       $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
+
+       $this->db->order_by('portal_applicant_jobs_list.date_applied', 'DESC');
+       $this->db->group_by('portal_applicant_jobs_list.portal_job_applications_sid');
+
+       if ($count_only == false) {
+            $applications = $this->db->get('portal_applicant_jobs_list')->result_array();
+
+            foreach ($applications as $key => $application) {
+                if ($application['job_sid'] != 0) {
+                    // Get City and State
+                    $this->db->select('portal_job_listings.Location_City');
+                    $this->db->select('portal_job_listings.Location_State');
+                    $this->db->where('sid', $application['job_sid']);
+
+                    $applications[$key] = array_merge(
+                       $applications[$key],
+                       $this->db->get('portal_job_listings')->row_array()
+                    );
+                }
+                //
+                $applications[$key]['Title'] = $this->get_job_title_by_type($application['job_sid'], $application['applicant_type'], $application['desired_job_title']);
+            }
+
+            $applications = array_merge($employeeCount, $applications);
+          
+            return $applications;
+       } else {
+           $applicantCount = $this->db->get('portal_applicant_jobs_list')->num_rows();
+           $newHireCount = $employeeCount + $applicantCount;
+           return $newHireCount;
+       }
+   }
+
+
 }

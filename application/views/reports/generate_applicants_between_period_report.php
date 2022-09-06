@@ -203,7 +203,7 @@
                                                                         if(isset($applicant['Location_State']) && $applicant['Location_State'] != null && $applicant['Location_State'] != '') $state = ', '.db_get_state_name($applicant['Location_State'])['state_name'];
                                                                     ?>
                                                                     <tr>
-                                                                        <td style="color:<?php echo (($applicant['Title'] != 'Job Deleted' && $applicant['Title'] != 'Job Not Applied') ? 'green' : 'red'); ?>"><?php echo ucwords($applicant['Title'].$city.$state); ?></td>
+                                                                    <td style="color:<?php echo (($applicant['Title'] != 'Job Deleted' && $applicant['Title'] != 'Job Not Applied' && $applicant['Title'] != '') ? 'green' : 'red'); ?>"><?php echo  $applicant['Title'] ? ucwords($applicant['Title'] . $city . $state) : 'Job Not Applied' ?></td>
                                                                         <td><?php echo ucwords($applicant['first_name'] . ' ' . $applicant['last_name']); ?></td>
                                                                         <?php if (isset($is_hired_report) && $is_hired_report == true) { ?>
                                                                             <td><?=reset_datetime(array('datetime' => $applicant['hired_date'], '_this' => $this)); ?></td>
