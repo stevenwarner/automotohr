@@ -2097,54 +2097,206 @@ class Hr_documents_management_model extends CI_Model
         $employees = $record_obj->result_array();
         $record_obj->free_result();
         //      
-
         if (!empty($employees)) {
             foreach ($employees as $emp_key => $employee) {
-                if ($documentList == 'all' || $documentList == 'w4') {
-                    $pending_w4 = $this->is_employee_w4_document_pending('employee', $employee['sid']);
+                $documents = explode(':', $documentList);
+                // _e($documents,true,true);
+                if (in_array('w4', $documents) || in_array('all', $documents)) {
+                    $pending_w4_status = $this->is_employee_w4_document_pending_or_notassigned('employee', $employee['sid']);
                 } else {
-                    $pending_w4 = 0;
+                    $pending_w4_status = 0;
                 }
                 //
-                if ($documentList == 'all' || $documentList == 'i9') {
-                    $pending_i9 = $this->is_employee_i9_document_pending('employee', $employee['sid']);
+                if (in_array('i9', $documents) || in_array('all', $documents)) {
+                    $pending_i9_status = $this->is_employee_i9_document_pending_or_notassigned('employee', $employee['sid']);
                 } else {
-                    $pending_i9 = 0;
+                    $pending_i9_status = 0;
                 }
-                // 
-                if ($pending_w4 != 0) {
-                    $w4_info = $this->get_w4_document_assign_date('employee', $employee['sid']);
+                
+                if ($pending_w4_status == "not_assigned" || $pending_w4_status == "pending") {
+                    if ($pending_w4_status == "pending") {
+                        $w4_info = $this->get_w4_document_assign_date('employee', $employee['sid']);
+                        //
+                        $employees[$emp_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'W4 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $w4_info['assigned_on'],
+                            'Days' => $w4_info['days'],
+                            'Status' => 'pending'
+                        );
+                    } else {
+                        $employees[$emp_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'W4 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => "",
+                            'Days' => "",
+                            'Status' => 'not_assigned'
+                        );
+                    }   
+                } else if ($pending_w4_status == "completed") {
+                    $w4_info = $this->get_w4_completed_document_assign_date('employee', $employee['sid']);
                     //
                     $employees[$emp_key]['Documents'][] = array(
                         'ID' => 0,
                         'Title' => 'W4 Fillable',
                         'Type' => 'Verification',
                         'AssignedOn' => $w4_info['assigned_on'],
-                        'Days' => $w4_info['days']
+                        'Days' => $w4_info['days'],
+                        'Status' => 'completed'
                     );
                 }
 
-                if ($pending_i9 != 0) {
-                    $i9_info = $this->get_i9_document_assign_date('employee', $employee['sid']);
+                if ($pending_i9_status == "not_assigned" || $pending_i9_status == "pending") {
+                    if ($pending_i9_status == "pending") {
+                        $i9_info = $this->get_i9_document_assign_date('employee', $employee['sid']);
+                        //
+                        $employees[$emp_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'I9 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => $i9_info['assigned_on'],
+                            'Days' => $i9_info['days'],
+                            'Status' => 'pending'
+                        );
+                    } else {
+                        $employees[$emp_key]['Documents'][] = array(
+                            'ID' => 0,
+                            'Title' => 'I9 Fillable',
+                            'Type' => 'Verification',
+                            'AssignedOn' => "",
+                            'Days' => "",
+                            'Status' => 'not_assigned'
+                        );
+                    }    
+                } else if ($pending_i9_status == "completed") {
+                    $i9_info = $this->get_i9_completed_document_assign_date('employee', $employee['sid']);
                     //
                     $employees[$emp_key]['Documents'][] = array(
                         'ID' => 0,
                         'Title' => 'I9 Fillable',
                         'Type' => 'Verification',
                         'AssignedOn' => $i9_info['assigned_on'],
-                        'Days' => $i9_info['days']
+                        'Days' => $i9_info['days'],
+                        'Status' => 'completed'
                     );
                 }
 
-                if ($pending_w4 == 0 && $pending_i9 == 0) {
-                    unset($employee_sids[$emp_key]);
+                if ($pending_w4_status === 0 && $pending_i9_status === 0) {
+                    unset($employees[$emp_key]);
                 } else {
                     $r[$employee['sid']]['Documents'] = $employees[$emp_key]['Documents'];
                 }
+           
             }
-        } 
+        }
 
         return $r;
+    }
+
+    function is_employee_w4_document_pending_or_notassigned($user_type, $user_sid)
+    {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('employer_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('form_w4_original');
+
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            if ($records_arr['user_consent'] == 1) {
+                return 'completed';
+            } else {
+                return "pending";
+            }
+        } else {
+            return "not_assigned";
+        }
+    }
+
+    function is_employee_i9_document_pending_or_notassigned($user_type, $user_sid)
+    {
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('applicant_i9form');
+
+        $records_obj = $this->db->get();
+        $records_arr = $records_obj->row_array();
+        $records_obj->free_result();
+
+        if (!empty($records_arr)) {
+            if ($records_arr['user_consent'] == 1) {
+                return 'completed';
+            } else {
+                return "pending";
+            }
+        } else {
+            return "not_assigned";
+        }
+    }
+
+    function get_w4_completed_document_assign_date($user_type, $user_sid)
+    {
+        $this->db->select('sent_date');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('employer_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('form_w4_original');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['sent_date']));
+            //
+            $now = time();
+            $datediff = $now - strtotime($record_arr['sent_date']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
+        }
+    }
+
+    function get_i9_completed_document_assign_date($user_type, $user_sid)
+    {
+        $this->db->select('sent_date');
+        $this->db->where('user_type', $user_type);
+        $this->db->where('user_sid', $user_sid);
+        $this->db->where('status', 1);
+
+        $this->db->from('applicant_i9form');
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+
+        if (!empty($record_arr)) {
+            $assigned_on = date('M d Y, D h:i:s', strtotime($record_arr['sent_date']));
+            //
+            $now = time();
+            $datediff = $now - strtotime($record_arr['sent_date']);
+            $days = round($datediff / (60 * 60 * 24));
+            //
+            $result['assigned_on'] = $assigned_on;
+            $result['days'] = $days;
+            //
+            return $result;
+        } else {
+            return array();
+        }
     }
 
     function get_employee_assigned_documents($company_sid, $user_type, $user_sid = null)

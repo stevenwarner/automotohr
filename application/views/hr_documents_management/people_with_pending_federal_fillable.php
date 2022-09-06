@@ -140,6 +140,7 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    
                                                     <div class="col-sm-6">
                                                         <div class="form-group">
                                                             <label>Federal Document(s)</label>
@@ -167,11 +168,11 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-<!--                                    <div class="row">-->
-<!--                                        <div class="col-xs-12">-->
-<!--                                            <h3 class="">Employees</h3>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
+                                    <!--  <div class="row">-->
+                                        <!-- <div class="col-xs-12">-->
+                                            <!-- <h3 class="">Employees</h3> -->
+                                        <!-- </div>-->
+                                    <!-- </div>-->
 
 
                                     <?php
@@ -199,8 +200,15 @@
                                                             </label>
                                                         </th>
                                                         <th scope="col">Employee Name</th>
-                                                        <th scope="col">Email</th>
-                                                        <th scope="col">Document(s)</th>
+
+                                                        <?php if (in_array('w4', $selectedDocumentList) || in_array('all', $selectedDocumentList)) { ?>
+                                                            <th scope="col">W4 Status</th>
+                                                        <?php } ?>
+
+                                                        <?php if (in_array('i9', $selectedDocumentList) || in_array('all', $selectedDocumentList)) { ?>
+                                                            <th scope="col">I9 Status</th>
+                                                        <?php } ?>
+                                                        
                                                         <th scope="col" style="text-align: right" >View Document(s)</th>
                                                     </tr>
                                                     </thead>
@@ -215,24 +223,74 @@
                                                         if(sizeof($employee['Documents'])){
                                                             //
                                                             usort($employee['Documents'], 'dateSorter');
+                                                            $i9_popup_text = '';
+                                                            $w4_popup_text = '';
+                                                            $show_view_btn = false;
+                                                            $w4_status = '<strong class="text-warning">Not Assigned</strong>';
+                                                            $i9_status = '<strong class="text-warning">Not Assigned</strong>';
+                                                            //
                                                             foreach ($employee['Documents'] as $ke => $v) {
                                                                 //
-                                                                $assignedByText = '';
+                                                                
+                                                                
                                                                 //
-                                                                if(isset($v['AssignedBy'])){
-                                                                    $assignedBy = getUserNameBySID($v['AssignedBy']);
-                                                                    $assignedByText = '<br /> <em>Assigned By: '.( $assignedBy ).'</em>';
+                                                                if ($v['Title'] == "W4 Fillable") { 
+                                                                    if ($v['Status'] == "pending" || $v['Status'] == "completed") {
+                                                                        if ($v['Status'] == "pending") {
+                                                                            $w4_status = '<strong class="text-danger">Pending</strong>';
+                                                                            $show_view_btn = true;
+                                                                        } else {
+                                                                            $w4_status = '<strong class="text-success">Completed</strong>';
+                                                                        }
+                                                                        
+                                                                        //
+                                                                        $w4_popup_text = '<p>';
+                                                                        $w4_popup_text .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
+                                                                        $w4_popup_text .= ' <br /> <em><strong>Assigned On:</strong> '.($v['AssignedOn']).'';
+                                                                        if(!empty($v['Days'])){
+                                                                            $w4_popup_text .= ' ('.$v['Days'].' day'.($v['Days'] == 1 ? '' : 's').' ago)';
+                                                                        }
+                                                                        $w4_popup_text .= ' </em>';
+                                                                        $w4_popup_text .= '</p>';    
+                                                                    } else { 
+                                                                        $w4_popup_text = '<p>';
+                                                                        $w4_popup_text .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
+                                                                        $w4_popup_text .= ' <br /> <em><strong>W4 Federal Fillable</strong> not assigned to '.remakeEmployeeName($employee).' </em>';
+                                                                        $w4_popup_text .= '</p>';
+                                                                    }
+                                                                }
+                                                                //
+                                                                
+                                                                
+                                                                //
+                                                                if ($v['Title'] == "I9 Fillable") {
+                                                                    if ($v['Status'] == "pending" || $v['Status'] == "completed") {
+                                                                        if ($v['Status'] == "pending") {
+                                                                            $i9_status = '<strong class="text-danger">Pending</strong>';
+                                                                            $show_view_btn = true;
+                                                                        } else {
+                                                                            $i9_status = '<strong class="text-success">Completed</strong>';
+                                                                        }
+                                                                        
+                                                                        //
+                                                                        $i9_popup_text = '<p>';
+                                                                        $i9_popup_text .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
+                                                                        $i9_popup_text .= ' <br /> <em><strong>Assigned On:</strong> '.($v['AssignedOn']).'';
+                                                                        if(!empty($v['Days'])){
+                                                                            $i9_popup_text .= ' ('.$v['Days'].' day'.($v['Days'] == 1 ? '' : 's').' ago)';
+                                                                        }
+                                                                        $i9_popup_text .= ' </em>';
+                                                                        $i9_popup_text .= '</p>';
+                                                                    } else {
 
+                                                                        $i9_popup_text = '<p>';
+                                                                        $i9_popup_text .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
+                                                                        $i9_popup_text .= ' <br /> <em><strong>I9 Federal Fillable</strong> not assigned to '.remakeEmployeeName($employee).' </em>';
+                                                                        $i9_popup_text .= '</p>';
+                                                                    }
                                                                 }
-                                                                $itext .= '<p>';
-                                                                $itext .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
-                                                                $itext .= ' <br /> <em>Assigned On: '.($v['AssignedOn']).'';
-                                                                if(!empty($v['Days'])){
-                                                                    $itext .= ' ('.$v['Days'].' day'.($v['Days'] == 1 ? '' : 's').' ago)';
-                                                                }
-                                                                $itext .= ' </em>';
-                                                                $itext .= $assignedByText;
-                                                                $itext .= '</p>';
+                                                                //
+                                                                
                                                             }
                                                         }
                                                         ?>
@@ -243,23 +301,35 @@
                                                                     <div class="control__indicator" style="top: -7px;"></div>
                                                                 </label>
                                                             </td>
-                                                            <td><?=remakeEmployeeName($employee);?></td>
-                                                            <td><?php echo $employee['email']; ?></td>
-                                                            <td
-                                                                style="cursor: pointer"
+                                                            <td><?=remakeEmployeeName($employee);?><br><?php echo $employee['email']; ?></td>
+                                                            <?php if (in_array('w4', $selectedDocumentList) || in_array('all', $selectedDocumentList)) { ?>
+                                                                <td
+                                                                    style="cursor: pointer"
                                                                     data-container="body" 
                                                                     data-toggle="cpopover"
                                                                     data-placement="left" 
-                                                                    data-title="<?=$icount;?> Document(s)"
-                                                                    data-content="<?=$itext;?>">
-                                                                <strong
-                                                                    
-                                                                ><?=$icount;?></strong> Document(s)
-                                                            </td>
+                                                                    data-title="W4 Status"
+                                                                    data-content="<?=$w4_popup_text;?>">
+                                                                    <?php echo $w4_status; ?>
+                                                                </td>
+                                                            <?php } ?>
+                                                            <?php if (in_array('i9', $selectedDocumentList) || in_array('all', $selectedDocumentList)) { ?>
+                                                                <td
+                                                                    style="cursor: pointer"
+                                                                    data-container="body" 
+                                                                    data-toggle="cpopover"
+                                                                    data-placement="left" 
+                                                                    data-title="I9 Status"
+                                                                    data-content="<?=$i9_popup_text;?>">
+                                                                    <?php echo $i9_status; ?>
+                                                                </td>
+                                                            <?php } ?>
                                                             <td class="text-right">
-                                                                <a data-toggle="tooltip" title="View" data-placement="left" href="<?php echo base_url('hr_documents_management/employee_document'); ?>/<?php echo $employee['sid']; ?>" class=" btn-sm btn-default">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </a>
+                                                                <?php if ($show_view_btn) { ?>
+                                                                    <a data-toggle="tooltip" title="View all pending Documents" data-placement="left" href="<?php echo base_url('hr_documents_management/employee_document'); ?>/<?php echo $employee['sid']; ?>" class=" btn-sm btn-default">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </a>
+                                                                <?php } ?>
                                                             </td>
                                                         </tr>
                                                     <?php }
