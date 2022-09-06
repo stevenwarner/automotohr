@@ -16,9 +16,9 @@
     <div class="container" style="margin-top: 50px;">
         <div class="row">
             <div class="col-sm-12">
-                <h3>Employee(s) with pending document(s) </h3>
+                <h3>Employee(s) with pending Federal Fillable document(s) </h3>
                 <h4><?= $company_name; ?></h4>
-                <h4><?= date('m-d-Y H:i:s', strtotime('now')); ?></h4>
+                <h4><?= date('M d Y, D H:i:s', strtotime('now')); ?></h4>
                 <hr />
                 <table class="table table-bordered">
                     <thead>

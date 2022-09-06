@@ -6610,7 +6610,7 @@ class Hr_documents_management extends Public_Controller
                     ob_flush();
                     exit;
                 } else if ($type == 'print') {
-                    $this->load->view('hr_documents_management/print_new_people_with_pending_documents_new', $data);
+                    $this->load->view('hr_documents_management/print_people_with_pending_federal_fillable', $data);
                     return;
                 } else if ($type == 'return') {
                     header('Content-Type: application/json');
@@ -6744,7 +6744,6 @@ class Hr_documents_management extends Public_Controller
                         unset($assigned_documents[$key]);
                     }
                 }
-
 
                 $w4_form = $this->hr_documents_management_model->is_w4_form_assign('employee', $employee_id);
                 $w9_form = $this->hr_documents_management_model->is_w9_form_assign('employee', $employee_id);

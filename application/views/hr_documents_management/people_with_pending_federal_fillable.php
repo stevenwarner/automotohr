@@ -225,6 +225,7 @@
                                                             usort($employee['Documents'], 'dateSorter');
                                                             $i9_popup_text = '';
                                                             $w4_popup_text = '';
+                                                            $show_view_btn = false;
                                                             $w4_status = '<strong class="text-warning">Not Assigned</strong>';
                                                             $i9_status = '<strong class="text-warning">Not Assigned</strong>';
                                                             //
@@ -237,6 +238,7 @@
                                                                     if ($v['Status'] == "pending" || $v['Status'] == "completed") {
                                                                         if ($v['Status'] == "pending") {
                                                                             $w4_status = '<strong class="text-danger">Pending</strong>';
+                                                                            $show_view_btn = true;
                                                                         } else {
                                                                             $w4_status = '<strong class="text-success">Completed</strong>';
                                                                         }
@@ -244,7 +246,7 @@
                                                                         //
                                                                         $w4_popup_text = '<p>';
                                                                         $w4_popup_text .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
-                                                                        $w4_popup_text .= ' <br /> <em>Assigned On: '.($v['AssignedOn']).'';
+                                                                        $w4_popup_text .= ' <br /> <em><strong>Assigned On:</strong> '.($v['AssignedOn']).'';
                                                                         if(!empty($v['Days'])){
                                                                             $w4_popup_text .= ' ('.$v['Days'].' day'.($v['Days'] == 1 ? '' : 's').' ago)';
                                                                         }
@@ -253,7 +255,7 @@
                                                                     } else { 
                                                                         $w4_popup_text = '<p>';
                                                                         $w4_popup_text .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
-                                                                        $w4_popup_text .= ' <br /> <em>W4 Federal Fillable not assigned to '.remakeEmployeeName($employee).' </em>';
+                                                                        $w4_popup_text .= ' <br /> <em><strong>W4 Federal Fillable</strong> not assigned to '.remakeEmployeeName($employee).' </em>';
                                                                         $w4_popup_text .= '</p>';
                                                                     }
                                                                 }
@@ -264,7 +266,8 @@
                                                                 if ($v['Title'] == "I9 Fillable") {
                                                                     if ($v['Status'] == "pending" || $v['Status'] == "completed") {
                                                                         if ($v['Status'] == "pending") {
-                                                                            $i9_status = '<strong class="text-danger">Pending</strong>';;
+                                                                            $i9_status = '<strong class="text-danger">Pending</strong>';
+                                                                            $show_view_btn = true;
                                                                         } else {
                                                                             $i9_status = '<strong class="text-success">Completed</strong>';
                                                                         }
@@ -272,7 +275,7 @@
                                                                         //
                                                                         $i9_popup_text = '<p>';
                                                                         $i9_popup_text .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
-                                                                        $i9_popup_text .= ' <br /> <em>Assigned On: '.($v['AssignedOn']).'';
+                                                                        $i9_popup_text .= ' <br /> <em><strong>Assigned On:</strong> '.($v['AssignedOn']).'';
                                                                         if(!empty($v['Days'])){
                                                                             $i9_popup_text .= ' ('.$v['Days'].' day'.($v['Days'] == 1 ? '' : 's').' ago)';
                                                                         }
@@ -282,7 +285,7 @@
 
                                                                         $i9_popup_text = '<p>';
                                                                         $i9_popup_text .= ' <strong>'.( $v['Title'] ).'</strong> ('.($v['Type']).')';
-                                                                        $i9_popup_text .= ' <br /> <em>I9 Federal Fillable not assigned to '.remakeEmployeeName($employee).' </em>';
+                                                                        $i9_popup_text .= ' <br /> <em><strong>I9 Federal Fillable</strong> not assigned to '.remakeEmployeeName($employee).' </em>';
                                                                         $i9_popup_text .= '</p>';
                                                                     }
                                                                 }
@@ -322,9 +325,11 @@
                                                                 </td>
                                                             <?php } ?>
                                                             <td class="text-right">
-                                                                <a data-toggle="tooltip" title="View" data-placement="left" href="<?php echo base_url('hr_documents_management/employee_document'); ?>/<?php echo $employee['sid']; ?>" class=" btn-sm btn-default">
-                                                                    <i class="fa fa-eye"></i>
-                                                                </a>
+                                                                <?php if ($show_view_btn) { ?>
+                                                                    <a data-toggle="tooltip" title="View all pending Documents" data-placement="left" href="<?php echo base_url('hr_documents_management/employee_document'); ?>/<?php echo $employee['sid']; ?>" class=" btn-sm btn-default">
+                                                                        <i class="fa fa-eye"></i>
+                                                                    </a>
+                                                                <?php } ?>
                                                             </td>
                                                         </tr>
                                                     <?php }

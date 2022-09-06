@@ -2099,13 +2099,15 @@ class Hr_documents_management_model extends CI_Model
         //      
         if (!empty($employees)) {
             foreach ($employees as $emp_key => $employee) {
-                if ($documentList == 'all' || $documentList == 'w4') {
+                $documents = explode(':', $documentList);
+                // _e($documents,true,true);
+                if (in_array('w4', $documents) || in_array('all', $documents)) {
                     $pending_w4_status = $this->is_employee_w4_document_pending_or_notassigned('employee', $employee['sid']);
                 } else {
                     $pending_w4_status = 0;
                 }
                 //
-                if ($documentList == 'all' || $documentList == 'i9') {
+                if (in_array('i9', $documents) || in_array('all', $documents)) {
                     $pending_i9_status = $this->is_employee_i9_document_pending_or_notassigned('employee', $employee['sid']);
                 } else {
                     $pending_i9_status = 0;
