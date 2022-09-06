@@ -407,17 +407,17 @@ $(function(){
         var consent_date = $('#consent_date').val();
         var instructions = $('#instructions').val();
         var signature_flag = 0;
-
+        //
         var todayDate = new Date('<?php echo date('Y-m-d'); ?>');
-
         var consentDate = new Date(consent_date);
-        if (todayDate.getDate() > consentDate.getDate()) {
+        //
+        if (todayDate.getTime() > consentDate.getTime()) {
             alertify.alert('Please Provide Today Date').set({
                 title: "WARNING !"
             });
             return exit;
         }
-
+        //
         <?php if(empty($user_signature)) { ?>
             var drawn_signature = $('#drawn_signature').val();
             if (drawn_signature == '' || drawn_signature == null) {
