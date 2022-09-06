@@ -2327,7 +2327,7 @@ class Reports_model extends CI_Model
                   }
                   
               }
-          }
+          }https://www.youtube.com/watch?v=s0A56zmIsUo
   
   
           if ($limit !== null && $offset !== null) {
@@ -2416,24 +2416,27 @@ class Reports_model extends CI_Model
        $this->db->group_by('portal_applicant_jobs_list.portal_job_applications_sid');
 
        if ($count_only == false) {
-           $applications = $this->db->get('portal_applicant_jobs_list')->result_array();
+            $applications = $this->db->get('portal_applicant_jobs_list')->result_array();
 
+            foreach ($applications as $key => $application) {
+                if ($application['job_sid'] != 0) {
+                    // Get City and State
+                    $this->db->select('portal_job_listings.Location_City');
+                    $this->db->select('portal_job_listings.Location_State');
+                    $this->db->where('sid', $application['job_sid']);
 
-           foreach ($applications as $key => $application) {
-               // Get City and State
-               $this->db->select('portal_job_listings.Location_City');
-               $this->db->select('portal_job_listings.Location_State');
-               $this->db->where('sid', $application['job_sid']);
+                    $applications[$key] = array_merge(
+                       $applications[$key],
+                       $this->db->get('portal_job_listings')->row_array()
+                    );
+                }
+                //
+                $applications[$key]['Title'] = $this->get_job_title_by_type($application['job_sid'], $application['applicant_type'], $application['desired_job_title']);
+            }
 
-               $applications[$key] = array_merge(
-                   $applications[$key],
-                   $this->db->get('portal_job_listings')->row_array()
-               );
-               $applications[$key]['Title'] = $this->get_job_title_by_type($application['job_sid'], $application['applicant_type'], $application['desired_job_title']);
-           }
-           $applications = array_merge($employeeCount, $applications);
+            $applications = array_merge($employeeCount, $applications);
           
-           return $applications;
+            return $applications;
        } else {
            $applicantCount = $this->db->get('portal_applicant_jobs_list')->num_rows();
            $newHireCount = $employeeCount + $applicantCount;
