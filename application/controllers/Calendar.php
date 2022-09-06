@@ -1243,15 +1243,16 @@ class Calendar extends Public_Controller {
         // Check for login session
         if (!$this->session->userdata('logged_in')) redirect(base_url('login'), "refresh");
         //3497
-
         // Set default array
         $data['show_event'] = array();
         // Check for event sid
         if($event_token){
             // Load encrypt class
-            $this->load->library('encrypt');
+           // $this->load->library('encrypt');
+            $this->load->library('encryption');
+            $this->encryption->initialize(array('driver' => 'openssl'));
             // Decode event_token
-            $event_token = $this->encrypt->decode(str_replace( '$eb$eb$', '/', $event_token));
+            $event_token = $this->encryption->decrypt(str_replace( '$eb$eb$', '/', $event_token));
             // Explode event token
             $event_token_array = explode(':', $event_token);
             // Check for sid and company id
@@ -2076,7 +2077,12 @@ class Calendar extends Public_Controller {
         // Load encryption class
         // to encrypt employee/applicant id
         // and email
-        $this->load->library('encrypt');
+
+        //$this->load->library('encrypt');
+
+        $this->load->library('encryption');
+        $this->encryption->initialize(array('driver' => 'openssl'));
+
         $base_url = base_url().'event/';
         // Set event code string
         $string_conf = 'id='.$user_sid.':eid='.$event_sid.':etype='.$event_type.':type=confirmed:name='.$user_name.':email='.$user_email;
@@ -2085,11 +2091,11 @@ class Calendar extends Public_Controller {
         if($event_category == 'training-session')
             $string_attended = 'id='.$user_sid.':eid='.$event_sid.':etype='.$event_type.':type=attended:name='.$user_name.':email='.$user_email;
         // Set encoded string
-        $enc_string_conf = $base_url.str_replace( '/', '$eb$eb$1', $this->encrypt->encode($string_conf));
+        $enc_string_conf = $base_url.str_replace( '/', '$eb$eb$1', $this->encryption->encrypt($string_conf));
         if($event_category == 'training-session')
-            $enc_string_attended = $base_url.str_replace( '/', '$eb$eb$1', $this->encrypt->encode($string_attended));
-        $enc_string_notconf  = $base_url.str_replace( '/', '$eb$eb$1', $this->encrypt->encode($string_notconf));
-        $enc_string_reschedule = $base_url.str_replace( '/', '$eb$eb$1', $this->encrypt->encode($string_reschedule));
+            $enc_string_attended = $base_url.str_replace( '/', '$eb$eb$1', $this->encryption->encrypt($string_attended));
+        $enc_string_notconf  = $base_url.str_replace( '/', '$eb$eb$1', $this->encryption->encrypt($string_notconf));
+        $enc_string_reschedule = $base_url.str_replace( '/', '$eb$eb$1', $this->encryption->encrypt($string_reschedule));
         // Set button rows
         $button_rows = '<div>';
         $button_rows .= '   <p>Please, select one of the options.</p>';

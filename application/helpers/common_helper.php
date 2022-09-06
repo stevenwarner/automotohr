@@ -6602,7 +6602,10 @@ if (!function_exists('generate_event_status_rows')) {
         // Load encryption class
         // to encrypt employee/applicant id
         // and email
-        $_this->load->library('encrypt');
+       // $_this->load->library('encrypt');
+        $_this->load->library('encryption');
+        $_this->encryption->initialize(array('driver' => 'openssl'));
+        
         $base_url = base_url() . 'event/';
         // Set event code string
         $string_conf = 'id=' . $user_sid . ':eid=' . $event_sid . ':etype=' . $event_type . ':type=confirmed:name=' . $user_name . ':email=' . $user_email;
@@ -6612,12 +6615,12 @@ if (!function_exists('generate_event_status_rows')) {
             $string_attended = 'id=' . $user_sid . ':eid=' . $event_sid . ':etype=' . $event_type . ':type=attended:name=' . $user_name . ':email=' . $user_email;
         // Set encoded string
         $short_url = array();
-        $short_url['conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_conf));
-        $short_url['not-conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_notconf));
-        $short_url['res'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_reschedule));
+        $short_url['conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_conf));
+        $short_url['not-conf'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_notconf));
+        $short_url['res'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_reschedule));
         $enc_string_conf = $short_url['conf'];
         if ($event_category == 'training-session') {
-            $short_url['att'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encrypt->encode($string_attended));
+            $short_url['att'] = $base_url . str_replace('/', '$eb$eb$1', $_this->encryption->encrypt($string_attended));
             $enc_string_attended = $short_url['att'];
         }
         $enc_string_notconf  = $short_url['not-conf'];
@@ -7130,7 +7133,8 @@ if (!function_exists('send_calendar_email')) {
         // Encode event_token
         $event_token = str_replace('/', '$eb$eb$', $_this->encrypt->encode($event_details['sid'] . ':' . $event_details['company_id']));
         // Set event link
-        $event_link = base_url('calendar/my_events/' . ($event_token) . '');
+       $event_link = base_url('calendar/my_events/' . ($event_token) . '');
+     
         // Create event link button
         $event_link_btn = '<a href="' . ($event_link) . '"
         style="

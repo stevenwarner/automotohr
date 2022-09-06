@@ -337,9 +337,12 @@ class Home extends CI_Controller {
         // Clean $token
         $token = str_replace('$eb$eb$1', '/', trim(strip_tags(str_replace('%24', '$', $token))));
         // Load encryption library
-        $this->load->library('encrypt');
+        $this->load->library('encryption');
+        $this->encryption->initialize(array('driver' => 'openssl'));
+
         // Decode token
-        $dec_token = $this->encrypt->decode($token);
+       $dec_token = $this->encryption->decrypt($token);
+
         if(empty($dec_token)) show_404();
         // Parse decoded string
         $detail_array = explode(':', $dec_token);
