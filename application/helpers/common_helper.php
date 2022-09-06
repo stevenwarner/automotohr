@@ -1562,6 +1562,12 @@ if (!function_exists('convert_email_template')) {
         $emailTemplateBody = str_replace('{{click_here}}', $click_here, $emailTemplateBody);
         $emailTemplateBody = str_replace('{{login_button}}', $replacement_array['login_button'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{login_link}}', $login_link, $emailTemplateBody);
+
+        $emailTemplateBody = str_replace('{{contact_name}}', $replacement_array['contact_name'], $emailTemplateBody);
+        $emailTemplateBody = str_replace('{{from_name}}', $replacement_array['from_name'], $emailTemplateBody);
+       
+
+
         return $emailTemplateBody;
     }
 }
