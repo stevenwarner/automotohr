@@ -5535,6 +5535,32 @@ class Hr_documents_management_model extends CI_Model
         $this->db->where('sid', $sid)->update('documents_assigned', ['link_creation_time' => $time]);
     }
 
+    function updateAssignedFederalFillableDocumentLinkTime(
+        $time,
+        $user_sid,
+        $type
+    ) {
+        $table = "form_w4_original";
+        //
+        if ($type == "I9") {
+           $table = "applicant_i9form";
+        } 
+        //
+        if ($type == "I9") {
+            $this->db->where('user_sid', $user_sid);
+        } else {
+            $this->db->where('employer_sid', $user_sid);
+        }
+        //
+        $this->db->where('user_type', 'applicant');
+        $this->db->update(
+                $table,
+                [
+                    'link_creation_time' => $time
+                ]
+            );
+    }
+
     //
     function checkForExiredToken(
         $sid,
@@ -5563,6 +5589,43 @@ class Hr_documents_management_model extends CI_Model
             ->select('first_name, last_name, email')
             ->where('sid', $b['user_sid'])
             ->get($b['user_type'] == 'employee' ? 'users' : 'portal_job_applications');
+        //
+        $c = $a->row_array();
+        $a = $a->free_result();
+        //
+        if (!count($c)) return false;
+        //
+        $b['user'] = $c;
+        //
+        return $b;
+    }
+
+    function checkForFederalFillableExiredToken (
+        $type,
+        $user_sid
+    ) {
+        if ($type == 'I9') {
+            $a = $this->db
+                ->where('user_type', "applicant")
+                ->where('user_sid', $user_sid)
+                ->where('status', 1)
+                ->get('applicant_i9form');
+        } else {
+            $a = $this->db
+                ->where('user_type', "applicant")
+                ->where('employer_sid', $user_sid)
+                ->where('status', 1)
+                ->get('form_w4_original');
+        }
+        //
+        $b = $a->row_array();
+        $a = $a->free_result();
+        if (!count($b)) return false;
+        //
+        $a = $this->db
+            ->select('first_name, last_name, email')
+            ->where('sid', $user_sid)
+            ->get('portal_job_applications');
         //
         $c = $a->row_array();
         $a = $a->free_result();

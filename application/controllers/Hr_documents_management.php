@@ -12831,6 +12831,7 @@ class Hr_documents_management extends Public_Controller
         $this->res($resp);
     }
 
+
     function fetchEmployees()
     {
         $return_array = array('Status' => FALSE, 'Response' => 'Invalid request', 'Redirect' => TRUE);
@@ -15385,5 +15386,93 @@ class Hr_documents_management extends Public_Controller
         $data = array();
         $data['employeesList'] = $this->hr_documents_management_model->fetch_all_company_managers(15708, '');
         $this->load->view('hr_documents_management/templates/test_approver_document', $data);
+    }
+
+
+
+
+    //
+    function send_email_notification_pending_document()
+    {
+        //
+        $resp = [
+            'Status' => false,
+            'Response' => 'Invalid request.'
+        ];
+        // Verfify the session
+        $data = $this->session->userdata('logged_in');
+        //
+        // Save sanatized post
+        $post = $this->input->post(NULL, TRUE);
+        $user_sid = $post['user_sid'];
+        $user_type = $post['user_type'];
+        $fillable_type = $post['document_type'];
+        //
+        // If not a post request
+        if (!count($post)) $this->res($resp);
+        //
+        // If user is not applicant then return back
+        if ($user_type != "applicant") $this->res($resp);
+        // 
+        $session = $this->session->userdata('logged_in');
+        $companyId = $session['company_detail']['sid'];
+        $companyName = $session['company_detail']['CompanyName'];
+        //
+        // Get Email header and footer
+        $hf = message_header_footer(
+            $companyId,
+            $companyName
+        );
+        // Set email content
+        $template = get_email_template(SINGLE_DOCUMENT_EMAIL_TEMPLATE);
+        //
+        $this->load->library('encryption', 'encrypt');
+        //
+        $time = strtotime('+10 days');
+        //
+        $encryptedKey = $this->encrypt->encode( $fillable_type  . '/' . $user_sid . '/' . $time);
+        $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
+        //
+        $user_info = $this->hr_documents_management_model->getUserData(
+            $user_sid,
+            $user_type,
+            $companyId
+        );
+        //
+        $document_title = "W4 Fillable";
+        //
+        if ($fillable_type == "I9") {
+            $document_title = "I9 Fillable";
+        }
+        //
+        $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="' . (base_url('document/' . ($encryptedKey) . '')) . '">' . ($document_title) . '</a>';
+        //
+
+        $subject = convert_email_template($template['subject'], $user_info);
+        $message = convert_email_template($template['text'], $user_info);
+        //
+        $body = $hf['header'];
+        $body .= $message;
+        $body .= $hf['footer'];
+        //
+        log_and_sendEmail(
+            FROM_EMAIL_NOTIFICATIONS,
+            $user_info['email'],
+            $subject,
+            $body,
+            $companyName
+        );
+        //
+        $this->hr_documents_management_model
+           ->updateAssignedFederalFillableDocumentLinkTime(
+               $time,
+               $user_sid,
+               $fillable_type
+           );
+        //
+        $resp['Status'] = TRUE;
+        $resp['Response'] = 'The document has been sent successfully.';
+        //
+        $this->res($resp);
     }
 }

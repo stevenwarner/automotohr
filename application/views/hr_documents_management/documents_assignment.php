@@ -299,7 +299,10 @@ $assignIdObj = $confidential_sids;
                                                                                             <a class="btn blue-button i9_edit_employer_section" href="javascript:;" data-form-type="i9_edit_btn">Employer Section - Not Completed</a>
                                                                                     <?php }
                                                                                     } ?>
-                                                                                    <a class="btn btn-success" data-form-type="i9" href="<?php echo $user_type == 'applicant' ? base_url('form_i9/applicant') . '/' . $applicant_info['sid'] . "/" . $job_list_sid : base_url('form_i9/employee') . '/' . $employer['sid']; ?>">View I9</a>
+
+                                                                                    <a class="btn btn-success" data-form-type="i9" href="<?php echo $user_type == 'applicant' ? base_url('form_i9/applicant') . '/' . $applicant_info['sid'] . "/" . $job_list_sid : base_url('form_i9/employee') . '/' . $employer['sid']; ?>">View I9 </a>
+                                                                                  
+
                                                                                 <?php } ?>
 
 
@@ -5705,7 +5708,7 @@ if ($user_type == 'employee') {
                     w4_btn = '',
                     i9_btn = '',
                     db = '';
-
+                   
                 //
                 if (dn.trim() == 'EEOC FORM') {
                     if (<?= $eeo_form_info['status']; ?> != 1) {
@@ -5728,6 +5731,8 @@ if ($user_type == 'employee') {
 
                 if ($(this).find('td:nth-child(4)').find('a[data-form-type="w4_edit_btn"]').length !== 0) {
                     w4_btn = $(this).find('td:nth-child(4)').find('a[data-form-type="w4_edit_btn"]').clone();
+                
+                    //w4_btn = w4_btn + '<a class="btn btn-success"  href="#">Send Document I9</a>';
                 }
 
                 if ($(this).find('td:nth-child(4)').find('a[data-form-type="i9_edit_btn"]').length !== 0) {
@@ -5770,7 +5775,17 @@ if ($user_type == 'employee') {
                 //
                 $('.clv-' + (i) + '').html(btn);
                 $('.clv-' + (i) + '').append(w4_btn);
+                if (dn.trim() == "W4 Fillable") {
+                        $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block  js-send-document-notification" data-type="w4">Send Document</a>');
+                    }
+
                 $('.clv-' + (i) + '').append(i9_btn);
+               // console.log(dn.trim())
+                    if (dn.trim() == "I9 Fillable") {
+                        $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block js-send-document-notification" data-type="I9">Send Document</a>');
+                    }
+
+                    
                 //
             }
         });
@@ -6277,4 +6292,56 @@ $this->load->view('hr_documents_management/scripts/index', [
         </div>
     </div>
 </div>
+
+<script>
+
+
+function sendFederalFillableDocumentReminder(
+        fillable_type
+    ){console.log('hello');
+        $.post("http://automotohr.local/hr_documents_management/send_email_notification_pending_document", {
+            document_type: fillable_type,
+            user_sid: '<?php echo $user_sid;?>',
+            user_type: '<?php echo $user_type;?>'
+        }, (resp) => {
+            //
+            $('#my_loader').hide(0);
+            $('#my_loader .loader-text').html('Please wait while we are sending email notification ...');
+            $('body').css('overflow-y', 'auto');
+            //
+            if(resp.Status === false){
+                alertify.alert('WARNING!', resp.Response, () => {});
+                return;
+            }
+            //
+            alertify.alert('SUCCESS!', resp.Response, () => {});
+            return;
+        });
+    }
+
+
+        $(document).on('click', '.js-send-document-notification', function() {
+        //
+       let type = $(this).data('type');
+        //
+        alertify.confirm(
+            'Confirm!', 
+            'Do you really want to send this document by email?', 
+            () => {
+                $('body').css('overflow-y', 'hidden');
+                $('#my_loader .loader-text').html('Please wait while we are sending this document....');
+                $('#my_loader').show();
+                //
+                sendFederalFillableDocumentReminder(type);
+            },
+            () => {}
+        ).set('labels', {
+            ok: 'YES',
+            cancel: 'NO'
+        });
+    });
+
+</script>
+
+
 <!-- Preview Latest Document Modal Modal End -->

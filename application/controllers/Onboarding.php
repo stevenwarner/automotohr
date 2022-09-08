@@ -9576,35 +9576,55 @@ class Onboarding extends CI_Controller
         // Load encryptipn library
         $this->load->library('encryption', 'encrypt');
         // Clean token
+        $redirect_token = $token;
         $token = str_replace(['$eb$eb$1', '$eb$eb$2'], ['/', '+'], $token);
         // Decode and convert to array
         $d = explode('/', $this->encrypt->decode($token));
+        //
         // Check for valid details
-        if (count($d) < 4) redirect('/');
+        if ($d[0] == "I9" ||$d[0] == "w4") {
+            if (count($d) < 3) redirect('/');
+        } else {
+            if (count($d) < 4) redirect('/');
+        }
+        
         //
         $document = [];
         // Validate and check for expire
         $this->load->model('hr_documents_management_model', 'hdm');
         //
-        $type = 'document';
-
-        //
-        if (isset($d[4])) $type = $d[4];
-
-        //
-        $document = $this->hdm->checkForExiredToken(
-            $d[0],
-            $type
-        );
-
-
+        if ($d[0] == "I9" || $d[0] == "w4") {
+            $type = $d[0];
+            $user_sid = $d[1];
+            //
+            $document = $this->hdm->checkForFederalFillableExiredToken(
+                $type,
+                $user_sid
+            );
+        } else {
+            $type = 'document';
+            //
+            if (isset($d[4])) $type = $d[4];
+            //
+            $document = $this->hdm->checkForExiredToken(
+                $d[0],
+                $type
+            );
+        }
         //
         $data['session']['company_detail'] = $this->hdm->getCompanyInfo($document['company_sid']);
         //
         $data['company_sid'] = $data['session']['company_detail']['sid'];
         $data['company_name'] = $data['session']['company_detail']['CompanyName'];
-        $data['users_sid'] = $userSid = $d[1];
-        $data['users_type'] = $userType = $d[2];
+        //
+        if ($d[0] == "I9" || $d[0] == "w4") {
+            $data['users_sid'] = $userSid = $d[1];
+            $data['users_type'] = $userType = "applicant";
+        } else {
+            $data['users_sid'] = $userSid = $d[1];
+            $data['users_type'] = $userType = $d[2];
+        }
+        //
         $data['first_name'] = $document['user']['first_name'];
         $data['last_name'] = $document['user']['last_name'];
         $data['email'] = $document['user']['email'];
@@ -9613,56 +9633,67 @@ class Onboarding extends CI_Controller
         //
         $data['Expired'] = false;
         //
-
         $post = $this->input->post(NULL, FALSE);
         //
-
         if (count($post)) {
             //
-            $save_input_values = array();
-            $users_type = $data['users_type'];
-            $users_sid = $data['users_sid'];
-            $save_signature = $post['save_signature'];
-            $save_initial = $post['save_signature_initial'];
-            $save_date = $post['save_signature_date'];
-            $user_consent = $post['user_consent'];
-            $base64_pdf = $post['save_PDF'];
+            if ($post['perform_action'] == "sign_w4_document" || $post['perform_action'] == "sign_i9_document") {
+                //
+                $result = $this->saveFederalFillable($post);
+                //
+                if ($result['Status']) {
+                    $data['Signed'] = true;
+                } else {
+                    $this->session->set_flashdata('message', '<strong>Error</strong>'.$result['Message']);
+                    redirect('hr_documents_management/document'.$redirect_token, 'refresh');
+                }
+            } else {
+                $save_input_values = array();
+                $users_type = $data['users_type'];
+                $users_sid = $data['users_sid'];
+                $save_signature = $post['save_signature'];
+                $save_initial = $post['save_signature_initial'];
+                $save_date = $post['save_signature_date'];
+                $user_consent = $post['user_consent'];
+                $base64_pdf = $post['save_PDF'];
 
-            if (isset($post['save_input_values']) && !empty($post['save_input_values'])) {
-                $save_input_values = $post['save_input_values'];
+                if (isset($post['save_input_values']) && !empty($post['save_input_values'])) {
+                    $save_input_values = $post['save_input_values'];
+                }
+
+                $save_input_values = serialize($save_input_values);
+
+                $data_to_update = array();
+
+                if ($save_signature == 'yes' || $save_initial == 'yes' || $save_date == 'yes') {
+                    $signature = get_e_signature($data['company_sid'], $data['users_sid'], $data['users_type']);
+
+                    if ($save_signature == 'yes') {
+                        $data_to_update['signature_base64'] = $signature['signature_bas64_image'];
+                    }
+
+                    if ($save_initial == 'yes') {
+                        $data_to_update['signature_initial'] = $signature['init_signature_bas64_image'];
+                    }
+
+                    if ($save_date == 'yes') {
+                        $data_to_update['signature_timestamp'] = date('Y-m-d');
+                    }
+                }
+
+                $data_to_update['signature_email'] = $data['email'];
+                $data_to_update['signature_ip'] = getUserIP();
+                $data_to_update['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $data_to_update['submitted_description'] = $base64_pdf;
+                $data_to_update['uploaded'] = 1;
+                $data_to_update['uploaded_date'] = date('Y-m-d H:i:s');
+                $data_to_update['user_consent'] = $user_consent == 1 ? 1 : 0;
+                $data_to_update['signature_timestamp'] = date('Y-m-d H:i:s');
+                $data_to_update['form_input_data'] = $save_input_values;
+                $this->hdm->update_assigned_documents($post['document_sid'], $data['users_sid'], $data['users_type'], $data_to_update);
+                //
+                $data['Signed'] = true;
             }
-            $save_input_values = serialize($save_input_values);
-
-            $data_to_update = array();
-
-            if ($save_signature == 'yes' || $save_initial == 'yes' || $save_date == 'yes') {
-                $signature = get_e_signature($data['company_sid'], $data['users_sid'], $data['users_type']);
-
-                if ($save_signature == 'yes') {
-                    $data_to_update['signature_base64'] = $signature['signature_bas64_image'];
-                }
-
-                if ($save_initial == 'yes') {
-                    $data_to_update['signature_initial'] = $signature['init_signature_bas64_image'];
-                }
-
-                if ($save_date == 'yes') {
-                    $data_to_update['signature_timestamp'] = date('Y-m-d');
-                }
-            }
-
-            $data_to_update['signature_email'] = $data['email'];
-            $data_to_update['signature_ip'] = getUserIP();
-            $data_to_update['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
-            $data_to_update['submitted_description'] = $base64_pdf;
-            $data_to_update['uploaded'] = 1;
-            $data_to_update['uploaded_date'] = date('Y-m-d H:i:s');
-            $data_to_update['user_consent'] = $user_consent == 1 ? 1 : 0;
-            $data_to_update['signature_timestamp'] = date('Y-m-d H:i:s');
-            $data_to_update['form_input_data'] = $save_input_values;
-            $this->hdm->update_assigned_documents($post['document_sid'], $data['users_sid'], $data['users_type'], $data_to_update);
-            //
-            $data['Signed'] = true;
         } else {
             //
             if ((!$document || !count($document)) || ($document['link_creation_time'] <= strtotime('now')) || (isset($document['user_consent']) && $document['user_consent'] == 1)) {
@@ -9788,6 +9819,40 @@ class Onboarding extends CI_Controller
                     //
                     $data[$userType] = $data['cn'] = $this->direct_deposit_model->getUserData($userSid, $userType);
                     $data['users_sign_info'] = get_e_signature($data['company_sid'], $userSid, $userType);
+                } else if ($type == 'w4') {
+                    $applicant_info = array();
+                    $applicant_info['employer_sid'] = $data['company_sid'];
+                    $applicant_info['sid'] = $d[1];
+                    $applicant_info['first_name'] = $data['first_name'];
+                    $applicant_info['last_name'] = $data['last_name'];
+                    $applicant_info['email'] = $data['email'];
+                    //
+                    $data['applicant'] = $applicant_info;
+                    //
+                    $data['w4_form'] = $this->onboarding_model->get_original_w4_form('applicant', $d[1]);
+                    $previous_form = $this->form_wi9_model->fetch_form('w4', 'applicant', $d[1]);
+                    $data['pre_form'] = $previous_form;
+                    $e_signature_data = get_e_signature($data['company_sid'], $d[1], 'applicant');
+                    $data['e_signature_data'] = $e_signature_data;
+                    $data['signed_flag'] = false;
+                } else if ($type == 'I9') {
+                    $applicant_info = array();
+                    $applicant_info['employer_sid'] = $data['company_sid'];
+                    $applicant_info['sid'] = $d[1];
+                    $applicant_info['first_name'] = $data['first_name'];
+                    $applicant_info['last_name'] = $data['last_name'];
+                    $applicant_info['email'] = $data['email'];
+                    //
+                    $data['applicant'] = $applicant_info;
+                    // 
+                    $data['i9_form'] = $this->onboarding_model->get_i9_form('applicant', $d[1]);
+                    $data['signed_flag'] = isset($data['i9_form']['user_consent']) && $data['i9_form']['user_consent'] == 1 ? true : false;
+                    $data['states'] = db_get_active_states(227);
+                    $e_signature_data = get_e_signature($data['company_sid'], $d[1], 'applicant');
+                    $data['e_signature_data'] = $e_signature_data;
+                    $previous_form = $this->form_wi9_model->fetch_form('i9', 'applicant', $d[1]);
+                    $data['pre_form'] = $previous_form;
+                    $data['prepare_signature'] = 'get_prepare_signature';
                 }
                 //
                 $data['document'] = $document;
@@ -9807,7 +9872,16 @@ class Onboarding extends CI_Controller
         $this->load->view('onboarding/applicant_boarding_header_public', $data);
         //
         $page = 'public/documents/document_public';
-        if ($type != 'document') $page = 'public/documents/general';
+        if ($type != 'document') {
+            if ($d[0] == "I9") {
+                $page = 'public/documents/form_i9';
+            } else if ($d[0] == "w4") {
+                $page = 'public/documents/form_w4';    
+            } else {
+                $page = 'public/documents/general';
+            }
+
+        }
         if ($data['Signed']) $page = 'public/documents/signed_public';
         if ($data['Expired']) $page = 'public/documents/expired_public';
         //
@@ -10647,7 +10721,187 @@ class Onboarding extends CI_Controller
     }
 
 
-
+    function saveFederalFillable ($post) {
+        //
+        $applicant_sid = $post['user_sid'];
+        //
+        $resp = [
+            'Status' => false,
+            'Message' => ''
+        ];
+        //
+        if ($post["perform_action"] == "sign_w4_document") {
+            if (empty($post["w4_first_name"]) || empty($post["w4_middle_name"])) {
+                //
+                $message = "";
+                //
+                if (empty($post["w4_first_name"]) && empty($post["w4_middle_name"])) {
+                    $message = "Please provide First and Middle name.";
+                } else if (empty($post["w4_first_name"])) {
+                    $message = "Please provide First name.";
+                } else if (empty($post["w4_middle_name"])) {
+                    $message = "Please provide Middle name.";
+                }
+                //
+                $resp['Message'] = $message;
+                return $resp;
+            } else {
+                //
+                $signature_timestamp        = date('Y-m-d H:i:s');
+                $signature_date             = $post['signature_date'];
+                $first_date_of_employment   = $post['first_date_of_employment'];
+                //
+                if (!empty($signature_date)) {
+                    $signature_timestamp = DateTime::createFromFormat('m-d-Y', $signature_date)->format('Y-m-d');
+                }
+                //
+                if (!empty($first_date_of_employment)) {
+                    $first_date_of_employment = DateTime::createFromFormat('m-d-Y', $first_date_of_employment)->format('Y-m-d');
+                }
+                //
+                $data_to_update = array();
+                $data_to_update['first_name'] = $post['w4_first_name'];
+                $data_to_update['middle_name'] = $post['w4_middle_name'];
+                $data_to_update['last_name'] = $post['w4_last_name'];
+                $data_to_update['ss_number'] = $post['ss_number'];
+                $data_to_update['home_address'] = $post['home_address'];
+                $data_to_update['city'] = $post['city'];
+                $data_to_update['state'] = $post['state'];
+                $data_to_update['zip'] = $post['zip'];
+                $data_to_update['marriage_status'] = $post['marriage_status'];
+                $data_to_update['signature_timestamp'] = $signature_timestamp;
+                $data_to_update['signature_email_address'] = $post['email_address'];
+                $data_to_update['signature_bas64_image'] = $post['signature_bas64_image'];
+                $data_to_update['init_signature_bas64_image'] = $post['init_signature_bas64_image'];
+                $data_to_update['ip_address'] = $post['signature_ip_address'];
+                $data_to_update['user_agent'] = $post['signature_user_agent'];
+                $data_to_update['emp_name'] = $post['emp_name'];
+                $data_to_update['emp_address'] = $post['emp_address'];
+                $data_to_update['first_date_of_employment'] = $first_date_of_employment;
+                $data_to_update['emp_identification_number'] = $post['emp_identification_number'];
+                $data_to_update['user_consent'] = $post['user_consent'];
+                $data_to_update['mjsw_status'] = $post['mjsw_status'];
+                $data_to_update['dependents_children'] = $post['dependents_children'];
+                $data_to_update['other_dependents'] = $post['other_dependents'];
+                $data_to_update['claim_total_amount'] = $post['claim_total_amount'];
+                $data_to_update['other_income'] = $post['other_income'];
+                $data_to_update['other_deductions'] = $post['other_deductions'];
+                $data_to_update['additional_tax'] = $post['additional_tax'];
+                $data_to_update['mjw_two_jobs'] = $post['mjw_two_jobs'];
+                $data_to_update['mjw_three_jobs_a'] = $post['mjw_three_jobs_a'];
+                $data_to_update['mjw_three_jobs_b'] = $post['mjw_three_jobs_b'];
+                $data_to_update['mjw_three_jobs_c'] = $post['mjw_three_jobs_c'];
+                $data_to_update['mjw_pp_py'] = $post['mjw_pp_py'];
+                $data_to_update['mjw_divide'] = $post['mjw_divide'];
+                $data_to_update['dw_input_1'] = $post['dw_input_1'];
+                $data_to_update['dw_input_2'] = $post['dw_input_2'];
+                $data_to_update['dw_input_3'] = $post['dw_input_3'];
+                $data_to_update['dw_input_4'] = $post['dw_input_4'];
+                $data_to_update['dw_input_5'] = $post['dw_input_5'];
+                
+                //  
+                $w4_sid = getVerificationDocumentSid($applicant_sid, 'applicant', 'w4');
+                keepTrackVerificationDocument($applicant_sid, 'applicant', 'completed', $w4_sid, 'w4', 'Public Link');
+                //
+                $this->form_wi9_model->update_form('w4', 'applicant', $applicant_sid, $data_to_update);
+                //
+                $resp['Message'] = "W4 save successfully";
+                $resp['Status'] = true;
+                //
+                return $resp;
+            }    
+        } else {
+            if (empty($post["section1_last_name"]) || empty($post["section1_first_name"])) {
+                $message = "";
+                //
+                if (empty($post["section1_last_name"]) && empty($post["section1_first_name"])) {
+                    $message = "Please provide First and Last name.";
+                } else if (empty($post["section1_last_name"])) {
+                    $message = "Please provide Last name.";
+                } else if (empty($post["section1_first_name"])) {
+                    $message = "Please provide First name.";
+                }
+                //
+                $resp['Message'] = $message;
+                //
+                return $resp;
+            } else {
+                //
+                $signature = get_e_signature($company_info['sid'], $applicant_sid, 'applicant');
+                $applicant_e_signature = $signature['signature_bas64_image'];
+                $applicant_e_signature_init = $signature['init_signature_bas64_image'];
+                //
+                $options_1 = array();
+                //
+                if ($post['section1_penalty_of_perjury'] == 'permanent-resident') {
+                    $options_1['section1_alien_registration_number_one'] = $post['section1_alien_registration_number_one'];
+                    $options_1['section1_alien_registration_number_two'] = $post['section1_alien_registration_number_two'];
+                } else if ($post['section1_penalty_of_perjury'] == 'alien-work') {
+                    $options_1['section1_alien_registration_number_one'] = $post['section1_alien_registration_number_one'];
+                    $options_1['section1_alien_registration_number_two'] = $post['section1_alien_registration_number_two'];
+                    $options_1['alien_authorized_expiration_date'] = empty($post['alien_authorized_expiration_date']) || $post['alien_authorized_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $post['alien_authorized_expiration_date'])->format('Y-m-d H:i:s');
+                    $options_1['form_admission_number'] = $post['form_admission_number'];
+                    $options_1['foreign_passport_number'] = $post['foreign_passport_number'];
+                    $options_1['country_of_issuance'] = $post['country_of_issuance'];
+                }
+                //
+                $options_2 = array();
+                $options_2['section1_preparer_or_translator'] = $post['section1_preparer_or_translator'];
+                $options_2['number-of-preparer'] = $post['number-of-preparer'];
+                //
+                $section1_today_date = empty($post['section1_today_date']) || $post['section1_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $post['section1_today_date'])->format('Y-m-d H:i:s');
+                //
+                $section1_date_of_birth = empty($post['section1_date_of_birth']) || $post['section1_date_of_birth'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $post['section1_date_of_birth'])->format('Y-m-d H:i:s');
+                //
+                $section1_preparer_today_date = empty($post['section1_preparer_today_date']) || $post['section1_preparer_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $post['section1_preparer_today_date'])->format('Y-m-d H:i:s');
+                //
+                $data_to_update = array(); //Section 1 Data Array Starts
+                $data_to_update['section1_last_name'] = $post['section1_last_name'];
+                $data_to_update['section1_first_name'] = $post['section1_first_name'];
+                $data_to_update['section1_middle_initial'] = $post['section1_middle_initial'];
+                $data_to_update['section1_other_last_names'] = $post['section1_other_last_names'];
+                $data_to_update['section1_address'] = $post['section1_address'];
+                $data_to_update['section1_apt_number'] = $post['section1_apt_number'];
+                $data_to_update['section1_city_town'] = $post['section1_city_town'];
+                $data_to_update['section1_state'] = $post['section1_state'];
+                $data_to_update['section1_zip_code'] = $post['section1_zip_code'];
+                $data_to_update['section1_date_of_birth'] = $section1_date_of_birth;
+                $data_to_update['section1_social_security_number'] = $post['section1_social_security_number'];
+                $data_to_update['section1_emp_email_address'] = $post['section1_emp_email_address'];
+                $data_to_update['section1_emp_telephone_number'] = $post['section1_emp_telephone_number'];
+                $data_to_update['section1_penalty_of_perjury'] = $post['section1_penalty_of_perjury'];
+                $data_to_update['section1_alien_registration_number'] = serialize($options_1);
+                $data_to_update['section1_emp_signature'] = $applicant_e_signature;
+                $data_to_update['section1_emp_signature_init'] = $applicant_e_signature_init;
+                $data_to_update['section1_emp_signature_ip_address'] = getUserIP();
+                $data_to_update['section1_emp_signature_user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $data_to_update['section1_today_date'] = $section1_today_date;
+                $data_to_update['section1_preparer_or_translator'] = serialize($options_2);
+                $data_to_update['section1_preparer_today_date'] = $section1_preparer_today_date;
+                $data_to_update['section1_preparer_last_name'] = $post['section1_preparer_last_name'];
+                $data_to_update['section1_preparer_first_name'] = $post['section1_preparer_first_name'];
+                $data_to_update['section1_preparer_city_town'] = $post['section1_preparer_city_town'];
+                $data_to_update['section1_preparer_address'] = $post['section1_preparer_address'];
+                $data_to_update['section1_preparer_state'] = $post['section1_preparer_state'];
+                $data_to_update['section1_preparer_zip_code'] = $post['section1_preparer_zip_code'];
+                $data_to_update['user_consent'] = 1;
+                $data_to_update['emp_app_sid'] = $applicant_sid;
+                $data_to_update['applicant_flag'] = 1;
+                $data_to_update['applicant_filled_date'] = date('Y-m-d H:i:s');
+                //
+                $this->form_wi9_model->update_form('i9', 'applicant', $applicant_sid, $data_to_update);
+                //
+                $i9_sid = getVerificationDocumentSid($applicant_sid, 'applicant', 'i9');
+                keepTrackVerificationDocument($applicant_sid, 'applicant', 'completed', $i9_sid, 'i9', 'Public Link');
+                //
+                //
+                $resp['Message'] = "I9 save successfully";
+                $resp['Status'] = true;
+                //
+                return $resp;
+            }    
+        }
+    }
 
     
 }
