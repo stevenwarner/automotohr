@@ -15329,27 +15329,29 @@ class Hr_documents_management extends Public_Controller
     //
     function send_email_notification_pending_document()
     {
-        $data['session'] = $this->session->userdata('logged_in');
-         //  _e($_POST, true, true);
-        $companyId = $data['session']['company_detail']['sid'];
-        $companyName = $data['session']['company_detail']['CompanyName'];
-
+        //
         $resp = [
             'Status' => false,
             'Response' => 'Invalid request.'
         ];
         // Verfify the session
         $data = $this->session->userdata('logged_in');
+        //
         // Save sanatized post
         $post = $this->input->post(NULL, TRUE);
         $user_sid = $post['user_sid'];
         $user_type = $post['user_type'];
-        // TOBE delete after testing
-        // $post['assignedDocumentSid'] = $sid;
+        $fillable_type = $post['document_type'];
+        //
         // If not a post request
         if (!count($post)) $this->res($resp);
-        // Verify document
-
+        //
+        // If user is not applicant then return back
+        if ($user_type != "applicant") $this->res($resp);
+        // 
+        $session = $this->session->userdata('logged_in');
+        $companyId = $session['company_detail']['sid'];
+        $companyName = $session['company_detail']['CompanyName'];
         //
         // Get Email header and footer
         $hf = message_header_footer(
@@ -15363,42 +15365,45 @@ class Hr_documents_management extends Public_Controller
         //
         $time = strtotime('+10 days');
         //
-        $encryptedKey = "testline"; //$this->encrypt->encode($post['assignedDocumentSid'] . '/' . $document['user_type'] . '/' . $time);
+        $encryptedKey = $this->encrypt->encode( $fillable_type  . '/' . $user_sid . '/' . $time);
         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
         //
-        $this->load->model('Hr_documents_management_model', 'HRDMM');
-        if ($this->HRDMM->isActiveUser($user_sid, $user_type)) {
-            //
-            $user_info = $this->hr_documents_management_model->getUserData(
-                $user_sid,
-                $user_type,
-                $companyId
-            );
-            //
-            $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="' . (base_url('document/' . ($encryptedKey) . '')) . '">' . ($document['document_title']) . '</a>';
-            //
-
-            $subject = convert_email_template($template['subject'], $user_info);
-            $message = convert_email_template($template['text'], $user_info);
-            //
-            $body = $hf['header'];
-            $body .= $message;
-            $body .= $hf['footer'];
-            //
-         //   $this->hr_documents_management_model
-          //      ->updateAssignedDocumentLinkTime(
-          //          $time,
-          //          $companyName
-           //     );
-            //
-            log_and_sendEmail(
-                FROM_EMAIL_NOTIFICATIONS,
-                $user_info['email'],
-                $subject,
-                $body,
-                $companyName
-            );
+        $user_info = $this->hr_documents_management_model->getUserData(
+            $user_sid,
+            $user_type,
+            $companyId
+        );
+        //
+        $document_title = "W4 Fillable";
+        //
+        if ($fillable_type == "I9") {
+            $document_title = "I9 Fillable";
         }
+        //
+        $user_info["link"] = '<a style="color: #ffffff; background-color: #0000FF; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; border-radius: 5px; text-align: center; display:inline-block;" href="' . (base_url('document/' . ($encryptedKey) . '')) . '">' . ($document_title) . '</a>';
+        //
+
+        $subject = convert_email_template($template['subject'], $user_info);
+        $message = convert_email_template($template['text'], $user_info);
+        //
+        $body = $hf['header'];
+        $body .= $message;
+        $body .= $hf['footer'];
+        //
+        log_and_sendEmail(
+            FROM_EMAIL_NOTIFICATIONS,
+            $user_info['email'],
+            $subject,
+            $body,
+            $companyName
+        );
+        //
+        $this->hr_documents_management_model
+           ->updateAssignedFederalFillableDocumentLinkTime(
+               $time,
+               $user_sid,
+               $fillable_type
+           );
         //
         $resp['Status'] = TRUE;
         $resp['Response'] = 'The document has been sent successfully.';
