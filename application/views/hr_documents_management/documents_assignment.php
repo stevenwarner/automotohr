@@ -5775,13 +5775,16 @@ if ($user_type == 'employee') {
                 //
                 $('.clv-' + (i) + '').html(btn);
                 $('.clv-' + (i) + '').append(w4_btn);
-                if (dn.trim() == "W4 Fillable") {
+                //
+                var user_type = '<?php echo $user_type; ?>';
+                //
+                if (dn.trim() == "W4 Fillable" && user_type == "applicant") {
                         $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block  js-send-document-notification" data-type="w4">Send Document</a>');
                     }
 
                 $('.clv-' + (i) + '').append(i9_btn);
                // console.log(dn.trim())
-                    if (dn.trim() == "I9 Fillable") {
+                    if (dn.trim() == "I9 Fillable" && user_type == "applicant") {
                         $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block js-send-document-notification" data-type="I9">Send Document</a>');
                     }
 
