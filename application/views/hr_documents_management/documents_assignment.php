@@ -5779,18 +5779,23 @@ if ($user_type == 'employee') {
                 var user_type = '<?php echo $user_type; ?>';
                 //
                 if (dn.trim() == "W4 Fillable" && user_type == "applicant") {
-                        $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block  js-send-document-notification" data-type="w4">Send Document</a>');
+                        $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block js-send-document-notification" data-toggle="popover" data-placement="left" data-content="Send document by email to complete without going through OnBoarding process." data-original-title="Send Document By Email" data-type="w4">Send Document</a>');
                     }
 
                 $('.clv-' + (i) + '').append(i9_btn);
                // console.log(dn.trim())
                     if (dn.trim() == "I9 Fillable" && user_type == "applicant") {
-                        $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block js-send-document-notification" data-type="I9">Send Document</a>');
+                        $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block js-send-document-notification" data-toggle="popover" data-placement="left" data-content="Send document by email to complete without going through OnBoarding process." data-original-title="Send Document By Email" data-type="I9">Send Document</a>');
                     }
 
                     
                 //
             }
+        });
+        //
+        $('.js-send-document-notification').popover({
+            trigger: 'hover',
+            html: true
         });
     })
 </script>
@@ -6323,7 +6328,7 @@ function sendFederalFillableDocumentReminder(
     }
 
 
-        $(document).on('click', '.js-send-document-notification', function() {
+    $(document).on('click', '.js-send-document-notification', function() {
         //
        let type = $(this).data('type');
         //
