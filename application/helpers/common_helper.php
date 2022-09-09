@@ -1565,7 +1565,7 @@ if (!function_exists('convert_email_template')) {
 
         $emailTemplateBody = str_replace('{{contact_name}}', $replacement_array['contact_name'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{from_name}}', $replacement_array['from_name'], $emailTemplateBody);
-       
+
 
 
         return $emailTemplateBody;
@@ -13976,21 +13976,21 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
         // Get company industry
         $industryId = $CI->db->select('job_category_industries_sid')->where('sid', $company_sid)->get('users')->row_array()['job_category_industries_sid'];
         //
-        if($industryId != 0){
+        if ($industryId != 0) {
             //
-            $default_categories2 = 
-            $CI->db
-            ->select('
+            $default_categories2 =
+                $CI->db
+                ->select('
                 default_categories.category_name as name,
                 default_categories.description,
                 "1" as status,
                 "1" as sort_order,
                 categories_document_industry.category_sid as sid
             ')
-            ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
-            ->where('categories_document_industry.industry_sid', $industryId)
-            ->get('categories_document_industry')->result_array();
-            
+                ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
+                ->where('categories_document_industry.industry_sid', $industryId)
+                ->get('categories_document_industry')->result_array();
+
             //
             $default_categories = array_merge($default_categories, $default_categories2);
         }
@@ -15679,6 +15679,38 @@ if (!function_exists('addColumnsForDocumentAssigned')) {
         //
         if ($data['confidential_employees']) {
             $dataArray['confidential_employees'] = $data['confidential_employees'];
+        }
+    }
+
+
+
+
+    // Get string Param and return encrypted string
+    if (!function_exists('opensslEncryptString')) {
+        function opensslEncryptString($string)
+        {
+            $creds = getCreds('AHR');
+
+            $key    = md5(utf8_encode($creds->OpenSSL->Key), true);
+            $data   = ($string);
+            $iv     = utf8_encode($creds->OpenSSL->Iv);
+            $method = $creds->OpenSSL->Method;
+            return  openssl_encrypt($data, $method, $key, 0, $iv);
+            
+        }
+    }
+
+  // Get encoded string Param and return decrypted string
+    if (!function_exists('opensslDecryptString')) {
+        function opensslDecryptString($encrypted)
+        {
+            $creds = getCreds('AHR');
+
+            $iv    = utf8_encode($creds->OpenSSL->Iv);
+            $key   = md5(utf8_encode($creds->OpenSSL->Key), true);
+            $method = $creds->OpenSSL->Method;
+            return  openssl_decrypt((($encrypted)), $method, $key, 0, $iv);
+
         }
     }
 }
