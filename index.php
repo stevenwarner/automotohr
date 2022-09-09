@@ -287,7 +287,7 @@ define('VIEWPATH', $view_folder);
 
 if (in_array($_SERVER['HTTP_HOST'], ['automotohr.local'])) {
 	error_reporting(E_ALL);
-	ini_set('display_errors', 0);
+	ini_set('display_errors', 1);
 	define('MINIFIED', '');
 } else {
 	error_reporting(E_ALL);
