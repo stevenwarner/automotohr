@@ -3774,7 +3774,7 @@ class Hr_documents_management_model extends CI_Model
                 }
             }
         }
-        if (count($completed_documents) > 0) {
+        if (is_array($completed_documents) && count($completed_documents) > 0) {
             $cat_index = count($categories);
             $categories_documents_completed[$cat_index]['name'] = "Uncategorized Documents";
             $categories_documents_completed[$cat_index]['category_sid'] = 0;
