@@ -4107,7 +4107,7 @@ class Hr_documents_management extends Public_Controller
             //     $user_type
             // );
             //
-            _e($data,true,true);
+            // _e($data,true,true);
             $this->load->view('main/header', $data);
             $this->load->view('hr_documents_management/documents_assignment');
             $this->load->view('main/footer');
