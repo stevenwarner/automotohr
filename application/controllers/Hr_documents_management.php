@@ -13,6 +13,8 @@ class Hr_documents_management extends Public_Controller
         $this->load->model('onboarding_model');
         $this->load->model('varification_document_model');
         $this->load->library('pagination');
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
     }
 
     public function index()
