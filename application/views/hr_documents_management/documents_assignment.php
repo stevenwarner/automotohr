@@ -2559,7 +2559,7 @@ if ($user_type == 'employee') {
                                                 <?php
                                                 $citizen = '';
                                                 if (sizeof($pre_form) > 0) {
-                                                    $citizen = $pre_form['section1_penalty_of_perjury'] == 'citizen' ? '1' : $pre_form['section1_penalty_of_perjury'] == 'noncitizen' ? '2' : $pre_form['section1_penalty_of_perjury'] == 'permanent-resident' ? '3' : $pre_form['section1_penalty_of_perjury'] == 'alien-work' ? '4' : '';
+                                                    $citizen = $pre_form['section1_penalty_of_perjury'] == 'citizen' ? '1' : ($pre_form['section1_penalty_of_perjury'] == 'noncitizen' ? '2' : ($pre_form['section1_penalty_of_perjury'] == 'permanent-resident' ? '3' : ($pre_form['section1_penalty_of_perjury'] == 'alien-work' ? '4' : '')));
                                                 }
                                                 ?>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
