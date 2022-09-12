@@ -6306,7 +6306,7 @@ $this->load->view('hr_documents_management/scripts/index', [
 function sendFederalFillableDocumentReminder(
         fillable_type
     ){console.log('hello');
-        $.post("http://automotohr.local/hr_documents_management/send_email_notification_pending_document", {
+        $.post('<?= base_url('hr_documents_management/send_email_notification_pending_document') ?>', {
             document_type: fillable_type,
             user_sid: '<?php echo $user_sid;?>',
             user_type: '<?php echo $user_type;?>'
