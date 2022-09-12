@@ -327,7 +327,7 @@ class CI_DB_result {
 			// array_key_exists() instead of isset() to allow for NULL values
 			if (empty($this->row_data) OR ! array_key_exists($n, $this->row_data))
 			{
-				return NULL;
+				return [];
 			}
 
 			return $this->row_data[$n];
@@ -386,7 +386,7 @@ class CI_DB_result {
 
 		if (count($this->custom_result_object[$type]) === 0)
 		{
-			return NULL;
+			return [];
 		}
 
 		if ($n !== $this->current_row && isset($this->custom_result_object[$type][$n]))
@@ -410,7 +410,7 @@ class CI_DB_result {
 		$result = $this->result_object();
 		if (count($result) === 0)
 		{
-			return NULL;
+			return [];
 		}
 
 		if ($n !== $this->current_row && isset($result[$n]))
@@ -434,7 +434,7 @@ class CI_DB_result {
 		$result = $this->result_array();
 		if (count($result) === 0)
 		{
-			return NULL;
+			return [];
 		}
 
 		if ($n !== $this->current_row && isset($result[$n]))
@@ -486,7 +486,7 @@ class CI_DB_result {
 		$result = $this->result($type);
 		if (count($result) === 0)
 		{
-			return NULL;
+			return [];
 		}
 
 		return isset($result[$this->current_row + 1])
@@ -507,7 +507,7 @@ class CI_DB_result {
 		$result = $this->result($type);
 		if (count($result) === 0)
 		{
-			return NULL;
+			return [];
 		}
 
 		if (isset($result[$this->current_row - 1]))

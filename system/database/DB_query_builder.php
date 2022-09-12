@@ -1384,7 +1384,6 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 		$result = $this->query($this->_compile_select());
 		$this->_reset_select();
 		return $result;
-		
 	}
 
 	// --------------------------------------------------------------------
@@ -1473,7 +1472,6 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 
 		$result = $this->query($this->_compile_select());
 		$this->_reset_select();
-		$result = checkResult($result);
 		return $result;
 	}
 
