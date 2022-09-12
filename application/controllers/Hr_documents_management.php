@@ -3279,7 +3279,7 @@ class Hr_documents_management extends Public_Controller
             $data['last_name'] = $data['session']['employer_detail']['last_name'];
 
             $data['users_type'] = 'employee';
-            $data['this'] = $this;
+            // $data['this'] = $this;
             $data['users_sid'] = $emp_sid;
             $data['jobs_listing'] = $jobs_listing;
 
