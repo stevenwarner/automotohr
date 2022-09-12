@@ -835,7 +835,7 @@ $AllNoActionRequiredDocuments = array_values($GLOBALS['noActionRequiredDocuments
 			//
 			rows += `<?php echo $this->load->view('hr_documents_management/partials/test_approvers_section',["appCheckboxIdx" => "jsHasApprovalFlowAOL", "containerIdx" => "jsApproverFlowContainerAOL", "addEmployeeIdx" => "jsAddDocumentApproversAOL", "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxAOL", "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxAOL", "approverNoteIdx" => "jsApproversNoteAOL", 'mainId' => 'testApproversAOL'] ,true); ?>`;
 
-			rows += `<?php echo $this->load->view('hr_documents_management/partials/settings', ['is_confidential' =>  $document_info['is_confidential']]); ?>`;
+			rows += `<?php echo $this->load->view('hr_documents_management/partials/settings', ['is_confidential' =>  $document_info['is_confidential']], TRUE); ?>`;
 
 			rows += getEmailContent();
 			if (do_descpt) rows += getTags();

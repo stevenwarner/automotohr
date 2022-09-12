@@ -1,3 +1,4 @@
+
 <?php
 $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
 $user_role = $session['employer_detail']['access_level'];
@@ -38,6 +39,7 @@ $modifyBTN = '<button
 $assignIdObj = $confidential_sids;
 //
 ?>
+
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -45,6 +47,7 @@ $assignIdObj = $confidential_sids;
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                             <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
 
@@ -60,6 +63,7 @@ $assignIdObj = $confidential_sids;
                             </div>
 
                             <?php $this->load->view('hr_documents_management/documents_assignment_tab_pages'); ?>
+
 
                             <?php if ($session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
                                 <div class="row">

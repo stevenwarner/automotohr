@@ -36,6 +36,7 @@
     }
     .jsCategoryManagerBTN{ display: none;}
 </style>
+
 <div class="row">
     <div class="col-xs-12">
         <ul class="nav nav-tabs nav-justified doc_assign_nav_tab">
@@ -88,6 +89,7 @@
                                                                     }
                                                                 ?>
                                                             </td>
+
                                                             <?php if ($document['document_type'] == 'hybrid_document') { ?>
                                                                 <td></td>
                                                                 <td class="col-lg-2">
@@ -665,6 +667,7 @@
                             </div>
                         </div>
                     <?php } ?>
+
                 </div>
             </div>
             <!-- Not Completed Document End -->
