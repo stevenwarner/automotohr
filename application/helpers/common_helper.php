@@ -2596,7 +2596,7 @@ if (!function_exists('check_user_status')) {
         $CI->db->limit(1);
         $emp_query = $CI->db->get();
 
-        if (is_countable($emp_query) && $emp_query->num_rows() == 1) {
+        if ($emp_query->num_rows() == 1) {
             $employer = $emp_query->result_array();
             $emp_query->free_result();
 
