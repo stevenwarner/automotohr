@@ -1383,11 +1383,12 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 
 		$result = $this->query($this->_compile_select());
 		$this->_reset_select();
-		if ($result) {
-			return $result;
-		} else {
-			return array();
+		//
+		if (empty($result)) {
+			$result = array();
 		}
+		//
+		return $result;
 		
 	}
 
