@@ -884,8 +884,10 @@ class Settings extends Public_Controller
                             $json_client->set_output('json');
                             $json_client->set_port(2083);
                             $json_client->password_auth($auth_user, $auth_pass);
-                            $pass = "^&hg#DFSGS(*&";
-
+                            //
+                            $AHR = getCreds("AHR");
+                            $pass = $AHR->keys->DomainPass;
+                            //
                             $args = array(
                                 'dir' => 'public_html/manage_portal/',
                                 'newdomain' => $new_domain,
