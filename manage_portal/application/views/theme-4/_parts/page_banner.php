@@ -147,7 +147,7 @@
 <?php } ?>
 
 
-<?=$this->load->view('flash_message');?>
+<?php echo $this->load->view('flash_message'); ?>
         
 <!-- Banner End -->
 <!-- Main Slider -->
