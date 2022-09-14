@@ -295,7 +295,7 @@ if (in_array($_SERVER['HTTP_HOST'], ['automotohr.local'])) {
 	ini_set('display_errors', 0);
 	define('MINIFIED', '.min');
 }
-
+//
 
 // Setting GLOBAL minified version and time
 $GLOBALS['minified_version'] = ENVIRONMENT == 'development' ? '' : '.min';
