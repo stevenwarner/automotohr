@@ -8,7 +8,7 @@ class Job_listings_auto_deactivation extends CI_Controller {
 
     public function index($verification_key = NULL) {
         if($verification_key == 'dw6btPzuoHI9d5TEIKBKDGWwNoGEUlRuSidW8wQ4zSUHIl9gBxRx18Z3Aqk4HV7ZNCbu2ZfkjFVLHWINnz5uzMkUfIiINdZ19nJi') {
-        sendMail('dev@automotohr.com', 'dev@automotohr.com', 'auto deactivate cron executed', 'it is auto executed', 'AutomotoHR', 'dev@automotohr.com');
+        sendMail('notifications@automotohr.com', 'dev@automotohr.com', 'auto deactivate cron executed', 'it is auto executed', 'AutomotoHR', 'dev@automotohr.com');
         $today_start_obj = new DateTime();
         $today_start_obj->setTime(00, 00, 00);
         $today_start_str = $today_start_obj->format('Y-m-d H:i:s');
@@ -113,7 +113,7 @@ class Job_listings_auto_deactivation extends CI_Controller {
         $message .= '</ol>';
 
         if (base_url() != 'http://localhost/automotoCI/') {
-            sendMail('dev@automotohr.com', 'dev@automotohr.com', $subject, $message, 'AutomotoHR', 'dev@automotohr.com');
+            sendMail('notifications@automotohr.com', 'dev@automotohr.com', $subject, $message, 'AutomotoHR', 'dev@automotohr.com');
 //            echo $message;
         } else {
             echo $message;

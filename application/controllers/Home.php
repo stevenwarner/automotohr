@@ -1685,7 +1685,7 @@ class Home extends CI_Controller {
                     $email_list
                 );
                 sendMail(
-                    'dev@automotohr.com', 
+                    'notifications@automotohr.com', 
                     'dev@automotohr.com', 
                     'Auto Calendar Event Reminder executed', 
                     'it is auto executed at '.date('Y-m-d H:i:s').'/n<br>Reminder sent to: '.implode(',', $sent_to), 

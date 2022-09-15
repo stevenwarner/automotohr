@@ -5077,7 +5077,7 @@ class Hr_documents_management extends Public_Controller
                 $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email; Please Do Not reply!</strong>' . '<br>';
                 $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
 
-                $from = TO_EMAIL_DEV;
+                $from = FROM_EMAIL_NOTIFICATIONS;
                 $to = $applicant_email;
                 $subject = 'Offer Letter';
                 $from_name = ucwords(STORE_DOMAIN);
@@ -11979,7 +11979,7 @@ class Hr_documents_management extends Public_Controller
                 $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email; Please Do Not reply!</strong>' . '<br>';
                 $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
 
-                $from = TO_EMAIL_DEV;
+                $from = FROM_EMAIL_NOTIFICATIONS;
                 $to = $applicant_email;
                 $subject = 'Offer Letter / Pay Plan';
                 $from_name = ucwords(STORE_DOMAIN);

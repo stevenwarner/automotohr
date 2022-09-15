@@ -150,7 +150,7 @@ class Corporate_management extends Admin_Controller {
                 //Add Company Portal Templates Information - Start
                 $company_sid = $result['company_id'];
                 $company_name = $this->input->post('CompanyName');
-                $company_email = FROM_EMAIL_DEV;
+                $company_email = FROM_EMAIL_NOTIFICATIONS;
 
                 if ($company_sid > 0) {
                     $this->portal_email_templates_model->check_default_tables($company_sid, $company_email, $company_name);
@@ -174,7 +174,7 @@ class Corporate_management extends Admin_Controller {
 
                 if ($_SERVER['SERVER_NAME'] != 'localhost') {
                     $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
-                    sendMail(FROM_EMAIL_DEV, 'ahassan@egenienext.com', 'New Api Result', $result);
+                    sendMail(FROM_EMAIL_NOTIFICATIONS, 'ahassan@egenienext.com', 'New Api Result', $result);
                 }
                 //Add Company to Automotive Group
                 $automotive_group_sid = $this->input->post('automotive_group_sid');

@@ -34,7 +34,7 @@ class Cssi extends Public_Controller
 
 
             $access_token = cssi_get_access_token('taptest', 'taptest');
-            //$access_token = cssi_get_access_token(FROM_EMAIL_DEV, 'dev@automotohr');
+            //$access_token = cssi_get_access_token(FROM_EMAIL_NOTIFICATIONS, 'dev@automotohr');
 
             $request_response = cssi_create_background_check_saved_credit_card($access_token, 'Johhy', 'Dept', '100654321', '09/06/1970', 2);
 

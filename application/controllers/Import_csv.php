@@ -274,7 +274,7 @@ class Import_csv extends Public_Controller {
                             // } else { //Send Email
                             //     save_email_log_common($emailData);
                             //     // sendMail($from, $to, $subject, $emailTemplateBody, $company_name); // outgoing emails are disabled
-                            //     // sendMail(FROM_EMAIL_DEV, $email, $subject, $messageBody, STORE_NAME, FROM_EMAIL_DEV);
+                            //     // sendMail(FROM_EMAIL_NOTIFICATIONS, $email, $subject, $messageBody, STORE_NAME, FROM_EMAIL_NOTIFICATIONS);
                             //     $count++;
                             // }
                         } 

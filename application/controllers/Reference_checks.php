@@ -183,7 +183,7 @@ class Reference_checks extends CI_Controller {
                                                 );
 
                                 $this->users_model->save_email_logs($emailData);
-                                sendMail(FROM_EMAIL_DEV, $referenceEmail, $subject, $body, $company_name, NULL);
+                                sendMail(FROM_EMAIL_NOTIFICATIONS, $referenceEmail, $subject, $body, $company_name, NULL);
                                 $this->session->set_flashdata('message', '<b>Notification: </b>Email has been successfully Sent!');
                                 redirect($reload_location, 'refresh');
                             }

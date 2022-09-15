@@ -1092,7 +1092,7 @@ class Documents_management extends Public_Controller {
 
             /*
 
-            $from                                                               = FROM_EMAIL_DEV;
+            $from                                                               = FROM_EMAIL_NOTIFICATIONS;
             $to                                                                 = $userData['email'];
             $subject                                                            = "HR Documents Reminder From " . ucfirst($companyname);
             $body           = $message_hf['header']

@@ -129,7 +129,7 @@ if (!function_exists('cssi_make_api_request')) {
         $email_body .= 'Request Data: ' . json_encode($data) . PHP_EOL;
         $email_body .= 'Request Result: ' . json_encode($response) . PHP_EOL;
 
-        mail(FROM_EMAIL_DEV, 'CSSI Debug Email', $email_body);
+        mail(FROM_EMAIL_NOTIFICATIONS, 'CSSI Debug Email', $email_body);
 
         //Send eMail To dev - end
 
@@ -247,10 +247,10 @@ if(!function_exists('cssi_register_new_user')){
     function cssi_register_new_user(){
 
         $user_info = array(
-            'Email' => FROM_EMAIL_DEV,
+            'Email' => FROM_EMAIL_NOTIFICATIONS,
             'Password' => 'dev@automotohr',
             'ConfirmPassword' => 'dev@automotohr',
-            'LoginName' => FROM_EMAIL_DEV,
+            'LoginName' => FROM_EMAIL_NOTIFICATIONS,
             'FirstName' => 'Software',
             'LastName' => 'Engineer',
             'Company' => 'egenie next',

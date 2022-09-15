@@ -4261,7 +4261,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
                 }
             } */
             //Send Emails Through System Notifications Email - End
-            //log_and_sendEmail(FROM_EMAIL_DEV, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
+            //log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
             //Send to Company Billing Contacts
             if (!empty($company_billing_contacts)) {
                 foreach ($company_billing_contacts as $company_billing_contact) {
@@ -4287,7 +4287,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
                 $message_body .= '<p>' . $invoice_html . '</p>';
                 $message_body .= '<p>' . STORE_NAME . '</p>';
                 $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-                //log_and_sendEmail(FROM_EMAIL_DEV, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
+                //log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
                 //Send Emails Through System Notifications Email - Start
                 $system_notification_emails = get_system_notification_emails('billing_and_invoice_emails');
 
@@ -4314,7 +4314,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
               $message_body .= '<p>' . $invoice_html . '</p>';
               $message_body .= '<p>' . STORE_NAME . '</p>';
               $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-              log_and_sendEmail(FROM_EMAIL_DEV, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
+              log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, TO_EMAIL_STEVEN, $subject, $message_body, STORE_NAME);
               //Email to Company Admin
               $message_body = '';
               $message_body .= '<p>' . 'Dear ' . ucwords($admin_details['first_name'] . ' ' . $admin_details['last_name']) . '</p>';
@@ -4323,7 +4323,7 @@ if (!function_exists('generate_invoice_for_cron_processing')) {
               $message_body .= '<p>' . $invoice_html . '</p>';
               $message_body .= '<p>' . STORE_NAME . '</p>';
               $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
-              log_and_sendEmail(FROM_EMAIL_DEV, $admin_details['email'], $subject, $message_body, STORE_NAME);
+              log_and_sendEmail(FROM_EMAIL_NOTIFICATIONS, $admin_details['email'], $subject, $message_body, STORE_NAME);
               }
              */
 

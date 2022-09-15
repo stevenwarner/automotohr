@@ -93,6 +93,7 @@ define('FROM_STORE_NAME', STORE_NAME);
 define('FROM_EMAIL_INFO', 'info@' . STORE_DOMAIN);
 define('TO_EMAIL_INFO', 'info@' . STORE_DOMAIN);
 define('REPLY_TO', 'notifications@' . STORE_DOMAIN);
+define('FROM_EMAIL_NOTIFICATIONS', 'notifications@' . STORE_DOMAIN);
 
 
 defined('EXIT_SUCCESS') OR define('EXIT_SUCCESS', 0); // no errors

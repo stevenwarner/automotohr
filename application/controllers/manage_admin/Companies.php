@@ -309,12 +309,12 @@ class Companies extends Admin_Controller
 
             $company_sid = $sid; //Add Company Portal Templates Information - Start
             $company_name = $this->input->post('CompanyName');
-            $company_email = FROM_EMAIL_DEV;
+            $company_email = FROM_EMAIL_NOTIFICATIONS;
 
             if ($company_sid > 0) {
                 $this->portal_email_templates_model->check_default_tables($company_sid, $company_email, $company_name);
             } else {
-                mail(FROM_EMAIL_DEV, 'company id not found', 'company id not found while adding a new company and creating email templates.');
+                mail(FROM_EMAIL_NOTIFICATIONS, 'company id not found', 'company id not found while adding a new company and creating email templates.');
             }
 
 
@@ -536,7 +536,7 @@ class Companies extends Admin_Controller
                     $this->portal_email_templates_model->check_default_tables($company_sid, $company_email, $company_name);
                     $this->company_model->insert_job_visibility_record_for_non_applicants($company_sid);
                 } else {
-                    mail(FROM_EMAIL_DEV, 'company id not found', 'company id not found while adding a new company and creating email templates.');
+                    mail(FROM_EMAIL_NOTIFICATIONS, 'company id not found', 'company id not found while adding a new company and creating email templates.');
                 }
                 //Add Company Portal Templates Information - End
                 $auth_details = $this->company_model->fetch_details(THEME_AUTH);
@@ -556,7 +556,7 @@ class Companies extends Admin_Controller
 
                 if ($_SERVER['SERVER_NAME'] != 'localhost') {
                     $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
-                    sendMail(FROM_EMAIL_DEV, 'ahassan@egenienext.com', 'New Api Result', $result);
+                    sendMail(FROM_EMAIL_NOTIFICATIONS, 'ahassan@egenienext.com', 'New Api Result', $result);
                 }
 
                 if ($action == 'sendemail') {

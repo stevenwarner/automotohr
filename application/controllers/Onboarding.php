@@ -5860,7 +5860,7 @@ class Onboarding extends CI_Controller
                             $emailTemplateBody = $emailTemplateBody . '<strong>Automated Email; Please Do Not reply!</strong>' . '<br>';
                             $emailTemplateBody = $emailTemplateBody . '---------------------------------------------------------' . '<br>';
         
-                            $from = TO_EMAIL_DEV;
+                            $from = FROM_EMAIL_NOTIFICATIONS;
                             $to = $applicant_email;
                             $subject = 'Offer Letter';
                             $from_name = ucwords(STORE_DOMAIN);
@@ -6957,7 +6957,7 @@ class Onboarding extends CI_Controller
 
                 $message_body = str_replace('{{link}}', $link_btn, $message_body);
 
-                $from = TO_EMAIL_DEV;
+                $from = FROM_EMAIL_NOTIFICATIONS;
                 $to = $applicant_email;
                 $from_name = ucwords(STORE_DOMAIN);
                 $email_hf = message_header_footer_domain($company_sid, $company_name);
@@ -7040,7 +7040,7 @@ class Onboarding extends CI_Controller
 
                 $message_body = str_replace('{{link}}', $link_btn, $message_body);
 
-                $from = TO_EMAIL_DEV;
+                $from = FROM_EMAIL_NOTIFICATIONS;
                 $to = $applicant_email;
                 $from_name = ucwords(STORE_DOMAIN);
                 $email_hf = message_header_footer_domain($company_sid, $company_name);
@@ -10381,7 +10381,7 @@ class Onboarding extends CI_Controller
                 //
                 $message_body = str_replace('{{link}}', $link_btn, $message_body);
                 //
-                $from = TO_EMAIL_DEV;
+                $from = FROM_EMAIL_NOTIFICATIONS;
                 $to = $applicant_email;
                 $from_name = ucwords(STORE_DOMAIN);
                 $email_hf = message_header_footer_domain($company_sid, $company_name);

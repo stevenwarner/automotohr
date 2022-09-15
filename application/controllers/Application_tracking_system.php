@@ -1911,7 +1911,7 @@ class Application_tracking_system extends Public_Controller {
                                 'username' => $userName
                             );
                             $this->application_tracking_system_model->save_email_logs($emailData);
-                            sendMail(FROM_EMAIL_DEV, $applicantEmail, $subject, $body, $company_name, NULL);
+                            sendMail(FROM_EMAIL_NOTIFICATIONS, $applicantEmail, $subject, $body, $company_name, NULL);
                             $this->session->set_flashdata('message', '<b>Notification: </b>Email has been successfully Sent!');
                         }
                         redirect($reload_location, 'refresh');

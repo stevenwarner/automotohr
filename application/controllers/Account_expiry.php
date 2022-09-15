@@ -37,7 +37,7 @@ class Account_expiry extends CI_Controller
             $formpost['date_placed'] = date('Y-m-d H:i:s');
             $result = $this->account_expiry_model->save_account_expiry($formpost);
             if ($result) {
-                $from = FROM_EMAIL_DEV;
+                $from = FROM_EMAIL_NOTIFICATIONS;
                 //$to = TO_EMAIL_STEVEN;
 
                 $subject = 'Account Expiration Recovery';

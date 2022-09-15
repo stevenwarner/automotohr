@@ -106,6 +106,7 @@ define('TO_EMAIL_INFO', 'info@'.STORE_DOMAIN); // automotoHR info email
 define('REPLY_TO', 'notifications@'.STORE_DOMAIN); // system emails to store in pm
 define('FROM_STORE_NAME', STORE_NAME.'.com'); // automotoHR developer email
 define('FROM_EMAIL_EVENTS', 'events@' . STORE_DOMAIN); // All Events Related Emails
+define('FROM_EMAIL_NOTIFICATIONS', 'notifications@' . STORE_DOMAIN); // automotoHR notifications email
 define('THUMBNAIL_IMAGE_MAX_WIDTH', 300);
 define('THUMBNAIL_IMAGE_MAX_HEIGHT', 300);
 define('HTTP', 'http://');

@@ -391,7 +391,7 @@ class Users extends CI_Controller
             }
 
             if($is_blocked_email == 'not-blocked') {
-                $from = FROM_EMAIL_DEV;
+                $from = FROM_EMAIL_NOTIFICATIONS;
                 $subject = "Contact Us enquiry - ".STORE_NAME;
                 $fromName = $contact_name;
                 $replyTo = $contact_email;

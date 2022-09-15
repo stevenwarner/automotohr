@@ -588,7 +588,7 @@ class logs extends Admin_Controller
             $log_data = $log_data[0];
             $this->logs_model->update_resend_status($edit_id);
             //Re-sending email to user
-            $from = FROM_EMAIL_DEV;
+            $from = FROM_EMAIL_NOTIFICATIONS;
             $to = $log_data["email"];
             $subject = $log_data["subject"];
             $body = $log_data["message"];
