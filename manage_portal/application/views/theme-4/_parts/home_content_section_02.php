@@ -1,7 +1,7 @@
 <div class="bottom-btn-row top-aplly-btn">
     <?php $this->load->view($theme_name . '/_parts/admin_flash_message'); ?>
     <ul>
-        <li><a href="<?php echo base_url($jobs_page_title); ?>" class="site-btn bg-color">View Job Opportunities</a></li>
+        <li><a href="<?php echo base_url(strtolower(str_replace(" ","_",$jobs_page_title))); ?>" class="site-btn bg-color">View Job Opportunities</a></li>
     </ul>
 </div>
 <div class="about-section">	
