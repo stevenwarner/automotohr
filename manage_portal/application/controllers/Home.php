@@ -3208,7 +3208,7 @@ class Home extends CI_Controller
                             }
                         }
 
-                        $output = $this->contact_model->talent_network_applicant($email, $first_name, $last_name, $country, $city, $phone_number, $desired_job_title, $resume, $data, $cover_letter, $state, $date_applied, $video_source, $video_id, $profile_picture);
+                        $output = $this->contact_model->talent_network_applicant($email, $first_name, $last_name, $country, $city, $phone_number, $desired_job_title, $resume, $data, $cover_letter, $state, $date_applied, $video_source, $video_id);
 
                         if ($output[1] == 1) {                                  // data inserted successfully
                             $applicant_network_sid                              = $output[0];
