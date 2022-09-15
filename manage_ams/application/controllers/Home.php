@@ -1513,7 +1513,7 @@ class Home extends CI_Controller
                                             if (!empty($notifications_status)) {
                                                 $applicant_notifications_status     = $notifications_status['new_applicant_notifications'];
                                             } /*else {
-                                                // mail(FROM_EMAIL_NOTIFICATIONS, STORE_NAME.' Apply Now Debug - No Status Record Found', $my_debug_message);
+                                                // mail(TO_EMAIL_DEV, STORE_NAME.' Apply Now Debug - No Status Record Found', $my_debug_message);
                                             } */
 
                                             $applicant_notification_contacts        = array();
@@ -2137,7 +2137,7 @@ class Home extends CI_Controller
                                             if (!empty($notifications_status)) {
                                                 $applicant_notifications_status     = $notifications_status['new_applicant_notifications'];
                                             } /*else {
-                                                // mail(FROM_EMAIL_NOTIFICATIONS, STORE_NAME.' Apply Now Debug - No Status Record Found', $my_debug_message);
+                                                // mail(TO_EMAIL_DEV, STORE_NAME.' Apply Now Debug - No Status Record Found', $my_debug_message);
                                             } */
 
                                             $applicant_notification_contacts        = array();
@@ -4715,7 +4715,7 @@ class Home extends CI_Controller
                                             if (!empty($notifications_status)) {
                                                 $applicant_notifications_status     = $notifications_status['new_applicant_notifications'];
                                             } /*else {
-                                                // mail(FROM_EMAIL_NOTIFICATIONS, STORE_NAME.' Apply Now Debug - No Status Record Found', $my_debug_message);
+                                                // mail(TO_EMAIL_DEV, STORE_NAME.' Apply Now Debug - No Status Record Found', $my_debug_message);
                                             } */
 
                                             $applicant_notification_contacts        = array();
@@ -5296,7 +5296,7 @@ class Home extends CI_Controller
                                             if (!empty($notifications_status)) {
                                                 $applicant_notifications_status     = $notifications_status['new_applicant_notifications'];
                                             } /*else {
-                                                // mail(FROM_EMAIL_NOTIFICATIONS, STORE_NAME.' Apply Now Debug - No Status Record Found', $my_debug_message);
+                                                // mail(TO_EMAIL_DEV, STORE_NAME.' Apply Now Debug - No Status Record Found', $my_debug_message);
                                             } */
 
                                             $applicant_notification_contacts        = array();

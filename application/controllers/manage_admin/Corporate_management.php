@@ -174,7 +174,7 @@ class Corporate_management extends Admin_Controller {
 
                 if ($_SERVER['SERVER_NAME'] != 'localhost') {
                     $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
-                    sendMail(FROM_EMAIL_NOTIFICATIONS, 'ahassan@egenienext.com', 'New Api Result', $result);
+                    sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashir.saleemi123@gmail.com', 'New Api Result', $result);
                 }
                 //Add Company to Automotive Group
                 $automotive_group_sid = $this->input->post('automotive_group_sid');
