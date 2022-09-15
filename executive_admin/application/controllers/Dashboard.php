@@ -261,7 +261,8 @@ class Dashboard extends CI_Controller {
                 $this->Users_model->reset_key($user);
                 $user_data = $this->Users_model->username_user_data($user);
                 
-                $from = TO_EMAIL_DEV; 
+                // $from = TO_EMAIL_DEV; 
+                $from = 'info@automotohr.com';
                 $to = $user_data['email'];
                 $subject = 'Password Changed Successfully'; 
                 $from_name = ucwords(STORE_DOMAIN); 
