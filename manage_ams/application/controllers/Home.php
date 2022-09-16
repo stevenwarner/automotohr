@@ -43,10 +43,14 @@ class Home extends CI_Controller
         $company_sid = $data['company_details']['sid'];
         company_phone_regex_module_check($company_sid, $data, $this);
         $data['remarket_company_settings'] = $this->themes_pages_model->get_remarket_company_settings();
-
-        $data['theme_name']                                                     = 'theme-4';
+        //
         $data['is_paid']                                                        = 1;
-        $theme_name                                                             = $data['theme_name'];
+        $theme_name                                                             = !empty($data['theme_name']) ? $data['theme_name'] : 'theme-4';
+        //
+        if (empty($data['theme_name'])) {
+            $data['theme_name']                                                  = 'theme-4';
+        }
+        //
         $countries_array                                                        = array();
         $states_array                                                           = array();
         $counntry_states_array                                                  = array();
@@ -659,7 +663,12 @@ class Home extends CI_Controller
     {
         $server_name                                                            = clean_domain($_SERVER['SERVER_NAME']);
         $data                                                                   = $this->check_domain->check_portal_status($server_name);
-        $theme_name                                                             = $data['theme_name'];
+        $theme_name                                                             = !empty($data['theme_name']) ? $data['theme_name'] : 'theme-4';
+        //
+        if (empty($data['theme_name'])) {
+            $data['theme_name']                                                  = 'theme-4';
+        }
+        //
         $company_sid                                                            = $data['company_details']['sid'];
         $data['dealership_website']                                             = '';
         $data['pageName']                                                       = 'contact_us';
@@ -805,7 +814,12 @@ class Home extends CI_Controller
         }
         $server_name                                                            = clean_domain($_SERVER['SERVER_NAME']);
         $data                                                                   = $this->check_domain->check_portal_status($server_name);
-        $data['theme_name']                                                     = 'theme-4';
+        $theme_name                                                             = !empty($data['theme_name']) ? $data['theme_name'] : 'theme-4';
+        //
+        if (empty($data['theme_name'])) {
+            $data['theme_name']                                                  = 'theme-4';
+        }
+        //
         $data['is_paid']                                                        = 1;
         $company_id                                                             = $data['company_details']['sid'];
         $company_name                                                           = $data['company_details']['CompanyName'];
