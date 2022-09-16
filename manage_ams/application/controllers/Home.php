@@ -2960,7 +2960,12 @@ class Home extends CI_Controller
     {
         $server_name                                                            = clean_domain($_SERVER['SERVER_NAME']);
         $data                                                                   = $this->check_domain->check_portal_status($server_name);
-        $theme_name                                                             = $data['theme_name'];
+        $theme_name                                                             = !empty($data['theme_name']) ? $data['theme_name'] : "theme-4";
+        //
+        if (empty($data['theme_name'])) {
+            $data['theme_name'] = "theme-4";
+        }
+        //
         $company_sid                                                            = $data['company_details']['sid'];
         $data['title']                                                          = 'Terms Of Use';
         $data['dealership_website']                                             = '';
@@ -2989,6 +2994,7 @@ class Home extends CI_Controller
             $data['meta_description']                                           = $data['meta_description'];
             $data['meta_keywords']                                              = $data['meta_keywords'];
             $data['embedded_code']                                              = $data['embedded_code'];
+            //
             $this->load->view($theme_name . '/_parts/header_view', $data);
             $this->load->view($theme_name . '/terms_of_use');
             $this->load->view($theme_name . '/_parts/footer_view');
@@ -3001,7 +3007,12 @@ class Home extends CI_Controller
     {
         $server_name                                                            = clean_domain($_SERVER['SERVER_NAME']);
         $data                                                                   = $this->check_domain->check_portal_status($server_name);
-        $theme_name                                                             = $data['theme_name'];
+        $theme_name                                                             = !empty($data['theme_name']) ? $data['theme_name'] : "theme-4";
+        //
+        if (empty($data['theme_name'])) {
+            $data['theme_name'] = "theme-4";
+        }
+        //
         $company_sid                                                            = $data['company_details']['sid'];
         $data['title']                                                          = 'Site Map';
         $data['dealership_website']                                             = '';
