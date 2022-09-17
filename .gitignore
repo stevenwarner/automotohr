@@ -71,3 +71,22 @@ manage_ams/robots.xml
 manage_portal/.well_known
 manage_ams/.well_known
 manage_affiliate/.well_known
+.well_known/*
+manage_portal/.well_known/*
+manage_ams/.well_known/*
+manage_affiliate/.well_known/*
+
+# Excluding cache
+cache
+application/cache
+affiliate_portal/application/cache
+executive_admin/application/cache
+manage_ams/application/cache
+manage_portal/application/cache
+
+cache/*
+application/cache/*
+affiliate_portal/application/cache/*
+executive_admin/application/cache/*
+manage_ams/application/cache/*
+manage_portal/application/cache/*

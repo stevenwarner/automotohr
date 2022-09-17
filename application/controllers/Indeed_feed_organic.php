@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-
+ini_set('memory_limit', '50M');
 class Indeed_feed_organic extends CI_Controller {
 
     private $debug_email = TO_EMAIL_DEV;

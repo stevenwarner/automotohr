@@ -1,6 +1,6 @@
 <?php
 
-// use function GuzzleHttp\json_decode;
+ini_set('memory_limit', '50M');
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
