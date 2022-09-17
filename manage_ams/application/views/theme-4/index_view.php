@@ -4,7 +4,7 @@
             <ul>
                 <li>
             <?php   if($enable_home_job_button == 1) { ?>
-                        <a href="<?php echo base_url($jobs_page_title); ?>" class="site-btn bg-color"><?php echo $home_job_button_text; ?></a>
+                        <a href="<?php echo base_url(strtolower(str_replace(" ","_",$jobs_page_title))); ?>" class="site-btn bg-color"><?php echo $home_job_button_text; ?></a>
             <?php   } ?>
             <?php   if($theme4_enable_job_fair_homepage == 1 && !empty($job_fairs)) { ?>
                         <a href="<?php echo base_url('/job_fair/'); ?>" class="site-btn fair_customizations"><?php echo $job_fairs['title']; ?></a>

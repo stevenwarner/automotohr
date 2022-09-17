@@ -39,7 +39,6 @@ class Home extends CI_Controller
 
     public function index()
     {
-
         $server_name = clean_domain($_SERVER['SERVER_NAME']);
         $data = $this->check_domain->check_portal_status($server_name);
 
