@@ -94,7 +94,7 @@ define('FROM_STORE_NAME', STORE_NAME);
 define('FROM_EMAIL_INFO', 'info@' . STORE_DOMAIN_HR);
 define('TO_EMAIL_INFO', 'info@' . STORE_DOMAIN_HR);
 define('REPLY_TO', 'notifications@' . STORE_DOMAIN_HR);
-define('AFFILIATE_NOTIFICATION', 'affiliate_notification@' . . STORE_DOMAIN_HR);
+define('AFFILIATE_NOTIFICATION', 'affiliate_notification@' . STORE_DOMAIN_HR);
 define('FROM_EMAIL_NOTIFICATIONS', 'notifications'. STORE_DOMAIN_HR);
 
 
