@@ -942,17 +942,15 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
     // 
 
-
-
     $('#template').on('change', function() {
-            var template_sid = $(this).val();
-            var msg_subject = $('#template_' + template_sid).attr('data-subject');
-            var msg_body = $('#template_' + template_sid).attr('data-body');
-            $('#bulk_email_subject').val(msg_subject);
-            CKEDITOR.instances.bulk_email_message.setData(msg_body);
-            $('.temp-attachment').hide();
-            $('#'+template_sid).show();
-        });
+        var template_sid = $(this).val();
+        var msg_subject = $('#template_' + template_sid).attr('data-subject');
+        var msg_body = $('#template_' + template_sid).attr('data-body');
+        $('#bulk_email_subject').val(msg_subject);
+        CKEDITOR.instances.bulk_email_message.setData(msg_body);
+        $('.temp-attachment').hide();
+        $('#' + template_sid).show();
+    });
 
 
     $('#message_attachment').on('change', function() {
@@ -970,9 +968,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         $('#template').val('');
         CKEDITOR.instances.bulk_email_message.setData('');
         $('.temp-attachment').hide();
-       
-
-        
     }
 
 
