@@ -10,6 +10,7 @@ class Employee_management extends Public_Controller
         $this->load->model('employee_model');
         $this->load->model('dashboard_model');
         $this->load->model('application_tracking_system_model');
+        $this->load->model('portal_email_templates_model');
         $this->form_validation->set_error_delimiters('<p class="error"><i class="fa fa-exclamation-circle"></i> ', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library("pagination");
@@ -265,6 +266,16 @@ class Employee_management extends Public_Controller
                 $data['department_sid'] = $department_sid;
             }
             $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+
+
+            $portal_email_templates                                             = $this->application_tracking_system_model->get_portal_email_templates($company_id);
+
+            foreach ($portal_email_templates as $key => $template) {
+                $portal_email_templates[$key]['attachments']                    = $this->portal_email_templates_model->get_all_email_template_attachments($template['sid']);
+            }
+
+            $data['portal_email_templates'] = $portal_email_templates;
+
 
             $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
             $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
@@ -1661,7 +1672,7 @@ class Employee_management extends Public_Controller
                     $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                     $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                     $data_to_insert['full_employment_application'] = serialize($full_emp_app);
-                 
+
                     $this->dashboard_model->update_user($sid, $data_to_insert);
                     // Handle timeoff policies
                     if (isset($_POST['policies']) && !empty($_POST['policies'])) {
@@ -2269,7 +2280,7 @@ class Employee_management extends Public_Controller
                 $this->dashboard_model->update_user($sid, $data);
                 //
                 $difference = $this->findDifference($oldCompareData, $newCompareData);
-                
+
                 //
                 if ($difference['profile_changed'] == 1) {
                     $notification_list = $this->employee_model->get_employee_profile_notification_list($company_id, 'employee_Profile', 'active');
@@ -2287,11 +2298,11 @@ class Employee_management extends Public_Controller
                     $changedData .= '        </tr>';
                     $changedData .= '    </thead>';
                     $changedData .= '    <tbody>';
-                 
+
                     foreach ($difference['data'] as $k => $v) :
-                       
-                            if ($k != "ssn" ) {
-                        
+
+                        if ($k != "ssn") {
+
                             $changedData .= '        <tr>';
                             $changedData .= '            <th>' . (ucwords(str_replace('_', ' ', $k))) . '</th>';
                             if ($k == "dob") {
@@ -2312,24 +2323,22 @@ class Employee_management extends Public_Controller
                         }
 
                         $changedData .= '        </tr>';
-                   
-                     
+
+
                     endforeach;
                     $changedData .= '    </tbody>';
                     $changedData .= '</table>';
-                 
+
                     foreach ($notification_list as $notify_user) {
                         $replacement_array = array();
                         $replacement_array['company_name'] = ucwords($company_name);
                         $replacement_array['user-name'] = ucwords($notify_user['contact_name']);
                         $replacement_array['employee_name'] = $employee_name;
                         $replacement_array['changed_data'] = $changedData;
-                  
+
                         $message_hf = message_header_footer_domain($company_id, $company_name);
                         log_and_send_templated_email(EMPLOYEE_PROFILE_UPDATE, $notify_user['email'], $replacement_array, $message_hf);
                     }
-            
-
                 }
                 //
                 $employer = $this->dashboard_model->get_company_detail($sid);
@@ -3443,19 +3452,18 @@ class Employee_management extends Public_Controller
                 }
                 //   
                 if ((isset($form_data[$key])) && strip_tags($data) != strip_tags($form_data[$key])) {
-                     //
+                    //
                     $dt[$key] = [
                         'old' => $data,
                         'new' => $form_data[$key]
                     ];
                     //
                     $profile_changed = 1;
-               
                 }
             }
         }
         //
-          
+
         return ['profile_changed' => $profile_changed, 'data' => $dt];
     }
 

@@ -166,19 +166,26 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                 </div>
                                 <div class="btn-panel text-right">
                                     <div class="row">
-                                        <div class="col-xs-4 text-left">
+                                        <div class="col-xs-2 text-left">
                                             <?php if ($session['employer_detail']['access_level_plus']) { ?>
                                                 <a class="btn btn-success jsEmployeeQuickProfile" title="Quick View of Employee Profile" placement="top">
                                                     <i class="fa fa-users" aria-hidden="true"></i>
                                                     Employee Profile
-                                                </a>
+                                                </a> &nbsp;&nbsp;&nbsp;
                                             <?php  } ?>
                                         </div>
                                         <?php if ($canEMSPermission) { ?>
+
+
+                                            <div class="col-xs-3">
+                                                <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Email</a>
+
+                                            </div>
+
                                             <div class="col-xs-4">
                                                 <a class="btn btn-success btn-block" href="<?php echo base_url(); ?>invite_colleagues">+ Add Employee / Team Members</a>
                                             </div>
-                                            <div class="col-xs-4">
+                                            <div class="col-xs-3">
                                                 <?php if ($offline) { ?>
                                                     <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a>
                                                 <?php } else { ?>
@@ -491,6 +498,102 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         </div>
     </div>
 </div>
+
+<div id="bulk_email_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header modal-header-bg">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Send Bulk Email to Employees</h4>
+            </div>
+            <div class="modal-body">
+                <div class="compose-message">
+                    <div class="universal-form-style-v2">
+                        <ul>
+                            <li class="form-col-100 autoheight">
+                                <label>Email Template</label>
+                                <div class="hr-select-dropdown">
+                                    <select class="invoice-fields" name="template" id="template">
+                                        <option id="" data-name="" data-subject="" data-body="" value="">Please Select</option>
+                                        <?php if (!empty($portal_email_templates)) { ?>
+                                            <?php foreach ($portal_email_templates as $template) { ?>
+                                                <option id="template_<?php echo $template['sid']; ?>" data-name="<?php echo $template['template_name'] ?>" data-subject="<?php echo $template['subject']; ?>" data-body="<?php echo htmlentities($template['message_body']); ?>" value="<?php echo $template['sid']; ?>"><?php echo $template['template_name']; ?></option>
+                                            <?php } ?>
+                                        <?php } else { ?>
+                                            <option id="template_" data-name="" data-subject="" data-body="" value="">No Custom Template Defined</option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </li>
+                            <form method='post' id='register-form' name='register-form'>
+
+                                <li class="form-col-100 autoheight">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label>Subject<span class="hr-required red"> * </span></label>
+                                            <input type='text' class="invoice-fields" id="bulk_email_subject" name='subject' />
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="form-col-100 autoheight">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label>Message<span class="hr-required red"> * </span></label>
+                                            <textarea style="padding:5px; height:200px; width:100%;" class="ckeditor" id="bulk_email_message" name="bulk_email_message"></textarea>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="form-col-100 autoheight">
+                                    <label>Attachments</label>
+                                    <?php if (!empty($portal_email_templates)) {
+                                        foreach ($portal_email_templates as $template) { ?>
+                                            <div id="<?php echo $template['sid']; ?>" class="temp-attachment" style="display: none">
+                                                <?php if (sizeof($template['attachments']) > 0) {
+                                                    foreach ($template['attachments'] as $attachment) { ?>
+                                                        <div class="invoice-fields">
+                                                            <span class="selected-file"><?php echo $attachment['original_file_name'] ?></span>
+                                                        </div>
+                                                    <?php }
+                                                } else { ?>
+                                                    <div class="invoice-fields">
+                                                        <span class="selected-file">No Attachments</span>
+                                                    </div>
+                                                <?php } ?>
+                                            </div>
+                                    <?php
+                                        }
+                                    } ?>
+                                </li>
+                                <li class="form-col-100 autoheight">
+                                    <label>Additional Attachments</label>
+                                    <div class="upload-file invoice-fields">
+                                        <span class="selected-file">No file selected</span>
+                                        <input type="file" name="message_attachment" id="message_attachment" class="image">
+                                        <a href="javascript:;">Choose File</a>
+                                    </div>
+                                </li>
+                                <li class="form-col-100 autoheight">
+                                    <div class="message-action-btn">
+                                        <input type="submit" value="Send Message" id="send-message-email" class="submit-btn" onclick="bulk_email_form_validate()">
+                                    </div>
+                                </li>
+                                <div class="custom_loader">
+                                    <div id="loader" class="loader" style="display: none">
+                                        <i style="font-size: 25px; color: #81b431;" class="fa fa-cog fa-spin"></i>
+                                        <span>Sending...</span>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     function deactivate_single_employee(id) {
         alertify.confirm("Please Confirm Deactivate", "Are you sure you want to Deactivate employee?",
@@ -603,7 +706,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                             }
 
                             window.location.href = '<?php echo base_url('employee_management') ?>';
-
                             // alertify.notify(data, 'success');
                         } else {
                             alertify.error('There was some error! Please consult Technical Support');
@@ -837,4 +939,129 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         //
         window.location.href = url;
     });
+
+    // 
+
+
+
+    $('#template').on('change', function() {
+            var template_sid = $(this).val();
+            var msg_subject = $('#template_' + template_sid).attr('data-subject');
+            var msg_body = $('#template_' + template_sid).attr('data-body');
+            $('#bulk_email_subject').val(msg_subject);
+            CKEDITOR.instances.bulk_email_message.setData(msg_body);
+            $('.temp-attachment').hide();
+            $('#'+template_sid).show();
+        });
+
+
+    $('#message_attachment').on('change', function() {
+        var fileName = $(this).val();
+        if (fileName.length > 0) {
+            $(this).prev().html(fileName.substring(0, 45));
+        } else {
+            $(this).prev().html('No file selected');
+        }
+    });
+
+    function toggle_bulk_email_modal() {
+        $('#bulk_email_modal').modal('toggle');
+        $('#bulk_email_subject').val('');
+        $('#template').val('');
+        CKEDITOR.instances.bulk_email_message.setData('');
+        $('.temp-attachment').hide();
+       
+
+        
+    }
+
+
+    $('#send_bulk_email').click(function() {
+        var butt = $(this);
+
+        if ($(".ej_checkbox:checked").size() > 0) {
+            if (butt.attr("id") == "ej_controll_mark") {
+                $("#ej_action").val("mark");
+            } else {
+                alertify.confirm("Are you sure you want to send bulk email to selected employee(s)?",
+                    function() {
+                        setTimeout(toggle_bulk_email_modal, 1000);
+                    },
+                    function() {
+                        alertify.error('Cancelled');
+                    });
+            }
+        } else {
+            alertify.alert('Please select employee(s) to send bulk email.');
+        }
+    });
+
+
+    function bulk_email_form_validate() {
+        $("#register-form").validate({
+            ignore: [],
+            rules: {
+                subject: {
+                    required: true
+                },
+                bulk_email_message: {
+                    required: function() {
+                        CKEDITOR.instances.bulk_email_message.updateElement();
+                    },
+                    minlength: 10
+                }
+            },
+            messages: {
+                subject: {
+                    required: 'E-Mail Subject is required'
+                },
+                bulk_email_message: {
+                    required: "E-Mail Message is required",
+                    minlength: "Please enter few characters"
+                }
+            },
+            submitHandler: function() {
+                var ids = [{}];
+                var counter = 0;
+
+                $.each($(".ej_checkbox:checked"), function() {
+                    ids[counter++] = $(this).val();
+                });
+
+
+                var file_data = $('#message_attachment').prop('files')[0];
+                var subject = ($('#bulk_email_subject').val()).trim();
+                var message = ($('#bulk_email_message').val()).trim();
+                var template = $('#template').val();
+                var form_data = new FormData();
+                form_data.append('message_attachment', file_data);
+                form_data.append('subject', subject);
+                form_data.append('ids', ids);
+                form_data.append('action', 'bulk_email');
+                form_data.append('message', message);
+                form_data.append('template_id', template);
+                $('#loader').show();
+                $('#send-message-email').addClass('disabled-btn');
+                $('#send-message-email').prop('disabled', true);
+                url_to = "<?= base_url() ?>send_manual_email/send_bulk_email_employees";
+                $.ajax({
+                    url: url_to,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'post',
+                    data: form_data,
+                    success: function(response) {
+                        $("#bulk_email_modal .close").click();
+                        $('#loader').hide();
+                        $('#send-message-email').removeClass('disabled-btn');
+                        $('#send-message-email').prop('disabled', false);
+                        alertify.success('Bulk email sent to selected applicant(s).');
+                    },
+                    error: function() {}
+                });
+                return false;
+            }
+        });
+    }
 </script>
