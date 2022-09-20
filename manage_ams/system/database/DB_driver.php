@@ -1929,8 +1929,12 @@ abstract class CI_DB_driver
 		foreach($template as $key => $value){
 			$this->$key = $value;
 		}
-		_e("SQL is: ". $this->sql, true);
-		_e("Connected to : ". $db->Name, true);
+		//
+		if($db->ConnectionDebug === true){
+			_e('', true);
+			_e($db->Name."<br />".$this->sql. "<br />");
+			_e('', true);
+		}
 		// Try to connect to master database
 		$this->conn_id = $this->db_connect($this->pconnect);
 	}
