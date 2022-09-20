@@ -781,6 +781,9 @@ abstract class CI_DB_driver {
 	 */
 	public function simple_query($sql)
 	{
+		//
+		$this->checkAndSetReadConnection($sql);
+		//
 		if ( ! $this->conn_id)
 		{
 			if ( ! $this->initialize())
@@ -1994,6 +1997,70 @@ abstract class CI_DB_driver {
 	 */
 	protected function _reset_select()
 	{
+	}
+
+	/**
+	 * Create replica DB Connection
+	 *
+	 * Created on 20/09/2022.
+	 * Created by Aleem
+	 *
+	 * @return	void
+	 */
+	private function checkAndSetReadConnection ($sql) {
+		//
+		if (!preg_match("/^SELECT /i", $sql)){
+			return true;
+		}
+		//
+		$AHR = getCreds("AHR");
+		//
+		$replicas = $AHR->DB_REPLICA;
+		//
+		if ( ! empty($replicas) && is_array($replicas))
+		{
+			// Go over all the failovers
+			foreach ($replicas as $replica)
+			{
+				// Replace the current settings with those of the replica
+				$this->hostname = $replica->Host;
+				$this->username = $replica->User;
+				$this->password = $replica->Password;
+				$this->database = $replica->Database;
+				$this->db_debug = $replica->Debug;
+				$this->cache_on = $replica->CacheOn;
+				// $this->stricton = $replica->Strict;
+
+				// Try to connect
+				$this->conn_id = $this->db_connect($this->pconnect);
+
+				// If a connection is made break the foreach loop
+				if ($this->conn_id)
+				{
+					break;
+				}
+			}
+		}
+		//
+		if ( ! $this->conn_id)
+		{
+			$master = (array) $AHR->DB;
+			//
+			// Replace the current settings with master
+			$this->hostname = $master->Host;
+			$this->username = $master->User;
+			$this->password = $master->Password;
+			$this->database = $master->Database;
+			$this->db_debug = $master->Debug;
+			$this->cache_on = $master->CacheOn;
+			// $this->stricton = $master->Strict;
+
+			// Try to connect
+			$this->conn_id = $this->db_connect($this->pconnect);
+		}
+
+		return true;
+
 	}
 
 }
