@@ -489,6 +489,6 @@ class CI_Profiler
 			}
 		}
 		//**Nisar
-		profilerEmail($profilerArray);
+		logSiteAndQueryBenchmark($profilerArray);
 	}
 }
