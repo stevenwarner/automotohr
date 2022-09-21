@@ -194,6 +194,7 @@ class CI_Profiler
 	protected function _compile_queries()
 	{
 		$dbs = array();
+		$this->_query_toggle_count = 0;
 		$profilerQueryArray = array();
 
 		// Let's determine which databases are currently connected to
@@ -220,7 +221,6 @@ class CI_Profiler
 			$total_time = number_format(array_sum($db->query_times), 4) . ' ' . $this->CI->lang->line('profiler_seconds');
 			//**Nisar
 			$profilerQueryArray['database'] = $db->database;
-			$profilerQueryArray['queries'] = $this->_query_toggle_count;
 			$profilerQueryArray['time_taken'] = $total_time;
 
 			if (count($db->queries) === 0) {
@@ -230,11 +230,14 @@ class CI_Profiler
 					$time = number_format($db->query_times[$key], 4);
 					$val = highlight_code($val);
 					//**Nisar
-					$profilerQueryArray['breakdown'][] = array('query' => strip_tags($val), 'time' => $time,'timestamp'=> date("Y-m-d h:i:sa"));
+					$profilerQueryArray['breakdown'][] = array('query' => strip_tags($val), 'time' => $time);
+					//
+					$this->_query_toggle_count++
 				}
 			}
 
 			$count++;
+			$profilerQueryArray['queries'] = $this->_query_toggle_count;
 		}
 		//**Nisar
 		return $profilerQueryArray;
