@@ -20,3 +20,12 @@ $hook['pre_controller'][] = array(
     'function' => 'checkBlockedIps',
     'class' => 'Security'
 );
+
+// Profiler for all controllers
+$hook['post_controller_constructor'][] = array(
+    'class'    => 'ProfilerHandler',
+    'function' => 'EnableProfiler',
+    'filename' => 'appprofiler.php',
+    'filepath' => 'hooks',
+    'params'   => array()
+);
