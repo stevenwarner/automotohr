@@ -753,11 +753,11 @@ abstract class CI_DB_driver
 		//
 		$this->checkAndSetReadConnection($sql);
 		//
-		// if (!$this->conn_id) {
-		// 	if (!$this->initialize()) {
-		// 		return FALSE;
-		// 	}
-		// }
+		if (!$this->conn_id) {
+			if (!$this->initialize()) {
+				return FALSE;
+			}
+		}
 
 		return $this->_execute($sql);
 	}
@@ -1874,13 +1874,12 @@ abstract class CI_DB_driver
 	 */
 	private function checkAndSetReadConnection($sql)
 	{
-		$this->sql = $sql;
 		//
 		$AHR = getCreds("AHR");
 		//
 		if (!preg_match("/^SELECT /i", $sql)) {
 			//
-			return $this->connectToDB($AHR->DB);
+			return $this->connectToDB($AHR->DB, $sql);
 		}
 		//
 		$replicas = $AHR->DB_REPLICA;
@@ -1889,7 +1888,7 @@ abstract class CI_DB_driver
 			//
 			foreach($replicas as $replica){
 				//
-				$this->connectToDB($replica);
+				$this->connectToDB($replica, $sql);
 				//
 				if($this->conn_id){
 					//
@@ -1900,12 +1899,12 @@ abstract class CI_DB_driver
 
 		//
 		if (!$this->conn_id) {
-			return $this->connectToDB($AHR->DB);
+			return $this->connectToDB($AHR->DB, $sql);
 		}
 	}
 
 
-	private function connectToDB($db){
+	private function connectToDB($db, $sql){
 		//
 		$template = [
 			'dsn'	=> '',
@@ -1931,9 +1930,8 @@ abstract class CI_DB_driver
 		}
 		//
 		if($db->ConnectionDebug === true){
-			_e('', true);
-			_e($db->Name."<br />".$this->sql. "<br />");
-			_e('', true);
+			_e('< - * - * - * - * - * - * - * - * - * ->',false,false,$db->ViewSource);
+			_e($db->Name."<br />".$sql. "<br />",false,false,$db->ViewSource);
 		}
 		// Try to connect to master database
 		$this->conn_id = $this->db_connect($this->pconnect);

@@ -781,6 +781,9 @@ abstract class CI_DB_driver {
 	 */
 	public function simple_query($sql)
 	{
+		//
+		$this->checkAndSetReadConnection($sql);
+		//
 		if ( ! $this->conn_id)
 		{
 			if ( ! $this->initialize())
@@ -1994,6 +1997,85 @@ abstract class CI_DB_driver {
 	 */
 	protected function _reset_select()
 	{
+	}
+
+	/**
+	 * Create replica DB Connection
+	 *
+	 * Created on 20/09/2022.
+	 * Created by Aleem
+	 *
+	 * @return	void
+	 */
+	private function checkAndSetReadConnection($sql)
+	{
+		//
+		$AHR = getCreds("AHR");
+		//
+		$request_path = array_values(array_filter(explode("/", $_SERVER['PATH_INFO'])));
+		$modules = array('dashboard');
+		//
+		if (!preg_match("/^SELECT /i", $sql)) {
+			//
+			return $this->connectToDB($AHR->DB, $sql);
+		}
+		//
+		if (in_array($request_path[0],$modules)) {
+			//
+			$replicas = $AHR->DB_REPLICA;
+			//
+			if(!empty($replicas) && is_array($replicas)){
+				//
+				foreach($replicas as $replica){
+					//
+					$this->connectToDB($replica, $sql);
+					//
+					if($this->conn_id){
+						//
+						break;
+					}
+				}
+			}
+		}
+
+		//
+		if (!$this->conn_id) {
+			return $this->connectToDB($AHR->DB, $sql);
+		}
+	}
+
+
+	private function connectToDB($db, $sql){
+		//
+		$template = [
+			'dsn'	=> '',
+			'hostname' => $db->Host,
+			'username' => $db->User,
+			'password' => $db->Password,
+			'database' => $db->Database,
+			'dbdriver' => 'mysqli',
+			'dbprefix' => '',
+			'pconnect' => FALSE,
+			'db_debug' => $db->Debug,
+			'cache_on' => $db->CacheOn,
+			'cachedir' => '',
+			'char_set' => 'utf8',
+			'dbcollat' => 'utf8_general_ci',
+			'swap_pre' => '',
+			'compress' => FALSE,
+			'stricton' => $db->Strict,
+			'failover' => []
+		];
+		foreach($template as $key => $value){
+			$this->$key = $value;
+		}
+		//
+		if($db->ConnectionDebug === true){
+			_e('< - * - * - * - * - * - * - * - * - * ->',false,false,$db->ViewSource);
+			_e($db->Name."<br />".$sql. "<br />",false,false,$db->ViewSource);
+		}
+		// Try to connect to master database
+		$this->conn_id = $this->db_connect($this->pconnect);
 	}
 
 }
