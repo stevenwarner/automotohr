@@ -221,7 +221,6 @@ class CI_Profiler
 			$total_time = number_format(array_sum($db->query_times), 4) . ' ' . $this->CI->lang->line('profiler_seconds');
 			//**Nisar
 			$profilerQueryArray['database'] = $db->database;
-			$profilerQueryArray['queries'] = $this->_query_toggle_count;
 			$profilerQueryArray['time_taken'] = $total_time;
 
 			if (count($db->queries) === 0) {
