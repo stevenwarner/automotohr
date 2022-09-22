@@ -493,11 +493,11 @@ class CI_Profiler
 		//
 		$AHR = getCreds("AHR");
 		//
-		if ($AHR->ProfilerShow) {
+		if ($AHR->PROFILER_SHOW) {
 			_e($profilerArray);
 		}
 		//
-		if ($AHR->ProfilerLog) {
+		if ($AHR->PROFILER_LOG) {
 			logSiteAndQueryBenchmark($profilerArray);
 		}
 	}
