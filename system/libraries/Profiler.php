@@ -492,7 +492,12 @@ class CI_Profiler
 		$AHR = getCreds("AHR");
 		//
 		if ($AHR->PROFILER_SHOW) {
-			_e($profilerArray);
+			$request_path = array_values(array_filter(explode("/", $_SERVER['PATH_INFO'])));
+			$modules = array('dashboard', 'manage_admin'); 
+
+			if (in_array($request_path[0],$modules)) {
+				_e($profilerArray,false,false,true);
+			}
 		}
 		//
 		if ($AHR->PROFILER_LOG) {
