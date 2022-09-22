@@ -21,11 +21,15 @@ $hook['pre_controller'][] = array(
     'class' => 'Security'
 );
 
-// Profiler for all controllers
-$hook['post_controller_constructor'][] = array(
-    'class'    => 'ProfilerHandler',
-    'function' => 'EnableProfiler',
-    'filename' => 'appprofiler.php',
-    'filepath' => 'hooks',
-    'params'   => array()
-);
+$AHR = getCreds("AHR");
+//
+if ($AHR->PROFILER_SHOW || $AHR->PROFILER_LOG) {
+    // Profiler for all controllers
+    $hook['post_controller_constructor'][] = array(
+        'class'    => 'ProfilerHandler',
+        'function' => 'EnableProfiler',
+        'filename' => 'appprofiler.php',
+        'filepath' => 'hooks',
+        'params'   => array()
+    );
+}    
