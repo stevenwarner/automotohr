@@ -494,7 +494,7 @@ class CI_Profiler
 		$AHR = getCreds("AHR");
 		//
 		if ($AHR->PROFILER_SHOW) {
-			_e($profilerArray);
+			_e($profilerArray,false,false,true);
 		}
 		//
 		if ($AHR->PROFILER_LOG) {
