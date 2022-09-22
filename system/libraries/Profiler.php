@@ -453,7 +453,7 @@ class CI_Profiler
 		if (!isset($this->CI->session)) {
 			return;
 		}
-		
+
 		$profilerQueryArray = array();
 
 		foreach ($this->CI->session->userdata() as $key => $val) {
@@ -491,11 +491,11 @@ class CI_Profiler
 		//
 		$AHR = getCreds("AHR");
 		//
-		if ($AHR->ProfilerShow) {
+		if ($AHR->PROFILER_SHOW) {
 			_e($profilerArray);
 		}
 		//
-		if ($AHR->ProfilerLog) {
+		if ($AHR->PROFILER_LOG) {
 			logSiteAndQueryBenchmark($profilerArray);
 		}
 	}
