@@ -453,11 +453,8 @@ class CI_Profiler
 		if (!isset($this->CI->session)) {
 			return;
 		}
-		$profilerQueryArray = array();
 
-		//$sen=$this->CI->session;
-		//print_r($sen);
-		//die();
+		$profilerQueryArray = array();
 
 		foreach ($this->CI->session->userdata() as $key => $val) {
 			if (is_array($val) or is_object($val)) {
@@ -479,7 +476,7 @@ class CI_Profiler
 	public function run()
 	{
 		$fields_displayed = 0;
-		//**Nisar
+		//
 		$profilerArray = array();
 		foreach ($this->_available_sections as $section) {
 
@@ -487,11 +484,19 @@ class CI_Profiler
 				$func = '_compile_' . $section;
 				$output = $this->{$func}();
 				$fields_displayed++;
-				//**Nisar
+				//
 				$profilerArray[$section] = $output;
 			}
 		}
-		//**Nisar
-		logSiteAndQueryBenchmark($profilerArray);
+		//
+		$AHR = getCreds("AHR");
+		//
+		if ($AHR->ProfilerShow) {
+			_e($profilerArray);
+		}
+		//
+		if ($AHR->ProfilerLog) {
+			logSiteAndQueryBenchmark($profilerArray);
+		}
 	}
 }
