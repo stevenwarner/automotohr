@@ -59,17 +59,17 @@ $(function MigrateGroupWithDocuments() {
     });
 
     //
-    $('#jsSelectAll').click(function(){
+    $('#jsSelectAll').click(function () {
         $('.jsSelectRow').prop('checked', $(this).prop('checked'));
         $('#jsGroupWithDocumentsSelectedCount').text($('.jsSelectRow:checked').length);
     });
 
     //
-    $(document).on('click', '.jsSelectRow', function(){
+    $(document).on('click', '.jsSelectRow', function () {
         //
         $('#jsSelectAll').prop('checked', false);
         //
-        if($('.jsSelectRow:checked').length == $('.jsSelectRow').length){
+        if ($('.jsSelectRow:checked').length == $('.jsSelectRow').length) {
             $('#jsSelectAll').prop('checked', true);
         }
         //
@@ -77,17 +77,17 @@ $(function MigrateGroupWithDocuments() {
     });
 
 
-    $('.jsStartMigrationProcess').click(function(event){
+    $('.jsStartMigrationProcess').click(function (event) {
         //
         event.preventDefault();
         //
-        if($('.jsSelectRow:checked').length === 0){
-            return alertify.alert('Warning!', 'Please select at least one group.', function(){});
+        if ($('.jsSelectRow:checked').length === 0) {
+            return alertify.alert('Warning!', 'Please select at least one group.', function () { });
         }
         //
         let ids = [];
         //
-        $('.jsSelectRow:checked').map(function(){
+        $('.jsSelectRow:checked').map(function () {
             ids.push(
                 $(this).closest('tr.jsParentRow').data('id')
             );
@@ -160,11 +160,11 @@ $(function MigrateGroupWithDocuments() {
             rows += '   <td colspan="4"><p class="alert alert-info text-center">No data found.</p></td>';
             rows += '</tr>';
         } else {
-            for(let i in groups){
+            for (let i in groups) {
                 //
                 let sg = groups[i];
                 //
-                rows += '<tr class="jsParentRow" data-id="'+(sg.sid)+'">';
+                rows += '<tr class="jsParentRow" data-id="' + (sg.sid) + '">';
                 rows += '    <td class="vam">';
                 rows += '        <label class="control control--checkbox">';
                 rows += '            <input type="checkbox" class="jsSelectRow" />';
@@ -172,14 +172,14 @@ $(function MigrateGroupWithDocuments() {
                 rows += '        </label>';
                 rows += '    </td>';
                 rows += '    <td class="vam">';
-                rows += '        <strong>'+(sg.name)+'</strong>';
+                rows += '        <strong>' + (sg.name) + '</strong>';
                 rows += '    </td>';
                 rows += '    <td class="vam">';
-                rows += '        <button class="btn btn-link jsToggleBtns"><i class="fa fa-plus-square"></i>&nbsp;&nbsp;'+(sg.total)+' Documents</button>';
+                rows += '        <button class="btn btn-link jsToggleBtns"><i class="fa fa-plus-square"></i>&nbsp;&nbsp;' + (sg.total) + ' Documents</button>';
                 rows += '    </td>';
                 rows += '</tr>';
-                if(sg.documents.length){
-                    rows += '<tr class="jsSub" style="display: none;" data-id="'+(sg.sid)+'">';
+                if (sg.documents.length) {
+                    rows += '<tr class="jsSub" style="display: none;" data-id="' + (sg.sid) + '">';
                     rows += '<td colspan="3"><table class="table table-striped">';
                     rows += '<thead>';
                     rows += '   <tr>';
@@ -192,22 +192,22 @@ $(function MigrateGroupWithDocuments() {
                     rows += '</thead>';
                     rows += '<tbody>';
                     //
-                    sg.documents.map(function(dct){
+                    sg.documents.map(function (dct) {
                         rows += '<tr>';
                         rows += '<td class="vam">';
-                        rows += '    <strong>'+(dct.document_title)+'</strong>';
+                        rows += '    <strong>' + (dct.document_title) + '</strong>';
                         rows += '</td>';
                         rows += '<td class="vam">';
-                        rows += '    <strong>'+(dct.document_type.toUpperCase())+'</strong>';
+                        rows += '    <strong>' + (dct.document_type.toUpperCase()) + '</strong>';
                         rows += '</td>';
                         rows += '<td class="vam text-center">';
-                        rows += '    <strong class="text-'+(dct.acknowledgment_required ? "success" : "danger")+'"><i class="fa fa-'+(dct.acknowledgment_required ? "check" : "times")+'"></i></strong>';
+                        rows += '    <strong class="text-' + (dct.acknowledgment_required ? "success" : "danger") + '"><i class="fa fa-' + (dct.acknowledgment_required ? "check" : "times") + '"></i></strong>';
                         rows += '</td>';
                         rows += '<td class="vam text-center">';
-                        rows += '    <strong class="text-'+(dct.download_required ? "success" : "danger")+'"><i class="fa fa-'+(dct.download_required ? "check" : "times")+'"></i></strong>';
+                        rows += '    <strong class="text-' + (dct.download_required ? "success" : "danger") + '"><i class="fa fa-' + (dct.download_required ? "check" : "times") + '"></i></strong>';
                         rows += '</td>';
                         rows += '<td class="vam text-center">';
-                        rows += '    <strong class="text-'+(dct.signature_required ? "success" : "danger")+'"><i class="fa fa-'+(dct.signature_required ? "check" : "times")+'"></i></strong>';
+                        rows += '    <strong class="text-' + (dct.signature_required ? "success" : "danger") + '"><i class="fa fa-' + (dct.signature_required ? "check" : "times") + '"></i></strong>';
                         rows += '</td>';
                         rows += '</tr>';
                     });
@@ -223,14 +223,14 @@ $(function MigrateGroupWithDocuments() {
         //
         loader(true);
         //
-        $('.jsToggleBtns').on('click', function(event){
+        $('.jsToggleBtns').on('click', function (event) {
             // 
             event.preventDefault();
             //
             $(this).find('i').toggleClass('fa-plus-square');
             $(this).find('i').toggleClass('fa-minus-square');
             //
-            $('.jsSub[data-id="'+($(this).closest('tr.jsParentRow').data('id'))+'"]').toggle();
+            $('.jsSub[data-id="' + ($(this).closest('tr.jsParentRow').data('id')) + '"]').toggle();
         });
     }
 
