@@ -8,6 +8,20 @@
     <!-- Set "A5", "A4" or "A3" for class name -->
     <!-- Set also "landscape" if you need -->
     <body class="A4">
+        <?php if (isset($action_button) && $action_button == "allowed" && $pre_form['user_consent'] != 0) { ?>
+            <div class="row mb-2">
+                <div class="col-lg-3 pull-right">
+                    <a target="_blank" href="<?php echo base_url('form_i9/download_i9_form'.'/'. $user_type . '/' . $user_sid); ?>" class="btn btn-success btn-block">
+                        Download PDF
+                    </a>
+                </div>
+                <div class="col-lg-3 pull-right">
+                    <a target="_blank" href="<?php echo base_url('form_i9/print_i9_form'.'/'. $user_type . '/' . $user_sid); ?>" class="btn btn-success btn-block">
+                        Print PDF
+                    </a>
+                </div>
+            </div>
+        <?php } ?>
         <section class="sheet padding-10mm">
             <article class="sheet-header">
                 <div class="header-logo"><img src="<?php echo base_url('assets/images/i9-header.png')?>"></div>
