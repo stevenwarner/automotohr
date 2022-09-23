@@ -1565,3 +1565,14 @@ $route['manage_admin/document_categories_manager/edit_job_category/(:num)'] = 'm
 $route['manage_admin/docuemnt_categories_manager/document_category_industries/(:num)']['delete'] = 'manage_admin/document_categories_manager/delete_industry/$1';
 
 $route['manage_admin/document_categories_manager']['get'] = 'manage_admin/Document_categories_manager/index';
+
+
+/**
+ * Migration of company groups with documents
+ * 
+ * @author Mubashir Ahmed
+ * @date 2022-09-22
+ */
+$route['migrate_company_groups']['get'] = 'manage_admin/2022/Migration/index';
+$route['migrate_company_groups_handler/(:num)']['get'] = 'manage_admin/2022/Migration/groupWithDocumentHandler/$1';
+$route['migrate_company_groups_handler']['post'] = 'manage_admin/2022/Migration/groupWithDocumentPostHandler';
