@@ -762,7 +762,7 @@
         <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
         <script type="text/javascript">
             $( window ).on( "load", function() {
-                var section_id = "<?php echo $download_section; ?>";
+                var section_id = "<?php echo $section_access; ?>";
                 var draw = kendo.drawing;
                 draw.drawDOM($("#"+section_id), {
                     avoidLinks: false,
