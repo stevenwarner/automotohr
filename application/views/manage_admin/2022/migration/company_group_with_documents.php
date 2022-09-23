@@ -145,4 +145,4 @@ if (!empty($companies) && is_array($companies)) {
 </style>
 
 <!--  -->
-<script src="<?= _m(base_url('assets/2022/js/migration/groups/main'), 'js', time()); ?>"></script>
+<script src="<?= _m(base_url('assets/2022/js/migration/groups/main'), 'js', '1.0'); ?>"></script>
