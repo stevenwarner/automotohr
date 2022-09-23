@@ -565,7 +565,7 @@ class Form_i9 extends Public_Controller
             //
             $data['title'] = 'Form i-9';
             $data['pre_form'] = $previous_form;
-            $data['section_access'] = "section_1_i9_pdf";
+            $data['section_access'] = "employee_section";
             //
             $this->load->view('2022/federal_fillable/form_i9_preview', $data);
             //
@@ -583,7 +583,7 @@ class Form_i9 extends Public_Controller
             //
             $data['title'] = 'Form i-9';
             $data['pre_form'] = $previous_form;
-            $data['section_access'] = "section_1_i9_pdf";
+            $data['section_access'] = "employee_section";
             //
             $this->load->view('2022/federal_fillable/form_i9_download', $data);
             //
@@ -600,7 +600,7 @@ class Form_i9 extends Public_Controller
             //
             $data['title'] = 'Form i-9';
             $data['pre_form'] = $previous_form;
-            $data['section_access'] = "complete_i9_pdf";
+            $data['section_access'] = "complete_pdf";
             //
             $this->load->view('2022/federal_fillable/form_i9_print', $data);
 
@@ -618,7 +618,7 @@ class Form_i9 extends Public_Controller
             //
             $data['title'] = 'Form i-9';
             $data['pre_form'] = $previous_form;
-            $data['section_access'] = "complete_i9_pdf";
+            $data['section_access'] = "complete_pdf";
             //
             $this->load->view('2022/federal_fillable/form_i9_download', $data);
 

@@ -260,7 +260,7 @@
                 </tbody>
             </table>
         </section>
-        <?php if ($section_access == "complete_i9_pdf") { ?>
+        <?php if ($section_access == "complete_pdf") { ?>
             <section class="sheet padding-10mm">
                 <article class="sheet-header">
                     <div class="header-logo"><img src="<?php echo base_url('assets/images/i9-header.png')?>"></div>
