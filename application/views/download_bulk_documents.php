@@ -504,7 +504,7 @@
     <div style="float: left; margin-left: -1000px; width: 800px;">
         <?php
         if (count($documents['I9'])) {
-            $this->load->view('form_i9/download_i9_pdf', [
+            $this->load->view('2022/federal_fillable/form_i9_download_bulk', [
                 'pre_form' => $documents['I9'],
                 'doUpload' => 1,
                 'token' => $token,
