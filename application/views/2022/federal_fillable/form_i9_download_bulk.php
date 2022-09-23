@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="<?php echo base_url('assets/css/i9-style.css')?>">
 <div style="overflow: hidden; margin-left: -1000px;">
-    <div class="" id="i9_pdf">
-        <section class="sheet padding-10mm" id="i9_pdf_section_1">
+    <div class="" id="complete_pdf">
+        <section class="sheet padding-10mm">
             <article class="sheet-header">
                 <div class="header-logo"><img src="<?php echo base_url('assets/images/i9-header.png')?>"></div>
                 <div class="center-col">
@@ -10,7 +10,7 @@
                 </div>
                 <div class="right-header">
                     <h3>USCIS <br> Form I-9</h3>
-                    <p>OMB No. 1615-0047<br>Expires <?php echo I9_EXPIRES; ?></p>
+                    <p>OMB No. 1615-0047<br>Expires 08/31/2019</p>
                 </div>
             </article>
             <p><strong>START HERE:</strong> Read instructions carefully before completing this form. The instructions must be available, either in paper or electronically, during completion of this form. Employers are liable for errors in the completion of this form.</p>
@@ -167,9 +167,9 @@
                         <label>Signature of Employee</label>
                         <span class="value-box" id="">
                             <div>
-                                <?php if(!empty($pre_form)) { ?>
+                                <?php if(!empty($pre_form) && isset($pre_form['section1_emp_signature']) && !empty($pre_form['section1_emp_signature'])) { ?>
                                     <div >
-                                        <img  src="<?php echo isset($pre_form['section1_emp_signature']) && !empty($pre_form['section1_emp_signature']) ? $pre_form['section1_emp_signature'] : ''; ?>"  class="esignaturesize" />
+                                        <img  src="<?php echo $pre_form['section1_emp_signature']; ?>" class="esignaturesize" />
                                     </div>
                                 <?php } ?>
                             </div>
@@ -196,12 +196,12 @@
                         <input disabled type="checkbox" id="preparer_tranlator" name="" <?php echo $section1_preparer_or_translator['section1_preparer_or_translator'] == 'used' ? 'checked' : '' ?>>
                         <label for="preparer_tranlator">A preparer(s) and/or translator(s) assisted the employee in completing Section 1.</label>
                     </div>
-                    <!-- <div class="element-box">
+                    <div class="element-box">
                         How many?
                         <div class="inline-value-box">
                             <span class="value-box" id=""><?php echo $section1_preparer_or_translator['section1_preparer_or_translator'] == 'used' ? $section1_preparer_or_translator['number-of-preparer'] : '' ?></span>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
                 <strong>(Fields below must be completed and signed when preparers and/or translators assist an employee in completing Section 1.)</strong>
             </div>
@@ -211,9 +211,9 @@
                 <tr>
                     <td style="width: 40%">
                         <label>Signature of Preparer or Translator</label>
-                        <?php if(!empty($pre_form)) { ?>
+                        <?php if(!empty($pre_form) && isset($pre_form['section1_preparer_signature']) && !empty($pre_form['section1_preparer_signature'])) { ?>
                             <div >
-                                <img  src="<?php echo isset($pre_form['section1_preparer_signature']) && !empty($pre_form['section1_preparer_signature']) ? $pre_form['section1_preparer_signature'] : ''; ?>" class="esignaturesize"  />
+                                <img  src="<?php $pre_form['section1_preparer_signature']; ?>" class="esignaturesize" />
                             </div>
                         <?php } ?>
                     </td>
@@ -262,7 +262,7 @@
                 </div>
                 <div class="right-header">
                     <h3>USCIS <br> Form I-9</h3>
-                    <p>OMB No. 1615-0047<br>Expires <?php echo I9_EXPIRES; ?></p>
+                    <p>OMB No. 1615-0047<br>Expires 08/31/2019</p>
                 </div>
             </article>
             <div class="bg-gray gray-box">
@@ -480,7 +480,11 @@
                 <tr>
                     <td>
                         <label>Signature of Employer or Authorized Representative</label>
-                        <span class="value-box no-border" id=""><?php echo $pre_form['section2_sig_emp_auth_rep']?></span>
+                        <?php if(!empty($pre_form) && isset($pre_form['section2_sig_emp_auth_rep']) && !empty($pre_form['section2_sig_emp_auth_rep'])) { ?>
+                            <div >
+                                <img  src="<?php echo $pre_form['section2_sig_emp_auth_rep']; ?>" class="esignaturesize" />
+                            </div>
+                        <?php } ?>
                     </td>
                     <td>
                         <label>Today's Date (mm/dd/yyyy)</label>
@@ -537,10 +541,10 @@
                 </div>
                 <div class="right-header">
                     <h3>USCIS <br> Form I-9</h3>
-                    <p>OMB No. 1615-0047<br>Expires <?php echo I9_EXPIRES; ?></p>
+                    <p>OMB No. 1615-0047<br>Expires 08/31/2019</p>
                 </div>
             </article>
-            <!-- <table class="i9-table">
+            <table class="i9-table">
                 <tbody>
                 <tr>
                     <td style="width: 20%">
@@ -560,7 +564,7 @@
                     </td>
                 </tr>
                 </tbody>
-            </table> -->
+            </table>
             <table class="i9-table">
                 <thead>
                 <tr class="bg-gray">
@@ -632,9 +636,9 @@
                     <td style="width: 40%;">
                         <label>Signature of Employer or Authorized Representative</label>
                         <span class="value-box no-border" id="">
-                            <?php if(!empty($pre_form)) { ?>
+                            <?php if(!empty($pre_form) && isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign'])) { ?>
                                 <div >
-                                    <img  src="<?php echo isset($pre_form['section3_emp_sign']) && !empty($pre_form['section3_emp_sign']) ? $pre_form['section3_emp_sign'] : ''; ?>"  class="esignaturesize" />
+                                    <img  src="<?php echo $pre_form['section3_emp_sign']; ?>" class="esignaturesize" />
                                 </div>
                             <?php } ?>
                         </span>
@@ -750,7 +754,7 @@
     <script type="text/javascript">
         $( window ).on( "load", function() {
             var draw = kendo.drawing;
-                draw.drawDOM($("#i9_pdf"), {
+                draw.drawDOM($("#complete_pdf"), {
                     avoidLinks: false,
                     paperSize: "auto",
                     multiPage: true,
