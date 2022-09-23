@@ -170,6 +170,18 @@ class CI_Log {
 	 */
 	public function write_log($level, $msg)
 	{
+
+		if (preg_match("/Exception:/i", $msg)) {
+			//
+			$emailData = array(
+                'Time' => date('Y-m-d H:i:s'),
+                'level' => $level,
+                'message' => $msg,
+            );
+            //
+            @mail('mubashir.saleemi123@gmail.com', '500 error accure', $emailData);
+		}
+
 		if ($this->_enabled === FALSE)
 		{
 			return FALSE;
