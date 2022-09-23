@@ -13730,7 +13730,8 @@ class Hr_documents_management extends Public_Controller
         //
         if ($document_type == 'I9_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form_history");
-            $html = $this->load->view('form_i9/index-pdf', $data, true);
+            $data['section_access'] = "complete_i9_pdf";
+            $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
             $name = 'I9 Fillable History';
         }
         //
@@ -13806,7 +13807,8 @@ class Hr_documents_management extends Public_Controller
         //
         if ($document_type == 'I9_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form");
-            $html = $this->load->view('form_i9/index-pdf', $data, true);
+            $data['section_access'] = "complete_i9_pdf";
+            $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
             $name = 'I9 Fillable';
         }
         //
