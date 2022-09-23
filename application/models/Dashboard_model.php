@@ -1006,8 +1006,10 @@ class Dashboard_model extends CI_Model
 
             $this->db->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left');
             $this->db->from('portal_applicant_jobs_list');
+           // $count = $this->db->count_all_results(['portal_applicant_jobs_list.job_sid']);
             $count = $this->db->count_all_results();
 
+          //  echo $this->db->last_query()."<br>";
             // return $this->db->get('portal_applicant_jobs_list')->result_array();
         }
 
@@ -1073,7 +1075,6 @@ class Dashboard_model extends CI_Model
 
             $this->db->join('portal_job_applications', 'portal_job_applications.sid = portal_applicant_jobs_list.portal_job_applications_sid', 'left');
             $this->db->from('portal_applicant_jobs_list');
-
             $count = $this->db->count_all_results();
             // return $this->db->get('portal_applicant_jobs_list')->result_array();
         }

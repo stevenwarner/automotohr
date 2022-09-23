@@ -1400,11 +1400,21 @@ abstract class CI_DB_query_builder extends CI_DB_driver {
 	 */
 	public function count_all_results($table = '', $reset = TRUE)
 	{
-		if ($table !== '')
-		{
-			$this->_track_aliases($table);
-			$this->from($table);
+		
+		if(is_array($table)){
+			//
+			$this->_count_string = "SELECT COUNT(".($table[0]).") AS ";
+		
+		} else{
+
+			if ($table !== '')
+			{
+				$this->_track_aliases($table);
+				$this->from($table);
+				
+			}
 		}
+
 
 		// ORDER BY usage is often problematic here (most notably
 		// on Microsoft SQL Server) and ultimately unnecessary
