@@ -8,8 +8,8 @@
     <!-- Set "A5", "A4" or "A3" for class name -->
     <!-- Set also "landscape" if you need -->
     <body class="A4">
-        <div class="" id="complete_i9_pdf">
-            <section class="sheet padding-10mm" id="section_1_i9_pdf">
+        <div id="complete_pdf">
+            <section class="sheet padding-10mm" id="employee_section">
                 <article class="sheet-header">
                     <div class="header-logo"><img src="<?php echo base_url('assets/images/i9-header.png')?>"></div>
                     <div class="center-col">

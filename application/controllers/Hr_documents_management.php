@@ -13730,7 +13730,7 @@ class Hr_documents_management extends Public_Controller
         //
         if ($document_type == 'I9_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form_history");
-            $data['section_access'] = "complete_i9_pdf";
+            $data['section_access'] = "complete_pdf";
             $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
             $name = 'I9 Fillable History';
         }
@@ -13784,7 +13784,7 @@ class Hr_documents_management extends Public_Controller
         exit(0);
     }
 
-    public function get_all_completed_document($document_sid, $document_type)
+    public function get_all_completed_document($document_sid, $document_type, $document_section)
     {
         //
         if (!$this->session->userdata('logged_in')) redirect('login', 'refresh');
@@ -13792,6 +13792,8 @@ class Hr_documents_management extends Public_Controller
         $html = '';
         $data = array();
         $name = '';
+        //
+        $data['section_access'] = $document_section;
         //
         if ($document_type == 'W4_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "form_w4_original");
@@ -13807,7 +13809,6 @@ class Hr_documents_management extends Public_Controller
         //
         if ($document_type == 'I9_Form') {
             $data["pre_form"] = $this->hr_documents_management_model->getUserVarificationHistoryDoc($document_sid, "applicant_i9form");
-            $data['section_access'] = "complete_i9_pdf";
             $html = $this->load->view('2022/federal_fillable/form_i9_preview', $data, true);
             $name = 'I9 Fillable';
         }

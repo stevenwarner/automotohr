@@ -101,12 +101,13 @@
         var document_type = $(this).data("type");
         var doc_sid = $(this).data("doc_sid");
         var doc_status = $(this).data("status");
+        var document_section = $(this).data("section");
         console.log(doc_status);
         //
         var url = '<?php echo base_url('hr_documents_management/get_verification_history_document'); ?>'+'/'+doc_sid+'/'+document_type;
         //
         if (doc_status == "Current") {
-            url = '<?php echo base_url('hr_documents_management/get_all_completed_document'); ?>'+'/'+doc_sid+'/'+document_type;
+            url = '<?php echo base_url('hr_documents_management/get_all_completed_document'); ?>'+'/'+doc_sid+'/'+document_type+'/'+document_section;
         }
         //
         $('#document_loader').show();

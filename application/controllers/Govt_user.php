@@ -157,7 +157,7 @@ class Govt_user extends Public_Controller {
 
             $previous_form = $this->govt_user_model->fetch_i9form($user_type, $employee_sid);
             $data['pre_form'] = $previous_form;
-            $data['section_access'] = "complete_i9_pdf";
+            $data['section_access'] = "complete_pdf";
             //
             if($action == 'download'){
                 $this->load->view('2022/federal_fillable/form_i9_download', $data);

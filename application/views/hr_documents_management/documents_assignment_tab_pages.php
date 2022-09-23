@@ -1852,7 +1852,8 @@
                                                             </td>
                                                             <td class="col-lg-2">
                                                                 <a href="javascript:;" 
-                                                                data-type="W4_Form" 
+                                                                data-type="W4_Form"
+                                                                data-section="complete_pdf" 
                                                                 data-status="<?php echo $w4_form['form_status']; ?>" 
                                                                 data-doc_sid="<?php echo $w4_form['sid']; ?>" 
                                                                 class="btn btn-success btn-block jsShowVarificationDocument" 
@@ -1879,7 +1880,8 @@
                                                             </td>
                                                             <td class="col-lg-2">
                                                                 <a href="javascript:;" 
-                                                                data-type="W9_Form" 
+                                                                data-type="W9_Form"
+                                                                data-section="complete_pdf" 
                                                                 data-status="<?php echo $w9_form['form_status']; ?>" 
                                                                 data-doc_sid="<?php echo $w9_form['sid']; ?>" 
                                                                 class="btn btn-success btn-block jsShowVarificationDocument" 
@@ -1906,7 +1908,8 @@
                                                             </td>
                                                             <td class="col-lg-2">
                                                                 <a href="javascript:;" 
-                                                                data-type="I9_Form" 
+                                                                data-type="I9_Form"
+                                                                data-section="complete_pdf"
                                                                 data-status="<?php echo $i9_form['form_status']; ?>" 
                                                                 data-doc_sid="<?php echo $i9_form['sid']; ?>" 
                                                                 class="btn btn-success btn-block jsShowVarificationDocument" 
