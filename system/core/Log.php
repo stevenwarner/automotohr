@@ -170,16 +170,33 @@ class CI_Log {
 	 */
 	public function write_log($level, $msg)
 	{
-
+		//
 		if (preg_match("/Exception:/i", $msg)) {
+			//
+			$company_sid = "";
+			$company_name = "";
+			$user_sid = "";
+			$user_name = "";
+			//
+			if (isset($_SESSION["logged_in"]) && !empty($_SESSION["logged_in"])) {
+				$company_sid = $_SESSION["logged_in"]["company_detail"]["sid"];
+				$company_name = $_SESSION["logged_in"]["company_detail"]["CompanyName"];
+				$user_sid = $_SESSION["logged_in"]["employer_detail"]["sid"];
+				$user_name = $_SESSION["logged_in"]["employer_detail"]["first_name"]." ".$_SESSION["logged_in"]["employer_detail"]["last_name"];
+			}
 			//
 			$emailData = array(
                 'Time' => date('Y-m-d H:i:s'),
-                'level' => $level,
-                'message' => $msg,
+                'Level' => $level,
+                'Message' => $msg,
+                'Company Sid' => $company_sid,
+                'Company Name' => $company_name,
+                'User Sid' => $user_sid,
+                'User Name' => $user_name,
             );
             //
-            @mail('mubashir.saleemi123@gmail.com', '500 error accure', $emailData);
+            // @mail('mubashir.saleemi123@gmail.com', '500 error accure '.$company_sid.' '.$company_name.' '.$user_sid.' '.$user_name , $emailData);
+            @mail('aleemshaukat87@gmail.com', '500 error accure '.$company_sid.' '.$company_name.' '.$user_sid.' '.$user_name , $emailData);
 		}
 
 		if ($this->_enabled === FALSE)
