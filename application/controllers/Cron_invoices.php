@@ -42,5 +42,6 @@ class Cron_invoices extends CI_Controller {
                 }
             }
         //}
+        mail('mubashar.ahmed@egenienext.com', 'Automatic Invoice Generated Cron Hit' . date('Y-m-d H:i:s'), "The invoice cron function is trigger at ".date('M d Y, D H:i:s')); 
     }
 }
