@@ -824,6 +824,7 @@ $route['manage_admin/company_billing_contacts/add/(:num)/(:num)'] = 'manage_admi
 $route['manage_admin/company_billing_contacts/edit/(:num)/(:num)'] = 'manage_admin/company_billing_contacts/add_edit/$1/$2';
 //Company Portal Email Templates
 $route['manage_admin/portal_email_templates/(:num)'] = 'manage_admin/portal_email_templates/index/$1';
+$route['eeo/export_excel'] = 'eeo/export_excel';
 $route['eeo/form'] = 'eeo/form';
 $route['eeo/form/(:any)/(:num)'] = 'eeo/form/$1/$2';
 $route['eeo/form/(:any)/(:num)/(:num)'] = 'eeo/form/$1/$2/$3';
@@ -833,7 +834,6 @@ $route['eeo/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3';
 $route['eeo/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4';
 $route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4/$5';
 $route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4/$5/$6';
-$route['eeo/export_excel'] = 'eeo/export_excel';
 $route['EEOC/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2';
 $route['EEOC/(:any)/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2/$3';
 
