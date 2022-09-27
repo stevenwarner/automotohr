@@ -324,6 +324,7 @@ class Application_tracking_system_model extends CI_Model {
             }
         }
 
+
         $result = $this->generate_applicants_counts($records_arr);
         return $result;
     }
