@@ -17,7 +17,7 @@ class Employee_management extends Public_Controller
     }
 
     public function archived_employee()
-    {
+    {   
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
