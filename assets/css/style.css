@@ -17871,3 +17871,20 @@ input[type='checkbox'].user_checkbox:checked:after {
     width: 150px !important; 
     height: 50px !important;  
 }
+
+.form-btn-orange {
+    float: right;
+    width: 100%;
+    background-color: #fd7a2a;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    padding: 9px 5px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.form-btn-orange:hover {
+    background-color: #df5a09;
+}

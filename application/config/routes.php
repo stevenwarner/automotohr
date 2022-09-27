@@ -831,7 +831,7 @@ $route['eeo/(:any)'] = 'eeo/index/$1';
 $route['eeo/(:any)/(:any)'] = 'eeo/index/$1/$2';
 $route['eeo/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3';
 $route['eeo/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4';
-$route['eeo/(:any)/(:any)/(:any)/(:any)/(:num)'] = 'eeo/index/$1/$2/$3/$4/$5';
+$route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4/$5';
 $route['eeo/export_excel'] = 'eeo/export_excel';
 $route['EEOC/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2';
 $route['EEOC/(:any)/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2/$3';
@@ -1576,3 +1576,7 @@ $route['manage_admin/document_categories_manager']['get'] = 'manage_admin/Docume
 $route['migrate_company_groups']['get'] = 'manage_admin/2022/Migration/index';
 $route['migrate_company_groups_handler/(:num)']['get'] = 'manage_admin/2022/Migration/groupWithDocumentHandler/$1';
 $route['migrate_company_groups_handler']['post'] = 'manage_admin/2022/Migration/groupWithDocumentPostHandler';
+
+// EEOC Chart route
+$route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5';
+$route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5/$6';
