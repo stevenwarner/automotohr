@@ -12,7 +12,7 @@ class Eeo extends Public_Controller
         $this->load->library('pagination');
     }
 
-    public function index($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null)
+    public function index($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null, $page = null)
     {
 
         if ($this->session->userdata('logged_in')) {
@@ -238,6 +238,20 @@ class Eeo extends Public_Controller
                 $uri_segment = 6;
                 $total_records = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, true);
                 $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset);
+
+                foreach ($eeo_candidates as $key => $eeo_detail) {
+                    if (empty($eeo_detail["gender"])) {
+                        $eeoc_form = $this->eeo_model->get_user_eeo_form_info($eeo_detail["applicant_sid"], "applicant");
+                        //
+                        $eeo_candidates[$key]["us_citizen"] = $eeoc_form['us_citizen'];
+                        $eeo_candidates[$key]["visa_status"] = $eeoc_form['visa_status'];
+                        $eeo_candidates[$key]["group_status"] = $eeoc_form['group_status'];
+                        $eeo_candidates[$key]["veteran"] = $eeoc_form['veteran'];
+                        $eeo_candidates[$key]["disability"] = $eeoc_form['disability'];
+                        $eeo_candidates[$key]["gender"] = $eeoc_form['gender'];
+
+                    }
+                }
 
                 $eeo_candidates_graph = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id);
 
