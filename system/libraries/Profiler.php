@@ -194,7 +194,6 @@ class CI_Profiler
 	protected function _compile_queries()
 	{
 		$dbs = array();
-		$this->_query_toggle_count = 0;
 		$profilerQueryArray = array();
 
 		// Let's determine which databases are currently connected to
@@ -227,8 +226,18 @@ class CI_Profiler
 				return $profilerQueryArray;
 			} else {
 				foreach ($db->queries as $key => $val) {
+
+					if(!isset($this->queryLogger[$val])){
+						$this->queryLogger[strip_tags($val)] = [
+							'count' => 0,
+							'time' => 0
+						];
+					}
+					
 					$time = number_format($db->query_times[$key], 4);
 					$val = highlight_code($val);
+					$this->queryLogger[strip_tags($val)]['count'] ++;
+					$this->queryLogger[strip_tags($val)]['time'] += $time;
 					//**Nisar
 					$profilerQueryArray['breakdown'][] = array('query' => strip_tags($val), 'time' => $time);
 					//
@@ -476,6 +485,10 @@ class CI_Profiler
 	public function run()
 	{
 		$fields_displayed = 0;
+
+
+		$this->queryLogger = [];
+		//
 		
 		$profilerArray = array();
 		foreach ($this->_available_sections as $section) {
@@ -488,15 +501,18 @@ class CI_Profiler
 				$profilerArray[$section] = $output;
 			}
 		}
+
+		_e($this->queryLogger, true);
 		//
 		$AHR = getCreds("AHR");
 		//
 		if ($AHR->PROFILER_SHOW) {
-			$request_path = array_values(array_filter(explode("/", $_SERVER['PATH_INFO'])));
-			$modules = array('dashboard', 'manage_admin'); 
+			$request_path = array_values(array_filter(explode("/", $_SERVER['REQUEST_URI'])));
 
-			if (in_array($request_path[0],$modules)) {
-				_e($profilerArray,false,false,true);
+			$modules = array('dashboard', 'manage_admin', 'application_tracking_system','employee_management');
+
+			if (in_array($request_path[0], $modules)) {
+				_e($profilerArray, false, false, true);
 			}
 		}
 		//

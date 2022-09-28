@@ -1,4 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+ini_set("memory_limit","1024M");
+
 
 class Application_tracking_system extends Public_Controller {
     public function __construct() {
@@ -263,6 +265,7 @@ class Application_tracking_system extends Public_Controller {
                     $applicants = $this->application_tracking_system_model->get_admin_jobs_and_applicants($company_sid, $archived, $records_per_page, $my_offset, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
                     $applicant_total_array = $this->application_tracking_system_model->get_admin_jobs_and_applicants_count($company_sid, $archived, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
 
+//print_r($applicant_total_array);
                     if (!empty($applicant_total_array)) {
                         $applicant_total = $applicant_total_array['all_job_applicants'];
                         $all_manual_applicants = $applicant_total_array['all_manual_applicants'];
@@ -288,7 +291,6 @@ class Application_tracking_system extends Public_Controller {
                     
                     $applicants = $this->application_tracking_system_model->get_employee_jobs_and_applicants($company_sid, $employer_sid, $archived, $records_per_page, $my_offset, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
                     $applicant_total_array = $this->application_tracking_system_model->get_employee_jobs_and_applicants_count($company_sid, $employer_sid, $archived, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
-
                     if (!empty($applicant_total_array)) {
                         $applicant_total = $applicant_total_array['all_job_applicants'];
                         $all_manual_applicants = $applicant_total_array['all_manual_applicants'];
@@ -378,7 +380,7 @@ class Application_tracking_system extends Public_Controller {
 
             $data['job_fair_forms']                                             = $job_fair_forms;
             //**** code for graph ****//
-            if ($archived == 0) {
+            if ($archived == 0) { 
                 $ApplciantPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Applicant', $company_sid);
                 $ManualPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Manual Candidate', $company_sid);
                 $TalentPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Talent Network', $company_sid);
