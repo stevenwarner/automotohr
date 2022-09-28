@@ -2524,20 +2524,12 @@
             });
 
             my_request.done(function (response) {
-                if (response == 'success') {
+                if (response == 'success' || response == 'Done') {
                     alertify.success("Candidate status updated successfully.");
                 } else {
                     alertify.error("Could not update Candidate Status.");
                 }
             });
-
-            /*
-             $.post(url, {id: id, status: status, action: "ajax_update_status"})
-             .done(function (data) {
-             console.log(data);
-             alertify.success("Candidate status updated successfully.");
-             });
-             */
         });
 
         $('.applicant').hover(function () {
