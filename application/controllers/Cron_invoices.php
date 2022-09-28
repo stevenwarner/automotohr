@@ -1,47 +1,42 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Cron_invoices extends CI_Controller {
-    
-    function __construct(){
+class Cron_invoices extends CI_Controller
+{
+
+    function __construct()
+    {
         parent::__construct();
         $this->load->model('manage_admin/recurring_payments_model');
     }
 
-    public function index($verification_key = null) {
-        $test = '/usr/local/bin/php -q /'.DOC_ROOT.'cron.php /cron_invoices/index/dwwbtPzuoHI9d5TEIKBKDGWwNoGEUlRuSidW8wQ4zSUHIl9gBxRx18Z3Dqk4HV7ZNCbu2ZfkjFVLHWINnY5uzMkUfIiINdZ19NJj';
-        $test_email = 'j.taylor.title@gmail.com';
+    public function index($verification_key = null)
+    {
+        $datetime = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        mail(
+            OFFSITE_DEV_EMAIL, 
+            'Automatic Invoice Generated Cron Hit' . $datetime, 
+            "The invoice cron function is trigger at " . $datetime
+        );
+        
+        
+        if ($verification_key == 'dwwbtPzuoHI9d5TEIKBKDGWwNoGEUlRuSidW8wQ4zSUHIl9gBxRx18Z3Dqk4HV7ZNCbu2ZfkjFVLHWINnY5uzMkUfIiINdZ19NJj') {
+            //
+            $today = new DateTime();
+            //
+            $recurring_payments = $this->recurring_payments_model->get_all_recurring_payment_records('active');
+            $current_day = $today->format('d');
 
-        $today = new DateTime();
+            if (!empty($recurring_payments)) {
 
-        //mail($test_email, 'AutomtoHr Debug - cron invoices executed ' . $today->format('Y-m-d H:i:s') , $verification_key);
+                foreach ($recurring_payments as $recurring_payment) {
+                    $payment_day = $recurring_payment['payment_day'];
 
-        //if($this->input->is_cli_request()) {
-            if($verification_key == 'dwwbtPzuoHI9d5TEIKBKDGWwNoGEUlRuSidW8wQ4zSUHIl9gBxRx18Z3Dqk4HV7ZNCbu2ZfkjFVLHWINnY5uzMkUfIiINdZ19NJj'){
-                //mail($test_email, 'AutomtoHr Debug - Key Verified', 'Email Generated On : ' . $today->format('Y-m-d H:i:s'));
-
-
-                //mail($test_email, 'Cron Testing from Invoices Controller', 'Server host : ' . $_SERVER['HTTP_HOST']);
-                $recurring_payments = $this->recurring_payments_model->get_all_recurring_payment_records('active');
-                $current_day = $today->format('d');
-
-                //mail($test_email, 'AutomtoHr Debug - Current Date ' . $current_day, 'This is the day for which invoices has to be generated.');
-
-                if(!empty($recurring_payments)) {
-                    //mail($test_email, 'AutomtoHr Debug - Recurring Records ' . $today->format('Y-m-d H:i:s'), print_r($recurring_payments, true));
-
-                    foreach ($recurring_payments as $recurring_payment) {
-                        $payment_day = $recurring_payment['payment_day'];
-
-                        if (intval($current_day) == intval($payment_day)) {
-
-                            //mail($test_email, 'AutomtoHr Debug - Day Check Mached', 'Email Generated On : ' . $today->format('Y-m-d H:i:s'));
-
-                            generate_invoice_for_cron_processing($recurring_payment['sid'], 1);
-                        }
+                    if (intval($current_day) == intval($payment_day)) {
+                        generate_invoice_for_cron_processing($recurring_payment['sid'], 1);
                     }
                 }
             }
-        //}
-        mail('mubashar.ahmed@egenienext.com', 'Automatic Invoice Generated Cron Hit' . date('Y-m-d H:i:s'), "The invoice cron function is trigger at ".date('M d Y, D H:i:s')); 
+        }
     }
 }
