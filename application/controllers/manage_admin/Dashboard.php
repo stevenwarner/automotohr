@@ -191,7 +191,8 @@ class Dashboard extends Admin_Controller {
         $this->data['month_not_active_employers']                               = $month_not_active_employers;
         $this->data['year_active_employers']                                    = $year_active_employers;
         $this->data['year_not_active_employers']                                = $year_not_active_employers;
-        $this->data['total_online_employers']                                   = $this->users_model->get_online_users(10);
+        // $this->data['total_online_employers']                                   = $this->users_model->get_online_users(10);
+        $this->data['total_online_employees_count']                             = $this->users_model->get_online_users_count(10);
 
         //Get Total Job Listings
         $job_listings = $this->dashboard_model->get_total_job_listings();
