@@ -107,7 +107,8 @@ class Users_model extends CI_Model {
         $current_date_str = $current_date_obj->format('Y-m-d H:i:s');
         //
         $this->db->where('action_timestamp >',  $current_date_str);
-        $this->db->from('logged_in_activitiy_tracker');
+        $this->db->group_by('employer_sid');
+        $this->db->from(checkAndGetArchiveTable('logged_in_activitiy_tracker', $current_date_str));
         //
         $count = $this->db->count_all_results();
         //
