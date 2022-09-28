@@ -501,8 +501,6 @@ class CI_Profiler
 				$profilerArray[$section] = $output;
 			}
 		}
-
-		_e($this->queryLogger, true);
 		//
 		$AHR = getCreds("AHR");
 		//
