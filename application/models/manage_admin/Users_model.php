@@ -15,10 +15,10 @@ class Users_model extends CI_Model {
         $this->db->where('action_timestamp >',  $current_date_str);
         $this->db->order_by('sid', 'DESC');
         
-        $return_obj = $this->db->get('logged_in_activitiy_tracker');
+        $return_obj = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $current_date_str));
         $data_row = $return_obj->result_array();
         $return_obj->free_result();
-//        $data_row = $this->db->get('logged_in_activitiy_tracker')->result_array(); //Table name is correct
+//        $data_row = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array(); //Table name is correct
         
         if(!empty($data_row)){
             foreach($data_row as $value) {

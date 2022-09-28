@@ -40,7 +40,7 @@ class Employer_login_duration_model extends CI_Model {
             $this->db->where('company_sid', $company_sid);
             $this->db->where('employer_sid', $employer_sid);
             $this->db->where("action_timestamp BETWEEN '" . $date_start . "' AND '" . $date_end . "'");
-            return $this->db->get('logged_in_activitiy_tracker')->result_array();
+            return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $date_start))->result_array();
         }
     }
 
@@ -49,7 +49,7 @@ class Employer_login_duration_model extends CI_Model {
         $this->db->select('employer_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
-        return $this->db->get('logged_in_activitiy_tracker')->result_array();
+        return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
     }
 
     public function get_activity_log_company($company_sid, $date = '12/30/2016') {
@@ -64,7 +64,7 @@ class Employer_login_duration_model extends CI_Model {
             $this->db->where('company_sid', $company_sid);
             $this->db->where('employer_sid', $active_employer['employer_sid']);
             $this->db->order_by('employer_ip', 'DESC');
-            $employer_logs = $this->db->get('logged_in_activitiy_tracker')->result_array();
+            $employer_logs = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
 
             if (!empty($employer_logs)) {
                 $active_employers[$key]['activity_logs'] = $employer_logs;
@@ -91,7 +91,7 @@ class Employer_login_duration_model extends CI_Model {
             $this->db->order_by('action_timestamp', 'ASC');
             $this->db->order_by('employer_ip', 'ASC');
             $this->db->limit(10);
-            $employer_logs = $this->db->get('logged_in_activitiy_tracker')->result_array();
+            $employer_logs = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $logs_to_return = array();
 
             if (!empty($employer_logs)) {
@@ -211,7 +211,7 @@ class Employer_login_duration_model extends CI_Model {
             $this->db->select('employer_sid');
             $this->db->where('company_sid', $company_sid);
             $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
-            $active_employers = $this->db->get('logged_in_activitiy_tracker')->result_array();
+            $active_employers = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $active_employers_sids = array();
             
             foreach ($active_employers as $active_employer) {
@@ -308,7 +308,7 @@ class Employer_login_duration_model extends CI_Model {
         //
         $result = $this->db
         ->select('DISTINCT DATE_FORMAT(action_timestamp, "%d-%H") as action_timestamp')
-        ->from('logged_in_activitiy_tracker')
+        ->from(checkAndGetArchiveTable('logged_in_activitiy_tracker', $startDate))
         ->where('company_sid', $companyId)
         ->where('employer_sid', $employerId)
         ->where("DATE_FORMAT(action_timestamp, '%Y-%m-%d') BETWEEN '" . $startDate . "' AND '" . $endDate . "'")
@@ -324,7 +324,7 @@ class Employer_login_duration_model extends CI_Model {
     function GetTrackerCE($start_date, $end_date){
         $this->db->select('company_sid, company_name')->distinct();
         $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
-        $query = $this->db->get('logged_in_activitiy_tracker');
+        $query = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date));
         //
         $result = $query->result_array();
         //
@@ -354,7 +354,7 @@ class Employer_login_duration_model extends CI_Model {
         $this->db->where('company_sid', $companyId);
         $this->db->order_by('action_timestamp', 'ASC');
         //
-        $query = $this->db->get('logged_in_activitiy_tracker');
+        $query = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date));
         //
         $records = $query->result_array();
         //

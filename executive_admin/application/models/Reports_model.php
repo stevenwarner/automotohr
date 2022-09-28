@@ -697,7 +697,7 @@ class Reports_model extends CI_Model {
             $this->db->where('employer_sid', $active_employer['employer_sid']);
             $this->db->order_by('action_timestamp', 'ASC');
             $this->db->order_by('employer_ip', 'ASC');
-            $employer_logs = $this->db->get('logged_in_activitiy_tracker')->result_array();
+            $employer_logs = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $logs_to_return = array();
             
             if (!empty($employer_logs)) {
@@ -785,7 +785,7 @@ class Reports_model extends CI_Model {
         $this->db->select('employer_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
-        return $this->db->get('logged_in_activitiy_tracker')->result_array();
+        return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
     }
 
     public function get_all_employers($company_sid) {
@@ -809,7 +809,7 @@ class Reports_model extends CI_Model {
             $this->db->where('company_sid', $company_sid);
             $this->db->where('employer_sid', $employer_sid);
             $this->db->where("action_timestamp BETWEEN '" . $date_start . "' AND '" . $date_end . "'");
-            return $this->db->get('logged_in_activitiy_tracker')->result_array();
+            return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $date_start))->result_array();
         }
     }
 
@@ -847,7 +847,7 @@ class Reports_model extends CI_Model {
             $this->db->select('employer_sid');
             $this->db->where('company_sid', $company_sid);
             $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
-            $active_employers = $this->db->get('logged_in_activitiy_tracker')->result_array();
+            $active_employers = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $active_employers_sids = array();
             
             foreach ($active_employers as $active_employer) {

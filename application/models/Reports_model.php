@@ -1672,7 +1672,7 @@ class Reports_model extends CI_Model
         $this->db->select('employer_sid');
         $this->db->where('company_sid', $company_sid);
         $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
-        return $this->db->get('logged_in_activitiy_tracker')->result_array();
+        return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
     }
 
     public function generate_activity_log_data_for_view($company_sid, $start_date, $end_date, $employer_sid = null)
@@ -1693,7 +1693,7 @@ class Reports_model extends CI_Model
             $this->db->where('employer_sid', $active_employer['employer_sid']);
             $this->db->order_by('action_timestamp', 'ASC');
             $this->db->order_by('employer_ip', 'ASC');
-            $employer_logs = $this->db->get('logged_in_activitiy_tracker')->result_array();
+            $employer_logs = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $logs_to_return = array();
 
             if (!empty($employer_logs)) {
