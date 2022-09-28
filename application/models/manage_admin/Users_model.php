@@ -101,7 +101,7 @@ class Users_model extends CI_Model {
         (!$result) ? $this->session->set_flashdata('message', 'Update Failed, Please try Again!') : $this->session->set_flashdata('message', $type . ' updated successfully');
     }
 
-    function get_online_users($minutes = 5, $company_sid = 0){
+    function get_online_users_count($minutes){
         $current_date_obj = new DateTime(date('Y-m-d H:i:s'));
         $current_date_obj->sub(date_interval_create_from_date_string( $minutes . ' min'));
         $current_date_str = $current_date_obj->format('Y-m-d H:i:s');
