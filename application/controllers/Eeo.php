@@ -251,6 +251,124 @@ class Eeo extends Public_Controller
                             $eeo_candidates[$key]["disability"] = $eeoc_form['disability'];
                             $eeo_candidates[$key]["gender"] = $eeoc_form['gender'];
 
+                            if ($eeoc_form['gender'] == 'Male') {
+                                $male_cout++;
+                                if ($eeoc_form['group_status'] == 'Hispanic or Latino') {
+                                    $male_cout_hispanic++;
+                                } else if ($eeoc_form['group_status'] == 'White') {
+                                    $male_cout_white++;
+                                } else if ($eeoc_form['group_status'] == 'Black or African American') {
+                                    $male_cout_black++;
+                                } else if ($eeoc_form['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                                    $male_cout_native++;
+                                } else if ($eeoc_form['group_status'] == 'Asian') {
+                                    $male_cout_asian++;
+                                } else if ($eeoc_form['group_status'] == 'American Indian or Alaska Native') {
+                                    $male_cout_american++;
+                                } else if ($eeoc_form['group_status'] == 'Two or More Races') {
+                                    $male_cout_races++;
+                                } else {
+                                    $male_cout_nogroup++;
+                                }
+                            } elseif ($eeoc_form['gender'] == 'Female') {
+                                $female_cout++;
+                                if ($eeoc_form['group_status'] == 'Hispanic or Latino') {
+                                    $female_cout_hispanic++;
+                                } else if ($eeoc_form['group_status'] == 'White') {
+                                    $female_cout_white++;
+                                } else if ($eeoc_form['group_status'] == 'Black or African American') {
+                                    $female_cout_black++;
+                                } else if ($eeoc_form['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                                    $female_cout_native++;
+                                } else if ($eeoc_form['group_status'] == 'Asian') {
+                                    $female_cout_asian++;
+                                } else if ($eeoc_form['group_status'] == 'American Indian or Alaska Native') {
+                                    $female_cout_american++;
+                                } else if ($eeoc_form['group_status'] == 'Two or More Races') {
+                                    $female_cout_races++;
+                                } else {
+                                    $female_cout_nogroup++;
+                                }
+                            } else {
+                                $notdefined_cout++;
+                                if ($eeoc_form['group_status'] == 'Hispanic or Latino') {
+                                    $notdefined_cout_hispanic++;
+                                } else if ($eeoc_form['group_status'] == 'White') {
+                                    $notdefined_cout_white++;
+                                } else if ($eeoc_form['group_status'] == 'Black or African American') {
+                                    $notdefined_cout_black++;
+                                } else if ($eeoc_form['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                                    $notdefined_cout_native++;
+                                } else if ($eeoc_form['group_status'] == 'Asian') {
+                                    $notdefined_cout_asian++;
+                                } else if ($eeoc_form['group_status'] == 'American Indian or Alaska Native') {
+                                    $notdefined_cout_american++;
+                                } else if ($eeoc_form['group_status'] == 'Two or More Races') {
+                                    $notdefined_cout_races++;
+                                } else {
+                                    $notdefined_cout_nogroup++;
+                                }
+                            }
+
+                        } else {
+                            if ($eeo_detail['gender'] == 'Male') {
+                                $male_cout++;
+                                if ($eeo_detail['group_status'] == 'Hispanic or Latino') {
+                                    $male_cout_hispanic++;
+                                } else if ($eeo_detail['group_status'] == 'White') {
+                                    $male_cout_white++;
+                                } else if ($eeo_detail['group_status'] == 'Black or African American') {
+                                    $male_cout_black++;
+                                } else if ($eeo_detail['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                                    $male_cout_native++;
+                                } else if ($eeo_detail['group_status'] == 'Asian') {
+                                    $male_cout_asian++;
+                                } else if ($eeo_detail['group_status'] == 'American Indian or Alaska Native') {
+                                    $male_cout_american++;
+                                } else if ($eeo_detail['group_status'] == 'Two or More Races') {
+                                    $male_cout_races++;
+                                } else {
+                                    $male_cout_nogroup++;
+                                }
+                            } elseif ($eeo_detail['gender'] == 'Female') {
+                                $female_cout++;
+                                if ($eeo_detail['group_status'] == 'Hispanic or Latino') {
+                                    $female_cout_hispanic++;
+                                } else if ($eeo_detail['group_status'] == 'White') {
+                                    $female_cout_white++;
+                                } else if ($eeo_detail['group_status'] == 'Black or African American') {
+                                    $female_cout_black++;
+                                } else if ($eeo_detail['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                                    $female_cout_native++;
+                                } else if ($eeo_detail['group_status'] == 'Asian') {
+                                    $female_cout_asian++;
+                                } else if ($eeo_detail['group_status'] == 'American Indian or Alaska Native') {
+                                    $female_cout_american++;
+                                } else if ($eeo_detail['group_status'] == 'Two or More Races') {
+                                    $female_cout_races++;
+                                } else {
+                                    $female_cout_nogroup++;
+                                }
+                            } else {
+                                $notdefined_cout++;
+                                if ($eeo_detail['group_status'] == 'Hispanic or Latino') {
+                                    $notdefined_cout_hispanic++;
+                                } else if ($eeo_detail['group_status'] == 'White') {
+                                    $notdefined_cout_white++;
+                                } else if ($eeo_detail['group_status'] == 'Black or African American') {
+                                    $notdefined_cout_black++;
+                                } else if ($eeo_detail['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                                    $notdefined_cout_native++;
+                                } else if ($eeo_detail['group_status'] == 'Asian') {
+                                    $notdefined_cout_asian++;
+                                } else if ($eeo_detail['group_status'] == 'American Indian or Alaska Native') {
+                                    $notdefined_cout_american++;
+                                } else if ($eeo_detail['group_status'] == 'Two or More Races') {
+                                    $notdefined_cout_races++;
+                                } else {
+                                    $notdefined_cout_nogroup++;
+                                }
+                            }
                         }
                     }
                 }    
@@ -258,66 +376,66 @@ class Eeo extends Public_Controller
                 $eeo_candidates_graph = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id);
 
 
-                foreach ($eeo_candidates_graph as $employee_row) {
-                    if ($employee_row['gender'] == 'Male') {
-                        $male_cout++;
-                        if ($employee_row['group_status'] == 'Hispanic or Latino') {
-                            $male_cout_hispanic++;
-                        } else if ($employee_row['group_status'] == 'White') {
-                            $male_cout_white++;
-                        } else if ($employee_row['group_status'] == 'Black or African American') {
-                            $male_cout_black++;
-                        } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
-                            $male_cout_native++;
-                        } else if ($employee_row['group_status'] == 'Asian') {
-                            $male_cout_asian++;
-                        } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
-                            $male_cout_american++;
-                        } else if ($employee_row['group_status'] == 'Two or More Races') {
-                            $male_cout_races++;
-                        } else {
-                            $male_cout_nogroup++;
-                        }
-                    } elseif ($employee_row['gender'] == 'Female') {
-                        $female_cout++;
-                        if ($employee_row['group_status'] == 'Hispanic or Latino') {
-                            $female_cout_hispanic++;
-                        } else if ($employee_row['group_status'] == 'White') {
-                            $female_cout_white++;
-                        } else if ($employee_row['group_status'] == 'Black or African American') {
-                            $female_cout_black++;
-                        } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
-                            $female_cout_native++;
-                        } else if ($employee_row['group_status'] == 'Asian') {
-                            $female_cout_asian++;
-                        } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
-                            $female_cout_american++;
-                        } else if ($employee_row['group_status'] == 'Two or More Races') {
-                            $female_cout_races++;
-                        } else {
-                            $female_cout_nogroup++;
-                        }
-                    } else {
-                        $notdefined_cout++;
-                        if ($employee_row['group_status'] == 'Hispanic or Latino') {
-                            $notdefined_cout_hispanic++;
-                        } else if ($employee_row['group_status'] == 'White') {
-                            $notdefined_cout_white++;
-                        } else if ($employee_row['group_status'] == 'Black or African American') {
-                            $notdefined_cout_black++;
-                        } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
-                            $notdefined_cout_native++;
-                        } else if ($employee_row['group_status'] == 'Asian') {
-                            $notdefined_cout_asian++;
-                        } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
-                            $notdefined_cout_american++;
-                        } else if ($employee_row['group_status'] == 'Two or More Races') {
-                            $notdefined_cout_races++;
-                        } else {
-                            $notdefined_cout_nogroup++;
-                        }
-                    }
-                }
+                // foreach ($eeo_candidates_graph as $employee_row) {
+                //     if ($employee_row['gender'] == 'Male') {
+                //         $male_cout++;
+                //         if ($employee_row['group_status'] == 'Hispanic or Latino') {
+                //             $male_cout_hispanic++;
+                //         } else if ($employee_row['group_status'] == 'White') {
+                //             $male_cout_white++;
+                //         } else if ($employee_row['group_status'] == 'Black or African American') {
+                //             $male_cout_black++;
+                //         } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                //             $male_cout_native++;
+                //         } else if ($employee_row['group_status'] == 'Asian') {
+                //             $male_cout_asian++;
+                //         } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
+                //             $male_cout_american++;
+                //         } else if ($employee_row['group_status'] == 'Two or More Races') {
+                //             $male_cout_races++;
+                //         } else {
+                //             $male_cout_nogroup++;
+                //         }
+                //     } elseif ($employee_row['gender'] == 'Female') {
+                //         $female_cout++;
+                //         if ($employee_row['group_status'] == 'Hispanic or Latino') {
+                //             $female_cout_hispanic++;
+                //         } else if ($employee_row['group_status'] == 'White') {
+                //             $female_cout_white++;
+                //         } else if ($employee_row['group_status'] == 'Black or African American') {
+                //             $female_cout_black++;
+                //         } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                //             $female_cout_native++;
+                //         } else if ($employee_row['group_status'] == 'Asian') {
+                //             $female_cout_asian++;
+                //         } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
+                //             $female_cout_american++;
+                //         } else if ($employee_row['group_status'] == 'Two or More Races') {
+                //             $female_cout_races++;
+                //         } else {
+                //             $female_cout_nogroup++;
+                //         }
+                //     } else {
+                //         $notdefined_cout++;
+                //         if ($employee_row['group_status'] == 'Hispanic or Latino') {
+                //             $notdefined_cout_hispanic++;
+                //         } else if ($employee_row['group_status'] == 'White') {
+                //             $notdefined_cout_white++;
+                //         } else if ($employee_row['group_status'] == 'Black or African American') {
+                //             $notdefined_cout_black++;
+                //         } else if ($employee_row['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                //             $notdefined_cout_native++;
+                //         } else if ($employee_row['group_status'] == 'Asian') {
+                //             $notdefined_cout_asian++;
+                //         } else if ($employee_row['group_status'] == 'American Indian or Alaska Native') {
+                //             $notdefined_cout_american++;
+                //         } else if ($employee_row['group_status'] == 'Two or More Races') {
+                //             $notdefined_cout_races++;
+                //         } else {
+                //             $notdefined_cout_nogroup++;
+                //         }
+                //     }
+                // }
 
 
                 $data['totalrecords'] = $total_records;
