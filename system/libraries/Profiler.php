@@ -156,7 +156,7 @@ class CI_Profiler
 	{
 		$profile = array();
 
-		//**Nisar
+		//
 		$profileBenchmark = array();
 
 		foreach ($this->CI->benchmark->marker as $key => $val) {
@@ -166,7 +166,7 @@ class CI_Profiler
 				preg_match('/(.+?)_end$/i', $key, $match)
 				&& isset($this->CI->benchmark->marker[$match[1] . '_end'], $this->CI->benchmark->marker[$match[1] . '_start'])
 			) {
-				//**Nisar
+				//
 				$profile[$match[1]] = $this->CI->benchmark->elapsed_time($match[1] . '_start', $key);
 			}
 		}
@@ -177,7 +177,7 @@ class CI_Profiler
 
 		foreach ($profile as $key => $val) {
 			$key = ucwords(str_replace(array('_', '-'), ' ', $key));
-			//**Nisar
+			//
 			$profileBenchmark[$key] = $val;
 		}
 
@@ -218,7 +218,7 @@ class CI_Profiler
 		foreach ($dbs as $name => $db) {
 
 			$total_time = number_format(array_sum($db->query_times), 4) . ' ' . $this->CI->lang->line('profiler_seconds');
-			//**Nisar
+			//
 			$profilerQueryArray['database'] = $db->database;
 			$profilerQueryArray['time_taken'] = $total_time;
 
@@ -238,7 +238,7 @@ class CI_Profiler
 					$val = highlight_code($val);
 					$this->queryLogger[strip_tags($val)]['count'] ++;
 					$this->queryLogger[strip_tags($val)]['time'] += $time;
-					//**Nisar
+					//
 					$profilerQueryArray['breakdown'][] = array('query' => strip_tags($val), 'time' => $time);
 					//
 					$this->_query_toggle_count++;
@@ -248,7 +248,7 @@ class CI_Profiler
 			$count++;
 			$profilerQueryArray['queries'] = $this->_query_toggle_count;
 		}
-		//**Nisar
+		//
 		return $profilerQueryArray;
 	}
 
