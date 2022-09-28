@@ -51,7 +51,9 @@ class Ip_model extends CI_Model {
             CONCAT(administrator_users.first_name, " ", administrator_users.last_name) AS admin_name
         ')
         ->from('blocked_ips')
+        ->where('blocked_ips.is_locked',1)
         ->join('administrator_users', 'administrator_users.id = blocked_ips.admin_sid', 'left')
+        ->order_by('blocked_ips.updated_at','DESC')
         ->limit($offset, $inset)
         ->get();
         // ;
@@ -65,6 +67,7 @@ class Ip_model extends CI_Model {
         $totalRecords = $this
         ->db
         ->from('blocked_ips')
+        ->where('is_locked',0)
         ->count_all_results();
 
         return array(
@@ -72,6 +75,54 @@ class Ip_model extends CI_Model {
             // 'TotalRecords' => 50,
             'Records' => $ids_array
         );
+    }
+
+//
+function get_ips_white($inset, $offset){
+    //
+    $result = $this
+    ->db
+    ->select('
+        blocked_ips.ip_address,
+        blocked_ips.created_at,
+        CONCAT(administrator_users.first_name, " ", administrator_users.last_name) AS admin_name
+    ')
+    ->from('blocked_ips')
+    ->where('blocked_ips.is_locked',0)
+    ->join('administrator_users', 'administrator_users.id = blocked_ips.admin_sid', 'left')
+    ->order_by('blocked_ips.updated_at','DESC')
+    ->limit($offset, $inset)
+    ->get();
+    // ;
+    // _e($this->db->get_compiled_select(), true);
+    //
+    $ids_array = $result->result_array();
+    $result   = $result->free_result();
+    //
+    if(!sizeof($ids_array)) return false;
+    // Create a subquery
+    $totalRecords = $this
+    ->db
+    ->from('blocked_ips')
+    ->where('is_locked',0)
+    ->count_all_results();
+
+    return array(
+        'TotalRecords' => $totalRecords,
+        // 'TotalRecords' => 50,
+        'Records' => $ids_array
+    );
+}
+
+
+
+    //
+    function check_ip_new($ip_address){
+        return $this->db
+        ->select('is_locked')
+        ->from('blocked_ips')
+        ->where('ip_address', $ip_address)
+        ->get()->result_array();
     }
 
 }

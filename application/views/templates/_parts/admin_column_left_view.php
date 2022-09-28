@@ -147,6 +147,7 @@ if (
     $this->uri->segment(2) == 'turnover_cost_calculator_logs' ||
     $this->uri->segment(2) == 'blocked_applicants' ||
     $this->uri->segment(2) == 'blocked_ips' ||
+    $this->uri->segment(3) == 'witelist' ||
     (
         ($this->uri->segment(3) == 'edit' && $this->uri->segment(2) == 'job_templates') ||
         ($this->uri->segment(3) == 'add' && $this->uri->segment(2) == 'job_templates' ||
@@ -731,15 +732,29 @@ if (
                                     ?> href="<?php echo site_url('manage_admin/blocked_applicants'); ?>">Blocked Applicants</a>
                             </div>
                         <?php } ?>
-                        <?php if (check_access_permissions_for_view($security_details, 'blocked_app')) { ?>
                             <div class="menu-item">
+                            <?php //echo die(base_url(uri_string()));?>
                                 <a <?php
-                                    if (base_url(uri_string()) == site_url('manage_admin/blocked_ips') || $this->uri->segment(2) == 'blocked_ips') {
+                                    if (base_url(uri_string()) == site_url('manage_admin/blocked_ips') && $this->uri->segment(2) == 'blocked_ips') {
                                         echo 'class="active"';
                                     }
                                     ?> href="<?php echo site_url('manage_admin/blocked_ips'); ?>">Blocked IPs</a>
                             </div>
+                        
+
+
+                        <?php if (check_access_permissions_for_view($security_details, 'blocked_app')) { ?>
+                            <div class="menu-item">
+                               
+                                <a <?php 
+                                    if (base_url(uri_string()) == site_url('manage_admin/blocked_ips/witelist') && $this->uri->segment(3) == 'witelist') {
+                                        echo 'class="active"';
+                                    }
+                                    ?> href="<?php echo site_url('manage_admin/blocked_ips/witelist'); ?>" >White List IPs</a>
+                            </div>
                         <?php } ?>
+
+
                     </div>
                 </li>
             <?php } ?>
