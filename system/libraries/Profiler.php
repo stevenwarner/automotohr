@@ -156,7 +156,7 @@ class CI_Profiler
 	{
 		$profile = array();
 
-		//**Nisar
+		//
 		$profileBenchmark = array();
 
 		foreach ($this->CI->benchmark->marker as $key => $val) {
@@ -166,7 +166,7 @@ class CI_Profiler
 				preg_match('/(.+?)_end$/i', $key, $match)
 				&& isset($this->CI->benchmark->marker[$match[1] . '_end'], $this->CI->benchmark->marker[$match[1] . '_start'])
 			) {
-				//**Nisar
+				//
 				$profile[$match[1]] = $this->CI->benchmark->elapsed_time($match[1] . '_start', $key);
 			}
 		}
@@ -177,7 +177,7 @@ class CI_Profiler
 
 		foreach ($profile as $key => $val) {
 			$key = ucwords(str_replace(array('_', '-'), ' ', $key));
-			//**Nisar
+			//
 			$profileBenchmark[$key] = $val;
 		}
 
@@ -194,7 +194,6 @@ class CI_Profiler
 	protected function _compile_queries()
 	{
 		$dbs = array();
-		$this->_query_toggle_count = 0;
 		$profilerQueryArray = array();
 
 		// Let's determine which databases are currently connected to
@@ -219,7 +218,7 @@ class CI_Profiler
 		foreach ($dbs as $name => $db) {
 
 			$total_time = number_format(array_sum($db->query_times), 4) . ' ' . $this->CI->lang->line('profiler_seconds');
-			//**Nisar
+			//
 			$profilerQueryArray['database'] = $db->database;
 			$profilerQueryArray['time_taken'] = $total_time;
 
@@ -227,9 +226,19 @@ class CI_Profiler
 				return $profilerQueryArray;
 			} else {
 				foreach ($db->queries as $key => $val) {
+
+					if(!isset($this->queryLogger[$val])){
+						$this->queryLogger[strip_tags($val)] = [
+							'count' => 0,
+							'time' => 0
+						];
+					}
+					
 					$time = number_format($db->query_times[$key], 4);
 					$val = highlight_code($val);
-					//**Nisar
+					$this->queryLogger[strip_tags($val)]['count'] ++;
+					$this->queryLogger[strip_tags($val)]['time'] += $time;
+					//
 					$profilerQueryArray['breakdown'][] = array('query' => strip_tags($val), 'time' => $time);
 					//
 					$this->_query_toggle_count++;
@@ -239,7 +248,7 @@ class CI_Profiler
 			$count++;
 			$profilerQueryArray['queries'] = $this->_query_toggle_count;
 		}
-		//**Nisar
+		//
 		return $profilerQueryArray;
 	}
 
@@ -476,6 +485,10 @@ class CI_Profiler
 	public function run()
 	{
 		$fields_displayed = 0;
+
+
+		$this->queryLogger = [];
+		//
 		
 		$profilerArray = array();
 		foreach ($this->_available_sections as $section) {
@@ -492,11 +505,12 @@ class CI_Profiler
 		$AHR = getCreds("AHR");
 		//
 		if ($AHR->PROFILER_SHOW) {
-			$request_path = array_values(array_filter(explode("/", $_SERVER['PATH_INFO'])));
-			$modules = array('dashboard', 'manage_admin'); 
+			$request_path = array_values(array_filter(explode("/", $_SERVER['REQUEST_URI'])));
 
-			if (in_array($request_path[0],$modules)) {
-				_e($profilerArray,false,false,true);
+			$modules = array('dashboard', 'manage_admin', 'application_tracking_system','employee_management');
+
+			if (in_array($request_path[0], $modules)) {
+				_e($profilerArray, false, false, true);
 			}
 		}
 		//

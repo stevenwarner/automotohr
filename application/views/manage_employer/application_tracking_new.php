@@ -827,7 +827,7 @@
             var status = $(this).find('#status').html();
             var id = $(this).parent().find('#id').html();
 
-            var my_url = "<?= base_url() ?>application_tracking/update_status";
+            var my_url = "<?= base_url() ?>application_tracking_system/update_status";
 
             //console.log(my_url);
 
@@ -839,21 +839,12 @@
             });
 
             my_request.done(function (response) {
-                //console.log(response);
-                if(response == 'Done'){
+                if(response == 'success' || response == 'Done'){
                     alertify.success("Candidate status updated successfully.");
                 } else {
                     alertify.success("Could not update Candidate Status.");
                 }
             });
-
-            /*
-            $.post(url, {id: id, status: status, action: "ajax_update_status"})
-                .done(function (data) {
-                    console.log(data);
-                    alertify.success("Candidate status updated successfully.");
-                });
-                */
         });
 
         $('.applicant').hover(function () {
