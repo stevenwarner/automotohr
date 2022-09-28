@@ -1244,7 +1244,7 @@ class Dashboard_model extends CI_Model
     function get_total_job_applications_today()
     {
         $this->db->where('applicant_type', 'Applicant');
-        $this->db->where('date_applied', date('Y-m-d', strtotime('now')));
+        $this->db->where('date_applied = "'.(date('Y-m-d', strtotime('now'))).'"', null);
         $this->db->from('portal_applicant_jobs_list');
         return $this->db->count_all_results();
     }
