@@ -1193,8 +1193,13 @@ function get_total_job_applications_week(){
     }
 
     function get_total_job_applications_year(){
+        $start_year = date('Y-01-01').' 00:00:01';
+        $end_year  = date('Y-12-31').' 23:59:59';
+        _e($start_year,true);
+        _e($end_year,true,true);
         $this->db->where('applicant_type', 'Applicant');
-        $this->db->where('date_format(date_applied,"%Y") = "'.( date('Y', strtotime('now')) ).'"', null);
+        // $this->db->where('date_format(date_applied,"%Y") = "'.( date('Y', strtotime('now')) ).'"', null);
+        $this->db->where('date_applied BETWEEN "' . $start_year . '" and "' . $end_year . '"');
         $this->db->from('portal_applicant_jobs_list');
         return $this->db->count_all_results();
     }
