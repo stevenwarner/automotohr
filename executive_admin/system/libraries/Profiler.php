@@ -232,7 +232,7 @@ class CI_Profiler
 					//
 					$profilerQueryArray['breakdown'][] = array('query' => strip_tags($val), 'time' => $time);
 					//
-					$this->_query_toggle_count++
+					$this->_query_toggle_count++;
 				}
 			}
 
