@@ -1200,8 +1200,11 @@ function get_total_job_applications_week(){
     }
 
     function get_total_job_applications_today(){
+        $today_start = date('Y-m-d').' 00:00:01';
+        $today_end  = date('Y-m-d').' 23:59:59';
         $this->db->where('applicant_type', 'Applicant');
         $this->db->where('date_format(date_applied,"%Y-%m-%d") = "'.( date('Y-m-d', strtotime('now')) ).'"', null);
+        $this->db->where('date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
         $this->db->from('portal_applicant_jobs_list');
         return $this->db->count_all_results();
     }
