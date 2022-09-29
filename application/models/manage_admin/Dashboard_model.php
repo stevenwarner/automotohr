@@ -1186,8 +1186,12 @@ function get_total_job_applications_week(){
     }
 
     function get_total_job_applications_month(){
+        $start_month = date('Y-m-01').' 00:00:01';
+        $end_month  = date('Y-m-t').' 23:59:59';
+        //
         $this->db->where('applicant_type', 'Applicant');
-        $this->db->where('date_format(date_applied,"%Y-%m") = "'.( date('Y-m', strtotime('now')) ).'"', null);
+        // $this->db->where('date_format(date_applied,"%Y-%m") = "'.( date('Y-m', strtotime('now')) ).'"', null);
+        $this->db->where('date_applied BETWEEN "' . $start_month . '" and "' . $end_month . '"');
         $this->db->from('portal_applicant_jobs_list');
         return $this->db->count_all_results();
     }
