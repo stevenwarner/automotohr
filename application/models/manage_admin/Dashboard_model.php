@@ -1195,8 +1195,7 @@ function get_total_job_applications_week(){
     function get_total_job_applications_year(){
         $start_year = date('Y-01-01').' 00:00:01';
         $end_year  = date('Y-12-31').' 23:59:59';
-        _e($start_year,true);
-        _e($end_year,true,true);
+        //
         $this->db->where('applicant_type', 'Applicant');
         // $this->db->where('date_format(date_applied,"%Y") = "'.( date('Y', strtotime('now')) ).'"', null);
         $this->db->where('date_applied BETWEEN "' . $start_year . '" and "' . $end_year . '"');
@@ -1207,6 +1206,7 @@ function get_total_job_applications_week(){
     function get_total_job_applications_today(){
         $start_date = date('Y-m-d').' 00:00:01';
         $end_date  = date('Y-m-d').' 23:59:59';
+        //
         $this->db->where('applicant_type', 'Applicant');
         // $this->db->where('date_format(date_applied,"%Y-%m-%d") = "'.( date('Y-m-d', strtotime('now')) ).'"', null);
         $this->db->where('date_applied BETWEEN "' . $start_date . '" and "' . $end_date . '"');
