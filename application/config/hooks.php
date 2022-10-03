@@ -39,4 +39,13 @@ if ($AHR->PROFILER_SHOW || $AHR->PROFILER_LOG) {
         'filepath' => 'hooks',
         'params'   => array()
     );
-}        
+} 
+
+// Cache Pages
+$hook['post_controller_constructor'][] = array(
+    'class'    => 'CacheHandler',
+    'function' => 'EnableCache',
+    'filename' => 'cache.php',
+    'filepath' => 'hooks',
+    'params'   => array()
+);
