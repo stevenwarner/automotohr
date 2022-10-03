@@ -6,13 +6,10 @@ class CacheHandler
     function EnableCache()
     {
         $CI = &get_instance();
-        $info =  getDomainInfo();
         //
-        if ($info['host'] === 'ahr') {
-            if (in_array($_SERVER['REQUEST_URI'], pagesCashe())) {
-               $CI->output->cache(PAGE_CASH_TIME);
-
-            }
+        $actualLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        if (in_array($actualLink, pagesCashe())) {
+            $CI->output->cache(PAGE_CASH_TIME);
         }
     }
 }
