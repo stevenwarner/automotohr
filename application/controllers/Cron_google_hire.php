@@ -141,7 +141,7 @@ class Cron_google_hire extends CI_Controller{
             $cred_filename = 'google_hire.json';
 
         // Loads configutaion file
-        $auth = @json_decode(@file_get_contents($cred_filename));
+        $auth = @json_decode(@file_get_contents(ROOTPATH.'../protected_files/'.$cred_filename));
 
         // Generate JWT token
         $this->load->library('Mjwt');
