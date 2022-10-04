@@ -19,7 +19,7 @@
 
 <?php if(!empty($companies)) { ?>
     <?php foreach ($companies as $company) { ?>
-        <div class="hr-box">
+        <div class="hr-box" id="jsCompanyBlock<?=$company['company_sid'];?>">
             <div class="hr-box-header bg-header-green">
                 <h1 class="hr-registered pull-left"><span class="text-success"><?php echo ucwords($company['company_name']); ?></span></h1>
             </div>
@@ -116,16 +116,19 @@
                     start_date: start_date,
                     end_date: end_date
                 }
-            ).done(function(resp){console.log(resp.data.length)
+            ).done(function(resp){
                 //
                 xhr = null;
                 //
                 if(resp.data.length){
                     //
                     var html = '';
+                    var show_html = 0;
                     //
                     resp.data.map(function(record, index){
                         if (record.total_time_spent_in_minutes > 0) {
+                            show_html = 1;
+                            //
                             var rowspan = 0;
                             var inner_html = '';
                             //
@@ -152,7 +155,14 @@
                         }
                     });
                     //
-                    $('#jsCompanyBody'+(companyId)+'').html(html);
+                    if (show_html == 1) {
+                        $('#jsCompanyBody'+(companyId)+'').html(html);
+                    }
+
+                    if (show_html == 0) {
+                        $('#jsCompanyBlock'+(companyId)+'').html(html);
+                    }
+                    
                 } else{
                     //
                     $('#jsCompanyBody'+(companyId)+'').html('<tr><td colspan="4"><p class="alert alert-info text-center">No records found</p></td></tr>');
