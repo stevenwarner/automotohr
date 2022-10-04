@@ -430,6 +430,7 @@ class Employer_login_duration_model extends CI_Model {
         $this->db->select('company_sid, company_name')->distinct();
         $this->db->where("action_timestamp >=", $start_date);
         $this->db->where("action_timestamp <=", $end_date);
+        $this->db->order_by('company_name', 'ASC');
         $query = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date));
         //
         $result = $query->result_array();
