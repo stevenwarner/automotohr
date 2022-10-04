@@ -164,6 +164,9 @@
 
 
     function get_activity_report() {
+        if (typeof stopProcess != "undefined") {
+            stopProcess();
+        }
         var week_span = $('#week_span').val();
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();
@@ -190,14 +193,14 @@
             });
 
             my_request.done(function (response) {
-                //console.log(response);
+                //
                 $('.bt-panel').show();
                 $('#main_container_for_ajax_response').html(response);
             });
 
 
         } else {
-            alertify.error('Please select company and date');
+            alertify.alert('Notice','Please select any date');
         }
 
     }
