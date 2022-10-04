@@ -77,6 +77,7 @@
         var end_date = "<?=$end_date;?>";
         //
         var current = 0;
+        var isTerminated = 0;
         //
         var total = companiesOBJ.length;
         //
@@ -86,11 +87,12 @@
         //
         StartEmployeeReportProcess();
         //
-        function stopProcess () {console.log(companiesOBJ)
+        function stopProcess () {
             $('#main_container_for_ajax_response').html("");
             companiesOBJ = [];
             current = 0;
             total = 0;
+            isTerminated = 1;
             //
             if(xhr !== null){
                 xhr.abort();
@@ -112,6 +114,10 @@
         }
         //
         function GetEmployees(companyId){
+            //
+            if(isTerminated == 1){
+                return stopProcess();
+            }
             //
             if(xhr !== null){
                 setTimeout(function(){
