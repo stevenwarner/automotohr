@@ -200,7 +200,7 @@ class Weekly_activity_report extends Admin_Controller
                     $week_end = $end_date->format('Y-m-d');
                     $week_end = $week_end . ' 23:59:59';
 
-                    $companies = $this->employer_login_duration_model->GetTrackerCE($week_start, $week_end);
+                    $companies = $this->employer_login_duration_model->GetTrackerCompanies($week_start, $week_end);
 
                     $my_data['companies'] = $companies;
                     $my_data['start_date'] = $this->input->post('start_date');

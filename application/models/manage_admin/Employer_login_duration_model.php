@@ -416,7 +416,34 @@ class Employer_login_duration_model extends CI_Model {
         return array_values($mainEmployeeArray);
     }
 
-     /**
+    /**
+     * Get active companies
+     * Created on: 03-10-2022
+     *
+     * 
+     * @param $start_date  String    (YYYY-MM-DD)
+     * @param $end_date    String    (YYYY-MM-DD)
+     *
+     * @return  Array
+     */
+    function GetTrackerCompanies($start_date, $end_date){
+        $this->db->select('company_sid, company_name')->distinct();
+        $this->db->where("action_timestamp >=", $start_date);
+        $this->db->where("action_timestamp <=", $end_date);
+        $query = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date));
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(empty($result)){
+            return [];
+        }
+        //
+        return $result;
+    }
+
+    /**
      * Get user active timeframe new
      * Created on: 03-10-2022
      *
@@ -429,12 +456,13 @@ class Employer_login_duration_model extends CI_Model {
     public function generate_company_employes_activity_log_detail($company_sid, $start_date, $end_date) {
         //
         $this->db->select('*');
-        $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+        $this->db->where("action_timestamp >=", $start_date);
+        $this->db->where("action_timestamp <=", $end_date);
         $this->db->where('company_sid', $company_sid);
         $company_logs = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
-       
+        //
         $logs_to_return = array();
-
+        //
         if (!empty($company_logs)) {
             //
             foreach ($company_logs as $log) {

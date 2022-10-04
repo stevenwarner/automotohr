@@ -82,7 +82,20 @@
         //
         var xhr = null;
         //
+        window.stopProcess = stopProcess;
+        //
         StartEmployeeReportProcess();
+        //
+        function stopProcess () {console.log(companiesOBJ)
+            $('#main_container_for_ajax_response').html("");
+            companiesOBJ = [];
+            current = 0;
+            total = 0;
+            //
+            if(xhr !== null){
+                xhr.abort();
+            }
+        }
         //
         function StartEmployeeReportProcess(){
             //
@@ -163,7 +176,7 @@
                         $('#jsCompanyBlock'+(companyId)+'').hide();
                     }
                     
-                } else{
+                } else {
                     //
                     $('#jsCompanyBody'+(companyId)+'').html('<tr><td colspan="4"><p class="alert alert-info text-center">No records found</p></td></tr>');
                 }
