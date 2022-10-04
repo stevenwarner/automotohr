@@ -167,10 +167,12 @@
         var week_span = $('#week_span').val();
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();
+        // var perform_action = "get_weekly_activity";
+        var perform_action = "get_weekly_active_companies";
 
         if (week_span != '' && week_span != null && week_span != undefined) {
             var request_data = {
-                "perform_action": "get_weekly_activity",
+                "perform_action": perform_action,
                 "start_date": start_date,
                 "end_date": end_date,
                 "week_span": week_span

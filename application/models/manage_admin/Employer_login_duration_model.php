@@ -9,7 +9,9 @@ class Employer_login_duration_model extends CI_Model {
         $excluded_companies = $this->get_excluded_company_sids();
         $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
         $this->db->where('parent_sid', 0);
-        $this->db->where('sid NOT IN ( ' . implode(',', $excluded_companies) . ' )');
+        if (!empty($excluded_companies)) {
+            $this->db->where('sid NOT IN ( ' . implode(',', $excluded_companies) . ' )');
+        }
         $this->db->order_by('CompanyName', 'ASC');
         $this->db->where('career_page_type', 'standard_career_site');
         $this->db->where('active', 1);
@@ -412,5 +414,80 @@ class Employer_login_duration_model extends CI_Model {
         }
         //
         return array_values($mainEmployeeArray);
+    }
+
+     /**
+     * Get user active timeframe new
+     * Created on: 03-10-2022
+     *
+     * @param $company_sid Integer
+     * @param $start_date  String    (YYYY-MM-DD)
+     * @param $end_date    String    (YYYY-MM-DD)
+     *
+     * @return  Array
+     */
+    public function generate_company_employes_activity_log_detail($company_sid, $start_date, $end_date) {
+        //
+        $this->db->select('*');
+        $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+        $this->db->where('company_sid', $company_sid);
+        $company_logs = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
+       
+        $logs_to_return = array();
+
+        if (!empty($company_logs)) {
+            //
+            foreach ($company_logs as $log) {
+                $employee_sid = $log["employer_sid"];
+                $current_employee_ip = $log["employer_ip"];
+                //
+                // Push employee into an array if not exist in it
+                if (!array_key_exists($employee_sid, $logs_to_return)) {
+                    $logs_to_return[$employee_sid]["employee_name"] = $log["employer_name"];
+                    $logs_to_return[$employee_sid]["total_time_spent_in_minutes"] = 0;
+                    //
+                    $activity_log = array();
+                    $activity_log['last_action_timestamp'] =  $log["action_timestamp"];
+                    $activity_log['user_agent'] =  $log["user_agent"];
+                    $activity_log['minutes'] =  0;
+                    //
+                    $logs_to_return[$employee_sid]["ips"][$current_employee_ip] =  $activity_log;
+                }
+                //
+                //Push new IP into ips array if not exist in employee ips
+                if (!array_key_exists($current_employee_ip, $logs_to_return[$employee_sid]["ips"])) {
+                    //
+                    $activity_log = array();
+                    $activity_log['last_action_timestamp'] =  $log["action_timestamp"];
+                    $activity_log['user_agent'] =  $log["user_agent"];
+                    $activity_log['minutes'] =  0;
+                    //
+                    $logs_to_return[$employee_sid]["ips"][$current_employee_ip] =  $activity_log;
+                }
+                //
+                // Calculate time between two timestamps start   
+                $previous_hours = $logs_to_return[$employee_sid]["ips"][$current_employee_ip]['hours'];
+                $previous_minutes = $logs_to_return[$employee_sid]["ips"][$current_employee_ip]['minutes'];
+                //
+                $previous_timestamp = new DateTime($logs_to_return[$employee_sid]["ips"][$current_employee_ip]['last_action_timestamp']);
+                $current_timestamp = new DateTime($log["action_timestamp"]);
+                //
+                if ($previous_timestamp < $current_timestamp) {
+                    //
+                    $logs_to_return[$employee_sid]["ips"][$current_employee_ip]['last_action_timestamp'] =  $log["action_timestamp"];
+                    //
+                    $current_hours = $previous_timestamp->diff($current_timestamp)->h;
+                    $current_minutes = $previous_timestamp->diff($current_timestamp)->i;
+                    //
+                    $logs_to_return[$employee_sid]["ips"][$current_employee_ip]['minutes'] = $previous_minutes + $current_minutes + ($current_hours * 60);
+                    //
+                    $logs_to_return[$employee_sid]["total_time_spent_in_minutes"] += $current_minutes + ($current_hours * 60);
+                    
+                }
+                // Calculate time between two timestamps end
+            }
+        }
+
+        return array_values($logs_to_return);
     }
 }
