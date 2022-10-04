@@ -160,7 +160,7 @@
                     }
 
                     if (show_html == 0) {
-                        $('#jsCompanyBlock'+(companyId)+'').html(html);
+                        $('#jsCompanyBlock'+(companyId)+'').hide();
                     }
                     
                 } else{
