@@ -139,6 +139,8 @@
             },
             showOtherMonths: true,
             selectOtherMonths: true,
+            changeYear: true,
+            changeMonth: true,
             onSelect: function (dateText, inst) {
                 setDates(this);
                 selectCurrentWeek();
@@ -162,8 +164,13 @@
 
     });
 
+    var my_request = null;
+
 
     function get_activity_report() {
+        if(my_request !== null){
+            my_request.abort();
+        }
         if (typeof stopProcess != "undefined") {
             stopProcess();
         }
@@ -181,7 +188,7 @@
                 "week_span": week_span
             };
 
-            var my_request;
+            
             var my_url = '<?php echo base_url('manage_admin/reports/weekly_activity_report/ajax_responder'); ?>';
 
             $('#main_container_for_ajax_response').html('<div class="cssload-loader"></div>');
@@ -193,6 +200,8 @@
             });
 
             my_request.done(function (response) {
+                //
+                my_request = null;
                 //
                 $('.bt-panel').show();
                 $('#main_container_for_ajax_response').html(response);
