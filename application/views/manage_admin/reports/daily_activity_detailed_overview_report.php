@@ -28,7 +28,7 @@
                                             <div class="field-row field-row-autoheight">
                                                 <input type="text" name="report_date"
                                                        value="<?php echo set_value('report_date', date('m/d/Y')); ?>"
-                                                       class="invoice-fields" id="report_date" readonly>
+                                                       class="invoice-fields" id="report_date" readonly autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
@@ -99,6 +99,8 @@
         
         $('#report_date').datepicker({
             format: 'mm/dd/yyyy',
+            changeMonth: true,
+            changeYear: true,
             onSelect: function () {
                 $('#hidden_report_date').val($('#report_date').val());
             }

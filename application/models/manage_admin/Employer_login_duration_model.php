@@ -41,7 +41,8 @@ class Employer_login_duration_model extends CI_Model {
             $this->db->select('sid');
             $this->db->where('company_sid', $company_sid);
             $this->db->where('employer_sid', $employer_sid);
-            $this->db->where("action_timestamp BETWEEN '" . $date_start . "' AND '" . $date_end . "'");
+            $this->db->where("action_timestamp >=", $date_start);
+            $this->db->where("action_timestamp <=", $date_end);
             return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $date_start))->result_array();
         }
     }
@@ -50,7 +51,8 @@ class Employer_login_duration_model extends CI_Model {
         $this->db->distinct();
         $this->db->select('employer_sid');
         $this->db->where('company_sid', $company_sid);
-        $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+        $this->db->where("action_timestamp >=", $start_date);
+        $this->db->where("action_timestamp <=", $end_date);
         return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
     }
 
@@ -62,7 +64,8 @@ class Employer_login_duration_model extends CI_Model {
 
         foreach ($active_employers as $key => $active_employer) {
             $this->db->select('*');
-            $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+            $this->db->where("action_timestamp >=", $start_date);
+            $this->db->where("action_timestamp <=", $end_date);
             $this->db->where('company_sid', $company_sid);
             $this->db->where('employer_sid', $active_employer['employer_sid']);
             $this->db->order_by('employer_ip', 'DESC');
@@ -87,7 +90,8 @@ class Employer_login_duration_model extends CI_Model {
 
         foreach ($active_employers as $key => $active_employer) {
             $this->db->select('*');
-            $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+            $this->db->where("action_timestamp >=", $start_date);
+            $this->db->where("action_timestamp <=", $end_date);
             $this->db->where('company_sid', $company_sid);
             $this->db->where('employer_sid', $active_employer['employer_sid']);
             $this->db->order_by('action_timestamp', 'ASC');
@@ -212,7 +216,8 @@ class Employer_login_duration_model extends CI_Model {
             $this->db->distinct();
             $this->db->select('employer_sid');
             $this->db->where('company_sid', $company_sid);
-            $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+            $this->db->where("action_timestamp >=", $start_date);
+            $this->db->where("action_timestamp <=", $end_date);
             $active_employers = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $active_employers_sids = array();
             
@@ -313,7 +318,8 @@ class Employer_login_duration_model extends CI_Model {
         ->from(checkAndGetArchiveTable('logged_in_activitiy_tracker', $startDate))
         ->where('company_sid', $companyId)
         ->where('employer_sid', $employerId)
-        ->where("DATE_FORMAT(action_timestamp, '%Y-%m-%d') BETWEEN '" . $startDate . "' AND '" . $endDate . "'")
+        ->where("action_timestamp >=", $startDate)
+        ->where("action_timestamp <=", $endDate)
         ->order_by('sid', 'ASC')
         ->get();
         //
@@ -325,7 +331,8 @@ class Employer_login_duration_model extends CI_Model {
     //
     function GetTrackerCE($start_date, $end_date){
         $this->db->select('company_sid, company_name')->distinct();
-        $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+        $this->db->where("action_timestamp >=", $start_date);
+        $this->db->where("action_timestamp <=", $end_date);
         $query = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date));
         //
         $result = $query->result_array();

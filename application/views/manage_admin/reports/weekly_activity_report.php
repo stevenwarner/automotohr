@@ -28,7 +28,7 @@
                                                 <input type="hidden" id="start_date" name="start_date" value="" />
                                                 <input type="hidden" id="end_date" name="end_date" value="" />
 
-                                                <input id="week_span" class="week-picker invoice-fields" name="week_span" placeholder="Please Select Date" />
+                                                <input id="week_span" class="week-picker invoice-fields" readonly autocomplete="off" name="week_span" placeholder="Please Select Date" />
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
@@ -129,7 +129,8 @@
         $('.week-picker').datepicker({
             firstDay: 1,
             format:'yyyy/mm/dd',
-
+            changeMonth: true,
+            changeYear: true,
             beforeShow: function () {
                 $('#ui-datepicker-div').addClass('ui-weekpicker');
                 selectCurrentWeek();
