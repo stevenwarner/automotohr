@@ -125,30 +125,31 @@
                     var html = '';
                     //
                     resp.data.map(function(record, index){
-                        var rowspan = 0;
-                        var inner_html = '';
-                        //
-                        $.each(record.ips, function(k,v){
-                            if (v.minutes > 0) {
-                                rowspan++;
-                                inner_html += '<tr>';
-                                inner_html += '   <td class="text-left text-success" style="vertical-align: middle;">'+(k.replace(/_/g, '.'))+'</td>';
-                                inner_html += '   <td class="text-left text-success" style="vertical-align: middle;">'+v.minutes+' Minutes spent</td>';
-                                inner_html += '   <td class="text-left text-success" style="vertical-align: middle;">'+(v.user_agent)+'</td>';
-                                inner_html += '</tr>';
-                            }
-                        });
-                        //
-                        html += '<tr>';
-                        html += '   <td class="text-left text-success" style="vertical-align: middle;" rowspan="'+(rowspan+1)+'">';
-                        html += record.employee_name;
-                        html += '   </td>';
-                        html += '   <td class="text-left text-success" style="vertical-align: middle;" rowspan="'+(rowspan+1)+'">';
-                        html += record.total_time_spent_in_minutes+' Minutes spent';
-                        html += '   </td>';
-                        html += '</tr>';
-                        html += inner_html;
-
+                        if (record.total_time_spent_in_minutes > 0) {
+                            var rowspan = 0;
+                            var inner_html = '';
+                            //
+                            $.each(record.ips, function(k,v){
+                                if (v.minutes > 0) {
+                                    rowspan++;
+                                    inner_html += '<tr>';
+                                    inner_html += '   <td class="text-left text-success" style="vertical-align: middle;">'+(k.replace(/_/g, '.'))+'</td>';
+                                    inner_html += '   <td class="text-left text-success" style="vertical-align: middle;">'+v.minutes+' Minutes spent</td>';
+                                    inner_html += '   <td class="text-left text-success" style="vertical-align: middle;">'+(v.user_agent)+'</td>';
+                                    inner_html += '</tr>';
+                                }
+                            });
+                            //
+                            html += '<tr>';
+                            html += '   <td class="text-left text-success" style="vertical-align: middle;" rowspan="'+(rowspan+1)+'">';
+                            html += record.employee_name;
+                            html += '   </td>';
+                            html += '   <td class="text-left text-success" style="vertical-align: middle;" rowspan="'+(rowspan+1)+'">';
+                            html += record.total_time_spent_in_minutes+' Minutes spent';
+                            html += '   </td>';
+                            html += '</tr>';
+                            html += inner_html;
+                        }
                     });
                     //
                     $('#jsCompanyBody'+(companyId)+'').html(html);
