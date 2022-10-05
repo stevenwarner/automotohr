@@ -145,7 +145,7 @@ class Weekly_inactivity_report extends Admin_Controller {
 
                 case 'get_all_active_companies':
                     //
-                    $report_date = $this->input->post('report_date');
+                    $report_date = $this->input->post('week_span');
                     //
                     $companies = $this->employer_login_duration_model->get_all_companies("sid, CompanyName");
                     $data['companies'] = $companies;
