@@ -113,13 +113,13 @@
                             html +=     record.access_level.toUpperCase();
                             html += '   </td>';
                             html += '   <td style="vertical-align: middle;">';
-                            html +=     record.first_name.toUpperCase()+' '+record.last_name.toUpperCase();
+                            html +=     (record.first_name ? record.first_name.toUpperCase() : '')+' '+(record.last_name ? record.last_name.toUpperCase() : '');
                             html += '   </td>';
                             html += '   <td style="vertical-align: middle;">';
                             html +=     record.email;
                             html += '   </td>';
                             html += '   <td style="vertical-align: middle;">';
-                            html +=     record.PhoneNumber ? record.PhoneNumber.toUpperCase() : 'Not Available';
+                            html +=     record.PhoneNumber ? record.PhoneNumber : 'Not Available';
                             html += '   </td>';
                             html += '</tr>';
                             //
