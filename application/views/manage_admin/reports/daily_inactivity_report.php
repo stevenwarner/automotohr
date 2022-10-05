@@ -110,15 +110,24 @@
         });
     });
 
+    var my_request = null;
 
     function get_inactivity_report() {
+        if(my_request !== null){
+            my_request.abort();
+        }
+
+        if (typeof stopProcess != "undefined") {
+            stopProcess();
+        }
+
         var report_date = $('#report_date').val();
 
         if (report_date != '' && report_date != null && report_date != undefined)
         {
-            var request_data = { "perform_action" : "get_daily_inactivity", "report_date" : report_date};
+            // var request_data = { "perform_action" : "get_daily_inactivity", "report_date" : report_date};
+            var request_data = { "perform_action" : "get_all_active_companies", "report_date" : report_date};
 
-            var my_request;
             var my_url = '<?php echo base_url('manage_admin/reports/daily_inactivity_report/ajax_responder'); ?>';
 
             $('#main_container_for_ajax_response').html('<div class="cssload-loader"></div>');
@@ -130,8 +139,10 @@
             });
 
             my_request.done(function (response) {
-                 //console.log(response);
-                 $('.bt-panel').show();
+                //
+                my_request = null;
+                //
+                $('.bt-panel').show();
                 $('#main_container_for_ajax_response').html(response);
             });
 

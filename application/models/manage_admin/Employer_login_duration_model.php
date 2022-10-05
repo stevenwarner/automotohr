@@ -187,7 +187,7 @@ class Employer_login_duration_model extends CI_Model {
         return $active_employers;
     }
 
-    public function get_all_inactive_employees($company_sid, $start_date, $end_date) {
+    public function get_all_inactive_employees($company_sid, $start_date, $end_date, $columns = '*') {
         $active_employers = $this->get_active_employers($company_sid, $start_date, $end_date);
         $active_employers_sids = array();
         
@@ -195,7 +195,7 @@ class Employer_login_duration_model extends CI_Model {
             $active_employers_sids[] = $active_employer['employer_sid'];
         }
 
-        $this->db->select('*');
+        $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('is_executive_admin', 0);
 

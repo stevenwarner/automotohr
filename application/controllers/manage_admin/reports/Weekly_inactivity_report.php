@@ -142,6 +142,18 @@ class Weekly_inactivity_report extends Admin_Controller {
                     //print_r($return_data);
 
                     break;
+
+                case 'get_all_active_companies':
+                    //
+                    $report_date = $this->input->post('report_date');
+                    //
+                    $companies = $this->employer_login_duration_model->get_all_companies("sid, CompanyName");
+                    $data['companies'] = $companies;
+                    $data['report_date'] = $report_date;
+                    //
+                    $this->load->view('manage_admin/reports/inactivity_report_partial_new', $data);
+                    break;
+                        
                 default:
                     //do nothing
                     break;
