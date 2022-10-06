@@ -75,7 +75,6 @@
             }
             //
             function GetEmployees(companyId){
-                console.log(companyId+" "+xhr);
                 //
                 if(isTerminated == 1){
                     return stopProcess();
