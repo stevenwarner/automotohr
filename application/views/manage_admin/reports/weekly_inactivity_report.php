@@ -185,12 +185,22 @@
 
     });
 
-
+    var my_request;
+    //
     function get_inactivity_report() {
+        //
+        if(my_request !== null){
+            my_request.abort();
+        }
+        //
+        if (typeof stopProcess != "undefined") {
+            stopProcess();
+        }
+        //
         var week_span = $('#week_span').val();
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();
-
+        //
         if (week_span != '' && week_span != null && week_span != undefined) {
             var request_data = {
                 // "perform_action": "get_weekly_inactivity",
@@ -200,7 +210,7 @@
                 "week_span": week_span
             };
 
-            var my_request;
+            
             var my_url = '<?php echo base_url('manage_admin/reports/weekly_inactivity_report/ajax_responder'); ?>';
 
             $('#main_container_for_ajax_response').html('<div class="cssload-loader"></div>');

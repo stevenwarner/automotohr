@@ -81,14 +81,23 @@
         }
     }
 
+    var my_request = null;
+
     function get_activity_report() {
+        //
+        if(my_request !== null){
+            my_request.abort();
+        }
+        //
+        if (typeof stopProcess != "undefined") {
+            stopProcess();
+        }
+        //
         var report_date = $('#report_date').val();
 
         if (report_date != '' && report_date != null && report_date != undefined)
         {
             var request_data = { "perform_action" : "get_daily_activity", "report_date" : report_date};
-
-            var my_request;
             var my_url = '<?php echo base_url('manage_admin/reports/daily_activity_report/ajax_responder'); ?>';
 
             $('#main_container_for_ajax_response').html('<div class="cssload-loader"></div>');
@@ -100,8 +109,7 @@
             });
 
             my_request.done(function (response) {
-                 //console.log(response);
-
+                my_request = null;
                 $('#main_container_for_ajax_response').html(response);
             });
 

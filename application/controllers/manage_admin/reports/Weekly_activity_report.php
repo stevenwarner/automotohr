@@ -230,7 +230,7 @@ class Weekly_activity_report extends Admin_Controller
                     //
                     $records = $this->employer_login_duration_model->generate_company_employes_activity_log_detail($company_sid, $week_start, $week_end);
                     //
-                    res(['data'=>$records]);
+                    res(['data'=>array_values($records)]);
 
                     break;    
 

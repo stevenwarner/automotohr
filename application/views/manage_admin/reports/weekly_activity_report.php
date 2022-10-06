@@ -172,9 +172,11 @@
         if(my_request !== null){
             my_request.abort();
         }
+        //
         if (typeof stopProcess != "undefined") {
             stopProcess();
         }
+        //
         var week_span = $('#week_span').val();
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();

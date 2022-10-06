@@ -524,7 +524,9 @@ class Employer_login_duration_model extends CI_Model {
             }
         }
 
-        return array_values($logs_to_return);
+        $logs_to_return = $this->fix_zero_iteration($logs_to_return);
+
+        return $logs_to_return;
     }
 
     public function get_company_activity_overview_new($company_sid, $start_date, $end_date, $columns = '*') {
@@ -568,5 +570,61 @@ class Employer_login_duration_model extends CI_Model {
         );
         //
         return $return_obj;
-    }    
+    } 
+
+    public function get_company_employees_detail_overview_log($company_sid, $start_date, $end_date, $columns = '*') {
+        //
+        $company_active_employees = $this->generate_company_employes_activity_log_detail($company_sid, $start_date, $end_date);
+        //
+        $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->order_by('is_executive_admin', 'DESC');
+        $this->db->order_by('access_level', 'ASC');
+        $company_employees = $this->db->get('users')->result_array();
+        //
+        $active_employees = array();
+        $inactive_employees = array();
+        //
+        foreach ($company_employees as $key => $employee) {
+            //
+            $employee["access_level"]   = $employee['is_executive_admin'] == 1 ? "Executive Admin" : ucwords($employee['access_level']);
+            $employee["employee_name"]  = ucwords($employee['first_name'] . ' ' . $employee['last_name']);
+            $employee["PhoneNumber"]    = $employee['PhoneNumber'] == '' ? 'Not Available' : $employee['PhoneNumber'];
+            $employee["job_title"]      = $employee['job_title'] != '' ? ucwords($employee['job_title']) : 'Not Available';
+            $employee["total_time"]     = 0;
+            $employee["ips"]            = [];
+            //
+            if (array_key_exists($employee["sid"], $company_active_employees)) {
+                $employee["total_time"]     = $company_active_employees[$employee["sid"]]["total_time_spent_in_minutes"];
+                $employee["ips"]            = $company_active_employees[$employee["sid"]]["ips"];
+                array_push($active_employees, $employee);
+            } else {
+                array_push($inactive_employees, $employee);
+            }
+
+        }
+        //
+        $return_obj = array(
+            "active_employees" => $active_employees,
+            "inactive_employees" => $inactive_employees
+        );
+        //
+        return $return_obj;
+    }  
+
+    public function fix_zero_iteration ($employees) {
+        //
+        foreach ($employees as $e_key => $employee) {
+            if (!empty($employee["ips"])) {
+                foreach ($employee["ips"] as $ip_key => $ip) {
+                    if ($ip["minutes"] == 0) {
+                        $employees[$e_key]["ips"][$ip_key]["minutes"] += 10;
+                        $employees[$e_key]['total_time_spent_in_minutes'] += 10;
+                    }
+                }
+            }
+        }
+        //
+        return $employees;
+    } 
 }

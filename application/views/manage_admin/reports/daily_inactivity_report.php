@@ -113,16 +113,17 @@
     var my_request = null;
 
     function get_inactivity_report() {
+        //
         if(my_request !== null){
             my_request.abort();
         }
-
+        //
         if (typeof stopProcess != "undefined") {
             stopProcess();
         }
-
+        //
         var report_date = $('#report_date').val();
-
+        //
         if (report_date != '' && report_date != null && report_date != undefined)
         {
             var request_data = { "perform_action" : "get_all_active_companies", "report_date" : report_date};
