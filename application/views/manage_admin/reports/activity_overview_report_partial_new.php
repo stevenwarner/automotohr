@@ -12,6 +12,7 @@
                     <caption></caption>
                     <thead>
                         <tr>
+                            <th class="text-center"></th>
                             <th class="text-left col-xs-2">Job Title</th>
                             <th class="text-left col-xs-2">Access Level</th>
                             <th class="text-left col-xs-3">Name</th>
