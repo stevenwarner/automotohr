@@ -526,4 +526,47 @@ class Employer_login_duration_model extends CI_Model {
 
         return array_values($logs_to_return);
     }
+
+    public function get_company_activity_overview_new($company_sid, $start_date, $end_date, $columns = '*') {
+        //
+        $company_active_employees = $this->get_active_employers($company_sid, $start_date, $end_date);
+        //
+        $active_employees_sids = array();
+        //   
+        if (!empty($company_active_employees)) {
+            foreach ($company_active_employees as $active_employee) {
+                array_push($active_employees_sids, $active_employee['employer_sid']);
+            }
+        } 
+        //
+        $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->order_by('is_executive_admin', 'DESC');
+        $this->db->order_by('access_level', 'ASC');
+        $company_employees = $this->db->get('users')->result_array();
+        //
+        $active_employees = array();
+        $inactive_employees = array();
+        //
+        foreach ($company_employees as $key => $employee) {
+            //
+            $employee["access_level"]   = ucwords($employee['access_level']);
+            $employee["employee_name"]  = ucwords($employee['first_name'] . ' ' . $employee['last_name']);
+            $employee["PhoneNumber"]    = $employee['PhoneNumber'] == '' ? 'Not Available' : $employee['PhoneNumber'];
+            $employee["job_title"]      = $employee['job_title'] != '' ? ucwords($employee['job_title']) : 'Not Available';
+            //
+            if (in_array($employee["sid"], $active_employees_sids)) {
+                array_push($active_employees, $employee);
+            } else {
+                array_push($inactive_employees, $employee);
+            }
+        }
+        //
+        $return_obj = array(
+            "active_employees" => $active_employees,
+            "inactive_employees" => $inactive_employees
+        );
+        //
+        return $return_obj;
+    }    
 }

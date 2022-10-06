@@ -125,7 +125,6 @@
 
         if (report_date != '' && report_date != null && report_date != undefined)
         {
-            // var request_data = { "perform_action" : "get_daily_inactivity", "report_date" : report_date};
             var request_data = { "perform_action" : "get_all_active_companies", "report_date" : report_date};
 
             var my_url = '<?php echo base_url('manage_admin/reports/daily_inactivity_report/ajax_responder'); ?>';
