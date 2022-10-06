@@ -113,7 +113,8 @@
 
         if (report_date != '' && report_date != null && report_date != undefined) {
             var request_data = {
-                "perform_action": "get_daily_activity_overview",
+                // "perform_action": "get_daily_activity_overview",
+                "perform_action": "get_all_active_companies",
                 "report_date": report_date
             };
 

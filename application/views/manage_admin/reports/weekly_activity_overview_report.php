@@ -191,7 +191,8 @@
 
         if (week_span != '' && week_span != null && week_span != undefined) {
             var request_data = {
-                "perform_action": "get_weekly_activity_overview",
+                // "perform_action": "get_weekly_activity_overview",
+                "perform_action": "get_all_active_companies",
                 "start_date": start_date,
                 "end_date": end_date,
                 "week_span": week_span
