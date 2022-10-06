@@ -1,0 +1,93 @@
+<?php defined('BASEPATH') or exit('No direct script access allowed');
+
+/**
+ * Employee Survey Module
+ *
+ * PHP version = 7.4.25
+ *
+ * @category   Module
+ * @package    Employee Surveys
+ * @author     AutomotoHR <www.automotohr.com>
+ * @author     Mubashir Ahmed
+ * @version    1.0
+ * @link       https://www.automotohr.com
+ */
+
+class Employee_surveys extends Public_Controller{
+    // Set page path
+    private $pp;
+    // Set mobile path
+    private $mp;
+    /**
+     * Holds the pages
+     */
+    private $pages;
+
+
+    /**
+     * 
+     */
+    public function __construct()
+    {
+        // Inherit parent properties and methods
+        parent::__construct();
+        // Load user agent
+        $this->load->library('user_agent');
+        //
+        $this->pages = [
+            'header' => 'main/header_2022',
+            'footer' => 'main/footer_2022',
+        ];
+        //
+        $this->mp = $this->agent->is_mobile() ? 'mobile/' : '';
+    }
+
+
+    /**
+     * 
+     */
+    public function overview(){
+        //
+        $data = [];
+        $data['load_view'] = 1;
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
+        //
+        $this->load
+        ->view($this->pages['header'], $data)
+        ->view("{$this->mp}es/overview/overview")
+        ->view($this->pages['footer']);
+    }
+
+    /**
+     * 
+     */
+    public function surveys(){
+        //
+        $data = [];
+        $data['load_view'] = 1;
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
+        //
+        $this->load
+        ->view($this->pages['header'], $data)
+        ->view("{$this->mp}es/surveys")
+        ->view($this->pages['footer']);
+    }
+    
+    /**
+     * 
+     */
+    public function create($id = 0){
+        //
+        $data = [];
+        $data['load_view'] = 1;
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
+        //
+        $this->load
+        ->view($this->pages['header'], $data)
+        ->view("{$this->mp}es/create")
+        ->view($this->pages['footer']);
+    }
+}

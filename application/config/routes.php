@@ -1581,3 +1581,15 @@ $route['migrate_company_groups_handler']['post'] = 'manage_admin/2022/Migration/
 // EEOC Chart route
 $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5';
 $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5/$6';
+
+
+/**
+ * Employee surveys
+ * 
+ * @author Mubashir Ahmed
+ * @date   2022-10-03
+ */
+$route['employee/surveys']['get'] = '2022/Employee_surveys/overview';
+$route['employee/surveys/overview']['get'] = '2022/Employee_surveys/overview';
+$route['employee/surveys/surveys']['get'] = '2022/Employee_surveys/surveys';
+$route['employee/surveys/create']['get'] = '2022/Employee_surveys/create';

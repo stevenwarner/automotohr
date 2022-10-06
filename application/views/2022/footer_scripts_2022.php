@@ -1,0 +1,36 @@
+<!-- jQuery -->
+<script src="<?php echo _m(base_url('assets/2022/js/jquery-1.11.3.min'), 'js', '1.11.3') ?>"></script>
+<!-- jQuery UI -->
+<script src="<?php echo _m(base_url('assets/2022/js/jquery-ui.min'), 'js', '1.0') ?>"></script>
+<!-- Bootstrap -->
+<script src="<?php echo _m(base_url('assets/2022/js/bootstrap.min')) ?>"></script>
+<!-- DateTimePicker -->
+<script src="<?php echo _m(base_url('assets/2022/js/jquery.datetimepicker'), 'js', time()) ?>"></script>
+<!-- Alertify -->
+<script src="<?php echo _m(base_url('assets/2022/js/alertify.min'), 'js', '1.0') ?>"></script>
+<!-- Select2 -->
+<script src="<?php echo _m(base_url('assets/2022/js/select2'), 'js', time()) ?>"></script>
+<!-- Moment -->
+<script type="text/javascript" src="<?= _m(base_url('assets/2022/js/moment.min'), 'js', time());?>"></script>
+<!-- Google translator scrips -->
+<!-- <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
+<!-- App -->
+<script type="text/javascript" src="<?= _m(base_url('assets/2022/js/app'), 'js', time()); ?>"></script>
+<!--  -->
+<?php if($this->session->userdata('logged_in')): ?>
+<script>
+    /**
+     * Token
+     */
+    var cToken = <?= $session['company_detail']['sid'] ?? 0 ?>;
+    /**
+     * Set base url
+     * @type {string}
+     */
+    var baseURI = "<?php echo rtrim(base_url(), '/'); ?>/";
+</script>
+<?php endif; ?>
+<?php if (isset($PageScripts)) {
+    echo '<!-- Dynamic Scripts -->';
+    echo GetScripts($PageScripts);
+} ?>

@@ -11224,15 +11224,18 @@ if (!function_exists('getFileData')) {
 }
 
 if (!function_exists('remakeEmployeeName')) {
-    function remakeEmployeeName($o, $i = TRUE)
+    function remakeEmployeeName($o, $i = TRUE, $onlyName = false)
     {
-        // echo '<pre>';
-        // print_r($o);
         //
         $first_name = isset($o['first_name']) ? $o['first_name'] : (isset($o['to_first_name']) ? $o['to_first_name'] : '');
+        $middleName = isset($o['middle_name']) ? ' '.$o['middle_name'] : (isset($o['to_middle_name']) ? ' '.$o['to_middle_name'] : '');
         $last_name = isset($o['last_name']) ? $o['last_name'] : (isset($o['to_last_name']) ? $o['to_last_name'] : '');
         //
-        $r = $i ? $first_name . ' ' . $last_name : '';
+        $r = $i ? $first_name . $middleName.' ' . $last_name : '';
+        //
+        if($onlyName){
+            return $r;
+        }
         //
         if (isset($o['job_title']) && $o['job_title'] != '' && $o['job_title'] != null) $r .= ' (' . ($o['job_title']) . ')';
         //
