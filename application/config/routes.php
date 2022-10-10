@@ -1086,6 +1086,7 @@ $route['manage_admin/recurring_payments/(:any)'] = 'manage_admin/recurring_payme
 $route['reports/generate_interviews_scheduled_by_recruiters/'] = 'reports/generate_interviews_scheduled_by_recruiters2/';
 $route['reports/generate_interviews_scheduled_by_recruiters/(:any)/(:any)'] = 'reports/generate_interviews_scheduled_by_recruiters/$1/$2';
 //Manage EMS Notification
+
 $route['add_ems_notification'] = 'manage_ems/ems_notification';
 $route['edit_ems_notification/(:num)'] = 'manage_ems/edit_ems_notification/$1';
 
@@ -1581,3 +1582,12 @@ $route['migrate_company_groups_handler']['post'] = 'manage_admin/2022/Migration/
 // EEOC Chart route
 $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5';
 $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5/$6';
+
+//2022 
+$route['manage_admin/2022/reports/complynet/'] = 'manage_admin/2022/reports/complynet/index/';
+$route['manage_admin/2022/reports/complynet/(:num)'] = 'manage_admin/2022/reports/complynet/index/$1';
+$route['manage_admin/2022/reports/complynet/(:any)/(:any)/(:any)'] = 'manage_admin/2022/reports/complynet/index/$1/$2/$3';
+$route['manage_admin/2022/reports/complynet/(:any)/(:any)/(:any)/(:num)'] = 'manage_admin/2022/reports/complynet/index/$1/$2/$3/$4';
+$route['manage_admin/2022/reports/complynet/login/(:num)'] = 'manage_admin/2022/reports/complynet/login/$1';
+
+

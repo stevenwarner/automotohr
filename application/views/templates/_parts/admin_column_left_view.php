@@ -210,7 +210,8 @@ if (
     $this->uri->segment(3) == 'applicant_origination_report' ||
     $this->uri->segment(3) == 'applicant_origination_statistics' ||
     $this->uri->segment(3) == 'accurate_background' ||
-    $this->uri->segment(3) == 'invoice_item_usage'
+    $this->uri->segment(3) == 'invoice_item_usage' ||
+    $this->uri->segment(4) == 'complynet'
 ) {
     $reports_menu = true;
 } else if (
@@ -1105,6 +1106,16 @@ if (
                                     } ?> href="<?php echo site_url('manage_admin/reports/invoice_item_usage'); ?>">Invoice Item Usage</a>
                             </div>
                         <?php } ?>
+
+
+                        <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/2022/reports/complynet')) !== false || ($this->uri->segment(4) == 'complynet')) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('manage_admin/2022/reports/complynet'); ?>">ComplyNet Reports</a>
+                            </div>
+
+
+
                         <!-- <?php if (check_access_permissions_for_view($security_details, 'accurate_background_report')) { ?>
                             <div class="menu-item">
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/reports/accurate_background')) !== false || ($this->uri->segment(3) == 'accurate_background')) {
