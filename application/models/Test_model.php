@@ -130,4 +130,17 @@ class Test_model extends CI_Model {
         $this->db->where('sid', $sid);
         $this->db->update('portal_eeo_form', $data_to_update);
     }
+
+    function  addtesting1($data_to_insert){
+       $this->db->insert('testing', $data_to_insert);
+       $insert_id = $this->db->insert_id();
+       return  $insert_id;
+      }
+
+      function addtestig2($data_to_insert){
+        $this->db->insert('testing2', $data_to_insert);
+        $insert_id = $this->db->insert_id();
+        return  $insert_id;
+      }
+
 }
