@@ -9,4 +9,9 @@ class Testing extends CI_Controller
         // Call the model
         $this->load->model("test_model", "tm");
     }
+
+    public function complynet() {
+        $this->load->library('complynet');
+        echo $this->complynet->getCompanies();
+    }
 }
