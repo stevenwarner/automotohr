@@ -1397,6 +1397,27 @@ if (
                     </div>
                 </li>
             <?php } ?>
+
+
+
+
+            <?php if (check_access_permissions_for_view($security_details, 'job_feeds_management')) { ?>
+                <li>
+                    <a class="hr-closed-menu <?php if ($job_feed) {
+                                                    echo 'hr-opened-menu';
+                                                } ?>" href="javascript:;">Complynet</a>
+
+                    <div class="submenu" <?= strpos(base_url(uri_string()), site_url('manage_admin/cpmplynet')) !== false || strpos(base_url(uri_string()), site_url('manage_admin/complynet')) !== false || strpos(base_url(uri_string()), site_url('manage-admin')) !== false ? 'style="display:block;"' : ''; ?>>
+                        <div class="menu-item">
+                            <a <?php echo in_array($this->uri->segment(3), array('jobs_active_on_feeds', 'refunded_requests')) ||  $this->uri->segment(2) == 'job_feeds_management' ?  'class="active"' : ''; ?> href="<?php echo site_url('manage_admin/complynet'); ?>">Manage Companies</a>
+                        </div>
+                    </div>
+                </li>
+            <?php } ?>
+
+
+
+
         </ul>
     </div>
 </div>
