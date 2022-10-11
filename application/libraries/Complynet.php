@@ -7,15 +7,12 @@
 class ComplyNet
 {
 
+    private $CI;
+    private $mode;
     private $token;
     private $response;
-    private $complynetUser;
-    private $mode;
-    private $CI;
-
-
     private $dateWithTime;
-
+    private $complynetUser;
 
     public function __construct()
     {
@@ -31,8 +28,6 @@ class ComplyNet
         $this->response = [];
         //
         $this->dateWithTime = date('Y-m-d H:i:s', strtotime('now'));
-        //
-        $this->date = date('Y-m-d', strtotime('now'));
         //
         $this->complynetUser = getCreds("AHR")->COMPLY_NET;
     }
@@ -83,8 +78,8 @@ class ComplyNet
                     "token" => $record["access_token"],
                     "token_type" => $record["token_type"],
                     "expires_in" => $record["expires_in"],
-                    "issued" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $record[".issued"])->format('Y-m-d H:m:s'),
-                    "expires" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $record[".expires"])->format('Y-m-d H:m:s')
+                    "issued" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $record[".issued"])->format('Y-m-d H:i:s'),
+                    "expires" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $record[".expires"])->format('Y-m-d H:i:s')
                 ]);
             //
             $record["token"] =  $record["access_token"];
@@ -94,6 +89,482 @@ class ComplyNet
         //
         return $this;
     }
+
+    /**
+     * Get all companies from complynet
+     * 
+     * @method fakeCompanyData
+     * 
+     * @return Array
+     */
+    public function getCompanies()
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeCompanyResponse();
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'Company',
+            [],
+            'GET',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Get all location against company from complynet
+     * 
+     * @param $company_ID String
+     * 
+     * @return Array
+     */
+    public function getLocations($company_ID)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeLocationResponse();
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'Location?companyId='.$company_ID,
+            [],
+            'GET',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Get all department against location from complynet
+     * 
+     * @param $location_ID String
+     * 
+     * @return Array
+     */
+    public function getDepartments($location_ID)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeDepartmentResponse("get");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'Department?LocationId='.$location_ID,
+            [],
+            'GET',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Create department
+     * 
+     * @param $department_name String
+     * 
+     * @return Array
+     */
+    public function createDepartment($Name, $LocationId)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeDepartmentResponse("create");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'Department',
+            [
+                "Name" => $Name,
+                "ParentId" => $LocationId
+
+            ],
+            'POST',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Update department
+     * 
+     * @param $Id String
+     * @param $ParentId String
+     * @param $Name String
+     * @param $IsActive String
+     * 
+     * @return Array
+     */
+    public function updateDepartments($Id, $ParentId, $Name, $IsActive)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeDepartmentResponse("update");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'Department',
+            [
+                "Id" => $Id,
+                "ParentId" => $ParentId,
+                "Name" => $Name,
+                "IsActive" => $IsActive
+            ],
+            'PUT',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Delete department
+     * 
+     * @param $department_Id String
+     * 
+     * @return Array
+     */
+    public function deleteDepartment($Id)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeDepartmentResponse("delete");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'Department',
+            [
+                "Id" => $Id,
+            ],
+            'DELETE',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Get all job roles against department from complynet
+     * 
+     * @param $department_Id String
+     * 
+     * @return Array
+     */
+    public function getJobRole($department_Id)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeJobRoleResponse("get");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'JobRole?DepartmentId='.$department_Id,
+            [],
+            'GET',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Create job role
+     * 
+     * @param $name String
+     * 
+     * @return Array
+     */
+    public function createJobRole($Name, $DepartmentId)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeJobRoleResponse("create");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'JobRole',
+            [
+                "Name" => $Name,
+                "ParentId" => $DepartmentId
+            ],
+            'POST',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Update job role
+     * 
+     * @param $Id String
+     * @param $ParentId String
+     * @param $Name String
+     * @param $IsActive String
+     * 
+     * @return Array
+     */
+    public function updateJobRole($Id, $ParentId, $Name, $IsActive)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeJobRoleResponse("update");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'JobRole',
+            [
+                "Id" => $Id,
+                "ParentId" => $ParentId,
+                "Name" => $Name,
+                "IsActive" => $IsActive
+            ],
+            'PUT',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Delete job role
+     * 
+     * @param $Id String
+     * 
+     * @return Array
+     */
+    public function deleteJobRole($Id)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeJobRoleResponse("delete");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'JobRole',
+            [
+                "Id" => $Id,
+            ],
+            'DELETE',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Get User
+     * 
+     * @param $userName String
+     * 
+     * @return Array
+     */
+    public function getUser($userName)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeUserResponse("get");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'User?username='.$userName,
+            [],
+            'GET',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Create User
+     * 
+     * @param $firstName String
+     * @param $lastName String
+     * @param $userName String
+     * @param $email String
+     * @param $password String
+     * @param $companyId String
+     * @param $locationId String
+     * @param $departmentId String
+     * @param $jobRoleId String
+     * @param $PhoneNumber String
+     * @param $TwoFactor String
+     * 
+     * @return Array
+     */
+    public function createUser(
+        $firstName,
+        $lastName,
+        $userName,
+        $email,
+        $password,
+        $companyId,
+        $locationId,
+        $departmentId,
+        $jobRoleId,
+        $PhoneNumber,
+        $TwoFactor = TRUE
+    ) {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeUserResponse("create");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'User',
+            [
+                "firstName" => $firstName,
+                "lastName" => $lastName,
+                "userName" => $userName,
+                "email" => $email,
+                "password" => $password,
+                "companyId" => $companyId,
+                "locationId" => $locationId,
+                "departmentId" => $departmentId,
+                "jobRoleId" => $jobRoleId,
+                "PhoneNumber" => $PhoneNumber,
+                "TwoFactor" => $TwoFactor,
+
+            ],
+            'POST',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Update User
+     * 
+     * @param $firstName String
+     * @param $lastName String
+     * @param $userName String
+     * @param $email String
+     * @param $password String
+     * @param $companyId String
+     * @param $locationId String
+     * @param $departmentId String
+     * @param $jobRoleId String
+     * @param $PhoneNumber String
+     * @param $TwoFactor String
+     * 
+     * @return Array
+     */
+    public function updateUser(
+        $firstName,
+        $lastName,
+        $userName,
+        $email,
+        $password,
+        $companyId,
+        $locationId,
+        $departmentId,
+        $jobRoleId,
+        $PhoneNumber,
+        $TwoFactor = TRUE
+    ) {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeUserResponse("update");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'User',
+            [
+                "firstName" => $firstName,
+                "lastName" => $lastName,
+                "userName" => $userName,
+                "email" => $email,
+                "password" => $password,
+                "companyId" => $companyId,
+                "locationId" => $locationId,
+                "departmentId" => $departmentId,
+                "jobRoleId" => $jobRoleId,
+                "PhoneNumber" => $PhoneNumber,
+                "TwoFactor" => $TwoFactor,
+
+            ],
+            'PUT',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * Disable User
+     * 
+     * @param $userName String
+     * 
+     * @return Array
+     */
+    public function disableUser($userName)
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeUserResponse("delete");
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'User',
+            [
+                "userName" => $userName,
+            ],
+            'DELETE',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
+        return $result;
+    }
+
+    /**
+     * 
+     * Set Library Enviorment
+     * 
+     */
+    public function setMode($mode)
+    {
+        //
+        $this->mode = $mode;
+        //
+        return $this;
+    }
+
+    // Library Private Functions
 
     /**
      * 
@@ -149,55 +620,15 @@ class ComplyNet
         return json_decode($response, true);
     }
 
-
-    /**
-     * 
-     */
-    public function setMode($mode)
-    {
-        //
-        $this->mode = $mode;
-        //
-        return $this;
-    }
-
-    /**
-     * Get all companies from complynet
-     * 
-     * @method fakeCompanyData
-     * 
-     * @return Array
-     */
-    public function getCompanies()
-    {
-        //
-        if ($this->mode == 'fake') {
-            return $this->fakeCompanyData();
-        }
-        //
-        $result = $this->curlCall(
-            $this->complynetUser->API_URL . 'Company',
-            [],
-            'GET',
-            [
-                'Content-Type: application/json'
-            ]
-        );
-        //
-        return $result;
-    }
-
-
-    // Fake data functions
     /**
      * Fake company generator
      * 
      * @return array
      */
-    private function fakeCompanyData()
+    private function fakeCompanyResponse()
     {
         return [[
-            "Id" => "1F9F9677-2CE0-43B3-A418-0815334B706B",
+            "Id" => "739FBDEA-2CE0-43B3-A418-0815334B706B",
             "Name" => " ComplyNet"
         ], [
             "Id" => "739FBDEA-135B-4FFD-803B-884A441F6C86",
@@ -209,214 +640,131 @@ class ComplyNet
     }
 
     /**
-     * Get all location against company from complynet
+     * Fake company location generator
      * 
-     * @param $company_ID String
-     * 
-     * @return Array
+     * @return array
      */
-    function getLocations($company_ID)
+    private function fakeLocationResponse()
     {
+        return [[
+            "Id" => "1F9F9677-2CE0-43B3-A418-0815334B706B",
+            "Name" => " Human Resource"
+        ], [
+            "Id" => "1F9F9677-135B-4FFD-803B-884A441F6C86",
+            "Name" => " Business Development "
+        ], [
+            "Id" => "1F9F9677-135B-4FFD-803B-884A441F6C87",
+            "Name" => " Development "
+        ]];
     }
 
     /**
-     * Get all department against location from complynet
+     * Fake company departments generator
      * 
-     * @param $location_ID String
-     * 
-     * @return Array
+     * @return array
      */
-    function getDepartments($location_ID)
+    private function fakeDepartmentResponse($type)
     {
-    }
-
-    /**https://www.youtube.com/shorts/HblXD3bH6dA
-     * Update department
-     * 
-     * @param $Id String
-     * @param $ParentId String
-     * @param $Name String
-     * @param $IsActive String
-     * 
-     * @return Array
-     */
-    function updateDepartments($Id, $ParentId, $Name, $IsActive)
-    {
-    }
-
-    /**
-     * Create department
-     * 
-     * @param $department_name String
-     * 
-     * @return Array
-     */
-    function createDepartment($department_name)
-    {
-    }
-
-    /**
-     * Delete department
-     * 
-     * @param $department_Id String
-     * 
-     * @return Array
-     */
-    function deleteDepartment($department_Id)
-    {
-    }
-
-    /**
-     * Get all job roles against department from complynet
-     * 
-     * @param $department_Id String
-     * 
-     * @return Array
-     */
-    function getJobRole($department_Id)
-    {
-    }
-
-    /**
-     * Update job role
-     * 
-     * @param $Id String
-     * @param $ParentId String
-     * @param $Name String
-     * @param $IsActive String
-     * 
-     * @return Array
-     */
-    function updateJobRole($Id, $ParentId, $Name, $IsActive)
-    {
-    }
-
-    /**
-     * Create job role
-     * 
-     * @param $name String
-     * 
-     * @return Array
-     */
-    function createJobRole($Name)
-    {
-    }
-
-    /**
-     * Delete job role
-     * 
-     * @param $Id String
-     * 
-     * @return Array
-     */
-    function deleteJobRole($Id)
-    {
-    }
-
-    /**
-     * Create User
-     * 
-     * @param $firstName String
-     * @param $lastName String
-     * @param $userName String
-     * @param $email String
-     * @param $password String
-     * @param $companyId String
-     * @param $locationId String
-     * @param $departmentId String
-     * @param $jobRoleId String
-     * @param $PhoneNumber String
-     * @param $TwoFactor String
-     * 
-     * @return Array
-     */
-    function createUser(
-        $firstName,
-        $lastName,
-        $userName,
-        $email,
-        $password,
-        $companyId,
-        $locationId,
-        $departmentId,
-        $jobRoleId,
-        $PhoneNumber,
-        $TwoFactor = TRUE
-    ) {
-    }
-
-    /**
-     * Update User
-     * 
-     * @param $firstName String
-     * @param $lastName String
-     * @param $userName String
-     * @param $email String
-     * @param $password String
-     * @param $companyId String
-     * @param $locationId String
-     * @param $departmentId String
-     * @param $jobRoleId String
-     * @param $PhoneNumber String
-     * @param $TwoFactor String
-     * 
-     * @return Array
-     */
-    function updateUser(
-        $firstName,
-        $lastName,
-        $userName,
-        $email,
-        $password,
-        $companyId,
-        $locationId,
-        $departmentId,
-        $jobRoleId,
-        $PhoneNumber,
-        $TwoFactor = TRUE
-    ) {
-    }
-
-    /**
-     * Get User
-     * 
-     * @param $userName String
-     * 
-     * @return Array
-     */
-    function getUser($userName)
-    {
-    }
-
-    /**
-     * Disable User
-     * 
-     * @param $userName String
-     * 
-     * @return Array
-     */
-    function disableUser($userName)
-    {
-    }
-
-    private function resp($response, $http_status)
-    {
+        $response = array();
         //
-        $result = array(
-            "status" => '',
-            "response" => ''
-        );
-        //
-        $response = json_decode($response, true);
-        //
-        if ($http_status == 200) {
-            $result["status"] = "success";
-            $result["response"] = $response;
-        } else {
-            $result["status"] = "error";
-            $result["response"] = $response["Message"];
+        if ($type == "create") {
+            $response["Id"] = "1F9F9677-2CE0-43B3-A418-0815334B706B";
+            $response["ParentId"] = "1F9F9677-2CE0-43B3-A418-0815334B706B";
+            $response["Name"] = " Service Provider";
+            $response["IsActive"] = TRUE;
+        } else if ($type == "update") {
+            $response["Id"] = "1F9F9677-2CE0-43B3-A418-0815334B706B";
+            $response["Name"] = " Service Provider";
+            $response["IsActive"] = TRUE;
+        } else if ($type == "delete") {
+            $response["Id"] = "1F9F9677-2CE0-43B3-A418-0815334B706B";
+            $response["Name"] = " Service Provider";
+            $response["IsActive"] = FALSE;
+        } else if ($type == "get") {
+            $response = [[
+                "Id" => "1F9F9677-2CE0-43B3-A418-0815334B706BD",
+                "Name" => " Backend Development"
+            ], [
+                "Id" => "1F9F9677-135B-4FFD-803B-0815334B706FD",
+                "Name" => "Frontend Development "
+            ], [
+                "Id" => "1F9F9677-135B-4FFD-803B-884A441F6SQA",
+                "Name" => " Software Quality Assurance "
+            ], [
+                "Id" => "1F9F9677-135B-4FFD-803B-884A441F6SEO",
+                "Name" => " Search Engine Optimization "
+            ]];
         }
         //
-        return $result;
+        return $response;
+    }
+
+    /**
+     * Fake company departments generator
+     * 
+     * @return array
+     */
+    private function fakeJobRoleResponse($type)
+    {
+        $response = array();
+        //
+        if ($type == "create") {
+            $response["Id"] = "1F9F9677-2CE0-43B3-A418-0815334B706B";
+            $response["ParentId"] = "1F9F9677-2CE0-43B3-A418-0815334B706B";
+            $response["Name"] = " General Manager";
+            $response["IsActive"] = TRUE;
+        } else if ($type == "update") {
+            $response["Id"] = "1F9F9677-2CE0-43B3-A418-0815334B706B";
+            $response["Name"] = " General Manager";
+            $response["IsActive"] = TRUE;
+        } else if ($type == "delete") {
+            $response["Id"] = "1F9F9677-2CE0-43B3-A418-0815334B706B";
+            $response["Name"] = " General Manager";
+            $response["IsActive"] = FALSE;
+        } else if ($type == "get") {
+             $response = [[
+                "Id" => "1F9F9677-2CE0-43B3-A418-0815334B706BD",
+                "Name" => " F&I Manager"
+            ], [
+                "Id" => "1F9F9677-135B-4FFD-803B-0815334B706FD",
+                "Name" => "General Manager "
+            ], [
+                "Id" => "1F9F9677-135B-4FFD-803B-884A441F6SQA",
+                "Name" => " Hiring Manager "
+            ], [
+                "Id" => "1F9F9677-135B-4FFD-803B-884A441F6SEO",
+                "Name" => "Employee "
+            ]];
+        }
+        //
+        return $response;
+    }
+
+    /**
+     * Fake company departments generator
+     * 
+     * @return array
+     */
+    private function fakeUserResponse($type)
+    {
+        $response = array();
+        //
+        if ($type == "get") {
+            $response["firstName"] = "ComplyNet";
+            $response["lastName"] = "User";
+            $response["userName"] = "requests@ComplyNet.com";
+            $response["email"] = "requests@ComplyNet.com";
+            $response["companyId"] = "E4A89DDA-12BB-4341-844A-BBE400451274";
+            $response["locationId"] = "8AB20AFF-C1AE-4F08-AB1C-160ABD4FEA2F";
+            $response["departmentId"] = "55A3BBA9-CE0F-4E1C-9587-9E3709CF2F25";
+            $response["jobRoleId"] = "FE96FEBA-DE91-4DA1-A809-499351D001F7";
+            $response["PhoneNumber"] = "5555555555";
+            $response["TwoFactor"] = TRUE;
+
+        } else {
+            $response = "N/A";
+        }
+        //
+        return $response;
     }
 }
