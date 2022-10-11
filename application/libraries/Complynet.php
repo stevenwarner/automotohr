@@ -9,46 +9,63 @@ class ComplyNet {
      * @return Array
      */
     private function Authentication(){
-
+        $CI =& get_instance();
         //
-        $credentials = getCreds("AHR")->ComplyNet;
+        $dateTime = date('Y-m-d h:m:s');
         //
-        $curl = curl_init();
+        $CI->db->select('token');
+        $CI->db->group_start();
+        $CI->db->where("issued <=", $dateTime);
+        $CI->db->where("expires >=", $dateTime);
+        $CI->db->group_end();
+        $result = $CI->db->get('complynet_access_token')->row_array();
         //
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.complynet.com/Token',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => 'grant_type=password&username='.$credentials->username.'&password='.$credentials->password,
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/x-www-form-urlencoded'
-            ),
-        ));
-        //
-        $response = curl_exec($curl);
-        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        //
-        curl_close($curl);
-        //
-        $response = $this->resp($response, $http_status);
-        //
-        if ($response["Status"] == "success") {
-            $CI =& get_instance();
-            $CI->db->insert("complynet_access_token", array(
-                "token" => $response["Data"]["access_token"],
-                "token_type" => $response["Data"]["token_type"],
-                "expires_in" => $response["Data"]["expires_in"],
-                "issued" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $response["Data"][".issued"])->format('Y-m-d h:m:s'),
-                "expires" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $response["Data"][".expires"])->format('Y-m-d h:m:s')
+        if (!empty($result)) {
+            return $result["token"];
+        } else {
+            //
+            $credentials = getCreds("AHR")->ComplyNet;
+            //
+            $curl = curl_init();
+            //
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'https://api.complynet.com/Token',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => 'grant_type=password&username='.$credentials->username.'&password='.$credentials->password,
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/x-www-form-urlencoded'
+                ),
             ));
             //
-            return $response["Data"]["access_token"];
+            $response = curl_exec($curl);
+            $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            //
+            curl_close($curl);
+            //
+            $response = $this->resp($response, $http_status);
+            //
+            if ($response["Status"] == "success") {
+                
+                $CI->db->insert("complynet_access_token", array(
+                    "token" => $response["Data"]["access_token"],
+                    "token_type" => $response["Data"]["token_type"],
+                    "expires_in" => $response["Data"]["expires_in"],
+                    "issued" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $response["Data"][".issued"])->format('Y-m-d h:m:s'),
+                    "expires" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $response["Data"][".expires"])->format('Y-m-d h:m:s')
+                ));
+                //
+                return $response["Data"]["access_token"];
+            } else {
+                return $response;
+            }
         }
+        
     }
 
     /**
