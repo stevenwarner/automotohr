@@ -1,43 +1,54 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Complynet extends Admin_Controller {
+class Complynet extends Admin_Controller
+{
 
     private $limit = 10;
     private $applicantLimit = 10;
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('ion_auth');
-        $this->load->model('manage_admin/copy_applicants_model');
+        $this->load->model('manage_admin/complynet_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
     //
-    public function index() {
+    public function index()
+    {
+
         $admin_id = $this->ion_auth->user()->row()->id;
         $security_details = db_get_admin_access_level_details($admin_id);
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, 'manage_admin', 'copy_applicants');
         $this->data['page_title'] = 'Manage Companies';
-        $active_companies = $this->copy_applicants_model->get_all_companies();
-        $this->data['active_companies'] = $active_companies;
-        $applicants_type = array(   0 => 'Active Applicants',
-                                    1 => 'Archived Applicants',
-                                    2 => 'All Applicants');
-        $this->data['applicants_type'] = $applicants_type;
-        $this->form_validation->set_rules('copy_from', 'Copy From', 'trim|xss_clean|required|numeric');
-        $this->form_validation->set_rules('applicants_type', 'Applicants Type', 'trim|xss_clean|required|numeric');
-        $this->form_validation->set_rules('copy_to', 'Copy To', 'trim|xss_clean|required|numeric');
+        $this->data['active_companies'] = $this->complynet_model->get_all_companies();
 
-        $this->data['source'] = '';
-        $this->data['destination'] = '';
-        $this->data['type'] = '';
+        //
+     //   $total_records = $this->complynet_model->get_complynet_companies($company_sid, null, null, true);
 
-        if ($this->form_validation->run() === FALSE) {
-            $this->render('manage_admin/complynet/manage_companies', 'admin_master');
-        } else {
-          
-        }
+
+        $this->render('manage_admin/complynet/manage_companies', 'admin_master');
+        
     }
 
+    public function mapcompany()
+    {
+        //
+        $automotohrcompany = $this->input->post('automotohrcompany');
+        $complynetcompany = $this->input->post('complynetcompany');
+        $automotohrcompanydata = explode('#', $automotohrcompany);
+        $complynetcompanydata = explode('#', $complynetcompany);
 
+        $data_insert['automotohr_sid'] = $automotohrcompanydata[0];
+        $data_insert['automotohr_name'] = $automotohrcompanydata[1];
+        $data_insert['status'] = $automotohrcompanydata[2];
+        $data_insert['complynet_sid'] = $complynetcompanydata[0];
+        $data_insert['complynet_name'] = $complynetcompanydata[1];
+        $data_insert['created_at'] = date('Y-m-d H:i:s');
+        //
+        $this->complynet_model->mapcompany($data_insert);
+        $this->session->set_flashdata('message', '<b>Success:</b> Company Maped Successfully');
+        redirect("manage_admin/complynet");
+    }
 }

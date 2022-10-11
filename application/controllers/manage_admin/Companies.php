@@ -2179,7 +2179,7 @@ class Companies extends Admin_Controller
             $this->form_validation->set_rules('action', 'action', '|trim');
 
             if ($this->form_validation->run() === FALSE) {
-                $this->render('manage_admin/company/manage_complynet');
+                $this->render('manage_admin/company/manage_complynet_companies');
             } else {
                 $link = $this->input->post('complynet_link');
                 $insert_data = array('complynet_dashboard_link' => $link);
