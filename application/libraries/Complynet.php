@@ -1,6 +1,7 @@
 <?php
-
+//
 class ComplyNet {
+
     /**
      * Get access_token
      *
@@ -8,36 +9,46 @@ class ComplyNet {
      * @return Array
      */
     private function Authentication(){
+        
         //
         $credentials = getCreds("AHR")->ComplyNet;
-        // _e($credentials,true,true);
-        //
-        $post = array(
-            "grant_type" => "password",
-            "credentials" => $credentials->username,
-            "password" => $credentials->password
-        );
         //
         $curl = curl_init();
         //
         curl_setopt_array($curl, array(
-          CURLOPT_URL => 'https://api.ComplyNet.com/Token',
-          CURLOPT_POSTFIELDS => $post,
-          CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_ENCODING => '',
-          CURLOPT_MAXREDIRS => 10,
-          CURLOPT_TIMEOUT => 0,
-          CURLOPT_FOLLOWLOCATION => true,
-          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-          CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_URL => 'https://api.complynet.com/Token',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => 'grant_type=password&username='.$credentials->username.'&password='.$credentials->password,
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/x-www-form-urlencoded'
+            ),
         ));
-
+        //
         $response = curl_exec($curl);
-
+        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        //
         curl_close($curl);
-
-        echo $response."<br>";
-        return "aSQzebtQBu8MXTK0peu_MYKmLxPPYVQf8_RJcku80GrxZOg6IWTQGbWl1CEPEnlWaU97FsghIi4QDW7c95LEd8aZVijtOFxvNUAXd0Z3CE6cCOuYa_28o8whp9xKvgaLz_noiOocL3x8YxkOz-LXC3IcakDu9c2urr5IuKWfx9E2KbgORUHBZm1MzNkFAITptm_CehWf8ko2uhyW97i_MVGOSpoF2eJLddiEnBmqwrOdnV8kghsRgcho-wXBZtFKRk2NbFQRu-Ffb6ZFzldeWs1vWh8ZAPyZCV0N199poKR-FwpZLOu7cu9jdI-YB0vapDCQ0ckEw3pdAL_TD7CX0dizuRercpt8n_XbMZKbJyvjAy3og5LIl1fxSb1ukIW5mA7I7QRitL4t4wxgy2VJcz7qO-hWLKTfPuJAu2K94cgW1FytUntzI3mTN5U5ZCvwhq0te5bgrJhLxxA6L7LozMHI90tLW8h7-MqtqT3LKj8mAsaC8xxRtVC0ORgtIoQH0f2IYWLOdTZMhFUI2fQNKMdPDcXNmIuRH7n-JuKIS2eBHh6x6Vo5E3frvJGPz4ZK";
+        //
+        $response = $this->resp($response, $http_status);
+        //
+        if ($response["Status"] == "success") {
+            $CI =& get_instance();
+            $CI->db->insert("complynet_access_token", array(
+                "token" => $response["Data"]["access_token"],
+                "token_type" => $response["Data"]["token_type"],
+                "expires_in" => $response["Data"]["expires_in"],
+                "issued" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $response["Data"][".issued"])->format('Y-m-d h:m:s'),
+                "expires" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $response["Data"][".expires"])->format('Y-m-d h:m:s')
+            ));
+            //
+            return $response["Data"]["access_token"];
+        }
     }
 
     /**
@@ -57,47 +68,25 @@ class ComplyNet {
           CURLOPT_ENCODING => '',
           CURLOPT_MAXREDIRS => 10,
           CURLOPT_TIMEOUT => 0,
-          CURLOPT_FAILONERROR => true,
           CURLOPT_FOLLOWLOCATION => true,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_CUSTOMREQUEST => 'GET',
           CURLOPT_HTTPHEADER => array(
-            'Authorization: Bearer '.$access_token
+            'ContentType: application/json',
+            'Authorization: Bearer aSQzebtQBu8MXTK0peu_MYKmLxPPYVQf8_RJcku80GrxZOg6IWTQGbWl1CEPEnlWaU97FsghIi4QDW7c95LEd8aZVijtOFxvNUAXd0Z3CE6cCOuYa_28o8whp9xKvgaLz_noiOocL3x8YxkOz-LXC3IcakDu9c2urr5IuKWfx9E2KbgORUHBZm1MzNkFAITptm_CehWf8ko2uhyW97i_MVGOSpoF2eJLddiEnBmqwrOdnV8kghsRgcho-wXBZtFKRk2NbFQRu-Ffb6ZFzldeWs1vWh8ZAPyZCV0N199poKR-FwpZLOu7cu9jdI-YB0vapDCQ0ckEw3pdAL_TD7CX0dizuRercpt8n_XbMZKbJyvjAy3og5LIl1fxSb1ukIW5mA7I7QRitL4t4wxgy2VJcz7qO-hWLKTfPuJAu2K94cgW1FytUntzI3mTN5U5ZCvwhq0te5bgrJhLxxA6L7LozMHI90tLW8h7-MqtqT3LKj8mAsaC8xxRtVC0ORgtIoQH0f2IYWLOdTZMhFUI2fQNKMdPDcXNmIuRH7n-JuKIS2eBHh6x6Vo5E3frvJGPz4ZK'
           ),
         ));
 
-        $response = curl_exec($curl);
+    $response = curl_exec($curl);
+    $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        $curl_errno = curl_errno($curl);
+    curl_close($curl);
+    $this->resp($response, $http_status);
 
-        echo $curl_errno." curl_errno<br>";
-        echo $http_status." http_status<br>";
 
-        switch ($http_status) {
-            case 401:
-                echo "401 Unauthorized Request</br>";
-                echo curl_error($curl);
-                break;
 
-            case 405:
-                echo "405 Method Not Allowed</br>";
-                echo curl_error($curl);
-                break;
-                
-            case 404:
-                echo "404 Url Not Found</br>";
-                echo curl_error($curl);
-                break; 
-
-            case 411:
-                echo "411 Length Required</br>";
-                echo curl_error($curl);
-                break;           
-        }
-        echo $response;
-
-        // return "Pepsico";
+        // $response = curl_exec($curl);
+        // $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     }
 
     /**
@@ -295,6 +284,50 @@ class ComplyNet {
     function disableUser($userName){
 
 
+    }
+
+    private function resp ($response, $http_status) {
+        $result = array(
+            "Status" => '',
+            "Error_code" => '',
+            "Error_message" => '',
+            "Data" => ''
+        );
+        //
+        $response = json_decode($response, true);
+        //
+        switch ($http_status) {
+            case 401:
+                $result["Status"] = "error";
+                $result["Error_code"] = "401";
+                $result["Error_message"] = $response["Message"];
+                break;
+
+            case 404:
+                $result["Status"] = "error";
+                $result["Error_code"] = "404";
+                $result["Error_message"] = $response["Message"];
+                break;     
+
+            case 405:
+                $result["Status"] = "error";
+                $result["Error_code"] = "405";
+                $result["Error_message"] = $response["Message"];
+                break;
+
+            case 411:
+                $result["Status"] = "error";
+                $result["Error_code"] = "411";
+                $result["Error_message"] = $response["Message"];
+                break;
+
+            case 200:  
+                $result["Status"] = "success";
+                $result["Data"] = $response;
+                break;     
+        }
+        //
+        return $result;
     }
 
 }
