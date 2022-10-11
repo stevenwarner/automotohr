@@ -90,20 +90,19 @@ class ComplyNet {
           CURLOPT_CUSTOMREQUEST => 'GET',
           CURLOPT_HTTPHEADER => array(
             'ContentType: application/json',
-            'Authorization: Bearer aSQzebtQBu8MXTK0peu_MYKmLxPPYVQf8_RJcku80GrxZOg6IWTQGbWl1CEPEnlWaU97FsghIi4QDW7c95LEd8aZVijtOFxvNUAXd0Z3CE6cCOuYa_28o8whp9xKvgaLz_noiOocL3x8YxkOz-LXC3IcakDu9c2urr5IuKWfx9E2KbgORUHBZm1MzNkFAITptm_CehWf8ko2uhyW97i_MVGOSpoF2eJLddiEnBmqwrOdnV8kghsRgcho-wXBZtFKRk2NbFQRu-Ffb6ZFzldeWs1vWh8ZAPyZCV0N199poKR-FwpZLOu7cu9jdI-YB0vapDCQ0ckEw3pdAL_TD7CX0dizuRercpt8n_XbMZKbJyvjAy3og5LIl1fxSb1ukIW5mA7I7QRitL4t4wxgy2VJcz7qO-hWLKTfPuJAu2K94cgW1FytUntzI3mTN5U5ZCvwhq0te5bgrJhLxxA6L7LozMHI90tLW8h7-MqtqT3LKj8mAsaC8xxRtVC0ORgtIoQH0f2IYWLOdTZMhFUI2fQNKMdPDcXNmIuRH7n-JuKIS2eBHh6x6Vo5E3frvJGPz4ZK'
+            'Authorization: Bearer '.$access_token
           ),
         ));
 
-    $response = curl_exec($curl);
-    $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $response = curl_exec($curl);
+        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
-    curl_close($curl);
-    $this->resp($response, $http_status);
+        curl_close($curl);
+        $result = $this->resp($response, $http_status);
+
+        return $result;
 
 
-
-        // $response = curl_exec($curl);
-        // $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     }
 
     /**
