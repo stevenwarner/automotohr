@@ -9,7 +9,7 @@ class ComplyNet {
      * @return Array
      */
     private function Authentication(){
-        
+
         //
         $credentials = getCreds("AHR")->ComplyNet;
         //
@@ -287,44 +287,20 @@ class ComplyNet {
     }
 
     private function resp ($response, $http_status) {
+        //
         $result = array(
-            "Status" => '',
-            "Error_code" => '',
-            "Error_message" => '',
-            "Data" => ''
+            "status" => '',
+            "response" => ''
         );
         //
         $response = json_decode($response, true);
         //
-        switch ($http_status) {
-            case 401:
-                $result["Status"] = "error";
-                $result["Error_code"] = "401";
-                $result["Error_message"] = $response["Message"];
-                break;
-
-            case 404:
-                $result["Status"] = "error";
-                $result["Error_code"] = "404";
-                $result["Error_message"] = $response["Message"];
-                break;     
-
-            case 405:
-                $result["Status"] = "error";
-                $result["Error_code"] = "405";
-                $result["Error_message"] = $response["Message"];
-                break;
-
-            case 411:
-                $result["Status"] = "error";
-                $result["Error_code"] = "411";
-                $result["Error_message"] = $response["Message"];
-                break;
-
-            case 200:  
-                $result["Status"] = "success";
-                $result["Data"] = $response;
-                break;     
+        if ($http_status == 200) {
+            $result["status"] = "success";
+            $result["response"] = $response;
+        } else {
+            $result["status"] = "error";
+            $result["response"] = $response["Message"];
         }
         //
         return $result;
