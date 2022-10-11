@@ -1,6 +1,41 @@
 <?php
-//
-class ComplyNet {
+
+/**
+ * 
+ */
+
+class ComplyNet
+{
+
+    private $token;
+    private $response;
+    private $complynetUser;
+    private $mode;
+    private $CI;
+
+
+    private $dateWithTime;
+
+
+    public function __construct()
+    {
+        //
+        $this->CI = &get_instance();
+        //
+        $this->CI->load->model('2022/Complynet_model', 'complynet_model');
+        //
+        $this->complynetModel = $this->CI->complynet_model;
+        //
+        $this->token = null;
+        //
+        $this->response = [];
+        //
+        $this->dateWithTime = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        $this->date = date('Y-m-d', strtotime('now'));
+        //
+        $this->complynetUser = getCreds("AHR")->COMPLY_NET;
+    }
 
     /**
      * Get access_token
@@ -8,101 +43,169 @@ class ComplyNet {
      * 
      * @return Array
      */
-    private function Authentication(){
-        $CI =& get_instance();
+    public function authenticate()
+    {
         //
-        $dateTime = date('Y-m-d h:m:s');
-        //
-        $CI->db->select('token');
-        $CI->db->group_start();
-        $CI->db->where("issued <=", $dateTime);
-        $CI->db->where("expires >=", $dateTime);
-        $CI->db->group_end();
-        $result = $CI->db->get('complynet_access_token')->row_array();
-        //
-        if (!empty($result)) {
-            return $result["token"];
-        } else {
+        if ($this->mode == 'fake') {
             //
-            $credentials = getCreds("AHR")->ComplyNet;
-            //
-            $curl = curl_init();
-            //
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api.complynet.com/Token',
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => 'grant_type=password&username='.$credentials->username.'&password='.$credentials->password,
-                CURLOPT_HTTPHEADER => array(
-                    'Content-Type: application/x-www-form-urlencoded'
-                ),
-            ));
-            //
-            $response = curl_exec($curl);
-            $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            //
-            curl_close($curl);
-            //
-            $response = $this->resp($response, $http_status);
-            //
-            if ($response["Status"] == "success") {
-                
-                $CI->db->insert("complynet_access_token", array(
-                    "token" => $response["Data"]["access_token"],
-                    "token_type" => $response["Data"]["token_type"],
-                    "expires_in" => $response["Data"]["expires_in"],
-                    "issued" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $response["Data"][".issued"])->format('Y-m-d h:m:s'),
-                    "expires" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $response["Data"][".expires"])->format('Y-m-d h:m:s')
-                ));
-                //
-                return $response["Data"]["access_token"];
-            } else {
-                return $response;
-            }
+            return $this;
         }
-        
+        // Check db for active token
+        $record = $this->complynetModel->getActiveToken(
+            ['token'],
+            [
+                'expires >= ' => $this->dateWithTime
+            ]
+        );
+
+        // Case of no record found
+        if (!$record) {
+            // generate new token
+            $record =
+                $this->curlCall(
+                    $this->complynetUser->AUTH_URL,
+                    [
+                        "grant_type" => $this->complynetUser->GRANT_TYPE,
+                        "username" => $this->complynetUser->USERNAME,
+                        "password" => $this->complynetUser->PASSWORD
+                    ],
+                    "POST",
+                    ['Content-Type: application/x-www-form-urlencoded']
+                );
+
+            // error
+            if (isset($record['error'])) {
+                //
+            }
+            // success
+            $this->complynetModel
+                ->insertData('complynet_access_token', [
+                    "token" => $record["access_token"],
+                    "token_type" => $record["token_type"],
+                    "expires_in" => $record["expires_in"],
+                    "issued" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $record[".issued"])->format('Y-m-d H:m:s'),
+                    "expires" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $record[".expires"])->format('Y-m-d H:m:s')
+                ]);
+            //
+            $record["token"] =  $record["access_token"];
+        }
+        //
+        $this->token = $record['token'];
+        //
+        return $this;
+    }
+
+    /**
+     * 
+     */
+    private function curlCall(
+        $url,
+        $postFields = [],
+        $method = 'POST',
+        $headerArray = ['Content-Type: application/json']
+    ) {
+        //
+        if (preg_match('/api/i', $url)) {
+            $headerArray[] = 'Authorization: Bearer ' . $this->token;
+        }
+        //
+        $curl = curl_init();
+        //
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_HTTPHEADER => $headerArray
+        ));
+        //
+        if (!empty($postFields)) {
+            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($postFields));
+        }
+        //
+        $response = curl_exec($curl);
+        //
+        $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        //
+        curl_close($curl);
+        //
+        if ($responseCode != 200) {
+            //
+            $responseObj = json_decode($response);
+            //
+            return [
+                "error" => [
+                    'code' => $responseCode,
+                    'message' => $responseObj->error ?? $responseObj->Message
+                ]
+            ];
+        }
+
+        //
+        return json_decode($response, true);
+    }
+
+
+    /**
+     * 
+     */
+    public function setMode($mode)
+    {
+        //
+        $this->mode = $mode;
+        //
+        return $this;
     }
 
     /**
      * Get all companies from complynet
      * 
+     * @method fakeCompanyData
      * 
      * @return Array
      */
-    public function getCompanies(){
-        $access_token = $this->Authentication();
-
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-          CURLOPT_URL => 'https://api.ComplyNet.com/api/Company',
-          CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_ENCODING => '',
-          CURLOPT_MAXREDIRS => 10,
-          CURLOPT_TIMEOUT => 0,
-          CURLOPT_FOLLOWLOCATION => true,
-          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-          CURLOPT_CUSTOMREQUEST => 'GET',
-          CURLOPT_HTTPHEADER => array(
-            'ContentType: application/json',
-            'Authorization: Bearer '.$access_token
-          ),
-        ));
-
-        $response = curl_exec($curl);
-        $http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-
-        curl_close($curl);
-        $result = $this->resp($response, $http_status);
-
+    public function getCompanies()
+    {
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeCompanyData();
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'Company',
+            [],
+            'GET',
+            [
+                'Content-Type: application/json'
+            ]
+        );
+        //
         return $result;
+    }
 
 
+    // Fake data functions
+    /**
+     * Fake company generator
+     * 
+     * @return array
+     */
+    private function fakeCompanyData()
+    {
+        return [[
+            "Id" => "1F9F9677-2CE0-43B3-A418-0815334B706B",
+            "Name" => " ComplyNet"
+        ], [
+            "Id" => "739FBDEA-135B-4FFD-803B-884A441F6C86",
+            "Name" => " My Dealer Group "
+        ], [
+            "Id" => "739FBDEA-135B-4FFD-803B-884A441F6C86",
+            "Name" => " AutomotoHR "
+        ]];
     }
 
     /**
@@ -112,8 +215,8 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function getLocations($company_ID){
-        
+    function getLocations($company_ID)
+    {
     }
 
     /**
@@ -123,8 +226,8 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function getDepartments($location_ID){
-        
+    function getDepartments($location_ID)
+    {
     }
 
     /**https://www.youtube.com/shorts/HblXD3bH6dA
@@ -137,8 +240,8 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function updateDepartments($Id, $ParentId, $Name, $IsActive){ 
-
+    function updateDepartments($Id, $ParentId, $Name, $IsActive)
+    {
     }
 
     /**
@@ -148,8 +251,8 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function createDepartment($department_name){
-
+    function createDepartment($department_name)
+    {
     }
 
     /**
@@ -159,8 +262,8 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function deleteDepartment($department_Id) {
-
+    function deleteDepartment($department_Id)
+    {
     }
 
     /**
@@ -170,8 +273,8 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function getJobRole ($department_Id) {
-
+    function getJobRole($department_Id)
+    {
     }
 
     /**
@@ -184,8 +287,8 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function updateJobRole ($Id, $ParentId, $Name, $IsActive) {
-
+    function updateJobRole($Id, $ParentId, $Name, $IsActive)
+    {
     }
 
     /**
@@ -195,8 +298,8 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function createJobRole($Name){
-
+    function createJobRole($Name)
+    {
     }
 
     /**
@@ -206,14 +309,14 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function deleteJobRole($Id) {
-
+    function deleteJobRole($Id)
+    {
     }
 
     /**
      * Create User
      * 
-    * @param $firstName String
+     * @param $firstName String
      * @param $lastName String
      * @param $userName String
      * @param $email String
@@ -239,9 +342,7 @@ class ComplyNet {
         $jobRoleId,
         $PhoneNumber,
         $TwoFactor = TRUE
-    ){
-
-
+    ) {
     }
 
     /**
@@ -273,9 +374,7 @@ class ComplyNet {
         $jobRoleId,
         $PhoneNumber,
         $TwoFactor = TRUE
-    ){
-
-
+    ) {
     }
 
     /**
@@ -285,9 +384,8 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function getUser($userName){
-
-
+    function getUser($userName)
+    {
     }
 
     /**
@@ -297,12 +395,12 @@ class ComplyNet {
      * 
      * @return Array
      */
-    function disableUser($userName){
-
-
+    function disableUser($userName)
+    {
     }
 
-    private function resp ($response, $http_status) {
+    private function resp($response, $http_status)
+    {
         //
         $result = array(
             "status" => '',
@@ -321,5 +419,4 @@ class ComplyNet {
         //
         return $result;
     }
-
 }
