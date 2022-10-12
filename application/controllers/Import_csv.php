@@ -339,6 +339,10 @@ class Import_csv extends Public_Controller {
                     if(count($v0) <=1){
                         continue;
                     }
+                    //
+                    if(!isset($v0['status']) && isset($v0['termination_date']) && !empty($v0['termination_date'])){
+                        $v0['status'] = "terminated";
+                    }
                     // Clean
                     $insertArray['email'] = isset($v0['email']) ? trim(strtolower($v0['email'])) : NULL;
                     //
