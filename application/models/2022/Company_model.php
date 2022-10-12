@@ -370,14 +370,14 @@ class Company_model extends CI_Model {
 
     /**
      * Add company data to table
-     * 
+     *
      * @param string $table
      * @param array $insertArray
-     * 
+     *
      * @return int
      */
     public function addData(
-        string $table, 
+        string $table,
         array $insertArray
     ){
         //
