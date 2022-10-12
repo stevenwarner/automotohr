@@ -1,4 +1,5 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<style>.tab-content > .tab-pane{ display: block !important; }</style>
 <div class="main">
     <div class="container-fluid">
         <div class="row">
@@ -8,33 +9,31 @@
                     <div class="dashboard-content">
                         <div class="dash-inner-block">
                             <div class="row">
+                                <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                    <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                     <div class="heading-title page-title">
-                                        <h1 class="page-title">ComplyNet<br></h1><br>
-                                        <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3" style="float: right;">
-                                            <a class="btn btn-success btn-block btn-equalizer" title="Add Company" href="javascript:;" onclick="showmodel()">Add Company</a>
+                                        <h1 class="page-title"><i class="fa fa-users"></i><?php echo $page_title; ?></h1>
+                                    </div>
+                                    <div class="message-action">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                <div class="hr-items-count">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <br />
-                                    <br />
+                                    <div class="col-xs-12 col-sm-12">
 
-                                    <div class="row">
-                                        <div class="col-xs-12">
-                                            <div class="hr-box">
-                                                <div class="hr-innerpadding">
-                                                    <?php if (!empty($links)) { ?>
-                                                        <div class="row">
-                                                            <div class="col-xs-12">
-                                                                <?php echo $links; ?>
-                                                            </div>
-                                                        </div>
-                                                        <hr />
-                                                    <?php } ?>
-                                                    <div class="row">
-                                                        <div class="col-xs-12">
-                                                            <div class="table-responsive">
-                                                                <table class="table table-bordered table-hover table-striped table-condensed">
+                                    </div>
+                                    <div class="tabs-outer">
+                                        <ul class="nav nav-tabs">
+                                            <li class="cards-tabs active" data-attr="active_cards" ><a  href="<?=base_url('manage_admin/companies/manage_complynet_new/'.$company_sid);?>">Add New</a></li>
+                                            <li class="cards-tabs" data-attr="inactive_cards" ><a  href="<?=base_url('manage_admin/companies/manage_complynet/'.$company_sid);?>">Old</a></li>
+                                            </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane" id="js-tab-pane">
+                                                    <div id="show_no_jobs" class="table-wrp">
+                                                       <table class="table table-bordered table-hover table-striped table-condensed">
                                                                     <thead>
                                                                         <tr>
                                                                             <th class="col-xs-3">AutomotoHR</th>
@@ -45,48 +44,35 @@
                                                                         </tr>
                                                                     </thead>
                                                                     <thead>
-                                                                        <?php if (!empty($company_records)) { ?>
-                                                                            <?php foreach ($company_records as $record) { ?>
+                                                                        <?php if (!empty($maped_company_info)) { ?>
                                                                                 <tr>
 
-                                                                                    <td><?php echo $record['automotohr_name']; ?></td>
-                                                                                    <td><?php echo $record['complynet_name']; ?></td>
-                                                                                    <td><?php //echo $record['created_at']; 
-                                                                                        ?><?php echo DateTime::createfromformat('Y-m-d H:i:s', $record['created_at'])->format('M d Y, D H:i:s'); ?></td>
-                                                                                    <td <?php echo  $record['status'] ? 'style="color:green;"' : 'style="color:red;"'; ?>><?php echo  $record['status'] ? 'Active' : 'In-Active'; ?></td>
+                                                                                    <td><?php echo $maped_company_info->automotohr_name; ?></td>
+                                                                                    <td><?php echo $maped_company_info->complynet_name; ?></td>
+                                                                                    <td><?php echo DateTime::createfromformat('Y-m-d H:i:s', $maped_company_info->created_at)->format('M d Y, D H:i:s'); ?></td>
+                                                                                    <td <?php echo  $maped_company_info->status ? 'style="color:green;"' : 'style="color:red;"'; ?>><?php  echo $maped_company_info->status ? 'Active' : 'In-Active'; ?></td>
                                                                                     <td>
-                                                                                        <a class="btn btn-success btn-sm btn-block" title="View" href="javascript:;" onclick="showmodel()">View</a>
-                                                                                        <?php if ($record['status']) { ?><a class="btn btn-danger btn-sm btn-block" title="View" href="javascript:;" onclick="changestatus('0#'+'<?php echo $record['automotohr_sid'] ?>')">Disable</a><?php } else { ?>
-                                                                                            <a class="btn btn-success btn-sm btn-block" title="View" href="javascript:;" onclick="changestatus('1#'+'<?php echo $record['automotohr_sid'] ?>')">Enable</a>
-
-                                                                                        <?php } ?>
+                                                                                        <a class="btn btn-success btn-sm btn-block" title="View" href="javascript:;" onclick="getcompanydata('<?php echo $maped_company_info->automotohr_sid?>', '<?php echo $maped_company_info->automotohr_name?>')">View</a>
+                          
                                                                                     </td>
                                                                                 </tr>
-                                                                            <?php } ?>
                                                                         <?php } else { ?>
                                                                             <tr>
                                                                                 <td colspan="7" class="text-center">
-                                                                                    <span class="no-data">No Records</span>
+                                                                                    <span class="no-data">                                            <a class="btn btn-success btn-block btn-equalizer" title="Add Company" href="javascript:;" onclick="showmodel()">Add Company</a>
+</span>
                                                                                 </td>
                                                                             </tr>
                                                                         <?php } ?>
                                                                     </thead>
                                                                 </table>
-                                                            </div>
-                                                        </div>
+
                                                     </div>
-                                                    <?php if (!empty($links)) { ?>
-                                                        <hr />
-                                                        <div class="row">
-                                                            <div class="col-xs-12">
-                                                                <?php echo $links; ?>
-                                                            </div>
-                                                        </div>
-                                                    <?php } ?>
-                                                </div>
                                             </div>
+                                           
                                         </div>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -96,6 +82,10 @@
         </div>
     </div>
 </div>
+
+
+
+
 
 
 <div id="bulk_email_modal" class="modal fade" role="dialog">
@@ -122,7 +112,6 @@
                                     <label>AutomotoHR</label>
                                     <div class="hr-select-dropdown">
                                         <select class="invoice-fields" name="automotohrcompany" id="automotohrcompany">
-                                            <option selected="selected" value="">--Please select a company--</option>
                                             <?php foreach ($active_companies as $automoto_row) { ?>
                                                 <option value="<?php echo $automoto_row['sid']; ?>#<?php echo $automoto_row['CompanyName']; ?>#<?php echo $automoto_row['complynet_status']; ?>"><?php echo $automoto_row['CompanyName']; ?></option>
                                             <?php } ?>
@@ -178,13 +167,10 @@
 <!-- Loader End -->
 
 
-<script>
-    $(document).ready(function() {
-        $("#company_sid").val('<?php echo $companySid; ?>');
-    });
 
-    //
-    function showmodel() {
+<script type="text/javascript">
+  //
+function showmodel() {
         $('#bulk_email_modal').modal("toggle");
     }
     //
@@ -233,36 +219,12 @@
     }
 
 
-    //
-    function changestatus(companydata) {
-        const companydataarray = companydata.split("#");
-        $('#loader_text_div').text('Processing');
-        $('#document_loader').show();
-        $.ajax({
-            'url': '<?php echo base_url('manage_admin/complynet/changecomplynetstatus'); ?>',
-            'type': 'POST',
-            'data': {
-                'automotohr_sid': companydataarray[1],
-                'complynet_status': companydataarray[0]
-            },
-            success: function(urls) {
-
-                location.reload();
-
-                $('#loader_text_div').text('');
-                $('#document_loader').hide();
-
-            }
-        });
-
-    }
-
     function getcompanydata(companyid, companyname) {
         $('#loader_text_div').text('Processing');
         $('#document_loader').show();
 
         $.ajax({
-            'url': '<?php echo base_url('manage_admin/2022/reports/complynet/getcompanyemployees/'); ?>' + companyid,
+            'url': '<?php echo base_url('manage_admin/complynet/getcompanyemployees/'); ?>' + companyid,
             'type': 'GET',
 
             success: function(urls) {
@@ -280,22 +242,7 @@
 
 
 
-    function func_apply_filters() {
-        var company_sid = $('#company_sid').val();
-        var date_start = $('#date_start').val();
-        var date_end = $('#date_end').val();
-        var base_url = '<?php echo base_url('manage_admin/2022/reports/complynet'); ?>';
-
-        company_sid = company_sid == '' || company_sid == undefined || company_sid == null ? 'all' : encodeURIComponent(company_sid);
-        date_start = date_start == '' || date_start == undefined || date_start == null ? 'all' : encodeURIComponent(date_start);
-        date_end = date_end == '' || date_end == undefined || date_end == null ? 'all' : encodeURIComponent(date_end);
-
-        var url = base_url + '/' + company_sid + '/' + date_start + '/' + date_end;
-
-        window.location = url;
-    }
 </script>
-
 
 <style>
     .modal-backdrop {

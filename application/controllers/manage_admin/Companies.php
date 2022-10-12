@@ -19,6 +19,8 @@ class Companies extends Admin_Controller
         $this->load->model('manage_admin/maintenance_mode_model');
         $this->load->model('manage_admin/marketing_agencies_model');
         $this->load->model('manage_admin/Incident_report_model');
+        $this->load->model('manage_admin/complynet_model');
+
         $this->load->library('form_validation');
         $this->load->library("pagination");
         require_once(APPPATH . 'libraries/xmlapi.php');
@@ -776,7 +778,7 @@ class Companies extends Admin_Controller
                             'company_website' => db_get_sub_domain($company_sid)
                         );
                     }
-                    
+
                     $this->company_model->add_company($data, $company_sid);
                     $this->company_model->apply_e_signature($executive_admin_sid);
                     echo 'success';
@@ -2190,6 +2192,37 @@ class Companies extends Admin_Controller
             redirect('manage_admin/companies', 'refresh');
         }
     }
+
+
+
+
+    public function manage_complynet_new($company_sid = null)
+    {
+        $this->load->model('manage_admin/complynet_model');
+        $admin_id = $this->ion_auth->user()->row()->id;
+        $security_details = db_get_admin_access_level_details($admin_id);
+        $this->data['security_details'] = $security_details;
+        if ($company_sid != null) {
+            $this->data['page_title'] = 'Manage ComplyNet';
+            $this->data['company_sid'] = $company_sid;
+            $company_info = $this->company_model->get_company_details($company_sid);
+            $all_employees = $this->company_model->get_company_employers($company_sid);
+            $company_name = $this->company_model->get_company_name($company_sid);
+            $this->data['company_name'] = $company_name;
+            $this->data['all_employees'] = $all_employees;
+            $this->data['company_info'] = $company_info;
+            //
+            $this->data['active_companies'] = $this->complynet_model->get_all_companies(1, $company_sid);
+            $maped_company_info = $this->complynet_model->get_complynet_maped_company($company_sid);
+            // print_r($maped_company_info);
+            // die();
+            $this->data['maped_company_info'] = $maped_company_info;
+            $this->render('manage_admin/company/manage_complynet_companies_new');
+        }
+    }
+
+
+
 
     public function save_complynet_cred()
     {

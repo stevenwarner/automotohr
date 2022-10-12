@@ -85,18 +85,57 @@ class Complynet extends Admin_Controller
         $data_insert['complynet_name'] = $complynetcompanydata[1];
         $data_insert['created_at'] = date('Y-m-d H:i:s');
         //
-        $this->complynet_model->mapcompany($data_insert);
-        $this->session->set_flashdata('message', '<b>Success:</b> Company Maped Successfully');
-        redirect("manage_admin/complynet");
+        $query_status = $this->complynet_model->mapcompany($data_insert);
+        if ($query_status == 'saved') {
+            $this->session->set_flashdata('message', '<b>Success:</b> Company Maped Successfully');
+        }
+        echo $query_status;
     }
 
     //
     function changecomplynetstatus()
     {
-
         $automotohr_sid = $this->input->post('automotohr_sid');
         $complynet_status = $this->input->post('complynet_status');
         $this->complynet_model->update_complynet_status($automotohr_sid, $complynet_status);
         $this->session->set_flashdata('message', '<b>Success:</b> Company Status Changed Successfully');
+    }
+
+
+
+    //
+    public function getcompanyemployees($company_id)
+    {
+
+        $employees = $this->complynet_model->get_active_employees_detail($company_id);
+        $result_head = '<table class="table table-bordered table-hover table-striped table-condensed">
+         <thead>
+             <tr>
+                 <th class="col-xs-4">Employee Name</th>
+                 <th class="col-xs-2">Email</th>
+              
+             </tr>
+         </thead>
+         <thead>';
+
+        //
+        $result_row = '';
+        if (!empty($employees)) {
+            foreach ($employees as $emp_row) {
+
+                $result_row .=  '<tr>                  
+             <td>' . getUserNameBySID($emp_row['sid'], $remake = true) . '</td>
+             <td>' . $emp_row['email'] . '</td>
+                     </tr>';
+            }
+        } else {
+
+            $result_row .=  '<tr><td colspan="5" class="text-center"><div class="no-data">No employee found.</div></td> </tr>';
+        }
+
+        //
+        $result_footer = '</thead>
+         </table>';
+        echo $result_head . $result_row . $result_footer;
     }
 }
