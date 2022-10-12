@@ -268,6 +268,7 @@ $route['manage_admin/reports/accurate_background'] = 'manage_admin/reports/accur
 $route['manage_admin/reports/accurate_background/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/reports/accurate_background/index/$1/$2/$3/$4/$5';
 $route['manage_admin/accurate_background/download/(:any)/(:any)'] = 'manage_admin/accurate_background/download/$1/$2';
 // Added on: 28-05-2019
+
 $route['complynet'] = 'Complynet/index';
 // Added on: 27-05-2019
 $route['download/(:any)/(:num)/(:num)/(:any)/(:any)/(:any)'] = 'Home/download/$1/$2/$3/$4/$5/$6';

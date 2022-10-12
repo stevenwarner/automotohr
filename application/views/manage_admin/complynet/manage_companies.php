@@ -48,14 +48,17 @@
                                                                             <?php foreach ($company_records as $record) { ?>
                                                                                 <tr>
 
-                                                                                    <td><?php echo $record['CompanyName']; ?></td>
-                                                                                    <td><?php echo $record['CompanyName']; ?></td>
-                                                                                    <td><?php echo $record['CompanyName']; ?></td>
-                                                                                    <td><?php echo $record['CompanyName']; ?></td>
-
-
+                                                                                    <td><?php echo $record['automotohr_name']; ?></td>
+                                                                                    <td><?php echo $record['complynet_name']; ?></td>
+                                                                                    <td><?php //echo $record['created_at']; 
+                                                                                        ?><?php echo DateTime::createfromformat('Y-m-d H:i:s', $record['created_at'])->format('M d Y, D H:i:s'); ?></td>
+                                                                                    <td <?php echo  $record['status'] ? 'style="color:green;"' : 'style="color:red;"'; ?>><?php echo  $record['status'] ? 'Active' : 'In-Active'; ?></td>
                                                                                     <td>
                                                                                         <a class="btn btn-success btn-sm btn-block" title="View" href="javascript:;" onclick="showmodel()">View</a>
+                                                                                        <?php if ($record['status']) { ?><a class="btn btn-success btn-sm btn-block" title="View" href="javascript:;" onclick="changestatus('0#'+'<?php echo $record['automotohr_sid'] ?>')">Disable</a><?php } else { ?>
+                                                                                            <a class="btn btn-success btn-sm btn-block" title="View" href="javascript:;" onclick="changestatus('1#'+'<?php echo $record['automotohr_sid'] ?>')">Enable</a>
+
+                                                                                        <?php } ?>
                                                                                     </td>
                                                                                 </tr>
                                                                             <?php } ?>
@@ -172,13 +175,11 @@
         $("#company_sid").val('<?php echo $companySid; ?>');
     });
 
-
-
     //
     function showmodel() {
         $('#bulk_email_modal').modal("toggle");
     }
-
+    //
     function savecompany() {
         event.preventDefault();
         var automotohrcompany = $('#automotohrcompany').val();
@@ -201,6 +202,36 @@
 
 
     }
+
+
+//
+    function changestatus(companydata) {
+        const companydataarray = companydata.split("#");
+        $('#loader_text_div').text('Processing');
+        $('#document_loader').show();
+        $.ajax({
+            'url': '<?php echo base_url('manage_admin/complynet/changecomplynetstatus'); ?>',
+            'type': 'POST',
+            'data': {
+                'automotohr_sid': companydataarray[1],
+                'complynet_status': companydataarray[0]
+            },
+            success: function(urls) {
+
+                location.reload();
+
+                $('#loader_text_div').text('');
+                $('#document_loader').hide();
+
+            }
+        });
+
+
+
+    }
+
+
+
 
 
     function getcompanydata(companyid, companyname) {
