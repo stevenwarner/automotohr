@@ -1,17 +1,79 @@
 <?php
 
 /**
- * 
- */
+* Name:  ComplyNet
+*
+* Version: 1.0
+*
+* Author: AutoMotoHR
+*
+* Added Awesomeness: Mubashir Ahmad, Aleem Shaukat
+*
+* Location: USA
+*
+* Created:  10.10.2022
+*
+* Description:  The library is used for link system with complynet.
+*
+* Requirements: PHP7 or above
+*
+*/
 
 class ComplyNet
 {
 
+    /**
+     *
+     * CI intance
+     * 
+     **/
     private $CI;
+
+    /**
+     *
+     * @var string
+     * 
+     * For toggle between live and fake
+     * 
+     * option: live | fake
+     * 
+     **/
     private $mode;
+
+    /**
+     *
+     * @var string
+     * 
+     * Complynet access_token
+     * 
+     **/
     private $token;
+
+    /**
+     *
+     * @var array
+     * 
+     * For return result
+     * 
+     **/
     private $response;
+
+    /**
+     *
+     * @var dateTime
+     * 
+     * For camparing
+     * 
+     **/
     private $dateWithTime;
+
+    /**
+     *
+     * @var associative array
+     * 
+     * For handling camplynet credential
+     * 
+     **/
     private $complynetUser;
 
     public function __construct()
@@ -123,7 +185,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function getLocations($company_ID)
+    public function getLocations($companyId)
     {
         //
         if ($this->mode == 'fake') {
@@ -131,7 +193,7 @@ class ComplyNet
         }
         //
         $result = $this->curlCall(
-            $this->complynetUser->API_URL . 'Location?companyId='.$company_ID,
+            $this->complynetUser->API_URL . 'Location?companyId='.$companyId,
             [],
             'GET',
             [
@@ -149,7 +211,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function getDepartments($location_ID)
+    public function getDepartments($locationId)
     {
         //
         if ($this->mode == 'fake') {
@@ -157,7 +219,7 @@ class ComplyNet
         }
         //
         $result = $this->curlCall(
-            $this->complynetUser->API_URL . 'Department?LocationId='.$location_ID,
+            $this->complynetUser->API_URL . 'Department?LocationId='.$locationId,
             [],
             'GET',
             [
@@ -175,7 +237,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function createDepartment($Name, $LocationId)
+    public function createDepartment($departmentName, $locationId)
     {
         //
         if ($this->mode == 'fake') {
@@ -185,8 +247,8 @@ class ComplyNet
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'Department',
             [
-                "Name" => $Name,
-                "ParentId" => $LocationId
+                "Name" => $departmentName,
+                "ParentId" => $locationId
 
             ],
             'POST',
@@ -208,7 +270,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function updateDepartments($Id, $ParentId, $Name, $IsActive)
+    public function updateDepartments($departmentId, $locationId, $departmentName, $isActive)
     {
         //
         if ($this->mode == 'fake') {
@@ -218,10 +280,10 @@ class ComplyNet
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'Department',
             [
-                "Id" => $Id,
-                "ParentId" => $ParentId,
-                "Name" => $Name,
-                "IsActive" => $IsActive
+                "Id" => $departmentId,
+                "ParentId" => $locationId,
+                "Name" => $departmentName,
+                "IsActive" => $isActive
             ],
             'PUT',
             [
@@ -239,7 +301,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function deleteDepartment($Id)
+    public function deleteDepartment($departmentId)
     {
         //
         if ($this->mode == 'fake') {
@@ -249,7 +311,7 @@ class ComplyNet
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'Department',
             [
-                "Id" => $Id,
+                "Id" => $departmentId,
             ],
             'DELETE',
             [
@@ -267,7 +329,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function getJobRole($department_Id)
+    public function getJobRole($departmentId)
     {
         //
         if ($this->mode == 'fake') {
@@ -275,7 +337,7 @@ class ComplyNet
         }
         //
         $result = $this->curlCall(
-            $this->complynetUser->API_URL . 'JobRole?DepartmentId='.$department_Id,
+            $this->complynetUser->API_URL . 'JobRole?DepartmentId='.$departmentId,
             [],
             'GET',
             [
@@ -293,7 +355,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function createJobRole($Name, $DepartmentId)
+    public function createJobRole($jobRoleName, $departmentId)
     {
         //
         if ($this->mode == 'fake') {
@@ -303,8 +365,8 @@ class ComplyNet
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'JobRole',
             [
-                "Name" => $Name,
-                "ParentId" => $DepartmentId
+                "Name" => $jobRoleName,
+                "ParentId" => $departmentId
             ],
             'POST',
             [
@@ -325,7 +387,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function updateJobRole($Id, $ParentId, $Name, $IsActive)
+    public function updateJobRole($jobRoleId, $departmentId, $jobRoleName, $isActive)
     {
         //
         if ($this->mode == 'fake') {
@@ -335,10 +397,10 @@ class ComplyNet
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'JobRole',
             [
-                "Id" => $Id,
-                "ParentId" => $ParentId,
-                "Name" => $Name,
-                "IsActive" => $IsActive
+                "Id" => $jobRoleId,
+                "ParentId" => $departmentId,
+                "Name" => $jobRoleName,
+                "IsActive" => $isActive
             ],
             'PUT',
             [
@@ -356,7 +418,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function deleteJobRole($Id)
+    public function deleteJobRole($jobRoleId)
     {
         //
         if ($this->mode == 'fake') {
@@ -366,7 +428,7 @@ class ComplyNet
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'JobRole',
             [
-                "Id" => $Id,
+                "Id" => $jobRoleId,
             ],
             'DELETE',
             [
@@ -420,19 +482,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function createUser(
-        $firstName,
-        $lastName,
-        $userName,
-        $email,
-        $password,
-        $companyId,
-        $locationId,
-        $departmentId,
-        $jobRoleId,
-        $PhoneNumber,
-        $TwoFactor = TRUE
-    ) {
+    public function createUser($user) {
         //
         if ($this->mode == 'fake') {
             return $this->fakeUserResponse("create");
@@ -440,20 +490,7 @@ class ComplyNet
         //
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'User',
-            [
-                "firstName" => $firstName,
-                "lastName" => $lastName,
-                "userName" => $userName,
-                "email" => $email,
-                "password" => $password,
-                "companyId" => $companyId,
-                "locationId" => $locationId,
-                "departmentId" => $departmentId,
-                "jobRoleId" => $jobRoleId,
-                "PhoneNumber" => $PhoneNumber,
-                "TwoFactor" => $TwoFactor,
-
-            ],
+            $user,
             'POST',
             [
                 'Content-Type: application/json'
@@ -480,19 +517,7 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function updateUser(
-        $firstName,
-        $lastName,
-        $userName,
-        $email,
-        $password,
-        $companyId,
-        $locationId,
-        $departmentId,
-        $jobRoleId,
-        $PhoneNumber,
-        $TwoFactor = TRUE
-    ) {
+    public function updateUser($user) {
         //
         if ($this->mode == 'fake') {
             return $this->fakeUserResponse("update");
@@ -500,20 +525,7 @@ class ComplyNet
         //
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'User',
-            [
-                "firstName" => $firstName,
-                "lastName" => $lastName,
-                "userName" => $userName,
-                "email" => $email,
-                "password" => $password,
-                "companyId" => $companyId,
-                "locationId" => $locationId,
-                "departmentId" => $departmentId,
-                "jobRoleId" => $jobRoleId,
-                "PhoneNumber" => $PhoneNumber,
-                "TwoFactor" => $TwoFactor,
-
-            ],
+            $user,
             'PUT',
             [
                 'Content-Type: application/json'
