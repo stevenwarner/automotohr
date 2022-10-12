@@ -139,19 +139,19 @@ class Testing extends CI_Controller
         // //
         // _e($response, true, true);
 
-        $cUser = array(
-            "firstName" => "Tom",
-            "lastName" => "Bob",
-            "userName" => "tombob@ComplyNet.com",
-            "email" => "tombob@ComplyNet.com",
-            "password" => "",
-            "companyId" => "E4A89DDA-12BB-4341-844A-BBE400451274",
-            "locationId" => "8AB20AFF-C1AE-4F08-AB1C-160ABD4FEA2F",
-            "departmentId" => "55A3BBA9-CE0F-4E1C-9587-9E3709CF2F25",
-            "jobRoleId" => "FE96FEBA-DE91-4DA1-A809-499351D001F7",
-            "PhoneNumber" => 5556667778,
-            "TwoFactor" => TRUE,
-        );
+        // $cUser = array(
+        //     "firstName" => "Tom",
+        //     "lastName" => "Bob",
+        //     "userName" => "tombob@ComplyNet.com",
+        //     "email" => "tombob@ComplyNet.com",
+        //     "password" => "",
+        //     "companyId" => "E4A89DDA-12BB-4341-844A-BBE400451274",
+        //     "locationId" => "8AB20AFF-C1AE-4F08-AB1C-160ABD4FEA2F",
+        //     "departmentId" => "55A3BBA9-CE0F-4E1C-9587-9E3709CF2F25",
+        //     "jobRoleId" => "FE96FEBA-DE91-4DA1-A809-499351D001F7",
+        //     "PhoneNumber" => 5556667778,
+        //     "TwoFactor" => TRUE,
+        // );
 
         // $response = $this
         // ->complynet
@@ -161,18 +161,18 @@ class Testing extends CI_Controller
         // //
         // _e($response, true, true);
 
-        $upUser = array(
-            "firstName" => "Tonny",
-            "lastName" => "Bomber",
-            "userName" => "tombob@ComplyNet.com",
-            "email" => "tombob@ComplyNet.com",
-            "companyId" => "E4A89DDA-12BB-4341-844A-BBE400451274",
-            "locationId" => "8AB20AFF-C1AE-4F08-AB1C-160ABD4FEA2F",
-            "departmentId" => "55A3BBA9-CE0F-4E1C-9587-9E3709CF2F25",
-            "jobRoleId" => "FE96FEBA-DE91-4DA1-A809-499351D001F7",
-            "PhoneNumber" => 4555666777,
-            "TwoFactor" => TRUE,
-        );
+        // $upUser = array(
+        //     "firstName" => "Tonny",
+        //     "lastName" => "Bomber",
+        //     "userName" => "tombob@ComplyNet.com",
+        //     "email" => "tombob@ComplyNet.com",
+        //     "companyId" => "E4A89DDA-12BB-4341-844A-BBE400451274",
+        //     "locationId" => "8AB20AFF-C1AE-4F08-AB1C-160ABD4FEA2F",
+        //     "departmentId" => "55A3BBA9-CE0F-4E1C-9587-9E3709CF2F25",
+        //     "jobRoleId" => "FE96FEBA-DE91-4DA1-A809-499351D001F7",
+        //     "PhoneNumber" => 4555666777,
+        //     "TwoFactor" => TRUE,
+        // );
 
         // $response = $this
         // ->complynet
@@ -182,16 +182,16 @@ class Testing extends CI_Controller
         // //
         // _e($response, true, true);
 
-        $response = $this
-        ->complynet
-        ->setMode('fake')
-        ->authenticate()
-        ->disableUser(
-            "tombob@ComplyNet.com"
+        // $response = $this
+        // ->complynet
+        // ->setMode('fake')
+        // ->authenticate()
+        // ->disableUser(
+        //     "tombob@ComplyNet.com"
 
-        );
-        //
-        _e($response, true, true);
+        // );
+        // //
+        // _e($response, true, true);
     }
 
 

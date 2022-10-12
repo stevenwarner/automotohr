@@ -1,30 +1,20 @@
 <?php
 
 /**
-* Name:  ComplyNet
-*
-* Version: 1.0
-*
-* Author: AutoMotoHR
-*
-* Added Awesomeness: Mubashir Ahmad, Aleem Shaukat
-*
-* Location: USA
-*
-* Created:  10.10.2022
-*
-* Description:  The library is used for link system with complynet.
-*
-* Requirements: PHP7 or above
-*
-*/
+ * ComplyNet
+ * 
+ * Support php version 7.4.24
+ * 
+ * @author  AutomotoHR <www.automotohr.com>
+ * @version 1.0
+ */
 
 class ComplyNet
 {
 
     /**
      *
-     * CI intance
+     * CI instance
      * 
      **/
     private $CI;
@@ -62,7 +52,7 @@ class ComplyNet
      *
      * @var dateTime
      * 
-     * For camparing
+     * Holds the current date and time
      * 
      **/
     private $dateWithTime;
@@ -76,27 +66,32 @@ class ComplyNet
      **/
     private $complynetUser;
 
+
+    /**
+     * Entry point of class
+     */
     public function __construct()
     {
-        //
+        // Save CI instance
         $this->CI = &get_instance();
-        //
+        // Load the model
         $this->CI->load->model('2022/Complynet_model', 'complynet_model');
-        //
+        // Saves local reference of model
         $this->complynetModel = $this->CI->complynet_model;
-        //
+        // Nullifies the token
         $this->token = null;
-        //
+        // Empty response
         $this->response = [];
-        //
+        // Saves current date and time
         $this->dateWithTime = date('Y-m-d H:i:s', strtotime('now'));
-        //
+        // Saves the credentials
         $this->complynetUser = getCreds("AHR")->COMPLY_NET;
     }
 
     /**
      * Get access_token
-     *
+     * 
+     * @method curlCall
      * 
      * @return Array
      */
@@ -140,8 +135,14 @@ class ComplyNet
                     "token" => $record["access_token"],
                     "token_type" => $record["token_type"],
                     "expires_in" => $record["expires_in"],
-                    "issued" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $record[".issued"])->format('Y-m-d H:i:s'),
-                    "expires" => DateTime::createFromFormat('D, d M Y H:i:s \G\M\T', $record[".expires"])->format('Y-m-d H:i:s')
+                    "issued" => DateTime::createFromFormat(
+                        'D, d M Y H:i:s \G\M\T',
+                        $record[".issued"]
+                    )->format('Y-m-d H:i:s'),
+                    "expires" => DateTime::createFromFormat(
+                        'D, d M Y H:i:s \G\M\T',
+                        $record[".expires"]
+                    )->format('Y-m-d H:i:s')
                 ]);
             //
             $record["token"] =  $record["access_token"];
@@ -169,10 +170,7 @@ class ComplyNet
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'Company',
             [],
-            'GET',
-            [
-                'Content-Type: application/json'
-            ]
+            'GET'
         );
         //
         return $result;
@@ -193,12 +191,9 @@ class ComplyNet
         }
         //
         $result = $this->curlCall(
-            $this->complynetUser->API_URL . 'Location?companyId='.$companyId,
+            $this->complynetUser->API_URL . 'Location?companyId=' . $companyId,
             [],
-            'GET',
-            [
-                'Content-Type: application/json'
-            ]
+            'GET'
         );
         //
         return $result;
@@ -219,12 +214,9 @@ class ComplyNet
         }
         //
         $result = $this->curlCall(
-            $this->complynetUser->API_URL . 'Department?LocationId='.$locationId,
+            $this->complynetUser->API_URL . 'Department?LocationId=' . $locationId,
             [],
-            'GET',
-            [
-                'Content-Type: application/json'
-            ]
+            'GET'
         );
         //
         return $result;
@@ -251,10 +243,7 @@ class ComplyNet
                 "ParentId" => $locationId
 
             ],
-            'POST',
-            [
-                'Content-Type: application/json'
-            ]
+            'POST'
         );
         //
         return $result;
@@ -285,10 +274,7 @@ class ComplyNet
                 "Name" => $departmentName,
                 "IsActive" => $isActive
             ],
-            'PUT',
-            [
-                'Content-Type: application/json'
-            ]
+            'PUT'
         );
         //
         return $result;
@@ -313,10 +299,7 @@ class ComplyNet
             [
                 "Id" => $departmentId,
             ],
-            'DELETE',
-            [
-                'Content-Type: application/json'
-            ]
+            'DELETE'
         );
         //
         return $result;
@@ -337,12 +320,9 @@ class ComplyNet
         }
         //
         $result = $this->curlCall(
-            $this->complynetUser->API_URL . 'JobRole?DepartmentId='.$departmentId,
+            $this->complynetUser->API_URL . 'JobRole?DepartmentId=' . $departmentId,
             [],
-            'GET',
-            [
-                'Content-Type: application/json'
-            ]
+            'GET'
         );
         //
         return $result;
@@ -368,10 +348,7 @@ class ComplyNet
                 "Name" => $jobRoleName,
                 "ParentId" => $departmentId
             ],
-            'POST',
-            [
-                'Content-Type: application/json'
-            ]
+            'POST'
         );
         //
         return $result;
@@ -402,10 +379,7 @@ class ComplyNet
                 "Name" => $jobRoleName,
                 "IsActive" => $isActive
             ],
-            'PUT',
-            [
-                'Content-Type: application/json'
-            ]
+            'PUT'
         );
         //
         return $result;
@@ -430,10 +404,7 @@ class ComplyNet
             [
                 "Id" => $jobRoleId,
             ],
-            'DELETE',
-            [
-                'Content-Type: application/json'
-            ]
+            'DELETE'
         );
         //
         return $result;
@@ -454,12 +425,9 @@ class ComplyNet
         }
         //
         $result = $this->curlCall(
-            $this->complynetUser->API_URL . 'User?username='.$userName,
+            $this->complynetUser->API_URL . 'User?username=' . $userName,
             [],
-            'GET',
-            [
-                'Content-Type: application/json'
-            ]
+            'GET'
         );
         //
         return $result;
@@ -482,7 +450,8 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function createUser($user) {
+    public function createUser($user)
+    {
         //
         if ($this->mode == 'fake') {
             return $this->fakeUserResponse("create");
@@ -491,10 +460,7 @@ class ComplyNet
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'User',
             $user,
-            'POST',
-            [
-                'Content-Type: application/json'
-            ]
+            'POST'
         );
         //
         return $result;
@@ -517,7 +483,8 @@ class ComplyNet
      * 
      * @return Array
      */
-    public function updateUser($user) {
+    public function updateUser($user)
+    {
         //
         if ($this->mode == 'fake') {
             return $this->fakeUserResponse("update");
@@ -526,10 +493,7 @@ class ComplyNet
         $result = $this->curlCall(
             $this->complynetUser->API_URL . 'User',
             $user,
-            'PUT',
-            [
-                'Content-Type: application/json'
-            ]
+            'PUT'
         );
         //
         return $result;
@@ -554,10 +518,7 @@ class ComplyNet
             [
                 "userName" => $userName,
             ],
-            'DELETE',
-            [
-                'Content-Type: application/json'
-            ]
+            'DELETE'
         );
         //
         return $result;
@@ -631,6 +592,8 @@ class ComplyNet
         //
         return json_decode($response, true);
     }
+
+    // Fake data generators
 
     /**
      * Fake company generator
@@ -734,7 +697,7 @@ class ComplyNet
             $response["Name"] = " General Manager";
             $response["IsActive"] = FALSE;
         } else if ($type == "get") {
-             $response = [[
+            $response = [[
                 "Id" => "1F9F9677-2CE0-43B3-A418-0815334B706BD",
                 "Name" => " F&I Manager"
             ], [
@@ -772,7 +735,6 @@ class ComplyNet
             $response["jobRoleId"] = "FE96FEBA-DE91-4DA1-A809-499351D001F7";
             $response["PhoneNumber"] = "5555555555";
             $response["TwoFactor"] = TRUE;
-
         } else {
             $response = "N/A";
         }
