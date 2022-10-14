@@ -70,7 +70,48 @@ $(function ComplyNetManagement(){
         .done(function(resp){
             //
             if(resp.code == 'NR'){
-                return showCompanyOnboardPopup();
+                return showCompanyOnboardPopup(resp.complynetCompanies);
+            }
+
+            if(resp.code == 'AR'){
+                loader(false)
+                $('.jsContentArea').removeClass('hidden');
+                $('.jsContentArea .company_info').removeClass('hidden');
+                $('.jsContentArea .location_info').removeClass('hidden');
+                //
+                let companyRow = '';
+                //
+                if (resp.compantDetail.status == 1) {
+                    statusText ='      <strong class="text-success">ACTIVE</strong>';
+                    statusButton ='    <button class="btn btn-danger jsChangeCompanyStatus" data-row_id="'+resp.compantDetail.sid+'" data-status="0">Disable</button>';
+                } else {
+                    statusText ='      <strong class="text-warning">DEACTIVE</strong>';
+                    statusButton ='    <button class="btn btn-success jsChangeCompanyStatus" data-row_id="'+resp.compantDetail.sid+'" data-status="1">Enable</button>';
+                }
+                //
+                companyRow +='<tr>';
+                companyRow +='  <td class="csVm">';
+                companyRow +='      <strong>'+resp.compantDetail.automotohr_name+'</strong> <br>';
+                companyRow +='      <span>Id: '+resp.compantDetail.automotohr_id+'</span>';
+                companyRow +='  </td>';
+                companyRow +='  <td class="csVm">';
+                companyRow +='      <strong>'+resp.compantDetail.complynet_name+'</strong><br />';
+                companyRow +='      <span>Id: '+resp.compantDetail.complynet_id+'</span>';
+                companyRow +='  </td>';
+                companyRow +='  <td class="csVm">';
+                companyRow +='      <span>'+ moment(resp.compantDetail.created_at).format('MMM Do YYYY, ddd H:m:s')+'</span>';
+                companyRow +='  </td>';
+                companyRow +='  <td class="csVm status_'+resp.compantDetail.sid+'">';
+                companyRow +=       statusText;
+                companyRow +='  </td>';
+                companyRow +='  <td class="csVm">';
+                companyRow +='      <button class="btn btn-success">View</button>';
+                companyRow +='      <button class="btn btn-warning jsEditCompany">Edit</button>';
+                companyRow +=       statusButton;
+                companyRow +='  </td>';
+                companyRow +='</tr>';
+                //
+                $('.jsContentArea .company_info tbody').html(companyRow);
             }
         })
         .fail(terminateCall);
@@ -81,7 +122,7 @@ $(function ComplyNetManagement(){
      *
      * @depends Modal
      */
-    function showCompanyOnboardPopup(){
+    function showCompanyOnboardPopup(complynetCompanies){
         //
         Modal({
             Id: 'jsCompanyOnboardModal',
@@ -111,18 +152,21 @@ $(function ComplyNetManagement(){
             rows +='    <div class="col-sm-12">';
             rows +='        <label>AutomotoHR Company</label>';
             rows +='        <select id="jsAutomotoHrCompany" style="width: 100%;" disabled>';
-            rows +='            <option value="0">Company</option>';
+            rows +='            <option value="'+$("#jsParentCompany").val()+'">'+$("#jsParentCompany option:selected").text()+'</option>';
             rows +='        </select>';
             rows +='    </div>';
             rows +='    <div class="col-sm-12"><br />';
             rows +='        <label>ComplyNet Company</label>';
             rows +='        <select id="jsComplyNetCompany" style="width: 100%;">';
-            rows +='            <option value="0">[Please select a company]</option>';
+            rows +='            <option value="0">Select Company</option>';
+            $.each(complynetCompanies, function(k,v){
+                rows +='            <option value="'+v.Id+'">'+v.Name+'</option>';
+            });
             rows +='        </select>';
             rows +='    </div>';
             rows +='    <div class="col-sm-12 text-right">';
             rows +='        <hr />';
-            rows +='        <button class="btn btn-success">Save</button>';
+            rows +='        <button class="btn btn-success jsLinkCompany">Save</button>';
             rows +='        <button class="btn btn-black jsModalCancel">Cancel</button>';
             rows +='    </div>';
             rows +='</div>';
@@ -135,6 +179,116 @@ $(function ComplyNetManagement(){
             
         });
     }
+
+    /**
+     * Link AutomotoHR company with ComplyNet
+     */
+    $(document).on('click', '.jsLinkCompany', function(event) {
+        //
+        event.preventDefault();
+        //
+        var CNCompany = $('#jsComplyNetCompany').val();
+        //
+        if (CNCompany == 0 || CNCompany == undefined) {
+            alertify.alert("Notice","Please select ComplyNet Company to link");
+            return;
+        }
+        $('[data-page="jsCompanyOnboardModalLoader"]').show(0);
+        //
+        var obj = {
+            AHRCompanySid: $('#jsAutomotoHrCompany').val(),
+            AHRCompanyName: $('#jsAutomotoHrCompany option:selected').text().trim(),
+            CNCompanySid: CNCompany,
+            CNCompanyName: $('#jsComplyNetCompany option:selected').text().trim()
+        };
+        //
+        $.post(
+            window.location.origin+'/link_company',
+            obj
+        )
+        .done(function(resp){
+            $('[data-page="jsCompanyOnboardModalLoader"]').hide(0);
+            //
+            if(resp.code == 'RS'){
+                alertify.alert('Success!', resp.message, function(){
+                    parentCompanyId = $('#jsAutomotoHrCompany').val();
+                    $("#jsCompanyOnboardModal").hide();
+                    getCompanyDetails();
+                });
+                return;
+            }
+            //
+            alertify.alert('Notice!', resp.message);
+           
+        })
+        .fail(terminateCall);
+    });
+
+     /**
+     * Disable complynet company against AutoMotoHR
+     */
+    $(document).on('click', '.jsEditCompany', function(event) {
+        console.log("pakistan")
+        //
+        event.preventDefault();
+        //
+        $.get(window.location.origin+'/get_complynet_companies')
+        .done(function(resp){
+            //
+            if(resp.code == 'SF'){
+                return showCompanyOnboardPopup(resp.complynetCompanies);
+            }
+        })
+        .fail(terminateCall);
+        
+    });
+
+
+    /**
+     * Disable complynet company against AutoMotoHR
+     */
+    $(document).on('click', '.jsChangeCompanyStatus', function(event) {
+        //
+        event.preventDefault();
+        var companyRowSid = $(this).data("row_id");
+        var changeStatus = $(this).data("status");
+        //
+        $('[data-page="jsCompanyOnboardModalLoader"]').show(0);
+        //
+        var obj = {
+            rowSid: companyRowSid,
+            status: changeStatus
+        };
+        //
+        $.post(
+            window.location.origin+'/change_link_company_status',
+            obj
+        )
+        .done(function(resp){
+            $('[data-page="jsCompanyOnboardModalLoader"]').hide(0);
+            //
+            if(resp.code == 'CS'){
+                if (changeStatus == 1) {
+                    $('.status_'+companyRowSid).html('<strong class="text-success">ACTIVE</strong>');
+                    $('.jsChangeCompanyStatus').removeClass('btn-success');
+                    $('.jsChangeCompanyStatus').addClass('btn-danger');
+                    $('.jsChangeCompanyStatus').data('status','0');
+                    $(".jsChangeCompanyStatus").html('Disable');
+                } else {
+                    $('.status_'+companyRowSid).html('<strong class="text-warning">DEACTIVE</strong>');
+                    $('.jsChangeCompanyStatus').removeClass('btn-danger');
+                    $('.jsChangeCompanyStatus').addClass('btn-success');
+                    $('.jsChangeCompanyStatus').data('status','1');
+                    $(".jsChangeCompanyStatus").html('Enable');
+                }
+                //
+                alertify.alert('Success!', resp.message);
+                return;
+            }
+           
+        })
+        .fail(terminateCall);
+    });
     
     /**
      * Empty callback

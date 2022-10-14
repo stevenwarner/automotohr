@@ -37,7 +37,7 @@
                             <div class="jsContentArea hidden">
                                 <hr />
                                 <!-- Company Information -->
-                                <div class="panel panel-success">
+                                <div class="panel panel-success company_info">
                                     <div class="panel-heading">
                                         <h4 style="padding: 0; margin: 0;"><strong>Basic Information</strong></h4>
                                     </div>
@@ -87,7 +87,7 @@
                                 </div>
 
                                 <!-- Location Information -->
-                                <div class="panel panel-success">
+                                <div class="panel panel-success location_info">
                                     <div class="panel-heading">
                                         <h4 style="padding: 0; margin: 0;"><strong>Locations Information</strong></h4>
                                     </div>
@@ -235,5 +235,6 @@
 <link rel="stylesheet" href="<?=base_url('assets/css/SystemModel.css');?>">
 <style> .csVm{ vertical-align: middle !important;} </style>
 <!--  -->
+<script type="text/javascript" src="<?= base_url('assets/js/moment.min.js'); ?>"></script>
 <script src="<?=base_url('assets/js/SystemModal.js');?>"></script>
 <script src="<?=base_url(_m('assets/2022/js/complynet/admin', 'js', time()));?>"></script>

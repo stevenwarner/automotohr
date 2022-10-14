@@ -1,5 +1,7 @@
 <?php
 
+defined('BASEPATH') || exit('No direct script access allowed');
+
 /**
  * ComplyNet
  * 
@@ -9,7 +11,7 @@
  * @version 1.0
  */
 
-class ComplyNet
+class Complynet_lib
 {
 
     /**
@@ -606,10 +608,10 @@ class ComplyNet
             "Id" => "739FBDEA-2CE0-43B3-A418-0815334B706B",
             "Name" => " ComplyNet"
         ], [
-            "Id" => "739FBDEA-135B-4FFD-803B-884A441F6C86",
+            "Id" => "739FBDEA-123B-4FFD-803B-884A441F6C86",
             "Name" => " My Dealer Group "
         ], [
-            "Id" => "739FBDEA-135B-4FFD-803B-884A441F6C86",
+            "Id" => "739FBDEA-145B-4GGD-8139-884A441F6D87",
             "Name" => " AutomotoHR "
         ]];
     }

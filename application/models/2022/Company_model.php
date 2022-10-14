@@ -386,4 +386,24 @@ class Company_model extends CI_Model {
         return $this->db->insert_id();
     }
 
+    /**
+     * Update company data to table
+     *
+     * @param string $table
+     * @param array  $where
+     * @param array $updateArray
+     *
+     * 
+     */
+    public function updateData(
+        string $table,
+        array $where,
+        array $updateArray
+    ){
+        //
+        $this->db->where($where);
+        $this->db->update($table, $updateArray);
+        //
+    }
+
 }

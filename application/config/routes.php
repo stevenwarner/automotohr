@@ -1593,3 +1593,6 @@ $route['manage_admin/complynet']['get'] = "manage_admin/2022/Complynet/manage";
 $route['manage_admin/complynet/(:num)']['get'] = "manage_admin/2022/Complynet/manage/$1";
 
 $route['complynet/get_company_details/(:num)']['get'] = "2022/Complynet/getCompanyDetails/$1";
+$route['link_company']['post'] = "2022/Complynet/link_company";
+$route['change_link_company_status']['post'] = "2022/Complynet/change_company_status";
+$route['get_complynet_companies']['get'] = "2022/Complynet/get_complynet_companies";

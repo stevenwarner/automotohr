@@ -8,7 +8,7 @@ class Testing extends CI_Controller
         parent::__construct();
         // Call the model
         $this->load->model("test_model", "tm");
-        $this->load->library('complynet');
+        $this->load->library('complynet_lib');
     }
 
     public function complynet()
@@ -182,16 +182,16 @@ class Testing extends CI_Controller
         // //
         // _e($response, true, true);
 
-        // $response = $this
-        // ->complynet
-        // ->setMode('fake')
-        // ->authenticate()
-        // ->disableUser(
-        //     "tombob@ComplyNet.com"
+        $response = $this
+        ->complynet_lib
+        ->setMode('fake')
+        ->authenticate()
+        ->disableUser(
+            "tombob@ComplyNet.com"
 
-        // );
-        // //
-        // _e($response, true, true);
+        );
+        //
+        _e($response, true, true);
     }
 
 
