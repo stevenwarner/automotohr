@@ -1591,8 +1591,21 @@ $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$
  */
 $route['manage_admin/complynet']['get'] = "manage_admin/2022/Complynet/manage";
 $route['manage_admin/complynet/(:num)']['get'] = "manage_admin/2022/Complynet/manage/$1";
-
+//
+//Company routes
 $route['complynet/get_company_details/(:num)']['get'] = "2022/Complynet/getCompanyDetails/$1";
-$route['link_company']['post'] = "2022/Complynet/link_company";
-$route['change_link_company_status']['post'] = "2022/Complynet/change_company_status";
-$route['get_complynet_companies']['get'] = "2022/Complynet/get_complynet_companies";
+$route['link_company']['post'] = "2022/Complynet/linkCompany";
+$route['delete_company_link']['post'] = "2022/Complynet/deleteCompanyLink";
+$route['get_complynet_companies']['get'] = "2022/Complynet/getComplynetCompanies";
+//
+//location routes
+$route['complynet/get_company_locations_details/(:num)']['get'] = "2022/Complynet/getCompanyLocationsDetails/$1";
+$route['complynet/get_complynet_locations/(:num)']['get'] = "2022/Complynet/getComplynetLocationsDetails/$1";
+$route['link_location']['post'] = "2022/Complynet/link_location";
+$route['delete_location_link']['post'] = "2022/Complynet/deleteLocationLink";
+//
+//location routes
+$route['complynet/get_company_departments_details/(:num)']['get'] = "2022/Complynet/getCompanyDepartmentsDetails/$1";
+// $route['complynet/get_complynet_locations/(:num)']['get'] = "2022/Complynet/getComplynetLocationsDetails/$1";
+// $route['link_location']['post'] = "2022/Complynet/link_location";
+// $route['delete_location_link']['post'] = "2022/Complynet/deleteLocationLink";

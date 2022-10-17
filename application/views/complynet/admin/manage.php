@@ -94,7 +94,7 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-sm-12 text-right">
-                                                <button class="btn btn-success">Add Location</button>
+                                                <button class="btn btn-success jsLinkLocation">Link Location</button>
                                             </div>
                                             <div class="col-sm-12">
                                                 <div class="table-responsive">
@@ -102,12 +102,14 @@
                                                         <caption></caption>
                                                         <thead>
                                                             <tr>
-                                                                <th scope="col">Location</th>
-                                                                <th scope="col">ComplyNet's Company</th>
+                                                                <th scope="col">AutomotoHR's Location</th>
+                                                                <th scope="col">ComplyNet's Location</th>
+                                                                <th scope="col">Linked At</th>
+                                                                <th scope="col">Status</th>
                                                                 <th scope="col">Actions</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody>
+                                                        <tbody >
                                                             <tr>
                                                                 <td class="csVm">
                                                                     <strong>PO BOX 123, Street 1, California, USA</strong>
@@ -118,6 +120,12 @@
                                                                     <strong>PO BOX 123, Street 1, California, USA</strong>
                                                                     <br />
                                                                     <span>Id: 1234-4567-91236-98745</span>
+                                                                </td>
+                                                                <td class="csVm">
+                                                                    <span>Oct 20th, Wednesday, 2022</span>
+                                                                </td>
+                                                                <td class="csVm">
+                                                                    <strong class="text-success">ACTIVE</strong>
                                                                 </td>
                                                                 <td class="csVm">
                                                                     <button class="btn btn-warning">Edit</button>

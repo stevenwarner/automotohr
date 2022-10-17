@@ -387,7 +387,7 @@ class Company_model extends CI_Model {
     }
 
     /**
-     * Update company data to table
+     * Update data into table
      *
      * @param string $table
      * @param array  $where
@@ -403,6 +403,24 @@ class Company_model extends CI_Model {
         //
         $this->db->where($where);
         $this->db->update($table, $updateArray);
+        //
+    }
+
+    /**
+     * Delete data from table
+     *
+     * @param string $table
+     * @param array  $where
+     *
+     * 
+     */
+    public function deleteRow(
+        string $table,
+        array $where
+    ){
+        //
+        $this->db->where($where);
+        $this->db->delete($table);
         //
     }
 

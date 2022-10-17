@@ -625,13 +625,13 @@ class Complynet_lib
     {
         return [[
             "Id" => "1F9F9677-2CE0-43B3-A418-0815334B706B",
-            "Name" => " Human Resource"
+            "Name" => " D123 Down Town"
         ], [
             "Id" => "1F9F9677-135B-4FFD-803B-884A441F6C86",
-            "Name" => " Business Development "
+            "Name" => " 95 Deep Down Street "
         ], [
             "Id" => "1F9F9677-135B-4FFD-803B-884A441F6C87",
-            "Name" => " Development "
+            "Name" => "New Airport Newyork "
         ]];
     }
 
