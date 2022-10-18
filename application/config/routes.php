@@ -1606,6 +1606,6 @@ $route['delete_location_link']['post'] = "2022/Complynet/deleteLocationLink";
 //
 //location routes
 $route['complynet/get_company_departments_details/(:num)']['get'] = "2022/Complynet/getCompanyDepartmentsDetails/$1";
-// $route['complynet/get_complynet_locations/(:num)']['get'] = "2022/Complynet/getComplynetLocationsDetails/$1";
-// $route['link_location']['post'] = "2022/Complynet/link_location";
-// $route['delete_location_link']['post'] = "2022/Complynet/deleteLocationLink";
+
+//
+$route['manage_admin/complynet/report'] = 'manage_admin/2022/Complynet/report';
