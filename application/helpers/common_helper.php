@@ -15685,3 +15685,36 @@ if (!function_exists('addColumnsForDocumentAssigned')) {
         }
     }
 }
+
+
+//
+if (!function_exists('getDepartments')) {
+    function getDepartments($company_sid) {
+               $CI = &get_instance();
+               $CI->db->select('sid,name');
+               $CI->db->where('company_sid', $company_sid);
+               $CI->db->where('status', 1);
+               $CI->db->where('is_deleted', 0);
+               $record_obj = $CI->db->get('departments_management');
+               $record_arr = $record_obj->result_array();
+               $record_obj->free_result();
+       
+               if (!empty($record_arr)) {
+                   return $record_arr;
+               } else {
+                   return array();
+               }
+    }
+}
+
+
+//
+if (!function_exists('getcompanyComplynetstatus')) {
+    function getcompanyComplynetstatus($company_sid) {
+               $CI = &get_instance();
+               $CI->db->select('complynet_status');
+               $CI->db->where('sid', $company_sid);
+               $record_obj = $CI->db->get('users')->row();
+               return $record_obj;
+         }
+}

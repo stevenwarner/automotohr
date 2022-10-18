@@ -24,6 +24,11 @@
                                     <form id="employers_add" action="" method="POST" enctype="multipart/form-data" autocomplete="off">
                                         <div class="universal-form-style-v2">
                                             <ul>
+                                                <?php
+                                                $complynetstatus = getcompanyComplynetstatus($company_sid);
+                                                echo $complynetstatus->complynet_status ? '<p class="hr-required">These fields are required Department, Job Title </p>' : '';
+                                                ?>
+
                                                 <li class="form-col-100 autoheight">
                                                     <label>First Name<span class="staric">*</span></label>
                                                     <input type="text" autocomplete="nope" class="invoice-fields" name="first_name" id="first_name" value="<?php
@@ -78,6 +83,22 @@
                                                 </li>
 
 
+                                                <li class="form-col-100 autoheight">
+                                                    <label>Department</label>
+                                                    <select class="invoice-fields" name="department" id="department">
+                                                        <option value="">Please Select</option>
+
+                                                        <?php
+                                                        $departments = getDepartments($company_sid);
+                                                        if (!empty($departments)) {
+                                                            foreach ($departments as $department_row) {
+                                                        ?>
+                                                                <option value="<?php echo $department_row['sid']; ?>"><?php echo $department_row['name']; ?></option>
+
+                                                        <?php }
+                                                        } ?>
+                                                    </select>
+                                                </li>
 
 
 
@@ -381,7 +402,7 @@
     $('.startdate').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
     }).val();
 </script>

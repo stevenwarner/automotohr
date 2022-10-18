@@ -1,7 +1,7 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
-        <div class="row">		
+        <div class="row">
             <div class="inner-content">
                 <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
@@ -17,11 +17,17 @@
                                         <div class="heading-title page-title">
                                             <h1 class="page-title"><?php echo $company_name; ?></h1>
                                         </div>
-                                        
-                                        <div class="edit-template-from-main" >
+
+                                        <div class="edit-template-from-main">
                                             <form method="post" enctype="multipart/form-data" id="form_add_new_employer">
                                                 <?php echo form_hidden('company_sid', $company_sid); ?>
                                                 <p>Fields marked with an asterisk (<span class="hr-required">*</span>) are mandatory</p>
+
+                                                <?php
+                                                $complynetstatus = getcompanyComplynetstatus($company_sid);
+                                                echo $complynetstatus->complynet_status ? '<p class="hr-required">These fields are required Department, Job Title </p>' : '';
+                                                ?>
+
                                                 <div class="row">
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
@@ -41,7 +47,7 @@
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
-                                                            <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?> 
+                                                            <?php echo form_label('User Name <span class="hr-required">*</span>', 'username'); ?>
                                                             <?php echo form_input('username', set_value('username'), 'class="hr-form-fileds"'); ?>
                                                             <?php echo form_error('username'); ?>
                                                         </div>
@@ -87,20 +93,22 @@
                                                             <?php echo form_error('security_access_level'); ?>
                                                         </div>
                                                     </div>
-                                                    
-                                                   <!--  <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+
+                                                    <!--  <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
-                                                            <?php //echo form_label('Access Level Plus ', 'access_level_plus'); ?>
+                                                            <?php //echo form_label('Access Level Plus ', 'access_level_plus'); 
+                                                            ?>
                                                             <div class="hr-select-dropdown">
                                                                 <select name="access_level_plus" class="invoice-fields">
                                                                     <option value="0">No</option>
                                                                     <option value="1">Yes</option>
                                                                 </select>
                                                             </div>
-                                                            <?php //echo form_error('access_level_plus'); ?>
+                                                            <?php //echo form_error('access_level_plus'); 
+                                                            ?>
                                                         </div>
                                                     </div> -->
-                                                    
+
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
                                                             <?php echo form_label('Access Level Plus <span class="hr-required">*</span>', 'access_level_plus'); ?>
@@ -116,12 +124,34 @@
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
+                                                            <?php echo form_label('Department', 'department'); ?>
+                                                            <div class="hr-select-dropdown">
+                                                                <select name="department" class="invoice-fields" id="department">
+                                                                    <option value="">Please Select</option>
+
+                                                                    <?php
+                                                                    $departments = getDepartments($company_sid);
+                                                                    if (!empty($departments)) {
+                                                                        foreach ($departments as $department_row) {
+                                                                    ?>
+                                                                            <option value="<?php echo $department_row['sid']; ?>"><?php echo $department_row['name']; ?></option>
+
+                                                                    <?php }
+                                                                    } ?>
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                        <div class="field-row">
                                                             <?php echo form_label('Direct Business Number', 'direct_business_number'); ?>
                                                             <?php echo form_input('direct_business_number', set_value('direct_business_number'), 'class="hr-form-fileds"'); ?>
                                                             <?php echo form_error('direct_business_number'); ?>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
                                                             <?php echo form_label('Cell Number', 'cell_number'); ?>
@@ -151,42 +181,41 @@
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
-                                                        <label>Gender:</label>
-                                                    <select class="invoice-fields" name="gender">
-                                                        <option value="">Please Select Gender</option>
-                                                        <option <?= $user_information["gender"] == 'male' ? 'selected' : ''; ?> value="male">Male</option>
-                                                        <option <?= $user_information["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
-                                                        <option <?= $user_information["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
-                                                    </select>   
+                                                            <label>Gender:</label>
+                                                            <select class="invoice-fields" name="gender">
+                                                                <option value="">Please Select Gender</option>
+                                                                <option <?= $user_information["gender"] == 'male' ? 'selected' : ''; ?> value="male">Male</option>
+                                                                <option <?= $user_information["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
+                                                                <option <?= $user_information["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
+                                                            </select>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
-                                                        <div class="row js-timezone-row">
-                                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                            <div class=" input-grey ">
-                                                                <?php $field_id = 'timezone'; ?>
-                                                                <?php echo form_label('Timezone:', $field_id); ?>
-                                                                <?= timezone_dropdown(
-                                                                    '',
-                                                                    array(
-                                                                        'class' => 'invoice-fields js-timezone ',
-                                                                        'id' => 'timezone',
-                                                                        'name' => 'timezone'
-                                                                    )
-                                                                ); ?>
+                                                            <div class="row js-timezone-row">
+                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                    <div class=" input-grey ">
+                                                                        <?php $field_id = 'timezone'; ?>
+                                                                        <?php echo form_label('Timezone:', $field_id); ?>
+                                                                        <?= timezone_dropdown(
+                                                                            '',
+                                                                            array(
+                                                                                'class' => 'invoice-fields js-timezone ',
+                                                                                'id' => 'timezone',
+                                                                                'name' => 'timezone'
+                                                                            )
+                                                                        ); ?>
 
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                                        </div>
-                                                                        </div>
-
 
                                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                                         <div class="field-row">
-                                                            <input name="action" type="hidden" id="submit_action" value="" >
+                                                            <input name="action" type="hidden" id="submit_action" value="">
                                                             <input type="button" name="action" value="Add New Employer" onclick="return fValidateForm('addonly')" class="site-btn">
                                                             <input type="button" name="action" value="Add New Employer & Send Email" onclick="return fValidateForm('sendemail')" class="site-btn">
                                                         </div>
@@ -206,12 +235,12 @@
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('.datepicker').datepicker({
             changeYear: true,
             changeMonth: true,
             dateFormat: 'mm-dd-yy',
-            yearRange: "<?=JOINING_DATE_LIMIT;?>"
+            yearRange: "<?= JOINING_DATE_LIMIT; ?>"
         });
     });
 
@@ -278,12 +307,12 @@
 
     function check_file_all(val) {
         var fileName = $("#" + val).val();
-        
+
         if (fileName.length > 0) {
             $('#name_' + val).html(fileName.substring(0, 45));
             var ext = fileName.split('.').pop();
             ext = ext.toLowerCase();
-            
+
             if (val == 'profile_picture') {
                 if (ext != "jpg" && ext != "jpeg" && ext != "png" && ext != "jpe" && ext != "JPG" && ext != "JPEG" && ext != "PNG" && ext != "JPE") {
                     $("#" + val).val(null);

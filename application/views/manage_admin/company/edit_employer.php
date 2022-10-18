@@ -243,6 +243,28 @@
                                                         <?php echo form_error('access_level_plus'); ?>
                                                     </div>
                                                 </li>
+
+                                                <li>
+                                                    <label>Department</label>
+                                                    
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="hr-select-dropdown">
+                                                            <select name="department" class="invoice-fields" id="department">
+                                                            <option value="">Please Select</option>
+                                                                <?php
+                                                                    $departments = getDepartments($data['parent_sid']);
+                                                                    if (!empty($departments)) {
+                                                                        foreach ($departments as $department_row) {
+                                                                    ?>
+                                                                            <option value="<?php echo $department_row['sid']; ?>"><?php echo $department_row['name']; ?></option>
+
+                                                                    <?php }
+                                                                    } ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </li>
+
                                                 
                                                 <?php if(IS_TIMEZONE_ACTIVE && $show_timezone != '') { ?>
                                                 <li class="js-timezone-row">
@@ -669,6 +691,9 @@
 </style>
 
 <script>
+
+$("#department").val('<?php echo $data['department_sid'];?>');
+
     $(function(){
         //
         $('.jsToLowerCase').popover({

@@ -10,8 +10,10 @@ class employers extends Admin_Controller
     {
         parent::__construct();
         $this->load->library('ion_auth');
+        $this->load->library('complynet');
         $this->load->model('manage_admin/company_model');
         $this->load->model('hr_documents_management_model');
+        $this->load->model('complynet_request_handler_model');
         $this->load->library("pagination");
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
@@ -351,6 +353,7 @@ class employers extends Admin_Controller
             $data['complynet_status'] = $this->input->post('complynet_status');
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
+            $data['department_sid'] = $this->input->post('department');
             //
             if ($data['gender'] != "other") {
                 $updateGender = array();
@@ -436,6 +439,10 @@ class employers extends Admin_Controller
 
             $this->company_model->update_user($sid, $data, 'Employer');
 
+            // Update User on complynet
+            $this->complynet_request_handler_model->complynet_user_request($sid, 'updateEmployee');
+            //
+
             if ($action == 'Save') {
                 redirect('manage_admin/employers/', 'refresh');
             } else {
@@ -489,6 +496,7 @@ class employers extends Admin_Controller
                 $action = $this->input->post('action');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+                $department = $this->input->post('department');
                 $salt = generateRandomString(48);
 
                 if ($registration_date != NULL) {
@@ -516,9 +524,16 @@ class employers extends Admin_Controller
                 $insert_data['salt'] = $salt;
                 $insert_data['gender'] = $gender;
                 $insert_data['timezone'] = $timezone;
+                $insert_data['department_sid'] = $department;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
+
+
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
+                //Create Employee on Complynet
+                $this->complynet_request_handler_model->complynet_user_request($sid, 'addEmployee');
+                //
+
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');
 
                 if ($profile_picture != 'error') {
@@ -565,6 +580,8 @@ class employers extends Admin_Controller
 
         if ($action == 'delete') {
             $this->company_model->delete_employer($employer_id);
+            // Delete Employee on Complynet
+            $this->complynet_request_handler_model->complynet_user_request($employer_id, 'disableEmployee');
         }
     }
 
@@ -694,6 +711,9 @@ class employers extends Admin_Controller
             $data_to_insert['employee_status'] = 6;
             $this->company_model->terminate_user($employer_id, $data_to_insert);
 
+            //Disable user on complynet
+            $this->complynet_request_handler_model->complynet_user_request($employer_id, 'disableEmployee');
+
             $data = array('active' => 0, 'general_status' => 'inactive');
             $this->company_model->update_user_status($employer_id, $data);
         } elseif ($action == 'active') {
@@ -803,8 +823,6 @@ class employers extends Admin_Controller
         $security_access_levels = $this->company_model->get_security_access_levels();
         $this->data['security_access_levels'] = $security_access_levels;
         $this->load->library('form_validation');
-
-
 
         if ($this->form_validation->run() === FALSE) {
             if ($employee_detail) {

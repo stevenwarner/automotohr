@@ -8,6 +8,8 @@ class Hire_onboarding_applicant extends CI_Controller
 
         $this->load->model('hire_onboarding_applicant_model');
         $this->load->model('onboarding_model');
+        $this->load->model('complynet_request_handler_model');
+
     }
 
     /**
@@ -553,7 +555,12 @@ class Hire_onboarding_applicant extends CI_Controller
             $update_flag = 1;
         }
 
+
+
         $this->hire_onboarding_applicant_model->update_company_employee($employer_data, $applicant_sid, $employee_sid, 0);
+        // Update User on complynet
+        $this->complynet_request_handler_model->complynet_user_request($employee_sid, 'updateEmployee');
+        //
 
         // now move all other information
 
@@ -630,6 +637,7 @@ class Hire_onboarding_applicant extends CI_Controller
             'documents' => $documents
         ];
         //
+        
         $this->hire_onboarding_applicant_model->save_merge_applicant_info($merge_applicant_data, $applicant_sid, $employee_sid);
         //
         $array['status'] = "success";

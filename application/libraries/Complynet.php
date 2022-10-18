@@ -584,7 +584,7 @@ class ComplyNet
             return [
                 "error" => [
                     'code' => $responseCode,
-                    'message' => $responseObj->error ?? $responseObj->Message
+                    'message' => $responseObj->error ? $responseObj->Message:''
                 ]
             ];
         }

@@ -11,13 +11,16 @@ class Employee_management extends Public_Controller
         $this->load->model('dashboard_model');
         $this->load->model('application_tracking_system_model');
         $this->load->model('portal_email_templates_model');
+        $this->load->model('complynet_request_handler_model');
+
         $this->form_validation->set_error_delimiters('<p class="error"><i class="fa fa-exclamation-circle"></i> ', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library("pagination");
+        $this->load->library('complynet');
     }
 
     public function archived_employee()
-    {   
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -343,6 +346,7 @@ class Employee_management extends Public_Controller
 
             $data["access_levels"] = $this->dashboard_model->get_security_access_levels();
             $data['send_mail'] = '1';
+            $data['company_sid'] = $company_id;
 
             if (isset($_POST['formsubmit']) && !isset($_POST['send_mail'])) {
                 $data['send_mail'] = '0';
@@ -400,12 +404,14 @@ class Employee_management extends Public_Controller
                 $employment_status = $this->input->post('employee-status');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+                $department = $this->input->post('department');
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 $start_date = reset_datetime(array('datetime' => $registration_date, '_this' => $this, 'from_format' => 'm-d-Y', 'format' => 'Y-m-d H:i:s'));
                 $verification_key = random_key() . "_csvImport";
                 $salt = generateRandomString(48);
                 $user_information = array();
+                $user_information['department_sid'] = $department;
                 $user_information['gender'] =  $gender;
                 $user_information['timezone'] = $timezone;
                 $user_information['first_name'] = $first_name;
@@ -434,9 +440,14 @@ class Employee_management extends Public_Controller
                     $user_information['profile_picture'] = $pictures;
                 }
 
+
                 if ($employee_type == 'direct_hiring') {
                     $user_information['username'] = $username;
                     $employee_sid = $this->employee_model->add_employee($user_information);
+                    //Create Employee on Complynet
+                    $this->complynet_request_handler_model->complynet_user_request($employee_sid, 'addEmployee');
+                    //
+
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;
                     $replacement_array['first_name'] = $first_name;
@@ -448,6 +459,10 @@ class Employee_management extends Public_Controller
                 } else {
                     $link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('employee_registration') . '/' . $verification_key . '">' . 'Update Login Credentials' . '</a>';
                     $employee_sid = $this->employee_model->add_employee($user_information);
+                    //Create Employee on Complynet
+                    $this->complynet_request_handler_model->complynet_user_request($employee_sid, 'addEmployee');
+
+
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;
                     $replacement_array['first_name'] = $first_name;
@@ -1674,6 +1689,14 @@ class Employee_management extends Public_Controller
                     $data_to_insert['full_employment_application'] = serialize($full_emp_app);
 
                     $this->dashboard_model->update_user($sid, $data_to_insert);
+
+                    // Update User on complynet
+                    $this->complynet_request_handler_model->complynet_user_request($sid, 'updateEmployee');
+
+                    //
+
+
+
                     // Handle timeoff policies
                     if (isset($_POST['policies']) && !empty($_POST['policies'])) {
                         $this->load->model('timeoff_model');
@@ -2279,6 +2302,11 @@ class Employee_management extends Public_Controller
                 //
                 $this->dashboard_model->update_user($sid, $data);
                 //
+
+                // Update User on complynet
+                $this->complynet_request_handler_model->complynet_user_request($sid, 'updateEmployee');
+
+
                 $difference = $this->findDifference($oldCompareData, $newCompareData);
 
                 //
