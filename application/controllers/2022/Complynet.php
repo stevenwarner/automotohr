@@ -27,6 +27,15 @@ class Complynet extends CI_Controller {
      * LNF Location Not Found
      * LF Location Found
      * DL Delete Locati0n
+     * DNF Department Not Found
+     * DF Department Found
+     * US Update Successfully
+     * DD Delete Department
+     * JRNF Job Role Not Found
+     * JRF Job Role Found
+     * DJR Delete Job Role
+     * ENF Employees Not Found
+     * EF Employees Found
      * 
      */
     public function __construct()
@@ -306,7 +315,7 @@ class Complynet extends CI_Controller {
      *
      * 
      */
-    public function link_location()
+    public function linkLocation()
     {   
         $AHRCompanySid = $this->input->post('companySid');
         $locationRowSid = $this->input->post('rowSid');
@@ -408,37 +417,545 @@ class Complynet extends CI_Controller {
     }
 
     /**
-     * Get the comply locations details
+     * Get the complynet departments details
      *
      * @param int $AHRCompanyId
      * 
      */
     public function getCompanyDepartmentsDetails ($AHRCompanyId) {
-        // check any Complynet location is linked with AHR Company
+        // check any Complynet departments is linked with AHR Company
         $doExists = $this->company_model->checkOrGetData(
             'complynet_departments',
             ['company_id' => $AHRCompanyId],
             ['sid'],
             'count_all_results'
         );
-        // in case company location not found
+        // in case company departmentsn not found
         if(!$doExists){
             return SendResponse(200, [
-                'code' => 'LNF',
-                'message' => 'No location linked yet.'
+                'code' => 'DNF',
+                'message' => 'No Department Found.'
             ]);
         }
-        // If company location found
-        $locationDetails = $this->company_model->checkOrGetData(
-            'complynet_locations',
+        // If company departments found
+        $departmentsDetails = $this->company_model->checkOrGetData(
+            'complynet_departments',
             ['company_id' => $AHRCompanyId],
-            ['sid', 'company_id', 'automotohr_location_id', 'automotohr_location_name', 'complynet_location_id', 'complynet_location_name', 'status', 'created_at'],
+            ['sid', 'company_id', 'complynet_location_id', 'complynet_department_id', 'complynet_department_name', 'automotohr_department_id', 'automotohr_department_name', 'status', 'created_at'],
             'result_array'
         );
         //
         return SendResponse(200, [
-            'code' => 'LF',
-            'locationDetails' => $locationDetails
+            'code' => 'DF',
+            'departmentsDetails' => $departmentsDetails
+        ]);
+    }
+
+    public function getComplynetLinkLocations ($AHRCompanyId) {
+        $locations = $this->company_model->checkOrGetData(
+            'complynet_locations',
+            ['company_id' => $AHRCompanyId],
+            ['sid', 'automotohr_location_name', 'complynet_location_id'],
+            'result_array'
+        );
+        // in case location already linked
+        if($locations){
+            return SendResponse(200, [
+                'code' => 'FS',
+                'locations' => $locations
+            ]);
+        } 
+        //
+        return SendResponse(200, [
+            'code' => 'LNF',
+            'message' => 'Please link the location first.'
+        ]);
+    }
+
+    public function getSpecificLocationDepartments ($rowId, $type) {
+        //
+        $selectedLocation = $this->company_model->checkOrGetData(
+            'complynet_locations',
+            ['sid' => $rowId],
+            ['complynet_location_id', 'company_id'],
+            'row_array'
+        );
+        //
+        if(!$selectedLocation){
+            return SendResponse(200, [
+                'code' => 'LNF',
+                'message' => 'Selected location not found.'
+            ]);
+        } 
+        //
+        $automotoHRSelectedDepartments = $this->company_model->checkOrGetData(
+            'complynet_departments',
+            ['complynet_location_id' => $selectedLocation["complynet_location_id"]],
+            ['sid', 'automotohr_department_name', 'automotohr_department_id'],
+            'result_array'
+        );
+        //
+        if ($type == "job_role") {
+            return SendResponse(200, [
+                'code' => 'FS',
+                'selectedDepartment' => $automotoHRSelectedDepartments
+            ]);
+        }
+        //
+        $selectedDepartmentSids =array();
+        //
+        if ($automotoHRSelectedDepartments) {
+           $selectedDepartmentSids = array_column($automotoHRSelectedDepartments, 'automotohr_department_id'); 
+        }
+        //
+        $this->load->library('complynet_lib');
+        //
+        $complyNetDepartments = $this
+        ->complynet_lib
+        ->setMode('fake')
+        ->authenticate()
+        ->getDepartments($selectedLocation["complynet_location_id"]);
+        //
+        $automotoHRDepartments = $this->company_model->checkOrGetData(
+            'departments_management',
+            ['company_sid' => $selectedLocation["company_id"]],
+            ['sid', 'name'],
+            'result_array'
+        );
+        //
+        return SendResponse(200, [
+            'code' => 'FS',
+            'complyNetDepartments' => $complyNetDepartments,
+            'automotoHRDepartments' => $automotoHRDepartments,
+            'selectedDepartmentSids' => $selectedDepartmentSids
+        ]);
+    }
+
+    /**
+     * Link AHR department with complynet department and save into DB
+     *
+     * 
+     */
+    public function linkDepartment()
+    {   
+        $action = "create";
+        //
+        $complyNetDepartmentSiD = '';
+        $complyNetDepartmentName = '';
+        $automotoHRDepartmentName = '';
+        //
+        $AHRCompanySid = $this->input->post('companySid');
+        $locationRowSid = $this->input->post('locationRowSid');
+        $AHRDepartmentList = $this->input->post('AHRDepartmentSid');
+        //
+        if (isset($_POST["complyNetDepartmentSiD"])) {
+            $action = "link";
+            $complyNetDepartmentSiD = $this->input->post('complyNetDepartmentSiD');
+            $complyNetDepartmentName = $this->input->post('complyNetDepartmentName');
+        }
+        //
+        // get complynet location id from DB
+        $locationInfo = $this->company_model->checkOrGetData(
+            'complynet_locations',
+            ['sid' => $locationRowSid],
+            ['complynet_location_id'],
+            'row_array'
+        );
+        //
+        $complyNetLocationId = $locationInfo["complynet_location_id"];
+        //
+        $insert_id = 0;
+        //
+        foreach ($AHRDepartmentList as $departmentSid) {
+            // get department name from DB
+            $departmentInfo = $this->company_model->checkOrGetData(
+                'departments_management',
+                ['sid' => $departmentSid],
+                ['name'],
+                'row_array'
+            );
+            //
+            $automotoHRDepartmentName = $departmentInfo["name"];
+            //
+            if ($action == "create") {
+                $this->load->library('complynet_lib');
+                //
+                $response = $this
+                ->complynet_lib
+                ->setMode('fake')
+                ->authenticate()
+                ->createDepartment($automotoHRDepartmentName, $complyNetLocationId);
+                //
+                $complyNetDepartmentSiD = $response["Id"];
+                $complyNetDepartmentName = $response["Name"];
+            }
+            //
+            $data_to_insert = array();
+            $data_to_insert["company_id"] = $AHRCompanySid;
+            $data_to_insert["complynet_location_id"] = $complyNetLocationId;
+            $data_to_insert["complynet_department_id"] = $complyNetDepartmentSiD;
+            $data_to_insert["automotohr_department_id"] = $departmentSid;
+            $data_to_insert["complynet_department_name"] = $complyNetDepartmentName;
+            $data_to_insert["automotohr_department_name"] = $automotoHRDepartmentName;
+            $data_to_insert["status"] = 1;
+            $data_to_insert["created_at"] = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            $insert_id = $this->company_model->addData("complynet_departments", $data_to_insert);
+        }
+        //
+        if ($insert_id > 0) {
+            return SendResponse(200, [
+                'code' => 'RS',
+                'message' => 'Department is linked Successfully.'
+            ]);
+        }
+        //
+        return SendResponse(200, [
+            'code' => 'RF',
+            'message' => 'Something went wrong while linking.'
+        ]);
+    }
+
+    /**
+     * Delete department Link
+     *
+     * 
+     */
+    public function deleteDepartmentLink()
+    {   
+        //
+        $rowSid = $this->input->post('rowSid');
+        //
+        $this->company_model->deleteRow(
+            "complynet_departments", 
+            ['sid' => $rowSid]
+        );
+        //
+        return SendResponse(200, [
+            'code' => 'DD',
+            'message' => "Department link deleted successfully."
+        ]);
+    }
+
+     /**
+     * Get all jobroles of company
+     *
+     * 
+     */
+    public function getCompanyJobRoleDetails ($AHRCompanyId) {
+        // check any Complynet job_role is linked with AHR Company
+        $doExists = $this->company_model->checkOrGetData(
+            'complynet_jobRole',
+            ['company_id' => $AHRCompanyId],
+            ['sid'],
+            'count_all_results'
+        );
+        //
+        // in case company job_role not found
+        if(!$doExists){
+            return SendResponse(200, [
+                'code' => 'JRNF',
+                'message' => 'No JobRole Found.'
+            ]);
+        }
+        //
+        // If company job_role found
+        $jobRolesDetails = $this->company_model->checkOrGetData(
+            'complynet_jobRole',
+            ['company_id' => $AHRCompanyId],
+            ['sid', 'complynet_department_id', 'complynet_jobRole_id', 'complynet_jobRole_name', 'automotohr_jobRole_name', 'status', 'created_at'],
+            'result_array'
+        );
+        //
+        return SendResponse(200, [
+            'code' => 'JRF',
+            'jobRolesDetails' => $jobRolesDetails
+        ]);
+    }
+
+    public function getSpecificJobRoles ($rowId, $type) {
+        //
+        $selectedDepaerments = $this->company_model->checkOrGetData(
+            'complynet_departments',
+            ['sid' => $rowId],
+            ['complynet_department_id', 'company_id'],
+            'row_array'
+        );
+        //
+        if(!$selectedDepaerments){
+            return SendResponse(200, [
+                'code' => 'DNF',
+                'message' => 'Selected location not found.'
+            ]);
+        } 
+        //
+        $selectedJobRoles = $this->company_model->checkOrGetData(
+            'complynet_jobRole',
+            ['complynet_department_id' => $selectedDepaerments["complynet_department_id"]],
+            ['sid', 'automotohr_jobRole_name'],
+            'result_array'
+        );
+        //
+        if ($type == "employee") {
+            //
+            $automotoHREmployees = $this->company_model->checkOrGetData(
+                'users',
+                ['parent_sid' => $selectedDepaerments["company_id"], 'active' => 1, 'terminated_status' => 0, 'is_executive_admin' => 0],
+                ['sid', 'first_name', 'last_name', 'job_title','is_executive_admin','access_level_plus', 'pay_plan_flag', 'access_level'],
+                'result_array'
+            );
+            //
+            return SendResponse(200, [
+                'code' => 'FS',
+                'selectedJobRoles' => $selectedJobRoles,
+                'automotoHREmployees' => $automotoHREmployees
+            ]);
+        }
+        //
+        $automotoHRJobRoles = $this->company_model->checkOrGetData(
+            'users',
+            ['parent_sid' => $selectedDepaerments["company_id"],'job_title <>' => null ,'job_title <>' => ''],
+            ['distinct(job_title)'],
+            'result_array'
+        );
+        //
+        $this->load->library('complynet_lib');
+        //
+        $complyNetJobRoles = $this
+        ->complynet_lib
+        ->setMode('fake')
+        ->authenticate()
+        ->getJobRole($selectedDepaerments["complynet_department_id"]);
+        //
+        return SendResponse(200, [
+            'code' => 'FS',
+            'selectedJobRoles' => array_column($selectedJobRoles, 'automotohr_jobRole_name'),
+            'automotoHRJobRoles' => array_column($automotoHRJobRoles, 'job_title'),
+            'complyNetJobRoles' => $complyNetJobRoles
+        ]);
+    }
+
+    /**
+     * Link AHR jobRole with complynet jobRole and save into DB
+     *
+     * 
+     */
+    public function linkJobRole()
+    {   
+        $action = "create";
+        //
+        $complyNetJobRoleSid = '';
+        $complyNetJobRoleName = '';
+        //
+        $AHRCompanySid = $this->input->post('companySid');
+        $departmentRowSid = $this->input->post('departmentRowSid');
+        $automotoHRJobRoleList = $this->input->post('jobRoleList');
+        //
+        if (isset($_POST["complyNetJobRoleSid"])) {
+            $action = "link";
+            $complyNetJobRoleSid = $this->input->post('complyNetJobRoleSid');
+            $complyNetJobRoleName = $this->input->post('complyNetJobRoleName');
+        }
+        //
+        // get complynet department id from DB
+        $departmentInfo = $this->company_model->checkOrGetData(
+            'complynet_departments',
+            ['sid' => $departmentRowSid],
+            ['complynet_department_id'],
+            'row_array'
+        );
+        //
+        $complyNetDepartmentId = $departmentInfo["complynet_department_id"];
+        //
+        $insert_id = 0;
+        //
+        foreach ($automotoHRJobRoleList as $jobRole) {
+            //
+            if ($action == "create") {
+                $this->load->library('complynet_lib');
+                //
+                $response = $this
+                ->complynet_lib
+                ->setMode('fake')
+                ->authenticate()
+                ->createJobRole($jobRole, $complyNetDepartmentId);
+                //
+                $complyNetJobRoleSid = $response["Id"];
+                $complyNetJobRoleName = $response["Name"];
+            }
+            //
+            $data_to_insert = array();
+            $data_to_insert["company_id"] = $AHRCompanySid;
+            $data_to_insert["complynet_department_id"] = $complyNetDepartmentId;
+            $data_to_insert["complynet_jobRole_id"] = $complyNetJobRoleSid;
+            $data_to_insert["complynet_jobRole_name"] = $complyNetJobRoleName;
+            $data_to_insert["automotohr_jobRole_name"] = $jobRole;
+            $data_to_insert["status"] = 1;
+            $data_to_insert["created_at"] = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            $insert_id = $this->company_model->addData("complynet_jobRole", $data_to_insert);
+        }
+        //
+        if ($insert_id > 0) {
+            return SendResponse(200, [
+                'code' => 'RS',
+                'message' => 'JobRole is linked Successfully.'
+            ]);
+        }
+        //
+        return SendResponse(200, [
+            'code' => 'RF',
+            'message' => 'Something went wrong while linking.'
+        ]);
+    }
+
+    /**
+     * Delete jobRole Link
+     *
+     * 
+     */
+    public function deleteJobRoleLink()
+    {   
+        //
+        $rowSid = $this->input->post('rowSid');
+        //
+        $this->company_model->deleteRow(
+            "complynet_jobRole", 
+            ['sid' => $rowSid]
+        );
+        //
+        return SendResponse(200, [
+            'code' => 'DJR',
+            'message' => "JobRole link deleted successfully."
+        ]);
+    }
+
+    /**
+     * Get all jobroles of company
+     *
+     * 
+     */
+    public function getCompanyEmployeesDetails ($AHRCompanyId) {
+        // check any Complynet employees is linked with AHR Company
+        $doExists = $this->company_model->checkOrGetData(
+            'complynet_employees',
+            ['company_id' => $AHRCompanyId],
+            ['sid'],
+            'count_all_results'
+        );
+        //
+        // in case company employees not found
+        if(!$doExists){
+            return SendResponse(200, [
+                'code' => 'ENF',
+                'message' => 'No employee Found.'
+            ]);
+        }
+        //
+        // If company job_role found
+        $jobRolesDetails = $this->company_model->checkOrGetData(
+            'complynet_jobRole',
+            ['company_id' => $AHRCompanyId],
+            ['sid', 'complynet_department_id', 'complynet_jobRole_id', 'complynet_jobRole_name', 'automotohr_jobRole_name', 'status', 'created_at'],
+            'result_array'
+        );
+        //
+        return SendResponse(200, [
+            'code' => 'JRF',
+            'jobRolesDetails' => $jobRolesDetails
+        ]);
+    }
+
+    /**
+     * Link AHR employee with complynet employee and save into DB
+     *
+     * 
+     */
+    public function linkEmployees ()
+    {
+        //
+        $AHRCompanySid = $this->input->post('companySid');
+        $locationRowSid = $this->input->post('locationRowSid');
+        $departmentRowSid = $this->input->post('departmentRowSid');
+        $jobRoleRowSid = $this->input->post('jobRoleRowSid');
+        $employeesList = $this->input->post('employeesList');
+        //
+        // get complynet location id from DB
+        $companyInfo = $this->company_model->checkOrGetData(
+            'complynet_companies',
+            ['automotohr_id' => $AHRCompanySid],
+            ['complynet_id'],
+            'row_array'
+        );
+        //
+        // get complynet location id from DB
+        $locationInfo = $this->company_model->checkOrGetData(
+            'complynet_locations',
+            ['sid' => $locationRowSid],
+            ['complynet_location_id'],
+            'row_array'
+        );
+        //
+        // get complynet department id from DB
+        $departmentInfo = $this->company_model->checkOrGetData(
+            'complynet_departments',
+            ['sid' => $departmentRowSid],
+            ['complynet_department_id'],
+            'row_array'
+        );
+        //
+        // get complynet jobRole id from DB
+        $jobRoleInfo = $this->company_model->checkOrGetData(
+            'complynet_jobRole',
+            ['sid' => $jobRoleRowSid],
+            ['complynet_jobRole_id'],
+            'row_array'
+        );
+        //
+        $complyNetCompanyId = $companyInfo["complynet_id"];
+        $complyNetLocationId = $locationInfo["complynet_location_id"];
+        $complyNetDepartmentId = $departmentInfo["complynet_department_id"];
+        $complyNetJobRoleId = $jobRoleInfo["complynet_jobRole_id"];
+        //
+        $insert_id = 0;
+        //
+        foreach ($employeesList as $employee) {
+            //
+            if ($action == "create") {
+                $this->load->library('complynet_lib');
+                //
+                $response = $this
+                ->complynet_lib
+                ->setMode('fake')
+                ->authenticate()
+                ->createJobRole($jobRole, $complyNetDepartmentId);
+                //
+                $complyNetJobRoleSid = $response["Id"];
+                $complyNetJobRoleName = $response["Name"];
+            }
+            //
+            $data_to_insert = array();
+            $data_to_insert["company_id"] = $AHRCompanySid;
+            $data_to_insert["complynet_department_id"] = $complyNetDepartmentId;
+            $data_to_insert["complynet_jobRole_id"] = $complyNetJobRoleSid;
+            $data_to_insert["complynet_jobRole_name"] = $complyNetJobRoleName;
+            $data_to_insert["automotohr_jobRole_name"] = $jobRole;
+            $data_to_insert["status"] = 1;
+            $data_to_insert["created_at"] = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            $insert_id = $this->company_model->addData("complynet_jobRole", $data_to_insert);
+        }
+        //
+        if ($insert_id > 0) {
+            return SendResponse(200, [
+                'code' => 'RS',
+                'message' => 'JobRole is linked Successfully.'
+            ]);
+        }
+        //
+        return SendResponse(200, [
+            'code' => 'RF',
+            'message' => 'Something went wrong while linking.'
         ]);
     }
 }

@@ -1593,7 +1593,7 @@ $route['manage_admin/complynet']['get'] = "manage_admin/2022/Complynet/manage";
 $route['manage_admin/complynet/(:num)']['get'] = "manage_admin/2022/Complynet/manage/$1";
 //
 //Company routes
-$route['complynet/get_company_details/(:num)']['get'] = "2022/Complynet/getCompanyDetails/$1";
+$route['complynet/get_company_details/(:num)']['get'] = "2022/Complynet/getCompanyDetails/$1";https://www.youtube.com/shorts/FBpNErz5_ZQ
 $route['link_company']['post'] = "2022/Complynet/linkCompany";
 $route['delete_company_link']['post'] = "2022/Complynet/deleteCompanyLink";
 $route['get_complynet_companies']['get'] = "2022/Complynet/getComplynetCompanies";
@@ -1601,11 +1601,23 @@ $route['get_complynet_companies']['get'] = "2022/Complynet/getComplynetCompanies
 //location routes
 $route['complynet/get_company_locations_details/(:num)']['get'] = "2022/Complynet/getCompanyLocationsDetails/$1";
 $route['complynet/get_complynet_locations/(:num)']['get'] = "2022/Complynet/getComplynetLocationsDetails/$1";
-$route['link_location']['post'] = "2022/Complynet/link_location";
+$route['link_location']['post'] = "2022/Complynet/linkLocation";
 $route['delete_location_link']['post'] = "2022/Complynet/deleteLocationLink";
 //
-//location routes
+//departments routes
 $route['complynet/get_company_departments_details/(:num)']['get'] = "2022/Complynet/getCompanyDepartmentsDetails/$1";
-// $route['complynet/get_complynet_locations/(:num)']['get'] = "2022/Complynet/getComplynetLocationsDetails/$1";
-// $route['link_location']['post'] = "2022/Complynet/link_location";
-// $route['delete_location_link']['post'] = "2022/Complynet/deleteLocationLink";
+$route['complynet/get_complynet_linked_locations/(:num)']['get'] = "2022/Complynet/getComplynetLinkLocations/$1";
+$route['complynet/get_specific_location_departments/(:num)/(:any)']['get'] = "2022/Complynet/getSpecificLocationDepartments/$1/$2";
+$route['link_department']['post'] = "2022/Complynet/linkDepartment";;
+$route['delete_department_link']['post'] = "2022/Complynet/deleteDepartmentLink";
+//
+//jobRole routes
+$route['complynet/get_company_job_role_details/(:num)']['get'] = "2022/Complynet/getCompanyJobRoleDetails/$1";
+$route['complynet/get_specific_job_roles/(:num)/(:any)']['get'] = "2022/Complynet/getSpecificJobRoles/$1/$2";
+$route['link_job_role']['post'] = "2022/Complynet/linkJobRole";
+$route['delete_job_role_link']['post'] = "2022/Complynet/deleteJobRoleLink";
+//
+//complyNet employees routes
+$route['complynet/get_company_employees_details/(:num)']['get'] = "2022/Complynet/getCompanyEmployeesDetails/$1";
+$route['link_employees']['post'] = "2022/Complynet/linkEmployees";
+$route['delete_employee_link']['post'] = "2022/Complynet/deleteEmployeeLink";

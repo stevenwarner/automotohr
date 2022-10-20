@@ -37,7 +37,7 @@
                             <div class="jsContentArea hidden">
                                 <hr />
                                 <!-- Company Information -->
-                                <div class="panel panel-success company_info">
+                                <div class="panel panel-success companyInfo">
                                     <div class="panel-heading">
                                         <h4 style="padding: 0; margin: 0;"><strong>Basic Information</strong></h4>
                                     </div>
@@ -87,7 +87,7 @@
                                 </div>
 
                                 <!-- Location Information -->
-                                <div class="panel panel-success location_info">
+                                <div class="panel panel-success locationInfo">
                                     <div class="panel-heading">
                                         <h4 style="padding: 0; margin: 0;"><strong>Locations Information</strong></h4>
                                     </div>
@@ -141,14 +141,14 @@
                                 </div>
 
                                 <!-- Departments Information -->
-                                <div class="panel panel-success">
+                                <div class="panel panel-success departmentInfo">
                                     <div class="panel-heading">
                                         <h4 style="padding: 0; margin: 0;"><strong>Departments Information</strong></h4>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-sm-12 text-right">
-                                                <button class="btn btn-success">Add Department</button>
+                                                <button class="btn btn-success jsAddDepartment">Add Department</button>
                                             </div>
                                             <div class="col-sm-12">
                                                 <div class="table-responsive">
@@ -158,6 +158,8 @@
                                                             <tr>
                                                                 <th scope="col">AutomotoHR's Department</th>
                                                                 <th scope="col">ComplyNet's Department</th>
+                                                                <th scope="col">Linked At</th>
+                                                                <th scope="col">Status</th>
                                                                 <th scope="col">Actions</th>
                                                             </tr>
                                                         </thead>
@@ -186,15 +188,63 @@
                                     </div>
                                 </div>
 
+                                <!-- JobRole Information -->
+                                <div class="panel panel-success jobRoleInfo">
+                                    <div class="panel-heading">
+                                        <h4 style="padding: 0; margin: 0;"><strong>JobRole Information</strong></h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-sm-12 text-right">
+                                                <button class="btn btn-success jsAddJobRole">Add JobRole</button>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped">
+                                                        <caption></caption>
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">AutomotoHR's JobRole</th>
+                                                                <th scope="col">ComplyNet's JobRole</th>
+                                                                <th scope="col">Linked At</th>
+                                                                <th scope="col">Status</th>
+                                                                <th scope="col">Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="csVm">
+                                                                    <strong>John Doe (Employee)</strong>
+                                                                    <br>
+                                                                    <span>Id: 3596</span>
+                                                                </td>
+                                                                <td class="csVm">
+                                                                    <strong>John Doe</strong>
+                                                                    <br />
+                                                                    <span>Id: 1234-4567-91236-98745</span>
+                                                                </td>
+                                                                <td class="csVm">
+                                                                    <button class="btn btn-warning">Edit</button>
+                                                                    <button class="btn btn-danger">Disable</button>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Employees Information -->
-                                <div class="panel panel-success">
+                                <div class="panel panel-success jobEmployeeInfo">
                                     <div class="panel-heading">
                                         <h4 style="padding: 0; margin: 0;"><strong>Employees Information</strong></h4>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-sm-12 text-right">
-                                                <button class="btn btn-success">Link Employee</button>
+                                                <button class="btn btn-success jsAddEmployee">Link Employee</button>
                                             </div>
                                             <div class="col-sm-12">
                                                 <div class="table-responsive">
