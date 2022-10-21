@@ -60,6 +60,46 @@ class Company_model extends CI_Model {
     }
 
 
+
+
+  /**
+     * Get all active companies
+     * 
+     * @param array  $columns
+     * @param array  $where
+     * @param string $method
+     * @param array  $orderBy
+     * @return array
+     */
+    public function getAllComplynetCompanies(
+        $columns = ['*'],
+        $where = [],
+        $method = 'result_array',
+        $orderBy = ['automotohr_name', 'ASC']
+    ){
+        // Set the default where clause
+       
+        //
+        $this->db
+        ->select($columns)
+        ->from('complynet_companies')
+        ->order_by($orderBy[0], $orderBy[1]);
+        if($where){
+            $this->db->where($where);
+        }
+        // Execute the query
+        $obj = $this->db->get();
+        // Get he data
+        $results = $obj->$method();
+        // Free up the memory
+        $obj = $obj->free_result();
+        //
+        return $results ?: [];
+    }
+
+
+
+
     /**
      * Get company groups with documents
      * 

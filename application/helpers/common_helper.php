@@ -1565,7 +1565,7 @@ if (!function_exists('convert_email_template')) {
 
         $emailTemplateBody = str_replace('{{contact_name}}', $replacement_array['contact_name'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{from_name}}', $replacement_array['from_name'], $emailTemplateBody);
-       
+
 
 
         return $emailTemplateBody;
@@ -1651,7 +1651,6 @@ if (!function_exists('return_value_if_key_exists')) {
                     return 0;
                 }
             }
-            
         }
     }
 }
@@ -13979,21 +13978,21 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
         // Get company industry
         $industryId = $CI->db->select('job_category_industries_sid')->where('sid', $company_sid)->get('users')->row_array()['job_category_industries_sid'];
         //
-        if($industryId != 0){
+        if ($industryId != 0) {
             //
-            $default_categories2 = 
-            $CI->db
-            ->select('
+            $default_categories2 =
+                $CI->db
+                ->select('
                 default_categories.category_name as name,
                 default_categories.description,
                 "1" as status,
                 "1" as sort_order,
                 categories_document_industry.category_sid as sid
             ')
-            ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
-            ->where('categories_document_industry.industry_sid', $industryId)
-            ->get('categories_document_industry')->result_array();
-            
+                ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
+                ->where('categories_document_industry.industry_sid', $industryId)
+                ->get('categories_document_industry')->result_array();
+
             //
             $default_categories = array_merge($default_categories, $default_categories2);
         }
@@ -15684,4 +15683,83 @@ if (!function_exists('addColumnsForDocumentAssigned')) {
             $dataArray['confidential_employees'] = $data['confidential_employees'];
         }
     }
+
+
+
+
+    //Get complyNet locations count by company sid
+    if (!function_exists('getComplynetLocationsCount')) {
+        function getComplynetLocationsCount($CompanySid)
+        {
+            // Get CI instance
+            $_this = &get_instance();
+            //
+            $locationCount = $_this->db->select('sid')->where('company_id', $CompanySid)->from('complynet_locations')->count_all_results();
+            return $locationCount;
+        }
+    }
+
+
+    //Get complyNet Departments count by company sid
+    if (!function_exists('getComplynetDepartmentsCount')) {
+
+        function getComplynetDepartmentsCount($CompanySid)
+        {
+            // Get CI instance
+            $_this = &get_instance();
+            //
+            $departmentsCount = $_this->db->select('sid')->where('company_id', $CompanySid)->from('complynet_departments')->count_all_results();
+            return $departmentsCount;
+        }
+    }
+
+
+
+    //Get complyNet Jobrole count by company sid
+    if (!function_exists('getComplynetjobRoleCount')) {
+
+        function getComplynetjobRoleCount($CompanySid)
+        {
+            // Get CI instance
+            $_this = &get_instance();
+            //
+            $departmentsCount = $_this->db->select('sid')->where('company_id', $CompanySid)->from('complynet_jobRole')->count_all_results();
+            return $departmentsCount;
+        }
+    }
+
+
+
+    //Get AutomotoHR Jobrole count by company sid
+    if (!function_exists('getAutomotohrjobRoleCount')) {
+
+        function getAutomotohrjobRoleCount($CompanySid)
+        {
+            // Get CI instance
+            $_this = &get_instance();
+
+            //
+            $jobRoleCount = $_this->db->select('job_title')->distinct('job_title')->where('parent_sid', $CompanySid)->where('job_title is NOT NULL', NULL, FALSE)->from('users')->count_all_results();
+            return $jobRoleCount;
+        }
+    }
+
+
+  //Get complyNet locations count by company sid
+  if (!function_exists('getAutomotohrDepartmentsCount')) {
+    function getAutomotohrDepartmentsCount($CompanySid)
+    {
+        // Get CI instance
+        $_this = &get_instance();
+        //
+        $departmentCount = $_this->db->select('sid')->where('company_sid', $CompanySid)->from('departments_management')->count_all_results();
+        return $departmentCount;
+    }
+}
+
+
+
+
+
+
 }

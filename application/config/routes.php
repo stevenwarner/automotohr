@@ -1609,3 +1609,22 @@ $route['complynet/get_company_departments_details/(:num)']['get'] = "2022/Comply
 
 //
 $route['manage_admin/complynet/report'] = 'manage_admin/2022/Complynet/report';
+$route['manage_admin/complynet/report/(:any)/(:any)'] = 'manage_admin/2022/Complynet/report/$1/$2';
+$route['manage_admin/complynet/report/(:any)/(:any)/(:num)'] = 'manage_admin/2022/Complynet/report/$1/$2/$3';
+$route['manage_admin/complynet/report/(:num)'] = 'manage_admin/2022/Complynet/report/$1';
+
+$route['manage_admin/complynet/reportcsv'] = 'manage_admin/2022/Complynet/reportcsv';
+$route['manage_admin/complynet/reportcsv/(:any)/(:any)'] = 'manage_admin/2022/Complynet/reportcsv/$1/$2';
+$route['manage_admin/complynet/reportcsv/(:any)/(:any)/(:num)'] = 'manage_admin/2022/Complynet/reportcsv/$1/$2/$3';
+$route['manage_admin/complynet/reportcsv/(:num)'] = 'manage_admin/2022/Complynet/reportcsv/$1';
+
+//
+$route['manage_admin/complynet/employee/(:num)'] = 'manage_admin/2022/Complynet/employee/$1';
+$route['manage_admin/complynet/employee/(:num)/(:any)/(:any)'] = 'manage_admin/2022/Complynet/employee/$1/$2/$3';
+$route['manage_admin/complynet/employee/(:num)/(:any)/(:any)/(:num)'] = 'manage_admin/2022/Complynet/employee/$1/$2/$3/$4';
+$route['manage_admin/complynet/employee/(:num)/(:num)'] = 'manage_admin/2022/Complynet/employee/$1/$2';
+
+$route['manage_admin/complynet/employeecsv/(:num)'] = 'manage_admin/2022/Complynet/employeecsv/$1';
+$route['manage_admin/complynet/employeecsv/(:num)/(:any)/(:any)'] = 'manage_admin/2022/Complynet/employeecsv/$1/$2/$3';
+$route['manage_admin/complynet/employeecsv/(:num)/(:any)/(:any)/(:num)'] = 'manage_admin/2022/Complynet/employeecsv/$1/$2/$3/$4';
+$route['manage_admin/complynet/employeecsv/(:num)/(:num)'] = 'manage_admin/2022/Complynet/employeecsv/$1/$2';
