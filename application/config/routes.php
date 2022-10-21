@@ -1619,5 +1619,7 @@ $route['delete_job_role_link']['post'] = "2022/Complynet/deleteJobRoleLink";
 //
 //complyNet employees routes
 $route['complynet/get_company_employees_details/(:num)']['get'] = "2022/Complynet/getCompanyEmployeesDetails/$1";
+$route['complynet/get_company_employees/(:num)']['get'] = "2022/Complynet/getCompanyEmployees/$1";
 $route['link_employees']['post'] = "2022/Complynet/linkEmployees";
 $route['delete_employee_link']['post'] = "2022/Complynet/deleteEmployeeLink";
+$route['disable_employee_link']['post'] = "2022/Complynet/disableEmployeeLink";

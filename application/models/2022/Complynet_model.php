@@ -23,10 +23,11 @@ class Complynet_model extends CI_Model {
     /**
      * 
      */
-    public function getActiveToken(
+    public function checkOrGetData(
         $columns = ['*'],
         $whereArray = [],
-        $method = 'row_array'
+        $method = 'row_array',
+        $table
     ){
         //
         $this->db
@@ -38,7 +39,7 @@ class Complynet_model extends CI_Model {
             return $this->db->$method();
         }
         //
-        $obj = $this->db->get('complynet_access_token');
+        $obj = $this->db->get($table);
         //
         $results = $obj->$method();
         //

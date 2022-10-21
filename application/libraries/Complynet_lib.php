@@ -105,11 +105,13 @@ class Complynet_lib
             return $this;
         }
         // Check db for active token
-        $record = $this->complynetModel->getActiveToken(
+        $record = $this->complynetModel->checkOrGetData(
             ['token'],
             [
                 'expires >= ' => $this->dateWithTime
-            ]
+            ],
+            'row_array',
+            'complynet_access_token'
         );
 
         // Case of no record found
@@ -524,6 +526,86 @@ class Complynet_lib
         );
         //
         return $result;
+    }
+
+    /**
+     * 
+     * Set Library Enviorment
+     * 
+     */
+    public function makeRequest
+    (
+        $complyNetCompanyId,
+        $complyNetLocationId,
+        $complyNetDepartmentId,
+        $complyNetJobRoleId,
+        $employeesList
+    )
+    {
+        foreach ($employeesList as $employeeSid) {
+            // get employee info from DB
+            $employeeInfo = $this->complynetModel->checkOrGetData(
+                ['first_name', 'last_name', 'email', 'PhoneNumber', 'parent_sid'],
+                [
+                    'sid' => $employeeSid
+                ],
+                'row_array',
+                'users'
+            ); 
+            //
+            $employeeData = [
+                "firstName" => $employeeInfo["first_name"],
+                "lastName" => $employeeInfo["last_name"],
+                "userName" => $employeeInfo["email"],
+                "email" => $employeeInfo["email"],
+                "password" => "",
+                "companyId" => $complyNetCompanyId,
+                "locationId" => $complyNetLocationId,
+                "departmentId" => $complyNetDepartmentId,
+                "jobRoleId" => $complyNetJobRoleId,
+                "PhoneNumber" => $employeeInfo["PhoneNumber"],
+                "TwoFactor" => TRUE
+            ];
+            //  
+            $result = $this->createUser(
+                $employeeData
+            ); 
+            //
+            $insertId = 0;
+            //
+            if ($result == "N/A") {
+                //
+                unset($employeeData['password']);
+                unset($employeeData['companyId']);
+                unset($employeeData['locationId']);
+                unset($employeeData['departmentId']);
+                unset($employeeData['jobRoleId']);
+                unset($employeeData['TwoFactor']);
+                //
+                $employeeData['company_id'] = $employeeInfo["parent_sid"];
+                $employeeData['complynet_company_id'] = $complyNetCompanyId;
+                $employeeData['complynet_location_id'] = $complyNetLocationId;
+                $employeeData['complynet_department_id'] = $complyNetDepartmentId;
+                $employeeData['complynet_jobRole_id'] = $complyNetJobRoleId;
+                $employeeData['automotohr_employee_id'] = $employeeSid;
+                $employeeData['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                //
+                $insertId = $this->complynetModel->insertData('complynet_employees', $employeeData);
+            }    
+
+        }
+        //
+        if ($insertId > 0) {
+            return SendResponse(200, [
+                'code' => 'RS',
+                'message' => 'Employee linked Successfully.'
+            ]);
+        }
+        //
+        return SendResponse(200, [
+            'code' => 'RF',
+            'message' => 'Something went wrong while linking.'
+        ]);
     }
 
     /**

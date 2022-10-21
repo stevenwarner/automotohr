@@ -9,6 +9,7 @@
                             <!-- Heading -->
                             <div class="heading-title page-title">
                                 <h1 class="page-title" style="width: 100%;"><i class="fa fa-users" aria-hidden="true"></i><?php echo $page_title; ?></h1>
+                                <a class="site-btn pull-right" href="<?php echo base_url("manage_admin/complynet/reports") ?>"><i class="fa fa-bar-chart"></i> Report</a>
                             </div>
 
                             <div class="clearfix"></div>
@@ -148,7 +149,7 @@
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-sm-12 text-right">
-                                                <button class="btn btn-success jsAddDepartment">Add Department</button>
+                                                <button class="btn btn-success jsAddDepartment">Link Department</button>
                                             </div>
                                             <div class="col-sm-12">
                                                 <div class="table-responsive">
@@ -191,12 +192,12 @@
                                 <!-- JobRole Information -->
                                 <div class="panel panel-success jobRoleInfo">
                                     <div class="panel-heading">
-                                        <h4 style="padding: 0; margin: 0;"><strong>JobRole Information</strong></h4>
+                                        <h4 style="padding: 0; margin: 0;"><strong>Job Role Information</strong></h4>
                                     </div>
                                     <div class="panel-body">
                                         <div class="row">
                                             <div class="col-sm-12 text-right">
-                                                <button class="btn btn-success jsAddJobRole">Add JobRole</button>
+                                                <button class="btn btn-success jsAddJobRole">Link Job Role</button>
                                             </div>
                                             <div class="col-sm-12">
                                                 <div class="table-responsive">
@@ -204,8 +205,8 @@
                                                         <caption></caption>
                                                         <thead>
                                                             <tr>
-                                                                <th scope="col">AutomotoHR's JobRole</th>
-                                                                <th scope="col">ComplyNet's JobRole</th>
+                                                                <th scope="col">AutomotoHR's Job Role</th>
+                                                                <th scope="col">ComplyNet's Job Role</th>
                                                                 <th scope="col">Linked At</th>
                                                                 <th scope="col">Status</th>
                                                                 <th scope="col">Actions</th>
@@ -254,6 +255,8 @@
                                                             <tr>
                                                                 <th scope="col">AutomotoHR's Employee</th>
                                                                 <th scope="col">ComplyNet's Employee</th>
+                                                                <th scope="col">Linked At</th>
+                                                                <th scope="col">Status</th>
                                                                 <th scope="col">Actions</th>
                                                             </tr>
                                                         </thead>
@@ -270,8 +273,7 @@
                                                                     <span>Id: 1234-4567-91236-98745</span>
                                                                 </td>
                                                                 <td class="csVm">
-                                                                    <button class="btn btn-warning">Edit</button>
-                                                                    <button class="btn btn-danger">Disable</button>
+                                                                    <button class="btn btn-danger ">Disable</button>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
