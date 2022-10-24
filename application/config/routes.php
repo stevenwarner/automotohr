@@ -1623,3 +1623,6 @@ $route['complynet/get_company_employees/(:num)']['get'] = "2022/Complynet/getCom
 $route['link_employees']['post'] = "2022/Complynet/linkEmployees";
 $route['delete_employee_link']['post'] = "2022/Complynet/deleteEmployeeLink";
 $route['disable_employee_link']['post'] = "2022/Complynet/disableEmployeeLink";
+
+//
+$route['complynetgreen'] = 'settings/complyNetGreen';

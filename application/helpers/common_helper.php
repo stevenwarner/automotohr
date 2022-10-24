@@ -15685,3 +15685,21 @@ if (!function_exists('addColumnsForDocumentAssigned')) {
         }
     }
 }
+
+//
+if (!function_exists('getCompanyComplyNetStatus')) {
+    function getCompanyComplyNetStatus($company_sid)
+    {
+        if (!empty($company_sid)) {
+
+            $CI = &get_instance();
+            $CI->db->select('complynet_status');
+            $CI->db->where('sid', $company_sid);
+            //
+            $company_info = $CI->db->get('users')->row_array();
+           return $company_info['complynet_status'];
+        }
+
+       
+    }
+}

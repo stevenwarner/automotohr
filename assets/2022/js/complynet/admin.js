@@ -13,6 +13,8 @@ $(function ComplyNetManagement(){
      */
     let XHR = null;
 
+    window.getLocationDetails = getCompanyLocationDetails;
+
     //
     $('#jsParentCompany').select2();
 
@@ -276,7 +278,7 @@ $(function ComplyNetManagement(){
      *
      * @depends showCompanyOnboardPopup
      */
-    function getCompanyLocationDetails(){
+    function getCompanyLocationDetails(){ alert('sdf');
         //
         loader(true,"Please wait while fetching company location");
         //
