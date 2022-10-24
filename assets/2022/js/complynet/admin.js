@@ -1530,21 +1530,9 @@ $(function ComplyNetManagement(){
 
     $(document).on('click', '.jsModalCancel', function(event) {
         $('body').css('overflow-y', 'auto');
-        $('.jsLocationS2').select2('destroy');
+        $('.jsAutomotoHRSelectLocation').select2('destroy');
         $('.jsAutomotoHRSelectDepartment').select2('destroy');
         $('.jsAutomotoHRJobRole').select2('destroy');
-        //
-    
-        // $(".jsAutomotoHRSelectLocation").select2('destroy'); 
-        // $('.jsAutomotoHREmployees').select2('destroy');
-        // $('#jsComplyNetCompany').select2('destroy');
-        // $('.jsAutomotoHrCompany').select2('destroy');
-        // $('.jsComplyNetLocation').select2('destroy');
-        // $('.jsAutomotoHRLocation').select2('destroy');
-        // $('.jsAutomotoHRDepartment').select2('destroy');
-        // $('.jsComplyNetDepartment').select2('destroy');
-        // $('.jsAutomotoHRJobRole').select2('destroy');
-        // $('.jsComplyNetJobRole').select2('destroy');
     });
     
     /**
