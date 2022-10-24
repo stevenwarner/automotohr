@@ -65,6 +65,8 @@ $(function ComplyNetManagement(){
      */
     function getCompanyDetails(){
         //
+        $('body').css('overflow-y', 'auto');
+        //
         return $
         .get(window.location.origin+'/complynet/get_company_details/'+parentCompanyId)
         .done(function(resp){
@@ -149,16 +151,16 @@ $(function ComplyNetManagement(){
             rows +='<div class="row"><br />';
             rows +='    <div class="col-sm-12">';
             rows +='        <label>AutomotoHR Company</label>';
-            rows +='        <select id="jsAutomotoHrCompany" style="width: 100%;" disabled>';
-            rows +='            <option value="'+$("#jsParentCompany").val()+'">'+$("#jsParentCompany option:selected").text()+'</option>';
+            rows +='        <select class="jsAutomotoHrCompany" style="width: 100%;" disabled>';
+            rows +='            <option value="'+parentCompanyId+'">'+$("#jsParentCompany option:selected").text()+'</option>';
             rows +='        </select>';
             rows +='    </div>';
             rows +='    <div class="col-sm-12"><br />';
             rows +='        <label>ComplyNet Company</label>';
-            rows +='        <select id="jsComplyNetCompany" style="width: 100%;">';
+            rows +='        <select class="jsComplyNetCompany" style="width: 100%;">';
             rows +='            <option value="0">Select Company</option>';
-            $.each(complynetCompanies, function(k,v){
-                rows +='            <option value="'+v.Id+'">'+v.Name+'</option>';
+            $.each(complynetCompanies, function(key,company){
+                rows +='            <option value="'+company.Id+'">'+company.Name+'</option>';
             });
             rows +='        </select>';
             rows +='    </div>';
@@ -171,8 +173,8 @@ $(function ComplyNetManagement(){
             //
             $('#jsCompanyOnboardModalBody').html(rows)
             //
-            $('#jsComplyNetCompany').select2();
-            $('#jsAutomotoHrCompany').select2();
+            $('.jsComplyNetCompany').select2();
+            $('.jsAutomotoHrCompany').select2();
             $('[data-page="jsCompanyOnboardModalLoader"]').hide(0);
             
         });
@@ -185,7 +187,7 @@ $(function ComplyNetManagement(){
         //
         event.preventDefault();
         //
-        var CNCompany = $('#jsComplyNetCompany').val();
+        var CNCompany = $('.jsComplyNetCompany option:selected').val();
         //
         if (CNCompany == 0 || CNCompany == undefined) {
             alertify.alert("Notice","Please select ComplyNet Company to link");
@@ -194,10 +196,10 @@ $(function ComplyNetManagement(){
         $('[data-page="jsCompanyOnboardModalLoader"]').show(0);
         //
         var obj = {
-            AHRCompanySid: $('#jsAutomotoHrCompany').val(),
-            AHRCompanyName: $('#jsAutomotoHrCompany option:selected').text().trim(),
+            AHRCompanySid: parentCompanyId,
+            AHRCompanyName: $('.jsAutomotoHrCompany option:selected').text().trim(),
             CNCompanySid: CNCompany,
-            CNCompanyName: $('#jsComplyNetCompany option:selected').text().trim()
+            CNCompanyName: $('.jsComplyNetCompany option:selected').text().trim()
         };
         //
         $.post(
@@ -209,7 +211,6 @@ $(function ComplyNetManagement(){
             //
             if(resp.code == 'RS'){
                 alertify.alert('Success!', resp.message, function(){
-                    parentCompanyId = $('#jsAutomotoHrCompany').val();
                     $("#jsCompanyOnboardModal").hide();
                     getCompanyDetails();
                 });
@@ -279,6 +280,8 @@ $(function ComplyNetManagement(){
     function getCompanyLocationDetails(){
         //
         loader(true,"Please wait while fetching company location");
+        //
+        $('body').css('overflow-y', 'auto');
         //
         return $
         .get(window.location.origin+'/complynet/get_company_locations_details/'+parentCompanyId)
@@ -378,11 +381,11 @@ $(function ComplyNetManagement(){
                     rows +='        </p>';
                     rows +='    </div>';
                     rows +='</div>';
-                    rows +='<input type="hidden" id="jsLocationRowId" value="'+row_id+'">';
+                    rows +='<input type="hidden" class="jsLocationRowId" value="'+row_id+'">';
                     rows +='<div class="row"><br />';
                     rows +='    <div class="col-sm-12">';
                     rows +='        <label>AutomotoHR Location</label>';
-                    rows +='        <select id="jsAutomotoHRLocation" style="width: 100%;">';
+                    rows +='        <select class="jsAutomotoHRLocation" style="width: 100%;">';
                     rows +='            <option value="not_selected">Select Location</option>';
                     resp.automotoHRLocations.map(function(location){
                         rows +='            <option value="'+location.sid+'">'+location.address+'</option>';
@@ -391,7 +394,7 @@ $(function ComplyNetManagement(){
                     rows +='    </div>';
                     rows +='    <div class="col-sm-12"><br />';
                     rows +='        <label>ComplyNet location</label>';
-                    rows +='        <select id="jsComplyNetLocation" style="width: 100%;">';
+                    rows +='        <select class="jsComplyNetLocation" style="width: 100%;">';
                     rows +='            <option value="0">Select Location</option>';
                     $.each(resp.complynetLocations, function(k,v){
                         rows +='            <option value="'+v.Id+'">'+v.Name+'</option>';
@@ -407,16 +410,16 @@ $(function ComplyNetManagement(){
                     //
                     $('#jsLocationOnboardModalBody').html(rows)
                     //
-                    $('#jsComplyNetLocation').select2();
+                    $('.jsComplyNetLocation').select2();
                     //
                     if (CN_location_id != 0) {
-                        $("#jsComplyNetLocation").select2("val", CN_location_id);
+                        $(".jsComplyNetLocation").select2("val", CN_location_id);
                     }
                     //
-                    $('#jsAutomotoHRLocation').select2();
+                    $('.jsAutomotoHRLocation').select2();
                     //
                     if (AHR_location_id != "not_selected") {
-                        $("#jsAutomotoHRLocation").select2("val", AHR_location_id);
+                        $(".jsAutomotoHRLocation").select2("val", AHR_location_id);
                     }
                     //
                     $('[data-page="jsLocationOnboardModalLoader"]').hide(0);
@@ -436,9 +439,9 @@ $(function ComplyNetManagement(){
         //
         event.preventDefault();
         //
-        var CNLocation = $('#jsComplyNetLocation').val();
-        var AHRLocation = $('#jsAutomotoHRLocation').val();
-        var locationRowId = $('#jsLocationRowId').val();
+        var CNLocation = $('.jsComplyNetLocation option:selected').val();
+        var AHRLocation = $('.jsAutomotoHRLocation option:selected').val();
+        var locationRowId = $('.jsLocationRowId').val();
         //
         if (AHRLocation == "not_selected" || AHRLocation == undefined) {
             alertify.alert("Notice","Please select AutomotoHR location to link");
@@ -453,12 +456,12 @@ $(function ComplyNetManagement(){
         $('[data-page="jsLocationOnboardModalLoader"]').show(0);
         //
         var obj = {
-            companySid: $("#jsParentCompany").val(),
+            companySid: parentCompanyId,
             AHRLocationSid: AHRLocation,
             rowSid: locationRowId,
-            AHRLocationName: $('#jsAutomotoHRLocation option:selected').text().trim(),
+            AHRLocationName: $('.jsAutomotoHRLocation option:selected').text().trim(),
             CNLocationSid: CNLocation,
-            CNLocationName: $('#jsComplyNetLocation option:selected').text().trim()
+            CNLocationName: $('.jsComplyNetLocation option:selected').text().trim()
         };
         //
         $.post(
@@ -542,6 +545,7 @@ $(function ComplyNetManagement(){
     function getCompanyDepartmentsDetail () {
         //
         loader(true,"Please wait while fetching company location");
+        $('body').css('overflow-y', 'auto');
         //
         return $
         .get(window.location.origin+'/complynet/get_company_departments_details/'+parentCompanyId)
@@ -634,7 +638,7 @@ $(function ComplyNetManagement(){
                     rows +='<div class="row"><br />';
                     rows +='    <div class="col-sm-12">';
                     rows +='        <label>AutomotoHR Location</label>';
-                    rows +='        <select id="jsAutomotoHRSelectLocation" data-type="department" style="width: 100%;">';
+                    rows +='        <select class="jsAutomotoHRSelectLocation"  data-type="department" style="width: 100%;">';
                     rows +='            <option value="not_selected">Select Location</option>';
                     resp.locations.map(function(location){
                         rows +='            <option value="'+location.sid+'">'+location.automotohr_location_name+'</option>';
@@ -644,13 +648,13 @@ $(function ComplyNetManagement(){
                     rows +='    <div class="jsLinkComplynetSection hidden">';
                     rows +='        <div class="col-sm-12"><br />';
                     rows +='            <label>AutomotoHR Department</label>';
-                    rows +='            <select id="jsAutomotoHRDepartment" style="width: 100%;" multiple>';
+                    rows +='            <select class="jsAutomotoHRDepartment" id="jsAutomotoHSelectedRDepartment" style="width: 100%;" multiple>';
                     rows +='                <option value="0">Select Department</option>';
                     rows +='            </select>';
                     rows +='        </div>';
                     rows +='        <div class="col-sm-12"><br />';
                     rows +='            <label>ComplyNet Department</label>';
-                    rows +='            <select id="jsComplyNetDepartment" style="width: 100%;">';
+                    rows +='            <select class="jsComplyNetDepartment" style="width: 100%;">';
                     rows +='                <option value="0">Select Department</option>';
                     rows +='            </select>';
                     rows +='        </div>';
@@ -667,7 +671,7 @@ $(function ComplyNetManagement(){
                     //
                     $('#jsDepartmentOnboardModalBody').html(rows)
                     //
-                    $('#jsAutomotoHRSelectLocation').select2();
+                    $('.jsAutomotoHRSelectLocation').select2();
                     //
                     $('[data-page="jsCreateLinkOnboardModalLoader"]').hide(0);
                     //
@@ -687,18 +691,18 @@ $(function ComplyNetManagement(){
     $(document).on('click', '.jsCreateNewDepartmentCB', function(event) {
         //
         if ($(".jsCreateNewDepartment").is(":checked")) {
-            $('#jsComplyNetDepartment').select2("enable", false)
+            $('.jsComplyNetDepartment').select2("enable", false)
         } else {
-            $('#jsComplyNetDepartment').select2("enable", true);
+            $('.jsComplyNetDepartment').select2("enable", true);
         }
     });
 
     /**
      * Get departments against selected location
      */
-    $(document).on("change","#jsAutomotoHRSelectLocation",function(){
+    $(document).on("change",".jsAutomotoHRSelectLocation",function(){
         var selectedLocationId = (this.value);
-        var type = $("#jsAutomotoHRSelectLocation").data("type");
+        var type = $(this).data("type");
         //
         $('[data-page="jsCreateLinkOnboardModalLoader"]').show(0);
         //
@@ -713,9 +717,12 @@ $(function ComplyNetManagement(){
             }
 
             if (resp.code == 'FS') {
+                //
                 if (type == "job_role") {
-                    if (typeof resp.selectedDepartment !== 'undefined' && resp.selectedDepartment.length > 0) {
+                    if (typeof resp.selectedDepartment !== 'undefined' && resp.selectedDepartment.length > 0) { 
                         $('.jsDepartmentSection').removeClass('hidden');
+                        //
+                        $('.jsAutomotoHRSelectDepartment').select2('destroy');
                         //
                         ahrDepartments = '<option value="0">Select Departments</option>';
                         //
@@ -723,17 +730,21 @@ $(function ComplyNetManagement(){
                             ahrDepartments += '<option value="'+department.sid+'">'+department.automotohr_department_name+'</option>';
                         });
                         //
-                        $('#jsAutomotoHRDepartment').html(ahrDepartments);
-                        $('#jsAutomotoHRDepartment').select2();
-                    } else {
+                        $('.jsAutomotoHRSelectDepartment').html(ahrDepartments);
+                        $('.jsAutomotoHRSelectDepartment').select2();
+                    } else { 
                         alertify.alert('Notice!', "Please link department with this location first.");
-                        $('#jsAutomotoHRDepartment').html("");
+                        $('.jsAutomotoHRSelectDepartment').html("");
                         $('.jsDepartmentSection').addClass('hidden');
                     }
                    
-                } else {
+                } else { 
                     if ((typeof resp.complyNetDepartments !== 'undefined' && resp.complyNetDepartments.length > 0) && (typeof resp.automotoHRDepartments !== 'undefined' && resp.automotoHRDepartments.length > 0)) {
+                        //                        
                         $('.jsLinkComplynetSection').removeClass('hidden');
+                        //
+                        $('.jsComplyNetDepartment').select2('destroy');
+                        $('.jsAutomotoHRDepartment').select2('destroy');
                         //
                         cnDepartments = '<option value="0">Select Department</option>';
                         //
@@ -741,8 +752,8 @@ $(function ComplyNetManagement(){
                             cnDepartments +='            <option value="'+department.Id+'">'+department.Name+'</option>';
                         });
                         //
-                        $('#jsComplyNetDepartment').html(cnDepartments);
-                        $('#jsComplyNetDepartment').select2();
+                        $('.jsComplyNetDepartment').html(cnDepartments);
+                        $('.jsComplyNetDepartment').select2();
                         //
                         ahrDepartments = '';
                         //
@@ -756,12 +767,12 @@ $(function ComplyNetManagement(){
                             ahrDepartments +='            <option value="'+department.sid+'" '+disable+'>'+department.name+'</option>';
                         });
                         //
-                        $('#jsAutomotoHRDepartment').html(ahrDepartments);
-                        $('#jsAutomotoHRDepartment').select2();
+                        $('.jsAutomotoHRDepartment').html(ahrDepartments);
+                        $('.jsAutomotoHRDepartment').select2();
                     } else {
                         alertify.alert('Notice!', "No departments found.");
-                        $('#jsComplyNetDepartment').html("");
-                        $('#jsAutomotoHRDepartment').html("");
+                        $('.jsComplyNetDepartment').html("");
+                        $('.jsAutomotoHRDepartment').html("");
                         $('.jsLinkComplynetSection').addClass('hidden');
                     }    
                 }    
@@ -777,8 +788,8 @@ $(function ComplyNetManagement(){
         //
         event.preventDefault();
         //
-        var locationRowId = $('#jsAutomotoHRSelectLocation').val();
-        var automotoHRDepartmentID = $('#jsAutomotoHRDepartment').val();
+        var locationRowId = $('.jsAutomotoHRSelectLocation option:selected').val();
+        var automotoHRDepartmentID = $('#jsAutomotoHSelectedRDepartment').val();
         //
         //
         if (automotoHRDepartmentID == 0 || automotoHRDepartmentID == undefined) {
@@ -794,8 +805,8 @@ $(function ComplyNetManagement(){
         //
         if (!$(".jsCreateNewDepartment").is(":checked")) {
             //
-            var complyNetDepartmentID = $('#jsComplyNetDepartment').val();
-            var complyNetDepartmentName = $('#jsComplyNetDepartment option:selected').text();
+            var complyNetDepartmentID = $('.jsComplyNetDepartment option:selected').val();
+            var complyNetDepartmentName = $('.jsComplyNetDepartment option:selected').text();
             //
             if (complyNetDepartmentID == 0 || complyNetDepartmentID == undefined) {
                 alertify.alert("Notice","Please select ComplyNet department to link");
@@ -877,6 +888,7 @@ $(function ComplyNetManagement(){
     function getCompanyJobRolesDetail () {
         //
         loader(true,"Please wait while fetching company location");
+        $('body').css('overflow-y', 'auto');
         //
         return $
         .get(window.location.origin+'/complynet/get_company_job_role_details/'+parentCompanyId)
@@ -967,7 +979,7 @@ $(function ComplyNetManagement(){
                     rows +='<div class="row"><br />';
                     rows +='    <div class="col-sm-12">';
                     rows +='        <label>AutomotoHR Location</label>';
-                    rows +='        <select id="jsAutomotoHRSelectLocation" data-type="job_role" style="width: 100%;">';
+                    rows +='        <select class="jsAutomotoHRSelectLocation" data-type="job_role" style="width: 100%;">';
                     rows +='            <option value="not_selected">Select Location</option>';
                     resp.locations.map(function(location){
                         rows +='            <option value="'+location.sid+'">'+location.automotohr_location_name+'</option>';
@@ -977,7 +989,7 @@ $(function ComplyNetManagement(){
                     rows +='    <div class="jsDepartmentSection hidden">';
                     rows +='        <div class="col-sm-12"><br />';
                     rows +='            <label>AutomotoHR Department</label>';
-                    rows +='            <select class="jsAutomotoHRSelectDepartment" data-type="job_role" id="jsAutomotoHRDepartment" style="width: 100%;">';
+                    rows +='            <select class="jsAutomotoHRSelectDepartment jsAutomotoHRDepartment" data-type="job_role" style="width: 100%;">';
                     rows +='                <option value="0">Select Department</option>';
                     rows +='            </select>';
                     rows +='        </div>';
@@ -985,13 +997,13 @@ $(function ComplyNetManagement(){
                     rows +='    <div class="jsJobRoleSection hidden">';
                     rows +='        <div class="col-sm-12"><br />';
                     rows +='            <label>AutomotoHR JobRole</label>';
-                    rows +='            <select id="jsAutomotoHRJobRole" style="width: 100%;" multiple>';
+                    rows +='            <select class="jsAutomotoHRJobRole" id="jsAutomotoHRSelectedJobRole" style="width: 100%;" multiple>';
                     rows +='                <option value="0">Select JobRole</option>';
                     rows +='            </select>';
                     rows +='        </div>';
                     rows +='        <div class="col-sm-12"><br />';
                     rows +='            <label>ComplyNet JobRole</label>';
-                    rows +='            <select id="jsComplyNetJobRole" style="width: 100%;">';
+                    rows +='            <select class="jsComplyNetJobRole" style="width: 100%;">';
                     rows +='                <option value="0">Select JobRole</option>';
                     rows +='            </select>';
                     rows +='        </div>';
@@ -1008,7 +1020,7 @@ $(function ComplyNetManagement(){
                     //
                     $('#jsJobRoleOnboardModalBody').html(rows)
                     //
-                    $('#jsAutomotoHRSelectLocation').select2();
+                    $('.jsAutomotoHRSelectLocation').select2();
                     //
                     $('[data-page="jsCreateLinkOnboardModalLoader"]').hide(0);
                     //
@@ -1030,7 +1042,7 @@ $(function ComplyNetManagement(){
      */
     $(document).on("change",".jsAutomotoHRSelectDepartment",function(){
         var selectedDepartmentId = (this.value);
-        var type = $("#jsAutomotoHRDepartment").data("type");
+        var type = $(this).data("type");
         //
         $('[data-page="jsCreateLinkOnboardModalLoader"]').show(0);
         //
@@ -1049,6 +1061,9 @@ $(function ComplyNetManagement(){
                 $('.jsJobRoleSection').removeClass('hidden');
                 //
                 if (type == "employee") {
+                    //
+                    $('.jsAutomotoHRJobRole').select2('destroy');
+                    //
                     if (typeof resp.selectedJobRoles !== 'undefined' && resp.selectedJobRoles.length > 0) {
                         //
                         ahrJobRoles = '';
@@ -1057,16 +1072,19 @@ $(function ComplyNetManagement(){
                             ahrJobRoles += '<option value="'+jobrole.sid+'">'+jobrole.automotohr_jobRole_name+'</option>';
                         });
                         //
-                        $('#jsAutomotoHRJobRole').html(ahrJobRoles);
-                        $('#jsAutomotoHRJobRole').select2();
+                        $('.jsAutomotoHRJobRole').html(ahrJobRoles);
+                        $('.jsAutomotoHRJobRole').select2();
                     } else {
-                        $('#jsAutomotoHRJobRole').html("");
+                        $('.jsAutomotoHRJobRole').html("");
                         $('.jsJobRoleSection').addClass('hidden');
                         alertify.alert('Notice!', "Please link job role with this department first.");
                     }    
                 } else {
-                     
-                    if ((typeof resp.complyNetDepartments !== 'undefined' && resp.complyNetDepartments.length > 0) && (typeof resp.automotoHRDepartments !== 'undefined' && resp.automotoHRDepartments.length > 0)) {
+                    //
+                    $('.jsComplyNetJobRole').select2('destroy');
+                    $('.jsAutomotoHRJobRole').select2('destroy');
+                    //
+                    if ((typeof resp.complyNetJobRoles !== 'undefined' && resp.complyNetJobRoles.length > 0) && (typeof resp.automotoHRJobRoles !== 'undefined' && resp.automotoHRJobRoles.length > 0)) {
                         //
                         cnJobRoles = '<option value="0">Select Department</option>';
                         //
@@ -1074,8 +1092,8 @@ $(function ComplyNetManagement(){
                             cnJobRoles +='            <option value="'+jobRole.Id+'">'+jobRole.Name+'</option>';
                         });
                         //
-                        $('#jsComplyNetJobRole').html(cnJobRoles);
-                        $('#jsComplyNetJobRole').select2();
+                        $('.jsComplyNetJobRole').html(cnJobRoles);
+                        $('.jsComplyNetJobRole').select2();
                         //
                         ahrJobRoles = '';
                         //
@@ -1089,12 +1107,12 @@ $(function ComplyNetManagement(){
                             ahrJobRoles +='            <option value="'+jobRole+'" '+disable+'>'+jobRole+'</option>';
                         });
                         //
-                        $('#jsAutomotoHRJobRole').html(ahrJobRoles);
-                        $('#jsAutomotoHRJobRole').select2();
+                        $('.jsAutomotoHRJobRole').html(ahrJobRoles);
+                        $('.jsAutomotoHRJobRole').select2();
                     } else {
                         alertify.alert('Notice!', "No job roles found.");
-                        $('#jsComplyNetJobRole').html("");
-                        $('#jsAutomotoHRJobRole').html("");
+                        $('.jsComplyNetJobRole').html("");
+                        $('.jsAutomotoHRJobRole').html("");
                         $('.jsJobRoleSection').addClass('hidden');
                     }  
                 }     
@@ -1106,9 +1124,9 @@ $(function ComplyNetManagement(){
     $(document).on('click', '.jsCreateNewJobRoleCB', function(event) {
         //
         if ($(".jsCreateNewJobRole").is(":checked")) {
-            $('#jsComplyNetJobRole').select2("enable", false)
+            $('.jsComplyNetJobRole').select2("enable", false)
         } else {
-            $('#jsComplyNetJobRole').select2("enable", true);
+            $('.jsComplyNetJobRole').select2("enable", true);
         }
     });
    
@@ -1119,8 +1137,8 @@ $(function ComplyNetManagement(){
         //
         event.preventDefault();
         //
-        var departmentRowId = $('#jsAutomotoHRDepartment').val();
-        var automotoHRJobRoleList = $('#jsAutomotoHRJobRole').val();
+        var departmentRowId = $('.jsAutomotoHRDepartment option:selected').val();
+        var automotoHRJobRoleList = $('#jsAutomotoHRSelectedJobRole').val();
         //
         //
         if (automotoHRJobRoleList == undefined) {
@@ -1136,8 +1154,8 @@ $(function ComplyNetManagement(){
         //
         if (!$(".jsCreateNewJobRole").is(":checked")) {
             //
-            var complyNetJobRoleId = $('#jsComplyNetJobRole').val();
-            var complyNetJobRoleName = $('#jsComplyNetJobRole option:selected').text();
+            var complyNetJobRoleId = $('.jsComplyNetJobRole option:selected').val();
+            var complyNetJobRoleName = $('.jsComplyNetJobRole option:selected').text();
             //
             if (complyNetJobRoleId == 0 || complyNetJobRoleId == undefined) {
                 alertify.alert("Notice","Please select ComplyNet JobRole to link");
@@ -1219,6 +1237,7 @@ $(function ComplyNetManagement(){
     function getCompanyEmployeesDetail () {
         //
         loader(true,"Please wait while fetching company complynet employees");
+        $('body').css('overflow-y', 'auto');
         //
         return $
         .get(window.location.origin+'/complynet/get_company_employees_details/'+parentCompanyId)
@@ -1324,7 +1343,7 @@ $(function ComplyNetManagement(){
                     rows +='    </div>';
                     rows +='    <div class="col-sm-12">';
                     rows +='        <label>AutomotoHR Location</label>';
-                    rows +='        <select id="jsAutomotoHRSelectLocation" data-type="job_role" style="width: 100%;">';
+                    rows +='        <select class="jsAutomotoHRSelectLocation" data-type="job_role" style="width: 100%;">';
                     rows +='            <option value="not_selected">Select Location</option>';
                     resp.linkedLocations.map(function(location){
                         rows +='            <option value="'+location.sid+'">'+location.automotohr_location_name+'</option>';
@@ -1334,7 +1353,7 @@ $(function ComplyNetManagement(){
                     rows +='    <div class="jsDepartmentSection hidden">';
                     rows +='        <div class="col-sm-12"><br />';
                     rows +='            <label>AutomotoHR Department</label>';
-                    rows +='            <select class="jsAutomotoHRSelectDepartment" data-type="employee" id="jsAutomotoHRDepartment" style="width: 100%;">';
+                    rows +='            <select class="jsAutomotoHRSelectDepartment jsAutomotoHRDepartment" data-type="employee" style="width: 100%;">';
                     rows +='                <option value="0">Select Department</option>';
                     rows +='            </select>';
                     rows +='        </div>';
@@ -1342,7 +1361,7 @@ $(function ComplyNetManagement(){
                     rows +='    <div class="jsJobRoleSection hidden">';
                     rows +='        <div class="col-sm-12"><br />';
                     rows +='            <label>AutomotoHR JobRole</label>';
-                    rows +='            <select id="jsAutomotoHRJobRole" style="width: 100%;">';
+                    rows +='            <select class="jsAutomotoHRJobRole" style="width: 100%;">';
                     rows +='                <option value="0">Select JobRole</option>';
                     rows +='            </select>';
                     rows +='        </div>';
@@ -1357,7 +1376,7 @@ $(function ComplyNetManagement(){
                     $('#jsEmployeeOnboardModalBody').html(rows)
                     //
                     $('#jsAutomotoHREmployees').select2();
-                    $('#jsAutomotoHRSelectLocation').select2();
+                    $('.jsAutomotoHRSelectLocation').select2();
                     //
                     $('[data-page="jsCreateLinkOnboardModalLoader"]').hide(0);
                     //
@@ -1381,9 +1400,9 @@ $(function ComplyNetManagement(){
         //
         event.preventDefault();
         //
-        var locationRowId = $('#jsAutomotoHRSelectLocation').val();
-        var departmentRowId = $('#jsAutomotoHRDepartment').val();
-        var jobRoleRowId = $('#jsAutomotoHRJobRole').val();
+        var locationRowId = $('.jsAutomotoHRSelectLocation option:selected').val();
+        var departmentRowId = $('.jsAutomotoHRDepartment option:selected').val();
+        var jobRoleRowId = $('.jsAutomotoHRJobRole option:selected').val();
         var automotoHREmployeesList = $('#jsAutomotoHREmployees').val();
         //
         //
@@ -1510,19 +1529,22 @@ $(function ComplyNetManagement(){
     }
 
     $(document).on('click', '.jsModalCancel', function(event) {
-        $('select').select2('destroy');
+        $('body').css('overflow-y', 'auto');
+        $('.jsLocationS2').select2('destroy');
+        $('.jsAutomotoHRSelectDepartment').select2('destroy');
+        $('.jsAutomotoHRJobRole').select2('destroy');
         //
     
-        // $("#jsAutomotoHRSelectLocation").select2('destroy'); 
-        // $('#jsAutomotoHREmployees').select2('destroy');
+        // $(".jsAutomotoHRSelectLocation").select2('destroy'); 
+        // $('.jsAutomotoHREmployees').select2('destroy');
         // $('#jsComplyNetCompany').select2('destroy');
-        // $('#jsAutomotoHrCompany').select2('destroy');
-        // $('#jsComplyNetLocation').select2('destroy');
-        // $('#jsAutomotoHRLocation').select2('destroy');
-        // $('#jsAutomotoHRDepartment').select2('destroy');
-        // $('#jsComplyNetDepartment').select2('destroy');
-        // $('#jsAutomotoHRJobRole').select2('destroy');
-        // $('#jsComplyNetJobRole').select2('destroy');
+        // $('.jsAutomotoHrCompany').select2('destroy');
+        // $('.jsComplyNetLocation').select2('destroy');
+        // $('.jsAutomotoHRLocation').select2('destroy');
+        // $('.jsAutomotoHRDepartment').select2('destroy');
+        // $('.jsComplyNetDepartment').select2('destroy');
+        // $('.jsAutomotoHRJobRole').select2('destroy');
+        // $('.jsComplyNetJobRole').select2('destroy');
     });
     
     /**
