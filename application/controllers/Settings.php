@@ -3373,31 +3373,4 @@ class Settings extends Public_Controller
             redirect('login', 'refresh');
         }
     }
-
-
-    //
-    public function complyNetGreen()
-    {
-        if ($this->session->userdata('logged_in')) {
-            $data['session'] = $this->session->userdata('logged_in');
-            // loadCachedFile('my_settings', $data['session']);
-            $security_sid = $data['session']['employer_detail']['sid'];
-            $security_details = db_get_access_level_details($security_sid);
-            $data['security_details'] = $security_details;
-            check_access_permissions($security_details, 'dashboard', 'my_settings'); // Param2: Redirect URL, Param3: Function Name
-            $company_id = $data["session"]["company_detail"]["sid"];
-            $employer_id = $data["session"]["employer_detail"]["sid"];
-            $data['title'] = "ComplyNet Details";
-
-          
-            $data['company_sid'] = $company_id;
-            $data['employer_sid'] = $employer_id;
-            $this->load->view('main/header', $data);
-            $this->load->view('complynet/company_complynet');
-            $this->load->view('main/footer');
-            // loadCachedFile('my_settings', $data['session'], true);
-        } else {
-            redirect(base_url('login'), "refresh");
-        }
-    }
 }

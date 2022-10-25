@@ -103,8 +103,7 @@ $(function ComplyNetManagement(){
                 }
                 companyRow +='  </td>';
                 companyRow +='  <td class="csVm">';
-                companyRow +='      <button class="btn btn-success">View</button>';
-                companyRow +='      <button class="btn btn-warning jsEditCompany">Edit</button>';
+                companyRow +='      <button class="btn btn-warning jsEditCompanyLink">Edit</button>';
                 companyRow +='       <button class="btn btn-danger jsDeleteCompanyLink" data-row_id="'+resp.compantDetail.sid+'">Delete</button>';
                 companyRow +='  </td>';
                 companyRow +='</tr>';
@@ -227,7 +226,7 @@ $(function ComplyNetManagement(){
     /**
      * link new complynet company against AutoMotoHR company
      */
-    $(document).on('click', '.jsEditCompany', function(event) {
+    $(document).on('click', '.jsEditCompanyLink', function(event) {
         //
         event.preventDefault();
         //
@@ -278,7 +277,7 @@ $(function ComplyNetManagement(){
      *
      * @depends showCompanyOnboardPopup
      */
-    function getCompanyLocationDetails(){ alert('sdf');
+    function getCompanyLocationDetails(){
         //
         loader(true,"Please wait while fetching company location");
         //

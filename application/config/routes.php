@@ -1625,4 +1625,4 @@ $route['delete_employee_link']['post'] = "2022/Complynet/deleteEmployeeLink";
 $route['disable_employee_link']['post'] = "2022/Complynet/disableEmployeeLink";
 
 //
-$route['complynetgreen'] = 'settings/complyNetGreen';
+$route['complynet_company_setting'] = 'Complynet/complyNetCompanySetting';

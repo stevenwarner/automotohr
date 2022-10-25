@@ -12,6 +12,11 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
                                 <span class="page-heading down-arrow">ComplyNet</span>
+                                <?php if ($session['employer_detail']['access_level_plus']) { ?>
+                                    <a href="<?php echo base_url('complynet_company_setting'); ?>" class="dashboard-link-btn-right">
+                                        <i class="fa fa-cog"></i> ComplyNet Setting
+                                    </a>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>

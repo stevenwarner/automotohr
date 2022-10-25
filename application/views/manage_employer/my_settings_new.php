@@ -249,12 +249,6 @@
                                         <?php if (checkIfAppIsEnabled('payroll')) { ?>
                                             <li><a href="javascript:void(0)" class="jsPayrollCompanyOnboard" data-cid="<?= $session['company_detail']['sid']; ?>">Company Payroll Onboarding</a></li>
                                         <?php } ?>
-
-                                        <?php if (getCompanyComplyNetStatus($company_sid)) { ?>
-                                            <li><a href="<?php echo base_url('complynetgreen'); ?>">ComplyNet</a></li>
-                                        <?php } ?>
-
-
                                     </ul>
                                 </article>
                             <?php } ?>
