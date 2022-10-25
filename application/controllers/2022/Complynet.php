@@ -2,7 +2,7 @@
 
 use phpDocumentor\Reflection\Types\Integer;
 
- defined('BASEPATH') || exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
 
 /**
  * ComplyNet
@@ -11,7 +11,8 @@ use phpDocumentor\Reflection\Types\Integer;
  * @version 1.0
  */
 
-class Complynet extends CI_Controller {
+class Complynet extends CI_Controller
+{
 
     /**
      * Entry point
@@ -63,14 +64,14 @@ class Complynet extends CI_Controller {
             'count_all_results'
         );
         // in case company is not on ComplyNet
-        if(!$doExists){
+        if (!$doExists) {
             $this->load->library('complynet_lib');
             //
             $complynetCompanies = $this
-            ->complynet_lib
-            ->setMode('fake')
-            ->authenticate()
-            ->getCompanies();
+                ->complynet_lib
+                ->setMode('fake')
+                ->authenticate()
+                ->getCompanies();
             //
             return SendResponse(200, [
                 'code' => 'NR',
@@ -98,7 +99,7 @@ class Complynet extends CI_Controller {
      * 
      */
     public function linkCompany()
-    {   
+    {
         //
         $AHRCompanySid = $this->input->post('AHRCompanySid');
         $AHRCompanyName = $this->input->post('AHRCompanyName');
@@ -113,12 +114,12 @@ class Complynet extends CI_Controller {
             'row_array'
         );
         // in case company is not on ComplyNet
-        if($doCNCompanyExists){
+        if ($doCNCompanyExists) {
             return SendResponse(200, [
                 'code' => 'AR',
-                'message' => 'Selected ComplyNet Company is already Linked with <b>'.$doCNCompanyExists["automotohr_name"].'</b>.'
+                'message' => 'Selected ComplyNet Company is already Linked with <b>' . $doCNCompanyExists["automotohr_name"] . '</b>.'
             ]);
-        } 
+        }
         //
         // check if company 
         $doAHRCompanyExists = $this->company_model->checkOrGetData(
@@ -130,7 +131,7 @@ class Complynet extends CI_Controller {
         //
         $insertId = 0;
         //
-        if($doAHRCompanyExists) {
+        if ($doAHRCompanyExists) {
             $insertId = $doAHRCompanyExists["sid"];
             //
             $data_to_update = array();
@@ -142,7 +143,7 @@ class Complynet extends CI_Controller {
             $data_to_update["updated_at"] = date('Y-m-d H:i:s', strtotime('now'));
             //
             $this->company_model->updateData(
-                "complynet_companies", 
+                "complynet_companies",
                 ['sid' => $insertId],
                 $data_to_update
             );
@@ -157,12 +158,12 @@ class Complynet extends CI_Controller {
             //
             $insertId = $this->company_model->addData("complynet_companies", $data_to_insert);
         }
-       
+
         //
         if ($insertId > 0) {
             return SendResponse(200, [
                 'code' => 'RS',
-                'message' => 'Successfully, <b>'.$AHRCompanyName.'</b> is linked with <b>'.$CNCompanyName.'</b>.'
+                'message' => 'Successfully, <b>' . $AHRCompanyName . '</b> is linked with <b>' . $CNCompanyName . '</b>.'
             ]);
         }
         //
@@ -178,12 +179,38 @@ class Complynet extends CI_Controller {
      * 
      */
     public function deleteCompanyLink()
-    {   
+    {
         //
         $rowSid = $this->input->post('rowSid');
+
+    //
+    $companyData = $this->company_model->checkOrGetData(
+        'complynet_companies',
+        ['sid' => $rowSid],
+        ['automotohr_id'],
+        'result_array'
+    );
+    //
+    $locationsCount = $this->company_model->checkOrGetData(
+        'complynet_locations',
+        ['company_id' => $companyData[0]['automotohr_id']],
+        ['company_id'],
+        'count_all_results'
+    );
+
+
+    if ($locationsCount > 0) {
+        return SendResponse(200, [
+            'code' => 'LF',
+            'message' => "please unlink the location first."
+        ]);
+    }
+
+
+
         //
         $this->company_model->deleteRow(
-            "complynet_companies", 
+            "complynet_companies",
             ['sid' => $rowSid]
         );
         //
@@ -193,14 +220,15 @@ class Complynet extends CI_Controller {
         ]);
     }
 
-    public function getComplynetCompanies () {
+    public function getComplynetCompanies()
+    {
         $this->load->library('complynet_lib');
         //
         $complynetCompanies = $this
-        ->complynet_lib
-        ->setMode('fake')
-        ->authenticate()
-        ->getCompanies();
+            ->complynet_lib
+            ->setMode('fake')
+            ->authenticate()
+            ->getCompanies();
         //
         return SendResponse(200, [
             'code' => 'SF',
@@ -215,7 +243,8 @@ class Complynet extends CI_Controller {
      * @param int $AHRCompanyId
      * 
      */
-    public function getCompanyLocationsDetails ($AHRCompanyId) {
+    public function getCompanyLocationsDetails($AHRCompanyId)
+    {
         // check any Complynet location is linked with AHR Company
         $doExists = $this->company_model->checkOrGetData(
             'complynet_locations',
@@ -224,7 +253,7 @@ class Complynet extends CI_Controller {
             'count_all_results'
         );
         // in case company location not found
-        if(!$doExists){
+        if (!$doExists) {
             return SendResponse(200, [
                 'code' => 'LNF',
                 'message' => 'No location linked yet.'
@@ -250,7 +279,8 @@ class Complynet extends CI_Controller {
      * @param int $AHRCompanyId
      * 
      */
-    public function getComplynetLocationsDetails ($AHRCompanyId) {
+    public function getComplynetLocationsDetails($AHRCompanyId)
+    {
         //
         $companyInfo = $this->company_model->checkOrGetData(
             'complynet_companies',
@@ -262,10 +292,10 @@ class Complynet extends CI_Controller {
         $this->load->library('complynet_lib');
         //
         $complynetLocations = $this
-        ->complynet_lib
-        ->setMode('fake')
-        ->authenticate()
-        ->getLocations($companyInfo["complynet_id"]);
+            ->complynet_lib
+            ->setMode('fake')
+            ->authenticate()
+            ->getLocations($companyInfo["complynet_id"]);
         //
         $companyPrimaryLocation = $this->company_model->checkOrGetData(
             'users',
@@ -277,7 +307,7 @@ class Complynet extends CI_Controller {
         $companySecondaryLocation = $this->company_model->checkOrGetData(
             'company_addresses_locations',
             [
-                'company_sid' => $AHRCompanyId, 
+                'company_sid' => $AHRCompanyId,
                 'status' => 1
             ],
             ['sid', 'address'],
@@ -304,7 +334,7 @@ class Complynet extends CI_Controller {
                 // 
                 $companyLocations[$l_key]['sid'] = $location["sid"];
                 $companyLocations[$l_key]['address'] = $location["address"];
-            }   
+            }
         }
         //
         return SendResponse(200, [
@@ -320,7 +350,7 @@ class Complynet extends CI_Controller {
      * 
      */
     public function linkLocation()
-    {   
+    {
         $AHRCompanySid = $this->input->post('companySid');
         $locationRowSid = $this->input->post('rowSid');
         //
@@ -338,12 +368,12 @@ class Complynet extends CI_Controller {
             'row_array'
         );
         // in case location already linked with someone
-        if($doCNLocationExists){
+        if ($doCNLocationExists) {
             return SendResponse(200, [
                 'code' => 'AR',
-                'message' => 'Selected ComplyNet location is already Linked with <b>'.$doCNLocationExists["automotohr_location_name"].'</b>.'
+                'message' => 'Selected ComplyNet location is already Linked with <b>' . $doCNLocationExists["automotohr_location_name"] . '</b>.'
             ]);
-        } 
+        }
         //
         // check if AHR location is already exist or not  
         $doAHRLocationExists = $this->company_model->checkOrGetData(
@@ -355,7 +385,7 @@ class Complynet extends CI_Controller {
         //
         $insertId = 0;
         //
-        if($locationRowSid != 0) {
+        if ($locationRowSid != 0) {
             $insertId = $locationRowSid;
             //
             $data_to_update = array();
@@ -368,7 +398,7 @@ class Complynet extends CI_Controller {
             $data_to_update["updated_at"] = date('Y-m-d H:i:s', strtotime('now'));
             //
             $this->company_model->updateData(
-                "complynet_locations", 
+                "complynet_locations",
                 ['sid' => $locationRowSid],
                 $data_to_update
             );
@@ -384,12 +414,12 @@ class Complynet extends CI_Controller {
             //
             $insertId = $this->company_model->addData("complynet_locations", $data_to_insert);
         }
-       
+
         //
         if ($insertId > 0) {
             return SendResponse(200, [
                 'code' => 'RS',
-                'message' => 'Successfully, <b>'.$AHRLocationName.'</b> is linked with <b>'.$CNLocationName.'</b>.'
+                'message' => 'Successfully, <b>' . $AHRLocationName . '</b> is linked with <b>' . $CNLocationName . '</b>.'
             ]);
         }
         //
@@ -405,12 +435,38 @@ class Complynet extends CI_Controller {
      * 
      */
     public function deleteLocationLink()
-    {   
+    {
         //
         $rowSid = $this->input->post('rowSid');
+
+        //
+        $locationsData = $this->company_model->checkOrGetData(
+            'complynet_locations',
+            ['sid' => $rowSid],
+            ['company_id',  'complynet_location_id'],
+            'result_array'
+        );
+        //
+        $locationsCount = $this->company_model->checkOrGetData(
+            'complynet_departments',
+            ['company_id' => $locationsData[0]['company_id'], 'complynet_location_id' => $locationsData[0]['complynet_location_id']],
+            ['company_id'],
+            'count_all_results'
+        );
+
+
+        if ($locationsCount > 0) {
+            return SendResponse(20011, [
+                'code' => 'DF',
+                'message' => "please unlink the department of this location first."
+            ]);
+        }
+
+
+
         //
         $this->company_model->deleteRow(
-            "complynet_locations", 
+            "complynet_locations",
             ['sid' => $rowSid]
         );
         //
@@ -426,7 +482,8 @@ class Complynet extends CI_Controller {
      * @param int $AHRCompanyId
      * 
      */
-    public function getCompanyDepartmentsDetails ($AHRCompanyId) {
+    public function getCompanyDepartmentsDetails($AHRCompanyId)
+    {
         // check any Complynet departments is linked with AHR Company
         $doExists = $this->company_model->checkOrGetData(
             'complynet_departments',
@@ -435,7 +492,7 @@ class Complynet extends CI_Controller {
             'count_all_results'
         );
         // in case company departmentsn not found
-        if(!$doExists){
+        if (!$doExists) {
             return SendResponse(200, [
                 'code' => 'DNF',
                 'message' => 'No Department Found.'
@@ -455,7 +512,8 @@ class Complynet extends CI_Controller {
         ]);
     }
 
-    public function getComplynetLinkLocations ($AHRCompanyId) {
+    public function getComplynetLinkLocations($AHRCompanyId)
+    {
         $locations = $this->company_model->checkOrGetData(
             'complynet_locations',
             ['company_id' => $AHRCompanyId],
@@ -463,12 +521,12 @@ class Complynet extends CI_Controller {
             'result_array'
         );
         // in case location already linked
-        if($locations){
+        if ($locations) {
             return SendResponse(200, [
                 'code' => 'FS',
                 'locations' => $locations
             ]);
-        } 
+        }
         //
         return SendResponse(200, [
             'code' => 'LNF',
@@ -476,7 +534,8 @@ class Complynet extends CI_Controller {
         ]);
     }
 
-    public function getSpecificLocationDepartments ($rowId, $type) {
+    public function getSpecificLocationDepartments($rowId, $type)
+    {
         //
         $selectedLocation = $this->company_model->checkOrGetData(
             'complynet_locations',
@@ -485,12 +544,12 @@ class Complynet extends CI_Controller {
             'row_array'
         );
         //
-        if(!$selectedLocation){
+        if (!$selectedLocation) {
             return SendResponse(200, [
                 'code' => 'LNF',
                 'message' => 'Selected location not found.'
             ]);
-        } 
+        }
         //
         $automotoHRSelectedDepartments = $this->company_model->checkOrGetData(
             'complynet_departments',
@@ -506,19 +565,19 @@ class Complynet extends CI_Controller {
             ]);
         }
         //
-        $selectedDepartmentSids =array();
+        $selectedDepartmentSids = array();
         //
         if ($automotoHRSelectedDepartments) {
-           $selectedDepartmentSids = array_column($automotoHRSelectedDepartments, 'automotohr_department_id'); 
+            $selectedDepartmentSids = array_column($automotoHRSelectedDepartments, 'automotohr_department_id');
         }
         //
         $this->load->library('complynet_lib');
         //
         $complyNetDepartments = $this
-        ->complynet_lib
-        ->setMode('fake')
-        ->authenticate()
-        ->getDepartments($selectedLocation["complynet_location_id"]);
+            ->complynet_lib
+            ->setMode('fake')
+            ->authenticate()
+            ->getDepartments($selectedLocation["complynet_location_id"]);
         //
         $automotoHRDepartments = $this->company_model->checkOrGetData(
             'departments_management',
@@ -541,7 +600,7 @@ class Complynet extends CI_Controller {
      * 
      */
     public function linkDepartment()
-    {   
+    {
         $action = "create";
         //
         $complyNetDepartmentSiD = '';
@@ -585,10 +644,10 @@ class Complynet extends CI_Controller {
                 $this->load->library('complynet_lib');
                 //
                 $response = $this
-                ->complynet_lib
-                ->setMode('fake')
-                ->authenticate()
-                ->createDepartment($automotoHRDepartmentName, $complyNetLocationId);
+                    ->complynet_lib
+                    ->setMode('fake')
+                    ->authenticate()
+                    ->createDepartment($automotoHRDepartmentName, $complyNetLocationId);
                 //
                 $complyNetDepartmentSiD = $response["Id"];
                 $complyNetDepartmentName = $response["Name"];
@@ -626,12 +685,36 @@ class Complynet extends CI_Controller {
      * 
      */
     public function deleteDepartmentLink()
-    {   
+    {
         //
         $rowSid = $this->input->post('rowSid');
+
+        //
+        $departmentsData = $this->company_model->checkOrGetData(
+            'complynet_departments',
+            ['sid' => $rowSid],
+            ['company_id',  'complynet_department_id'],
+            'result_array'
+        );
+        //
+        $jobRoleCount = $this->company_model->checkOrGetData(
+            'complynet_jobRole',
+            ['company_id' => $departmentsData[0]['company_id'], 'complynet_department_id' => $departmentsData[0]['complynet_department_id']],
+            ['company_id'],
+            'count_all_results'
+        );
+
+
+        if ($jobRoleCount > 0) {
+            return SendResponse(200, [
+                'code' => 'DF',
+                'message' => "please unlink the job role of this department first."
+            ]);
+        }
+
         //
         $this->company_model->deleteRow(
-            "complynet_departments", 
+            "complynet_departments",
             ['sid' => $rowSid]
         );
         //
@@ -641,12 +724,13 @@ class Complynet extends CI_Controller {
         ]);
     }
 
-     /**
+    /**
      * Get all jobroles of company
      *
      * 
      */
-    public function getCompanyJobRoleDetails ($AHRCompanyId) {
+    public function getCompanyJobRoleDetails($AHRCompanyId)
+    {
         // check any Complynet job_role is linked with AHR Company
         $doExists = $this->company_model->checkOrGetData(
             'complynet_jobRole',
@@ -656,7 +740,7 @@ class Complynet extends CI_Controller {
         );
         //
         // in case company job_role not found
-        if(!$doExists){
+        if (!$doExists) {
             return SendResponse(200, [
                 'code' => 'JRNF',
                 'message' => 'No JobRole Found.'
@@ -677,7 +761,8 @@ class Complynet extends CI_Controller {
         ]);
     }
 
-    public function getSpecificJobRoles ($rowId, $type) {
+    public function getSpecificJobRoles($rowId, $type)
+    {
         //
         $selectedDepaerments = $this->company_model->checkOrGetData(
             'complynet_departments',
@@ -686,12 +771,12 @@ class Complynet extends CI_Controller {
             'row_array'
         );
         //
-        if(!$selectedDepaerments){
+        if (!$selectedDepaerments) {
             return SendResponse(200, [
                 'code' => 'DNF',
                 'message' => 'Selected location not found.'
             ]);
-        } 
+        }
         //
         $selectedJobRoles = $this->company_model->checkOrGetData(
             'complynet_jobRole',
@@ -712,7 +797,7 @@ class Complynet extends CI_Controller {
             'users',
             [
                 'parent_sid' => $selectedDepaerments["company_id"],
-                'job_title <>' => null ,
+                'job_title <>' => null,
                 'job_title <>' => ''
             ],
             ['distinct(job_title)'],
@@ -722,10 +807,10 @@ class Complynet extends CI_Controller {
         $this->load->library('complynet_lib');
         //
         $complyNetJobRoles = $this
-        ->complynet_lib
-        ->setMode('fake')
-        ->authenticate()
-        ->getJobRole($selectedDepaerments["complynet_department_id"]);
+            ->complynet_lib
+            ->setMode('fake')
+            ->authenticate()
+            ->getJobRole($selectedDepaerments["complynet_department_id"]);
         //
         return SendResponse(200, [
             'code' => 'FS',
@@ -741,7 +826,7 @@ class Complynet extends CI_Controller {
      * 
      */
     public function linkJobRole()
-    {   
+    {
         $action = "create";
         //
         $complyNetJobRoleSid = '';
@@ -775,10 +860,10 @@ class Complynet extends CI_Controller {
                 $this->load->library('complynet_lib');
                 //
                 $response = $this
-                ->complynet_lib
-                ->setMode('fake')
-                ->authenticate()
-                ->createJobRole($jobRole, $complyNetDepartmentId);
+                    ->complynet_lib
+                    ->setMode('fake')
+                    ->authenticate()
+                    ->createJobRole($jobRole, $complyNetDepartmentId);
                 //
                 $complyNetJobRoleSid = $response["Id"];
                 $complyNetJobRoleName = $response["Name"];
@@ -815,12 +900,36 @@ class Complynet extends CI_Controller {
      * 
      */
     public function deleteJobRoleLink()
-    {   
+    {
         //
         $rowSid = $this->input->post('rowSid');
+
         //
+        $jobRoleData = $this->company_model->checkOrGetData(
+            'complynet_jobRole',
+            ['sid' => $rowSid],
+            ['company_id', 'complynet_department_id', 'complynet_jobRole_id'],
+            'result_array'
+        );
+        //
+        $employeesCount = $this->company_model->checkOrGetData(
+            'complynet_employees',
+            ['company_id' => $jobRoleData[0]['company_id'], 'complynet_department_id' => $jobRoleData[0]['complynet_department_id'], 'complynet_jobRole_id' => $jobRoleData[0]['complynet_jobRole_id']],
+            ['company_id', 'complynet_department_id', 'complynet_jobRole_id'],
+            'count_all_results'
+        );
+
+
+        if ($employeesCount > 0) {
+            return SendResponse(20011, [
+                'code' => 'EF',
+                'message' => "please unlink the employees against this job role first."
+            ]);
+        }
+
+
         $this->company_model->deleteRow(
-            "complynet_jobRole", 
+            "complynet_jobRole",
             ['sid' => $rowSid]
         );
         //
@@ -835,7 +944,8 @@ class Complynet extends CI_Controller {
      *
      * 
      */
-    public function getCompanyEmployeesDetails ($AHRCompanyId) {
+    public function getCompanyEmployeesDetails($AHRCompanyId)
+    {
         // check any Complynet employees is linked with AHR Company
         $doExists = $this->company_model->checkOrGetData(
             'complynet_employees',
@@ -845,7 +955,7 @@ class Complynet extends CI_Controller {
         );
         //
         // in case company employees not found
-        if(!$doExists){
+        if (!$doExists) {
             return SendResponse(200, [
                 'code' => 'ENF',
                 'message' => 'No employee Found.'
@@ -870,24 +980,25 @@ class Complynet extends CI_Controller {
         ]);
     }
 
-    public function getCompanyEmployees ($AHRCompanyId) {
+    public function getCompanyEmployees($AHRCompanyId)
+    {
         //
         $automotoHREmployees = $this->company_model->checkOrGetData(
             'users',
             [
-                'parent_sid' => $AHRCompanyId, 
-                'active' => 1, 
-                'terminated_status' => 0, 
-                'is_executive_admin' => 0, 
-                'email <>' => null , 
+                'parent_sid' => $AHRCompanyId,
+                'active' => 1,
+                'terminated_status' => 0,
+                'is_executive_admin' => 0,
+                'email <>' => null,
                 'email <>' => ''
             ],
-            ['sid', 'first_name', 'last_name', 'job_title','is_executive_admin','access_level_plus', 'pay_plan_flag', 'access_level'],
+            ['sid', 'first_name', 'last_name', 'job_title', 'is_executive_admin', 'access_level_plus', 'pay_plan_flag', 'access_level'],
             'result_array'
         );
         //
         // in case location already linked
-        if(!$automotoHREmployees){
+        if (!$automotoHREmployees) {
             return SendResponse(200, [
                 'code' => 'ENF',
                 'message' => 'Employees not found.'
@@ -901,12 +1012,12 @@ class Complynet extends CI_Controller {
             'result_array'
         );
         // in case location already linked
-        if(!$linkedLocations){
+        if (!$linkedLocations) {
             return SendResponse(200, [
                 'code' => 'LNF',
                 'message' => 'Please link location first.'
             ]);
-        } 
+        }
         //
         $selectedEmployees = $this->company_model->checkOrGetData(
             'complynet_employees',
@@ -928,7 +1039,7 @@ class Complynet extends CI_Controller {
      *
      * 
      */
-    public function linkEmployees ()
+    public function linkEmployees()
     {
         //
         $AHRCompanySid = $this->input->post('companySid');
@@ -1005,16 +1116,16 @@ class Complynet extends CI_Controller {
         $this->load->library('complynet_lib');
         //
         $employeeResponse = $this
-        ->complynet_lib
-        ->setMode('fake')
-        ->authenticate()
-        ->makeRequest(
-            $complyNetCompanyId,
-            $complyNetLocationId,
-            $complyNetDepartmentId,
-            $complyNetJobRoleId,
-            $employeesList
-        );
+            ->complynet_lib
+            ->setMode('fake')
+            ->authenticate()
+            ->makeRequest(
+                $complyNetCompanyId,
+                $complyNetLocationId,
+                $complyNetDepartmentId,
+                $complyNetJobRoleId,
+                $employeesList
+            );
         //
         return $employeeResponse;
     }
@@ -1025,21 +1136,21 @@ class Complynet extends CI_Controller {
      * 
      */
     public function disableEmployeeLink()
-    {   
+    {
         //
         $rowSid = $this->input->post('rowSid');
         $name = $this->input->post('name');
         $status = $this->input->post('status');
         //
         $this->company_model->updateData(
-            "complynet_employees", 
+            "complynet_employees",
             ['sid' => $rowSid],
             ['status' => $status]
         );
         //
         return SendResponse(200, [
             'code' => 'DE',
-            'message' => '<b>'.$name.'</b> employee '.($status == 0 ? "disabled" : "enabled").' successfully.'
+            'message' => '<b>' . $name . '</b> employee ' . ($status == 0 ? "disabled" : "enabled") . ' successfully.'
         ]);
     }
 }
