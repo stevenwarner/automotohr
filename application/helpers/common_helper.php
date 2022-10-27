@@ -12059,7 +12059,8 @@ if (!function_exists('')) {
                 }
             }
             //
-            $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
+            // $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
+            $printURL = str_replace(array_keys($replace), $replace, $printURL);
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
         }
         //_e($document, true);
