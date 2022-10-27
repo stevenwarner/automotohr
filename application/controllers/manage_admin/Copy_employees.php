@@ -132,7 +132,6 @@ class Copy_employees extends Admin_Controller {
             $employee = $this->copy_employees_model->fetch_employee_by_sid($employee_sid);
             $company_name = $this->copy_employees_model->get_company_name_by_id($to_company);
 
-            // _e($employee, true, true);
 
             $employee_name = $employee['first_name'].' '.$employee['last_name'];
      
@@ -146,18 +145,7 @@ class Copy_employees extends Admin_Controller {
             if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) { 
                 $primary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $to_company);
                 $secondary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $from_company);
-              //  $resp['status'] = FALSE;
-              //  $resp['response'] = 'Employee <b>'.$employee_name.'</b> already exist in company <b>'.$company_name.'</b>';
-              
-             // die('dsfsdfsdfsdfsdf');
-              
-              
-              
-                //Merge Employee
-
-    //   $company_sid        = $this->input->post('company_sid');
-               // $secondary_employee_sid = $this->input->post('secondary_employee_sid');
-              //  $primary_employee_sid   = $this->input->post('primary_employee_sid');
+            
                 $secondary_employee_email    = $employee['email'];
                 //
                 //Update Primary Employee Profile

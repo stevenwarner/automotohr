@@ -866,6 +866,8 @@ class Merge_employees_model extends CI_Model
                     unset($secondary_doc['sid']);
                     $secondary_doc['user_sid'] = $primary_employee_sid;
                     $secondary_doc['user_type'] = 'employee';
+                    $secondary_doc['company_sid'] = $primary_company_sid;
+
                     $this->db->insert('documents_assigned', $secondary_doc);
                 }
                 //
