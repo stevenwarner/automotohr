@@ -192,7 +192,7 @@ if($load_view){
         }
 
         function unCheckAll(classID,obj){
-//        $('.'+classID).not(obj).attr('checked', false);
+            //  $('.'+classID).not(obj).attr('checked', false);
         }
 
         $('.watched_video_now').on('click', function () {
@@ -296,12 +296,13 @@ if($load_view){
                                 } else if(doc_type == ''){
                                     docDiv += '<i class="fa fa-2x fa-file-text"></i>';
                                 }
-                            docDiv += '<td class="col-lg-1 text-center"><a href="'+base+document.sid+'" class="btn btn-info">View</a></td></tr>';
+                            // docDiv += '<td class="col-lg-1 text-center"><a href="'+base+document.sid+'" class="btn btn-info">View</a></td></tr>';
+                            docDiv += '<td class="col-lg-1 text-center"><a href="javascript:;" class="btn btn-info jsShowSupportingDocument" data-doc_path="'+document.upload_file_name+'" data-doc_name="'+document.upload_file_title+'" data-doc_extension="'+document.upload_file_extension+'">View</a></td></tr>';
                         });
-                        thisDocuments = '<div class="row"><div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"><div class="panel panel-default ems-documents"><div class="panel-heading"><strong>Supported Documents</strong></div><div class="panel-body"><div class="table-responsive">';
+                        thisDocuments = '<div class="row"><div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"><div class="panel panel-default ems-documents"><div class="panel-heading"><strong>Supported Documents</strong></div><div class="panel-body"><div class="table-responsive"><div id="document_listing">';
                         thisDocuments += '<table class="table table-plane"><thead><tr><th class="col-lg-3">Document Name</th><th class="col-lg-3 text-center">Type</th><th class="col-lg-3 text-center">Actions</th></tr></thead><tbody>';
                         thisDocuments += docDiv;
-                        thisDocuments += '</tbody></table></div></div></div></div></div>';
+                        thisDocuments += '</tbody></table></div><div id="document_section"></div></div></div></div></div></div>';
                         $('#docDiv').html(thisDocuments);
                     }
                     $("#popup_user_sid").val(user_id);
@@ -310,7 +311,7 @@ if($load_view){
                     $("#popup_video_sid").val(video_sid);
                     $("#popup_video_title").html(video_title);
                     $("#popup_video_description").html(video_description);
-                    // alert(video_id);
+                    // 
                     if (video_source == 'youtube') {
                         $('#popup1').modal('show');
                         $('#youtube-section').show();
@@ -344,6 +345,89 @@ if($load_view){
                 }
             });
         });
+
+        // 
+        $(document).on('click', '.jsShowSupportingDocument', function() {
+            $('#document_listing').hide();
+            $('#document_section').show();
+            var preview_document = 1;
+            var model_contant = '';
+            var doc_path = $(this).data("doc_path");
+            var doc_name = $(this).data("doc_name");
+            var doc_extension = $(this).data("doc_extension");
+            var document_file_name = doc_path.substr(0, doc_path.lastIndexOf('.'));
+
+            switch (doc_extension.toLowerCase()) {
+                case 'pdf':
+                    preview_iframe_url = 'https://docs.google.com/gview?url=' + doc_path + '&embedded=true';
+                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pdf';
+                    break;
+                case 'csv':
+                    preview_iframe_url = 'https://docs.google.com/gview?url=' + doc_path + '&embedded=true';
+                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.csv';
+                    break;
+                case 'doc':
+                    preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(doc_path);
+                    document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_file_name + '%2Edoc&wdAccPdf=0';
+                    break;
+                case 'docx':
+                    preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(doc_path);
+                    document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_file_name + '%2Edocx&wdAccPdf=0';
+                    break;
+                case 'ppt':
+                    preview_iframe_url = 'https://docs.google.com/gview?url=' + doc_path + '&embedded=true';
+                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.ppt';
+                    break;
+                case 'pptx':
+                    dpreview_iframe_url = 'https://docs.google.com/gview?url=' + doc_path + '&embedded=true';
+                    document_print_url = 'https://docs.google.com/viewerng/viewer?url=https://automotohrattachments.s3.amazonaws.com/' + document_file_name + '.pptx';
+                    break;
+                case 'xls':
+                    preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(doc_path);
+                    document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_file_name + '%2Exls';
+                    break;
+                case 'xlsx':
+                    preview_iframe_url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURI(doc_path);
+                    document_print_url = 'https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Fautomotohrattachments%2Es3%2Eamazonaws%2Ecom%3A443%2F' + document_file_name + '%2Exlsx';
+                    break;
+                case 'jpg':
+                case 'jpe':
+                case 'jpeg':
+                case 'png':
+                case 'gif':
+                case 'JPG':
+                case 'JPE':
+                case 'JPEG':
+                case 'PNG':
+                case 'GIF':
+                    preview_document = 0;
+                    preview_image_url = doc_path;
+                    document_print_url = '<?php echo base_url("hr_documents_management/print_s3_image"); ?>' + '/' + doc_path;
+                    break;
+                default: //using google docs
+                    preview_iframe_url = 'https://docs.google.com/gview?url=' + doc_path + '&embedded=true';
+                    break;
+            }
+
+            document_download_url = '<?php echo base_url("hr_documents_management/download_upload_document"); ?>' + '/' + doc_path;
+
+            if (preview_document == 1) {
+                documentContant = $("<iframe />")
+                    .attr("id", "latest_document_iframe")
+                    .attr("class", "uploaded-file-preview")
+                    .attr("src", preview_iframe_url);
+            } else {
+                documentContant = $("<img />")
+                    .attr("id", "latest_image_tag")
+                    .attr("class", "img-responsive")
+                    .css("margin-left", "auto")
+                    .css("margin-right", "auto")
+                    .attr("src", preview_image_url);
+            }
+
+            $("#document_section").append(documentContant);
+        });
+
 
         var vid = document.getElementById("my-video");
         vid.onplay = function() {
