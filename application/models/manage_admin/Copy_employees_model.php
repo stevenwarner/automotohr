@@ -577,4 +577,15 @@ class Copy_employees_model extends CI_Model {
     function maintain_employee_log_data ($data) {
         $this->db->insert('employees_transfer_log', $data);
     }
+
+    function get_employee_sid ($email, $company_sid) {
+        $this->db->select('sid');
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->where('email', $email);
+        $this->db->where('is_executive_admin', 0);
+        $this->db->from('users');
+        $records_obj = $this->db->get();
+        $result = $records_obj->row_array();
+        return $result["sid"];
+    }
 }

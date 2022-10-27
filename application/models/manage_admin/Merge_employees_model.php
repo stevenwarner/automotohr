@@ -1,11 +1,14 @@
 <?php
-class Merge_employees_model extends CI_Model {
-    function __construct() {
+class Merge_employees_model extends CI_Model
+{
+    function __construct()
+    {
         parent::__construct();
     }
 
 
-    function get_all_companies() {
+    function get_all_companies()
+    {
 
         $this->db->select('sid, CompanyName');
         $this->db->where('active', 1);
@@ -25,18 +28,19 @@ class Merge_employees_model extends CI_Model {
     }
 
 
-    function GetCompanyEmployees($companyId){
+    function GetCompanyEmployees($companyId)
+    {
         //
         return
-        $this->db->select(getUserFields(), 'timezone')
-        ->where('is_executive_admin', 0)
-        ->where('parent_sid', $companyId)
-        ->order_by('first_name', 'ASC')
-        ->get('users')
-        ->result_array();
+            $this->db->select(getUserFields(), 'timezone')
+            ->where('is_executive_admin', 0)
+            ->where('parent_sid', $companyId)
+            ->order_by('first_name', 'ASC')
+            ->get('users')
+            ->result_array();
     }
 
-    
+
     function get_employee_profile($sid)
     {
         $this->db->select('*');
@@ -44,7 +48,7 @@ class Merge_employees_model extends CI_Model {
 
         $result = $this->db->get('users')->result_array();
 
-        if (empty($result)) {// applicant does not exits
+        if (empty($result)) { // applicant does not exits
             return array();
         } else {
             return $result[0];
@@ -79,13 +83,17 @@ class Merge_employees_model extends CI_Model {
         //
         $this->db->insert('employee_merge_history', $merge_history);
         // Delete secondary Employee
+        
         $this->db->where('sid', $secondary_employee_sid);
         $this->db->delete('users');
+     
+
         //
         return $secondary_employee;
     }
 
-    function save_merge_secondary_employee_info ($secondary_employee_data, $primary_employee_sid, $secondary_employee_sid) {
+    function save_merge_secondary_employee_info($secondary_employee_data, $primary_employee_sid, $secondary_employee_sid)
+    {
         $data_to_update = array();
         $data_to_update["secondary_employee_profile_data"] = serialize($secondary_employee_data);
 
@@ -425,14 +433,14 @@ class Merge_employees_model extends CI_Model {
         $this->db->where('status', 1);
         $primary_employee_w4 = $this->db->get('form_w4_original')->row_array();
         //
-        if(empty($primary_employee_w4)){
+        if (empty($primary_employee_w4)) {
             $this->db->select('*');
             $this->db->where('employer_sid', $secondary_employee_sid);
             $this->db->where('user_type', 'employee');
             $this->db->where('status', 1);
             $secondary_employee_w4 = $this->db->get('form_w4_original')->row_array();
             //
-            if(!empty($secondary_employee_w4)){
+            if (!empty($secondary_employee_w4)) {
                 //
                 $return_array['W4'] = $secondary_employee_w4;
                 //
@@ -449,14 +457,14 @@ class Merge_employees_model extends CI_Model {
         $this->db->where('status', 1);
         $primary_employee_w9 = $this->db->get('applicant_w9form')->row_array();
         //
-        if(empty($primary_employee_w9)){
+        if (empty($primary_employee_w9)) {
             $this->db->select('*');
             $this->db->where('user_sid', $secondary_employee_sid);
             $this->db->where('user_type', 'employee');
             $this->db->where('status', 1);
             $secondary_employee_w9 = $this->db->get('applicant_w9form')->row_array();
             //
-            if(!empty($secondary_employee_w9)){
+            if (!empty($secondary_employee_w9)) {
                 //
                 $return_array['W9'] = $secondary_employee_w9;
                 //
@@ -473,14 +481,14 @@ class Merge_employees_model extends CI_Model {
         $this->db->where('status', 1);
         $primary_employee_i9 = $this->db->get('applicant_i9form')->row_array();
         //
-        if(empty($primary_employee_i9)){
+        if (empty($primary_employee_i9)) {
             $this->db->select('*');
             $this->db->where('user_sid', $secondary_employee_sid);
             $this->db->where('user_type', 'employee');
             $this->db->where('status', 1);
             $secondary_employee_i9 = $this->db->get('applicant_i9form')->row_array();
             //
-            if(!empty($secondary_employee_i9)){
+            if (!empty($secondary_employee_i9)) {
                 //
                 $return_array['I9'] = $secondary_employee_i9;
                 //
@@ -515,27 +523,29 @@ class Merge_employees_model extends CI_Model {
         } else {
             $already_sid = array();
             //
-            foreach($primary_general_docs as $obj){
+            foreach ($primary_general_docs as $obj) {
                 $already_sid[] = $obj['sid'];
             }
+        
             //
             $this->db->select('*');
             $this->db->where('user_sid', $secondary_employee_sid);
             $this->db->where('user_type', 'employee');
             $secondary_general_docs = $this->db->get('documents_assigned')->result_array();
-            //
+             //
             if (!empty($secondary_general_docs)) {
                 foreach ($secondary_general_docs as $secondary_doc) {
-                    if(!in_array($secondary_doc['sid'],$already_sid)){
+                    if (!in_array($secondary_doc['sid'], $already_sid)) {
                         unset($secondary_doc['sid']);
-                        $secondary_doc['user_sid'] = $hired_sid;
+                        $secondary_doc['user_sid'] = $primary_employee_sid;
                         $secondary_doc['user_type'] = 'employee';
                         $this->db->insert('documents_assigned', $secondary_doc);
+                        print_r($secondary_doc);
                     }
                 }
                 //
                 $return_array['documents'] = $secondary_general_docs;
-            } 
+            }
         }
 
         //
@@ -579,7 +589,7 @@ class Merge_employees_model extends CI_Model {
         $this->db->where('is_active', 1);
         $secondary_employee_signature = $this->db->get('e_signatures_data')->row_array();
         //
-        if (!empty($secondary_employee_signature)) {     
+        if (!empty($secondary_employee_signature)) {
             $this->db->select($columns);
             $this->db->where('user_sid', $primary_employee_sid);
             $this->db->where('user_type', 'employee');
@@ -613,7 +623,7 @@ class Merge_employees_model extends CI_Model {
         }
     }
 
-    function update_employee_eeoc_form ($primary_employee_sid, $secondary_employee_sid)
+    function update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid)
     {
         $columns = 'portal_applicant_jobs_list_sid, us_citizen, visa_status, group_status, veteran, disability, gender, is_latest, last_sent_at, is_expired';
         //
@@ -654,7 +664,8 @@ class Merge_employees_model extends CI_Model {
         }
     }
 
-    function findDifference ($primary_data, $secondary_data) {
+    function findDifference($primary_data, $secondary_data)
+    {
         // 
         $difference = array();
         //
@@ -664,7 +675,7 @@ class Merge_employees_model extends CI_Model {
                 if (empty($data) && !isset($data) || $data == "") {
                     if (!empty($secondary_data[$key])) {
                         $difference[$key] = $secondary_data[$key];
-                    }       
+                    }
                 }
                 //
                 if ($this->is_serialized($data)) {
@@ -676,12 +687,12 @@ class Merge_employees_model extends CI_Model {
                         //
                         foreach ($secondary_serialize as $ss_key => $ss_data) {
                             if (empty($primary_serialize[$ss_key]) || !isset($primary_serialize[$ss_key])) {
-                                $primary_serialize[$ss_key] = $secondary_serialize[$ss_key];       
+                                $primary_serialize[$ss_key] = $secondary_serialize[$ss_key];
                             }
-                        }  
+                        }
                         //
-                        $difference[$key] = serialize($primary_serialize); 
-                    }    
+                        $difference[$key] = serialize($primary_serialize);
+                    }
                 }
                 //
             }
@@ -696,62 +707,202 @@ class Merge_employees_model extends CI_Model {
         return $difference;
     }
 
-    function is_serialized( $data, $strict = true ) {
+    function is_serialized($data, $strict = true)
+    {
         // If it isn't a string, it isn't serialized.
-        if ( ! is_string( $data ) ) {
+        if (!is_string($data)) {
             return false;
         }
-        $data = trim( $data );
-        if ( 'N;' === $data ) {
+        $data = trim($data);
+        if ('N;' === $data) {
             return true;
         }
-        if ( strlen( $data ) < 4 ) {
+        if (strlen($data) < 4) {
             return false;
         }
-        if ( ':' !== $data[1] ) {
+        if (':' !== $data[1]) {
             return false;
         }
-        if ( $strict ) {
-            $lastc = substr( $data, -1 );
-            if ( ';' !== $lastc && '}' !== $lastc ) {
+        if ($strict) {
+            $lastc = substr($data, -1);
+            if (';' !== $lastc && '}' !== $lastc) {
                 return false;
             }
         } else {
-            $semicolon = strpos( $data, ';' );
-            $brace     = strpos( $data, '}' );
+            $semicolon = strpos($data, ';');
+            $brace     = strpos($data, '}');
             // Either ; or } must exist.
-            if ( false === $semicolon && false === $brace ) {
+            if (false === $semicolon && false === $brace) {
                 return false;
             }
             // But neither must be in the first X characters.
-            if ( false !== $semicolon && $semicolon < 3 ) {
+            if (false !== $semicolon && $semicolon < 3) {
                 return false;
             }
-            if ( false !== $brace && $brace < 4 ) {
+            if (false !== $brace && $brace < 4) {
                 return false;
             }
         }
         $token = $data[0];
-        switch ( $token ) {
+        switch ($token) {
             case 's':
-                if ( $strict ) {
-                    if ( '"' !== substr( $data, -2, 1 ) ) {
+                if ($strict) {
+                    if ('"' !== substr($data, -2, 1)) {
                         return false;
                     }
-                } elseif ( false === strpos( $data, '"' ) ) {
+                } elseif (false === strpos($data, '"')) {
                     return false;
                 }
                 // Or else fall through.
             case 'a':
             case 'O':
-                return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
+                return (bool) preg_match("/^{$token}:[0-9]+:/s", $data);
             case 'b':
             case 'i':
             case 'd':
                 $end = $strict ? '$' : '';
-                return (bool) preg_match( "/^{$token}:[0-9.E+-]+;$end/", $data );
+                return (bool) preg_match("/^{$token}:[0-9.E+-]+;$end/", $data);
         }
         return false;
-    } 
+    }
+
+
+//
+    function update_documents_new($primary_employee_sid, $secondary_employee_sid,$primary_company_sid)
+    {
+        $return_array = [
+            'W4' => '',
+            'W9' => '',
+            'I9' => '',
+            'documents' => "",
+        ];
+        //Fillable Forms
+        //W4
+        $this->db->select('sid');
+        $this->db->where('employer_sid', $primary_employee_sid);
+        $this->db->where('user_type', 'employee');
+        $this->db->where('status', 1);
+        $primary_employee_w4 = $this->db->get('form_w4_original')->row_array();
+        //
+        if (empty($primary_employee_w4)) {
+            $this->db->select('*');
+            $this->db->where('employer_sid', $secondary_employee_sid);
+            $this->db->where('user_type', 'employee');
+            $this->db->where('status', 1);
+            $secondary_employee_w4 = $this->db->get('form_w4_original')->row_array();
+            //
+            if (!empty($secondary_employee_w4)) {
+                //
+                $return_array['W4'] = $secondary_employee_w4;
+                //
+                unset($secondary_employee_w4['sid']);
+                $secondary_employee_w4['employer_sid'] = $primary_employee_sid;
+                $this->db->insert('form_w4_original', $secondary_employee_w4);
+            }
+        }
+
+        //W9
+        $this->db->select('sid');
+        $this->db->where('user_sid', $primary_employee_sid);
+        $this->db->where('user_type', 'employee');
+        $this->db->where('status', 1);
+        $primary_employee_w9 = $this->db->get('applicant_w9form')->row_array();
+        //
+        if (empty($primary_employee_w9)) {
+            $this->db->select('*');
+            $this->db->where('user_sid', $secondary_employee_sid);
+            $this->db->where('user_type', 'employee');
+            $this->db->where('status', 1);
+            $secondary_employee_w9 = $this->db->get('applicant_w9form')->row_array();
+            //
+            if (!empty($secondary_employee_w9)) {
+                //
+                $return_array['W9'] = $secondary_employee_w9;
+                //
+                unset($secondary_employee_w9['sid']);
+                $secondary_employee_w9['user_sid'] = $primary_employee_sid;
+                $this->db->insert('applicant_w9form', $secondary_employee_w9);
+            }
+        }
+
+        //I9
+        $this->db->select('sid');
+        $this->db->where('user_sid', $primary_employee_sid);
+        $this->db->where('user_type', 'employee');
+        $this->db->where('status', 1);
+        $primary_employee_i9 = $this->db->get('applicant_i9form')->row_array();
+        //
+        if (empty($primary_employee_i9)) {
+            $this->db->select('*');
+            $this->db->where('user_sid', $secondary_employee_sid);
+            $this->db->where('user_type', 'employee');
+            $this->db->where('status', 1);
+            $secondary_employee_i9 = $this->db->get('applicant_i9form')->row_array();
+            //
+            if (!empty($secondary_employee_i9)) {
+                //
+                $return_array['I9'] = $secondary_employee_i9;
+                //
+                unset($secondary_employee_i9['sid']);
+                $secondary_employee_i9['user_sid'] = $primary_employee_sid;
+                $this->db->insert('applicant_i9form', $secondary_employee_i9);
+            }
+        }
+
+        //General Documents
+        $this->db->select('sid');
+        $this->db->where('user_sid', $primary_employee_sid);
+        $this->db->where('user_type', 'employee');
+        $primary_general_docs = $this->db->get('documents_assigned')->result_array();
+
+        if (sizeof($primary_general_docs) == 0) {
+            $this->db->select('*');
+            $this->db->where('user_sid', $secondary_employee_sid);
+            $this->db->where('user_type', 'employee');
+            $secondary_general_docs = $this->db->get('documents_assigned')->result_array();
+            //
+            if (!empty($secondary_general_docs)) {
+                foreach ($secondary_general_docs as $secondary_doc) {
+                    unset($secondary_doc['sid']);
+                    $secondary_doc['user_sid'] = $primary_employee_sid;
+                    $secondary_doc['user_type'] = 'employee';
+                    $this->db->insert('documents_assigned', $secondary_doc);
+                }
+                //
+                $return_array['documents'] = $secondary_general_docs;
+            }
+        } else {
+            $already_sid = array();
+            //
+            foreach ($primary_general_docs as $obj) {
+                $already_sid[] = $obj['sid'];
+            }
+        
+            //
+            $this->db->select('*');
+            $this->db->where('user_sid', $secondary_employee_sid);
+            $this->db->where('user_type', 'employee');
+            $secondary_general_docs = $this->db->get('documents_assigned')->result_array();
+             //
+            if (!empty($secondary_general_docs)) {
+                foreach ($secondary_general_docs as $secondary_doc) {
+                    if (!in_array($secondary_doc['sid'], $already_sid)) {
+                        unset($secondary_doc['sid']);
+                        $secondary_doc['user_sid'] = $primary_employee_sid;
+                        $secondary_doc['user_type'] = 'employee';
+                        $secondary_doc['company_sid'] = $primary_company_sid;
+                        $this->db->insert('documents_assigned', $secondary_doc);
+                    }
+                }
+                //
+                $return_array['documents'] = $secondary_general_docs;
+            }
+        }
+
+        //
+        return $return_array;
+    }
+
+
 
 }
