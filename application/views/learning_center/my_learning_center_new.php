@@ -128,8 +128,8 @@ if (isset($applicant)) {
                 <div class="panel panel-default lc-tabs-panel">
                     <div class="panel-heading">
                         <ul class="nav nav-tabs nav-justified">
-                            <li class="active"><a href="#online_videos" data-toggle="tab" id="OV_tab">Online Videos <?php echo !empty($videos) ? '('.count($videos).')' : ""; ?></a></li>
-                            <li><a href="#training_sessions" data-toggle="tab" id="TS_tab">Training Sessions <?php echo !empty($assigned_sessions) ? '('.count($assigned_sessions).')' : ""; ?></a></li>
+                            <li class="active"><a href="#online_videos" data-toggle="tab" id="OV_tab">Online Videos <?php echo !empty($videos) ? '('.$pendingVideo.')' : ""; ?></a></li>
+                            <li><a href="#training_sessions" data-toggle="tab" id="TS_tab">Training Sessions <?php echo !empty($assigned_sessions) ? '('.$pendingSessions.')' : ""; ?></a></li>
                         </ul>
                     </div>
                     
