@@ -135,6 +135,7 @@ function fetchPolicies() {
         //
         if (resp.Status === false) {
             console.log('Failed to load employees.');
+            $('.jsIPLoader[data-page="balance"]').hide(0);
             return;
         }
         //
