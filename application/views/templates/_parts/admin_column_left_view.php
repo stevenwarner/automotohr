@@ -63,6 +63,7 @@ if (
     $this->uri->segment(2) == 'bulk_email' ||
     $this->uri->segment(2) == 'copy_applicants' ||
     $this->uri->segment(2) == 'copy_documents' ||
+    $this->uri->segment(2) == 'copy_policies' ||
     $this->uri->segment(2) == 'copy_employees' ||
     $this->uri->segment(1) == 'migrate_company_groups' ||
     $this->uri->segment(2) == 'merge_employees' ||
@@ -428,6 +429,13 @@ if (
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/copy_documents')) !== false) {
                                         echo 'class="active"';
                                     } ?> href="<?php echo site_url('manage_admin/copy_documents'); ?>">Copy Documents</a>
+                            </div>
+                        <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'copy_policies')) { ?>
+                            <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/copy_policies')) !== false) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('manage_admin/copy_policies'); ?>">Copy Documents</a>
                             </div>
                         <?php } ?>
                         <?php if (check_access_permissions_for_view($security_details, 'copy_employees')) { ?>
