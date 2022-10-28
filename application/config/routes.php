@@ -1623,3 +1623,12 @@ $route['complynet/get_company_employees/(:num)']['get'] = "2022/Complynet/getCom
 $route['link_employees']['post'] = "2022/Complynet/linkEmployees";
 $route['delete_employee_link']['post'] = "2022/Complynet/deleteEmployeeLink";
 $route['disable_employee_link']['post'] = "2022/Complynet/disableEmployeeLink";
+
+
+//
+$route['cron_complynet/complynet_locations_update'] = "cron_complynet/auto_complynet_locations_update";
+$route['cron_complynet/complynet_departments_update'] = "cron_complynet/auto_complynet_departments_update";
+$route['cron_complynet/complynet_jobroles_update'] = "cron_complynet/auto_complynet_jobroles_update";
+$route['cron_complynet/complynet_employeesinfo_update'] = "cron_complynet/auto_complynet_employeesinfo_update";
+
+

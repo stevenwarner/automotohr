@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Complynet model
@@ -10,12 +10,14 @@
  * @version 1.0 
  * 
  */
-class Complynet_model extends CI_Model {
+class Complynet_model extends CI_Model
+{
 
     /**
      * Entry point
      */
-    function __construct() {
+    function __construct()
+    {
         // Inherit parent class properties and methods
         parent::__construct();
     }
@@ -28,13 +30,13 @@ class Complynet_model extends CI_Model {
         $whereArray = [],
         $method = 'row_array',
         $table
-    ){
+    ) {
         //
         $this->db
-        ->select($columns)
-        ->where($whereArray);
+            ->select($columns)
+            ->where($whereArray);
         //
-        if($method == 'count_all_results'){
+        if ($method == 'count_all_results') {
             //
             return $this->db->$method();
         }
@@ -51,10 +53,18 @@ class Complynet_model extends CI_Model {
     public function insertData(
         $table,
         $dataArray
-    ){
+    ) {
         //
         $this->db->insert($table, $dataArray);
         return $this->db->insert_id();
     }
 
+
+    //
+    function updateData($columns, $whereArray, $table)
+    {
+        $this->db->set($columns);
+        $this->db->where($whereArray);
+        $this->db->update($table);
+    }
 }
