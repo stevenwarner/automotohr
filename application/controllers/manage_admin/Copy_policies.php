@@ -48,7 +48,7 @@ class Copy_policies extends Admin_Controller {
         //
         switch($formpost['action']){
             case 'get_all_companies':
-                $companies = $this->copy_documents_model->getAllCompanies(1);
+                $companies = $this->copy_policies_model->getAllCompanies(1);
 
                 if(!sizeof($companies)){
                     $this->resp['Response'] = 'Oops! System unable to find any company.';
@@ -61,26 +61,19 @@ class Copy_policies extends Admin_Controller {
                 $this->response();
             break;
 
-            case 'get_company_documents':
-                $companyDocuments = $this->copy_documents_model->getCompanyDocuments($formpost, $this->limit);
-                $companyOfferLetters = $this->copy_documents_model->getCompanyOfferLetters($formpost, $this->limit);
+            case 'get_company_policies':
+                $companyPolicies = $this->copy_policies_model->getCompanyPolicies($formpost, $this->limit);
                 //
-                $companyDocuments['Documents'] = array_merge( 
-                    $companyDocuments['Documents'],  
-                    $companyOfferLetters['Documents']
-                );
-                $companyDocuments['DocumentCount'] = $companyDocuments['DocumentCount'] + $companyOfferLetters['DocumentCount'];
-                //
-                if(!sizeof($companyDocuments['Documents'])){
-                    $this->resp['Response'] = 'Oops! This company has no documents.';
+                if(!sizeof($companyPolicies['policies'])){
+                    $this->resp['Response'] = 'Oops! This company has no policies.';
                     $this->response();
                 }
                 //
-                $this->resp['Data'] = $companyDocuments['Documents'];
+                $this->resp['Data'] = $companyPolicies['policies'];
                 $this->resp['Status'] = TRUE;
                 if($formpost['page'] == 1){
                     $this->resp['Limit'] = $this->limit;
-                    $this->resp['TotalRecords'] = $companyDocuments['DocumentCount'];
+                    $this->resp['TotalRecords'] = $companyPolicies['PoliciesCount'];
                     $this->resp['TotalPages'] = ceil($this->resp['TotalRecords'] / $this->limit);
                 }
                 $this->resp['Response'] = 'Proceed.';
@@ -91,23 +84,18 @@ class Copy_policies extends Admin_Controller {
                 $this->resp['Copied'] = FALSE;
                 $this->resp['Failed'] = FALSE;
                 $this->resp['Exists'] = FALSE;
-                // Check if document is copied
-                $isCopied = $this->copy_documents_model->checkDocumentCopied($formpost);
+                // Check if policy is copied
+                $isCopied = $this->copy_policies_model->checkPolicyCopied($formpost);
                 //
                 if($isCopied){
                     $this->resp['Exists'] = TRUE;
                     $this->resp['Status'] = TRUE;
-                    $this->resp['Response'] = 'Document already copied';
+                    $this->resp['Response'] = 'Policy already copied';
                     $this->response();
                 }
                 //
-                if($formpost['document']['document_type'] == 'offer_letter'){
-                    $isMoved = $this->copy_documents_model->moveOfferLetter($formpost, $this->ion_auth->user()->row()->id);
-                } else{
-                    // Fetch document details
-                    $isMoved = $this->copy_documents_model->moveDocument($formpost, $this->ion_auth->user()->row()->id);
-                }
-
+                $isMoved = $this->copy_policies_model->movePolicy($formpost, $this->ion_auth->user()->row()->id);
+                //
                 $this->resp['Copied'] = $isMoved;
                 $this->resp['Status'] = TRUE;
                 $this->resp['Response'] = 'Proceed.';
