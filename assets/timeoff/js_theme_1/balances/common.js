@@ -93,7 +93,13 @@ function fetchEmployees() {
         if (resp.Status === false) {
             window.timeoff.employees = [];
             console.log('Failed to load employees.');
-            return;
+            return alertify.alert(
+                "Warning!",
+                "No employees found.",
+                function(){
+                    $('.jsIPLoader[data-page="balance"]').hide(0);
+                }
+            );
         }
         //
         window.timeoff.employees = resp.Data;
