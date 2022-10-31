@@ -49,7 +49,7 @@ class Copy_policies extends Admin_Controller {
         switch($formpost['action']){
             case 'get_all_companies':
                 $companies = $this->copy_policies_model->getAllCompanies(1);
-
+                //
                 if(!sizeof($companies)){
                     $this->resp['Response'] = 'Oops! System unable to find any company.';
                     $this->response();

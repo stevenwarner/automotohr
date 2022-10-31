@@ -112,7 +112,11 @@ $(function() {
                     $('#js-approval-check').prop('checked', resp.Data.Settings.approval_check == '1' ? true : false);
                     // $('#js-email-check').prop('checked', resp.Data.Settings.email_check == '0' ? true : false);
                     $('#js-send-email-check').prop('checked', resp.Data.Settings.send_email_to_supervisor == '1' ? true : false);
-                    $('#js-formats').select2('val', resp.Data.Settings.timeoff_format_sid);
+                    //
+                    if (resp.Data.Settings.timeoff_format_sid != undefined || parseInt(resp.Data.Settings.timeoff_format_sid) > 0) {
+                        $('#js-formats').select2('val', resp.Data.Settings.timeoff_format_sid);
+                    }
+                    //
                     $('#js-team-visibility-check').prop('checked', resp.Data.Settings.team_visibility_check == '1' ? true : false);
                     //
                     $('#js-off-days').select2('val', resp.Data.Settings.off_days.split(','));
