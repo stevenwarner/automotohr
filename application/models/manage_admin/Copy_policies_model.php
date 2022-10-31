@@ -79,6 +79,8 @@ class copy_policies_model extends CI_Model {
         //
         if(!sizeof($policy)) return false;
         //
+        $typeSid = $this->checkPolicyType($policy['type_sid'], $formpost['toCompanyId']);
+        //
         unset(
             $policy['sid'],
             $policy['created_at'],
@@ -90,6 +92,7 @@ class copy_policies_model extends CI_Model {
         $policy['creator_sid'] = 0;
         $policy['assigned_employees'] = 0;
         $policy['company_sid'] = $formpost['toCompanyId'];
+        $policy['type_sid'] = $typeSid;
         //
         $this->db->insert('timeoff_policies', $policy);
         $policyId = $this->db->insert_id();
@@ -113,5 +116,53 @@ class copy_policies_model extends CI_Model {
         }
         else $this->db->trans_commit();
         return true;
+    }
+
+    private function checkPolicyType ($typeId, $companyId) {
+        //
+        $result = $this->db
+        ->select('*')
+        ->where('sid', $typeId)
+        ->get('timeoff_categories');
+        //
+        $category = $result->row_array();
+        $result = $result->free_result();
+        //
+        $returnTypeSid = 0;
+        //
+        if(!empty($category)) {
+            $checkTypeExist =  $this->db
+            ->where('company_sid', $companyId)
+            ->where('timeoff_category_list_sid', $category['timeoff_category_list_sid'])
+            ->count_all_results('timeoff_categories');
+            //
+            
+            if ($checkTypeExist == 0) {
+                unset(
+                    $category['sid'],
+                    $category['created_at'],
+                    $category['updated_at']
+                );
+                //
+                $category['company_sid'] = $companyId;
+                $category['creator_sid'] = 0;
+                //
+                $this->db->insert('timeoff_categories', $category);
+                $returnTypeSid = $this->db->insert_id();
+            } else {
+                $result = $this->db
+                ->select('sid')
+                ->where('company_sid', $companyId)
+                ->where('timeoff_category_list_sid', $category['timeoff_category_list_sid'])
+                ->get('timeoff_categories');
+                //
+                $categoryInfo = $result->row_array();
+                $result = $result->free_result();
+                //
+                $returnTypeSid = $categoryInfo["sid"];
+            }
+        }
+
+        return $returnTypeSid;
     }
 }
