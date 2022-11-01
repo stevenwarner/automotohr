@@ -9,4 +9,21 @@ class Testing extends CI_Controller
         // Call the model
         $this->load->model("test_model", "tm");
     }
+
+
+    // Enable Rehired Employees
+
+
+    public function enableRehiredemployees()
+    {
+
+        $employeesData = $this->tm->getRehiredemployees();
+
+        if (!empty($employeesData)) {
+            foreach ($employeesData as $employeeRow) {
+                $this->tm->updateEmployee($employeeRow['sid']);
+            }
+        }
+        echo "Done";
+    }
 }
