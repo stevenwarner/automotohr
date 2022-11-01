@@ -1,12 +1,14 @@
-<?php 
-define('PJL', 'portal_job_listings') ;
-define('PJA', 'portal_job_applications') ;
-define('PAJL', 'portal_applicant_jobs_list') ;
+<?php
+define('PJL', 'portal_job_listings');
+define('PJA', 'portal_job_applications');
+define('PAJL', 'portal_applicant_jobs_list');
 
-class Test_model extends CI_Model {
+class Test_model extends CI_Model
+{
     //
     //
-    function __construct() {
+    function __construct()
+    {
         //
         parent::__construct();
         //
@@ -24,7 +26,7 @@ class Test_model extends CI_Model {
     //     //
     //     return !empty($ids) ? array_column($ids, 'sid') : [];
     // }
-   
+
     // //
     // function getJobs(){
     //     $ids = $this->db2
@@ -41,7 +43,7 @@ class Test_model extends CI_Model {
     //     ->where('sid', $sid)
     //     ->update(PJL, $data);
     // }
-    
+
     // //
     // function insertJob($data){
     //     $this->db
@@ -75,7 +77,7 @@ class Test_model extends CI_Model {
     //     ->where('sid', $sid)
     //     ->update(PJA, $data);
     // }
-    
+
     // //
     // function insertApplicant($data){
     //     $this->db
@@ -109,14 +111,15 @@ class Test_model extends CI_Model {
     //     ->where('sid', $sid)
     //     ->update(PAJL, $data);
     // }
-    
+
     // //
     // function insertApplicantJob($data){
     //     $this->db
     //     ->insert(PAJL, $data);
     // }
 
-    function getEEOCRecords(){
+    function getEEOCRecords()
+    {
         $this->db2->select('sid,last_sent_at,assigned_at');
         $this->db2->from('portal_eeo_form');
         $result = $this->db2->get()->result_array();
@@ -124,10 +127,35 @@ class Test_model extends CI_Model {
         return $result;
     }
 
-    function updateEEOCTime($sid, $datetime){
+    function updateEEOCTime($sid, $datetime)
+    {
         $data_to_update = array();
         $data_to_update['assigned_at'] = $datetime;
         $this->db->where('sid', $sid);
         $this->db->update('portal_eeo_form', $data_to_update);
+    }
+
+
+
+    //
+    function getRehiredemployees()
+    {
+        $this->db2->select('sid');
+        $this->db->where('general_status', 'rehired');
+        $this->db->where('active', 0);
+        $this->db2->from('users');
+        $result = $this->db2->get()->result_array();
+
+        return $result;
+    }
+
+
+    //
+    function updateEmployee($sid)
+    {
+        $data_to_update = array();
+        $data_to_update['active'] = 1;
+        $this->db->where('sid', $sid);
+        $this->db->update('users', $data_to_update);
     }
 }
