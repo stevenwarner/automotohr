@@ -81,7 +81,7 @@ class Copy_employees extends Admin_Controller {
             echo json_encode($resp);
         } 
         
-        $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 10);
+        $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 50);
         $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $to_company_sid);
        
         if(empty($company_employees)){
@@ -92,7 +92,7 @@ class Copy_employees extends Admin_Controller {
             $resp['status'] = TRUE;
             $resp['response'] = 'Proceed';
             if($page == 1){
-                $resp['limit'] = 10;
+                $resp['limit'] = 50;
                 $resp['records'] = $company_employees;
                 $resp['totalPages'] = ceil( $employees_count / $resp['limit'] );
                 $resp['totalRecords'] = $employees_count;
