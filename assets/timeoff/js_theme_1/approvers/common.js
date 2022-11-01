@@ -1,7 +1,7 @@
 let cmnOBJ = {
     Employees:{
         Main: {
-            action: 'get_company_employees',
+            action: 'get_company_employees_for_approvers',
             companyId: companyId,
             employerId: employerId,
             employeeId: employeeId,

@@ -2292,6 +2292,26 @@ class Time_off extends Public_Controller
                 $this->res['Response'] = 'Proceed.';
                 $this->resp();
             break;
+
+            // Fetch company all employees also executive admin
+            case 'get_company_employees_for_approvers':
+                // Check if policy already exists for current company
+                $employees = $this->timeoff_model->getCompanyAllEmployees(
+                    $post['companyId'],
+                    $post['employerId']
+                );
+
+                if (!sizeof($employees)) {
+                    $this->res['Response'] = 'We are unable to find employee(s). Please, add employee(s) from "Create employee" page.';
+                    $this->resp();
+                }
+                //
+                $this->res['Data'] = $employees;
+                $this->res['Code'] = 'SUCCESS';
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed.';
+                $this->resp();
+            break;
             
             // Change sort order of policies
             case 'update_sort_order':
