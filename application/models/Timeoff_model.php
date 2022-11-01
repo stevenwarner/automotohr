@@ -123,6 +123,54 @@ class Timeoff_model extends CI_Model
         $result = $result->free_result();
         return $employees;
     }
+
+    /**
+     * Get company employees and executive admin
+     * 
+     * @employee Aleem Shaukat
+     * @date     01/11/2022
+     *
+     * @param Integer $companySid
+     * @param Integer $employerId
+     * 
+     * @return Array
+     */
+    function getCompanyAllEmployees($companySid, $employerId = false){
+        //
+        $ses = $this->session->userdata('logged_in')['employer_detail'];
+        $ids = [];
+        //
+        $this->db
+            ->select('sid as user_id, 
+            employee_number, 
+            email, 
+            first_name, 
+            timezone, 
+            last_name, 
+            job_title, 
+            is_executive_admin, 
+            concat(first_name," ",last_name) as full_name, 
+            profile_picture as image, 
+            access_level,
+            access_level_plus,
+            pay_plan_flag,
+            joined_at,
+            registration_date,
+            rehire_date
+        ')
+            ->from('users')
+            ->where('parent_sid', $companySid)
+            ->where('active', 1)
+            ->where('terminated_status', 0)
+            ->order_by('first_name', 'ASC');
+        if(!empty($ids)) $this->db->where_in('sid', $ids);
+            
+        $result = $this->db->get();
+        //
+        $employees = $result->result_array();
+        $result = $result->free_result();
+        return $employees;
+    }
     
     /**
      * Check if policy exists
@@ -1000,7 +1048,7 @@ class Timeoff_model extends CI_Model
         $dataArray['pto_email_receiver'] = $post['emailCheck'];
         $dataArray['team_visibility_check'] = $post['teamVisibility'];
         $dataArray['timeoff_format_sid'] = $post['format'];
-        $dataArray['off_days'] = !isset($post['offDays']) || $post['offDays'] == null ? null : implode(',', $post['offDays']);
+        $dataArray['off_days'] = !isset($post['offDays']) || $post['offDays'] == null ? '' : implode(',', $post['offDays']);
         $dataArray['theme'] = $post['theme'];
 
         // Check if default time option is set
@@ -1013,6 +1061,8 @@ class Timeoff_model extends CI_Model
                 ]
             );
         }
+        // _e($post['offDays'],true);
+        // _e($dataArray,true,true);
         // Check if settiuing exists
         if ($this->db->where('company_sid', $post['companyId'])->count_all_results('timeoff_settings') == 0) {
             $dataArray['company_sid'] = $post['companyId'];
@@ -5005,7 +5055,7 @@ class Timeoff_model extends CI_Model
         if(!empty($theme_id)){
             return $theme_id['theme'];
         } else{
-            return 1;
+            return TIMEOFF_THEME_TWO;
         }
     }
 
