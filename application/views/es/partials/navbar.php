@@ -74,7 +74,9 @@ foreach ($navpills as $tab) {
                     <!-- Web -->
                     <ul class="_csPageNavBarWeb text-left">
                         <li class="_csP0">
-                            <a href="<?= base_url('dashboard'); ?>" class="btn _csB4 _csF2 _csF14 _csR5"><i class="fa fa-th _csF2" aria-hidden="true"></i>Go To Dashboard</a>
+                            <a href="<?= base_url('dashboard'); ?>" class="btn _csB4 _csF2 _csF14 _csR5">
+                                <i class="fa fa-th _csF2" aria-hidden="true"></i>Go To Dashboard
+                            </a>
                         </li>
                         <?= $lis; ?>
                     </ul>

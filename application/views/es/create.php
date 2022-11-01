@@ -13,39 +13,16 @@
                     <h3 class="_csF26">Let's get started</h3>
                 </div>
                 <div class="col-md-4 col-sm-12 text-right _csVm">
-                    <a href="" class="btn _csB4 _csF16 _csF2 _csR5 _csMt20">
-                        <i class="fa fa-times" aria-hidden="true"></i>&nbsp;Cancel
+                    <a href="" class="btn _csB1 _csF16 _csF2 _csR5 _csMt20">
+                        <i class="fa fa-times-circle _csF16" aria-hidden="true"></i>&nbsp;Cancel
                     </a>
                 </div>
             </div>
-            <!--  -->
-            <div class="row _csMt30 _csMb20">
-                <div class="col-md-12 col-sm-12">
-                    <div class="row line">
-                        <div class="col-xs-3 stepText1">Getting Started</div>
-                        <div class="col-xs-3 stepText2">Details</div>
-                        <div class="col-xs-3 stepText3">Questions</div>
-                        <div class="col-xs-3 stepText4">Respondents</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <div class="step step1 active"></div>
-                        </div>
-                        <div class="col-xs-3">
-                            <div class="step step2"></div>
-                        </div>
-                        <div class="col-xs-3">
-                            <div class="step step3"></div>
-                        </div>
-                        <div class="col-xs-3">
-                            <div class="step step4"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php $this->load->view('es/partials/steps'); ?>
 
             <!--  -->
-            <div class="panel panel-default _csMt10">
+            <div class="panel panel-default _csMt20 _csPR _csR5">
+                <?php $this->load->view('loader_new', ['id' => 'createES']); ?>
                 <div class="panel-heading">
                     <h3 class="_csF16">Select a Survey Template</h3>
                 </div>
@@ -55,17 +32,71 @@
                     <hr>
                     <!--  -->
                     <h3 class="_csF14">TEMPLATES</h3>
-                    <p class="_csF14"><?=STORE_NAME;?> templates are industry standard and capture the most important aspects of engagement. If you edit any question here, it will impact the comparison capabilities in the future.</p>
+                    <p class="_csF14"><?= STORE_NAME; ?> templates are industry standard and capture the most important aspects of engagement. If you edit any question here, it will impact the comparison capabilities in the future.</p>
                     <hr>
                     <!--  -->
                     <div class="row">
                         <div class="col-md-4 col-sm-12">
                             <div class="csESBox _csBD _csBD6 _csR5 _csP10">
-                                <img src="<?=base_url("assets/2022/images/es/pulse_check.svg");?>" alt=""/>
+                                <img src="<?= base_url("assets/2022/images/es/pulse_check.svg"); ?>" alt="" />
                                 <p class="_csF14">Pulse Check</p>
                                 <br>
+                                <dl>
+                                    <dt>Length</dt>
+                                    <dd>5 Questions</dd>
+                                    <br>
+                                    <dt>Suggested frequency</dt>
+                                    <dd>Monthly</dd>
+                                </dl>
                                 <hr>
+                                <div class="text-center">
+                                    <button class="btn _csR5 _csB3 _csF2">Preview</button>
+                                    <button class="btn _csR5 _csB4 _csF2">Select</button>
+                                </div>
                             </div>
+                        </div>
+
+                        <div class="col-md-4 col-sm-12">
+                            <div class="csESBox active _csBD _csBD6 _csR5 _csP10">
+                                <img src="<?= base_url("assets/2022/images/es/enps.svg"); ?>" alt="" />
+                                <p class="_csF14">Employee Net Promoter Score (eNPS)</p>
+                                <br>
+                                <dl>
+                                    <dt>Length</dt>
+                                    <dd>2 Questions</dd>
+                                    <br>
+                                    <dt>Suggested frequency</dt>
+                                    <dd>Monthly</dd>
+                                </dl>
+                                <hr>
+                                <div class="text-center">
+                                    <button class="btn _csR5 _csB3 _csF2">Preview</button>
+                                    <button class="btn _csR5 _csB4 _csF2">Select</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12 _csMt20 _csMb20">
+                            <label class="control control--checkbox">
+                                <input type="checkbox" name="jsCustom" /> Start from scratch
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12 text-right">
+                            <button class="btn _csB1 _csF2 _csR5 _csF14">
+                                <i class="fa fa-times-circle _csF14" aria-hidden="true"></i>
+                                Cancel
+                            </button>
+                            <button class="btn _csB4 _csF2 _csR5 _csF14">
+                                <i class="fa fa-long-arrow-right _csF14" aria-hidden="true"></i>
+                                Next
+                            </button>
                         </div>
                     </div>
                 </div>
