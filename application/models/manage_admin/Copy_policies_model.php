@@ -165,4 +165,54 @@ class copy_policies_model extends CI_Model {
         //
         return $categoryArray['sid'];
     }
+
+    public function addDefaultPolicies ($companyId) {
+        
+        //
+        $result = $this->db
+        ->select('*')
+        ->where('company_sid', 11276)
+        ->where('is_archived', 0)
+        ->where('status', 1)
+        ->get('timeoff_policies');
+        //
+        $policies = $result->result_array();
+        $result = $result->free_result();
+        //
+        if (!sizeof($policies)){
+            return false;
+        }
+        //
+        foreach ($policies as $policy) {
+            //
+            if(!$this->db->where([
+                'lower(title)' => strtolower($policy['title']),
+                'company_sid' => $companyId
+            ])->count_all_results('timeoff_policies')){
+                //
+                $typeSid = $this->checkPolicyType($policy['type_sid'], $companyId);
+                //
+                unset(
+                    $policy['sid'],
+                    $policy['created_at'],
+                    $policy['updated_at']
+                );
+                //
+                $this->db->trans_begin();
+                //
+                $policy['creator_sid'] = 0;
+                $policy['assigned_employees'] = 0;
+                $policy['company_sid'] = $companyId;
+                $policy['type_sid'] = $typeSid;
+                //
+                $this->db->insert('timeoff_policies', $policy);
+                $policyId = $this->db->insert_id();
+                //
+                if(!$policyId) {
+                    return $this->db->trans_rollback();
+                }
+                else $this->db->trans_commit();
+            }
+        }
+    }
 }
