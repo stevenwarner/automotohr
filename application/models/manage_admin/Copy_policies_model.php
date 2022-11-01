@@ -77,92 +77,92 @@ class copy_policies_model extends CI_Model {
         $policy = $result->row_array();
         $result = $result->free_result();
         //
-        if(!sizeof($policy)) return false;
-        //
-        $typeSid = $this->checkPolicyType($policy['type_sid'], $formpost['toCompanyId']);
-        //
-        unset(
-            $policy['sid'],
-            $policy['created_at'],
-            $policy['updated_at']
-        );
-        //
-        $this->db->trans_begin();
-        //
-        $policy['creator_sid'] = 0;
-        $policy['assigned_employees'] = 0;
-        $policy['company_sid'] = $formpost['toCompanyId'];
-        $policy['type_sid'] = $typeSid;
-        //
-        $this->db->insert('timeoff_policies', $policy);
-        $policyId = $this->db->insert_id();
-        //
-        if(!$policyId) return false;
-        //
-        $insertArray = array();
-        $insertArray['admin_sid'] = $id;
-        $insertArray['policy_sid'] = $formpost['policy']['policy_id'];
-        $insertArray['to_company_sid'] = $formpost['toCompanyId'];
-        $insertArray['new_policy_sid'] = $policyId;
-        $insertArray['from_company_sid'] = $formpost['fromCompanyId'];
-        $insertArray['policy_category'] = $formpost['policy']['policy_category'];
-        //
-        $this->db->insert('copy_timeoff_policy_track', $insertArray);
-        $historyInsertId = $this->db->insert_id();
-
-        if(!$historyInsertId) {
-            $this->db->trans_rollback();
+        if (!sizeof($policy)){
             return false;
         }
-        else $this->db->trans_commit();
+        //
+        $typeSid = $this->checkPolicyType($policy['type_sid'], $formpost['toCompanyId']);
+        // Check
+        if(!$this->db->where([
+            'lower(title)' => strtolower($policy['title']),
+            'company_sid' => $formpost['toCompanyId']
+        ])->count_all_results('timeoff_policies')){
+            //
+            unset(
+                $policy['sid'],
+                $policy['created_at'],
+                $policy['updated_at']
+            );
+            //
+            $this->db->trans_begin();
+            //
+            $policy['creator_sid'] = 0;
+            $policy['assigned_employees'] = 0;
+            $policy['company_sid'] = $formpost['toCompanyId'];
+            $policy['type_sid'] = $typeSid;
+            //
+            $this->db->insert('timeoff_policies', $policy);
+            $policyId = $this->db->insert_id();
+            //
+            $insertArray = array();
+            $insertArray['admin_sid'] = $id;
+            $insertArray['policy_sid'] = $formpost['policy']['policy_id'];
+            $insertArray['to_company_sid'] = $formpost['toCompanyId'];
+            $insertArray['new_policy_sid'] = $policyId;
+            $insertArray['from_company_sid'] = $formpost['fromCompanyId'];
+            $insertArray['policy_category'] = $formpost['policy']['policy_category'];
+            //
+            // $this->db->insert('copy_timeoff_policy_track', $insertArray);
+    
+            if(!$policyId) {
+                return $this->db->trans_rollback();
+            }
+            else $this->db->trans_commit();
+        }
+        //
         return true;
     }
 
     private function checkPolicyType ($typeId, $companyId) {
         //
         $result = $this->db
-        ->select('*')
+        ->select('timeoff_category_list_sid')
         ->where('sid', $typeId)
         ->get('timeoff_categories');
         //
         $category = $result->row_array();
         $result = $result->free_result();
-        //
-        $returnTypeSid = 0;
-        //
-        if(!empty($category)) {
-            $checkTypeExist =  $this->db
-            ->where('company_sid', $companyId)
-            ->where('timeoff_category_list_sid', $category['timeoff_category_list_sid'])
-            ->count_all_results('timeoff_categories');
-            //
-            
-            if ($checkTypeExist == 0) {
-                unset(
-                    $category['sid'],
-                    $category['created_at'],
-                    $category['updated_at']
-                );
-                //
-                $category['company_sid'] = $companyId;
-                $category['creator_sid'] = 0;
-                //
-                $this->db->insert('timeoff_categories', $category);
-                $returnTypeSid = $this->db->insert_id();
-            } else {
-                $result = $this->db
-                ->select('sid')
-                ->where('company_sid', $companyId)
-                ->where('timeoff_category_list_sid', $category['timeoff_category_list_sid'])
-                ->get('timeoff_categories');
-                //
-                $categoryInfo = $result->row_array();
-                $result = $result->free_result();
-                //
-                $returnTypeSid = $categoryInfo["sid"];
-            }
-        }
 
-        return $returnTypeSid;
+        if(empty($category)){
+            return 0;
+        }
+        //
+        $categoryArray =  $this->db
+        ->select('sid')
+        ->where('company_sid', $companyId)
+        ->where('timeoff_category_list_sid', $category['timeoff_category_list_sid'])
+        ->get('timeoff_categories')
+        ->row_array();
+        
+        //
+        if(empty($categoryArray)){
+            //
+            $cat = [];
+            $cat['company_sid'] = $companyId;
+            $cat['timeoff_category_list_sid'] = $category['timeoff_category_list_sid'];
+            $cat['creator_sid'] = 0;
+            $cat['status'] = 1;
+            $cat['is_archived'] = 0;
+            $cat['is_default'] = 0;
+            $cat['default_type'] = 0;
+            $cat['created_at'] = 
+            $cat['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            //
+            $this->db->insert('timeoff_categories', $cat);
+            //
+            return $this->db->insert_id();
+        }
+        //
+        return $categoryArray['sid'];
     }
 }

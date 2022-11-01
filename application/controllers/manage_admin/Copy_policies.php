@@ -85,14 +85,14 @@ class Copy_policies extends Admin_Controller {
                 $this->resp['Failed'] = FALSE;
                 $this->resp['Exists'] = FALSE;
                 // Check if policy is copied
-                $isCopied = $this->copy_policies_model->checkPolicyCopied($formpost);
-                //
-                if($isCopied){
-                    $this->resp['Exists'] = TRUE;
-                    $this->resp['Status'] = TRUE;
-                    $this->resp['Response'] = 'Policy already copied';
-                    $this->response();
-                }
+                // $isCopied = $this->copy_policies_model->checkPolicyCopied($formpost);
+                // //
+                // if($isCopied){
+                //     $this->resp['Exists'] = TRUE;
+                //     $this->resp['Status'] = TRUE;
+                //     $this->resp['Response'] = 'Policy already copied';
+                //     $this->response();
+                // }
                 //
                 $isMoved = $this->copy_policies_model->movePolicy($formpost, $this->ion_auth->user()->row()->id);
                 //
