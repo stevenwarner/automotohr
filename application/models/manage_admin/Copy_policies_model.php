@@ -81,7 +81,8 @@ class copy_policies_model extends CI_Model {
             return false;
         }
         //
-        $typeSid = $this->checkPolicyType($policy['type_sid'], $formpost['toCompanyId']);
+        $creatorId = $this->getCompanyCreator($formpost['toCompanyId']);
+        $typeSid = $this->checkPolicyType($policy['type_sid'], $formpost['toCompanyId'], $creatorId);
         // Check
         if(!$this->db->where([
             'lower(title)' => strtolower($policy['title']),
@@ -96,7 +97,7 @@ class copy_policies_model extends CI_Model {
             //
             $this->db->trans_begin();
             //
-            $policy['creator_sid'] = 0;
+            $policy['creator_sid'] = $creatorId;
             $policy['assigned_employees'] = 0;
             $policy['company_sid'] = $formpost['toCompanyId'];
             $policy['type_sid'] = $typeSid;
@@ -123,7 +124,7 @@ class copy_policies_model extends CI_Model {
         return true;
     }
 
-    private function checkPolicyType ($typeId, $companyId) {
+    private function checkPolicyType ($typeId, $companyId, $creatorId) {
         //
         $result = $this->db
         ->select('timeoff_category_list_sid')
@@ -150,7 +151,7 @@ class copy_policies_model extends CI_Model {
             $cat = [];
             $cat['company_sid'] = $companyId;
             $cat['timeoff_category_list_sid'] = $category['timeoff_category_list_sid'];
-            $cat['creator_sid'] = 0;
+            $cat['creator_sid'] = $creatorId;
             $cat['status'] = 1;
             $cat['is_archived'] = 0;
             $cat['is_default'] = 0;
@@ -183,6 +184,8 @@ class copy_policies_model extends CI_Model {
             return false;
         }
         //
+        $creatorId = $this->getCompanyCreator($companyId);
+        //
         foreach ($policies as $policy) {
             //
             if(!$this->db->where([
@@ -190,7 +193,7 @@ class copy_policies_model extends CI_Model {
                 'company_sid' => $companyId
             ])->count_all_results('timeoff_policies')){
                 //
-                $typeSid = $this->checkPolicyType($policy['type_sid'], $companyId);
+                $typeSid = $this->checkPolicyType($policy['type_sid'], $companyId, $creatorId);
                 //
                 unset(
                     $policy['sid'],
@@ -200,7 +203,7 @@ class copy_policies_model extends CI_Model {
                 //
                 $this->db->trans_begin();
                 //
-                $policy['creator_sid'] = 0;
+                $policy['creator_sid'] = $creatorId;
                 $policy['assigned_employees'] = 0;
                 $policy['company_sid'] = $companyId;
                 $policy['type_sid'] = $typeSid;
@@ -214,5 +217,39 @@ class copy_policies_model extends CI_Model {
                 else $this->db->trans_commit();
             }
         }
+    }
+
+    public function getCompanyCreator ($companyId) {
+        $result = $this->db
+        ->select('sid')
+        ->where('parent_sid', $companyId)
+        ->group_start()
+        ->where('access_level_plus', 1)
+        ->or_where('access_level', 'Admin')
+        ->group_end()
+        ->order_by('access_level_plus', 'desc')
+        ->get('users');
+        //
+        $employeesList = $result->result_array();
+        $result = $result->free_result();
+        //
+        if (!empty($employeesList[0])) {
+            return $employeesList[0]["sid"];
+        } 
+        //
+        $result = $this->db
+        ->select('sid')
+        ->where('parent_sid', $companyId)
+        ->limit(1)
+        ->get('users');
+        //
+        $employeeInfo = $result->row_array();
+        $result = $result->free_result();
+        //
+        if (!empty($employeeInfo)) {
+            return $employeeInfo["sid"];
+        } 
+        //
+        return 0;
     }
 }
