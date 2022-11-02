@@ -68,11 +68,13 @@ class Copy_employees_model extends CI_Model {
     }
 
     function get_company_employee ($sid, $type, $page, $limit) {
-        $start = $page == 1 ? 0 : ($page * $limit) - $limit;
+      // $start = $page == 1 ? 0 : ($page * $limit) - $limit;
+        $start = ($page-1) * $limit;
+      
         $this->db->select('sid, email, first_name, last_name, active, job_title, access_level, access_level_plus, pay_plan_flag, terminated_status');
         $this->db->where('parent_sid', $sid);
         $this->db->where('is_executive_admin', 0);
-        $this->db->order_by('first_name', 'ASC');
+       // $this->db->order_by('first_name', 'ASC');
 
         if ($type == 2) {
             $this->db->where('active', 1);
@@ -89,7 +91,7 @@ class Copy_employees_model extends CI_Model {
         $records_obj->free_result();
         $return_data = array();
 
-        if (!empty($records_arr)) {
+              if (!empty($records_arr)) {
             $return_data = $records_arr;
         }
 
@@ -111,16 +113,9 @@ class Copy_employees_model extends CI_Model {
             $this->db->where('terminated_status', 1);  
         }
 
-        $records_obj = $this->db->get('users');
-        $records_arr = $records_obj->result_array();
-        $records_obj->free_result();
-        $return_count = 0;
-
-        if (!empty($records_arr)) {
-            $return_count = count($records_arr);
-        }
-
-        return $return_count;
+        $records_obj = $this->db->get('users')->num_rows();
+         return $records_obj ;
+       
     }
 
     function fetch_employee_by_sid ($sid) {
