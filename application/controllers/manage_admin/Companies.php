@@ -2855,6 +2855,11 @@ class Companies extends Admin_Controller
                     );
                 }
             }
+
+            if ($post['Id'] == 1 && $post['Status'] == 0) {
+                $this->load->model('manage_admin/copy_policies_model');
+                $this->copy_policies_model->addDefaultPolicies($post['CompanyId']);
+            }
         }
         //
         header('Content-Type: application/json');
