@@ -138,24 +138,24 @@ class Test_model extends CI_Model
 
 
     //
-    function getRehiredemployees()
-    {
-        $this->db2->select('sid');
-        $this->db->where('general_status', 'rehired');
-        $this->db->where('active', 0);
-        $this->db2->from('users');
-        $result = $this->db2->get()->result_array();
+    // function getRehiredemployees()
+    // {
+    //     $this->db->select('sid');
+    //     $this->db->where('general_status', 'rehired');
+    //     $this->db->where('active', 0);
+    //     $this->db->from('users');
+    //     $result = $this->db->get()->result_array();
 
-        return $result;
-    }
+    //     return $result;
+    // }
 
 
-    //
-    function updateEmployee($sid)
-    {
-        $data_to_update = array();
-        $data_to_update['active'] = 1;
-        $this->db->where('sid', $sid);
-        $this->db->update('users', $data_to_update);
-    }
+    // //
+    // function updateEmployee($sid)
+    // {
+    //     $data_to_update = array();
+    //     $data_to_update['active'] = 1;
+    //     $this->db->where('sid', $sid);
+    //     $this->db->update('users', $data_to_update);
+    // }
 }

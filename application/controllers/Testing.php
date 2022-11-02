@@ -14,16 +14,16 @@ class Testing extends CI_Controller
     // Enable Rehired Employees
 
 
-    public function enableRehiredemployees()
-    {
+    // public function enableRehiredemployees()
+    // {
 
-        $employeesData = $this->tm->getRehiredemployees();
+    //     $employeesData = $this->tm->getRehiredemployees();
 
-        if (!empty($employeesData)) {
-            foreach ($employeesData as $employeeRow) {
-                $this->tm->updateEmployee($employeeRow['sid']);
-            }
-        }
-        echo "Done";
-    }
+    //     if (!empty($employeesData)) {
+    //         foreach ($employeesData as $employeeRow) {
+    //             $this->tm->updateEmployee($employeeRow['sid']);
+    //         }
+    //     }
+    //     echo "Done";
+    // }
 }
