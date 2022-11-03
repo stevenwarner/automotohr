@@ -47,7 +47,12 @@
                     <th scope="col">Time Taken</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">End Date</th>
+                    <th scope="col">Approved/Rejected By</th>
+                    <th scope="col">Approved/Rejected Date</th>
+                    <th scope="col">Approver Comments</th>
                     <th scope="col">Status</th>
+                    <th scope="col">Submitted Date</th>
+                    <th scope="col">Employee Comments</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,8 +65,13 @@
                         echo '  <td>'.( $row['consumed_time'] ).'</td>';
                         echo '  <td>'.( DateTime::createfromformat('Y-m-d', $row['request_from_date'])->format('m/d/Y') ).'</td>';
                         echo '  <td>'.( DateTime::createfromformat('Y-m-d', $row['request_to_date'])->format('m/d/Y') ).'</td>';
+                        //
+                        echo '  <td>'.$row['approvalInfo']['approverName'].'<br>'.$row['approvalInfo']['approverRole'].'</td>';
+                        echo '  <td>'.DateTime::createfromformat('Y-m-d H:i:s', $row['approvalInfo']['approverDate'])->format('m/d/Y').'</td>';
+                        echo '  <td>'.$row['approvalInfo']['approverNote'].'</td>';
+                        //
                         $status = $row['status']; 
-
+                        //
                         if ($status == 'approved') {
                             echo '<td><p class="text-success"><b>APPROVED</b></p></td>';
                         } else if ($status == 'rejected') {
@@ -69,6 +79,10 @@
                         } else if ($status == 'pending') {
                             echo '<td><p class="text-warning"><b>PENDING</b></p></td>';
                         }
+                        //
+                        echo '<td>'.DateTime::createfromformat('Y-m-d H:i:s', $row['created_at'])->format('m/d/Y').'</td>';
+                        echo '<td>'.$row['reason'].'</td>';
+                        //
                         echo '</tr>';
                     }
                 } else{

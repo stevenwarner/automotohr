@@ -317,14 +317,22 @@
     </div>
 </div>
 
-<div class="modal fade" id="js-view-report-modal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title"></h4>
-            </div>
-            <div class="modal-body" style="float: none;">
+<div class="csModal" id="js-view-report-modal">
+    <div class="container">
+        <div class="csModalHeader">
+            <h3 class="csModalHeaderTitle">
+                <span>
+                TimeOff Request Detail report
+                </span>
+                <span class="csModalButtonWrap">
+                    <button class="btn btn-black btn-cancel csW" data-dismiss="modal" aria-hidden="true" title="Close this window">Cancel</button>
+                </span>
+                <div class="clearfix"></div>
+            </h3>
+        </div>
+        <div class="csModalBody">
+            <div class="container">
+                <div class="csIPLoader jsIPLoader" data-page="report" style="display: none;"><i class="fa fa-circle-o-notch fa-spin"></i></div>
                 <div class="row">
                     <div class="col-xs-6">
                         <p>Company: <strong><?=$session['company_detail']['CompanyName'];?></strong></p>
@@ -362,7 +370,12 @@
                             <th scope="col">Time Taken</th>
                             <th scope="col">Start Date</th>
                             <th scope="col">End Date</th>
+                            <th scope="col">Approved/Rejected By</th>
+                            <th scope="col">Approved/Rejected Date</th>
+                            <th scope="col">Approver Comments</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Submitted Date</th>
+                            <th scope="col">Employee Comments</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -385,21 +398,38 @@
                                                 <br>
                                                 <?php echo $employee_no; ?>
                                             </td>
-                                            <td><?php echo $timeoff['policy_name']; ?></td>
-                                            <?php 
-                                                $hours = floor($timeoff['requested_time'] / 60); 
-                                                if ($hours > 1) {
-                                                    $hours = $hours.' Hours';
-                                                } else {
-                                                    $hours = $hours.' Hour';
-                                                }
-                                            ?>
-                                            <td><?php echo $hours; ?></td>
+                                            <td>
+                                                <?php echo $timeoff['policy_name']; ?>
+                                            </td>
+                                            <td>
+                                                <?php 
+                                                    $hours = floor($timeoff['requested_time'] / 60); 
+                                                    //
+                                                    if ($hours > 1) {
+                                                        $hours = $hours.' Hours';
+                                                    } else {
+                                                        $hours = $hours.' Hour';
+                                                    }
+                                                    //
+                                                    echo $hours;
+                                                ?>
+                                            </td>
                                             <td>
                                                 <?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_from_date'])->format('m/d/Y'); ?>
                                             </td>
                                             <td>
                                                 <?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_to_date'])->format('m/d/Y'); ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $timeoff['approvalInfo']['approverName']; ?>
+                                                <br>
+                                                <?php echo $timeoff['approvalInfo']['approverRole']; ?>
+                                            </td>
+                                            <td>
+                                                <?php echo DateTime::createfromformat('Y-m-d H:i:s', $timeoff['approvalInfo']['approverDate'])->format('m/d/Y'); ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $timeoff['approvalInfo']['approverNote']; ?>
                                             </td>
                                             <td>
                                                 <?php 
@@ -414,6 +444,12 @@
                                                     }
                                                 ?> 
                                             </td>
+                                            <td>
+                                                <?php echo DateTime::createfromformat('Y-m-d H:i:s', $timeoff['created_at'])->format('m/d/Y'); ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $timeoff['reason']; ?>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 
@@ -423,8 +459,9 @@
                         <?php } ?>
                     </tbody>
                 </table>
-            </div>
+            </div>    
         </div>
+        <div class="clearfix"></div>
     </div>
 </div>
 

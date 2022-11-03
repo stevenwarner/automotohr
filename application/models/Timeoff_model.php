@@ -5211,6 +5211,7 @@ class Timeoff_model extends CI_Model
     ){
 
         $this->db->select('
+            tr.sid,
             tp.title,
             tr.request_from_date,
             tr.request_to_date,
@@ -5219,6 +5220,8 @@ class Timeoff_model extends CI_Model
             tr.created_at,
             tr.timeoff_days,
             tr.status,
+            tr.created_at, 
+            tr.reason,
             u.first_name,
             u.sid as employeeId,
             u.job_title,
@@ -5270,8 +5273,11 @@ class Timeoff_model extends CI_Model
                 );
                 //
                 $b[$k]['consumed_time'] = $tmp['text'];
+                //
+                $b[$k]['approvalInfo'] = $this->getRequestedApprovalInfo($request['sid'], $request['status']);
             }
         }
+        //
         return $b;
     }
 
@@ -5354,7 +5360,7 @@ class Timeoff_model extends CI_Model
         if ($type == 'employees_only') {
             $this->db->select('employee_sid');
         } else if ($type == 'records_only') {
-            $this->db->select('employee_sid, timeoff_policy_sid, requested_time, allowed_timeoff, request_from_date, request_to_date, status');
+            $this->db->select('sid, employee_sid, timeoff_policy_sid, requested_time, allowed_timeoff, request_from_date, request_to_date, status, created_at, reason');
         }
         //
         $this->db->where('company_sid', $company_sid);
@@ -5398,6 +5404,50 @@ class Timeoff_model extends CI_Model
             $return_data = $records_arr['title'];
         }
 
+        return $return_data;
+    }
+
+    function getRequestedApprovalInfo ($requested_sid, $status) {
+        //
+        $this->db->select('
+            timeoff_request_timeline.comment,
+            timeoff_request_timeline.created_at,
+            users.first_name,
+            users.last_name,
+            users.timezone,
+            users.access_level,
+            users.access_level_plus,
+            users.is_executive_admin,
+            users.pay_plan_flag,
+            users.job_title
+        ');
+        //
+        $this->db->where('timeoff_request_timeline.request_sid', $requested_sid);
+        $this->db->where("timeoff_request_timeline.note regexp '$status'", NULL, NULL);
+        $this->db->where("timeoff_request_timeline.note regexp '1'", NULL, NULL);
+        $this->db->where('timeoff_request_timeline.action', "update");
+        $this->db->order_by('timeoff_request_timeline.sid', 'DESC');
+        $this->db->limit(1);
+        $this->db->join('users', 'users.sid = timeoff_request_timeline.employee_sid', 'inner');
+        //
+        $record_obj = $this->db->get('timeoff_request_timeline');
+        $record_arr = $record_obj->row_array();
+        $record_obj->free_result();
+        //
+        $return_data = [
+            "approverName" => "",
+            "approverRole" => "",
+            "approverDate" => "",
+            "approverNote" => "",
+        ];
+        //
+        if (!empty($record_arr)) {
+            $return_data['approverName'] = ucwords($record_arr['first_name'] . ' '. $record_arr['last_name']);
+            $return_data['approverRole'] = remakeEmployeeName($record_arr, false);
+            $return_data['approverDate'] = $record_arr['created_at'];
+            $return_data['approverNote'] = $record_arr['comment'];
+        }
+        //
         return $return_data;
     }
 

@@ -948,7 +948,6 @@ class Time_off extends Public_Controller
             $data['assign_teams'] = $this->timeoff_model->get_all_teams($data['company_sid']);
             $data['assign_employees'] = array_column($company_employees_filter, 'sid');
         }
-        
         //
         foreach ($company_employees as $ekey => $employee) {
             if (!in_array($employee['sid'], $empTimeoff) || !in_array($employee['sid'], $data['assign_employees'])) {
@@ -958,19 +957,17 @@ class Time_off extends Public_Controller
                     if ($employee['sid'] == $request['employee_sid']) {
                         $policy_sid = $request['timeoff_policy_sid'];
                         $request['policy_name'] = $this->timeoff_model->getEPolicyName($policy_sid);
+                        //
+                        $request['approvalInfo'] = $this->timeoff_model->getRequestedApprovalInfo(
+                            $request['sid'],
+                            $request['status']
+                        );
+                        //
                         $company_employees[$ekey]['timeoffs'][$tkey] = $request;
                     }
                 }
             }
         }
-        //
-        
-        // echo '<pre>';
-        // echo print_r($data['assign_departments']);
-        // echo print_r($data['assign_teams']);
-        // die('stop');
-        //
-        
         //
         $data['company_employees'] = $company_employees;
         $data['DT'] = $this->timeoff_model->getCompanyDepartmentsAndTeams($data['company_sid']);
@@ -1292,17 +1289,11 @@ class Time_off extends Public_Controller
         $data['title'] = 'Report::time-off';
         $data['theme'] = $this->theme;
         if (isset($_GET['token']) && !empty($_GET['token'])) {
-            // echo 'pakis<br><pre>';
+            //
             $filter_session = $this->session->userdata($_GET['token']);
-            // print_r($this->session->userdata('2021_06_27_18_04_06_57'));
-            // echo '<br>';
-            // print_r($filter_session);
+            //
             $employeeId = $filter_session != null ? implode(',', $filter_session) : $employeeId; 
         }
-        // echo"<br>";
-        // print_r($_GET['token']);
-        // echo"<br>";
-        // echo $employeeId; die();
         //
         $data['data'] = $this->timeoff_model->getEmployeesTimeOff(
             $data['company_sid'],
@@ -1310,8 +1301,6 @@ class Time_off extends Public_Controller
             $this->input->get('start', true),
             $this->input->get('end', true)
         );
-        // echo DateTime::createfromformat('m/d/Y', $this->input->get('start', true))->format('Y-m-d').'<br>';
-        // echo DateTime::createfromformat('m/d/Y', $this->input->get('end', true))->format('Y-m-d').'<br>';
         //
         $this->load->view('timeoff/'.(strtolower(trim($action))).'_report', $data);
     }
