@@ -66,9 +66,23 @@
                         echo '  <td>'.( DateTime::createfromformat('Y-m-d', $row['request_from_date'])->format('m/d/Y') ).'</td>';
                         echo '  <td>'.( DateTime::createfromformat('Y-m-d', $row['request_to_date'])->format('m/d/Y') ).'</td>';
                         //
-                        echo '  <td>'.$row['approvalInfo']['approverName'].'<br>'.$row['approvalInfo']['approverRole'].'</td>';
-                        echo '  <td>'.DateTime::createfromformat('Y-m-d H:i:s', $row['approvalInfo']['approverDate'])->format('m/d/Y').'</td>';
-                        echo '  <td>'.$row['approvalInfo']['approverNote'].'</td>';
+                        if (!empty($row['approvalInfo']['approverName']) && !empty($row['approvalInfo']['approverRole'])) {
+                            echo '  <td>'.$row['approvalInfo']['approverName'].'<br>'.$row['approvalInfo']['approverRole'].'</td>';
+                        } else {
+                            echo '  <td>-</td>';
+                        }
+                        //
+                        if (!empty($row['approvalInfo']['approverDate'])) {
+                            echo '  <td>'.DateTime::createfromformat('Y-m-d H:i:s', $row['approvalInfo']['approverDate'])->format('m/d/Y').'</td>';
+                        } else {
+                            echo '  <td>-</td>';
+                        }
+                        //
+                        if (!empty($row['approvalInfo']['approverNote'])) {
+                            echo '  <td>'.$row['approvalInfo']['approverNote'].'</td>';
+                        } else {
+                            echo '  <td>-</td>';
+                        }
                         //
                         $status = $row['status']; 
                         //

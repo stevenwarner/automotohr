@@ -420,17 +420,29 @@
                                             <td>
                                                 <?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_to_date'])->format('m/d/Y'); ?>
                                             </td>
-                                            <td>
-                                                <?php echo $timeoff['approvalInfo']['approverName']; ?>
-                                                <br>
-                                                <?php echo $timeoff['approvalInfo']['approverRole']; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo DateTime::createfromformat('Y-m-d H:i:s', $timeoff['approvalInfo']['approverDate'])->format('m/d/Y'); ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $timeoff['approvalInfo']['approverNote']; ?>
-                                            </td>
+                                            <?php if (!empty($timeoff['approvalInfo']['approverName']) && !empty($timeoff['approvalInfo']['approverRole'])) { ?>
+                                                <td>
+                                                    <?php echo $timeoff['approvalInfo']['approverName']; ?>
+                                                    <br>
+                                                    <?php echo $timeoff['approvalInfo']['approverRole']; ?>
+                                                </td>
+                                            <?php } else { ?>
+                                                <td>-</td!>
+                                            <?php } ?> 
+                                            <?php if (!empty($timeoff['approvalInfo']['approverDate'])) { ?>
+                                                <td>
+                                                    <?php echo DateTime::createfromformat('Y-m-d H:i:s', $timeoff['approvalInfo']['approverDate'])->format('m/d/Y'); ?>
+                                                </td>
+                                            <?php } else { ?>
+                                                <td>-</td>
+                                            <?php } ?> 
+                                            <?php if (!empty($timeoff['approvalInfo']['approverNote'])) { ?>
+                                                <td>
+                                                    <?php echo $timeoff['approvalInfo']['approverNote']; ?>
+                                                </td>
+                                            <?php } else { ?>
+                                                <td>-</td>
+                                            <?php } ?>   
                                             <td>
                                                 <?php 
                                                     $status = $timeoff['status']; 
