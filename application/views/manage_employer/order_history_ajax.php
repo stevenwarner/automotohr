@@ -345,7 +345,7 @@
                 page: current_page
             }, function(resp) {
                 //
-                resp = $.parseJSON(resp);
+                // resp = $.parseJSON(resp);
                 //
                 if(resp.Status === false) return;
                 if(resp.Data == '' || resp.Data == undefined) { reset_table(); return; }
