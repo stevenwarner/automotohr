@@ -339,12 +339,12 @@
                         <p>Employee Name: <strong><?=ucwords($session['employer_detail']['first_name'].' '.$session['employer_detail']['last_name']);?> <?=remakeEmployeeName($session['employer_detail'], false);?></strong></p>
                         <p>Report Period: <strong>
                         <?php 
-                            if ($this->input->get('start', true) && $this->input->get('end', true)) {
-                                echo $this->input->get('start', true).' - '.$this->input->get('end', true);
+                            if ($start_date && $end_date) {
+                                echo $start_date .' - '. $end_date;
                             } else if ($this->input->get('start', true)) {
-                                echo $this->input->get('start', true).' - N/A';
+                                echo $start_date .' - N/A';
                             } else if ($this->input->get('end', true)) {
-                                echo 'N/A - '.$this->input->get('end', true);
+                                echo $end_date .' - N/A';
                             } else {
                                 echo 'N/A';
                             }
