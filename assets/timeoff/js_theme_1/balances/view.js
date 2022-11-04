@@ -172,102 +172,105 @@ $(function() {
         if (resp.Data.Balances.length == 0) return;
         //
         $.each(resp.Data.Balances, function(i, v) {
-            //
-            let userRow = getUserById(v.total.UserId, resp.Data.Employees, "userId");
-            //
-            if (Object.keys(userRow).length == 0) return;
-            //
-            rows += `<tr data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}">`;
-            rows += '    <td scope="row">';
-            rows += '        <div class="employee-info">';
-            rows += "            <figure>";
-            rows += `                <img src="${getImageURL(
-        userRow.image
-      )}" class="img-circle emp-image" />`;
-            rows += "            </figure>";
-            rows += '            <div class="text">';
-            rows += `                <h4>${userRow.first_name} ${userRow.last_name}</h4>`;
-            rows += `                <p>${remakeEmployeeName(userRow, false)}</p>`;
-            rows += `                <p><a href="${baseURL}employee_profile/${
-        userRow.userId
-      }" target="_blank">Id: ${getEmployeeId(
-        userRow.userId,
-        userRow.employee_number
-      )}</a></p>`;
-            rows += "            </div>";
-            rows += "        </div>";
-            rows += "    </td>";
-            rows += "    <td>";
-            rows += '        <div class="text">';
-            //
-            rows += `            <p>${
-        userRow.joined_at == "" || userRow.joined_at == null
-          ? "-"
-          : moment(userRow.joined_at).format(timeoffDateFormat)
-      }</p>`;
-            rows += "        </div>";
-            rows += "    </td>";
-            rows += "    <td>";
-            rows += '        <div class="text">';
-            rows += `            <p>${
-        v.total.AllowedTime.text == "" ? "0 hours" : v.total.AllowedTime.text
-      } <a href="" data-target="jsBreakdownDivAllowed${
-        v.total.UserId
-      }" class="csExpandBalance jsExpandBalance" title="See breakdown" placement="top" class="btn btn-xs"><i class="fa fa-plus-circle"></i></a></p>`;
-            rows += `        <div class="dn" id="jsBreakdownDivAllowed${v.total.UserId}">`;
-            $.each(v, (index, poli) => {
-                if (index == "total") return "";
-                rows += `<p><strong>${index}</strong><br /> (${poli.AllowedTime.text})</p>`;
-            });
-            rows += "        </div>";
-            rows += "        </div>";
-            rows += "    </td>";
-            rows += '    <td style="vertical-align: middle;">';
-            rows += '        <div class="text">';
-            rows += `            <span><strong>Paid:</strong> ${
-        v.total.ConsumedTime.text == "" ? "0 hours" : v.total.ConsumedTime.text
-      }</span><br />`;
-            rows += `            <span><strong>Unpaid:</strong> ${
-        v.total.UnpaidConsumedTime.text == ""
-          ? "0 hours"
-          : v.total.UnpaidConsumedTime.text
-      }</span>`;
-            rows += "        </div>";
-            rows += "    </td>";
-            rows += "    <td>";
-            rows += '        <div class="text">';
-            rows += `            <p>${
-        v.total.RemainingTime.text == ""
-          ? "0 hours"
-          : v.total.RemainingTime.text
-      }<a href="" data-target="jsBreakdownDivRemaining${
-        v.total.UserId
-      }" class="csExpandBalance jsExpandBalance" title="See breakdown" placement="top" class="btn btn-xs"><i class="fa fa-plus-circle"></i></a></p>`;
-            rows += `        <div class="dn" id="jsBreakdownDivRemaining${v.total.UserId}">`;
-            $.each(v, (index, poli) => {
-                if (index == "total") return "";
-                rows += `<p><strong>${index}</strong><br /> (${poli.RemainingTime.text})</p>`;
-            });
-            rows += "        </div>";
-            rows += "        </div>";
-            rows += "    </td>";
+            if(v.total !== undefined){
 
-            rows += `    <td>`;
-            rows += `    <div class="dropdown" style="margin-top: 10px;">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        Action
-                        <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="right:0; left: auto;">
-                        <li><a href="#" class="jsViewPolicies">View Policies</a></li>
-                        <li><a href="#" class="jsViewBalance">Manage Balance</a></li>
-                        <li><a href="#" class="jsViewApprovers">View Approvers</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#" class="jsCreateRequest">Create Time-off</a></li>
-                        </ul>
-                    </div>`;
-            rows += `    </td>`;
-            rows += `</tr>`;
+                //
+                let userRow = getUserById(v.total.UserId, resp.Data.Employees, "userId");
+                //
+                if (Object.keys(userRow).length == 0) return;
+                //
+                rows += `<tr data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}">`;
+                rows += '    <td scope="row">';
+                rows += '        <div class="employee-info">';
+                rows += "            <figure>";
+                rows += `                <img src="${getImageURL(
+            userRow.image
+          )}" class="img-circle emp-image" />`;
+                rows += "            </figure>";
+                rows += '            <div class="text">';
+                rows += `                <h4>${userRow.first_name} ${userRow.last_name}</h4>`;
+                rows += `                <p>${remakeEmployeeName(userRow, false)}</p>`;
+                rows += `                <p><a href="${baseURL}employee_profile/${
+            userRow.userId
+          }" target="_blank">Id: ${getEmployeeId(
+            userRow.userId,
+            userRow.employee_number
+          )}</a></p>`;
+                rows += "            </div>";
+                rows += "        </div>";
+                rows += "    </td>";
+                rows += "    <td>";
+                rows += '        <div class="text">';
+                //
+                rows += `            <p>${
+            userRow.joined_at == "" || userRow.joined_at == null
+              ? "-"
+              : moment(userRow.joined_at).format(timeoffDateFormat)
+          }</p>`;
+                rows += "        </div>";
+                rows += "    </td>";
+                rows += "    <td>";
+                rows += '        <div class="text">';
+                rows += `            <p>${
+            v.total.AllowedTime.text == "" ? "0 hours" : v.total.AllowedTime.text
+          } <a href="" data-target="jsBreakdownDivAllowed${
+            v.total.UserId
+          }" class="csExpandBalance jsExpandBalance" title="See breakdown" placement="top" class="btn btn-xs"><i class="fa fa-plus-circle"></i></a></p>`;
+                rows += `        <div class="dn" id="jsBreakdownDivAllowed${v.total.UserId}">`;
+                $.each(v, (index, poli) => {
+                    if (index == "total") return "";
+                    rows += `<p><strong>${index}</strong><br /> (${poli.AllowedTime.text})</p>`;
+                });
+                rows += "        </div>";
+                rows += "        </div>";
+                rows += "    </td>";
+                rows += '    <td style="vertical-align: middle;">';
+                rows += '        <div class="text">';
+                rows += `            <span><strong>Paid:</strong> ${
+            v.total.ConsumedTime.text == "" ? "0 hours" : v.total.ConsumedTime.text
+          }</span><br />`;
+                rows += `            <span><strong>Unpaid:</strong> ${
+            v.total.UnpaidConsumedTime.text == ""
+              ? "0 hours"
+              : v.total.UnpaidConsumedTime.text
+          }</span>`;
+                rows += "        </div>";
+                rows += "    </td>";
+                rows += "    <td>";
+                rows += '        <div class="text">';
+                rows += `            <p>${
+            v.total.RemainingTime.text == ""
+              ? "0 hours"
+              : v.total.RemainingTime.text
+          }<a href="" data-target="jsBreakdownDivRemaining${
+            v.total.UserId
+          }" class="csExpandBalance jsExpandBalance" title="See breakdown" placement="top" class="btn btn-xs"><i class="fa fa-plus-circle"></i></a></p>`;
+                rows += `        <div class="dn" id="jsBreakdownDivRemaining${v.total.UserId}">`;
+                $.each(v, (index, poli) => {
+                    if (index == "total") return "";
+                    rows += `<p><strong>${index}</strong><br /> (${poli.RemainingTime.text})</p>`;
+                });
+                rows += "        </div>";
+                rows += "        </div>";
+                rows += "    </td>";
+    
+                rows += `    <td>`;
+                rows += `    <div class="dropdown" style="margin-top: 10px;">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Action
+                            <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="right:0; left: auto;">
+                            <li><a href="#" class="jsViewPolicies">View Policies</a></li>
+                            <li><a href="#" class="jsViewBalance">Manage Balance</a></li>
+                            <li><a href="#" class="jsViewApprovers">View Approvers</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" class="jsCreateRequest">Create Time-off</a></li>
+                            </ul>
+                        </div>`;
+                rows += `    </td>`;
+                rows += `</tr>`;
+            }
         });
 
         //

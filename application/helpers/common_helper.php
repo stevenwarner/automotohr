@@ -15686,3 +15686,17 @@ if (!function_exists('addColumnsForDocumentAssigned')) {
         }
     }
 }
+
+
+if(!function_exists('loadFileData')) {
+    function loadFileData($filePath){
+        //
+        $h = fopen($filePath, 'r');
+        //
+        $contents = fread($h, filesize($filePath));
+        //
+        fclose($h);
+        //
+        return $contents;
+    }
+}
