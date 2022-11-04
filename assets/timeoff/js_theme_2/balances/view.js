@@ -268,25 +268,28 @@ $(function() {
         //
         $.each(resp.Data.Balances, function(i, v) {
             //
-            let userRow = getUserById(v.total.UserId, resp.Data.Employees, "userId");
-            //
-            if (Object.keys(userRow).length == 0) return;
-            //
-            rows += getBalanceBox(v, userRow);
-            //
-            balancePolicyOBJ[v.total.UserId] = { allowed: [], pending: [] };
-            //
-            $.each(v, (index, poli) => {
-                if (index == "total") return "";
-                balancePolicyOBJ[v.total.UserId]['allowed'].push({
-                    policy: index,
-                    time: poli.AllowedTime.text
+            if(v.total !== undefined){
+                //
+                let userRow = getUserById(v.total.UserId, resp.Data.Employees, "userId");
+                //
+                if (Object.keys(userRow).length == 0) return;
+                //
+                rows += getBalanceBox(v, userRow);
+                //
+                balancePolicyOBJ[v.total.UserId] = { allowed: [], pending: [] };
+                //
+                $.each(v, (index, poli) => {
+                    if (index == "total") return "";
+                    balancePolicyOBJ[v.total.UserId]['allowed'].push({
+                        policy: index,
+                        time: poli.AllowedTime.text
+                    });
+                    balancePolicyOBJ[v.total.UserId]['pending'].push({
+                        policy: index,
+                        time: poli.RemainingTime.text
+                    });
                 });
-                balancePolicyOBJ[v.total.UserId]['pending'].push({
-                    policy: index,
-                    time: poli.RemainingTime.text
-                });
-            });
+            }
         });
         //
         if (typo === undefined) $(".csBalanceBoxInner").html(rows);
