@@ -34,6 +34,16 @@
     .subheader th{
         font-size: 16px !important;
     }
+
+    p .timeoff_approver_Info_heading {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+    }
+
+    p .timeoff_approver_Info_text {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+    }
 </style>
 
 <?php 
@@ -265,40 +275,42 @@
                                                         </td>
                                                     </tr>
                                                     <?php if (!empty($emp['timeoffs'])) { ?>
-                                                        <!-- <div class="row" > -->
-                                                            <tr class="timeoff_<?php echo $emp['sid']; ?> subheader" style="display: none;">
-                                                                <th style="font-size: 14px !important;">Policy</th>
-                                                                <th style="font-size: 14px !important;">Time Taken</th>
-                                                                <th style="font-size: 14px !important;">Start Date</th>
-                                                                <th style="font-size: 14px !important;">End Date</th>
-                                                                <th style="font-size: 14px !important;">Status</th>
+                                                        <tr class="timeoff_<?php echo $emp['sid']; ?> subheader" style="display: none; background-color: #696969 !important; color: #fff !important;">
+                                                            <th style="font-size: 14px !important;">Policy</th>
+                                                            <th style="font-size: 14px !important;">Time Taken</th>
+                                                            <th style="font-size: 14px !important;">Start Date</th>
+                                                            <th style="font-size: 14px !important;">End Date</th>
+                                                            <th style="font-size: 14px !important;">Status</th>
+                                                        </tr>
+                                                        <?php foreach ($emp['timeoffs'] as $timeoff) { ?>
+                                                            <tr class="timeoff_<?php echo $emp['sid']; ?>" style="display: none;">
+                                                                <td><?php echo $timeoff['policy_name']; ?></td>
+                                                                <?php 
+                                                                    $hours = floor($timeoff['requested_time'] / 60); 
+                                                                    $hours = $hours.' Hour(s)';
+                                                                ?>
+                                                                <td><?php echo $hours; ?></td>
+                                                                <td><?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_from_date'])->format('m/d/Y'); ?></td>
+                                                                <td><?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_to_date'])->format('m/d/Y'); ?></td>
+                                                                <td>
+                                                                    <?php if ($timeoff['status'] == 'approved') { ?>
+                                                                            <p class="text-success"><b>APPROVED</b></p>
+                                                                            <p style="font-size: 14px !important; font-weight: 600 !important;">Approved By</p>
+                                                                            <p style="font-size: 14px !important;"><?=$timeoff['approvalInfo']['approverName'].' '.$timeoff['approvalInfo']['approverRole']?></p>
+                                                                            <p style="font-size: 14px !important; font-weight: 600 !important;">Manager Comments</p>
+                                                                            <p style="font-size: 14px !important;"><?=!empty($timeoff['approvalInfo']['approverNote']) ?$timeoff['approvalInfo']['approverNote'] : '-'?></p>
+                                                                    <?php } else if ($timeoff['status'] == 'rejected') { ?>
+                                                                            <p class="text-danger"><b>REJECTED</b></p>
+                                                                            <p style="font-size: 14px !important; font-weight: 600 !important;">Rejected By</p>
+                                                                            <p style="font-size: 14px !important;"><?=$timeoff['approvalInfo']['approverName'].' '.$timeoff['approvalInfo']['approverRole']?></p>
+                                                                            <p style="font-size: 14px !important; font-weight: 600 !important;">Manager Comments</p>
+                                                                            <p style="font-size: 14px !important;"><?=!empty($timeoff['approvalInfo']['approverNote']) ?$timeoff['approvalInfo']['approverNote'] : '-'?></p>
+                                                                    <?php } else if ($timeoff['status'] == 'pending') { ?>
+                                                                            <p class="text-warning"><b>PENDING</b></p>
+                                                                    <?php } ?>
+                                                                </td>
                                                             </tr>
-                                                            <?php foreach ($emp['timeoffs'] as $timeoff) { ?>
-                                                                <tr class="timeoff_<?php echo $emp['sid']; ?>" style="display: none;">
-                                                                    <td><?php echo $timeoff['policy_name']; ?></td>
-                                                                    <?php 
-                                                                        $hours = floor($timeoff['requested_time'] / 60); 
-                                                                        $hours = $hours.' Hour(s)';
-                                                                    ?>
-                                                                    <td><?php echo $hours; ?></td>
-                                                                    <td><?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_from_date'])->format('m/d/Y'); ?></td>
-                                                                    <td><?php echo DateTime::createfromformat('Y-m-d', $timeoff['request_to_date'])->format('m/d/Y'); ?></td>
-                                                                    <td>
-                                                                        <?php 
-                                                                            $status = $timeoff['status']; 
-
-                                                                            if ($status == 'approved') {
-                                                                                echo '<p class="text-success"><b>APPROVED</b></p>';
-                                                                            } else if ($status == 'rejected') {
-                                                                                echo '<p class="text-danger"><b>REJECTED</b></p>';
-                                                                            } else if ($status == 'pending') {
-                                                                                echo '<p class="text-warning"><b>PENDING</b></p>';
-                                                                            }
-                                                                        ?>  
-                                                                    </td>
-                                                                </tr>
-                                                            <?php } ?>
-                                                        <!-- </div>    -->
+                                                        <?php } ?>
                                                     <?php } ?>
                                                     <?php 
                                                         }
