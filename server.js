@@ -12,6 +12,7 @@ const AUTH = require('./Auth/Index');
 
 // Employee Login Route
 const EmployeeRouter = require('./Employee/Controller');
+const EmployeeSurvey = require('./EmployeeSurvey/Controller');
 
 //
 app.use(cors());
@@ -20,11 +21,21 @@ app.use(express.json());
 // Use Routes
 //
 app.use('/employee', EmployeeRouter);
+// 
+app.use('/getTemplate', EmployeeSurvey);
 // Hello URL
 app.get('/ping', (req, res) => { res.send("All systems ready to go :)"); });
+//
+app.get('/:tagId/p', function(req, res) {
+  res.send("tagId is set to the " + req.params.tagId);
+});
+
+
+
 // For unauthorised routes 
 app.get('*', (req, res) => { res.sendStatus(404); });
 //
 app.listen(3000, () => {
     console.log(`Server running on: http://127.0.0.1:3000`);
 });
+
