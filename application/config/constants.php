@@ -450,7 +450,7 @@ define('COMPLYNET_URL', 'https://able.complynet.com/Training/Login');
 // define('COMPLYNET_URL', 'https://complynet.learn.taleo.net/login.asp?id=178443&requestedurl=%2fPage%2f596%3fh%3d1%26deepLink%3d1&secure=true');
 
 // Special Character remover regex
-define('SC_REGEX', '/([^a-z0-9\s-_])|([\x00-\x1F\x7F-\xFF])+/i');
+define('SC_REGEX', '/[^(\x20-\x7F)\x0A\x0D]*/i');
 
 // 26-06-2019
 // Default timezone for webapp
