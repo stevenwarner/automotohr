@@ -176,11 +176,14 @@ class Common_model extends CI_Model
 
 
     // 
-    function getTimeoffEnabledCompanies()
+    function getTimeoffEnabledCompanies($sId = null)
     {
         $this->db->select("company_sid");
         $this->db->from('company_modules');
         $this->db->where('module_sid', 1);
+        if ($sId != null) {
+            $this->db->where('company_sid', $sId);
+        }
         //
         return  $this->db->get()->result_array();
     }
@@ -226,7 +229,7 @@ class Common_model extends CI_Model
 
         if (empty($holidays)) {
             return [];
-        }else{
+        } else {
             return $holidays;
         }
     }
@@ -246,14 +249,14 @@ class Common_model extends CI_Model
 
         if (empty($holidays)) {
             return [];
-        }else{
+        } else {
             return $holidays;
         }
     }
-    
 
 
-    function checkPublicHoliday($sId,$year,$title)
+
+    function checkPublicHoliday($sId, $year, $title)
     {
         $this->db->select('sid');
         $this->db->from('timeoff_holidays');
@@ -264,12 +267,8 @@ class Common_model extends CI_Model
         $result = $this->db->get()->row();
         if (empty($result)) {
             return [];
-        }else{
+        } else {
             return $result;
         }
     }
-
-
-
-
 }
