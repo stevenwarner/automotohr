@@ -459,7 +459,7 @@ class copy_policies_model extends CI_Model {
      *
      * @author Mubashir Ahmed
      */
-    private function getCurrentYearHolidaysFromGoogle(){
+    public function getCurrentYearHolidaysFromGoogle(){
         //
         $holidays = json_decode(
             getFileData("https://www.googleapis.com/calendar/v3/calendars/en.usa%23holiday%40group.v.calendar.google.com/events?key=".(getCreds('AHR')->GoogleAPIKey).""),

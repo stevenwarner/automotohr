@@ -167,10 +167,109 @@ class Common_model extends CI_Model
             $this->db->where('date(created_at)', $data['date']);
         }
         //
-        if(!empty($data['limit'])){
+        if (!empty($data['limit'])) {
             $this->db->limit($data['limit']);
         }
         //
         return $this->db->get('', null, null, FALSE)->result();
     }
+
+
+    // 
+    function getTimeoffEnabledCompanies()
+    {
+        $this->db->select("company_sid");
+        $this->db->from('company_modules');
+        $this->db->where('module_sid', 1);
+        //
+        return  $this->db->get()->result_array();
+    }
+
+
+    // 
+    function getAllCurrentYearHolidays($year)
+    {
+        $this->db->select("holiday_year,holiday_title,from_date,to_date,event_link,status");
+        $this->db->from('timeoff_holiday_list');
+        $this->db->where('holiday_year', $year);
+        //
+        $holidays = $this->db->get()->result_array();
+
+        if (empty($holidays)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($holidays as $holiday) {
+            // 
+            // Christmas Day -> christmasday
+            $tmp[preg_replace('/[^a-z]/i', '', strtolower($holiday['holiday_title']))] = $holiday;
+        }
+
+        return $tmp;
+    }
+
+
+
+    public function CompanyPreviusYearHolidays($companySid)
+    {
+
+        $year = date('Y');
+
+        $this->db->select("*");
+        $this->db->from('timeoff_holidays');
+        $this->db->where('holiday_year', $year - 1);
+        $this->db->where('company_sid', $companySid);
+        //
+        $holidays = $this->db->get()->result_array();
+
+        if (empty($holidays)) {
+            return [];
+        }else{
+            return $holidays;
+        }
+    }
+
+
+    public function CompanyCurrentYearHolidays($companySid)
+    {
+
+        $year = date('Y');
+
+        $this->db->select("*");
+        $this->db->from('timeoff_holidays');
+        $this->db->where('holiday_year', $year);
+        $this->db->where('company_sid', $companySid);
+        //
+        $holidays = $this->db->get()->result_array();
+
+        if (empty($holidays)) {
+            return [];
+        }else{
+            return $holidays;
+        }
+    }
+    
+
+
+    function checkPublicHoliday($sId,$year,$title)
+    {
+        $this->db->select('sid');
+        $this->db->from('timeoff_holidays');
+        $this->db->where('company_sid', $sId);
+        $this->db->where('holiday_year', $year);
+        $this->db->where('holiday_title', $title);
+        //
+        $result = $this->db->get()->row();
+        if (empty($result)) {
+            return [];
+        }else{
+            return $result;
+        }
+    }
+
+
+
+
 }

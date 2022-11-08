@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') || exit('No direct script access allowed');
+<?php
+
+use function GuzzleHttp\Psr7\str;
+
+defined('BASEPATH') || exit('No direct script access allowed');
 
 
 class Cron_common extends CI_Controller
@@ -403,7 +407,7 @@ class Cron_common extends CI_Controller
         $this->load->model('Hr_documents_management_model', 'HRDMM');
         foreach ($toArray as $record) {
             //
-            if(!$this->HRDMM->isActiveUser($record['userId'])){
+            if (!$this->HRDMM->isActiveUser($record['userId'])) {
                 continue;
             }
             //
@@ -610,9 +614,10 @@ class Cron_common extends CI_Controller
     }
 
     //
-    public function applicant_fixer($date){
+    public function applicant_fixer($date)
+    {
         //
-        $folders = [ 
+        $folders = [
             [
                 'folder' => 'autocareers',
                 'link' => 'Auto_careers/add_applicant'
@@ -631,7 +636,7 @@ class Cron_common extends CI_Controller
             ]
         ];
         //
-        foreach($folders as $folder){
+        foreach ($folders as $folder) {
             //
             $this->putBackApplicants(
                 $date,
@@ -642,28 +647,29 @@ class Cron_common extends CI_Controller
             usleep(1);
         }
         //
-        die ('All Done');
+        die('All Done');
     }
 
     //
-    private function putBackApplicants($date, $folder, $link){
+    private function putBackApplicants($date, $folder, $link)
+    {
         //
-        $file_path = APPPATH.'../../applicant/'.($folder).'/';
+        $file_path = APPPATH . '../../applicant/' . ($folder) . '/';
         //
         $files = scandir($file_path, 1);
         //
-        foreach($files as $file){
+        foreach ($files as $file) {
             //
-            if(!preg_match("/$date/", $file)){
+            if (!preg_match("/$date/", $file)) {
                 continue;
             }
             //
-            $content = file_get_contents($file_path.$file);
+            $content = file_get_contents($file_path . $file);
             //
             $curl = curl_init();
             //
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://www.automotohr.com/'.$link,
+                CURLOPT_URL => 'https://www.automotohr.com/' . $link,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -673,7 +679,7 @@ class Cron_common extends CI_Controller
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => $content,
                 CURLOPT_HTTPHEADER => array(
-                  'Content-Type: application/json',
+                    'Content-Type: application/json',
                 ),
             ));
             //
@@ -683,5 +689,92 @@ class Cron_common extends CI_Controller
             //
             sleep(1);
         }
+    }
+
+
+    public function timeoffUpdate()
+    {
+        //
+        $this->load->model('manage_admin/copy_policies_model');
+        //
+      //  $this->copy_policies_model->getCurrentYearHolidaysFromGoogle();
+        //
+        $companies = $this->common_model->getTimeoffEnabledCompanies();
+        //
+        if (empty($companies)) {
+            exit(0);
+        }
+        //
+        $year = date('Y');
+        // Get all Current year holidays from timeoff_holiday_list
+        $publicHolidays = $this->common_model->getAllCurrentYearHolidays($year);
+        //
+        foreach ($companies as $company_row) {
+            // 2021
+            $previusYearHolidays = $this->common_model->CompanyPreviusYearHolidays($company_row['company_sid']);
+            // 2022
+            if (!empty($previusYearHolidays)) {
+                $currentYearHolidays = array_column($this->common_model->CompanyCurrentYearHolidays($company_row['company_sid']), 'holiday_title'); // ['christmanr,, 'sdas'das'd,asd'asd']
+                // Company holidays
+                // manual + public
+                foreach ($previusYearHolidays as $holiday) {
+                    //
+                    $title = preg_replace('/[^a-z]/i', '', strtolower($holiday['holiday_title']));
+                    //
+                    if (in_array($holiday['holiday_title'], $currentYearHolidays)) {
+                        continue;
+                    }
+                    //
+                    $holiday['holiday_year'] = $year;
+                    $holiday['created_at'] = $holiday['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                    //
+                    if (isset($publicHolidays[$title])) { // public
+                        $holiday['from_date'] = $publicHolidays[$title]['from_date'];
+                        $holiday['to_date'] = $publicHolidays[$title]['to_date'];
+                        $holiday['event_link'] = $publicHolidays[$title]['event_link'];
+                    } else { // manual
+                        $holiday['from_date'] = str_replace($year - 1, $year, $holiday['from_date']);
+                        $holiday['to_date'] = str_replace($year - 1, $year, $holiday['to_date']);
+                    }
+                    //
+                    unset($holiday['sid']);
+
+                    $this->db->insert('timeoff_holidays', $holiday);
+                }
+            }
+
+
+            // Public fetched from Google
+            if (!empty($publicHolidays)) {
+                $creator_sid = $this->copy_policies_model->getCompanyCreator($company_row['company_sid']);
+
+                foreach ($publicHolidays as $publicHoliday) {
+                    //
+                    $title = preg_replace('/[^a-z]/i', '', strtolower($publicHoliday['holiday_title']));
+                    //
+
+                    if (!empty($this->common_model->checkPublicHoliday($company_row['company_sid'], $year, $publicHoliday['holiday_title']))) {
+                        continue;
+                    }
+
+                    //
+                    $holidaypublic['company_sid'] = $company_row['company_sid'];
+                    $holidaypublic['creator_sid'] = $creator_sid;
+                    $holidaypublic['holiday_year'] = $publicHoliday['holiday_year'];
+                    $holidaypublic['holiday_title'] = $publicHoliday['holiday_title'];
+                    $holidaypublic['frequency'] = 'yearly';
+                    $holidaypublic['icon'] = '';
+                    $holidaypublic['from_date'] = $publicHoliday['from_date'];
+                    $holidaypublic['to_date'] = $publicHoliday['to_date'];
+                    $holidaypublic['event_link'] = $publicHoliday['event_link'];
+                    $holidaypublic['status'] = $publicHoliday['status'];
+                    $holidaypublic['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                    $holidaypublic['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                    $this->db->insert('timeoff_holidays', $holidaypublic);
+                }
+            }
+        }
+
+        echo "Done";
     }
 }
