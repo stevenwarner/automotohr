@@ -22,13 +22,10 @@ app.use(express.json());
 //
 app.use('/employee', EmployeeRouter);
 // 
-app.use('/getTemplate', EmployeeSurvey);
+app.use('/employee_survey', EmployeeSurvey);
 // Hello URL
 app.get('/ping', (req, res) => { res.send("All systems ready to go :)"); });
 //
-app.get('/:tagId/p', function(req, res) {
-  res.send("tagId is set to the " + req.params.tagId);
-});
 
 
 
