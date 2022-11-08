@@ -1,23 +1,40 @@
 // Create router
-const esrouter = require('express').Router();
+const router = require('express').Router();
 //
 // Include Company Modal
 const {
-    GetCompanyBankAccounts,
-    GetCompanyBankAccountsRow,
-    GetCompanyBankAccountsHistory,
-    InsertCompanyBankAccounts,
-    InsertCompanyBankAccountsHistory,
-    UpdateCompanyBankAccounts,
+    getDefaultTemplates
 } = require('./Modal.js');
 
 /**
- * Get companys' bank account history
+ * Get AutomotHR Default Survey Templates
  * 
  * @returns JSON
  */
-esrouter.get(
-    '/:num/getTemplate',
+router.get(
+    '/:num/templates',
+    async(Request, Response) => {
+        //
+        console.log(Request.params.num);
+        //
+
+
+        //
+        Response.send({
+            status: true,
+            response: "please Enjoy"
+        });
+    }
+);
+
+
+/**
+ * Get AutomotHR Default Survey Templates
+ * 
+ * @returns JSON
+ */
+router.get(
+    '/:num/templates',
     async(Request, Response) => {
         //
         console.log(Request.params.num);
@@ -33,4 +50,4 @@ esrouter.get(
 );
 
 // Export the Router
-module.exports = esrouter;
+module.exports = router;
