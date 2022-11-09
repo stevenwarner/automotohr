@@ -782,7 +782,7 @@ class Cron_common extends CI_Controller
     //
     public function timeoffUpdateByCompany($sId = null)
     {
-        if ($sId==null) {
+        if ($sId == null) {
             exit(0);
         }
 
@@ -792,8 +792,6 @@ class Cron_common extends CI_Controller
         //  $this->copy_policies_model->getCurrentYearHolidaysFromGoogle();
         //
         $companies = $this->common_model->getTimeoffEnabledCompanies($sId);
-
-        
         //
         if (empty($companies)) {
             exit(0);
@@ -870,5 +868,69 @@ class Cron_common extends CI_Controller
         }
 
         echo "Done";
+    }
+
+    //
+    public function getTerminatedEmployeeStatus()
+    {
+
+        $employees = $this->common_model->getTerminatedEmployeeStatus();
+        if (empty($employees)) {
+            exit(0);
+        }
+
+        //
+        foreach ($employees as $employee) {
+            $this->db->select("employee_status,status_change_date,employee_sid,termination_date");
+            $this->db->from('terminated_employees');
+            $this->db->where('employee_sid', $employee['employee_sid']);
+            $this->db->order_by('sid', 'Desc');
+            $this->db->limit(1, 0);
+            $result = $this->db->get()->row();
+
+            $status = $result->employee_status;
+
+            //
+            $todatDate = date('Y-m-d');
+            if (strtotime($todatDate) < strtotime($result->status_change_date)) {
+                continue;
+            }
+
+            if ($status == 1) {
+                $data_to_update['active'] = 0;
+                $data_to_update['terminated_status'] = 1;
+                $data_to_update['general_status'] = 'terminated';
+            } else {
+                if ($status == 5) {
+                    $data_to_update['active'] = 1;
+                    $data_to_update['general_status'] = 'active';
+                } else if ($status == 6) {
+                    $data_to_update['general_status'] = 'inactive';
+                    $data_to_update['active'] = 0;
+                } else if ($status == 7) {
+                    $data_to_update['general_status'] = 'leave';
+                } else if ($status == 4) {
+                    $data_to_update['general_status'] = 'suspended';
+                    $data_to_update['active'] = 0;
+                } else if ($status == 3) {
+                    $data_to_update['general_status'] = 'deceased';
+                    $data_to_update['active'] = 0;
+                } else if ($status == 2) {
+                    $data_to_update['general_status'] = 'retired';
+                    $data_to_update['active'] = 0;
+                } else if ($status == 8) {
+                    $data_to_update['active'] = 1;
+                    $data_to_update['general_status'] = 'rehired';
+                    $data_to_update['rehire_date'] = $result->status_change_date;
+                }
+
+                $data_to_update['terminated_status'] = 0;
+            }
+             $this->common_model->updateEmployeeTerminatedStatus($result->employee_sid, $data_to_update);
+        }
+
+        echo "Done";
+
+
     }
 }

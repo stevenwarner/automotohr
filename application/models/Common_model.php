@@ -271,4 +271,29 @@ class Common_model extends CI_Model
             return $result;
         }
     }
+
+
+    function getTerminatedEmployeeStatus()
+    {
+        $this->db->select("employee_sid");
+        $this->db->from('terminated_employees');
+        $this->db->group_by('employee_sid');
+        $result = $this->db->get()->result_array();
+        if (empty($result)) {
+            return [];
+        } else {
+            return $result;
+        }
+    }
+
+
+
+    function updateEmployeeTerminatedStatus($sid, $data)
+    {
+        //
+        $this->db
+            ->where('sid', $sid)
+            ->update('users',$data);
+
+    }
 }
