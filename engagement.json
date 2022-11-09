@@ -1,0 +1,321 @@
+[
+    {
+        "title": "Pulse Check",
+        "description": "This is a quick survey to measure the company’s engagement.",
+        "frequency": "monthly",
+        "length": 5,
+        "questions": [
+            {
+                "text": "It is easy to bury myself in my work.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I’m excited to start my workweek.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I would recommend this company as a great place to work.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "What are things we are doing well as a company?",
+                "type": "text"
+            },
+            {
+                "text": "What can we improve in our company?",
+                "type": "text"
+            }
+        ]
+    },
+    {
+        "title": "Employee Net Promoter Score (eNPS)",
+        "description": "This survey is designed to capture the company's internal happiness and loyalty. The questions are inspired by the Net Promoter® Score template, an industry standard survey to gather customer satisfaction.",
+        "frequency": "monthly",
+        "length": 2,
+        "questions": [
+            {
+                "text": "How likely are you to recommend our company to friends as a place to work?",
+                "type": "rating",
+                "limit": 10
+            },
+            {
+                "text": "What changes would we have to make to receive an even higher rating?",
+                "type": "text"
+            }
+        ]
+    },
+    {
+        "title": "Engagement Survey",
+        "description": "This survey’s purpose is to obtain holistic feedback on the company’s leadership, enablement, alignment and development.",
+        "frequency": "Semiannually",
+        "length": 21,
+        "questions": [
+            {
+                "tag": "Alignment",
+                "questions": [
+                    {
+                        "text": "The company leaders keep people informed about what's happening.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "The company leaders have set clear goals for the company.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I know how my work contributes to achieving the company’s goals.",
+                        "type": "rating",
+                        "limit": 5
+                    }
+                ]
+            },
+            {
+                "tag": "Development",
+                "questions": [
+                    {
+                        "text": "My manager has shown a genuine interest in my career.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I have a healthy work-life balance.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I am given the opportunities to develop skills relevant to my interests.",
+                        "type": "rating",
+                        "limit": 5
+                    }
+                ]
+            },
+            {
+                "tag": "Enablement",
+                "questions": [
+                    {
+                        "text": "I have access to the tools and equipment I need to do my job well.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I have access to the learning and development I need to do my job well.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "The systems and processes here support me in getting my work done effectively.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I know what I need to do to be successful in my role.",
+                        "type": "rating",
+                        "limit": 5
+                    }
+                ]
+            },
+            {
+                "tag": "Engagement",
+                "questions": [
+                    {
+                        "text": "I'm proud to be part of this company.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I would recommend this company as a great workplace to friends.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I’m excited to start my workweek.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I plan on being with this company for the foreseeable future.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "The company leaders motivate me to do my best work.",
+                        "type": "rating",
+                        "limit": 5
+                    }
+                ]
+            },
+            {
+                "tag": "Leadership",
+                "questions": [
+                    {
+                        "text": "My manager has created a trusting, open environment.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "My manager often provides constructive feedback.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I feel valued at work.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "I am recognized for my good work.",
+                        "type": "rating",
+                        "limit": 5
+                    },
+                    {
+                        "text": "Leadership seriously listens to feedback.",
+                        "type": "rating",
+                        "limit": 5
+                    }
+                ]
+            },
+            {
+                "tag": "Comments",
+                "questions": [
+                    {
+                        "text": "Provide any additional feedback for the leadership team.",
+                        "type": "text"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Pre Open Enrollment Survey",
+        "description": "This survey will measure if people are satisfied with the company’s current health benefit offerings.",
+        "frequency": "annually",
+        "length": 8,
+        "questions": [
+            {
+                "text": "Overall, I am satisfied with the benefits package my organization offers.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "My company offers affordable health benefit packages.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I have a clear understanding of the benefits package offered by my company.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I am satisfied with the current provider network and access to care.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I would recommend this company as a great place to work based on the current benefits packages.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "Are there any benefits that you’d like us to offer? List the three most important to you.",
+                "type": "text"
+            },
+            {
+                "text": "Which already offered benefits are most important to you?",
+                "type": "text"
+            },
+            {
+                "text": "Rank the top 3 items that’ll impact your benefits election: 1: Lower copays // 2: Lower plan premiums // 3: Lower out-of-pocket maximum // 4: Lower deductible // 5: Broader network of providers // 6: Lower prescription drug costs",
+                "type": "text"
+            }
+        ]
+    },
+    {
+        "title": "Post Open Enrollment Survey",
+        "description": "This survey’s intent is to gather feedback on the company’s health benefit offerings in the most recent open enrollment.",
+        "frequency": "annually",
+        "length": 10,
+        "questions": [
+            {
+                "text": "Overall, I am satisfied with the benefits package my organization offers.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "My company offers affordable health benefit packages.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I have a clear understanding of the benefits package offered by my company.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I am satisfied with the current provider network and access to care.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I would recommend this company as a great place to work based on the current benefits packages.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I am satisfied with the overall benefits enrollment experience.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I felt confident in my ability to make my plan selections.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I knew who/where to go to if I had questions during open enrollment.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "Are there any other benefits that you’d like us to offer?",
+                "type": "text"
+            },
+            {
+                "text": "Which already offered benefits are most important to you?",
+                "type": "text"
+            }
+        ]
+    },
+    {
+        "title": "Work-Life Flexibility",
+        "description": "This is a quick survey to assess the company’s work-life balance.",
+        "frequency": "quarterly",
+        "length": 4,
+        "questions": [
+            {
+                "text": "I navigate my work responsibilities along with my personal needs.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I accomplish my most important daily to-do items at work and in my personal life.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I am able to spend the right amount of time with my family and friends.",
+                "type": "rating",
+                "limit": 5
+            },
+            {
+                "text": "I enjoy my time away from work, whether it be a vacation day or just the weekend, without worrying about my work.",
+                "type": "rating",
+                "limit": 5
+            }
+        ]
+    }
+]

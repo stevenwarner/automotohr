@@ -158,4 +158,9 @@ class Test_model extends CI_Model
     //     $this->db->where('sid', $sid);
     //     $this->db->update('users', $data_to_update);
     // }
+
+    function insertDefaultTemplate($template)
+    {
+        $this->db->insert('employee_survey_default_templates', $template);
+    }
 }

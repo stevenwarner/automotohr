@@ -26,4 +26,31 @@ class Testing extends CI_Controller
     //     }
     //     echo "Done";
     // }
+
+    public function addDefaultTemplate(){
+        //
+        $file_name = ROOTPATH.'engagement.json';
+        //
+        $file = fopen($file_name, 'r');
+        // read data from file
+        $file_data =  fread($file, filesize($file_name));
+        $file_data = json_decode($file_data, true);
+        //
+        if (!empty($file_data)) {
+            foreach ($file_data as  $template) {
+                // _e($template, true);
+                $data_to_insert = array();
+                $data_to_insert["title"] = $template["title"];
+                $data_to_insert["description"] = $template["description"];
+                $data_to_insert["questions_count"] = $template["length"];
+                $data_to_insert["frequency"] = $template["frequency"];
+                $data_to_insert["questions"] = json_encode($template["questions"]);
+                //
+                $this->tm->insertDefaultTemplate($data_to_insert);
+            }
+        }
+        //
+        fclose($file);
+        die("ppak");
+    }
 }
