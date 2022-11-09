@@ -18,9 +18,9 @@ const RowArray = (query) => {
             (err, results) => {
                 //
                 if (err) {
-                    res(err.sqlMessage);
+                    return res(err.sqlMessage);
                 }
-                res(results[0]);
+                return res(results[0]);
             }
         );
     });
@@ -35,9 +35,9 @@ const ResultArray = (query) => {
             (err, results) => {
                 //
                 if (err) {
-                    res(err.sqlMessage);
+                    return res(err.sqlMessage);
                 }
-                res(results);
+                return res(results);
             }
         );
     });
@@ -66,9 +66,9 @@ const Insert = (table, dataOBJ) => {
             (err, results) => {
                 //
                 if (err) {
-                    res(err.sqlMessage);
+                    return res(err.sqlMessage);
                 }
-                res(results.insertId);
+                return res(results.insertId);
             }
         );
     });
@@ -96,10 +96,10 @@ const Update = (table, dataOBJ, whereOBJ) => {
             (err, results) => {
                 //
                 if (err) {
-                    res(err.sqlMessage);
+                    return res(err.sqlMessage);
                 }
                 //
-                res(results.affectedRows);
+                return res(results.affectedRows);
             }
         );
     });
@@ -121,9 +121,9 @@ const Delete = (table, whereOBJ) => {
             (err, results) => {
                 //
                 if (err) {
-                    res(err.sqlMessage);
+                    return res(err.sqlMessage);
                 }
-                res(results.affectedRows);
+                return res(results.affectedRows);
             }
         );
     });
