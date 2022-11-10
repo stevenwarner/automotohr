@@ -886,6 +886,23 @@
                                     </div>
                                 </div>
 
+                                <!-- Survey -->
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure><i class="fa fa-newspaper-o" aria-hidden="true"></i></figure>
+                                                <h2 class="post-title" style="margin: 2px 0;">
+                                                    <a href="<?php echo base_url('survey'); ?>">Are your employees engaged at work?</a>
+                                                </h2>
+                                               
+                                                <div class="button-panel">
+                                                    <a href="<?= base_url("survey"); ?>" class="site-btn">Create Survey</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                
                             </div>
                         </div>
