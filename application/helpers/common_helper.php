@@ -8396,7 +8396,7 @@ if (!function_exists('sc_remove')) {
             }
             return $input;
         }
-        return preg_replace(SC_REGEX, ' ', utf8_decode($input));
+        return preg_replace(SC_REGEX, '', utf8_decode($input));
     }
 }
 

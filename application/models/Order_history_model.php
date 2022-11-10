@@ -264,8 +264,7 @@ class order_history_model extends CI_Model
                 $items .= sc_remove($product_detail['name']);
                 $items .= $product_detail['name'];
 
-                // $rows .= '  <li class="invoice-description-list-item">'.sc_remove($product_detail['name']);
-                $rows .= '  <li class="invoice-description-list-item">' . $product_detail['name'];
+                $rows .= '  <li class="invoice-description-list-item">'.sc_remove($product_detail['name']);
 
                 //
                 if (isset($uns['credit'][$product_id])) {
