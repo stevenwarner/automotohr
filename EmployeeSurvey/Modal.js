@@ -24,9 +24,20 @@ const getDefaultTemplates = (columns) => {
  * @param {Object} dataObj 
  * @returns 
  */
-const InsertCompanySurvey = (dataObj) => {
+const insertCompanySurvey = (dataObj) => {
     //
     return DB_DRIVER.Insert(Surveys, dataObj);
+};
+
+/**
+ * 
+ * @param {Object} dataObj 
+ * @param {Object} whereObj 
+ * @returns 
+ */
+const updateCompanySurvey = (dataObj, whereObj) => {
+    //
+    return DB_DRIVER.Update(Surveys, dataObj, whereObj);
 };
 
 
@@ -52,16 +63,29 @@ const getDefaultTemplateInfo = (templateId, columns) => {
  * @param {Object} dataObj 
  * @returns 
  */
-const InsertCompanySurveyQuestion = (dataObj) => {
+const insertCompanySurveyQuestion = (dataObj) => {
     //
     return DB_DRIVER.Insert(SurveyQuestion, dataObj);
 };
 
 
+/**
+ * 
+ * @param {Object} dataObj 
+ * @param {Object} whereObj 
+ * @returns 
+ */
+const updateCompanySurveyQuestion = (dataObj, whereObj) => {
+    //
+    return DB_DRIVER.Update(SurveyQuestion, dataObj, whereObj);
+};
+
 // Export the Modal Methods
 module.exports = {
     getDefaultTemplates,
-    InsertCompanySurvey,
+    insertCompanySurvey,
+    updateCompanySurvey,
     getDefaultTemplateInfo,
-    InsertCompanySurveyQuestion
+    insertCompanySurveyQuestion,
+    updateCompanySurveyQuestion
 };

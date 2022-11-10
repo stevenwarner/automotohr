@@ -56,7 +56,7 @@ const Insert = (table, dataOBJ) => {
         query = query.replace(/,$/, '') + ') VALUES (';
         //
         for (let value in dataOBJ) {
-            query += '"' + (dataOBJ[value]) + '",';
+            query += "'" + (dataOBJ[value]) + "',";
         };
         //
         query = query.replace(/,$/, '') + ');';
