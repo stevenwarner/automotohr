@@ -12,7 +12,8 @@ const {
     updateCompanySurvey,
     getDefaultTemplateInfo,
     insertCompanySurveyQuestion,
-    updateCompanySurveyQuestion
+    updateCompanySurveyQuestion,
+    deleteCompanySurveyQuestion
 } = require('./Modal.js');
 
 /**
@@ -48,6 +49,7 @@ router.get(
 /**
  * Create Company Survey
  * 
+ * @param {Integer} num
  * @returns JSON
  */
 router.post(
@@ -119,8 +121,9 @@ router.post(
 );
 
 /**
- * Create Company Survey
+ * Create Company Survey Question
  * 
+ * @param {Integer} num
  * @returns JSON
  */
 router.post(
@@ -187,8 +190,8 @@ router.post(
 );
 
 /**
- * Create Company Survey
- * 
+ * Update Company Survey Question
+ * @param {Integer} num
  * @returns JSON
  */
 router.put(
@@ -259,6 +262,25 @@ router.put(
     }
 );
 
+/**
+ * Delete Company Survey Question
+ * 
+ * @param {Integer} num
+ * @returns
+ */
+router.delete(
+    '/:num',
+    async(Request, Response) => {
+        //
+        const response = await deleteCompanySurveyQuestion([
+            `sid = ${Request.params.num}`
+        ]);
+        //
+        return Response.send({
+            "id": response
+        });
+    }
+);
 
 async function moveQuestion (templateSid, surveySid) {
     const templateInfo = await getDefaultTemplateInfo(

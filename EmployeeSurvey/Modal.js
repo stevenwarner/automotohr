@@ -5,6 +5,7 @@ const { DefaultTemplates, Surveys, SurveyQuestion } = require('../Database/Schem
 
 /**
  * Get AutoMoto Default Templates
+ * 
  * @param {Array} columns 
  * @returns
  */
@@ -21,6 +22,8 @@ const getDefaultTemplates = (columns) => {
 
 /**
  * 
+ * Insert company survey
+ * 
  * @param {Object} dataObj 
  * @returns 
  */
@@ -30,6 +33,7 @@ const insertCompanySurvey = (dataObj) => {
 };
 
 /**
+ * Update company survey
  * 
  * @param {Object} dataObj 
  * @param {Object} whereObj 
@@ -43,6 +47,7 @@ const updateCompanySurvey = (dataObj, whereObj) => {
 
 /**
  * Get Specific Template Question
+ * 
  * @param {Integer} templateId 
  * @param {Array} columns 
  * @returns
@@ -60,6 +65,8 @@ const getDefaultTemplateInfo = (templateId, columns) => {
 
 /**
  * 
+ * Insert company survey question
+ * 
  * @param {Object} dataObj 
  * @returns 
  */
@@ -71,6 +78,7 @@ const insertCompanySurveyQuestion = (dataObj) => {
 
 /**
  * 
+ * Update company survey question
  * @param {Object} dataObj 
  * @param {Object} whereObj 
  * @returns 
@@ -80,6 +88,16 @@ const updateCompanySurveyQuestion = (dataObj, whereObj) => {
     return DB_DRIVER.Update(SurveyQuestion, dataObj, whereObj);
 };
 
+/**
+ * Delete company survey question
+ * @param {Array} whereObj 
+ * @returns 
+ */
+const deleteCompanySurveyQuestion = (whereObj) => {
+    //
+    return DB_DRIVER.Delete(SurveyQuestion, whereObj);
+};
+
 // Export the Modal Methods
 module.exports = {
     getDefaultTemplates,
@@ -87,5 +105,6 @@ module.exports = {
     updateCompanySurvey,
     getDefaultTemplateInfo,
     insertCompanySurveyQuestion,
-    updateCompanySurveyQuestion
+    updateCompanySurveyQuestion,
+    deleteCompanySurveyQuestion
 };
