@@ -15,7 +15,7 @@
         $employee_sid = isset($data[$i]) && isset($data[$i]['employee_number']) ? $data[$i]['employee_number'] : $user_sid;
         $print_name = isset($data[$i]) && isset($data[$i]['print_name']) ? $data[$i]['print_name'] : $user_print_name;
         $last_update_date = isset($data[$i]) && isset($data[$i]['consent_date']) ? date("m/d/Y", strtotime($data[$i]['consent_date'])) : date("m/d/Y");
-        $user_signature = isset($data[$i]) && isset($data[$i]['user_signature']) ? $data[$i]['user_signature'] : $user_primary_signature;
+        $user_signature = isset($data[$i]) && isset($data[$i]['user_signature']) && !empty($data[$i]['user_signature']) ? $data[$i]['user_signature'] : $user_primary_signature;
     }    
 ?>
 <style>
@@ -408,9 +408,10 @@ $(function(){
         var instructions = $('#instructions').val();
         var signature_flag = 0;
         //
-        var todayDate = new Date('<?php echo date('Y-m-d'); ?>');
+        var todayDate = new Date('<?php echo date('m/d/Y'); ?>');
         var consentDate = new Date(consent_date);
         //
+
         if (todayDate.getTime() > consentDate.getTime()) {
             alertify.alert('Please Provide Today Date').set({
                 title: "WARNING !"
@@ -420,13 +421,13 @@ $(function(){
         //
         <?php if(empty($user_signature)) { ?>
             var drawn_signature = $('#drawn_signature').val();
+           
             if (drawn_signature == '' || drawn_signature == null) {
                 signature_flag = 1;
             } else {
                 $('#user_previous_signature').val(drawn_signature);
             }
         <?php } ?>
-
         if (print_name != '' && consent_date != '' &&  signature_flag != 1) {
             getData();
         }  else {
@@ -451,7 +452,6 @@ $(function(){
         var obj_length = '<?php echo $i; ?>';
         //
         $('.js-dd-row').map(function(el, i) {
-            console.log(`#jsVoidedCheck${el+1}`)
             var account_title = $(this).find('.js-account-title').val();
             var account_type = $(this).find('.js-account-type:checked').val();
             var financial_institution_name = $(this).find('.js-financial-institution-name').val();
