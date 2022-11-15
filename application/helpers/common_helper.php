@@ -15700,3 +15700,28 @@ if(!function_exists('loadFileData')) {
         return $contents;
     }
 }
+
+
+if (!function_exists('get_userSidbyEmail')) {
+    function get_userSidbyEmail($email)
+    {
+        $CI = &get_instance();
+        $CI->db->select('sid');
+        $CI->db->where('email', $email);
+        $result = $CI->db->get('users')->row_array();
+        //
+        return $result["sid"];
+    }
+}
+
+if (!function_exists('get_polidySid')) {
+    function get_polidySid($title)
+    {
+        $CI = &get_instance();
+        $CI->db->select('sid');
+        $CI->db->where('title', $title);
+        $result = $CI->db->get('timeoff_policies')->row_array();
+        //
+        return $result["sid"];
+    }
+}

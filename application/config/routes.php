@@ -1585,3 +1585,8 @@ $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$
 
 //Survey
 $route['survey'] = 'manage_admin/survey/index';
+
+//Import historical Tiem Off
+$route['timeoff/importhistorical'] = 'Time_off/importHistorical';
+$route['timeoff/getemployeesdata'] = 'Time_off/getemployeesdata';
+$route['timeoff/importHistoricalTimeOff'] = 'Time_off/importHistoricalTimeOff';
