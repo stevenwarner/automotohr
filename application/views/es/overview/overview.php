@@ -1,7 +1,6 @@
 <!-- Main page -->
 <div class="csPage">
-    <!-- Sidebar -->
-    <?php $this->load->view('2022/sidebar'); ?>
+    
     <!--  -->
     <?php $this->load->view('es/partials/navbar'); ?>
     <!--  -->
@@ -11,14 +10,11 @@
             <div class="row">
                 <!--  -->
                 <div class="col-md-3 col-sm-12">
-                    <div class="csPageSideBar _csR5 _csPb10">
-                        <h3 class="_csM0 _csB4 _csP10 _csF2 _csF16">Statistics</h3>
-                        <canvas id="myChart"></canvas>
-                    </div>
-                    <?php $this->load->view('es/partials/faqs'); ?>
+                    <!-- Sidebar -->
+                    <?php $this->load->view('2022/sidebar'); ?>
                 </div>
                 <!--  -->
-                <div class="col-md-9 col-sm-12">
+                <div class="col-md-6 col-sm-12">
                     <!--  -->
                     <div class="row">
                         <div class="col-sm-12">
@@ -117,6 +113,14 @@
                             </p>
                         </div>
                     </div>
+                </div>
+                <!--  -->
+                <div class="col-md-3 col-sm-12">
+                    <div class="csPageSideBar _csR5 _csPb10">
+                        <h3 class="_csM0 _csB4 _csP10 _csF2 _csF16">Statistics</h3>
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    <?php $this->load->view('es/partials/faqs'); ?>
                 </div>
             </div>
         </div>

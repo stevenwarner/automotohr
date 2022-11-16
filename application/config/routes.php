@@ -1585,7 +1585,7 @@ $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$
 
 /**
  * Employee surveys
- * 
+ *
  * @author Mubashir Ahmed
  * @date   2022-10-03
  */
@@ -1593,3 +1593,4 @@ $route['employee/surveys']['get'] = '2022/Employee_surveys/overview';
 $route['employee/surveys/overview']['get'] = '2022/Employee_surveys/overview';
 $route['employee/surveys/surveys']['get'] = '2022/Employee_surveys/surveys';
 $route['employee/surveys/create']['get'] = '2022/Employee_surveys/create';
+$route['employee/surveys/create/(:num)/([a-z]+)']['get'] = '2022/Employee_surveys/create/$1/$2';

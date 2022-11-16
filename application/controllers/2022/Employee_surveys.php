@@ -44,7 +44,7 @@ class Employee_surveys extends Public_Controller{
 
 
     /**
-     * 
+     *
      */
     public function overview(){
         //
@@ -60,7 +60,7 @@ class Employee_surveys extends Public_Controller{
     }
 
     /**
-     * 
+     *
      */
     public function surveys(){
         //
@@ -76,14 +76,16 @@ class Employee_surveys extends Public_Controller{
     }
     
     /**
-     * 
+     *
      */
-    public function create($id = 0){
+    public function create($id = 0, $step = 'getting_started'){
         //
         $data = [];
         $data['load_view'] = 1;
         $data['session'] = $this->session->userdata('logged_in');
         $data['employee'] = $data['session']['employer_detail'];
+        //
+        $data['step'] = $step;
         //
         $this->load
         ->view($this->pages['header'], $data)

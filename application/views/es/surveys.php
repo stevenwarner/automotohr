@@ -1,7 +1,5 @@
 <!-- Main page -->
 <div class="csPage">
-    <!-- Sidebar -->
-    <?php $this->load->view('2022/sidebar'); ?>
     <!--  -->
     <?php $this->load->view('es/partials/navbar'); ?>
     <!--  -->
@@ -10,11 +8,16 @@
             <!--  -->
             <div class="row">
                 <!--  -->
-                <div class="col-md-12 col-sm-12">
+                <div class="col-md-3 col-sm-12">
+                    <!-- Sidebar -->
+                    <?php $this->load->view('2022/sidebar'); ?>
+                </div>
+                <!--  -->
+                <div class="col-md-9 col-sm-12">
                     <!--  -->
                     <div class="row">
                         <div class="col-sm-12 text-right">
-                            <a href="<?=base_url("employee/surveys/create");?>" class="btn _csB4 _csF2 _csR5 _csMt20 _csF16"><i class="fa fa-plus _csF16" aria-hidden="true"></i>&nbsp;Create Survey</a>
+                            <a href="<?= base_url("employee/surveys/create"); ?>" class="btn _csB4 _csF2 _csR5  _csF16"><i class="fa fa-plus _csF16" aria-hidden="true"></i>&nbsp;Create Survey</a>
                         </div>
                     </div>
                     <!-- Running surveys -->

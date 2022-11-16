@@ -129,16 +129,20 @@ body{
 
 /* Paddings */
 ._csP0{ padding: 0px !important; }
+._csP5{ padding: 5px !important; }
 ._csP10{ padding: 10px !important; }
 ._csP20{ padding: 20px !important; }
 ._csPt0{ padding-top: 0px !important; }
 ._csPt10{ padding-top: 10px !important; }
+._csPt5{ padding-top: 5px !important; }
 ._csPt20{ padding-top: 20px !important; }
 ._csPt30{ padding-top: 30px !important; }
 ._csPr0{ padding-right: 0px !important; }
+._csPr5{ padding-right: 5px !important; }
 ._csPr10{ padding-right: 10px !important; }
 ._csPr20{ padding-right: 20px !important; }
 ._csPb0{ padding-bottom: 0px !important; }
+._csPb5{ padding-bottom: 5px !important; }
 ._csPb10{ padding-bottom: 10px !important; }
 ._csPb20{ padding-bottom: 20px !important; }
 ._csPl0{ padding-left: 0px !important; }
@@ -306,4 +310,35 @@ body{
 .csIPLoader div p i {
     font-size: 50px;
     color: #fd7a2a;
+}
+
+
+/*  */
+._csImg{
+    display: block;
+    max-width: 100%;
+    margin: auto;
+}
+
+._csBox{
+    margin-bottom: 20px;
+}
+/*  */
+._csBox:nth-child(even){
+    background-color: rgba(0, 0, 0, .1);
+}
+/*  */
+._csHeight100{
+    height: 100px !important;
+}
+/*  */
+._csRatingBox{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+._csRatingItem{
+    display: inline-block;
+    width: 20%;
+    border: 1px solid #eee;
+
 }
