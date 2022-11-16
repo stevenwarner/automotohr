@@ -342,3 +342,83 @@ body{
     border: 1px solid #eee;
 
 }
+
+
+
+
+._csInfo {
+    color: #b4052c !important;
+}
+
+._csPaginationMenu {
+    list-style: none;
+}
+
+._csPageWrap ul li {
+    transition: all .2s ease-in-out;
+}
+
+._csPaginationMenu li {
+    display: inline-block;
+}
+
+
+
+/* --- New ---*/
+
+._csPaginationMenu li.active a,
+._csPaginationMenu li:hover a {
+    background: #fd7a2a;
+    color: #fff;
+}
+
+._csPaginationMenu li a {
+    display: block;
+    background: #f1f1f1;
+    padding: 10px 20px;
+    text-align: center;
+    color: #111;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+}
+
+/* Rating box New  */
+._csRatingBar {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+
+._pr10 {
+    padding-right: 10px !important;
+}
+
+._pl10 {
+    padding-left: 10px !important;
+}
+
+
+._csRatingBar li {
+    display: inline-block;
+    text-align: center;
+    width: 19%;
+    background-color: #f2f2f2;
+    padding: 10px 0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+
+._csRatingBar li.active {
+    background-color: #fd7b5b;
+}
+
+._csRatingBar li:not(.active):hover {
+    background-color: #fd7b5b;
+    color: #fff;
+}

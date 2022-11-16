@@ -13,7 +13,8 @@
  * @link       https://www.automotohr.com
  */
 
-class Employee_surveys extends Public_Controller{
+class Employee_surveys extends Public_Controller
+{
     // Set page path
     private $pp;
     // Set mobile path
@@ -46,7 +47,8 @@ class Employee_surveys extends Public_Controller{
     /**
      *
      */
-    public function overview(){
+    public function overview()
+    {
         //
         $data = [];
         $data['load_view'] = 1;
@@ -54,15 +56,16 @@ class Employee_surveys extends Public_Controller{
         $data['employee'] = $data['session']['employer_detail'];
         //
         $this->load
-        ->view($this->pages['header'], $data)
-        ->view("{$this->mp}es/overview/overview")
-        ->view($this->pages['footer']);
+            ->view($this->pages['header'], $data)
+            ->view("{$this->mp}es/overview/overview")
+            ->view($this->pages['footer']);
     }
 
     /**
      *
      */
-    public function surveys(){
+    public function surveys()
+    {
         //
         $data = [];
         $data['load_view'] = 1;
@@ -70,15 +73,16 @@ class Employee_surveys extends Public_Controller{
         $data['employee'] = $data['session']['employer_detail'];
         //
         $this->load
-        ->view($this->pages['header'], $data)
-        ->view("{$this->mp}es/surveys")
-        ->view($this->pages['footer']);
+            ->view($this->pages['header'], $data)
+            ->view("{$this->mp}es/surveys")
+            ->view($this->pages['footer']);
     }
-    
+
     /**
      *
      */
-    public function create($id = 0, $step = 'getting_started'){
+    public function create($id = 0, $step = 'getting_started')
+    {
         //
         $data = [];
         $data['load_view'] = 1;
@@ -88,8 +92,44 @@ class Employee_surveys extends Public_Controller{
         $data['step'] = $step;
         //
         $this->load
-        ->view($this->pages['header'], $data)
-        ->view("{$this->mp}es/create")
-        ->view($this->pages['footer']);
+            ->view($this->pages['header'], $data)
+            ->view("{$this->mp}es/create")
+            ->view($this->pages['footer']);
+    }
+
+
+
+    /**
+     *
+     */
+    public function companysurveys($id)
+    {
+        //
+        $data = [];
+        $data['load_view'] = 1;
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
+        //
+        $this->load
+            ->view($this->pages['header'], $data)
+            ->view("{$this->mp}es/companysurvey")
+            ->view($this->pages['footer']);
+    }
+
+    /**
+     *
+     */
+    public function surveyfeedback($id, $id2, $id3)
+    {
+        //
+        $data = [];
+        $data['load_view'] = 1;
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
+        //
+        $this->load
+            ->view($this->pages['header'], $data)
+            ->view("{$this->mp}es/surveyfeedback")
+            ->view($this->pages['footer']);
     }
 }
