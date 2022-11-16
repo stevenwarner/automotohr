@@ -60,7 +60,7 @@ define('GOOGLE_TRANSLATE_SNIPPET', "<script type='text/javascript'>function goog
 define('DEFAULT_JOB_IMAGE', 'no_job_image.jpg');
 define('JOB_LISTING_SHARE_TO_EMAIL_ADDRESS', 334);
 define('TELL_A_FRIEND_JOB_SHARE', 350);
-define('PAGINATION_RECORDS_PER_PAGE', 250);
+define('PAGINATION_RECORDS_PER_PAGE', 50);
 define('DEF_EMAIL_BTN_STYLE_PRIMARY', 'background-color: #007bff; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block');  // color: Light Blue
 define('DEF_EMAIL_BTN_STYLE_SECONDARY', 'background-color: #5a6268; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block');  // color: Gray
 define('DEF_EMAIL_BTN_STYLE_SUCCESS', 'background-color: #218838; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block');  // color: Green
