@@ -262,6 +262,22 @@ class copy_policies_model extends CI_Model {
         return 0;
     }
 
+    public function copyTimeOff($fromCompanyId, $toCompanyId, $adminId)
+    {
+        // Set company id
+        $this->companyId = $toCompanyId;
+        // Get creator id
+        $this->employeeId = $this->getCompanyCreator($toCompanyId);
+        // Copy categories
+        $this->checkAndAddPolicyTypes($fromCompanyId);
+        // Copy policies
+        $this->checkAndAddPolicies($fromCompanyId);
+        // Copy holidays
+        $this->addCompanyHolidays($fromCompanyId);
+        // Copy settings
+        $this->updateCompanyTimeOffSettings($fromCompanyId);
+    }
+
 
     /**
      * Check and add time off stuff
@@ -291,13 +307,18 @@ class copy_policies_model extends CI_Model {
      *
      * @author Mubashir Ahmed
      */
-    private function checkAndAddPolicyTypes()
+    private function checkAndAddPolicyTypes($companyId = 0)
     {
-        // Load all the types
-        $categories = json_decode(
-            loadFileData(ROOTPATH.'../protected_files/timeoff/categories.json'),
-            true
-        );
+        //
+        if ($companyId != 0) {
+            $categories = $this->getCompanyTypes($companyId);
+        } else {
+            // Load all the types
+            $categories = json_decode(
+                loadFileData(ROOTPATH.'../protected_files/timeoff/categories.json'),
+                true
+            );
+        }
         //
         foreach ($categories as $category){
             //
@@ -339,13 +360,17 @@ class copy_policies_model extends CI_Model {
      *
      * @author Mubashir Ahmed
      */
-    private function checkAndAddPolicies()
+    private function checkAndAddPolicies($companyId = 0)
     {
-        // Load all the types
-        $policies = json_decode(
-            loadFileData(ROOTPATH.'../protected_files/timeoff/policies.json'),
-            true
-        );
+        if ($companyId != 0) {
+            $policies = $this->getCompanyPoliciesById($companyId);
+        } else {
+            // Load all the types
+            $policies = json_decode(
+                loadFileData(ROOTPATH.'../protected_files/timeoff/policies.json'),
+                true
+            );
+        }
         //
         foreach ($policies as $policy){
             //
@@ -422,7 +447,7 @@ class copy_policies_model extends CI_Model {
             // Lets get the holidays
             $this->getCurrentYearHolidaysFromGoogle();
         }
-        // 
+        //
         $publicHolidays = $this->db
         ->select(['holiday_title', 'holiday_year', 'from_date', 'to_date', 'event_link', 'status'])
         ->where([
@@ -494,5 +519,122 @@ class copy_policies_model extends CI_Model {
             );
         }
 
+    }
+
+    /**
+     *
+     */
+    private function getCompanyTypes($companyId){
+        //
+        return $this->db
+        ->where('company_sid', $companyId)
+        ->get('timeoff_categories')
+        ->result_array();
+    }
+    
+    /**
+     *
+     */
+    private function getCompanyPoliciesById($companyId){
+        //
+        return $this->db
+        ->where('company_sid', $companyId)
+        ->get('timeoff_policies')
+        ->result_array();
+    }
+    
+    /**
+     *
+     */
+    private function updateCompanyTimeOffSettings($companyId){
+        // set
+        $ia = [];
+        $ia['company_sid'] = $companyId;
+        $ia['default_timeslot'] = 8;
+        $ia['pto_approval_check'] = 0;
+        $ia['pto_email_receiver'] = 0;
+        $ia['created_at'] = $this->dateTime;
+        $ia['accural_type'] = 'per year';
+        $ia['accrue_start_day'] = 0;
+        $ia['timeoff_type'] = 'per year';
+        $ia['is_lose_active'] = 0;
+        $ia['accrue_start_date'] = null;
+        $ia['timeoff_format_sid'] = 2;
+        $ia['send_email_to_supervisor'] = 0;
+        $ia['off_days'] = '';
+        $ia['theme'] = 2;
+        $ia['team_visibility_check'] = 1;
+        // Check if already exists
+        if (!$this->db->where([
+            'company_sid' => $companyId
+        ])->count_all_results('timeoff_settings')) {
+            // Insert
+            return $this->db
+            ->insert('timeoff_settings', $ia);
+        }
+        // Update
+        $this->db
+        ->where('company_sid', $companyId)
+        ->update('timeoff_settings', $ia);
+    }
+
+    private function addCompanyHolidays($companyId){
+        //
+        $holidays = $this->db
+        ->where('company_sid', $companyId)
+        ->get('timeoff_holidays')
+        ->result_array();
+        //
+        if (empty($holidays)) {
+            return false;
+        }
+        //
+        $year = date('Y', strtotime('now'));
+        //
+        $publicHolidays = $this->db
+        ->where('holiday_year', $year)
+        ->get('timeoff_holiday_list')
+        ->result_array();
+        //
+        $ph = [];
+        //
+        if ($publicHolidays) {
+            foreach ($publicHolidays as $holiday) {
+                $ph[$holiday['holiday_title']] = $holiday;
+            }
+        }
+        //
+        foreach ($holidays as $holiday) {
+            //
+            $ia = $holiday;
+            unset(
+                $ia['sid']
+            );
+            //
+            $ia['company_sid'] = $this->companyId;
+            $ia['created_at'] =
+            $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            // Check for public holiday
+            if (isset($ph[$holiday['holiday_title']])) {
+                $ii = $ph[$holiday['holiday_title']];
+                // public holiday
+                $ia['from_date'] = $ii['from_date'];
+                $ia['to_date'] = $ii['to_date'];
+            } else {
+                // company holiday
+                $ia['from_date'] = preg_replace('/[0-9]{4}/', $year, $ia['from_date']);
+                $ia['to_date'] = preg_replace('/[0-9]{4}/', $year, $ia['to_date']);
+            }
+
+            // check if already exits
+            if (!$this->db->where([
+                'company_sid' => $this->companyId,
+                'holiday_title' => $holiday['holiday_title'],
+                'holiday_year' => $year
+            ])->count_all_results('timeoff_holidays')) {
+                // insert
+                $this->db->insert('timeoff_holidays', $ia);
+            }
+        }
     }
 }

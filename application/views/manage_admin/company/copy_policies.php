@@ -8,6 +8,24 @@
                     <div class="dashboard-content">
                         <div class="dash-inner-block">
                             <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="heading-title page-title">
+                                        <h1 class="page-title" style="width: 100%;">
+                                            <i class="fa fa-users" aria-hidden="true"></i>
+                                            Copy Time Off
+                                        </h1>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <br>
+                                <div class="col-sm-12">
+                                        <p class="text-danger" style="font-size: 16px;">
+                                            <em><strong>Note:</strong>  This will copy the time off <strong>types, policies, holidays, and settings</strong> from source company to selected companies.</em>
+                                        </p>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <!-- Main Page -->
@@ -24,21 +42,11 @@
                                                 <li>
                                                     <label>Copy To <span class="cs-required">*</span></label>
                                                     <div class="hr-fields-wrap">
-                                                        <select style="width: 100%;" id="js-to-company"></select>
+                                                        <select style="width: 100%;" id="js-to-company" multiple></select>
                                                     </div>
                                                 </li>
                                                 <li>
-                                                    <label>Policies Status</label>
-                                                    <div class="hr-fields-wrap">
-                                                        <select style="width: 100%;" id="js-status">
-                                                            <option value="all" selected="true">All</option>
-                                                            <option value="0">Active</option>
-                                                            <option value="1">Archived</option>
-                                                        </select>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <a class="site-btn" id="js-fetch-all" href="#">Fetch All Policies</a>
+                                                    <a class="site-btn" id="jsMoveTimeOff" href="#">Move Time Off</a>
                                                 </li>
                                             </ul>
                                             <?php echo form_close(); ?>
@@ -158,8 +166,49 @@
         counter = 0;
         //
         $('#js-status').select2();
+        //
+        $('#js-from-company').change(function(){
+            $('#js-to-company').find('option').prop('disabled', false)
+            $('#js-to-company').find('[value="'+($(this).val())+'"]').prop('disabled', true)
+        });
         // Fetch companies
         fetchCompanies();
+
+
+        //
+        $('#jsMoveTimeOff').click(function(e){
+            //
+            e.preventDefault();
+            //
+            var baseCompanyId = $('#js-from-company').val();
+            var toCompanyIds = $('#js-to-company').val() || [];
+
+            //
+            if(!baseCompanyId || baseCompanyId == 0){
+                return alertify.alert('Warning!', 'Please select the source company.', function(){});
+            }
+            //
+            if(toCompanyIds.length == 0){
+                return alertify.alert('Warning!', 'Please select at least one destination company.', function(){});
+            }
+            //
+            var baseCompanyName = $('#js-from-company').find('[value="'+(baseCompanyId)+'"]').text();
+
+            //
+            return alertify.confirm(
+                '<p>This will copy the time off types, policies, holidays, and settings from '+(baseCompanyName)+' company to selected companies.<p><br /><p><strong>Are you sure you want to proceed?</strong></p>',
+                function(){
+                    startCopyTimeOffProcess(
+                        baseCompanyId,
+                        toCompanyIds
+                    )
+                },
+                function(){}
+            );
+        });
+
+
+
         //
         $('#js-fetch-all').click((e) => {
             e.preventDefault();
@@ -349,6 +398,7 @@
                     $('#js-from-company').select2();
                     // $('#js-from-company').select2('val', 57);
                     $('#js-to-company').html(rows);
+                    $('#js-to-company').find('[value="0"]').remove();
                     $('#js-to-company').select2();
                     // $('#js-to-company').select2('val', 51);
                     loader('hide');
@@ -410,6 +460,76 @@
             })
             $('#js-report-page').fadeIn(100);
             loader('hide');
+        }
+
+        var fromCompanyId = 0,
+        toCompanyIds = [],
+        current = 1,
+        xhr = null;
+
+        /**
+         * 
+         */
+        function startCopyTimeOffProcess(
+            baseCompanyId,
+            destinationCompanyIds
+        ){
+            //
+            fromCompanyId = baseCompanyId;
+            toCompanyIds = destinationCompanyIds;
+            current = 1;
+            //
+            return copyTimeOff();
+        }
+
+        function copyTimeOff(){
+            //
+            if(xhr !== null){
+                return false;
+            }
+            //
+            if(current > toCompanyIds.length){
+                //
+                loader(false);
+                //
+                return alertify.alert(
+                    'Success!',
+                    'Time off is copied to selected companies.',
+                    function(){
+                        window.location.reload();
+                    }
+                );
+            }
+            //
+            var row = '';
+            row += 'Please wait while we are copying time off <br />';
+            row += 'This may take a few minutes <br />';
+            row += 'Copying time off <strong>'+( current )+' ('+( $('#js-from-company').find('[value="'+(toCompanyIds[current - 1])+'"]').text() )+')</strong> of <strong>'+( toCompanyIds.length )+'</strong>';
+            $('#js-loader-text').html(row);
+            //
+            loader('show');
+            //
+
+            xhr = $.post(
+                baseURI, {
+                    action: 'copy_timeoff',
+                    fromCompanyId: fromCompanyId,
+                    toCompanyId: toCompanyIds[current-1],
+                }
+            ).success(function(resp){
+                //
+                xhr = null;
+                //
+                current++;
+                //
+                setTimeout(copyTimeOff, 1000);
+            })
+            .fail(function(){
+                //
+                xhr = null;
+                //
+                setTimeout(copyTimeOff, 1000);
+            });
         }
     })
 </script>

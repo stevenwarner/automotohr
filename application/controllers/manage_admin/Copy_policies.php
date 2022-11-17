@@ -101,6 +101,19 @@ class Copy_policies extends Admin_Controller {
                 $this->resp['Response'] = 'Proceed.';
                 $this->response();
             break;
+            
+            case 'copy_timeoff':
+                $isMoved = $this->copy_policies_model->copyTimeOff(
+                    $formpost['fromCompanyId'],
+                    $formpost['toCompanyId'],
+                    $this->ion_auth->user()->row()->id
+                );
+                //
+                $this->resp['Copied'] = $isMoved;
+                $this->resp['Status'] = TRUE;
+                $this->resp['Response'] = 'Proceed.';
+                $this->response();
+            break;
         }
         $this->response();
     }
