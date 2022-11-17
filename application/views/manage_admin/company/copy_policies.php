@@ -46,7 +46,7 @@
                                                     </div>
                                                 </li>
                                                 <li>
-                                                    <a class="site-btn" id="jsMoveTimeOff" href="#">Move Time Off</a>
+                                                    <a class="site-btn" id="jsMoveTimeOff" href="#">Copy Time Off</a>
                                                 </li>
                                             </ul>
                                             <?php echo form_close(); ?>

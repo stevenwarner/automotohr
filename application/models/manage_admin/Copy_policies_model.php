@@ -580,16 +580,30 @@ class copy_policies_model extends CI_Model {
 
     private function addCompanyHolidays($companyId){
         //
+        $year = date('Y', strtotime('now'));
+        //
         $holidays = $this->db
-        ->where('company_sid', $companyId)
+        ->where([
+            'company_sid' => $companyId,
+            'holiday_year' => $year
+        ])
         ->get('timeoff_holidays')
         ->result_array();
         //
         if (empty($holidays)) {
-            return false;
+            //
+            $holidays = $this->db
+            ->where([
+                'company_sid' => $companyId,
+                'holiday_year' => $year - 1
+            ])
+            ->get('timeoff_holidays')
+            ->result_array();
+            //
+            if (empty($holidays)) {
+                return false;
+            }
         }
-        //
-        $year = date('Y', strtotime('now'));
         //
         $publicHolidays = $this->db
         ->where('holiday_year', $year)
@@ -612,6 +626,7 @@ class copy_policies_model extends CI_Model {
             );
             //
             $ia['company_sid'] = $this->companyId;
+            $ia['holiday_year'] = $year;
             $ia['created_at'] =
             $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
             // Check for public holiday
