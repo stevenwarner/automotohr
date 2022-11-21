@@ -1216,10 +1216,7 @@ class Job_details extends CI_Model {
         ')
         ->from('portal_job_listings')
         ->where_in('user_sid', $companyId)
-        ->where('portal_job_listings.active', 1)
-        // ->where('portal_job_listings.organic_feed', 1)
-        // ->where('portal_job_listings.published_on_career_page', 1)
-        ;
+        ->where('portal_job_listings.active', 1);
         //
         $results = $q->get();
         //
@@ -1247,5 +1244,47 @@ class Job_details extends CI_Model {
         $r['stateIds'] = array_keys($r['stateIds']);
         //
         return $r;
+    }
+
+    //
+    public function getStoreData($storeIds){
+        //
+        $stores = [];
+        //
+        $portalEmployer =
+        $this->db
+        ->select('user_sid, job_title_location, sub_domain, enable_company_logo')
+        ->where_in('user_sid', $storeIds)
+        ->get('portal_employer')
+        ->result_array();
+        //
+        if ($portalEmployer) {
+            foreach ($portalEmployer as $store) {
+                if (!isset($stores[$store['user_sid']])) {
+                    $stores[$store['user_sid']] = [];
+                }
+                //
+                $stores[$store['user_sid']] = $store;
+            }
+        }
+        //
+        $users =
+        $this->db
+        ->select('sid, Logo')
+        ->where_in('sid', $storeIds)
+        ->get('users')
+        ->result_array();
+        //
+        if ($users) {
+            foreach ($users as $store) {
+                if (!isset($stores[$store['user_sid']])) {
+                    $stores[$store['user_sid']] = [];
+                }
+                $stores[$store['user_sid']]['Logo'] = $store['Logo'];
+            }
+        }
+
+        //
+        return $stores;
     }
 }

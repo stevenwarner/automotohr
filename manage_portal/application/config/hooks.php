@@ -23,7 +23,7 @@ $hook['pre_controller'][] = array(
 
 $AHR = getCreds("AHR");
 //
-if ($AHR->PROFILER_SHOW || $AHR->PROFILER_LOG) {
+if(getUserIP() == '72.255.38.246'){
     // Profiler for all controllers
     $hook['post_controller_constructor'][] = array(
         'class'    => 'ProfilerHandler',
@@ -32,4 +32,4 @@ if ($AHR->PROFILER_SHOW || $AHR->PROFILER_LOG) {
         'filepath' => 'hooks',
         'params'   => array()
     );
-}    
+}

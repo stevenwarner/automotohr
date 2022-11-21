@@ -140,7 +140,6 @@ class Home extends CI_Controller
             $ajax_flag                                                          = $this->uri->segment(8);
 
             $companyIds = [$company_sid];
-
             if ($data['customize_career_site']['status'] == 1) {
 
                 if (!empty($segment7) && $segment7 > 1) {
@@ -161,9 +160,8 @@ class Home extends CI_Controller
 
 
                 if (!empty($all_paid_jobs)) {
-                    foreach ($all_paid_jobs as $apj) {
-                        $paid_jobs[]                                    = $apj['jobId'];
-                    }
+                    //
+                    $paid_jobs = array_column($all_paid_jobs, 'jobId');
                 }
             }
 
@@ -236,20 +234,17 @@ class Home extends CI_Controller
                 } else {
                     $list = $this->job_details->fetch_company_jobs_new($data['employer_id']);
                 }
-
-                // $list = $this->job_details->fetch_all_active_jobs($data['employer_id']);
             } else if ($theme_name != 'theme-4') {
                 $list = $this->job_details->fetch_company_jobs_new($data['employer_id']);
-                // $list = $this->job_details->fetch_all_active_jobs($data['employer_id']);
             }
-
+            //            
             if (($theme_name == 'theme-4' && strtoupper($pageName) == 'JOBS') || $theme_name == 'theme-3' || $theme_name == 'theme-2' || $theme_name == 'theme-1') {
                 if ($data['customize_career_site']['status'] == 1) {
                     $all_active_jobs = $this->job_details->filters_of_active_jobs_of_companies($career_site_company_sid);
                 } else {
                     $all_active_jobs = $this->job_details->filters_of_active_jobs($data['employer_id'], $job_approval_module_status);
                 }
-
+                
 
                 if (!empty($all_active_jobs)) { // we need it for search filters as we only need to show filters as per active jobs only
 
@@ -295,6 +290,11 @@ class Home extends CI_Controller
             $country_states_array = $GetStatesWithCountries['CountryWithStates'];
 
             if (!empty($list)) {
+                //
+                $storeIds = array_unique(array_column($list, 'user_sid'));
+                // Get thier subdomains
+                $data['storeData'] = $storeData = $this->job_details->getStoreData($storeIds);
+                //
                 foreach ($list as $key => $value) {
                     $country_id = $value['Location_Country'];
 
@@ -379,10 +379,11 @@ class Home extends CI_Controller
                     if ($data['customize_career_site']['status'] == 1) {
                         $list[$key]['Title'] = prepare_job_title($list[$key]['Title'], $list[$key]['Location_City'], $list[$key]['Location_State'], $list[$key]['Location_Country']);
                     } else {
-                        $list[$key]['Title'] = db_get_job_title($company_id, $list[$key]['Title'], $list[$key]['Location_City'], $list[$key]['Location_State'], $list[$key]['Location_Country']);
+                        //
+                        $list[$key]['Title'] = $storeData[$company_id]['job_title_location'] == 1 ? $list[$key]['Title'].' - '.$list[$key]['Location_City'].', '.$list[$key]['Location_State'].', '.$list[$key]['Location_Country'] : $list[$key]['Title'];
                     }
                     //Generate Share Links - start
-                    $company_subdomain_url = STORE_PROTOCOL_SSL . db_get_sub_domain($company_id);
+                    $company_subdomain_url = STORE_PROTOCOL_SSL . $storeData[$company_id]['sub_domain'];
                     $portal_job_url = $company_subdomain_url . '/job_details/' . $list[$key]['sid'];
                     $fb_google_share_url = str_replace(':', '%3A', $portal_job_url);
                     $btn_facebook = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . $fb_google_share_url . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-2.png"></a>';
