@@ -295,6 +295,12 @@ class Home extends CI_Controller
                 // Get thier subdomains
                 $data['storeData'] = $storeData = $this->job_details->getStoreData($storeIds);
                 //
+                $screeningQuestionaires = array_unique(
+                    array_column($list, 'questionnaire_sid')
+                );
+                //
+                $data['screeningQuestionaires'] = $screeningQuestionaires = $this->job_details->getScreeningQuestionares($screeningQuestionaires);
+                //
                 foreach ($list as $key => $value) {
                     $country_id = $value['Location_Country'];
 
@@ -332,13 +338,12 @@ class Home extends CI_Controller
                     $questionnaire_sid = $value['questionnaire_sid'];
 
                     if ($questionnaire_sid > 0) {
-                        $portal_screening_questionnaires = $this->job_details->get_screening_questionnaire_by_id($questionnaire_sid);
-
-                        if (!empty($portal_screening_questionnaires)) {
-                            $list[$key]['q_name'] = $portal_screening_questionnaires[0]['name'];
-                            $list[$key]['q_passing'] = $portal_screening_questionnaires[0]['passing_score'];
-                            $list[$key]['q_send_pass'] = $portal_screening_questionnaires[0]['auto_reply_pass'];
-                            $list[$key]['q_send_fail'] = $portal_screening_questionnaires[0]['auto_reply_fail'];
+                        //
+                        if (isset($screeningQuestionaires[$questionnaire_sid])) {
+                            $list[$key]['q_name'] = $screeningQuestionaires[$questionnaire_sid][0]['name'];
+                            $list[$key]['q_passing'] = $screeningQuestionaires[$questionnaire_sid][0]['passing_score'];
+                            $list[$key]['q_send_pass'] = $screeningQuestionaires[$questionnaire_sid][0]['auto_reply_pass'];
+                            $list[$key]['q_send_fail'] = $screeningQuestionaires[$questionnaire_sid][0]['auto_reply_fail'];
                             $list[$key]['q_pass_text'] = ''; //$portal_screening_questionnaires[0]['email_text_pass'];
                             $list[$key]['q_fail_text'] = ''; //$portal_screening_questionnaires[0]['email_text_fail'];
                             $list[$key]['my_id'] = 'q_question_' . $questionnaire_sid;
@@ -352,9 +357,8 @@ class Home extends CI_Controller
                             $list[$key]['my_id'] = 'q_question_' . $questionnaire_sid;
                         }
 
-                        $screening_questions_numrows = $this->job_details->get_screenings_count_by_id($questionnaire_sid);
+                        if(isset($screeningQuestionaires[$questionnaire_sid]) && $screeningQuestionaires[$questionnaire_sid]['questions_count'] > 0){
 
-                        if ($screening_questions_numrows > 0) {
                             $screening_questions = $this->job_details->get_screening_questions_by_id($questionnaire_sid);
 
                             foreach ($screening_questions as $qkey => $qvalue) {

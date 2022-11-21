@@ -1284,11 +1284,50 @@ class Job_details extends CI_Model {
                 if (!isset($stores[$store['user_sid']])) {
                     $stores[$store['user_sid']] = [];
                 }
-                $stores[$store['user_sid']]['Logo'] = $store['Logo'];
+                $stores[$store['sid']]['Logo'] = $store['Logo'];
             }
         }
 
         //
         return $stores;
+    }
+
+    //
+    public function getScreeningQuestionares($screeningQuestionIds)
+    {
+        //
+        $ra = [];
+        //
+        $sqa = 
+        $this->db
+        ->select('sid, name, employer_sid, passing_score, auto_reply_pass, email_text_pass, auto_reply_fail, email_text_fail')
+        ->where_in('sid', $screeningQuestionIds)
+        ->from('portal_screening_questionnaires')
+        ->get()
+        ->result_array();
+        //
+        if (!$sqa) {
+            return [];
+        }
+        //
+        foreach ($sqa as $sq) {
+            //
+            if (!isset($ra[$sq['sid']])) {
+                $ra[$sq['sid']] = $sq;
+                $ra[$sq['sid']]['questions'] = [];
+                $ra[$sq['sid']]['questions_count'] = 0;
+                $ra[$sq['sid']]['answers'] = [];
+            }
+            //
+            $ra[$sq['sid']]['questions_count'] = $this->get_screenings_count_by_id($sq['sid']);
+            //
+            if ($ra[$sq['sid']]['questions_count'] == 0) {
+                continue;
+            }
+            
+        }
+        //
+        return $ra;
+        _e($sq, true, true);
     }
 }
