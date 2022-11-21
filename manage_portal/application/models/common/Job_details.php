@@ -241,6 +241,7 @@ class Job_details extends CI_Model {
             $this->db->where('active', 1);
             $this->db->where('published_on_career_page', 1);
             $this->db->from('portal_job_listings');
+            return $this->db->count_all_results();
         return $this->db->get()->num_rows();
     }
 
@@ -278,6 +279,7 @@ class Job_details extends CI_Model {
             $this->db->select('*');
             $this->db->where('questionnaire_sid', $sid);
             $this->db->from('portal_questions');
+            return $this->db->count_all_results();
         return $this->db->get()->num_rows();
     }
 
@@ -292,6 +294,7 @@ class Job_details extends CI_Model {
             $this->db->select('*');
             $this->db->where('questions_sid', $sid);
             $this->db->from('portal_question_option');
+            return $this->db->count_all_results();
         return $this->db->get()->num_rows();
     }
 
@@ -437,6 +440,7 @@ class Job_details extends CI_Model {
                 $this->db->where('job_sid', $job_sid);
                 $this->db->where('portal_job_applications_sid', $applicant_sid);
                 $this->db->from('portal_applicant_jobs_list');
+                return $this->db->count_all_results();
                 return $this->db->get()->num_rows();
             }
         }
