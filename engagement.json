@@ -8,25 +8,30 @@
             {
                 "text": "It is easy to bury myself in my work.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I’m excited to start my workweek.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I would recommend this company as a great place to work.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 1
             },
             {
                 "text": "What are things we are doing well as a company?",
-                "type": "text"
+                "type": "text",
+                "score": 0
             },
             {
                 "text": "What can we improve in our company?",
-                "type": "text"
+                "type": "text",
+                "score": 0
             }
         ]
     },
@@ -39,11 +44,13 @@
             {
                 "text": "How likely are you to recommend our company to friends as a place to work?",
                 "type": "rating",
-                "limit": 10
+                "limit": 10,
+                "score": 1
             },
             {
                 "text": "What changes would we have to make to receive an even higher rating?",
-                "type": "text"
+                "type": "text",
+                "score": 0
             }
         ]
     },
@@ -59,17 +66,20 @@
                     {
                         "text": "The company leaders keep people informed about what's happening.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "The company leaders have set clear goals for the company.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "I know how my work contributes to achieving the company’s goals.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     }
                 ]
             },
@@ -79,17 +89,20 @@
                     {
                         "text": "My manager has shown a genuine interest in my career.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "I have a healthy work-life balance.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "I am given the opportunities to develop skills relevant to my interests.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     }
                 ]
             },
@@ -99,22 +112,26 @@
                     {
                         "text": "I have access to the tools and equipment I need to do my job well.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "I have access to the learning and development I need to do my job well.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "The systems and processes here support me in getting my work done effectively.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "I know what I need to do to be successful in my role.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     }
                 ]
             },
@@ -124,27 +141,32 @@
                     {
                         "text": "I'm proud to be part of this company.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 1
                     },
                     {
-                        "text": "I would recommend this company as a great workplace to friends.",
+                        "text": "I would recommend this company as a great place to work to my friends and family.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 1
                     },
                     {
-                        "text": "I’m excited to start my workweek.",
+                        "text": "Most days, I'm happy to start my work week.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 1
                     },
                     {
                         "text": "I plan on being with this company for the foreseeable future.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 1
                     },
                     {
-                        "text": "The company leaders motivate me to do my best work.",
+                        "text": "This company makes me want to do my best work.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 1
                     }
                 ]
             },
@@ -154,27 +176,32 @@
                     {
                         "text": "My manager has created a trusting, open environment.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "My manager often provides constructive feedback.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "I feel valued at work.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "I am recognized for my good work.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     },
                     {
                         "text": "Leadership seriously listens to feedback.",
                         "type": "rating",
-                        "limit": 5
+                        "limit": 5,
+                        "score": 0
                     }
                 ]
             },
@@ -183,7 +210,8 @@
                 "questions": [
                     {
                         "text": "Provide any additional feedback for the leadership team.",
-                        "type": "text"
+                        "type": "text",
+                        "score": 0
                     }
                 ]
             }
@@ -196,41 +224,49 @@
         "length": 8,
         "questions": [
             {
-                "text": "Overall, I am satisfied with the benefits package my organization offers.",
+                "text": "Overall I am satisfied with the benefits package my organization offers.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 1
             },
             {
                 "text": "My company offers affordable health benefit packages.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I have a clear understanding of the benefits package offered by my company.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I am satisfied with the current provider network and access to care.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I would recommend this company as a great place to work based on the current benefits packages.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "Are there any benefits that you’d like us to offer? List the three most important to you.",
-                "type": "text"
+                "type": "text",
+                "score": 0
             },
             {
                 "text": "Which already offered benefits are most important to you?",
-                "type": "text"
+                "type": "text",
+                "score": 0
             },
             {
                 "text": "Rank the top 3 items that’ll impact your benefits election: 1: Lower copays // 2: Lower plan premiums // 3: Lower out-of-pocket maximum // 4: Lower deductible // 5: Broader network of providers // 6: Lower prescription drug costs",
-                "type": "text"
+                "type": "text",
+                "score": 0
             }
         ]
     },
@@ -241,24 +277,28 @@
         "length": 10,
         "questions": [
             {
-                "text": "Overall, I am satisfied with the benefits package my organization offers.",
+                "text": "Overall I am satisfied with the benefits package my organization offers.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 1
             },
             {
                 "text": "My company offers affordable health benefit packages.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I have a clear understanding of the benefits package offered by my company.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I am satisfied with the current provider network and access to care.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I would recommend this company as a great place to work based on the current benefits packages.",
@@ -268,25 +308,30 @@
             {
                 "text": "I am satisfied with the overall benefits enrollment experience.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I felt confident in my ability to make my plan selections.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "I knew who/where to go to if I had questions during open enrollment.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 0
             },
             {
                 "text": "Are there any other benefits that you’d like us to offer?",
-                "type": "text"
+                "type": "text",
+                "score": 0
             },
             {
                 "text": "Which already offered benefits are most important to you?",
-                "type": "text"
+                "type": "text",
+                "score": 0
             }
         ]
     },
@@ -297,24 +342,28 @@
         "length": 4,
         "questions": [
             {
-                "text": "I navigate my work responsibilities along with my personal needs.",
+                "text": "I am able to navigate my work responsibilities along with my personal needs",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 1
             },
             {
-                "text": "I accomplish my most important daily to-do items at work and in my personal life.",
+                "text": "I am able to get the most important things done on a day to day or week to week basis.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 1
             },
             {
-                "text": "I am able to spend the right amount of time with my family and friends.",
+                "text": "I am able to spend the right amount of time with my family and friends",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 1
             },
             {
-                "text": "I enjoy my time away from work, whether it be a vacation day or just the weekend, without worrying about my work.",
+                "text": "I am able to enjoy my time away from work, whether it is a vacation day or just the weekend, without worrying about my work.",
                 "type": "rating",
-                "limit": 5
+                "limit": 5,
+                "score": 1
             }
         ]
     }
