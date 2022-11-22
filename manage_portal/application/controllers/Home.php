@@ -358,18 +358,23 @@ class Home extends CI_Controller
                         }
 
                         if(isset($screeningQuestionaires[$questionnaire_sid]) && $screeningQuestionaires[$questionnaire_sid]['questions_count'] > 0){
-
-                            $screening_questions = $this->job_details->get_screening_questions_by_id($questionnaire_sid);
+                            //
+                            $screening_questions = $screeningQuestionaires[$questionnaire_sid]['questions'];
+                            $screeningAnswers = [];
+                            //
+                            if ($screening_questions) {
+                                $screeningQuestionIds = array_keys($screening_questions);
+                                $screeningAnswers = $this->job_details->getScreeningAnswers($screeningQuestionIds);
+                            }
 
                             foreach ($screening_questions as $qkey => $qvalue) {
                                 $questions_sid = $qvalue['sid'];
                                 $list[$key]['q_question_' . $questionnaire_sid][] = array('questions_sid' => $questions_sid, 'caption' => $qvalue['caption'], 'is_required' => $qvalue['is_required'], 'question_type' => $qvalue['question_type']);
-                                $screening_answers_numrows = $this->job_details->get_screening_answer_count_by_id($questions_sid);
 
-                                if ($screening_answers_numrows) {
-                                    $screening_answers = $this->job_details->get_screening_answers_by_id($questions_sid);
+                                //
+                                if (isset($screeningAnswers[$questions_sid])) {
 
-                                    foreach ($screening_answers as $akey => $avalue) {
+                                    foreach ($screeningAnswers[$questions_sid] as $akey => $avalue) {
                                         $list[$key]['q_answer_' . $questions_sid][] = array('value' => $avalue['value'], 'score' => $avalue['sid']);
                                     }
                                 }

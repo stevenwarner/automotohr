@@ -1310,6 +1310,8 @@ class Job_details extends CI_Model {
             return [];
         }
         //
+        $questions = $this->getQuestionnaireQuestions($screeningQuestionIds);
+        //
         foreach ($sqa as $sq) {
             //
             if (!isset($ra[$sq['sid']])) {
@@ -1319,15 +1321,65 @@ class Job_details extends CI_Model {
                 $ra[$sq['sid']]['answers'] = [];
             }
             //
-            $ra[$sq['sid']]['questions_count'] = $this->get_screenings_count_by_id($sq['sid']);
+            $ra[$sq['sid']]['questions_count'] = isset($questions[$sq['sid']]) ? count($questions[$sq['sid']]['questions']) : 0;
             //
             if ($ra[$sq['sid']]['questions_count'] == 0) {
                 continue;
             }
-            
+            $ra[$sq['sid']]['questions'] = $questions[$sq['sid']]['questions'];
         }
         //
         return $ra;
-        _e($sq, true, true);
+    }
+
+    public function getQuestionnaireQuestions($screeningQuestionIds)
+    {
+        $questions = $this->db
+        ->where_in('questionnaire_sid', $screeningQuestionIds)
+        ->get('portal_questions')
+        ->result_array();
+        //
+        if (empty($questions)) {
+            return [];
+        }
+        //
+        $ra = [];
+        //
+        foreach ($questions as $question) {
+            //
+            if (!isset($ra[$question['questionnaire_sid']])) {
+                $ra[$question['questionnaire_sid']] = [
+                    'questions' => []
+                ];
+            }
+            //
+            $ra[$question['questionnaire_sid']]['questions'][$question['sid']] = $question;
+        }
+        //
+        return $ra;
+    }
+  
+    public function getScreeningAnswers($screeningQuestionIds)
+    {
+        $answers = $this->db
+        ->where_in('questions_sid', $screeningQuestionIds)
+        ->get('portal_question_option')
+        ->result_array();
+        //
+        if (empty($answers)) {
+            return [];
+        }
+        //
+        $ra = [];
+        //
+        foreach ($answers as $answer) {
+            //
+            if (!isset($ra[$answer['questions_sid']])) {
+                $ra[$answer['questions_sid']] = [];
+            }
+            $ra[$answer['questions_sid']][] = $answer;
+        }
+        //
+        return $ra;
     }
 }
