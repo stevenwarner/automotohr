@@ -1104,9 +1104,9 @@ class Job_details extends CI_Model {
                     $this->db->like('portal_job_listings.Title', $keyword);
                 }
 
-                if ($limit !== null && $offset !== null) {
-                    $this->db->limit($limit, $offset);
-                }
+                // if ($limit !== null && $offset !== null) {
+                //     $this->db->limit($limit, $offset);
+                // }
 
                 $this->db->where('users.active', 1);
                 $this->db->where('users.career_site_listings_only', 0);

@@ -238,14 +238,7 @@
                         <i style="font-size: 25px; color: #81b431;" class="fa fa-cog fa-spin"></i>
                         <span>Loading...</span>
                     </div>
-                    <?php if(!empty($job_listings)) { ?>
-                        <div class="row">
-                            <div class="col-xs-12" style="text-align: center;">
-                                <a class="site-btn bg-color" href="javascript:;" id="jsloadJobs">Load More Jobs</a>
-                                 
-                            </div>
-                        </div>
-                    <?php } ?>                   
+                   
                 </div>
                 
             </div>            
