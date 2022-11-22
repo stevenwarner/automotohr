@@ -23,13 +23,13 @@ $hook['pre_controller'][] = array(
 
 $AHR = getCreds("AHR");
 //
-if(getUserIP() == '72.255.38.246'){
-    // Profiler for all controllers
-    $hook['post_controller_constructor'][] = array(
-        'class'    => 'ProfilerHandler',
-        'function' => 'EnableProfiler',
-        'filename' => 'appprofiler.php',
-        'filepath' => 'hooks',
-        'params'   => array()
-    );
-}
+// if(getUserIP() == '72.255.38.246'){
+//     // Profiler for all controllers
+//     $hook['post_controller_constructor'][] = array(
+//         'class'    => 'ProfilerHandler',
+//         'function' => 'EnableProfiler',
+//         'filename' => 'appprofiler.php',
+//         'filepath' => 'hooks',
+//         'params'   => array()
+//     );
+// }
