@@ -741,6 +741,11 @@ class Cron_common extends CI_Controller
                     $upd['rehire_date'] = $rows[$id]['termination_date'];
                     $upd['active'] = 1;
                 }
+                // for active
+                if (in_array($rows[$id]['employee_status'], [5])) {
+                    $upd['general_status'] = 'active';
+                    $upd['active'] = 1;
+                }
                 
                 $found++;
             } else {
