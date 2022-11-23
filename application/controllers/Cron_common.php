@@ -736,24 +736,12 @@ class Cron_common extends CI_Controller
             // Check if record found in terminated
             if (isset($rows[$id])) {
                 // Check the last status
-                // for terminated
-                if (in_array($rows[$id]['employee_status'], [1])) {
-                    $upd['terminated_status'] = 1;
-                    $upd['active'] = 0;
-                }
                 // for rehired
                 if (in_array($rows[$id]['employee_status'], [8])) {
                     $upd['rehire_date'] = $rows[$id]['termination_date'];
                     $upd['active'] = 1;
                 }
-                // for active
-                if (in_array($rows[$id]['employee_status'], [5])) {
-                    $upd['active'] = 1;
-                }
-                // for inactive
-                if (in_array($rows[$id]['employee_status'], [6])) {
-                    $upd['active'] = 0;
-                }
+                
                 $found++;
             } else {
                 //
