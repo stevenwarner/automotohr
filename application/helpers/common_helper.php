@@ -15725,3 +15725,21 @@ if (!function_exists('get_polidySid')) {
         return $result["sid"];
     }
 }
+
+
+
+if (!function_exists('get_userSidbyName')) {
+    function get_userSidbyName($employeeName,$companySid)
+    {
+
+        $CI = &get_instance();
+        $CI->db->select('sid');
+        $CI->db->where("parent_sid", $companySid);
+        $CI->db->where("REPLACE(lower(concat(first_name,'',last_name)),' ','')=", $employeeName);
+        $result = $CI->db->get('users')->row_array();
+       // _e($CI->db->last_query(), true);
+        //
+        return $result["sid"];
+        
+    }
+}

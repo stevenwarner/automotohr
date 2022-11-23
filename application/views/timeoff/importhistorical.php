@@ -43,32 +43,34 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
 
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12" style="overflow-x: auto;overflow-y: auto; display: none;" id='importhistoricaldiv'>
 
+                                    <!--
                                         <div class="col-lg-6 col-md-6 col-xs-6 col-sm-12">
                                             <p class="alert-danger" id="emailnotexist"></p>
                                             <p class="alert-danger" id="approveremailnotexist"></p>
                                             <p class="alert-danger" id="policynotexist"></p>
                                         </div>
-
+-->
 
 
                                         <div class="col-lg-6 col-md-6 col-xs-6 col-sm-12">
-                                            <p class="alert-success" id="msgrecordsimported"></p>
-                                            <p class="alert-danger" id="msgrecordsnotimported"></p>
+                                        <p class="alert-success" id="msgrecordstotal" style="padding-left: 10px;"></p>
+                                            <p class="alert-success" id="msgrecordsimported" style="padding-left: 10px;"></p>
+                                            <p class="alert-danger" id="msgrecordsnotimported" style="padding-left: 10px;"></p> <br>
                                         </div>
 
-                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"> <span class="alert-danger"><b>Note:</b> Records that are highlighted in red  will not import </span></div>
+                                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"> <span class="alert-danger" style="padding-left: 10px;"><b>Note:</b> Records that are highlighted in red will not import </span></div>
 
-                                        <table id="importhistoricaltable" class="table">
-                                            <thead>
+                                        <table id="importhistoricaltable" class="table table-striped table-condensed pto-policy-table csCustomTableHeader">
+                                            <thead class="js-table-head">
                                                 <tr>
-                                                    <th>Employee Email Address</th>
+                                                    <th>Employee Name</th>
                                                     <th>Department</th>
                                                     <th>Approved By</th>
                                                     <th>First Name</th>
                                                     <th>Last Name</th>
                                                     <th>Leave Type</th>
-                                                    <th>Requested</th>
-                                                    <th>Hours</th>
+                                                    <th>Requested Hours</th>
+                                                    <th>Leave From</th>
                                                     <th>Leave To</th>
                                                     <th>Status</th>
                                                     <th>Available</th>
@@ -145,8 +147,8 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
     $(function importCSV() {
         var
             file = [],
-            emailAddressTitles = <?= json_encode(array('email', 'emailaddress', 'employeeemailaddress')); ?>,
-            approvedByemailAddressTitles = <?= json_encode(array('approvedby', 'approvedbyemail', 'approvedbyemployeeemailaddress, approved_by_email_address')); ?>,
+            companyTitles = <?= json_encode(array('companyname', 'companiesname', 'companies', 'company')); ?>,
+            approvedByTitles = <?= json_encode(array('approvedby', 'approvers', 'approvername, approversname')); ?>,
             policyTitles = <?= json_encode(array('policy', 'policyname', 'requesttype', 'requestedtype', 'leavetype')); ?>,
             departmentName = <?= json_encode(array('department', 'department', 'departmentname')); ?>,
             firstName = <?= json_encode(array('firstname', 'employeefirstname')); ?>,
@@ -156,7 +158,7 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
             requestedToDate = <?= json_encode(array('requestedtodate', 'leaveto')); ?>,
             requestStatusTitles = <?= json_encode(array('requestedstatus', 'requeststatus', 'status')); ?>,
             availableHoursTiles = <?= json_encode(array('available', 'availablehours')); ?>,
-            submitedDate = <?= json_encode(array('submitteddate','createddate')); ?>,
+            submitedDate = <?= json_encode(array('submitteddate', 'createddate')); ?>,
             approvedDate = <?= json_encode(array('approveddate', 'declineddate', 'approveddeclineddate')); ?>,
             employeeComments = <?= json_encode(array('employeecomments')); ?>,
             managerComments = <?= json_encode(array('managercomments')); ?>;
@@ -226,17 +228,17 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
                 return index === -1 ? 'extra' : index;
             });
 
-           //console.log({indexes})
-           //return;
+            //console.log({indexes})
+            //return;
 
             // Remove head
             fileData.splice(0, 1);
             //
             var records = [];
-            //
 
-            var employeesEmail = [];
-            var employeeApprovers = [];
+            // var employeesEmail = [];
+            var approversName = [];
+            var employeesName = [];
             var incomingPolicies = {};
 
             fileData.map(function(v) {
@@ -263,17 +265,21 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
                         incomingPolicies[cp] = cp;
                     }
 
+                    var empFirstName = tmp[columnIndex['first_name']];
+                    var empLastName = tmp[columnIndex['last_name']];
+                    var empName = empFirstName.toLowerCase().replace(/[^a-z]/g, '').trim() + empLastName.toLowerCase().replace(/[^a-z]/g, '').trim();
                     //
-                    var empEmail = tmp[columnIndex['email_address']];
-                    //
-                    if (!employeesEmail[empEmail]) {
-                        employeesEmail[empEmail] = empEmail;
+                    if (!employeesName[empName]) {
+                        employeesName[empName] = empName;
                     }
 
-                    var approverEmail = tmp[columnIndex['approved_by_email_address']];
+
+                    var approverName = tmp[columnIndex['approved_by_name']];
+                    var approverName = approverName.toLowerCase().replace(/[^a-z]/g, '').trim();
+
                     //
-                    if (!employeeApprovers[approverEmail]) {
-                        employeeApprovers[approverEmail] = approverEmail;
+                    if (!approversName[approverName]) {
+                        approversName[approverName] = approverName;
                     }
 
                 }
@@ -284,9 +290,9 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
             // Send Ajax
             var empurl = '<?= base_url('timeoff/getemployeesdata') ?>';
             var form_data = new FormData();
-            form_data.append('employeesEmail', Object.keys(employeesEmail));
+            form_data.append('employeesName', Object.keys(employeesName));
             form_data.append('policy', Object.keys(incomingPolicies));
-            form_data.append('approvedbyEmail', Object.keys(employeeApprovers));
+            form_data.append('approversName', Object.keys(approversName));
             ///
 
             $.ajax({
@@ -307,14 +313,14 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
                     approversData = $data;
                     //
                     var html = '';
-                    var emailAddressNotexist = 0;
-                    var approvarAddressNotexist = 0;
+                    var employeeNotexist = 0;
+                    var approvarNotexist = 0;
                     var policyNotExist = 0;
+
+                    var employeeFLName = '';
                     fileData.map(function(v) {
 
                         v = removecoma(v);
-
-
 
                         var index = in_array(v.toLowerCase().replace(/[^a-z]/g, '').trim());
 
@@ -325,32 +331,41 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
                             len = tmp.length;
 
                         //
-                        var emailFlag = 0;
-                        var emailApproverFlag = 0;
+                        var employeeNameFlag = 0;
+                        var ApproverNameFlag = 0;
                         var policyFlag = 0;
 
                         var columns = '';
-                      //  console.log({tmp})
+                        //  console.log({tmp})
 
 
                         if (tmp[1]) {
                             for (i; i < len; i++) {
                                 // vs
-                                if (i == columnIndex['email_address']) {
-                                    if ($data.employeesApprovers.includes(tmp[columnIndex['email_address']])) {
-                                        //   console.log('Found');
-                                        emailFlag = 1;
-                                    } else {
-                                        emailAddressNotexist++;
-                                    }
+
+                                if (i == columnIndex['first_name']) {
+                                    employeeFLName = tmp[columnIndex['first_name']];
                                 }
-                                //
-                                if (i == columnIndex['approved_by_email_address']) {
-                                    if ($data.employeesApprovers.includes(tmp[columnIndex['approved_by_email_address']])) {
-                                     //   console.log('address');
-                                        emailApproverFlag = 1;
+                                if (i == columnIndex['last_name']) {
+                                    employeeFLName += tmp[columnIndex['last_name']];
+                                }
+
+                                if (i == columnIndex['last_name']) {
+                                    if ($data.employeesApprovers.includes(employeeFLName.toLowerCase().replace(/[^a-z]/g, '').trim())) {
+                                        console.log(employeeFLName.toLowerCase().replace(/[^a-z]/g, '').trim());
+                                        employeeNameFlag = 1;
                                     } else {
-                                        approvarAddressNotexist++;
+                                        employeeNotexist++;
+                                    }
+
+                                }
+
+                                //
+                                if (i == columnIndex['approved_by_name']) {
+                                    if ($data.employeesApprovers.includes(tmp[columnIndex['approved_by_name']].toLowerCase().replace(/[^a-z]/g, '').trim())) {
+                                        ApproverNameFlag = 1;
+                                    } else {
+                                        approvarNotexist++;
 
                                     }
                                 }
@@ -370,7 +385,8 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
 
                             }
                         }
-                        if (emailFlag == 1 && emailApproverFlag == 1 && policyFlag == 1) {
+                        if (employeeNameFlag == 1 && ApproverNameFlag == 1 && policyFlag == 1) {
+
                             html += '<tr>' + columns + '</tr>';
                         } else {
                             html += '<tr style="background-color:#f2dede !important">' + columns + '</tr>';
@@ -379,13 +395,12 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
                     });
 
 
-
                     tableBody = $("#importhistoricaltable tbody");
                     tableBody.append(html);
                     $('#importhistoricaldiv').show();
-                    $('#emailnotexist').html("<b>Employee email address not exist (" + emailAddressNotexist + ")</b>");
-                    $('#approveremailnotexist').html("<b>Approved by not exist (" + approvarAddressNotexist + ")</b>");
-                    $('#policynotexist').html("<b>Leave type not exist (" + policyNotExist + ")</b>");
+                   // $('#emailnotexist').html("<b>Employees  not exist (" + employeeNotexist + ")</b>");
+                  //  $('#approveremailnotexist').html("<b>Approved by not exist (" + approvarNotexist + ")</b>");
+                 //   $('#policynotexist').html("<b>Leave type not exist (" + policyNotExist + ")</b>");
                     $('#loader_text_div').text('');
                     $('#document_loader').hide();
                 },
@@ -420,8 +435,8 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
             var records = [];
             //
 
-            var employeesEmail = [];
-            var employeeApprovers = [];
+            var employeesName = [];
+            var approversName = [];
             var incomingPolicies = {};
 
             fileData.map(function(v) {
@@ -448,17 +463,21 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
                         incomingPolicies[cp] = cp;
                     }
 
+                    var empFirstName = tmp[columnIndex['first_name']];
+                    var empLastName = tmp[columnIndex['last_name']];
+                    var empName = empFirstName.toLowerCase().replace(/[^a-z]/g, '').trim() + empLastName.toLowerCase().replace(/[^a-z]/g, '').trim();
                     //
-                    var empEmail = tmp[columnIndex['email_address']];
-                    //
-                    if (!employeesEmail[empEmail]) {
-                        employeesEmail[empEmail] = empEmail;
+                    if (!employeesName[empName]) {
+                        employeesName[empName] = empName;
                     }
 
-                    var approverEmail = tmp[columnIndex['approved_by_email_address']];
+
+                    var approverName = tmp[columnIndex['approved_by_name']];
+                    var approverName = approverName.toLowerCase().replace(/[^a-z]/g, '').trim();
+
                     //
-                    if (!employeeApprovers[approverEmail]) {
-                        employeeApprovers[approverEmail] = approverEmail;
+                    if (!approversName[approverName]) {
+                        approversName[approverName] = approverName;
                     }
 
                 }
@@ -475,18 +494,18 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
             var i, len, array;
             // Reset start and length
             i = 0;
-            len = emailAddressTitles.length;
-            array = emailAddressTitles;
+            len = companyTitles.length;
+            array = companyTitles;
             for (i; i < len; i++)
-                if (index == array[i]) return 'email_address';
+                if (index == array[i]) return 'company_name';
             // Reset start and length
 
             // Reset start and length
             i = 0;
-            len = approvedByemailAddressTitles.length;
-            array = approvedByemailAddressTitles;
+            len = approvedByTitles.length;
+            array = approvedByTitles;
             for (i; i < len; i++)
-                if (index == array[i]) return 'approved_by_email_address';
+                if (index == array[i]) return 'approved_by_name';
             // Reset start and length
 
             i = 0;
@@ -591,8 +610,8 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
 
         //
         function uploadRecords(records) {
-         //   console.log({records})
-           // return;
+            //   console.log({records})
+            // return;
             chunkOBJ.records = [];
             //
             chunkOBJ.recordsLength = records.length;
@@ -657,13 +676,14 @@ jhondoe@example.dev,jhondoe@example.dev, PTO,8 ,01-06-2020,01-06-2020,01-06-2020
                 // Update current and hit uploadChunk function
                 chunkOBJ.current++;
                 if (chunkOBJ.current >= chunkOBJ.records.length) {
-                   $('#loader_text_div').text();
-                   $('#document_loader').hide();
+                    $('#loader_text_div').text();
+                    $('#document_loader').hide();
+                    
+                    $('#msgrecordstotal').html("Total Records: " + chunkOBJ.recordsLength);
+                    $('#msgrecordsimported').html("Fetched Records: " + insertedCount);
+                    $('#msgrecordsnotimported').html("Not Fetched Records: " + failedCount);
 
-                    $('#msgrecordsimported').html("Records sucessfully imported (" + insertedCount + ")");
-                    $('#msgrecordsnotimported').html("Records Not imported (" + failedCount + ")");
-
-                 }
+                }
                 // To stop the server break
                 setTimeout(function() {
                     uploadChunk();

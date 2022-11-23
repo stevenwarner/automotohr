@@ -3700,6 +3700,17 @@ class Time_off extends Public_Controller
                 $in = [];
                 $in['archive'] = $post['archive'];
                 //
+
+                $record = $this->timeoff_model->checkTimeoffIshistorical($post['requestId']);
+                if ($record['is_historical'] == 1) {
+                    $this->res['Response'] = 'Its historical time off You cannot change it.';
+                    $this->res['Status'] = TRUE;
+                    $this->res['Code'] = 'SUCCESS';
+                    $this->resp();
+                    break;
+                }
+
+
                 $this->timeoff_model->updateTable($in, $post['requestId'], 'timeoff_requests');
                 //
                 $in = [];
@@ -3726,6 +3737,7 @@ class Time_off extends Public_Controller
                 $in['status'] = 'cancelled';
                 //
                 $previous_status = $this->timeoff_model->getPreviousStatus($post['requestId']);
+
                 //
                 $this->timeoff_model->updateTable($in, $post['requestId'], 'timeoff_requests');
                 //
@@ -3935,6 +3947,17 @@ class Time_off extends Public_Controller
                 $in['level_status'] = $post['status'];
                 //
                 $send_email = 'yes';
+                //
+
+                $record = $this->timeoff_model->checkTimeoffIshistorical($post['requestId']);
+                if ($record['is_historical'] == 1) {
+                    $this->res['Response'] = 'Its historical time off You cannot change it.';
+                    $this->res['Status'] = TRUE;
+                    $this->res['Code'] = 'SUCCESS';
+                    $this->resp();
+                    break;
+                }
+
                 //
                 $canApprove = $this->timeoff_model->getEmployerApprovalStatus($post['employerId']);
                 if ($canApprove === 1) {
@@ -7064,11 +7087,15 @@ class Time_off extends Public_Controller
     public function getemployeesdata()
     {
 
-        $employee_email = explode(',', $_POST['employeesEmail']);
-        $approvedbyEmail = explode(',', $_POST['approvedbyEmail']);
+        $data = array();
+        $this->check_login($data);
+        $companySid = $data['session']['company_detail']['sid'];
+
+        $employeesName = explode(',', $_POST['employeesName']);
+        $approversName = explode(',', $_POST['approversName']);
         $policy = explode(',', $_POST['policy']);
 
-        $result = $this->timeoff_model->getEmployes($employee_email, $approvedbyEmail, $policy);
+        $result = $this->timeoff_model->getEmployes($employeesName, $approversName, $policy, $companySid);
         echo json_encode($result);
         exit(0);
     }
@@ -7119,14 +7146,22 @@ class Time_off extends Public_Controller
             //
             $insert_data['company_sid'] = $post['companySid'];
 
-            if (in_array($timeoffrow['email_address'], $post['approversPolicyDatacheck']['employeesApprovers'])) {
-                $employeeSid = get_userSidbyEmail($timeoffrow['approved_by_email_address']);
-                $insert_data['employee_sid'] = $employeeSid;
-            }
-            //
-            if (in_array($timeoffrow['approved_by_email_address'], $post['approversPolicyDatacheck']['employeesApprovers'])) {
-                $approverSid = get_userSidbyEmail($timeoffrow['approved_by_email_address']);
+
+            $approvedBy = preg_replace('/\s+/', '', strtolower($timeoffrow['approved_by_name']));
+
+            if (in_array($approvedBy, $post['approversPolicyDatacheck']['employeesApprovers'])) {
+                $approverSid = get_userSidbyName($approvedBy, $insert_data['company_sid']);
                 $insert_data['approved_by'] = $approverSid;
+            }
+
+
+            //
+            $employeeName = $timeoffrow['first_name'] . $timeoffrow['last_name'];
+            $employeeName = preg_replace('/\s+/', '', strtolower($employeeName));
+
+            if (in_array($employeeName, $post['approversPolicyDatacheck']['employeesApprovers'])) {
+                $employeeSid = get_userSidbyName($employeeName, $insert_data['company_sid']);
+                $insert_data['employee_sid'] = $employeeSid;
             }
 
             //
@@ -7137,22 +7172,35 @@ class Time_off extends Public_Controller
             //
             if ($timeoffrow['requested_hours'] != '' || $timeoffrow['requested_hours'] != 0) {
                 $requestedHours = $timeoffrow['requested_hours'];
-                $insert_data['requested_time'] = $requestedHours;
+                $insert_data['requested_time'] = ($requestedHours * 60);
             }
             //
             if ($timeoffrow['requested_from_date'] != '' || $timeoffrow['requested_from_date'] != 0) {
                 $requestedFromDate = $timeoffrow['requested_from_date'];
-                $insert_data['request_from_date'] = DateTime::createFromFormat('m/d/Y', $timeoffrow['requested_from_date'])->format('Y-m-d');
+                $insert_data['request_from_date'] = DateTime::createFromFormat('d/m/Y', $timeoffrow['requested_from_date'])->format('Y-m-d');
             }
             //
             if ($timeoffrow['requested_to_date'] != '' || $timeoffrow['requested_to_date'] != 0) {
                 $requestedToDate = $timeoffrow['requested_to_date'];
-                $insert_data['request_to_date'] = DateTime::createFromFormat('m/d/Y', $timeoffrow['requested_to_date'])->format('Y-m-d');
+                $insert_data['request_to_date'] = DateTime::createFromFormat('d/m/Y', $timeoffrow['requested_to_date'])->format('Y-m-d');
             }
+
+            if (($timeoffrow['requested_from_date'] != '' || $timeoffrow['requested_from_date'] != 0)) {
+                $toYear = DateTime::createFromFormat('d/m/Y', $timeoffrow['requested_to_date'])->format('Y');
+                $fromYear = DateTime::createFromFormat('d/m/Y', $timeoffrow['requested_from_date'])->format('Y');
+                $historicalDate = TIMEOFF_ENABLE_YEAR;
+
+                if (($toYear < $historicalDate) && ($fromYear < $historicalDate)) {
+                    $insert_data['is_historical'] = 1;
+                } else {
+                    $insert_data['is_historical'] = 0;
+                }
+            }
+
             //
             if ($timeoffrow['submited_date'] != '' || $timeoffrow['submited_date'] != 0) {
                 $submitedDate = $timeoffrow['requested_to_date'];
-                $insert_data['created_at'] = DateTime::createFromFormat('m/d/Y', $timeoffrow['submited_date'])->format('Y-m-d');
+                $insert_data['created_at'] = DateTime::createFromFormat('d/m/Y', $timeoffrow['submited_date'])->format('Y-m-d');
             }
             //
             if ($timeoffrow['status'] != '' || $timeoffrow['status'] != 0) {
@@ -7164,37 +7212,41 @@ class Time_off extends Public_Controller
 
             //
             if ($employeeSid != 0 && $approverSid != 0 && $policy != 0 && $requestedFromDate != 0 && $requestedToDate != 0 && $submitedDate != 0) {
+
                 //
                 $requestSid = $this->timeoff_model->timeoffInsertRequest($insert_data);
-
                 //
-                if ($requestSid && ($timeoffrow['status'] == 'approved' || $timeoffrow['status'] == 'rejected') && $timeoffrow['approved_date'] != '' || $timeoffrow['approved_date'] != 0) {
-                    $insert_data_timeline['request_sid'] = $requestSid;
-                    $insert_data_timeline['employee_sid'] = $employeeSid;
-                    $insert_data_timeline['action'] = 'update';
-                    $insert_data_timeline['created_at'] = DateTime::createFromFormat('m/d/Y', $timeoffrow['approved_date'])->format('Y-m-d');
-                    $insert_data_timeline['updated_at'] = DateTime::createFromFormat('m/d/Y', $timeoffrow['approved_date'])->format('Y-m-d');
-                    $managerComment = $timeoffrow['manager_comments'];
-                    $insert_data_timeline['comment'] = $managerComment;
-                    $insert_data_timeline['is_moved'] = 0;
+                if ($requestSid != 0) {
+                    if ((strtolower($timeoffrow['status']) == 'approved' || strtolower($timeoffrow['status']) == 'rejected') && ($timeoffrow['approved_date'] != '' || $timeoffrow['approved_date'] != 0)) {
+                        $insert_data_timeline['request_sid'] = $requestSid;
+                        $insert_data_timeline['employee_sid'] = $employeeSid;
+                        $insert_data_timeline['action'] = 'update';
+                        $insert_data_timeline['created_at'] = DateTime::createFromFormat('d/m/Y', $timeoffrow['approved_date'])->format('Y-m-d');
+                        $insert_data_timeline['updated_at'] = DateTime::createFromFormat('d/m/Y', $timeoffrow['approved_date'])->format('Y-m-d');
+                        $managerComment = $timeoffrow['manager_comments'];
+                        $insert_data_timeline['comment'] = $managerComment;
+                        $insert_data_timeline['is_moved'] = 0;
 
 
-                    $insert_data_timeline['note'] = json_encode([
-                        'status' => 'approved',
-                        'canApprove' => 1,
-                        'comment' => $managerComment,
-                        'details' => [
-                            'startDate' => $timeoffrow['requested_from_date'],
-                            'endDate' => $timeoffrow['requested_to_date'],
-                            'time' => $timeoffrow['requested_hours'],
-                            'policyId' => $policy,
-                            'policyTitle' => $timeoffrow['policy']
-                        ]
-                    ]);
-                    //
-                    $this->timeoff_model->timeoffInsertRequestTimeline($insert_data_timeline);
+                        $insert_data_timeline['note'] = json_encode([
+                            'status' => 'approved',
+                            'canApprove' => 1,
+                            'comment' => $managerComment,
+                            'details' => [
+                                'startDate' => $timeoffrow['requested_from_date'],
+                                'endDate' => $timeoffrow['requested_to_date'],
+                                'time' => $timeoffrow['requested_hours'],
+                                'policyId' => $policy,
+                                'policyTitle' => $timeoffrow['policy']
+                            ]
+                        ]);
+                        //
+
+                        $this->timeoff_model->timeoffInsertRequestTimeline($insert_data_timeline);
+                    }
+
+                    $totalInsertRecords++;
                 }
-                $totalInsertRecords++;
             } else {
                 //
                 $totalReeorRecords++;
@@ -7205,8 +7257,6 @@ class Time_off extends Public_Controller
         $this->res['Inserted'] = $totalInsertRecords;
         $this->res['Failed'] = $totalReeorRecords;
         $this->res['Response'] = 'Historical Time off requests imported.';
-        $this->resp();
-        //
         $this->resp();
     }
 }

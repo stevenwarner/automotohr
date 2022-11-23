@@ -182,6 +182,11 @@ $(function() {
         $.each(resp.Data, function(i, v) {
             //
             let allow_update = v.allow_update;
+            if (v.is_historical == 1) {
+              allow_update = "no";
+          }
+
+
             let userRow = getUserById(
                 v.employee_sid,
                 window.timeoff.employees,

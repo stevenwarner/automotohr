@@ -761,6 +761,12 @@ $(function () {
         //
         let expired = 0;
         let allow_update = v.allow_update;
+
+        if (v.is_historical == 1) {
+            allow_update = "no";
+        }
+
+
         //
         if (callOBJ.Requests.Main.isMine == 1) {
             if (moment() > moment(v.request_from_date)) expired = 1;

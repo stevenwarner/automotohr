@@ -5455,20 +5455,21 @@ class Timeoff_model extends CI_Model
 
 
 
-    function getEmployes($employee_email, $approvedbyEmail, $policy)
+    function getEmployes($employeesName, $approversName, $policy, $companySid)
     {
-
         $returnData = [];
 
         $employeesApprovers = $this->db
-            ->select('email')
+            ->select("REPLACE(lower(concat(first_name,'',last_name)),' ','') as employeename")
             ->from('users')
-            ->where_in('email', $employee_email)
-            ->where_in('email', $approvedbyEmail)
+            ->where_in("REPLACE(lower(concat(first_name,'',last_name)),' ','')", $employeesName)
+            ->where_in("REPLACE(lower(concat(first_name,'',last_name)),' ','')", $approversName)
+            ->where("parent_sid", $companySid)
             ->get();
         //
         $employeeApproversResult = $employeesApprovers->result_array();
-        $returnData['employeesApprovers'] = array_column($employeeApproversResult, 'email');
+
+        $returnData['employeesApprovers'] = array_column($employeeApproversResult, 'employeename');
 
         //
         $polices = $this->db
@@ -5491,8 +5492,29 @@ class Timeoff_model extends CI_Model
     function timeoffInsertRequest($dataInsert)
     {
         //
-        $this->db->insert('timeoff_requests', $dataInsert);
-        return $this->db->insert_id();
+        if ($dataInsert['is_historical'] == 0) {
+
+            $polices = $this->db
+                ->select('sid')
+                ->from('timeoff_requests')
+                ->where('employee_sid', $dataInsert['employee_sid'])
+                ->where('timeoff_policy_sid', $dataInsert['timeoff_policy_sid'])
+                ->where('request_to_date', $dataInsert['request_to_date'])
+                ->where('request_from_date', $dataInsert['request_from_date'])
+                ->get();
+            //
+            $policesResult = $polices->result_array();
+
+            if (empty($policesResult)) {
+                $this->db->insert('timeoff_requests', $dataInsert);
+                return $this->db->insert_id();
+            }else{
+                return 0;
+            }
+        } else {
+            $this->db->insert('timeoff_requests', $dataInsert);
+            return $this->db->insert_id();
+        }
     }
 
 
@@ -5502,4 +5524,20 @@ class Timeoff_model extends CI_Model
         $this->db->insert('timeoff_request_timeline', $dataInsert);
         return $this->db->insert_id();
     }
+
+//
+function checkTimeoffIshistorical($sid){
+
+    $record = $this->db
+    ->select('is_historical')
+    ->from('timeoff_requests')
+    ->where('sid', $sid)
+    ->get()->row_array();
+    return $record;
+
+}
+
+
+
+
 }
