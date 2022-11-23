@@ -1581,3 +1581,7 @@ $route['migrate_company_groups_handler']['post'] = 'manage_admin/2022/Migration/
 // EEOC Chart route
 $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5';
 $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5/$6';
+
+
+// CLI Routes
+$route['run_employee_status_fixer']['cli'] = 'Cron_Common/employeeStatusFixer';
