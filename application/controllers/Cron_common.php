@@ -684,4 +684,93 @@ class Cron_common extends CI_Controller
             sleep(1);
         }
     }
+
+    /**
+     * Employee rehire status fixer
+     */
+    public function employeeStatusFixer()
+    {
+        //
+        $employees = $this->db
+        ->select('sid')
+        ->where([
+            'general_status' => 'rehired',
+            'active' => 0
+        ])
+        ->get('users')
+        ->result_array();
+        //
+        if (empty($employees)) {
+            exit(0);
+        }
+        //
+        $ids = array_column($employees, 'sid');
+        //
+        $rows = [];
+        //
+        $lastStatuses =
+        $this->db
+        ->select('employee_status, employee_sid, termination_date')
+        ->where_in('employee_sid', $ids)
+        ->order_by('sid', 'desc')
+        ->get('terminated_employees')
+        ->result_array();
+        // Save the last record of each employee
+        foreach ($lastStatuses as $status) {
+            //
+            if (!isset($rows[$status['employee_sid']])) {
+                $rows[$status['employee_sid']] = $status;
+            }
+        }
+        //
+        $handler = fopen(ROOTPATH.'../app_logs/'.time().'-rehired.json', 'w');
+        fwrite($handler, json_encode(['ids' => $ids, 'status' => $rows]));
+        fclose($handler);
+        //
+        $found = 0;
+        $notFound = 0;
+        // Loop through the original ids
+        foreach ($ids as $id) {
+            //
+            $upd = [];
+            // Check if record found in terminated
+            if (isset($rows[$id])) {
+                // Check the last status
+                // for terminated
+                if (in_array($rows[$id]['employee_status'], [1])) {
+                    $upd['terminated_status'] = 1;
+                    $upd['active'] = 0;
+                }
+                // for rehired
+                if (in_array($rows[$id]['employee_status'], [8])) {
+                    $upd['rehire_date'] = $rows[$id]['termination_date'];
+                    $upd['active'] = 1;
+                }
+                // for active
+                if (in_array($rows[$id]['employee_status'], [5])) {
+                    $upd['active'] = 1;
+                }
+                // for inactive
+                if (in_array($rows[$id]['employee_status'], [6])) {
+                    $upd['active'] = 0;
+                }
+                $found++;
+            } else {
+                //
+                $upd['active'] = 1;
+                $upd['terminated_status'] = 0;
+                //
+                $notFound++;
+            }
+            //
+            $this->db
+            ->reset_query()
+            ->set($upd)
+            ->where('sid', $id)
+            ->update('users');
+        }
+        //
+        _e($found, true);
+        _e($notFound, true, true);
+    }
 }
