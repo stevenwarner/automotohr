@@ -132,4 +132,43 @@ class Employee_surveys extends Public_Controller
             ->view("{$this->mp}es/surveyfeedback")
             ->view($this->pages['footer']);
     }
+
+
+    /**
+     *
+     */
+    public function settings()
+    {
+        //
+        $data = [];
+        $data['load_view'] = 1;
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
+        //
+        $this->load
+            ->view($this->pages['header'], $data)
+            ->view("{$this->mp}es/settings")
+            ->view($this->pages['footer']);
+    }
+
+
+
+
+       /**
+     *
+     */
+    public function reports()
+    {
+        //
+        $data = [];
+        $data['load_view'] = 1;
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
+        //
+        $this->load
+            ->view($this->pages['header'], $data)
+            ->view("{$this->mp}es/reports")
+            ->view($this->pages['footer']);
+    }
+
 }

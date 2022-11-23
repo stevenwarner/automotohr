@@ -1598,3 +1598,6 @@ $route['employee/surveys/create/(:num)/([a-z]+)']['get'] = '2022/Employee_survey
 
 $route['employee/surveys/surveys/(:num)']['get'] = '2022/Employee_surveys/companysurveys/$1';
 $route['employee/surveys/surveys/(:num)/(:num)/(:num)']['get'] = '2022/Employee_surveys/surveyfeedback/$1/$2/$3';
+
+$route['employee/surveys/settings']= '2022/Employee_surveys/settings';
+$route['employee/surveys/reports']= '2022/Employee_surveys/reports';
