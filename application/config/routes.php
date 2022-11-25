@@ -1601,3 +1601,4 @@ $route['employee/surveys/surveys/(:num)/(:num)/(:num)']['get'] = '2022/Employee_
 
 $route['employee/surveys/settings']= '2022/Employee_surveys/settings';
 $route['employee/surveys/reports']= '2022/Employee_surveys/reports';
+$route['employee/surveys/faqs']= '2022/Employee_surveys/faqs';
