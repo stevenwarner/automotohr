@@ -22,9 +22,14 @@
                             </a>
                         </div>
                     </div>
+                    <?php $this->load->view('2022/footer_scripts_2022'); ?>
                     <?php $this->load->view('es/partials/steps'); ?>
                     <?php $this->load->view('es/partials/step_' . ($step)); ?>
                 </div>
             </div>
         </div>
     </div>
+  
+
+
+    

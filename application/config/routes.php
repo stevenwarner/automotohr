@@ -1602,3 +1602,9 @@ $route['employee/surveys/surveys/(:num)/(:num)/(:num)']['get'] = '2022/Employee_
 $route['employee/surveys/settings']= '2022/Employee_surveys/settings';
 $route['employee/surveys/reports']= '2022/Employee_surveys/reports';
 $route['employee/surveys/faqs']= '2022/Employee_surveys/faqs';
+
+
+
+$route['employee/surveys/templatedetail/(:num)']['get'] = '2022/Employee_surveys/surveyTemplateDetail/$1';
+
+$route['employee/surveys/templateselect/(:num)']['get'] = '2022/Employee_surveys/surveyTemplateSelect/$1';
