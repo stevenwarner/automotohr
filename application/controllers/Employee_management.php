@@ -1399,6 +1399,11 @@ class Employee_management extends Public_Controller
                     //
                     $data['MergeData'] = array_merge($mergedEmployees, $mergedApplicants);
                     //
+                    $data['profileHistory'] = $this->employee_model->getProfileHistory($sid, true);
+                    $data['PageScripts'] = [
+                        '2022/js/employee_profile/main'
+                    ];
+                    //
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/employee_management/employee_profile_ats_view');
                     $this->load->view('main/footer');
@@ -2283,6 +2288,9 @@ class Employee_management extends Public_Controller
 
                 //
                 if ($difference['profile_changed'] == 1) {
+                    // Lets save the change
+                    $this->employee_model->saveProfileChange($sid, $difference['data']);
+                    //
                     $notification_list = $this->employee_model->get_employee_profile_notification_list($company_id, 'employee_Profile', 'active');
                     //
                     $company_data = get_company_details($company_id);

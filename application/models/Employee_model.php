@@ -1785,4 +1785,53 @@
             return array();
         }
     }
+
+    /**
+     * Save employee profile data
+     *
+     * @param int   $employeeId
+     * @param array $changedData
+     * @return int
+     */
+    public function saveProfileChange(
+        $employeeId,
+        $changedData
+    ){
+        //
+        $this->db->insert('profile_history', [
+            'user_sid' => $employeeId,
+            'profile_data' => json_encode($changedData),
+            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+        //
+        return $this->db->insert_id();
+    }
+    
+    /**
+     * Get employee profile history data
+     *
+     * @param int     $employeeId
+     * @param boolean $count
+     * @return array
+     */
+    public function getProfileHistory(
+        $employeeId,
+        $count = false
+    ){
+        //
+        $this->db
+        ->from('profile_history')
+        ->where('user_sid', $employeeId);
+        //
+        if ($count) {
+            return $this->db->count_all_results();
+        }
+        //
+        return
+        $this->db
+        ->select('profile_data, created_at')
+        ->order_by('sid', 'DESC')
+        ->get()
+        ->result_array();
+    }
 }

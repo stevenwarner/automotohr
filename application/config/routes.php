@@ -1585,3 +1585,9 @@ $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$
 
 // CLI Routes
 $route['run_employee_status_fixer']['cli'] = 'Cron_Common/employeeStatusFixer';
+
+/**
+ * Get the employee profile data
+ * 11/30/2022
+ */
+$route['get_employee_profile_history/(:num)']['get'] = '2022/Employee/getProfileHistory/$1';
