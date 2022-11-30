@@ -1565,7 +1565,7 @@ if (!function_exists('convert_email_template')) {
 
         $emailTemplateBody = str_replace('{{contact_name}}', $replacement_array['contact_name'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{from_name}}', $replacement_array['from_name'], $emailTemplateBody);
-       
+
 
 
         return $emailTemplateBody;
@@ -1651,7 +1651,6 @@ if (!function_exists('return_value_if_key_exists')) {
                     return 0;
                 }
             }
-            
         }
     }
 }
@@ -13980,21 +13979,21 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
         // Get company industry
         $industryId = $CI->db->select('job_category_industries_sid')->where('sid', $company_sid)->get('users')->row_array()['job_category_industries_sid'];
         //
-        if($industryId != 0){
+        if ($industryId != 0) {
             //
-            $default_categories2 = 
-            $CI->db
-            ->select('
+            $default_categories2 =
+                $CI->db
+                ->select('
                 default_categories.category_name as name,
                 default_categories.description,
                 "1" as status,
                 "1" as sort_order,
                 categories_document_industry.category_sid as sid
             ')
-            ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
-            ->where('categories_document_industry.industry_sid', $industryId)
-            ->get('categories_document_industry')->result_array();
-            
+                ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
+                ->where('categories_document_industry.industry_sid', $industryId)
+                ->get('categories_document_industry')->result_array();
+
             //
             $default_categories = array_merge($default_categories, $default_categories2);
         }
@@ -15688,8 +15687,9 @@ if (!function_exists('addColumnsForDocumentAssigned')) {
 }
 
 
-if(!function_exists('loadFileData')) {
-    function loadFileData($filePath){
+if (!function_exists('loadFileData')) {
+    function loadFileData($filePath)
+    {
         //
         $h = fopen($filePath, 'r');
         //
@@ -15698,5 +15698,36 @@ if(!function_exists('loadFileData')) {
         fclose($h);
         //
         return $contents;
+    }
+}
+
+
+if (!function_exists('checkDateFormate')) {
+    /**
+     * Check the date format to 
+     * avoid 500
+     * 
+     * @param string $dateIm
+     * @param string $format
+     * @return string
+     */
+    function checkDateFormate($dateIn, $format = 'm-d-Y')
+    {
+        // Check for empty
+        if (empty($dateIn) || $dateIn == "N/A") {
+            return "";
+        }
+        // Check for valid syntax
+        if (!preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $dateIn)) {
+            return "";
+        }
+        //
+        $dateArray = explode("-", $dateIn);
+        //
+        if ($dateArray[0] > 12) {
+            return "";
+        }
+        //
+        return $dateIn;
     }
 }
