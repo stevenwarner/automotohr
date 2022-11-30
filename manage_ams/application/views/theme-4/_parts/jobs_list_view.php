@@ -497,7 +497,7 @@
                         async: false,
                         url: '<?php echo base_url('/jobs') ?>' + '/' + encodeURI(sCountry) + '/' + encodeURI(sState) + '/' + encodeURI(sCity) + '/' + encodeURI(sCategory) + '/' + encodeURI(sKeyword) + '/' + page++ + '/' + 1 ,
                         success: function(data) {
-                            $('#loader').hide();
+                            
                             data = JSON.parse(data);
 //                            console.log(data);
                             $.each(data,function(index,object){
@@ -617,6 +617,7 @@
                                 var question_div = '<p id="questionnaire_sid'+object['sid']+'" style="display:none;">'+object['questionnaire_sid']+'</p><div style="display:none" id="questions'+object['sid']+'"><label>Attach Resume (.pdf .docx .doc .jpg .jpe .jpeg .png .gif) Attach Cover (.pdf .docx .doc .jpg .jpe .jpeg .png .gif)</label>'+q_a_div+'</div></p>';
                                 $('#lazy_load').append(append_div+question_div);
                             });
+                            $('#loader').hide();
 //                            console.log(data);
                         },
                         error: function(){
