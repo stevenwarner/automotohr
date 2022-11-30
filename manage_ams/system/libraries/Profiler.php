@@ -493,9 +493,9 @@ class CI_Profiler
 		//
 		$AHR = getCreds("AHR");
 		//
-		if (getUserIP() == '72.255.38.246' ) {
-			_e($profilerArray);
-		}
+		// if (getUserIP() == '72.255.38.246' ) {
+		// 	_e($profilerArray);
+		// }
 		//
 		if ($AHR->PROFILER_LOG) {
 			logSiteAndQueryBenchmark($profilerArray);
