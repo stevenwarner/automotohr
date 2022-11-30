@@ -2697,7 +2697,7 @@ if ($user_type == 'employee') {
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_51_expiration_date"></i></label>
-                                                        <input type="text" name="section2_lista_part2_expiration_date" id="section2_lista_part2_expiration_date" value="<?= isset($pre_form['section2_lista_part2_expiration_date']) && !empty($pre_form['section2_lista_part2_expiration_date']) && $pre_form['section2_lista_part2_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_lista_part2_expiration_date'])) : ""; ?>" class="form-control date_picker2">
+                                                        <input type="text" readonly name="section2_lista_part2_expiration_date" id="section2_lista_part2_expiration_date" value="<?= isset($pre_form['section2_lista_part2_expiration_date']) && !empty($pre_form['section2_lista_part2_expiration_date']) && $pre_form['section2_lista_part2_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_lista_part2_expiration_date'])) : ""; ?>" class="form-control date_picker2">
                                                     </div>
                                                 </div>
                                             </div>
@@ -2756,7 +2756,7 @@ if ($user_type == 'employee') {
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_52_expiration_date"></i></label>
-                                                        <input type="text" name="section2_lista_part3_expiration_date" id="section2_lista_part3_expiration_date" value="<?= isset($pre_form['section2_lista_part3_expiration_date']) && !empty($pre_form['section2_lista_part3_expiration_date']) && $pre_form['section2_lista_part3_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_lista_part3_expiration_date'])) : ""; ?>" class="form-control date_picker2">
+                                                        <input type="text" readonly name="section2_lista_part3_expiration_date" id="section2_lista_part3_expiration_date" value="<?= isset($pre_form['section2_lista_part3_expiration_date']) && !empty($pre_form['section2_lista_part3_expiration_date']) && $pre_form['section2_lista_part3_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_lista_part3_expiration_date'])) : ""; ?>" class="form-control date_picker2">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -2804,7 +2804,7 @@ if ($user_type == 'employee') {
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_53_expiration_date"></i></label>
-                                                        <input type="text" name="section2_listb_expiration_date" value="<?= isset($pre_form['section2_listb_expiration_date']) && !empty($pre_form['section2_listb_expiration_date']) && $pre_form['section2_listb_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_listb_expiration_date'])) : ""; ?>" id="section2_listb_expiration_date" class="form-control date_picker2" autocomplete="off">
+                                                        <input type="text" readonly name="section2_listb_expiration_date" value="<?= isset($pre_form['section2_listb_expiration_date']) && !empty($pre_form['section2_listb_expiration_date']) && $pre_form['section2_listb_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_listb_expiration_date'])) : ""; ?>" id="section2_listb_expiration_date" class="form-control date_picker2" autocomplete="off">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 list-b-fields">
@@ -2848,7 +2848,7 @@ if ($user_type == 'employee') {
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_54_expiration_date"></i></label>
-                                                        <input type="text" name="section2_listc_expiration_date" id="section2_listc_expiration_date" value="<?= isset($pre_form['section2_listc_expiration_date']) && !empty($pre_form['section2_listc_expiration_date']) && $pre_form['section2_listc_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_listc_expiration_date'])) : ""; ?>" class="form-control date_picker2" autocomplete="off">
+                                                        <input type="text" readonly name="section2_listc_expiration_date" id="section2_listc_expiration_date" value="<?= isset($pre_form['section2_listc_expiration_date']) && !empty($pre_form['section2_listc_expiration_date']) && $pre_form['section2_listc_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_listc_expiration_date'])) : ""; ?>" class="form-control date_picker2" autocomplete="off">
                                                     </div>
                                                 </div>
                                             </div>
@@ -2869,7 +2869,7 @@ if ($user_type == 'employee') {
                                                         instructions for exemptions) <span class="staric">*</span> </strong></p>
                                             </div>
                                             <div class="col-lg-3">
-                                                <input type="text" name="section2_firstday_of_emp_date" id="section2_firstday_of_emp_date" class="form-control date_picker2" autocomplete="off" value="<?= isset($pre_form['section2_firstday_of_emp_date']) && !empty($pre_form['section2_firstday_of_emp_date']) ? date('m-d-Y', strtotime($pre_form['section2_firstday_of_emp_date'])) : ""; ?>" />
+                                                <input type="text" readonly name="section2_firstday_of_emp_date" id="section2_firstday_of_emp_date" class="form-control date_picker2" autocomplete="off" value="<?= isset($pre_form['section2_firstday_of_emp_date']) && !empty($pre_form['section2_firstday_of_emp_date']) ? date('m-d-Y', strtotime($pre_form['section2_firstday_of_emp_date'])) : ""; ?>" />
                                             </div>
                                         </div>
                                     </div>
@@ -2894,7 +2894,7 @@ if ($user_type == 'employee') {
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <label>Today's Date (mm/dd/yyyy) <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_6_today_date"></i></label>
-                                                        <input name="section2_today_date" id="section2_today_date" class="form-control date_picker" type="text" autocomplete="off" value="<?= date('m-d-Y'); ?>">
+                                                        <input readonly name="section2_today_date" id="section2_today_date" class="form-control date_picker" type="text" autocomplete="off" value="<?= date('m-d-Y'); ?>">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -3030,7 +3030,7 @@ if ($user_type == 'employee') {
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Date (mm/dd/yyyy) <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_date"></i></label>
-                                                        <input type="text" class="form-control date_picker2" value="<?= isset($pre_form['section3_rehire_date']) && !empty($pre_form['section3_rehire_date']) ? date('m-d-Y', strtotime($pre_form['section3_rehire_date'])) : ""; ?>" name="section3_rehire_date" value="N/A" autocomplete="off">
+                                                        <input type="text" class="form-control date_picker2" value="<?= isset($pre_form['section3_rehire_date']) && !empty($pre_form['section3_rehire_date']) ? date('m-d-Y', strtotime($pre_form['section3_rehire_date'])) : ""; ?>"  readonly name="section3_rehire_date" value="N/A" autocomplete="off">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12">
@@ -3167,7 +3167,7 @@ if ($user_type == 'employee') {
                                                                 <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12">
                                                                     <div class="form-group">
                                                                         <label>Expiration Date (if any) (mm/dd/yyyy) <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_expiration"></i></label>
-                                                                        <input type="text" value="<?= isset($pre_form['section3_expiration_date']) && !empty($pre_form['section3_expiration_date']) ? date('m-d-Y', strtotime($pre_form['section3_expiration_date'])) : ""; ?>" class="form-control date_picker2" name="section3_expiration_date" autocomplete="off">
+                                                                        <input type="text" value="<?= isset($pre_form['section3_expiration_date']) && !empty($pre_form['section3_expiration_date']) ? date('m-d-Y', strtotime($pre_form['section3_expiration_date'])) : ""; ?>" class="form-control date_picker2" readonly name="section3_expiration_date" autocomplete="off">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -3202,7 +3202,7 @@ if ($user_type == 'employee') {
                                                                 <div class="col-lg-4 col-md-6 col-xs-12 col-sm-12">
                                                                     <div class="form-group">
                                                                         <label>Today's Date (mm/dd/yyyy) <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_today_date"></i></label>
-                                                                        <input type="text" value="<?= date('m-d-Y'); ?>" class="form-control date_picker" name="section3_today_date" autocomplete="off">
+                                                                        <input type="text" value="<?= date('m-d-Y'); ?>" class="form-control date_picker" readonly name="section3_today_date" autocomplete="off">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-4 col-md-12 col-xs-12 col-sm-12">

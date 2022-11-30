@@ -9051,15 +9051,15 @@ class Hr_documents_management extends Public_Controller
             $insert_data['section2_lista_part1_document_title'] = $formpost['lista_part1_doc_select_input'] != 'input' ? $formpost['section2_lista_part1_document_title'] : $formpost['section2_lista_part1_document_title_text_val'];
             $insert_data['section2_lista_part1_issuing_authority'] = isset($formpost['section2_lista_part1_issuing_authority']) && $formpost['lista_part1_issuing_select_input'] != 'input' ? $formpost['section2_lista_part1_issuing_authority'] : $formpost['section2_lista_part1_issuing_authority_text_val'];
             $insert_data['section2_lista_part1_document_number'] = $formpost['section2_lista_part1_document_number'];
-            $insert_data['section2_lista_part1_expiration_date'] = empty($formpost['section2_lista_part1_expiration_date']) || $formpost['section2_lista_part1_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part1_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_lista_part1_expiration_date'] = empty(checkDateFormate($formpost['section2_lista_part1_expiration_date'])) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part1_expiration_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_lista_part2_document_title'] = $formpost['lista_part2_doc_select_input'] != 'input' ? $formpost['section2_lista_part2_document_title'] : $formpost['section2_lista_part2_document_title_text_val'];
             $insert_data['section2_lista_part2_issuing_authority'] = isset($formpost['section2_lista_part2_issuing_authority']) && $formpost['lista_part2_issuing_select_input'] != 'input' ? $formpost['section2_lista_part2_issuing_authority'] : $formpost['section2_lista_part2_issuing_authority_text_val'];
             $insert_data['section2_lista_part2_document_number'] = $formpost['section2_lista_part2_document_number'];
-            $insert_data['section2_lista_part2_expiration_date'] = empty($formpost['section2_lista_part2_expiration_date']) || $formpost['section2_lista_part2_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part2_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_lista_part2_expiration_date'] = empty(checkDateFormate($formpost['section2_lista_part2_expiration_date'])) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part2_expiration_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_lista_part3_document_title'] = $formpost['lista_part3_doc_select_input'] != 'input' ? $formpost['section2_lista_part3_document_title'] : $formpost['section2_lista_part3_document_title_text_val'];
             $insert_data['section2_lista_part3_issuing_authority'] = isset($formpost['section2_lista_part3_issuing_authority']) && $formpost['lista_part3_doc_select_input'] != 'input' ? $formpost['section2_lista_part3_issuing_authority'] : $formpost['section2_lista_part3_issuing_authority_text_val'];
             $insert_data['section2_lista_part3_document_number'] = $formpost['section2_lista_part3_document_number'];
-            $insert_data['section2_lista_part3_expiration_date'] = empty($formpost['section2_lista_part3_expiration_date']) || $formpost['section2_lista_part3_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part3_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_lista_part3_expiration_date'] = empty(checkDateFormate($formpost['section2_lista_part3_expiration_date'])) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part3_expiration_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_additional_information'] = $formpost['section2_additional_information'];
 
             $insert_data['section2_listb_document_title'] = $formpost['section2_listb_document_title'];
@@ -9073,7 +9073,7 @@ class Hr_documents_management extends Public_Controller
 
             $insert_data['section2_listb_issuing_authority'] = isset($formpost['section2_listb_issuing_authority']) && $formpost['listb-auth-select-input'] != 'input' ? $formpost['section2_listb_issuing_authority'] : $formpost['section2_listb_issuing_authority_text_val'];
             $insert_data['section2_listb_document_number'] = $formpost['section2_listb_document_number'];
-            $insert_data['section2_listb_expiration_date'] = empty($formpost['section2_listb_expiration_date']) || $formpost['section2_listb_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listb_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_listb_expiration_date'] = empty(checkDateFormate($formpost['section2_listb_expiration_date']))  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listb_expiration_date'])->format('Y-m-d H:i:s');
 
             $insert_data['section2_listc_document_title'] = $formpost['section2_listc_document_title'];
             $insert_data['listc_auth_select_input'] = isset($formpost['listc-auth-select-input']) ? $formpost['listc-auth-select-input'] : '';
@@ -9083,12 +9083,12 @@ class Hr_documents_management extends Public_Controller
             // $insert_data['section2_listc_issuing_authority'] = isset($formpost['section2_listc_issuing_authority']) ? $formpost['section2_listc_issuing_authority'] : '';
 
             $insert_data['section2_listc_document_number'] = $formpost['section2_listc_document_number'];
-            $insert_data['section2_listc_expiration_date'] = empty($formpost['section2_listc_expiration_date']) || $formpost['section2_listc_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listc_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_listc_expiration_date'] = empty(checkDateFormate($formpost['section2_listc_expiration_date']))  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listc_expiration_date'])->format('Y-m-d H:i:s');
 
-            $insert_data['section2_firstday_of_emp_date'] = empty($formpost['section2_firstday_of_emp_date']) || $formpost['section2_firstday_of_emp_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_firstday_of_emp_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_firstday_of_emp_date'] = empty(checkDateFormate($formpost['section2_firstday_of_emp_date'])) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_firstday_of_emp_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_sig_emp_auth_rep'] = $reviewer_signature_base64;
 
-            $insert_data['section2_today_date'] = empty($formpost['section2_today_date']) || $formpost['section2_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_today_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_today_date'] = empty(checkDateFormate($formpost['section2_today_date']))  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_today_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_title_of_emp'] = $formpost['section2_title_of_emp'];
             $insert_data['section2_last_name_of_emp'] = $formpost['section2_last_name_of_emp'];
             $insert_data['section2_first_name_of_emp'] = $formpost['section2_first_name_of_emp'];
@@ -9104,12 +9104,12 @@ class Hr_documents_management extends Public_Controller
             $insert_data['section3_last_name'] = $formpost['section3_last_name'];
             $insert_data['section3_first_name'] = $formpost['section3_first_name'];
             $insert_data['section3_middle_initial'] = $formpost['section3_middle_initial'];
-            $insert_data['section3_rehire_date'] = empty($formpost['section3_rehire_date']) || $formpost['section3_rehire_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_rehire_date'])->format('Y-m-d H:i:s');
+            $insert_data['section3_rehire_date'] = empty(checkDateFormate($formpost['section3_rehire_date'])) || checkDateFormate($formpost['section3_rehire_date'])  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_rehire_date'])->format('Y-m-d H:i:s');
             $insert_data['section3_document_title'] = $formpost['section3_document_title'];
             $insert_data['section3_document_number'] = $formpost['section3_document_number'];
-            $insert_data['section3_expiration_date'] = empty($formpost['section3_expiration_date']) || $formpost['section3_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section3_expiration_date'] = empty(checkDateFormate($formpost['section3_expiration_date'])) || checkDateFormate($formpost['section3_expiration_date'])  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_expiration_date'])->format('Y-m-d H:i:s');
             $insert_data['section3_emp_sign'] = $reviewer_signature_base64;
-            $insert_data['section3_today_date'] = empty($formpost['section3_today_date']) || $formpost['section3_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_today_date'])->format('Y-m-d H:i:s');
+            $insert_data['section3_today_date'] = empty(checkDateFormate($formpost['section3_today_date'])) || checkDateFormate($formpost['section3_today_date']) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_today_date'])->format('Y-m-d H:i:s');
             $insert_data['section3_name_of_emp'] = $formpost['section3_name_of_emp'];
 
             $insert_data['emp_app_sid'] = $employer_sid;
@@ -9243,8 +9243,8 @@ class Hr_documents_management extends Public_Controller
                 $document_path = $request_from == "company_document" ? $document["uploaded_document_s3_name"] : $document["document_s3_name"];
             }
             //
-            
-            $data['document_path'] = base_url("hr_documents_management/download_upload_document").'/'.$document_path;
+
+            $data['document_path'] = base_url("hr_documents_management/download_upload_document") . '/' . $document_path;
             $data['perform_action'] = "download";
             $data['is_hybrid'] = "yes";
         }
@@ -15435,7 +15435,7 @@ class Hr_documents_management extends Public_Controller
         //
         $time = strtotime('+10 days');
         //
-        $encryptedKey = $this->encrypt->encode( $fillable_type  . '/' . $user_sid . '/' . $time);
+        $encryptedKey = $this->encrypt->encode($fillable_type  . '/' . $user_sid . '/' . $time);
         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
         //
         $user_info = $this->hr_documents_management_model->getUserData(
@@ -15469,11 +15469,11 @@ class Hr_documents_management extends Public_Controller
         );
         //
         $this->hr_documents_management_model
-           ->updateAssignedFederalFillableDocumentLinkTime(
-               $time,
-               $user_sid,
-               $fillable_type
-           );
+            ->updateAssignedFederalFillableDocumentLinkTime(
+                $time,
+                $user_sid,
+                $fillable_type
+            );
         //
         $resp['Status'] = TRUE;
         $resp['Response'] = 'The document has been sent successfully.';
