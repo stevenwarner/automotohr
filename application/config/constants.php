@@ -664,3 +664,9 @@ define("WORK_WEEK_HOURS", 40);
 define('PRIVATE_MESSAGE_NOTIFICATION', 424);
 define('TIMEOFF_THEME_ONE', 1);
 define('TIMEOFF_THEME_TWO', 2);
+
+
+/**
+ * Employee survey constants
+ */
+define('EMPLOYEE_SURVEYS', 'employeesurvey');

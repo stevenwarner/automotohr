@@ -1591,3 +1591,28 @@ $route['run_employee_status_fixer']['cli'] = 'Cron_Common/employeeStatusFixer';
  * 11/30/2022
  */
 $route['get_employee_profile_history/(:num)']['get'] = '2022/Employee/getProfileHistory/$1';
+/**
+ * Employee surveys
+ *
+ * @author Mubashir Ahmed
+ * @date   2022-10-03
+ */
+$route['employee/surveys']['get'] = '2022/Employee_surveys/overview';
+$route['employee/surveys/overview']['get'] = '2022/Employee_surveys/overview';
+$route['employee/surveys/surveys']['get'] = '2022/Employee_surveys/surveys';
+$route['employee/surveys/create']['get'] = '2022/Employee_surveys/create';
+$route['employee/surveys/create/(:num)/([a-z]+)']['get'] = '2022/Employee_surveys/create/$1/$2';
+
+
+$route['employee/surveys/surveys/(:num)']['get'] = '2022/Employee_surveys/companysurveys/$1';
+$route['employee/surveys/surveys/(:num)/(:num)/(:num)']['get'] = '2022/Employee_surveys/surveyfeedback/$1/$2/$3';
+
+$route['employee/surveys/settings']= '2022/Employee_surveys/settings';
+$route['employee/surveys/reports']= '2022/Employee_surveys/reports';
+$route['employee/surveys/faqs']= '2022/Employee_surveys/faqs';
+
+
+
+$route['employee/surveys/templatedetail/(:num)']['get'] = '2022/Employee_surveys/surveyTemplateDetail/$1';
+
+$route['employee/surveys/templateselect/(:num)']['get'] = '2022/Employee_surveys/surveyTemplateSelect/$1';

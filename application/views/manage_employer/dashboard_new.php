@@ -845,6 +845,26 @@
 
                                 <?php $this->load->view('attendance/2022/clock_green'); ?>
 
+                                <?php if (checkIfAppIsEnabled(EMPLOYEE_SURVEYS)) { ?>
+                                    <!-- Employee Surveyss -->
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure><i class="fa fa-pie-chart" aria-hidden="true"></i></figure>
+                                                <h2 class="post-title">
+                                                    <a href="<?=base_url('employee/surveys/overview');?>">Employee Surveys</a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <small style="font-size: 12px"></small>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <a href="<?=base_url('employee/surveys/overview');?>" class="site-btn">Overview</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+
                                 <!-- Account Activity -->
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box activity-box-wrp">
