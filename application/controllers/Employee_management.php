@@ -1401,7 +1401,7 @@ class Employee_management extends Public_Controller
                     //
                     $data['profileHistory'] = $this->employee_model->getProfileHistory($sid, true);
                     $data['PageScripts'] = [
-                        '2022/js/employee_profile/main'
+                        ['1.0.1', '2022/js/employee_profile/main']
                     ];
                     //
                     $this->load->view('main/header', $data);
