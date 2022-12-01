@@ -111,12 +111,39 @@
                                                     <label>Gender:</label>
                                                     <select class="invoice-fields" name="gender">
                                                         <option value="">Please Select Gender</option>
-                                                        <option <?= $user_information["gender"] == 'male' ? 'selected' : ''; ?> value="male">Male</option>
-                                                        <option <?= $user_information["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
-                                                        <option <?= $user_information["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
+                                                        <option <?= $formpost["gender"] == 'male' ? 'selected' : ''; ?> value="male">Male</option>
+                                                        <option <?= $formpost["gender"] == 'female' ? 'selected' : ''; ?> value="female">Female</option>
+                                                        <option <?= $formpost["gender"] == 'other' ? 'selected' : ''; ?> value="other">Other</option>
                                                     </select>
 
                                                 </li>
+
+
+                                                <li class="form-col-100 autoheight">
+                                                    <?php $department = get_company_departments_teams($company_id);  ?>
+                                                    <label>Department/Team:</label>
+                                                    <select name="department" id="department" class="invoice-fields">
+                                                        <option value="">Please Select Team</option>
+
+                                                        <?php foreach ($department as $departmenRow) { ?>
+                                                            <?php if (!empty($departmenRow['Departments']['DepartmentName'])) { ?>
+                                                                <optgroup label="<?php echo $departmenRow['Departments']['DepartmentName'] ?>" style="background-color: #81b431; color:#FFFFFF">
+                                                                <?php } ?>
+                                                                <?php if (!empty($departmenRow['DepartmentTeams'])) {
+                                                                    foreach ($departmenRow['DepartmentTeams'] as $teamsRow) {
+                                                                ?>
+                                                                        <option value="<?php echo $teamsRow['department_sid'] ?>#<?php echo $teamsRow['sid'] ?>"><?php echo $teamsRow['name'] ?></option>
+                                                                <?php }
+                                                                } ?>
+                                                                </optgroup>
+
+                                                            <?php } ?>
+                                                    </select>
+
+                                                </li>
+
+
+
                                                 <li class="form-col-100 autoheight">
 
                                                     <div class="row js-timezone-row">
@@ -239,6 +266,11 @@
             $("input[name='username']").prop('required', false);
             $("input[name='password']").prop('required', false);
         }
+
+        //
+        $('#timezone').val('<?php echo $formpost['timezone']; ?>');
+        $('#department').val('<?php echo $formpost['department']; ?>');
+
     });
 
     $('.employeeRadio').click(function() {
@@ -381,7 +413,7 @@
     $('.startdate').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
     }).val();
 </script>

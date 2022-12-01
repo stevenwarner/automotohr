@@ -2830,4 +2830,14 @@ class Company_model extends CI_Model
         return true;
     }
 
+
+
+//
+    function add_new_employer_to_team($data_to_insert)
+    {
+ 
+        $this->db->insert('departments_employee_2_team', $data_to_insert);
+        return $this->db->insert_id();
+    }
+
 }

@@ -491,6 +491,17 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone');
                 $salt = generateRandomString(48);
 
+                //
+                $departments = $this->input->post('department');
+                $departmenId = '';
+                $teamsId = '';
+                if (!empty($departments)) {
+                    $departmentsinfo = explode('#', $departments);
+                    $departmenId = $departmentsinfo[0];
+                    $teamsId = $departmentsinfo[1];
+                }
+
+
                 if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
                     $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
@@ -518,8 +529,24 @@ class employers extends Admin_Controller
                 $insert_data['timezone'] = $timezone;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
+
+
+                if ($departmenId != '' && $teamsId != '') {
+                    $insert_data['department_sid'] = $departmenId;
+                    $insert_data['team_sid'] = $teamsId;
+                }
+
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');
+
+                //
+                if ($departmenId != '' && $teamsId != '') {
+                    $team_information['department_sid'] = $departmenId;
+                    $team_information['team_sid'] = $teamsId;
+                    $team_information['employee_sid'] = $sid;
+                    $team_information['created_at'] = date('Y-m-d H:i:s');
+                    $this->company_model->add_new_employer_to_team($team_information);
+                }
 
                 if ($profile_picture != 'error') {
                     $pictures = array('profile_picture' => $profile_picture);

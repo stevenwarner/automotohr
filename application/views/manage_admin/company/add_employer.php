@@ -161,6 +161,35 @@
                                                         </div>
                                                     </div>
 
+
+                                                    <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                    <?php $department = get_company_departments_teams($company_sid);  ?>
+
+                                                        <div class="field-row">
+                                                        <label>Department/Team:</label>
+                                                        <select name="department" id="department" class="invoice-fields">
+                                                        <option value="">Please Select Team</option>
+
+                                                        <?php foreach ($department as $departmenRow) { ?>
+                                                            <?php if (!empty($departmenRow['Departments']['DepartmentName'])) { ?>
+                                                                <optgroup label="<?php echo $departmenRow['Departments']['DepartmentName'] ?>" style="background-color: #81b431; color:#FFFFFF">
+                                                                <?php } ?>
+                                                                <?php if (!empty($departmenRow['DepartmentTeams'])) {
+                                                                    foreach ($departmenRow['DepartmentTeams'] as $teamsRow) {
+                                                                ?>
+                                                                        <option value="<?php echo $teamsRow['department_sid'] ?>#<?php echo $teamsRow['sid'] ?>"><?php echo $teamsRow['name'] ?></option>
+                                                                <?php }
+                                                                } ?>
+                                                                </optgroup>
+
+                                                            <?php } ?>
+                                                    </select>   
+                                                        </div>
+                                                    </div>
+
+
+
+
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <div class="field-row">
                                                         <div class="row js-timezone-row">

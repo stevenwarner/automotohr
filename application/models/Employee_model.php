@@ -1785,4 +1785,13 @@
             return array();
         }
     }
+
+
+
+    function add_employee_to_team($data) {
+        $this->db->insert('departments_employee_2_team', $data);
+        return $this->db->insert_id();
+    }
+
+
 }

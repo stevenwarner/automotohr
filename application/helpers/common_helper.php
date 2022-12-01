@@ -15731,3 +15731,36 @@ if (!function_exists('checkDateFormate')) {
         return $dateIn;
     }
 }
+
+
+
+//
+
+if (!function_exists('get_company_departments_teams')) {
+    function get_company_departments_teams($company_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('name,sid');
+        $CI->db->where('company_sid', $company_id);
+        $CI->db->where('is_deleted', 0);
+        $departments = $CI->db->get('departments_management')->result_array();
+
+        $departmentsTeams = [];
+        if (!empty($departments)) {
+
+            foreach ($departments as $departmentRow) {
+                $departmentsTeams[]['Departments'] = array('DepartmentName' => $departmentRow['name'], 'DepartmentId' => $departmentRow['sid']);
+
+                $CI->db->select('name,sid,department_sid');
+                $CI->db->where('department_sid', $departmentRow['sid']);
+                $CI->db->where('is_deleted', 0);
+                $CI->db->where('status', 1);
+                $teams = $CI->db->get('departments_team_management')->result_array();
+                if (!empty($teams)) {
+                    $departmentsTeams[]['DepartmentTeams'] = $teams;
+                }
+            }
+        }
+        return  $departmentsTeams;
+    }
+}

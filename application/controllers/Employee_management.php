@@ -17,7 +17,7 @@ class Employee_management extends Public_Controller
     }
 
     public function archived_employee()
-    {   
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -339,6 +339,9 @@ class Employee_management extends Public_Controller
             $employer_id = $data["session"]["employer_detail"]["sid"];
             $data['title'] = "Add Employees / Team Members";
             $data['formpost'] = $_POST;
+
+            $data['company_id'] = $company_id;
+
             //$data["access_levels"] = db_get_enum_values('users', 'access_level');
 
             $data["access_levels"] = $this->dashboard_model->get_security_access_levels();
@@ -400,6 +403,20 @@ class Employee_management extends Public_Controller
                 $employment_status = $this->input->post('employee-status');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+
+                //
+                $departments = $this->input->post('department');
+                $departmenId = '';
+                $teamsId = '';
+
+                if (!empty($departments)) {
+
+                    $departmentsinfo = explode('#', $departments);
+                    $departmenId = $departmentsinfo[0];
+                    $teamsId = $departmentsinfo[1];
+                }
+                //
+
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 $start_date = reset_datetime(array('datetime' => $registration_date, '_this' => $this, 'from_format' => 'm-d-Y', 'format' => 'Y-m-d H:i:s'));
@@ -430,6 +447,11 @@ class Employee_management extends Public_Controller
                 $user_information['employee_type'] = $employment_type;
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
+                if ($departmenId != '' && $teamsId != '') {
+                    $user_information['department_sid'] = $departmenId;
+                    $user_information['team_sid'] = $teamsId;
+                }
+
                 if (!empty($pictures) && $pictures != 'error') {
                     $user_information['profile_picture'] = $pictures;
                 }
@@ -437,6 +459,18 @@ class Employee_management extends Public_Controller
                 if ($employee_type == 'direct_hiring') {
                     $user_information['username'] = $username;
                     $employee_sid = $this->employee_model->add_employee($user_information);
+
+                    //
+                    if ($departmenId != '' && $teamsId != '') {
+                        $team_information['department_sid'] = $departmenId;
+                        $team_information['team_sid'] = $teamsId;
+                        $team_information['employee_sid'] = $employee_sid;
+                        $team_information['created_at'] = date('Y-m-d H:i:s');
+                        $employee_sid = $this->employee_model->add_employee_to_team($team_information);
+                     }
+
+
+
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;
                     $replacement_array['first_name'] = $first_name;
@@ -448,6 +482,7 @@ class Employee_management extends Public_Controller
                 } else {
                     $link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('employee_registration') . '/' . $verification_key . '">' . 'Update Login Credentials' . '</a>';
                     $employee_sid = $this->employee_model->add_employee($user_information);
+
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;
                     $replacement_array['first_name'] = $first_name;
@@ -1111,7 +1146,6 @@ class Employee_management extends Public_Controller
                     $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);
                     $data['department_name'] = $department_name;
                 }
-
                 if ($data['employer']['team_sid'] > 0) {
                     $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
                     $data['team_name'] = $team_name;
