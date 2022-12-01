@@ -49,7 +49,7 @@ $(function () {
             if (record.employer_sid != 0) {
                 rows += ' ' + (record.full_name) + '';
             } else {
-                row += 'Self';
+                rows += 'Self';
             }
             rows += '           </th>';
             rows += '       </tr>';
