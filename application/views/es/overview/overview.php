@@ -21,7 +21,7 @@
                             <div class="csPageBox _csB2 _csR5 _csPt20 _csPb20">
                                 <h2 class="_csF28"><strong>Are your employees engaged at work?</strong></h2>
                                 <p class="_csF14">We tailored some surveys to understand better your employee's engagement.</p>
-                                <a href="" class="btn _csB4 _csF2 _csR5 _csMt20">Create Survey</a>
+                                <a href="<?php echo base_url("employee/surveys/create"); ?>" class="btn _csB4 _csF2 _csR5 _csMt20"><i class="fa fa-plus _csF16" aria-hidden="true"></i>&nbsp;Create Survey</a>
                             </div>
                         </div>
                     </div>

@@ -9,16 +9,16 @@
         </div>
         <div class="row">
             <div class="col-xs-3">
-                <div class="step step1 _csactive"></div>
+                <div class="step step1 <?php echo $step == 'getting_started' ? '_csactive' : ''; ?>"></div>
             </div>
             <div class="col-xs-3">
-                <div class="step step2"></div>
+                <div class="step step2 <?php echo $step == 'details' ? '_csactive' : ''; ?>"></div>
             </div>
             <div class="col-xs-3">
-                <div class="step step3"></div>
+                <div class="step step3 <?php echo $step == 'questions' ? '_csactive' : ''; ?>"></div>
             </div>
             <div class="col-xs-3">
-                <div class="step step4"></div>
+                <div class="step step4 <?php echo $step == 'respondents' ? '_csactive' : ''; ?>"></div>
             </div>
         </div>
     </div>

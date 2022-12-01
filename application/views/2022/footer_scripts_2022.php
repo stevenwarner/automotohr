@@ -17,20 +17,27 @@
 <!-- App -->
 <script type="text/javascript" src="<?= _m(base_url('assets/2022/js/app'), 'js', time()); ?>"></script>
 <!--  -->
+<link rel="stylesheet" href="<?=base_url("assets/css/SystemModel.css");?>">
+<script src="<?=base_url("assets/js/SystemModal.js");?>"></script>
+<!--  -->
 <?php if($this->session->userdata('logged_in')): ?>
 <script>
     /**
      * Token
      */
     var cToken = <?= $session['company_detail']['sid'] ?? 0 ?>;
+    var eToken = <?= $session['employer_detail']['sid'] ?? 0 ?>;
     /**
      * Set base url
      * @type {string}
      */
     var baseURI = "<?php echo rtrim(base_url(), '/'); ?>/";
+    var apiURI = "<?php echo getCreds("AHR")->API_BROWSER_URL; ?>";
 </script>
 <?php endif; ?>
 <?php if (isset($PageScripts)) {
     echo '<!-- Dynamic Scripts -->';
     echo GetScripts($PageScripts);
 } ?>
+<!--  -->
+<script src="<?php echo _m(base_url('assets/employee_survey/js/create'), 'js', time()) ?>"></script>

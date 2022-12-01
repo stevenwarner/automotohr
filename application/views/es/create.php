@@ -22,13 +22,25 @@
                             </a>
                         </div>
                     </div>
-                    <?php $this->load->view('2022/footer_scripts_2022'); ?>
                     <?php $this->load->view('es/partials/steps'); ?>
-                    <?php $this->load->view('es/partials/step_' . ($step)); ?>
+                    <div id="show_default_templates_section">
+                        <?php $this->load->view('es/partials/step_' . ($step)); ?>
+                    </div>
+                    <div id="show_detail_section" style="display: none;">
+                        <?php $this->load->view('es/partials/step_details'); ?>
+                    </div>
+                    <div id="show_questions_section" style="display: none;">
+                        <?php $this->load->view('es/partials/step_questions'); ?>
+                    </div>
+                    <div id="show_respondants_section" style="display: none;">
+                        <?php $this->load->view('es/partials/step_respondants'); ?>
+                    </div>
+                    <?php $this->load->view('es/partials/loader'); ?>
                 </div>
             </div>
         </div>
     </div>
+</div>    
   
 
 

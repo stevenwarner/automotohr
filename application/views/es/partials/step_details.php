@@ -12,7 +12,7 @@
                     <p>What the survey will be called. e.g. "Pre Open Enrollment Survey"</p>
                 </div>
                 <div class="col-md-9 col-sm-12">
-                    <input type="text" class="form-control" required />
+                    <input type="text" class="form-control" id="jsSurveyTitle" required />
                 </div>
             </div>
             <div class="row">
@@ -21,30 +21,34 @@
                     <p>What this survey is about.</p>
                 </div>
                 <div class="col-md-9 col-sm-12 _csMt10">
-                    <textarea class="form-control" row="30"></textarea>
+                    <textarea class="form-control" row="30" id="jsSurveyDescription"></textarea>
                 </div>
             </div>
             <hr>
             <div class="row">
                 <div class="col-md-3 col-sm-12 _csMt10">
-                    <label>Survey Period </label>
+                    <label>Survey Period <span class="text-danger">*</span></label>
                     <p>When the survey will start and end.</p>
                 </div>
                 <div class="col-md-3 col-sm-12 _csMt10">
-                    <input type="text" class="form-control" placeholder="MM/DD/YYY">
+                    <input type="text" class="form-control" id="jsStartDate" placeholder="MM/DD/YYYY" readonly>
                 </div>
                 <div class="col-md-1 col-sm-12 text-center _csVm _csMt10">
                     <i class="fa fa-minus" aria-hidden="true"></i>
                 </div>
                 <div class="col-md-3 col-sm-12 _csMt10">
-                    <input type="text" class="form-control" placeholder="MM/DD/YYY">
+                    <input type="text" class="form-control" id="jsEndDate" placeholder="MM/DD/YYYY" readonly>
                 </div>
             </div>
             <!-- Footer -->
             <div class="row">
                 <hr />
                 <div class="col-sm-12 text-right">
-                    <button class="btn _csB4 _csF2 _csR5 _csF14">
+                    <button class="btn _csB1 _csF2 _csR5 _csF14 jsBackToTemplates">
+                        <i class="fa fa-long-arrow-left _csF14" aria-hidden="true"></i>
+                        Back To Templates
+                    </button>
+                    <button class="btn _csB4 _csF2 _csR5 _csF14 jsSaveSurveyDetails">
                         <i class="fa fa-long-arrow-right _csF14" aria-hidden="true"></i>
                         Next
                     </button>

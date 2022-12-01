@@ -17,7 +17,7 @@
                     <!--  -->
                     <div class="row">
                         <div class="col-sm-12 text-right">
-                            <a href="<?= base_url("employee/surveys/create"); ?>" class="btn _csB4 _csF2 _csR5  _csF16"><i class="fa fa-plus _csF16" aria-hidden="true"></i>&nbsp;Create Survey</a>
+                            <a href="<?php echo base_url("employee/surveys/create"); ?>" class="btn _csB4 _csF2 _csR5  _csF16"><i class="fa fa-plus _csF16" aria-hidden="true"></i>&nbsp;Create Survey</a>
                         </div>
                     </div>
                     <!-- Running surveys -->
