@@ -1791,15 +1791,18 @@
      *
      * @param int   $employeeId
      * @param array $changedData
+     * @param int   $employerId
      * @return int
      */
     public function saveProfileChange(
         $employeeId,
-        $changedData
+        $changedData,
+        $employerId = 0
     ){
         //
         $this->db->insert('profile_history', [
             'user_sid' => $employeeId,
+            'employer_sid' => $employerId,
             'profile_data' => json_encode($changedData),
             'created_at' => date('Y-m-d H:i:s', strtotime('now'))
         ]);

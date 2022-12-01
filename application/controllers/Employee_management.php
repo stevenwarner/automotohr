@@ -1688,6 +1688,14 @@ class Employee_management extends Public_Controller
                             $this->input->post('policies')
                         );
                     }
+                    // Profile save intercept
+                    $this->handleProfileChange(
+                        $this->input->post(null, true),
+                        $employee_detail,
+                        $sid,
+                        $data_to_insert
+                    );
+
                     //
                     $this->session->set_flashdata('message', '<b>Success:</b> Employee / Team Member Profile is updated successfully');
                     redirect("employee_profile/" . $sid, "location");
@@ -3532,5 +3540,116 @@ class Employee_management extends Public_Controller
                 return (bool) preg_match("/^{$token}:[0-9.E+-]+;$end/", $data);
         }
         return false;
+    }
+
+
+    /**
+     * Saves the difference
+     */
+    private function handleProfileChange(
+        $post,
+        $employeeDetail,
+        $employeeId,
+        $dataToInsert
+    )
+    {
+        //
+        $newCompareData = [];
+        $newCompareData['first_name'] = $dataToInsert['first_name'];
+        if (isset($dataToInsert['middle_name'])) {
+            $newCompareData['middle_name'] = $dataToInsert['middle_name'];
+        }
+        $newCompareData['last_name'] = $dataToInsert['last_name'];
+        $newCompareData['nick_name'] = $dataToInsert['nick_name'];
+        $newCompareData['email'] = $dataToInsert['email'];
+        $newCompareData['PhoneNumber'] = $dataToInsert['PhoneNumber'];
+        $newCompareData['gender'] = $dataToInsert['gender'];
+        $newCompareData['job_title'] = $dataToInsert['job_title'];
+        $newCompareData['Location_Address'] = $dataToInsert['Location_Address'];
+        $newCompareData['Location_City'] = $dataToInsert['Location_City'];
+        $newCompareData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
+        $newCompareData['Location_State'] = $dataToInsert['Location_State'];
+        $newCompareData['Location_Country'] = $dataToInsert['Location_Country'];
+        $newCompareData['ssn'] = $dataToInsert['ssn'];
+        $newCompareData['employee_number'] = $dataToInsert['employee_number'];
+        $newCompareData['employee_type'] = $dataToInsert['employee_type'];
+        $newCompareData['timezone'] = $dataToInsert['timezone'];
+        $newCompareData['joined_at'] = $dataToInsert['joined_at'];
+        $newCompareData['dob'] = $dataToInsert['dob'];
+        $newCompareData['rehire_date'] = $dataToInsert['rehire_date'];
+        $newCompareData['linkedin_profile_url'] = $dataToInsert['linkedin_profile_url'];
+        $newCompareData['department_sid'] = $dataToInsert['department_sid'];
+        $newCompareData['marital_status'] = $dataToInsert['marital_status'];
+        $newCompareData['alternative_email'] = $dataToInsert['alternative_email'];
+        $newCompareData['profile_picture'] = $dataToInsert['profile_picture'];
+        $newCompareData['hourly_rate'] = $dataToInsert['hourly_rate'];
+        $newCompareData['hourly_technician'] = $dataToInsert['hourly_technician'];
+        $newCompareData['flat_rate_technician'] = $dataToInsert['flat_rate_technician'];
+        $newCompareData['semi_monthly_salary'] = $dataToInsert['semi_monthly_salary'];
+        $newCompareData['semi_monthly_draw'] = $dataToInsert['semi_monthly_draw'];
+
+        $newCompareData['office_location'] = $post['office_location'];
+        $newCompareData['secondary_email'] = $post['secondary_email'];
+        $newCompareData['secondary_PhoneNumber'] = $post['secondary_PhoneNumber'];
+        $newCompareData['other_email'] = $post['other_email'];
+        $newCompareData['other_PhoneNumber'] = $post['other_PhoneNumber'];
+
+        // Old Data
+        $oldCompareData = [];
+        $oldCompareData['first_name'] = $employeeDetail['first_name'];
+        if (isset($employeeDetail['middle_name'])) {
+            $oldCompareData['middle_name'] = $employeeDetail['middle_name'];
+        }
+        $oldCompareData['last_name'] = $employeeDetail['last_name'];
+        $oldCompareData['nick_name'] = $employeeDetail['nick_name'];
+        $oldCompareData['email'] = $employeeDetail['email'];
+        $oldCompareData['PhoneNumber'] = $employeeDetail['PhoneNumber'];
+        $oldCompareData['gender'] = $employeeDetail['gender'];
+        $oldCompareData['job_title'] = $employeeDetail['job_title'];
+        $oldCompareData['Location_Address'] = $employeeDetail['Location_Address'];
+        $oldCompareData['Location_City'] = $employeeDetail['Location_City'];
+        $oldCompareData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
+        $oldCompareData['Location_State'] = $employeeDetail['Location_State'];
+        $oldCompareData['Location_Country'] = $employeeDetail['Location_Country'];
+        $oldCompareData['ssn'] = $employeeDetail['ssn'];
+        $oldCompareData['employee_number'] = $employeeDetail['employee_number'];
+        $oldCompareData['employee_type'] = $employeeDetail['employee_type'];
+        $oldCompareData['timezone'] = $employeeDetail['timezone'];
+        $oldCompareData['joined_at'] = $employeeDetail['joined_at'];
+        $oldCompareData['dob'] = $employeeDetail['dob'];
+        $oldCompareData['rehire_date'] = $employeeDetail['rehire_date'];
+        $oldCompareData['linkedin_profile_url'] = $employeeDetail['linkedin_profile_url'];
+        $oldCompareData['department_sid'] = $employeeDetail['department_sid'];
+        $oldCompareData['marital_status'] = $employeeDetail['marital_status'];
+        $oldCompareData['alternative_email'] = $employeeDetail['alternative_email'];
+        $oldCompareData['profile_picture'] = $employeeDetail['profile_picture'];
+        $oldCompareData['hourly_rate'] = $employeeDetail['hourly_rate'];
+        $oldCompareData['hourly_technician'] = $employeeDetail['hourly_technician'];
+        $oldCompareData['flat_rate_technician'] = $employeeDetail['flat_rate_technician'];
+        $oldCompareData['semi_monthly_salary'] = $employeeDetail['semi_monthly_salary'];
+        $oldCompareData['semi_monthly_draw'] = $employeeDetail['semi_monthly_draw'];
+        //
+        $employeeDetailExtra = unserialize($employeeDetail['extra_info']);
+        //
+        $oldCompareData['office_location'] = $employeeDetailExtra['office_location'];
+        $oldCompareData['secondary_email'] = $employeeDetailExtra['secondary_email'];
+        $oldCompareData['secondary_PhoneNumber'] = $employeeDetailExtra['secondary_PhoneNumber'];
+        $oldCompareData['other_email'] = $employeeDetailExtra['other_email'];
+        $oldCompareData['other_PhoneNumber'] = $employeeDetailExtra['other_PhoneNumber'];
+
+        //
+        $difference = $this->findDifference($oldCompareData, $newCompareData);
+        //
+        if ($difference['profile_changed'] == 0) {
+            return false;
+        }
+        //
+        $this->load->model('Employee_model', 'em');
+        //
+        $this->em->saveProfileChange(
+            $employeeId,
+            $difference['data'],
+            $this->session->userdata('logged_in')['employer_detail']['sid']
+        );
     }
 }

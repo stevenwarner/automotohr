@@ -40,12 +40,18 @@ $(function () {
             //
             let data = JSON.parse(record.profile_data);
             //
-            console.log(data);
             // Create head
             rows += '<table class="table table-bordered">';
             rows += '   <thead>';
             rows += '       <tr class="bg-primary">';
-            rows += '           <th colspan="3">Profile changed at ' + (moment(record.created_at).format('DD MMMM Y, dddd HH:mm:ss')) + '</th>';
+            rows += '           <th colspan="3">';
+            rows += '<span class="pull-right"> ' + (moment(record.created_at).format('DD MMMM Y, dddd HH:mm:ss')) + '</span>';
+            if (record.employer_sid != 0) {
+                rows += ' ' + (record.full_name) + '';
+            } else {
+                row += 'Self';
+            }
+            rows += '           </th>';
             rows += '       </tr>';
             rows += '   </thead>';
             rows += '   <tbody>';
@@ -59,7 +65,7 @@ $(function () {
                     oldData = response.states[oldData];
                 }
                 //
-                if (index.toLowerCase() == 'dob') {
+                if (index.toLowerCase() == 'dob' || index.toLowerCase() == 'rehire_date' || index.toLowerCase() == 'joined_at') {
                     newData = newData != '-' ? moment(newData, 'Y-MM-DD').format('DD MMMM Y, dddd') : newData;
                     oldData = oldData != '-' ? moment(oldData, 'Y-MM-DD').format('DD MMMM Y, dddd') : oldData;
                 }

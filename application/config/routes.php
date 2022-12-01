@@ -1616,3 +1616,9 @@ $route['employee/surveys/faqs']= '2022/Employee_surveys/faqs';
 $route['employee/surveys/templatedetail/(:num)']['get'] = '2022/Employee_surveys/surveyTemplateDetail/$1';
 
 $route['employee/surveys/templateselect/(:num)']['get'] = '2022/Employee_surveys/surveyTemplateSelect/$1';
+
+/**
+ * Show employees profile report
+ * 12/01/2022
+ */
+$route['employee/information/report']['get'] = '2022/Employee/employeeProfileReport';
