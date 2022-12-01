@@ -29,7 +29,7 @@ $(function () {
         $.get(baseURI + 'get_employee_profile_history/' + employeeId)
             .success(loadData)
             .fail(handleError);
-    }
+    } 
 
 
     function loadData(response) {
