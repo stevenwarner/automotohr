@@ -35,7 +35,7 @@ class Employee extends CI_Controller
         $data['employee'] = $data['session']['employer_detail'];
         //
         $data['PageScripts'] = [
-            '2022/js/employee/change/main'
+            ['1.0.1', '2022/js/employee/change/main']
         ];
         //
         $this->load

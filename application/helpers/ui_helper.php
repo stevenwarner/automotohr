@@ -75,15 +75,21 @@ if(!function_exists('GetScripts')){
      * [
      *  'assets/js/script'
      * ]
-     * 
+     *
      * @return
      */
-    function GetScripts($scripts){
+    function GetScripts ($scripts)
+    {
         //
         $html = '';
         //
-        foreach($scripts as $script) {
-            $html .= '<script type="text/javascript" src="'.(base_url('assets/'._m($script))).'"></script>';
+        foreach ($scripts as $script) {
+            //
+            if (is_array($script)) {
+                $html .= '<script type="text/javascript" src="'.(base_url('assets/'._m($script[1], 'js', $script[0]))).'"></script>';
+            } else {
+                $html .= '<script type="text/javascript" src="'.(base_url('assets/'._m($script))).'"></script>';
+            }
         }
         //
         return $html;
