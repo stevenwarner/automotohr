@@ -9,7 +9,7 @@ class User_model extends CI_Model
     /**
      *
      */
-    public function getCompanyEmployees(int $companyId)
+    public function getCompanyEmployees($companyId)
     {
         return $this->db
         ->select(getUserFields())
