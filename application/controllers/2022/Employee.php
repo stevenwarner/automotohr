@@ -9,7 +9,7 @@ class Employee extends CI_Controller
     {
         parent::__construct();
         //
-        $this->load->model('2022/employee_model', 'em');
+        $this->load->model('2022/User_model', 'em');
     }
 
     /**

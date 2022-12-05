@@ -630,6 +630,7 @@ $(function(){
                     var record_sid = $('#table_row_id_'+i).val();
 
                     var new_form_data = new FormData();
+                    new_form_data.append('account_code', i+1);
                     new_form_data.append('record_sid', record_sid);
                     new_form_data.append('company_sid', company_sid);
                     new_form_data.append('user_sid', user_sid);
@@ -710,14 +711,17 @@ $(function(){
             type: 'post',
             data: form_data,
             success: function (data) {
-                var obj = jQuery.parseJSON(data);
-                var signature_bas64_image = obj.signature_bas64_image;
-                currentSignature = signature_bas64_image;
-                //
-                if(signature_bas64_image == "<?=$user_signature;?>"){
-                    $('.replace_signature').remove();
-                } else{
-                    $('.replace_signature').add();
+                if(data !== ''){
+
+                    var obj = jQuery.parseJSON(data);
+                    var signature_bas64_image = obj.signature_bas64_image;
+                    currentSignature = signature_bas64_image;
+                    //
+                    if(signature_bas64_image == "<?=$user_signature;?>"){
+                        $('.replace_signature').remove();
+                    } else{
+                        $('.replace_signature').add();
+                    }
                 }
                
             },

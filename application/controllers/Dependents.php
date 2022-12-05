@@ -1,8 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Dependents extends Public_Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('dependents_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
@@ -10,7 +11,8 @@ class Dependents extends Public_Controller
     }
 
 
-    public function index($type = NULL, $sid = NULL, $jobs_listing = NULL) {
+    public function index($type = NULL, $sid = NULL, $jobs_listing = NULL)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -90,7 +92,7 @@ class Dependents extends Public_Controller
 
             if ($type == 'applicant') {
                 $applicant_info = $this->dependents_model->get_applicants_details($sid);
-//                $data['applicant_info'] = $applicant_info;
+                //                $data['applicant_info'] = $applicant_info;
                 //getting Company accurate backgroud check
                 $data['company_background_check'] = checkCompanyAccurateCheck($data['session']['company_detail']['sid']);
 
@@ -167,7 +169,7 @@ class Dependents extends Public_Controller
                 // Check and set the company sms module
                 // phone number
                 company_sms_phonenumber(
-                    $data['session']['company_detail']['sms_module_status'], 
+                    $data['session']['company_detail']['sms_module_status'],
                     $company_id,
                     $data,
                     $this
@@ -176,18 +178,30 @@ class Dependents extends Public_Controller
                 $data['company_sid'] = $company_id;
                 $data['user_sid'] = $sid;
                 $data['user_type'] = $type;
-                
+
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/dependants');
                 $this->load->view('main/footer');
-
             } else {
                 $perform_action = $this->input->post('perform_action');
                 switch ($perform_action) {
                     case 'delete_dependent':
                         $users_sid = $this->input->post('users_sid');
                         $dependant_sid = $this->input->post('dependent_sid');
-                        $users_type = 'employee';
+                        $users_type = 'employee'; // Need to check it why its hardcoded to employee
+
+                        //
+                        $this->load->model('2022/User_model', 'em');
+                        //
+                        $this->em->saveDifference([
+                            'user_sid' => $users_sid,
+                            'employer_sid' => ($users_sid == $this->session->userdata('logged_in')['employer_detail']['sid']
+                                ? 0 : $this->session->userdata('logged_in')['employer_detail']['sid']),
+                            'history_type' => 'dependent',
+                            'profile_data' => json_encode(['action' => 'delete']),
+                            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+                        ]);
+
 
                         $this->dependents_model->delete_dependant($users_type, $users_sid, $dependant_sid, $company_id);
 
@@ -200,7 +214,8 @@ class Dependents extends Public_Controller
         }
     }
 
-    public function edit_dependant_information($sid = NULL, $type = NULL, $user_sid = NULL, $jobs_listing = NULL) {
+    public function edit_dependant_information($sid = NULL, $type = NULL, $user_sid = NULL, $jobs_listing = NULL)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -222,11 +237,11 @@ class Dependents extends Public_Controller
             }
 
             $dependantData = $this->dependents_model->dependant_details($sid);
-//            $check_id = $this->dependents_model->check_authenticity($company_id, $sid, 'dependants');
+            //            $check_id = $this->dependents_model->check_authenticity($company_id, $sid, 'dependants');
 
             if (!empty($dependantData)) {
                 $dependant_details = $dependantData[0];
-            } else {// emergency contact does not exists.
+            } else { // emergency contact does not exists.
                 if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
                     header('Location: ' . $_SERVER['HTTP_REFERER']);
                 } else {
@@ -241,27 +256,27 @@ class Dependents extends Public_Controller
 
             $this->load->model('dashboard_model');
 
-//            if ($jobs_listing == NULL) {
-//                $security_sid = $data['session']['employer_detail']['sid'];
-//                $security_details = db_get_access_level_details($security_sid);
-//                $data['security_details'] = $security_details;
-//                $employer_id = $data['session']['employer_detail']['sid'];
-//                $data['employee'] = $data["session"]["employer_detail"];
-//                $left_navigation = 'manage_employer/employee_management/profile_right_menu_personal';
-//                $data['title'] = 'Edit Dependent Information';
-//                $reload_location = 'dependants';
-//                $type = 'employee';
-//                $data['employer'] = $this->dependents_model->get_company_detail($employer_id);
-//                $cancel_url = 'dependants';
-//                $data["return_title_heading"] = "Back to Dependent";
-//                $data["return_title_heading_link"] = base_url() . 'dependants';
-//                // getting applicant ratings - getting average rating of applicant
-//                $data['applicant_average_rating'] = $this->dependents_model->getApplicantAverageRating($employer_id, 'employee');
-//
-//                $data['sid'] = $sid;
-//                $load_view                                                      = check_blue_panel_status(false, 'self');
-//                $data['employer']                                               = $employer_details;
-//            } else
+            //            if ($jobs_listing == NULL) {
+            //                $security_sid = $data['session']['employer_detail']['sid'];
+            //                $security_details = db_get_access_level_details($security_sid);
+            //                $data['security_details'] = $security_details;
+            //                $employer_id = $data['session']['employer_detail']['sid'];
+            //                $data['employee'] = $data["session"]["employer_detail"];
+            //                $left_navigation = 'manage_employer/employee_management/profile_right_menu_personal';
+            //                $data['title'] = 'Edit Dependent Information';
+            //                $reload_location = 'dependants';
+            //                $type = 'employee';
+            //                $data['employer'] = $this->dependents_model->get_company_detail($employer_id);
+            //                $cancel_url = 'dependants';
+            //                $data["return_title_heading"] = "Back to Dependent";
+            //                $data["return_title_heading_link"] = base_url() . 'dependants';
+            //                // getting applicant ratings - getting average rating of applicant
+            //                $data['applicant_average_rating'] = $this->dependents_model->getApplicantAverageRating($employer_id, 'employee');
+            //
+            //                $data['sid'] = $sid;
+            //                $load_view                                                      = check_blue_panel_status(false, 'self');
+            //                $data['employer']                                               = $employer_details;
+            //            } else
             if ($type == NULL) {
                 // Emergency contact belongs to logged in employer.
                 $employer_id = $data['session']['employer_detail']['sid'];
@@ -303,7 +318,7 @@ class Dependents extends Public_Controller
                 $reload_location = 'dependants/applicant/' . $dependant_details['users_sid'] . '/' . $jobs_listing;
                 $cancel_url = 'dependants/applicant/' . $employer_id . '/' . $jobs_listing;
                 $applicant_info = $this->dependents_model->get_applicants_details($dependant_details['users_sid']);
-//                $data['applicant_info'] = $applicant_info;
+                //                $data['applicant_info'] = $applicant_info;
                 //getting Company accurate backgroud check
                 $data['company_background_check'] = checkCompanyAccurateCheck($data["session"]["company_detail"]["sid"]);
                 //Outsourced HR Compliance and Onboarding check
@@ -366,7 +381,7 @@ class Dependents extends Public_Controller
                 // Check and set the company sms module
                 // phone number
                 company_sms_phonenumber(
-                    $data['session']['company_detail']['sms_module_status'], 
+                    $data['session']['company_detail']['sms_module_status'],
                     $company_id,
                     $data,
                     $this
@@ -374,18 +389,34 @@ class Dependents extends Public_Controller
 
                 $data['job_list_sid'] = $jobs_listing;
                 $data['sid'] = $sid;
-//                if ($load_view == 'old') {
+                //                if ($load_view == 'old') {
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/dependants_edit');
                 $this->load->view('main/footer');
-//                } else {
-//                    $this->load->view('onboarding/on_boarding_header', $data);
-//                    $this->load->view('onboarding/edit_dependents');
-//                    $this->load->view('onboarding/on_boarding_footer');
-//                }
+                //                } else {
+                //                    $this->load->view('onboarding/on_boarding_header', $data);
+                //                    $this->load->view('onboarding/edit_dependents');
+                //                    $this->load->view('onboarding/on_boarding_footer');
+                //                }
             } else {
+                //
+                if ($type == 'employee') {
+                    //
+                    $this->load->model('2022/User_model', 'em');
+                    //
+                    $_POST['sid'] = $sid;
+                    //
+                    $this->em->handleGeneralDocumentChange(
+                        'dependent',
+                        $this->input->post(null, true),
+                        null,
+                        $user_sid,
+                        $this->session->userdata('logged_in')['employer_detail']['sid']
+                    );
+                }
+                //
                 $formpost = $this->input->post(null, true);
-                if(isset($formpost['txt_phonenumber'])){
+                if (isset($formpost['txt_phonenumber'])) {
                     $formpost['phone'] = $formpost['txt_phonenumber'];
                     unset($formpost['txt_phonenumber']);
                 }
@@ -411,11 +442,11 @@ class Dependents extends Public_Controller
                 //
                 $doSend = false;
                 //
-                if(array_key_exists('document_sent_on', $userData)){
+                if (array_key_exists('document_sent_on', $userData)) {
                     //
                     $doSend = false;
                     //
-                    if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                    if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                         $doSend = true;
                         //
                         $this->hr_documents_management_model->update_employee($sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -424,7 +455,7 @@ class Dependents extends Public_Controller
                 } else $doSend = true;
 
                 // Only send if dosend is true
-                if($doSend == true){
+                if ($doSend == true) {
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -448,7 +479,8 @@ class Dependents extends Public_Controller
         }
     }
 
-    public function add_dependant_information($type = NULL, $sid = NULL, $jobs_listing = NULL) {
+    public function add_dependant_information($type = NULL, $sid = NULL, $jobs_listing = NULL)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -508,7 +540,7 @@ class Dependents extends Public_Controller
 
             if ($type == 'applicant') {
                 $applicant_info = $this->dependents_model->get_applicants_details($sid);
-//                $data['applicant_info'] = $applicant_info;
+                //                $data['applicant_info'] = $applicant_info;
                 //getting Company accurate backgroud check
                 $data['company_background_check'] = checkCompanyAccurateCheck($data["session"]["company_detail"]["sid"]);
 
@@ -559,7 +591,7 @@ class Dependents extends Public_Controller
                 // Check and set the company sms module
                 // phone number
                 company_sms_phonenumber(
-                    $data['session']['company_detail']['sms_module_status'], 
+                    $data['session']['company_detail']['sms_module_status'],
                     $company_id,
                     $data,
                     $this
@@ -571,7 +603,7 @@ class Dependents extends Public_Controller
             } else {
                 $formpost = $this->input->post(null, true);
 
-                if(isset($formpost['txt_phonenumber'])){
+                if (isset($formpost['txt_phonenumber'])) {
                     $formpost['phone'] = $formpost['txt_phonenumber'];
                     unset($formpost['txt_phonenumber']);
                 }
@@ -599,11 +631,11 @@ class Dependents extends Public_Controller
                 //
                 $doSend = false;
                 //
-                if(array_key_exists('document_sent_on', $userData)){
+                if (array_key_exists('document_sent_on', $userData)) {
                     //
                     $doSend = false;
                     //
-                    if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                    if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                         $doSend = true;
                         //
                         $this->hr_documents_management_model->update_employee($sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -612,7 +644,7 @@ class Dependents extends Public_Controller
                 } else $doSend = true;
 
                 // Only send if dosend is true
-                if($doSend == true){
+                if ($doSend == true) {
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -634,5 +666,4 @@ class Dependents extends Public_Controller
             redirect(base_url('login'), "refresh");
         }
     }
-
 }

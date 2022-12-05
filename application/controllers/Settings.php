@@ -2385,6 +2385,19 @@ class Settings extends Public_Controller
                     $licenseData['license_file'] = $license_file;
                 }
 
+                if ($type == 'employee') {
+                    //
+                    $this->load->model('2022/User_model', 'em');
+                    //
+                    $this->em->handleGeneralDocumentChange(
+                        'driversLicense',
+                        $this->input->post(null, true),
+                        $license_file,
+                        $sid,
+                        $this->session->userdata('logged_in')['employer_detail']['sid']
+                    );
+                }
+
                 //uplaod file to AMS
                 /*
                   if (isset($_FILES['license_file']) && $_FILES['license_file']['name'] != '') {
@@ -2675,6 +2688,19 @@ class Settings extends Public_Controller
                 $licenseCheck = $this->dashboard_model->check_user_license($employer_id, $type, $license_type);
                 //$formpost['license_file'] = "";
                 $license_file = upload_file_to_aws('license_file', $company_id, 'license_file', $employer_id);
+
+                if ($type == 'employee') {
+                    //
+                    $this->load->model('2022/User_model', 'em');
+                    //
+                    $this->em->handleGeneralDocumentChange(
+                        'occupationalLicense',
+                        $this->input->post(null, true),
+                        $license_file,
+                        $sid,
+                        $this->session->userdata('logged_in')['employer_detail']['sid']
+                    );
+                }
 
                 if (!empty($license_file) && $license_file != 'error') {
                     $licenseData['license_file'] = $license_file;

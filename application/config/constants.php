@@ -534,6 +534,7 @@ define('DOB_LIMIT', '1900:+1');
 define('JOINING_DATE_LIMIT', '1900:+5');
 define('STARTING_DATE_LIMIT', '1900:+20');
 define('DATE', 'M d Y, D');
+define('SITE_DATE', 'm/d/Y');
 define('DB_DATE', 'Y-m-d');
 define('DATE_WITH_TIME', 'M d, Y, D H:m:s');
 define('TIME', 'H:i:s');

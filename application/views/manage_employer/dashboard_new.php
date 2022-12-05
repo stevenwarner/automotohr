@@ -688,7 +688,7 @@
                                 <?php } ?>
 
                                 <!-- Employee Information Change -->
-                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 hidden">
+                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box">
                                         <div class="dashboard-widget-box">
                                             <figure>

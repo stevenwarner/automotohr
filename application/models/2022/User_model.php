@@ -1,0 +1,561 @@
+<?php defined('BASEPATH') || exit('No direct script access allowed');
+
+class User_model extends CI_Model
+{
+    function __construct() {
+        parent::__construct();
+    }
+
+    /**
+     * Get employee profile history data
+     *
+     * @param int     $employeeId
+     * @param boolean $count
+     * @return array
+     */
+    public function getProfileHistory(
+        $employeeId,
+        $count = false
+    )
+    {
+        //
+        $this->db
+        ->from('profile_history')
+        ->where('user_sid', $employeeId);
+        //
+        if ($count) {
+            return $this->db->count_all_results();
+        }
+        //
+        $records =
+        $this->db
+        ->select('
+            profile_history.profile_data,
+            profile_history.created_at,
+            profile_history.employer_sid,
+            users.first_name,
+            users.last_name,
+            users.middle_name,
+            users.access_level,
+            users.access_level_plus,
+            users.is_executive_admin,
+            users.job_title,
+            users.timezone
+        ')
+        ->join('users', 'users.sid = profile_history.employer_sid', 'left')
+        ->order_by('profile_history.sid', 'DESC')
+        ->get()
+        ->result_array();
+        //
+        if (!empty($records)) {
+            foreach ($records as $key => $record) {
+                $records[$key]['full_name'] = remakeEmployeeName($record);
+                //
+                unset(
+                    $records[$key]['first_name'],
+                    $records[$key]['last_name'],
+                    $records[$key]['middle_name'],
+                    $records[$key]['access_level'],
+                    $records[$key]['access_level_plus'],
+                    $records[$key]['is_executive_admin'],
+                    $records[$key]['job_title'],
+                    $records[$key]['timezone']
+                );
+            }
+        }
+        //
+        return $records;
+    }
+
+    /**
+     * Get states
+     *
+     * @return array
+     */
+    public function getStates()
+    {
+        //
+        return $this->db
+        ->select('sid, state_name')
+        ->from('states')
+        ->get()
+        ->result_array();
+    }
+
+    /**
+     *
+     */
+    public function handleGeneralDocumentChange(
+        $documentType,
+        $post,
+        $licenseFile,
+        $employeeId,
+        $employerId = 0
+    )
+    {
+        //
+        if ($employeeId == $employerId) {
+            $employerId = 0;
+        }
+        // Lets fetch the old record
+        $oldData = $this->getGeneralDocumentData($documentType, $employeeId);
+        $newData = [];
+        // Licenses
+        if ($documentType == 'occupationalLicense' || $documentType == 'driversLicense') {
+            $newData['license_type'] = $post['license_type'];
+            $newData['license_authority'] = $post['license_authority'];
+            $newData['license_class'] = isset($post['license_class']) ? $post['license_class'] : '';
+            $newData['license_number'] = $post['license_number'];
+            $newData['license_issue_date'] = !empty($post['license_issue_date']) ?
+            formatDateToDB($post['license_issue_date'], SITE_DATE, DB_DATE)
+            : '';
+            $newData['license_expiration_date'] = !empty($post['license_expiration_date']) ?
+            formatDateToDB($post['license_expiration_date'], SITE_DATE, DB_DATE)
+            : '';
+            $newData['license_indefinite'] = isset($post['license_indefinite']) ? $post['license_indefinite'] : '';
+            $newData['license_notes'] = trim($post['license_notes']);
+            $newData['license_file'] = $licenseFile;
+            //
+            if (!empty($oldData['license_issue_date'])) {
+                $oldData['license_issue_date'] =
+                formatDate($oldData['license_issue_date'], SITE_DATE, DB_DATE);
+            }
+            //
+            if (!empty($oldData['license_expiration_date'])) {
+                $oldData['license_expiration_date'] =
+                formatDate($oldData['license_expiration_date'], SITE_DATE, DB_DATE);
+            }
+            //
+            $oldData['license_notes'] = trim($oldData['license_notes']);
+        }
+        // Direct deposit
+        if ($documentType == 'directDeposit') {
+            //
+            $oldData = $oldData[$post['account_code'] - 1];
+            //
+            $newData['account_title'] = $post['account_title'];
+            $newData['account_type'] = $post['account_type'];
+            $newData['financial_institution_name'] = $post['financial_institution_name'];
+            $newData['routing_transaction_number'] = $post['routing_transaction_number'];
+            $newData['account_number'] = $post['account_number'];
+            $newData['deposit_type'] = $post['deposit_type'];
+            $newData['account_percentage'] = $post['account_percentage'];
+            $newData['employee_number'] = $post['employee_number'];
+            $newData['print_name'] = $post['print_name'];
+            $newData['consent_date'] = formatDateToDB($post['consent_date'], SITE_DATE, DB_DATE);
+            //
+            if (!empty($licenseFile)) {
+                $newData['voided_cheque'] = $licenseFile;
+            } else {
+                unset($oldData['voided_cheque']);
+            }
+            $newData['user_signature'] = $this->input->post('drawn_signature', false);
+        }
+        // dependents
+        if ($documentType == 'dependent') {
+            //
+            $newData['first_name'] = $post['first_name'];
+            $newData['last_name'] = $post['last_name'];
+            $newData['address'] = $post['address'];
+            $newData['address_line'] = $post['address_line'];
+            $newData['Location_Country'] = $post['Location_Country'];
+            $newData['Location_State'] = $post['Location_State'];
+            $newData['city'] = $post['city'];
+            $newData['postal_code'] = $post['postal_code'];
+            $newData['phone'] = $post['phone'];
+            $newData['birth_date'] = formatDateToDB($post['birth_date'], SITE_DATE, DB_DATE);
+            $newData['relationship'] = $post['relationship'];
+            $newData['ssn'] = $post['ssn'];
+            $newData['gender'] = $post['gender'];
+            $newData['family_member'] = $post['family_member'] ?? '';
+            //
+            if (!empty($oldData['birth_date'])) {
+                //
+                $oldData['birth_date'] =
+                formatDateToDB(
+                    $oldData['birth_date'],
+                    strpos('-', $oldData['birth_date']) === false ? SITE_DATE : 'm-d-Y',
+                    DB_DATE
+                );
+            }
+        }
+        // Emergency Contacts
+        if ($documentType == 'emergencyContact') {
+            //
+            $newData['first_name'] = $post['first_name'];
+            $newData['last_name'] = $post['last_name'];
+            $newData['email'] = $post['email'];
+            $newData['Location_Country'] = $post['Location_Country'];
+            $newData['Location_State'] = $post['Location_State'];
+            $newData['Location_City'] = $post['Location_City'];
+            $newData['Location_ZipCode'] = $post['Location_ZipCode'];
+            $newData['Location_Address'] = $post['Location_Address'];
+            $newData['PhoneNumber'] = $post['PhoneNumber'];
+            $newData['Relationship'] = $post['Relationship'];
+            $newData['priority'] = $post['priority'];
+        }
+        //
+        $difference = $this->findDifference($oldData, $newData);
+        //
+        if ($difference['changed'] == 0) {
+            return 0;
+        }
+        //
+        if ($documentType == 'directDeposit') {
+            $difference['data']['account'] = $post['account_code'];
+        }
+        //
+        return $this->saveDifference([
+            'user_sid' => $employeeId,
+            'employer_sid' => $employerId,
+            'history_type' => $documentType,
+            'profile_data' => json_encode($difference['data']),
+            'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+        ]);
+    }
+
+
+    /**
+     * Get the general documents
+     *
+     * @param string $documentType
+     * @param int    $employeeId
+     *
+     * @return array
+     */
+    public function getGeneralDocumentData(
+        $documentType,
+        $employeeId
+    )
+    {
+        //
+        $func = 'get'.(ucwords($documentType));
+        //
+        return $this->$func($employeeId);
+    }
+    
+    /**
+     * Get occupational license
+     *
+     * @param int    $userId
+     * @param string $userType
+     *
+     * @return array
+     */
+    public function getOccupationalLicense(
+        $userId,
+        $userType = 'employee'
+    )
+    {
+        //
+        $record = $this->db
+        ->select('license_details, license_file')
+        ->where([
+            'users_sid' => $userId,
+            'users_type' => $userType,
+            'license_type' => 'occupational'
+        ])
+        ->get('license_information')
+        ->row_array();
+        //
+        $tmp = [];
+        //
+        if (empty($record)) {
+            $tmp['license_type'] = '';
+            $tmp['license_authority'] = '';
+            $tmp['license_class'] = '';
+            $tmp['license_number'] = '';
+            $tmp['license_issue_date'] = '';
+            $tmp['license_expiration_date'] = '';
+            $tmp['license_indefinite'] = '';
+            $tmp['license_notes'] = '';
+            $tmp['license_file'] = '';
+            //
+            return $tmp;
+        }
+        //
+        $tmp = unserialize($record['license_details']);
+        $tmp['license_file'] = $record['license_file'];
+        //
+        unset($record);
+        //
+        return $tmp;
+    }
+
+    /**
+     * Get drivers license
+     *
+     * @param int    $userId
+     * @param string $userType
+     *
+     * @return array
+     */
+    public function getDriversLicense(
+        $userId,
+        $userType = 'employee'
+    )
+    {
+        //
+        $record = $this->db
+        ->select('license_details, license_file')
+        ->where([
+            'users_sid' => $userId,
+            'users_type' => $userType,
+            'license_type' => 'drivers'
+        ])
+        ->get('license_information')
+        ->row_array();
+        //
+        $tmp = [];
+        //
+        if (empty($record)) {
+            $tmp['license_type'] = '';
+            $tmp['license_authority'] = '';
+            $tmp['license_class'] = '';
+            $tmp['license_number'] = '';
+            $tmp['license_issue_date'] = '';
+            $tmp['license_expiration_date'] = '';
+            $tmp['license_indefinite'] = '';
+            $tmp['license_notes'] = '';
+            $tmp['license_file'] = '';
+            //
+            return $tmp;
+        }
+        //
+        $tmp = unserialize($record['license_details']);
+        $tmp['license_file'] = $record['license_file'];
+        //
+        unset($record);
+        //
+        return $tmp;
+    }
+
+    /**
+     * Get direct deposit
+     *
+     * @param int    $userId
+     * @param string $userType
+     *
+     * @return array
+     */
+    public function getDirectDeposit(
+        $userId,
+        $userType = 'employee'
+    )
+    {
+        //
+        $records = $this->db
+        ->select('
+            account_title,
+            routing_transaction_number,
+            account_number,
+            financial_institution_name,
+            account_type,
+            voided_cheque,
+            deposit_type,
+            account_percentage,
+            employee_number,
+            user_signature,
+            print_name,
+            consent_date
+        ')
+        ->where([
+            'users_sid' => $userId,
+            'users_type' => $userType
+        ])
+        ->order_by('sid', 'ASC')
+        ->get('bank_account_details')
+        ->result_array();
+        //
+        if (empty($records)) {
+            $records = [];
+            $records[0]['account_title'] = '';
+            $records[0]['routing_transaction_number'] = '';
+            $records[0]['account_number'] = '';
+            $records[0]['financial_institution_name'] = '';
+            $records[0]['account_type'] = '';
+            $records[0]['voided_cheque'] = '';
+            $records[0]['deposit_type'] = '';
+            $records[0]['account_percentage'] = '';
+            $records[0]['employee_number'] = '';
+            $records[0]['user_signature'] = '';
+            $records[0]['print_name'] = '';
+            $records[0]['consent_date'] = '';
+            //
+            $records[1]['account_title'] = '';
+            $records[1]['routing_transaction_number'] = '';
+            $records[1]['account_number'] = '';
+            $records[1]['financial_institution_name'] = '';
+            $records[1]['account_type'] = '';
+            $records[1]['voided_cheque'] = '';
+            $records[1]['deposit_type'] = '';
+            $records[1]['account_percentage'] = '';
+            $records[1]['employee_number'] = '';
+            $records[1]['user_signature'] = '';
+            $records[1]['print_name'] = '';
+            $records[1]['consent_date'] = '';
+        }
+        //
+        if (!isset($records[1])) {
+            //
+            $records[1]['account_title'] = '';
+            $records[1]['routing_transaction_number'] = '';
+            $records[1]['account_number'] = '';
+            $records[1]['financial_institution_name'] = '';
+            $records[1]['account_type'] = '';
+            $records[1]['voided_cheque'] = '';
+            $records[1]['deposit_type'] = '';
+            $records[1]['account_percentage'] = '';
+            $records[1]['employee_number'] = '';
+            $records[1]['user_signature'] = '';
+            $records[1]['print_name'] = '';
+            $records[1]['consent_date'] = '';
+        }
+        //
+        return $records;
+    }
+    
+    /**
+     * Get dependents
+     *
+     * @param int    $userId
+     * @param string $userType
+     *
+     * @return array
+     */
+    public function getDependent(
+        $userId,
+        $userType = 'employee'
+    )
+    {
+        //
+        $record = $this->db
+        ->select('dependant_details')
+        ->where([
+            'sid' => $this->input->post('sid', true)
+        ])
+        ->get('dependant_information')
+        ->row_array();
+        //
+        if (empty($record)) {
+            $record['first_name'] = '';
+            $record['last_name'] = '';
+            $record['address'] = '';
+            $record['address_line'] = '';
+            $record['Location_Country'] = '';
+            $record['Location_State'] = '';
+            $record['city'] = '';
+            $record['postal_code'] = '';
+            $record['phone'] = '';
+            $record['birth_date'] = '';
+            $record['relationship'] = '';
+            $record['ssn'] = '';
+            $record['gender'] = '';
+            //
+            return $record;
+        }
+        //
+        $record = unserialize($record['dependant_details']);
+        //
+        return $record;
+    }
+    
+    /**
+     * Get emergency contacts
+     *
+     * @param int    $userId
+     * @param string $userType
+     *
+     * @return array
+     */
+    public function getEmergencyContact(
+        $userId,
+        $userType = 'employee'
+    )
+    {
+        //
+        $record = $this->db
+        ->select('
+            first_name,
+            last_name,
+            email,
+            Location_Country,
+            Location_State,
+            Location_City,
+            Location_ZipCode,
+            Location_Address,
+            PhoneNumber,
+            Relationship,
+            priority
+        ')
+        ->where([
+            'sid' => $this->input->post('sid', true)
+        ])
+        ->get('emergency_contacts')
+        ->row_array();
+        //
+        if (empty($record)) {
+            $record['first_name'] = '';
+            $record['last_name'] = '';
+            $record['email'] = '';
+            $record['Location_Country'] = '';
+            $record['Location_State'] = '';
+            $record['Location_City'] = '';
+            $record['Location_ZipCode'] = '';
+            $record['Location_Address'] = '';
+            $record['PhoneNumber'] = '';
+            $record['Relationship'] = '';
+            $record['priority'] = '';
+        }
+        //
+        return $record;
+    }
+
+    /**
+     *
+     */
+    private function findDifference($oldData, $newData)
+    {
+        //
+        $changed = 0;
+        //
+        $dt = [];
+        //
+        if (!empty($oldData)) {
+            foreach ($oldData as $key => $data) {
+                //
+                if (!isset($newData[$key])) {
+                    continue;
+                }
+                //
+                if ((isset($newData[$key])) && strip_tags($data) != strip_tags($newData[$key])) {
+                    //
+                    $dt[$key] = [
+                        'old' => $data,
+                        'new' => $newData[$key]
+                    ];
+                    //
+                    $changed = 1;
+                }
+            }
+        }
+        //
+
+        return ['changed' => $changed, 'data' => $dt];
+    }
+
+    /**
+     * Saves the history
+     *
+     * @param array $data
+     *
+     * @return int
+     */
+    public function saveDifference($data)
+    {
+        //
+        $this->db->insert('profile_history', $data);
+        //
+        return $this->db->insert_id();
+    }
+}
