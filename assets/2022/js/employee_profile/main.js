@@ -121,8 +121,8 @@ $(function () {
                     index.toLowerCase() == 'voided_cheque' ||
                     index.toLowerCase() == 'user_signature'
                 ) {
-                    newData = newData != '-' ? '<img src="' + (index.toLowerCase() == "user_signature" ? "" : "https://automotohrattachments.s3.amazonaws.com/") + '"' + (newData) + '" width="60" />' : newData;
-                    oldData = oldData != '-' ? '<img src="' + (index.toLowerCase() == "user_signature" ? "" : "https://automotohrattachments.s3.amazonaws.com/") + '"' + (oldData) + '" width="60" />' : oldData;
+                    newData = newData != '-' ? '<img src="' + (index.toLowerCase() == "user_signature" ? "" : "https://automotohrattachments.s3.amazonaws.com/") + '' + (newData) + '" width="60" />' : newData;
+                    oldData = oldData != '-' ? '<img src="' + (index.toLowerCase() == "user_signature" ? "" : "https://automotohrattachments.s3.amazonaws.com/") + '' + (oldData) + '" width="60" />' : oldData;
                 }
                 //
                 rows += '   <tr>';
