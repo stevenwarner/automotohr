@@ -35,8 +35,8 @@ class Employee extends CI_Controller
         $data['employee'] = $data['session']['employer_detail'];
         //
         $data['PageScripts'] = [
-            ['1.0.2', '2022/js/employee/change/main'],
-            ['1.0.5', '2022/js/employee_profile/main'],
+            ['1.0.3', '2022/js/employee/change/main'],
+            ['1.0.6', '2022/js/employee_profile/main'],
         ];
         // Get employees list
         $data['employeesList'] = $this->em->getCompanyEmployees($data['session']['company_detail']['sid']);
