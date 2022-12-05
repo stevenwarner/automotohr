@@ -1,6 +1,7 @@
+Model = Modal;
 $(function(){
     //
-    $('select').select2();
+    $('#employeeIds').select2();
     //
     $('.jsStartDatePicker')
     .datepicker({

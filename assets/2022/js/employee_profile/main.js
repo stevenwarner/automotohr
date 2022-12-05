@@ -4,6 +4,7 @@ $(function () {
         employeeName;
     //
     $('#jsProfileHistory').click(getEmployeeProfileHistory);
+    $('.jsProfileHistory').click(getEmployeeProfileHistory);
 
     /**
      * Get employee profile history

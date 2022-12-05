@@ -35,8 +35,22 @@ class Employee extends CI_Controller
         $data['employee'] = $data['session']['employer_detail'];
         //
         $data['PageScripts'] = [
-            ['1.0.1', '2022/js/employee/change/main']
+            ['1.0.2', '2022/js/employee/change/main'],
+            ['1.0.3', '2022/js/employee_profile/main'],
         ];
+        // Get employees list
+        $data['employeesList'] = $this->em->getCompanyEmployees($data['session']['company_detail']['sid']);
+        // set filter
+        $data['employeeIds'] = $employeeIds = $this->input->get('employeeIds', true) ?? [];
+        $data['startDate'] = $startDate = $this->input->get('startDate', true) ?? date('m/01/Y', strtotime('now'));
+        $data['endDate'] = $endDate = $this->input->get('endDate', true) ?? date('m/t/Y', strtotime('now'));
+        //
+        $data['records'] = $this->em->getEmployeeChanges(
+            $employeeIds,
+            formatDateToDB($startDate, SITE_DATE, DB_DATE),
+            formatDateToDB($endDate, SITE_DATE, DB_DATE)
+        );
+        
         //
         $this->load
         ->view('main/header_2022', $data)

@@ -7,6 +7,23 @@ class User_model extends CI_Model
     }
 
     /**
+     *
+     */
+    public function getCompanyEmployees(int $companyId)
+    {
+        return $this->db
+        ->select(getUserFields())
+        ->where([
+            'parent_sid' => $companyId,
+            'active' => 1,
+            'terminated_status' => 0
+        ])
+        ->order_by('first_name', 'ASC')
+        ->get('users')
+        ->result_array();
+    }
+
+    /**
      * Get employee profile history data
      *
      * @param int     $employeeId
@@ -558,5 +575,75 @@ class User_model extends CI_Model
         $this->db->insert('profile_history', $data);
         //
         return $this->db->insert_id();
+    }
+
+
+     /**
+     * Get employee history data
+     *
+     * @param int     $employeeId
+     * @return array
+     */
+    public function getEmployeeChanges(
+        $employeeIds,
+        $startDate,
+        $endDate
+    )
+    {
+        //
+        $this->db
+        ->select('
+            profile_history.profile_data,
+            profile_history.created_at,
+            profile_history.employer_sid,
+            profile_history.history_type,
+            profile_history.user_sid,
+            users.first_name,
+            users.last_name,
+            users.middle_name,
+            users.access_level,
+            users.access_level_plus,
+            users.is_executive_admin,
+            users.job_title,
+            users.timezone
+        ')
+        ->join('users', 'users.sid = profile_history.user_sid', 'left')
+        ->order_by('profile_history.sid', 'DESC');
+        // where
+        if ($employeeIds) {
+            $this->db->where_in('user_sid', $employeeIds);
+        }
+        if ($startDate && $endDate) {
+            $this->db->where('profile_history.created_at >= ', $startDate.' 00:00:00' );
+            $this->db->where('profile_history.created_at <= ', $endDate.' 23:59:59' );
+        }
+        $records = $this->db
+        ->get('profile_history')
+        ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $key => $record) {
+            //
+            if (!isset($tmp[$record['user_sid']])) {
+                $tmp[$record['user_sid']] = [];
+                $tmp[$record['user_sid']]['full_name'] = remakeEmployeeName($record);
+                $tmp[$record['user_sid']]['last_changed'] = $record['created_at'];
+                $tmp[$record['user_sid']]['sid'] = $record['user_sid'];
+                $tmp[$record['user_sid']]['what_changed'] = [];
+                //
+                if (trim($tmp[$record['user_sid']]['full_name']) == '[]') {
+                    $tmp[$record['user_sid']]['full_name'] = 'Self';
+                }
+            }
+            //
+            $tmp[$record['user_sid']]['what_changed'][$record['history_type']] = 1;
+        }
+        //
+        return $tmp;
     }
 }
