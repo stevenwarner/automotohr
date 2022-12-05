@@ -46,6 +46,7 @@ class Employee extends CI_Controller
         $data['endDate'] = $endDate = $this->input->get('endDate', true) ?? date('m/t/Y', strtotime('now'));
         //
         $data['records'] = $this->em->getEmployeeChanges(
+            $data['session']['company_detail']['sid'],
             $employeeIds,
             formatDateToDB($startDate, SITE_DATE, DB_DATE),
             formatDateToDB($endDate, SITE_DATE, DB_DATE)

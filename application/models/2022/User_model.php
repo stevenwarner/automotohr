@@ -585,6 +585,7 @@ class User_model extends CI_Model
      * @return array
      */
     public function getEmployeeChanges(
+        $companyId,
         $employeeIds,
         $startDate,
         $endDate
@@ -610,6 +611,7 @@ class User_model extends CI_Model
         ->join('users', 'users.sid = profile_history.user_sid', 'left')
         ->order_by('profile_history.sid', 'DESC');
         // where
+        $this->db->where('parent_sid', $companyId);
         if ($employeeIds) {
             $this->db->where_in('user_sid', $employeeIds);
         }
