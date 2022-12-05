@@ -85,11 +85,13 @@ class Employee_surveys extends Public_Controller
         //
         $data = [];
         $data['step'] = $step;
+        $data['template_id'] = $id;
         $data['load_view'] = 1;
         $data['template_id'] = $id;
         $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
         //
-        $page = $step == 'getting_started' ? "create" : "surveytemplateselect";
+        $page = $id == 0 ? "create" : "update";
         //
         $this->load
             ->view($this->pages['header'], $data)
