@@ -699,9 +699,6 @@
                                                     Employee Information Change
                                                 </a>
                                             </h2>
-                                            <div class="count-box" style="font-size: 12px">
-                                                <span class="green">0 Today</span>
-                                            </div>
                                             <div class="button-panel">
                                                 <a  href="<?php echo base_url('employee/information/report'); ?>"
                                                     class="site-btn">Show Changes</a>
