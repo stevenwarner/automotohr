@@ -26,21 +26,57 @@ $(function () {
 
     function getData() {
         //
+        let rows = '';
+        //
+        rows += '<div>';
+        rows += '  <!-- Nav tabs -->';
+        rows += '  <ul class="nav nav-tabs" role="tablist">';
+        rows += '    <li role="presentation" class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>';
+        rows += '    <li role="presentation"><a href="#directDeposit" aria-controls="directDeposit" role="tab" data-toggle="tab">Direct Deposit</a></li>';
+        rows += '    <li role="presentation"><a href="#driversLicense" aria-controls="driversLicense" role="tab" data-toggle="tab">Drivers License</a></li>';
+        rows += '    <li role="presentation"><a href="#occupationalLicense" aria-controls="occupationalLicense" role="tab" data-toggle="tab">Occupational License</a></li>';
+        rows += '    <li role="presentation"><a href="#dependent" aria-controls="dependent" role="tab" data-toggle="tab">Dependents</a></li>';
+        rows += '    <li role="presentation"><a href="#emergencyContact" aria-controls="emergencyContact" role="tab" data-toggle="tab">Emergency Contacts</a></li>';
+        rows += '  </ul>';
+        rows += '  <!-- Tab panes -->';
+        rows += '  <div class="tab-content">';
+        rows += '    <div role="tabpanel" class="tab-pane active" id="profile"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="directDeposit"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="driversLicense"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="occupationalLicense"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="dependent"></div>';
+        rows += '    <div role="tabpanel" class="tab-pane" id="emergencyContact"></div>';
+        rows += '  </div>';
+        rows += '</div>';
+        //
+        $('#jsEmployeeProfileHistoryBody').html(rows);
+        //
         $.get(baseURI + 'get_employee_profile_history/' + employeeId)
             .success(loadData)
             .fail(handleError);
-    } 
+    }
 
 
     function loadData(response) {
         //
-        let rows = '';
+        let obj = {
+            profile: '',
+            directDeposit: '',
+            driversLicense: '',
+            occupationalLicense: '',
+            dependent: '',
+            emergencyContact: ''
+        };
+        //
         //
         response.history.map(function (record) {
+            //
+            let rows = '';
             //
             let data = JSON.parse(record.profile_data);
             //
             // Create head
+            rows += '<br />';
             rows += '<table class="table table-bordered">';
             rows += '   <thead>';
             rows += '       <tr class="bg-primary">';
@@ -61,32 +97,56 @@ $(function () {
                 let oldData = data[index]['old'] || '-';
                 //
                 if (index.toLowerCase() == 'location_state') {
-                    newData = response.states[newData];
-                    oldData = response.states[oldData];
+                    newData = response.states[newData] || '-';
+                    oldData = response.states[oldData] || '-';
                 }
                 //
-                if (index.toLowerCase() == 'dob' || index.toLowerCase() == 'rehire_date' || index.toLowerCase() == 'joined_at') {
+                if (
+                    index.toLowerCase() == 'dob' ||
+                    index.toLowerCase() == 'rehire_date' ||
+                    index.toLowerCase() == 'joined_at' ||
+                    index.toLowerCase() == 'birth_date' ||
+                    index.toLowerCase() == 'license_issue_date' ||
+                    index.toLowerCase() == 'license_expiration_date' ||
+                    index.toLowerCase() == 'consent_date'
+                ) {
                     newData = newData != '-' ? moment(newData, 'Y-MM-DD').format('DD MMMM Y, dddd') : newData;
                     oldData = oldData != '-' ? moment(oldData, 'Y-MM-DD').format('DD MMMM Y, dddd') : oldData;
                 }
                 //
-                if (index.toLowerCase() == 'profile_picture') {
-                    newData = newData != '-' ? '<img src="https://automotohrattachments.s3.amazonaws.com/' + (newData) + '" width="60" />' : newData;
-                    oldData = oldData != '-' ? '<img src="https://automotohrattachments.s3.amazonaws.com/' + (oldData) + '" width="60" />' : oldData;
+                if (
+                    index.toLowerCase() == 'profile_picture' ||
+                    index.toLowerCase() == 'license_file' ||
+                    index.toLowerCase() == 'voided_cheque' ||
+                    index.toLowerCase() == 'user_signature'
+                ) {
+                    newData = newData != '-' ? '<img src=' + (index.toLowerCase() == "user_signature" ? "" : "https://automotohrattachments.s3.amazonaws.com/") + '"' + (newData) + '" width="60" />' : newData;
+                    oldData = oldData != '-' ? '<img src=' + (index.toLowerCase() == "user_signature" ? "" : "https://automotohrattachments.s3.amazonaws.com/") + '"' + (oldData) + '" width="60" />' : oldData;
                 }
                 //
                 rows += '   <tr>';
                 rows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + '</strong></td>';
-                rows += '       <td class="bg-danger">' + (oldData) + '</td>';
-                rows += '       <td class="bg-success">' + (newData) + '</td>';
+                //
+                if (index == 'action') {
+                    rows += '       <td class="bg-danger text-center" colspan="2">Deleted</td>';
+                } else {
+                    rows += '       <td class="bg-danger">' + (oldData) + '</td>';
+                    rows += '       <td class="bg-success">' + (newData) + '</td>';
+                }
                 rows += '   </tr>';
             }
             rows += '   </tbody>';
             rows += '</table>';
             rows += '<hr />';
+
+            //
+            obj[record.history_type] += rows;
         });
         //
-        $('#jsEmployeeProfileHistoryBody').html(rows);
+        for (let index in obj) {
+            //
+            $('#' + index).html(obj[index]);
+        }
         //
         ml(false, 'jsEmployeeProfileHistoryLoader');
     }

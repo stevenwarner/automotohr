@@ -33,6 +33,7 @@ class User_model extends CI_Model
             profile_history.profile_data,
             profile_history.created_at,
             profile_history.employer_sid,
+            profile_history.history_type,
             users.first_name,
             users.last_name,
             users.middle_name,
