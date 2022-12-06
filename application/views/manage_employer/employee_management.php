@@ -202,7 +202,11 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                         <div id="show_no_jobs">
                             <?php if (empty($employee_array)) { ?>
                                 <span class="applicant-not-found">Employee not found!</span>
-                            <?php } else { ?>
+                            <?php } else {
+                                $employeeIds = array_column($employee_array, 'sid');
+                                $doNotHireRecords = checkDontHireText($employeeIds);
+
+                            ?>
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -213,7 +217,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                 </label>
                                             </th>
                                             <th width="30%">Employees</th>
-                                            <th width="25%">Designation</th>
+                                            <th width="25%">Designation f</th>
                                             <th>Password</th>
                                             <th class="text-center">Joining Date</th>
                                             <th class="text-center">Rehire Date</th>
@@ -226,9 +230,13 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                     <tbody>
                                         <form method="POST" name="ej_form" id="ej_form">
                                             <?php $sizeof = sizeof($employee_array); ?>
-                                            <?php foreach ($employee_array as $employee) { ?>
+                                            <?php foreach ($employee_array as $employee) {
+
+                                                $doNotHireWarning = doNotHireWarning($employee['sid'], $doNotHireRecords, 14);
+
+                                            ?>
                                                 <tr id="manual_row<?php echo $employee['sid']; ?>">
-                                                    <td class="text-center">
+                                                    <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                         <?php if ($employee['is_executive_admin'] == 0) { ?>
                                                             <label class="control control--checkbox">
                                                                 <input name="ej_check[]" type="checkbox" value="<?php echo $employee['sid']; ?>" class="<?= $employee['is_executive_admin'] == 0 ? 'ej_checkbox' : ''; ?>" <?= $employer_id != $employee['sid'] ? '' : 'disabled="true"'; ?>>
@@ -236,7 +244,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                             </label>
                                                         <?php } ?>
                                                     </td>
-                                                    <td width="30%">
+                                                    <td width="30%" class="<?php echo $doNotHireWarning['row']; ?>">
                                                         <div class="employee-profile-info">
                                                             <figure>
                                                                 <?php if (check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
@@ -288,10 +296,12 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     echo ']';
                                                                 }
                                                                 ?>
+
+                                                                <?php echo $doNotHireWarning['message']; ?>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td width="25%">
+                                                    <td width="25%" class="<?php echo $doNotHireWarning['row']; ?>">
                                                         <?php
                                                         if (empty($employee["job_title"])) {
                                                             echo 'No job designation found!';
@@ -300,7 +310,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                         }
                                                         ?>
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                         <?php if (check_access_permissions_for_view($security_details, 'send_login_email')) { ?>
                                                             <?php if (($employee['password'] == '' || is_null($employee['password'])) && ($employee['is_executive_admin'] != 1)) { ?>
                                                                 <img src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
@@ -310,7 +320,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                             <?php   } ?>
                                                         <?php   } ?>
                                                     </td>
-                                                    <td class="text-center">
+                                                    <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                         <?php
                                                         $joiningDate = get_employee_latest_joined_date($employee["registration_date"], $employee["joined_at"], "", true);
                                                         //
@@ -321,7 +331,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                         }
                                                         ?>
                                                     </td>
-                                                    <td>
+                                                    <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                         <?php
                                                         $rehireDate = get_employee_latest_joined_date("", "", $employee["rehire_date"], true);
                                                         //
@@ -333,7 +343,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                         ?>
                                                     </td>
                                                     <?php if ($all === true || $terminated === true) { ?>
-                                                        <td class="text-center">
+                                                        <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                             <?php
                                                             //
                                                             if ($employee['last_status']) {
@@ -394,7 +404,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                             check_access_permissions_for_view($security_details, 'employee_send_documents') ||
                                                             $canAccessDocument
                                                         ) { ?>
-                                                            <td class="text-center">
+                                                            <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                                 <?php //if($employee['terminated_status'] == 0) { 
                                                                 ?>
                                                                 <?php if ($ems_status == 1) { ?>
@@ -435,7 +445,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                 ?>
                                                             </td>
                                                         <?php } ?>
-                                                        <td class="text-center">
+                                                        <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                             <?php if ($canEMSPermission) { ?>
                                                                 <?php if ($employee['is_executive_admin'] == 0) { ?>
                                                                     <?php if ($employee['active'] == 1 && $employee['terminated_status'] == 0 && $employee['archived'] == 0) { ?>
@@ -448,7 +458,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                 <?php } ?>
                                                             <?php } ?>
                                                         </td>
-                                                        <td class="text-center">
+                                                        <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                             <?php if ($canEMSPermission) { ?>
                                                                 <?php if ($employee['is_executive_admin'] == 0) { ?>
                                                                     <?php if ($employee['terminated_status'] == 0) { ?>
