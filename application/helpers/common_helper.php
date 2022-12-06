@@ -11227,12 +11227,12 @@ if (!function_exists('remakeEmployeeName')) {
     {
         //
         $first_name = isset($o['first_name']) ? $o['first_name'] : (isset($o['to_first_name']) ? $o['to_first_name'] : '');
-        $middleName = isset($o['middle_name']) ? ' '.$o['middle_name'] : (isset($o['to_middle_name']) ? ' '.$o['to_middle_name'] : '');
+        $middleName = isset($o['middle_name']) ? ' ' . $o['middle_name'] : (isset($o['to_middle_name']) ? ' ' . $o['to_middle_name'] : '');
         $last_name = isset($o['last_name']) ? $o['last_name'] : (isset($o['to_last_name']) ? $o['to_last_name'] : '');
         //
-        $r = $i ? $first_name . $middleName.' ' . $last_name : '';
+        $r = $i ? $first_name . $middleName . ' ' . $last_name : '';
         //
-        if($onlyName){
+        if ($onlyName) {
             return $r;
         }
         //
@@ -15732,5 +15732,79 @@ if (!function_exists('checkDateFormate')) {
         }
         //
         return $dateIn;
+    }
+}
+
+
+/**
+ * 
+ */
+if (!function_exists('checkDontHireText')) {
+    function checkDontHireText($empIds)
+    {
+        $CI = &get_instance();
+        //
+        $records =
+            $CI->db
+            ->select('
+            terminated_employees.employee_sid,
+            terminated_employees.termination_date,
+            terminated_employees.employee_status,
+            terminated_employees.do_not_hire,
+            ' . (getUserFields()) . '
+        ')
+            ->join('users', 'users.sid = terminated_employees.changed_by')
+            ->where_in('terminated_employees.employee_sid', $empIds)
+            ->order_by('terminated_employees.sid', 'DESC')
+            ->get('terminated_employees')
+            ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            // Check if last record was found
+            if (!isset($tmp[$record['employee_sid']])) {
+                //
+                $tmp[$record['employee_sid']] = [];
+                //
+                if ($record['employee_status'] == 1 && $record['do_not_hire'] == 1) {
+                    //
+                    $tmp[$record['employee_sid']] = [
+                        'full_name' => remakeEmployeeName($record),
+                        'action_date' => formatDateToDB($record['termination_date'], DB_DATE, DATE)
+                    ];
+                }
+            }
+        }
+        //
+        return $tmp;
+    }
+}
+
+if (!function_exists('doNotHireWarning')) {
+    function doNotHireWarning($employeeId, $list,$fontSize=20)
+    {
+        //
+        $returnArray = [
+            'message' => '',
+            'row' => ''
+        ];
+        //
+        if (empty($list)) {
+            return $returnArray;
+        }
+        // Check if employee exists
+        if (!isset($list[$employeeId]) || empty($list[$employeeId])) {
+             return $returnArray;
+        }
+        //
+        $returnArray['message'] = '<p class="text-danger" style="font-size: '.$fontSize.'px;"><strong>DO NOT HIRE this person<strong> <i class="fa fa-info-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="' . ($list[$employeeId]['full_name']) . ' marked it on '.($list[$employeeId]['action_date']).'"></i></p>';
+        $returnArray['row'] = 'bg-danger';
+        //
+        return $returnArray;
     }
 }
