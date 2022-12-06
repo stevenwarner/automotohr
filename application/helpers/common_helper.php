@@ -14580,7 +14580,8 @@ if (!function_exists('_m')) {
      */
     function _m($string, $type = 'js', $version = '1.0.0')
     {
-        return $string . (MINIFIED) . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
+        //
+        return $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
     }
 }
 
