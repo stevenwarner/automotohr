@@ -648,4 +648,40 @@ class User_model extends CI_Model
         //
         return $tmp;
     }
+
+    /**
+     * Gets the profile change count
+     *
+     * @param int    $companyId
+     * @param string $type
+     * @return int
+     */
+    public function getEmployeeInformationChange(
+        int $companyId,
+        string $type
+    )
+    {
+        // Set dates
+        if ($type == 'daily') {
+            $startDate = date('Y-m-d', strtotime('now'));
+            $endDate = date('Y-m-d', strtotime('now'));
+        } elseif ($type == 'week') {
+            $startDate = date('Y-m-d', strtotime('monday this week'));
+            $endDate = date('Y-m-d', strtotime('sunday this week'));
+        } elseif ($type == 'month') {
+            $startDate = date('Y-m-01', strtotime('now'));
+            $endDate = date('Y-m-t', strtotime('now'));
+        }
+        // Query
+        return
+        $this->db
+        ->select('profile_history.sid')
+        ->join('users', 'users.sid = profile_history.user_sid')
+        ->where('users.parent_sid', $companyId)
+        ->where('profile_history.created_at >= ', $startDate.' 00:00:00')
+        ->where('profile_history.created_at <= ', $endDate.' 23:59:59')
+        ->group_by('profile_history.user_sid')
+        ->get('profile_history')
+        ->num_rows();
+    }
 }

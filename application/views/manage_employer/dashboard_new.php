@@ -692,16 +692,20 @@
                                     <div class="dash-box">
                                         <div class="dashboard-widget-box">
                                             <figure>
-                                                <i class="fa fa-users" aria-hidden="true"></i>
+                                                <i class="fa fa-users <?=$employeeInformationChange['daily'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
                                             </figure>
                                             <h2 class="post-title" style="margin: 2px 0;">
                                                 <a href="<?php echo base_url('employee/information/report'); ?>">
                                                     Employee Information Change
                                                 </a>
                                             </h2>
+                                            <div class="count-box" style="font-size: 12px">
+                                                <span class="green">Today <?= $employeeInformationChange['daily']; ?> changed information</span><br>
+                                                <small style="font-size: 12px">This week <?= $employeeInformationChange['week']; ?> changed information</small><br>
+                                                <small style="font-size: 12px">This month <?= $employeeInformationChange['month']; ?> changed information</small><br>
+                                            </div>
                                             <div class="button-panel">
-                                                <a  href="<?php echo base_url('employee/information/report'); ?>"
-                                                    class="site-btn">Show Changes</a>
+                                                <a href="<?php echo base_url('employee/information/report'); ?>" class="site-btn">Show Changes</a>
                                             </div>
                                         </div>
                                     </div>

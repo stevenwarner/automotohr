@@ -1,7 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Dashboard extends Public_Controller {
-    public function __construct() {
+class Dashboard extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('dashboard_model');
         $this->load->model('timeoff_model');
@@ -14,7 +16,8 @@ class Dashboard extends Public_Controller {
         $this->load->library('pagination');
     }
 
-    public function welcome() {
+    public function welcome()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $employer_id = $data["session"]["employer_detail"]["sid"];
@@ -30,8 +33,9 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    public function index() {
-         if ($this->session->userdata('logged_in')) {
+    public function index()
+    {
+        if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];
             $company_detail                                                     = $data['session']['company_detail'];
@@ -48,7 +52,7 @@ class Dashboard extends Public_Controller {
             $jobs_approval_module_status                                        = $company_detail['has_job_approval_rights']; //get_job_approval_module_status($company_id);
             $applicant_approval_module_status                                   = $company_detail['has_applicant_approval_rights']; //get_applicant_approval_module_status($company_id);
 
-            if(check_blue_panel_status() && strtolower($loggedin_access_level) == 'employee') { //New Panel configuration
+            if (check_blue_panel_status() && strtolower($loggedin_access_level) == 'employee') { //New Panel configuration
 
                 // $configuration  = $this->onboarding_model->get_onboarding_configuration('employee', $employer_id);
                 // $locations_data = $this->get_single_record_from_array($configuration, 'section', 'locations');
@@ -96,7 +100,7 @@ class Dashboard extends Public_Controller {
                 //
                 $people_data                                                    = $this->get_single_record_from_array($configuration, 'section', 'people');
                 $items_data                                                     = $this->onboarding_model->get_assigned_custom_office_record_sids($company_id, $employer_id, 'employee', 'item', 2); // fetch items from new table
-                $ems_notification                                               = $this->onboarding_model->get_ems_notifications($company_id,$employer_id);
+                $ems_notification                                               = $this->onboarding_model->get_ems_notifications($company_id, $employer_id);
                 $sections                                                       = empty($sections_data) ? array() : $sections_data['items_details'];
                 $locations                                                      = empty($locations_data) ? array() : $locations_data['items_details'];
                 $timings                                                        = empty($timings_data) ? array() : $timings_data['items_details'];
@@ -124,7 +128,8 @@ class Dashboard extends Public_Controller {
                 // if not then redirect to dashboard
                 // only for access level employee
                 // Check for employee Job Approval Management
-                if( $jobs_approval_module_status == 1 &&
+                if (
+                    $jobs_approval_module_status == 1 &&
                     $this->dashboard_model->check_employee_has_approval_rights($company_id, $employer_id) == 1
                 ) { // Jobs Count By Approval Status
                     $data['all_unapproved_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'pending');
@@ -139,7 +144,7 @@ class Dashboard extends Public_Controller {
                 ///////////-----------------------------------------------------------------------------------------\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
             } else { /* It is for Main Dashboard --- Start ---*/
-                if(!isset($company_detail['has_task_management_rights'])) {
+                if (!isset($company_detail['has_task_management_rights'])) {
                     $task_management_module_status                              = $this->job_approval_rights_model->GetModuleStatus($company_id, 'tasks_management');
                 } else {
                     $task_management_module_status                              = $company_detail['has_task_management_rights'];
@@ -191,13 +196,13 @@ class Dashboard extends Public_Controller {
                     $all_company_applications_today                             = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id, $today_start, $today_end);
                     // $this->filter_out_array_based_on_date($all_company_applications, 'date_applied', $today_start, $today_end);
                 } else {
-                    if($loggedin_access_level != 'Admin'){
+                    if ($loggedin_access_level != 'Admin') {
                         $all_company_jobs                                           = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id); //Jobs
                         $all_company_jobs_active                                    = $this->dashboard_model->get_all_company_jobs_count($company_id, $employer_id, 1);
                         $all_company_applications                                   = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id); //Applications
                         $all_act_inact_applications                                 = $this->dashboard_model->get_all_active_inactive_applicants_count($company_id, $employer_id); //Applications
                         $all_company_applications_today                             = $this->dashboard_model->get_all_company_applicants_count($company_id, $employer_id, $today_start, $today_end);
-                    } else{
+                    } else {
                         $all_company_jobs                                           = $this->dashboard_model->get_all_company_jobs_count($company_id); //Jobs
                         $all_company_jobs_active                                    = $this->dashboard_model->get_all_company_jobs_count($company_id, 0, 1);
                         $all_company_applications                                   = $this->dashboard_model->get_all_company_applicants_count($company_id); //Applications
@@ -216,11 +221,11 @@ class Dashboard extends Public_Controller {
                 $data['all_approved_jobs_count']                            = 0;
                 $data['all_rejected_jobs_count']                            = 0;
 
-                if($jobs_approval_module_status == 1) { // Jobs Count By Approval Status
-                    if(!in_array(
+                if ($jobs_approval_module_status == 1) { // Jobs Count By Approval Status
+                    if (!in_array(
                         strtolower($data['session']['employer_detail']['access_level']),
-                        array('employee', 'hiring manager', 'manager'))
-                    ){
+                        array('employee', 'hiring manager', 'manager')
+                    )) {
                         $data['all_unapproved_jobs_count'] = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'pending');
                         $data['all_approved_jobs_count']   = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'approved');
                         $data['all_rejected_jobs_count']   = $this->dashboard_model->GetAllJobsCompanySpecificCount($company_id, '', 'rejected');
@@ -229,11 +234,10 @@ class Dashboard extends Public_Controller {
                         $data['all_approved_jobs_count']   = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'approved');
                         $data['all_rejected_jobs_count']   = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'rejected');
                     }
-
                 }
 
                 if ($applicant_approval_module_status == 1) {
-                    if($loggedin_access_level == 'Admin') {
+                    if ($loggedin_access_level == 'Admin') {
                         $employer_visibility_check                              = 0;
                     } else {
                         $employer_visibility_check                              = $employer_id;
@@ -271,7 +275,7 @@ class Dashboard extends Public_Controller {
             $data['company_sid'] = $company_id;
             $data['employer_sid'] = $data['employee']['sid'];
             $data['employee_sid'] = $data['employee']['sid'];
-            $data['employee_name'] = $data['employee']['first_name'].' '.$data['employee']['last_name'];
+            $data['employee_name'] = $data['employee']['first_name'] . ' ' . $data['employee']['last_name'];
             $data['level'] = $this->timeoff_model->getEmployerApprovalStatus($data['employer_sid']);
 
             $announcements = $this->dashboard_model->get_all_events_count($company_id, $employer_id);
@@ -281,7 +285,7 @@ class Dashboard extends Public_Controller {
             $training_session_count = $this->dashboard_model->get_training_session_count('employee', $employer_id, $company_id);
             $online_video_count = $this->dashboard_model->get_my_all_online_videos_count('employee', $employer_id, $company_id);
             // $documents_count = $this->dashboard_model->get_documents_count('employee', $employer_id);
-            $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id , 'employee', $employer_id, 0);
+            $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id, 'employee', $employer_id, 0);
             $assigned_offer_letter = $this->dashboard_model->get_assigned_offer_letter($company_id, 'employee', $employer_id);
             $is_w4_assign = $this->dashboard_model->check_w4_form_exist('employee', $employer_id);
             $is_w9_assign = $this->dashboard_model->check_w9_form_exist('employee', $employer_id);
@@ -312,13 +316,13 @@ class Dashboard extends Public_Controller {
                 if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
                     $documents_count++;
                 }
-            }    
+            }
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
                 $is_document_completed = 0;
 
-                if (!empty($assigned_document['document_description']) && ( $assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document' )) {
+                if (!empty($assigned_document['document_description']) && ($assigned_document['document_type'] == 'generated' || $assigned_document['document_type'] == 'hybrid_document')) {
                     $document_body = $assigned_document['document_description'];
                     // $magic_codes = array('{{signature}}', '{{signature_print_name}}', '{{inital}}', '{{sign_date}}', '{{short_text}}', '{{text}}', '{{text_area}}', '{{checkbox}}', 'select');
                     $magic_codes = array('{{signature}}', '{{inital}}');
@@ -418,25 +422,25 @@ class Dashboard extends Public_Controller {
                                             $signed_document_sids[] = $assigned_document['document_sid'];
                                             $signed_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
-                                        } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                        } else if ($assigned_document['pay_roll_catgory'] == 1) {
                                             $signed_document_sids[] = $assigned_document['document_sid'];
-                                            $completed_payroll_documents[] = $assigned_document; 
+                                            $completed_payroll_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
                                         }
                                     } else {
                                         if ($assigned_document['pay_roll_catgory'] == 1) {
-                                            $uncompleted_payroll_documents[] = $assigned_document; 
+                                            $uncompleted_payroll_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
                                         }
                                     }
                                     //
-                                    $assigned_sids[] = $assigned_document['document_sid'];  
+                                    $assigned_sids[] = $assigned_document['document_sid'];
                                 } else {
                                     $assigned_sids[] = $assigned_document['document_sid'];
                                     $no_action_required_sids[] = $assigned_document['document_sid'];
                                     $no_action_required_documents[] = $assigned_document;
                                     unset($assigned_documents[$key]);
-                                }  
+                                }
                             }
                         } else {
                             $revoked_sids[] = $assigned_document['document_sid'];
@@ -444,10 +448,10 @@ class Dashboard extends Public_Controller {
                     }
                 } else {
                     unset($assigned_documents[$key]);
-                }     
+                }
             }
 
-            $documents_count = $documents_count + sizeof($assigned_documents) + + $this->hr_documents_management_model->getGeneralDocumentCount(
+            $documents_count = $documents_count + sizeof($assigned_documents) + +$this->hr_documents_management_model->getGeneralDocumentCount(
                 $data['session']['employer_detail']['sid'],
                 'employee',
                 $data['session']['company_detail']['sid']
@@ -468,10 +472,10 @@ class Dashboard extends Public_Controller {
 
             //
             $this->load->model('varification_document_model');
-           // For verification documents
-           $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($data['session']['company_detail']['sid']);
-           $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($data['session']['company_detail']['sid']);
-           
+            // For verification documents
+            $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($data['session']['company_detail']['sid']);
+            $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($data['session']['company_detail']['sid']);
+
             $today_start                = date('Y-m-d 00:00:00');
             $today_end                  = date('Y-m-d 23:59:59');
             $eventCount                 = $this->dashboard_model->company_employee_events_count($company_id, $employer_id); //Events
@@ -488,14 +492,14 @@ class Dashboard extends Public_Controller {
             $data['AuthorizedDocuments']['Today'] = $total_assigned_today_doc;
             $data['AuthorizedDocuments']['Pending'] = $total_pending_auth_doc;
             $data['AuthorizedDocuments']['Total'] = $total_assigned_auth_doc;
-             //    
+            //    
             $data['total_assigned_today_doc']   = $total_assigned_today_doc;
             $data['total_pending_auth_doc']     = $total_pending_auth_doc;
             $data['total_assigned_auth_doc']    = $total_assigned_auth_doc;
             //
             // For verification documents
             //
-            if($employer_detail['access_level_plus'] || $employer_detail['pay_plan_flag']){
+            if ($employer_detail['access_level_plus'] || $employer_detail['pay_plan_flag']) {
                 // Pending Employer Sections
                 $data['PendingEmployerSection'] = [];
                 $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($data['session']['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
@@ -513,9 +517,9 @@ class Dashboard extends Public_Controller {
                 $data['PendingEmployerSection']['Applicant'] = 0;
             }
             // 
-            $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id,$companyEmployeesForVerification, $companyApplicantsForVerification);
-            $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id,$companyEmployeesForVerification, $companyApplicantsForVerification);
-            $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id,$companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_today_doc   = $this->dashboard_model->get_all_auth_documents_assigned_today_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_pending_auth_doc     = $this->dashboard_model->get_all_pending_auth_documents_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
+            $total_assigned_auth_doc    = $this->dashboard_model->get_all_auth_documents_assigned_count($company_id, $employer_id, $companyEmployeesForVerification, $companyApplicantsForVerification);
 
             $data['messages']                   = $messages;
             $data['eventCount']                 = $eventCount;
@@ -524,7 +528,7 @@ class Dashboard extends Public_Controller {
             $data['documents_count']            = $documents_count;
             $data['eventCountToday']            = $eventCountToday; //count($all_company_events_today);
             $data['unreadMessageCount']         = $unreadMessageCount;
-            $data['training_session_count']     = $training_session_count + $online_video_count ;
+            $data['training_session_count']     = $training_session_count + $online_video_count;
             //
             $this->load->model('timeoff_model');
             //
@@ -538,7 +542,7 @@ class Dashboard extends Public_Controller {
             //
             $data['employee_handbook_enable'] = $this->dashboard_model->get_employee_handbook_status($company_id);
             //
-            if($data['employee_handbook_enable']){
+            if ($data['employee_handbook_enable']) {
                 //
                 $category_sid = $this->dashboard_model->check_company_employee_handbook_category($company_id);
                 //
@@ -554,13 +558,21 @@ class Dashboard extends Public_Controller {
             //
             $data['PendingEmployerSection']['Total'] = $data['PendingEmployerSection']['Employee'] + $data['PendingEmployerSection']['Applicant'];
 
-            $data['total_library_doc']= count($this->hr_documents_management_model->getVerificationDocumentsForLibrary(
+            $data['total_library_doc'] = count($this->hr_documents_management_model->getVerificationDocumentsForLibrary(
                 $company_id,
                 $employer_id,
                 'employee'
             )) + $this->dashboard_model->get_all_library_doc_count($company_id);
-          
-           //
+            // Get the employee information change report
+            // Loads up the model
+            $this->load->model('2022/User_model', 'em');
+            // Set the data array
+            $data['employeeInformationChange'] = [
+                'daily' => $this->em->getEmployeeInformationChange($company_id, 'daily'),
+                'week' => $this->em->getEmployeeInformationChange($company_id, 'week'),
+                'month' => $this->em->getEmployeeInformationChange($company_id, 'month')
+            ];
+            //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
             $this->load->view('main/footer');
@@ -569,7 +581,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    public function employee_management_system() {
+    public function employee_management_system()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];
@@ -577,7 +590,7 @@ class Dashboard extends Public_Controller {
             $security_sid                                                       = $employer_detail['sid'];
             $ems_status                                                         = $company_detail['ems_status'];
 
-            if(!$ems_status){
+            if (!$ems_status) {
                 $this->session->set_flashdata('message', '<strong>Warning</strong> Not Allowed!');
                 redirect('dashboard', 'refresh');
             }
@@ -612,7 +625,7 @@ class Dashboard extends Public_Controller {
             //  $items_data                                                     = $this->get_single_record_from_array($configuration, 'section', 'items');
             $items_data                                                     = $this->onboarding_model->get_assigned_custom_office_record_sids($company_id, $employer_id, 'employee', 'item', 2); // fetch items from new table
             // $links_data                                                     = $this->get_single_record_from_array($configuration, 'section', 'links');
-            $ems_notification                                               = $this->onboarding_model->get_ems_notifications($company_id,$employer_id);
+            $ems_notification                                               = $this->onboarding_model->get_ems_notifications($company_id, $employer_id);
             $sections                                                       = empty($sections_data) ? array() : $sections_data['items_details'];
             $locations                                                      = empty($locations_data) ? array() : $locations_data['items_details'];
             $timings                                                        = empty($timings_data) ? array() : $timings_data['items_details'];
@@ -636,19 +649,19 @@ class Dashboard extends Public_Controller {
             $sess_array['cart']                                             = $data['session']['cart'];
             $sess_array['portal_detail']                                    = $data['session']['portal_detail'];
 
-            if(isset($data['session']['clocked_status'])) {
+            if (isset($data['session']['clocked_status'])) {
                 $sess_array['clocked_status']                               = $data['session']['clocked_status'];
             }
 
-            if(isset($data['session']['incident_config'])) {
+            if (isset($data['session']['incident_config'])) {
                 $sess_array['incident_config']                              = $data['session']['incident_config'];
             }
 
-            if(isset($data['session']['resource_center'])) {
+            if (isset($data['session']['resource_center'])) {
                 $sess_array['resource_center']                              = $data['session']['resource_center'];
             }
 
-            if(isset($data['session']['is_super'])) {
+            if (isset($data['session']['is_super'])) {
                 $sess_array['is_super']                                     = $data['session']['is_super'];
             }
 
@@ -668,7 +681,8 @@ class Dashboard extends Public_Controller {
             $jobs_approval_module_status = $company_detail['has_job_approval_rights']; //get_job_approval_module_status($company_id);
 
             $data['has_approval_access'] = false;
-            if( $jobs_approval_module_status == 1 &&
+            if (
+                $jobs_approval_module_status == 1 &&
                 $this->dashboard_model->check_employee_has_approval_rights($company_id, $employer_id) == 1
             ) { // Jobs Count By Approval Status
                 $data['all_unapproved_jobs_count'] = $this->dashboard_model->getJobsForEmployee($company_id, $employer_id, 'pending');
@@ -684,7 +698,7 @@ class Dashboard extends Public_Controller {
             $training_session_count = $this->dashboard_model->get_training_session_count('employee', $employer_id, $company_id);
             $online_video_count = $this->dashboard_model->get_my_all_online_videos_count('employee', $employer_id, $company_id);
             // $documents_count = $this->dashboard_model->get_documents_count('employee', $employer_id);
-            $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id , 'employee', $employer_id, 0);
+            $assigned_documents = $this->dashboard_model->get_assigned_documents($company_id, 'employee', $employer_id, 0);
             $assigned_offer_letter = $this->dashboard_model->get_assigned_offer_letter($company_id, 'employee', $employer_id);
             $is_w4_assign = $this->dashboard_model->check_w4_form_exist('employee', $employer_id);
             $is_w9_assign = $this->dashboard_model->check_w9_form_exist('employee', $employer_id);
@@ -716,7 +730,7 @@ class Dashboard extends Public_Controller {
                 if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
                     $documents_count++;
                 }
-            } 
+            }
 
             foreach ($assigned_documents as $key => $assigned_document) {
                 $is_magic_tag_exist = 0;
@@ -822,19 +836,19 @@ class Dashboard extends Public_Controller {
                                             $signed_document_sids[] = $assigned_document['document_sid'];
                                             $signed_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
-                                        } else if ($assigned_document['pay_roll_catgory'] == 1) { 
+                                        } else if ($assigned_document['pay_roll_catgory'] == 1) {
                                             $signed_document_sids[] = $assigned_document['document_sid'];
-                                            $completed_payroll_documents[] = $assigned_document; 
+                                            $completed_payroll_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
                                         }
                                     } else {
                                         if ($assigned_document['pay_roll_catgory'] == 1) {
-                                            $uncompleted_payroll_documents[] = $assigned_document; 
+                                            $uncompleted_payroll_documents[] = $assigned_document;
                                             unset($assigned_documents[$key]);
                                         }
                                     }
                                     //
-                                    $assigned_sids[] = $assigned_document['document_sid'];  
+                                    $assigned_sids[] = $assigned_document['document_sid'];
                                 } else {
                                     $assigned_sids[] = $assigned_document['document_sid'];
                                     $no_action_required_sids[] = $assigned_document['document_sid'];
@@ -848,7 +862,7 @@ class Dashboard extends Public_Controller {
                     }
                 } else {
                     unset($assigned_documents[$key]);
-                }    
+                }
             }
 
             // $this->load->model('hr_documents_management_model');
@@ -881,7 +895,7 @@ class Dashboard extends Public_Controller {
             // $data['incidents_count'] = $incidents_new;
             $data['incidents_count'] = $incident_count;
             $data['messages'] = $messages;
-            $data['training_session_count'] = $training_session_count+$online_video_count;
+            $data['training_session_count'] = $training_session_count + $online_video_count;
             // $data['online_video_count'] = $online_video_count;
             $data['documents_count'] = $documents_count;
 
@@ -892,7 +906,7 @@ class Dashboard extends Public_Controller {
             $data['company_sid'] = $company_id;
             $data['employer_sid'] = $data['employee']['sid'];
             $data['employee_sid'] = $data['employee']['sid'];
-            $data['employee_name'] = $data['employee']['first_name'].' '.$data['employee']['last_name'];
+            $data['employee_name'] = $data['employee']['first_name'] . ' ' . $data['employee']['last_name'];
             $data['level'] = $this->timeoff_model->getEmployerApprovalStatus($data['employer_sid']);
 
             $data['timeOffDays'] = $this->timeoff_model->getTimeOffDays($data['session']['company_detail']['sid']);
@@ -924,14 +938,14 @@ class Dashboard extends Public_Controller {
             // For verification documents
             //
             $data['PendingEmployerSection']['Employee'] = 0;
-            if($data['session']['employer_detail']['access_level_plus']){
+            if ($data['session']['employer_detail']['access_level_plus']) {
                 $data['PendingEmployerSection']['Employee'] = $this->varification_document_model->get_all_users_pending_w4($company_id, 'employee', TRUE, $companyEmployeesForVerification);
                 $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->get_all_users_pending_i9($company_id, 'employee', TRUE, $companyEmployeesForVerification);
             }
             $data['PendingEmployerSection']['Employee'] += $this->varification_document_model->getPendingAuthDocs($company_id, 'employee', TRUE, $data['session']['employer_detail'], $companyEmployeesForVerification);
             //
             $data['PendingEmployerSection']['Applicant'] = 0;
-            if($data['session']['employer_detail']['access_level_plus']){
+            if ($data['session']['employer_detail']['access_level_plus']) {
                 $data['PendingEmployerSection']['Applicant'] = $this->varification_document_model->get_all_users_pending_w4($company_id, 'applicant', TRUE, $companyApplicantsForVerification);
                 $data['PendingEmployerSection']['Applicant'] += $this->varification_document_model->get_all_users_pending_i9($company_id, 'applicant', TRUE, $companyApplicantsForVerification);
             }
@@ -943,7 +957,8 @@ class Dashboard extends Public_Controller {
             $this->load->model('payroll_model', 'pm');
             //
             $data['TotalPayStubs'] = count($this->pm->GetPayrollColumns(
-                'payroll_employees_pay_stubs', [
+                'payroll_employees_pay_stubs',
+                [
                     'employee_sid' => $data['session']['employer_detail']['sid']
                 ],
                 'sid'
@@ -951,7 +966,7 @@ class Dashboard extends Public_Controller {
             //
             $data['employee_handbook_enable'] = $this->dashboard_model->get_employee_handbook_status($company_id);
             //
-            if($data['employee_handbook_enable']){
+            if ($data['employee_handbook_enable']) {
                 //
                 $category_sid = $this->dashboard_model->check_company_employee_handbook_category($company_id);
                 //
@@ -969,12 +984,12 @@ class Dashboard extends Public_Controller {
             $data["all_documents_approval"] = $total_document_approval;
             //
 
-            $data['total_library_doc']= count($this->hr_documents_management_model->getVerificationDocumentsForLibrary(
+            $data['total_library_doc'] = count($this->hr_documents_management_model->getVerificationDocumentsForLibrary(
                 $company_id,
                 $employer_id,
                 'employee'
             )) + $this->dashboard_model->get_all_library_doc_count($company_id);
-           
+
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
             $this->load->view('main/footer');
@@ -983,7 +998,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    private function get_single_record_from_array($records, $key, $value) {
+    private function get_single_record_from_array($records, $key, $value)
+    {
         if (is_array($records)) {
             foreach ($records as $record) {
                 foreach ($record as $k => $v) {
@@ -999,7 +1015,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    public function colleague_profile($employee_sid) {
+    public function colleague_profile($employee_sid)
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data["session"]["company_detail"]["sid"];
@@ -1030,7 +1047,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    private function filter_out_array_based_on_value($data_array, $field_name, $value) {
+    private function filter_out_array_based_on_value($data_array, $field_name, $value)
+    {
         $return_array = array();
 
         if (!empty($data_array)) {
@@ -1047,7 +1065,8 @@ class Dashboard extends Public_Controller {
         return $return_array;
     }
 
-    private function filter_out_array_based_on_date($data_array, $date_field_name, $date_start, $date_end) {
+    private function filter_out_array_based_on_date($data_array, $date_field_name, $date_start, $date_end)
+    {
         $return_array = array();
 
         if (!empty($data_array)) {
@@ -1068,7 +1087,8 @@ class Dashboard extends Public_Controller {
         return $return_array;
     }
 
-    private function log_and_send_email_with_attachment($from, $to, $subject, $body, $senderName, $file_path) {
+    private function log_and_send_email_with_attachment($from, $to, $subject, $body, $senderName, $file_path)
+    {
         $CI = &get_instance();
 
         if (base_url() == STAGING_SERVER_URL) {
@@ -1095,7 +1115,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    private function send_email_notification($event_sid, $is_update = false)  {
+    private function send_email_notification($event_sid, $is_update = false)
+    {
         $session = $this->session->userdata('logged_in');
         $company_sid = $session["company_detail"]["sid"];
         $company_name = $session["company_detail"]["CompanyName"];
@@ -1127,7 +1148,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    public function setting_task() {
+    public function setting_task()
+    {
         $action = $this->input->post('action');
 
         if ($action == 'remove_logo') {
@@ -1136,7 +1158,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    public function validate_youtube($str) {
+    public function validate_youtube($str)
+    {
         if ($this->session->userdata('logged_in')) {
             if ($str != "") {
                 preg_match("#(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=v\/)[^&\n]+|(?<=v=)[^&\n]+|(?<=youtu.be/)[^&\n]+#", $str, $matches);
@@ -1153,13 +1176,14 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    public function validate_vimeo($str) {
+    public function validate_vimeo($str)
+    {
         if ($str != "") {
-            if($_SERVER['HTTP_HOST']=='localhost'){
+            if ($_SERVER['HTTP_HOST'] == 'localhost') {
                 $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
                 $response = @file_get_contents($api_url);
 
-                if(!empty($response)){
+                if (!empty($response)) {
                     $response = json_decode($response, true);
 
                     if (isset($response['video_id'])) {
@@ -1197,13 +1221,14 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    public function vimeo_get_id($str) {
+    public function vimeo_get_id($str)
+    {
         if ($str != "") {
-            if($_SERVER['HTTP_HOST']=='localhost'){
+            if ($_SERVER['HTTP_HOST'] == 'localhost') {
                 $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
                 $response = @file_get_contents($api_url);
 
-                if(!empty($response)){
+                if (!empty($response)) {
                     $response = json_decode($response, true);
 
                     if (isset($response['video_id'])) {
@@ -1235,12 +1260,13 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    public function validate_vimeo_url($str) {
+    public function validate_vimeo_url($str)
+    {
         if ($str != "") {
             $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
             $response = @file_get_contents($api_url);
 
-            if(!empty($response)){
+            if (!empty($response)) {
                 $response = json_decode($response, true);
 
                 if (isset($response['video_id'])) {
@@ -1258,7 +1284,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    public function validate_vimeo_curl($str) {
+    public function validate_vimeo_curl($str)
+    {
         if ($str != "") {
             $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
             $cSession = curl_init();
@@ -1280,7 +1307,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    function alpha_dash_space($str) {
+    function alpha_dash_space($str)
+    {
         if ($str != "") {
             if (!preg_match("/^([-0-9])+$/i", $str)) {
                 $this->form_validation->set_message('alpha_dash_space', 'The %s field may only contain numeric characters and dashes.');
@@ -1292,7 +1320,8 @@ class Dashboard extends Public_Controller {
             return TRUE;
     }
 
-    function save_jobs_to_feed() {
+    function save_jobs_to_feed()
+    {
         if ($this->input->post()) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_id = $data["session"]["company_detail"]["sid"];
@@ -1344,7 +1373,8 @@ class Dashboard extends Public_Controller {
         }
     }
 
-    function import_google_fonts() {
+    function import_google_fonts()
+    {
         echo "Import them";
         $jSonData = file_get_contents('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyDe1NtsblZE0ibkbt9k7JJlPkLvuclq0r4&sort=popularity');
         $data = json_decode($jSonData, true);
@@ -1353,8 +1383,10 @@ class Dashboard extends Public_Controller {
 
         foreach ($data as $key => $value) {
             if (isset($value['files']['regular'])) {
-                $insert_data[] = array('font_family' => $value['family'],
-                    'font_url' => $value['files']['regular']);
+                $insert_data[] = array(
+                    'font_family' => $value['family'],
+                    'font_url' => $value['files']['regular']
+                );
             }
         }
 
@@ -1362,5 +1394,4 @@ class Dashboard extends Public_Controller {
         print_r($insert_data);
         //$this->db->insert_batch('google_fonts', $insert_data);
     }
-
 }
