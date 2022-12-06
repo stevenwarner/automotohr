@@ -472,4 +472,6 @@
                 alertify.error('Canceled');
             });
     }
+
+    $('[data-placement="top"]').popover({placement: 'top', trigger: 'hover'});
 </script>
