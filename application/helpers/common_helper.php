@@ -15832,5 +15832,6 @@ if (!function_exists('doNotHireWarning')) {
         $returnArray['message'] = '<p class="text-danger" style="font-size: '.$fontSize.'px;"><strong>DO NOT HIRE this person<strong> <i class="fa fa-info-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="' . ($list[$employeeId]['full_name']) . ' marked this employee as DO NOT HIRE on the '.($list[$employeeId]['action_date']).'"></i></p>';
         $returnArray['row'] = 'bg-danger';
         //
+        return $returnArray;
     }
 }
