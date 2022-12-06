@@ -35,7 +35,7 @@
                         // Do not hire logic
                         $doNotHireRecords = checkDontHireText([$employer['sid']]);
                         //
-                        $doNotHireWarning = doNotHireWarning($employer['sid'], $doNotHireRecords,22);
+                        $doNotHireWarning = doNotHireWarning($employer['sid'], $doNotHireRecords, 18);
                         //
                         echo $doNotHireWarning['message'];
                         

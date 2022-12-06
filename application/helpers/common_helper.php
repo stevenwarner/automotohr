@@ -15786,7 +15786,15 @@ if (!function_exists('checkDontHireText')) {
 }
 
 if (!function_exists('doNotHireWarning')) {
-    function doNotHireWarning($employeeId, $list,$fontSize=20)
+    /**
+     * Employee do not hire
+     *
+     * @param int   $employeeId
+     * @param array $list
+     * @param int   $fontSize
+     * @return array
+     */
+    function doNotHireWarning($employeeId, $list, $fontSize=20)
     {
         //
         $returnArray = [
@@ -15802,7 +15810,7 @@ if (!function_exists('doNotHireWarning')) {
              return $returnArray;
         }
         //
-        $returnArray['message'] = '<p class="text-danger" style="font-size: '.$fontSize.'px;"><strong>DO NOT HIRE this person<strong> <i class="fa fa-info-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="' . ($list[$employeeId]['full_name']) . ' marked it on '.($list[$employeeId]['action_date']).'"></i></p>';
+        $returnArray['message'] = '<p class="text-danger" style="font-size: '.$fontSize.'px;"><strong>DO NOT HIRE this person<strong> <i class="fa fa-info-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="' . ($list[$employeeId]['full_name']) . ' marked this employee as DO NOT HIRE on the '.($list[$employeeId]['action_date']).'"></i></p>';
         $returnArray['row'] = 'bg-danger';
         //
         return $returnArray;
