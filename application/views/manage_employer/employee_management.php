@@ -217,7 +217,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                 </label>
                                             </th>
                                             <th width="30%">Employees</th>
-                                            <th width="25%">Designation f</th>
+                                            <th width="25%">Designation</th>
                                             <th>Password</th>
                                             <th class="text-center">Joining Date</th>
                                             <th class="text-center">Rehire Date</th>
