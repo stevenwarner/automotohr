@@ -103,9 +103,9 @@
                                                                     $doNotHireWarning = doNotHireWarning($value['sid'], $doNotHireRecords, 14);
 
                                                                 ?>
-                                                                    <tr id="parent_<?= $value['sid'] ?>"  class="<?php echo $doNotHireWarning['row']; ?>">
-                                                                        <td><input type="checkbox" name="checkit[]" value="<?php echo $value['sid']; ?>" class="my_checkbox"></td>
-                                                                        <td class="text-center">
+                                                                    <tr id="parent_<?= $value['sid'] ?>">
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>"><input type="checkbox" name="checkit[]" value="<?php echo $value['sid']; ?>" class="my_checkbox"></td>
+                                                                        <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                                             <div class="employee-profile-info">
                                                                                 <figure>
                                                                                     <img class="profile-img-responsive" src="<?= getImageURL($value['profile_picture']); ?>" alt="Employee" />
@@ -113,7 +113,7 @@
                                                                             </div>
                                                                             <b><?php echo $value['sid']; ?></b>
                                                                         </td>
-                                                                        <td>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                                             <?php
                                                                             if (empty($value['username'])) {
                                                                                 echo 'Employee Onboarding';
@@ -131,7 +131,7 @@
                                                                             ?>
                                                                             <?php echo $doNotHireWarning['message']; ?>
                                                                         </td>
-                                                                        <td>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                                             <?php echo $value['email'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
                                                                             <br />
                                                                             <b>System Date: </b><?php echo date_with_time($value['system_user_date']); ?>
@@ -139,7 +139,7 @@
                                                                         <!--<td>--><?php //echo ucwords($value['access_level']); 
                                                                                     ?>
                                                                         <!--</td>-->
-                                                                        <td>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                                             <?php
                                                                             $middle_initial = !empty($value['middle_name']) ? ' ' . $value['middle_name'] : '';
                                                                             echo ucwords($value['first_name'] . $middle_initial . ' ' . $value['last_name']);
@@ -155,7 +155,7 @@
                                                                             ?>
                                                                         </td>
 
-                                                                        <td>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                                             <b>Joining Date: </b><?php
                                                                                                     $joiningDate = get_employee_latest_joined_date($value["registration_date"], $value["joined_at"], "", true);
                                                                                                     //
@@ -186,7 +186,7 @@
                                                                             }
                                                                             ?>
                                                                         </td>
-                                                                        <td><?php echo ucwords($value['company_name']); ?>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>"><?php echo ucwords($value['company_name']); ?>
                                                                             <?php if ($value['password'] == '' || is_null($value['password'])) { ?>
                                                                                 <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
                                                                             <?php   } else { ?>
@@ -194,17 +194,17 @@
                                                                             <?php   } ?>
                                                                         </td>
                                                                         <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
-                                                                            <td><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'],  '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'],  '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
                                                                         <?php   } ?>
 
                                                                         <?php if (check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')) { ?>
-                                                                            <td><a href="javascript:;" class="btn btn-danger btn-sm" title="Delete Employer" onclick="deleteEmployer(<?= $value['sid'] ?>)"><i class="fa fa-times"></i></a>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><a href="javascript:;" class="btn btn-danger btn-sm" title="Delete Employer" onclick="deleteEmployer(<?= $value['sid'] ?>)"><i class="fa fa-times"></i></a>
                                                                                 <!--<input class="hr-delete-btn" type="button" id="<?= $value['sid'] ?>" value="Delete" onclick="return deleteEmployer(this.id)" name="button">-->
                                                                             </td>
                                                                         <?php } ?>
 
                                                                         <?php if (check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')) { ?>
-                                                                            <td>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                                                 <?php if ($value['active']) {
                                                                                     echo '<a href="javascript:;" class="btn btn-warning btn-sm deactive_employee" id="' . $value['sid'] . '" title="Disable Employee" data-attr="' . $value['sid'] . '"><i class="fa fa-ban"></i></a>';
                                                                                 } else {
@@ -215,7 +215,7 @@
                                                                         <?php   } ?>
 
                                                                         <?php if (check_access_permissions_for_view($security_details, 'employerlogin')) { ?>
-                                                                            <td><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login"></td>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login"></td>
                                                                         <?php   } ?>
                                                                     </tr>
                                                                 <?php } ?>
