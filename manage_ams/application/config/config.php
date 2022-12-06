@@ -17,7 +17,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | environments.
 |
 */
-$baseURI = 'http'.($_SERVER['HTTPS'] ? 's' : '').'://'.($_SERVER['HTTP_HOST']);
+$baseURI = 'http'.(isset($_SERVER['HTTPS']) ? 's' : '').'://'.($_SERVER['HTTP_HOST']);
 $baseURI .= str_replace(
     $_SERVER['SCRIPT_FILENAME'],
     '',
