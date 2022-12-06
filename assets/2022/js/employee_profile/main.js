@@ -32,12 +32,12 @@ $(function () {
         rows += '<div>';
         rows += '  <!-- Nav tabs -->';
         rows += '  <ul class="nav nav-tabs" role="tablist">';
-        rows += '    <li role="presentation" class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>';
-        rows += '    <li role="presentation"><a href="#directDeposit" aria-controls="directDeposit" role="tab" data-toggle="tab">Direct Deposit</a></li>';
-        rows += '    <li role="presentation"><a href="#driversLicense" aria-controls="driversLicense" role="tab" data-toggle="tab">Drivers License</a></li>';
-        rows += '    <li role="presentation"><a href="#occupationalLicense" aria-controls="occupationalLicense" role="tab" data-toggle="tab">Occupational License</a></li>';
-        rows += '    <li role="presentation"><a href="#dependent" aria-controls="dependent" role="tab" data-toggle="tab">Dependents</a></li>';
-        rows += '    <li role="presentation"><a href="#emergencyContact" aria-controls="emergencyContact" role="tab" data-toggle="tab">Emergency Contacts</a></li>';
+        rows += '    <li role="presentation" class="active"><a href="#profile" id="profileHead" aria-controls="profile" role="tab" data-toggle="tab">Profile <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#directDeposit" id="directDepositHead" aria-controls="directDeposit" role="tab" data-toggle="tab">Direct Deposit <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#driversLicense" id="driversLicenseHead" aria-controls="driversLicense" role="tab" data-toggle="tab">Drivers License <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#occupationalLicense" id="occupationalLicenseHead" aria-controls="occupationalLicense" role="tab" data-toggle="tab">Occupational License <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#dependent" id="dependentHead" aria-controls="dependent" role="tab" data-toggle="tab">Dependents <span></span></a></li>';
+        rows += '    <li role="presentation"><a href="#emergencyContact" id="emergencyContactHead" aria-controls="emergencyContact" role="tab" data-toggle="tab">Emergency Contacts <span></span></a></li>';
         rows += '  </ul>';
         rows += '  <!-- Tab panes -->';
         rows += '  <div class="tab-content">';
@@ -92,6 +92,12 @@ $(function () {
             rows += '       </tr>';
             rows += '   </thead>';
             rows += '   <tbody>';
+            rows += '   {{innerRows}}';
+            rows += '   </tbody>';
+            rows += '</table>';
+            rows += '<hr />';
+            //
+            let innerRows = '';
             for (let index in data) {
                 //
                 let newData = data[index]['new'] || '-';
@@ -125,26 +131,30 @@ $(function () {
                     oldData = oldData != '-' ? '<img src="' + (index.toLowerCase() == "user_signature" ? "" : "https://automotohrattachments.s3.amazonaws.com/") + '' + (oldData) + '" width="60" />' : oldData;
                 }
                 //
-                rows += '   <tr>';
-                rows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + '</strong></td>';
+                innerRows += '   <tr>';
+                innerRows += '       <td><strong>' + (index.replace(/[^a-z]/gi, ' ').toUpperCase()) + '</strong></td>';
                 //
                 if (index == 'action') {
-                    rows += '       <td class="bg-danger text-center" colspan="2">Deleted</td>';
+                    innerRows += '       <td class="bg-danger text-center" colspan="2">Deleted</td>';
                 } else {
-                    rows += '       <td class="bg-danger">' + (oldData) + '</td>';
-                    rows += '       <td class="bg-success">' + (newData) + '</td>';
+                    innerRows += '       <td class="bg-danger">' + (oldData) + '</td>';
+                    innerRows += '       <td class="bg-success">' + (newData) + '</td>';
                 }
-                rows += '   </tr>';
+                innerRows += '   </tr>';
             }
-            rows += '   </tbody>';
-            rows += '</table>';
-            rows += '<hr />';
 
             //
-            obj[record.history_type] += rows;
+            if (innerRows.length > 0) {
+                obj[record.history_type] += rows.replace(/{{innerRows}}/i, innerRows);
+            }
         });
         //
         for (let index in obj) {
+            // Add count
+            if (obj[index].length === 0) {
+
+                $('#' + (index) + 'Head').parent().remove();
+            }
             //
             $('#' + index).html(obj[index]);
         }

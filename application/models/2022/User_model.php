@@ -616,8 +616,8 @@ class User_model extends CI_Model
             $this->db->where_in('user_sid', $employeeIds);
         }
         if ($startDate && $endDate) {
-            $this->db->where('profile_history.created_at >= ', $startDate.' 00:00:00' );
-            $this->db->where('profile_history.created_at <= ', $endDate.' 23:59:59' );
+            $this->db->where('profile_history.created_at >= ', $startDate.' 00:00:00');
+            $this->db->where('profile_history.created_at <= ', $endDate.' 23:59:59');
         }
         $records = $this->db
         ->get('profile_history')

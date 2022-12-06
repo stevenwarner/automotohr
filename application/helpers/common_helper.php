@@ -15735,3 +15735,18 @@ if (!function_exists('checkDateFormate')) {
         return $dateIn;
     }
 }
+
+
+if (!function_exists('getAssetTag')) {
+    /**
+     * Set the tage depending on the
+     * devlopment mode
+     *
+     * @param string $tag
+     * @return string
+     */
+    function getAssetTag ($tag = '1.0.1')
+    {
+        return MINIFIED === '.min' ? $tag : time();
+    }
+}

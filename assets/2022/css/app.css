@@ -434,3 +434,8 @@ body{
     position: relative;
 }     
 
+._csSeparator{
+    background-color: #eee;
+    height: 1px;
+    margin: 5px 0;
+}

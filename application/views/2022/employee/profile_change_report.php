@@ -78,13 +78,17 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php 
+                                                <?php
                                                     if (!empty($records)) {
                                                         foreach ($records as $record) {
                                                             ?>
                                                         <tr>
-                                                            <td class="_csVm"><strong><?=$record['full_name'];?></strong></td>
-                                                            <td class="_csVm"><?=formatDateToDB($record['last_changed'], DB_DATE_WITH_TIME, DATE_WITH_TIME);?></td>
+                                                            <td class="_csVm">
+                                                                <strong><?=$record['full_name'];?></strong>
+                                                            </td>
+                                                            <td class="_csVm">
+                                                                <?=formatDateToDB($record['last_changed'], DB_DATE_WITH_TIME, DATE_WITH_TIME);?>
+                                                            </td>
                                                             <td class="_csVm">
                                                                 <dl>
                                                                     <?php foreach ($record['what_changed'] as $hist => $v) {
@@ -100,10 +104,27 @@
                                                                     <i class="fa fa-eye _csF14" aria-hidden="true"></i>&nbsp;
                                                                     View
                                                                 </button>
+                                                                <?php if (
+                                                                    $employee['access_level_plus'] == 1 ||
+                                                                    $employee['pay_plan_flag'] == 1
+                                                                ) :?>
+                                                                <a href="<?=base_url("employee_profile/".($record['sid']));?>" class="btn btn _csB4 _csF2 _csR5 _csF14 ">
+                                                                    <i class="fa fa-eye _csF14" aria-hidden="true"></i>&nbsp;
+                                                                    View Profile
+                                                                </a>
+                                                                <?php endif; ?>
                                                             </td>
                                                         </tr>
                                                             <?php
                                                         }
+                                                    } else {
+                                                        ?>
+                                                        <tr>
+                                                            <th scope="col" colspan="4">
+                                                                <p class="alert alert-info text-center">No records found.</p>
+                                                            </th>
+                                                        </tr>
+                                                        <?php
                                                     } ?>
                                             </tbody>
                                         </table>

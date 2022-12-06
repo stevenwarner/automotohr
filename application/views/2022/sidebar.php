@@ -6,9 +6,12 @@
     <img src="<?=getImageURL($employee['profile_picture']);?>" alt="" class="_csImg" />
     <!--  -->
     <dl class="_csP5 _csPt10">
+        <dt class="_csSeparator"></dt>
         <dt>Name</dt>
         <dd><?=remakeEmployeeName($employee, true, true);?></dd>
-        <dt class="_csPt10">Role</dt>
+        <dt class="_csSeparator"></dt>
+        <dt>Role</dt>
         <dd><?=remakeEmployeeName($employee, false);?></dd>
+        <dt class="_csSeparator"></dt>
     </dl>
 </div>
