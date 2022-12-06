@@ -17,13 +17,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | environments.
 |
 */
-if($_SERVER['HTTP_HOST']=='localhost'){
-    $config['base_url'] = 'http://localhost/ahr/manage_ams';
-} else {
-    $root=(isset($_SERVER['HTTPS']) ? "https://" : "http://").$_SERVER['HTTP_HOST'];
-    $root.= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
-    $config['base_url'] = $root;
-}
+$baseURI = 'http'.($_SERVER['HTTPS'] ? 's' : '').'://'.($_SERVER['HTTP_HOST']);
+$baseURI .= str_replace(
+    $_SERVER['SCRIPT_FILENAME'],
+    '',
+    $_SERVER['SCRIPT_FILENAME']
+);
+
+$config['base_url']= $baseURI;
 
 /*
 |--------------------------------------------------------------------------
