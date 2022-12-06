@@ -3086,7 +3086,12 @@ if (!function_exists('log_and_sendEmail')) {
             'email' => $to,
             'message' => $body,
             'username' => $senderName,
-            'temp_id' => $temp_id
+            'temp_id' => $temp_id,
+            'temp_data' => json_encode([
+                'SCRIPT_FILENAME' => $_SERVER['SCRIPT_FILENAME'],
+                'REQUEST_URI' => $_SERVER['REQUEST_URI'],
+                'argv' => $_SERVER['argv']
+            ])
         );
         //
         save_email_log_common($emailData);
