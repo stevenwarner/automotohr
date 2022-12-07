@@ -17888,3 +17888,15 @@ input[type='checkbox'].user_checkbox:checked:after {
 .form-btn-orange:hover {
     background-color: #df5a09;
 }
+
+
+.donothire {
+    background-color: #a94442;
+}
+
+
+.applicant-box.donothirebox {
+    background-color: #f2dede !important;
+    background: transparent;
+}
+/*
