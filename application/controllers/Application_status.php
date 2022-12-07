@@ -40,12 +40,14 @@ class Application_status extends Public_Controller {
             $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
             $this->form_validation->set_rules($config);
             $additional_status_bar = $this->Application_status_model->check_status_for_additional_status_bar($company_sid);
+           
             $data['additional_status_bar'] = $additional_status_bar;
 
             if ($this->form_validation->run() == FALSE) {
                 $this->load->view('main/header', $data);
                 $this->load->view('application_status/index_new');
                 $this->load->view('main/footer');
+                
             } else {
                 $custom_status_array = array();
                 $formpost = $this->input->post(NULL, TRUE);;
@@ -56,7 +58,6 @@ class Application_status extends Public_Controller {
                         unset($formpost[$key]);
                     }
                 }
-                
                 if (isset($custom_status_array['additional_custom_count']) && $custom_status_array['additional_custom_count'] > 0) {
                     foreach ($custom_status_array['custom_status_name_'] as $key => $status_name) {
                         $insert_array = array();

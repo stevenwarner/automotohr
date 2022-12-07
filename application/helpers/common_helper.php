@@ -12627,7 +12627,8 @@ function getStatusColor($index)
         'placed_important' => 'rgb(77, 160, 0)',
         'not_contacted_important' => 'rgb(82, 82, 82)',
         'future_opportunity_important' => '#00008B',
-        'left_message_important' => '#B2B200'
+        'left_message_important' => '#B2B200',
+        'donothire' => '#a94442'
     ];
     //
     $index = ltrim(trim($index), '.');
