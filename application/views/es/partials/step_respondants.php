@@ -1,7 +1,16 @@
 <!--  -->
 <div class="panel panel-default _csMt20 _csPR _csR5 jsQuestionListing">
     <div class="panel-heading">
-        <h3 class="_csF16">Employees <span>(0)</span></h3>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <h3 class="_csF16">Survey Questions <span id="jsSurveyQuestionCount">(0)</span></h3>
+            </div>
+            <div class="col-md-6 col-sm-12 text-right">
+                 <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/questions"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16">
+                    <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Question
+                </a>
+            </div>
+        </div>
     </div>
     <div class="panel-body">
         <!--  -->
@@ -96,6 +105,18 @@
             <div class="col-sm-12 text-right">
                 <button class="btn _csF2 _csB1 _csR5">Cancel</button>
                 <button class="btn _csF2 _csB4 _csR5">Save</button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                
+            </div>
+            <div class="col-md-6 col-sm-12 text-right">
+                 <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/questions"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16" >
+                    <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Question
+                </a>
             </div>
         </div>
     </div>

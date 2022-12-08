@@ -3,6 +3,14 @@ $(function (){
 	//
 	var questionFile = null;
 	//
+	var questionCount = 0;
+	//
+	var survey = "";
+    //
+    var questionSid = 0;
+    //
+    var peviousVideo = "";
+	//
     window.questionFile = questionFile;
     //
     // window.REVIEW = obj;
@@ -71,7 +79,7 @@ $(function (){
 	            $('.jsESLoader').hide();
             },
             error: function() {
-            	alertify.alert("NOTICE!", "Unable to load survey template detail</b>");
+            	alertify.alert("NOTICE!", "Unable to load survey template detail");
             	$('.jsESLoader').hide();
             }
         }); 
@@ -233,7 +241,7 @@ $(function (){
                 $('.jsESLoader').hide();
             },
             error: function() {
-            	alertify.alert("NOTICE!", "Unable to save employee survey detail</b>");
+            	alertify.alert("NOTICE!", "Unable to save employee survey detail");
             	$('.jsESLoader').hide();
             }
         });
@@ -254,16 +262,16 @@ $(function (){
 	            let questionNo = 1;
 	            //
 	            resp.questions.map(function(question) {
-	            	questionBox += '<div class="jsBox _csBox _csP10">';
+	            	questionBox += '<div class="jsBox _csBox _csP10 jsSurveyQuestionSort" id="div_'+question.sid+'" data-question_sid="'+question.sid+'">';
 			        questionBox += '    <div class="row">';
 			        questionBox += '        <div class="col-md-6">';
 			        questionBox += '            <label>Question '+questionNo+' </label>';
 			        questionBox += '        </div>';
 			        questionBox += '        <div class="col-md-6 text-right">';
-			        questionBox += '            <button class="btn _csR5"> <i class="fa fa-long-arrow-up" aria-hidden="true"></i></button>';
-			        questionBox += '            <button class="btn _csR5"> <i class="fa fa-long-arrow-down" aria-hidden="true"></i></button>';
-			        questionBox += '            <button class="btn btn-warning _csR5"> <i class="fa fa-pencil" aria-hidden="true"></i></button>';
-			        questionBox += '            <button class="btn btn-danger _csR5"> <i class="fa fa-trash" aria-hidden="true"></i></button>';
+			        questionBox += '            <button class="btn _csR5 jsRearrangeUpQuestion" data-question_sid="'+question.sid+'" data-sort_order="'+question.sort_order+'"> <i class="fa fa-long-arrow-up" aria-hidden="true"></i></button>';
+			        questionBox += '            <button class="btn _csR5 jsRearrangeDownQuestion" data-question_sid="'+question.sid+'" data-sort_order="'+question.sort_order+'"> <i class="fa fa-long-arrow-down" aria-hidden="true"></i></button>';
+			        questionBox += '            <button class="btn btn-warning _csR5 jsEditQuestion" data-question_sid="'+question.sid+'"> <i class="fa fa-pencil" aria-hidden="true"></i></button>';
+			        questionBox += '            <button class="btn btn-danger _csR5 jsDeleteQuestion" data-question_sid="'+question.sid+'"> <i class="fa fa-trash" aria-hidden="true"></i></button>';
 			        questionBox += '        </div>';
 			        questionBox += '    </div>';
 					questionBox += '	<div class="row">';
@@ -277,8 +285,9 @@ $(function (){
             		questionNo++;
 		        });
 		        //
-		        $("#jsSurveyQuestions").html(questionBox);
-		        $("#jsQuestionCount").html("("+resp.questions_count+")");
+		        $("#jsSurveyQuestionsList").html(questionBox);
+		        $("#jsSurveyQuestionCount").html("("+resp.questions_count+")");
+		        questionCount = resp.questions_count
 	            //
             	if (step == "details") {
             		$("#show_detail_section").show();
@@ -319,136 +328,10 @@ $(function (){
                 
             },
             error: function() {
-            	alertify.alert("NOTICE!", "Unable to load survey detail</b>");
+            	alertify.alert("NOTICE!", "Unable to load survey detail");
             	$('.jsESLoader').hide();
             }
         }); 
-	}
-	//
-	function addQuestionTemplate () {
-		let questionsection = '';
-		//
-		questionsection += '<div class="container">';
-		questionsection += '	<div class="panel panel-default _csMt20 _csPR _csR5 ">';
-		questionsection += '	    <div class="panel-heading">';
-		questionsection += '	        <div class="row">';
-		questionsection += '	            <div class="col-md-12 col-sm-12 ">';
-		questionsection += '	                <b>Add Question</b>';
-		questionsection += '	            </div>';
-		questionsection += '	        </div>';
-		questionsection += '	    </div>';
-		questionsection += '	    <div class="panel-body">';
-		questionsection += '	            <div class="row">';
-		questionsection += '	                <div class="col-md-3 col-sm-12">';
-		questionsection += '	                    <label>Question <span class="text-danger">*</span></label>';
-		questionsection += '	                </div>';
-		questionsection += '	                <div class="col-md-9 col-sm-12">';
-		questionsection += '	                    <input type="text" class="form-control jsQuestionText" required />';
-		questionsection += '	                </div>';
-		questionsection += '	            </div>';
-		questionsection += '	            <br>';
-		questionsection += '	            <div class="row">';
-		questionsection += '	                <div class="col-md-3 col-sm-12 _csMt10">';
-		questionsection += '	                    <label>Description </label>';
-		questionsection += '	                    <p>Explain to the employees what they need to add into the answer.</p>';
-		questionsection += '	                </div>';
-		questionsection += '	                <div class="col-md-9 col-sm-12 _csMt10">';
-		questionsection += '	                    <textarea class="form-control _csHeight100 jsQuestionDescription"></textarea>';
-		questionsection += '	                </div>';
-		questionsection += '	            </div>';
-		questionsection += '	            <br>';
-		questionsection += '				<div class="row">';
-		questionsection += '					<br>';
-		questionsection += '					<div class="col-sm-4 col-xs-12">';
-		questionsection += '						<label class="csF16 csB7">Video Help <i class="fa fa-question-circle-o jsHintBtn csCP" data-target="video_help" aria-hidden="true"></i></label>';
-		questionsection += '						<p class="csF14 jsHintBody" data-hint="video_help">Record/Upload a video explaining the reviewer what to add into the answer.</p>';
-		questionsection += '					</div>';
-		questionsection += '					<div class="col-sm-8 col-xs-12">';
-		questionsection += '						<label class="control control--radio csF16">';
-		questionsection += '							<input type="radio" class="jsSurveyQuestionAddVideoType" name="jsSurveyQuestionAddVideoType" value="none" checked/> None';
-		questionsection += '							<div class="control__indicator"></div>';
-		questionsection += '						</label>';
-		questionsection += '						<br>';
-		questionsection += '						<label class="control control--radio csF16">';
-		questionsection += '							<input type="radio" class="jsSurveyQuestionAddVideoType" name="jsSurveyQuestionAddVideoType" value="record" /> Record Video';
-		questionsection += '							<div class="control__indicator"></div>';
-		questionsection += '						</label>';
-		questionsection += '						<br>';
-		questionsection += '						<label class="control control--radio csF16">';
-		questionsection += '							<input type="radio" class="jsSurveyQuestionAddVideoType" name="jsSurveyQuestionAddVideoType" value="upload" /> Upload Video';
-		questionsection += '							<div class="control__indicator"></div>';
-		questionsection += '						</label>';
-		questionsection += '						<br>';
-		questionsection += '						<div id="jsSurveyQuestionAddVideoUpload" class="dn">';
-		questionsection += '							<input type="file" id="jsSurveyQuestionAddVideoUploadInp" class="hidden" />';
-		questionsection += '						</div>';
-		questionsection += '						<br>';
-		questionsection += '						<div id="jsSurveyQuestionAddVideoRecord" class="dn">';
-		questionsection += '							<div class="row">';
-		questionsection += '								<div class="col-sm-12">';
-		questionsection += '									<div class="jsVideoRecorderBox">';
-		questionsection += '										<p class="csF16 csB7 csInfo"><i class="fa fa-info-circle csF18" aria-hidden="true"></i>&nbsp;To use this feature, please, make sure you have allowed microphone and camera access.</p>';
-		questionsection += '								    </div>';
-		questionsection += '								</div>';
-		questionsection += '								<div class="col-sm-12 col-xs-12">';
-		questionsection += '									<div class="jsVideoRecorderBox">';
-		questionsection += '								    	<video id="jsVideoRecorder" width="100%"></video>';
-		questionsection += '								        <button class="btn btn-orange btn-lg csF16 dn" id="jsVideoRecordButton"><i aria-hidden="true" class="fa fa-stop csF16"></i> Start Recording</button>';
-		questionsection += '								        <button class="btn btn-black btn-lg csF16 dn" id="jsVideoPauseButton"><i aria-hidden="true" class="fa fa-pause-circle csF16"></i> Pause Recording</button>';
-		questionsection += '								        <button class="btn btn-black btn-lg csF16 dn" id="jsVideoResumeButton"><i aria-hidden="true" class="fa fa-play-circle csF16"></i> Resume Recording</button>';
-		questionsection += '								    </div>';
-		questionsection += '								</div>';
-		questionsection += '							 </div>';
-		questionsection += '						</div>';
-		questionsection += '					</div>';
-		questionsection += '				</div>';
-		questionsection += '	            <br>';
-		questionsection += '	            <div class="row">';
-		questionsection += '	                <div class="col-md-3 col-sm-12 _csMt10">';
-		questionsection += '	                    <label>Question Type </label>';
-		questionsection += '	                    <p>Select the type of the question.</p>';
-		questionsection += '	                </div>';
-		questionsection += '	                <div class="col-md-9 col-sm-12 _csMt10">';
-		questionsection += '	                    <select name="" id="jsQuestionType">';
-		questionsection += '	                        <option value="text">Text</option>';
-		questionsection += '	                        <option value="rating">Rating</option>';
-		questionsection += '	                    </select>';
-		questionsection += '	                </div>';
-		questionsection += '	            </div>';
-		questionsection += '	            <br>';
-		questionsection += '	            <div class="row">';
-		questionsection += '	                <div class="col-md-12 text-right col-sm-12 _csMt10">';
-		questionsection += '	                    <button class="btn _csB1 _csF2 _csR5 jsModalCancel">Cancel</button>';
-		questionsection += '	                    <button class="btn _csB4 _csF2 _csR5">Save</button>';
-		questionsection += '	                </div>';
-		questionsection += '	            </div>';
-		questionsection += '	        <hr>';
-		questionsection += '	        <div class="jsBox _csBox _csP10">';
-		questionsection += '	            <div class="row _csB4 _csF2">';
-		questionsection += '	                <div class="col-md-12">';
-		questionsection += '	                    <h4>Question 1</h4>';
-		questionsection += '	                </div>';
-		questionsection += '	            </div>';
-		questionsection += '	            <div class="row">';
-		questionsection += '	                <div class="col-md-12">';
-		questionsection += '	                    <h4 class="_csF14"><strong>Overall, I am satisfied with the benefits package my organization offers.</strong></h4>';
-		questionsection += '	                </div>';
-		questionsection += '	            </div>';
-		questionsection += '	            <div class="row">';
-		questionsection += '	                <div class="col-md-12">';
-		questionsection += '	                    <h4 class="_csF14">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quaerat, excepturi illo doloribus accusantium est blanditiis nobis voluptatum quidem fugit optio at, unde fuga debitis, earum incidunt odit quis magni ex.</h4>';
-		questionsection += '	                </div>';
-		questionsection += '	            </div>';
-		questionsection += '	            <div>';
-		questionsection += '	            </div>';
-		questionsection += '	            <div>';
-		questionsection += '	            </div>';
-		questionsection += '	        </div>';
-		questionsection += '	    </div>';
-		questionsection += '	</div>';
-		questionsection += '</div>';
-		//
-		return questionsection;
 	}
 	//
 	function updatePreview() {
@@ -490,9 +373,6 @@ $(function (){
             video += '</video>';
             $('#jsSurveyQuestionAddPreviewVideo').append(video);
         }
-
-        //
-        console.log(question.type)
         //
         if (question.type.match(/rating/ig) !== null) {
             $('#jsSurveyQuestionAddPreviewRatingBox').removeClass('dn');
@@ -503,6 +383,79 @@ $(function (){
         }
     }
     //
+    function uploadVideo(video, questionInfo, type = "insert") {
+    	var fd = new FormData();
+        fd.append('upload_video', video);
+        //
+        $.ajax({
+            type: 'POST',
+            url: apiURI+'employee_survey/upload_video',
+            data: fd,
+            mimeType: "multipart/form-data",
+		  	contentType: false,
+		  	cache: false,
+		  	processData: false,
+		  	dataType: 'json',
+            beforeSend: function() {
+                $('.jsESLoader').show();
+            },
+            success: function(resp) {
+            	//
+            	console.log(resp)
+            	if (!resp.file) {
+            		alertify.alert('NOTICE!','Unable to upload video.',function () {
+                		$('.jsESLoader').hide();
+                		return;
+	                });
+            	} 
+            	//
+            	questionInfo.video = resp.file;
+                //
+            	type == "insert" ? saveSurveyQuestion(questionInfo) : updateSurveyQuestion(questionInfo);
+            },
+            error: function() {
+            	alertify.alert("NOTICE!", "Unable to upload video");
+            	$('.jsESLoader').hide();
+            }
+        });
+    }
+    //
+    function uploadRecordedVideo(video_base64, questionInfo, type = "insert") {
+        //
+        $.ajax({
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: apiURI+'employee_survey/upload_video',
+            data: JSON.stringify({
+            	upload_video_base64: video_base64
+        	}),
+            dataType: 'json',
+            beforeSend: function() {
+                $('.jsESLoader').show();
+            },
+            success: function(resp) {
+            	//
+            	if (!resp.file) {
+            		alertify.alert('NOTICE!','Unable to upload video.',function () {
+                		$('.jsESLoader').hide();
+                		return;
+	                });
+            	} 
+            	//
+            	questionInfo.video = resp.file;
+                //
+            	type == "insert" ? saveSurveyQuestion(questionInfo) : updateSurveyQuestion(questionInfo);
+            },
+            error: function() {
+            	alertify.alert("NOTICE!", "Unable to upload video");
+            	$('.jsESLoader').hide();
+            }
+        });
+    }
+    //
     function saveSurveyQuestion (surveyQuestion) {
 		$.ajax({
             type: 'POST',
@@ -510,7 +463,7 @@ $(function (){
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            url: apiURI+'employee_survey/12/question',
+            url: apiURI+'employee_survey/'+ surveyToken +'/question',
             data: JSON.stringify(surveyQuestion),
             dataType: 'json',
             beforeSend: function() {
@@ -520,19 +473,104 @@ $(function (){
             	//
                 alertify.alert('SUCCESS!','Employee Survey Question Saved Sucessfully.',function () {
                 	//
-                	var URL = baseURI+'employee/surveys/create/12/questions';
-                	window.location.href = URL; 
+                	resetAddQuestionSection();
+                	//
+			    	$('#jsAddNewQuestionSection').addClass('dn');
+			    	$('#jsSurveyQuestionListSection').removeClass('dn');
+			    	//
+			   		getCompanySurvey(surveyToken, "questions")
                 	
                 });
                 //
                 $('.jsESLoader').hide();
             },
             error: function() {
-            	alertify.alert("NOTICE!", "Unable to save employee survey question</b>");
+            	alertify.alert("NOTICE!", "Unable to save employee survey question");
             	$('.jsESLoader').hide();
             }
         });
 	}
+    //
+    function updateSurveyQuestion (surveyQuestion) {
+        //
+        $.ajax({
+            type: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: apiURI+'employee_survey/'+ questionSid +'/question',
+            data: JSON.stringify(surveyQuestion),
+            dataType: 'json',
+            beforeSend: function() {
+                $('.jsESLoader').show();
+            },
+            success: function(resp) {
+                //
+                alertify.alert('SUCCESS!','Employee Survey Question Update Sucessfully.',function () {
+                    //
+                    resetAddQuestionSection();
+                    //
+                    $('#jsAddNewQuestionSection').addClass('dn');
+                    $('#jsSurveyQuestionListSection').removeClass('dn');
+                    //
+                    getCompanySurvey(surveyToken, "questions");
+                    //
+                });
+                //
+                $('.jsESLoader').hide();
+            },
+            error: function() {
+                alertify.alert("NOTICE!", "Unable to update employee survey question");
+                $('.jsESLoader').hide();
+            }
+        });
+    }
+	//
+	function resetAddQuestionSection () {
+		$('#jsSurveyQuestionAddTitle').val("");
+        $('#jsSurveyQuestionAddDescription').val("");
+        $("input[name=jsSurveyQuestionAddVideoType][value='none']").prop("checked",true);
+        $('#jsSurveyAddQuestionType').select2('val', "text");
+        $('#jsSurveyQuestionAddVideoRecord').addClass('dn');
+        $('#jsSurveyQuestionAddVideoUpload').addClass('dn');
+        $('#jsSurveyQuestionAddPreviewTextBox').removeClass('dn');
+
+        cp.close();
+	}
+	//
+    function resetSortQuestions (sortOrder) {
+        //
+        var obj = {
+            "sortOrder" : sortOrder
+        }
+        //
+        console.log(obj)
+        //
+        $.ajax({
+            type: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: apiURI+'employee_survey/'+ surveyToken +'/sort_question',
+            data: JSON.stringify(sortOrder),
+            dataType: 'json',
+            beforeSend: function() {
+                $('.jsESLoader').show();
+            },
+            success: function(resp) {
+                //
+                alertify.alert('SUCCESS!','Question Sort Update Sucessfully.');
+                //
+                $('.jsESLoader').hide();
+            },
+            error: function(resp) {
+                alertify.alert("NOTICE!", "Unable to update employee survey question");
+                $('.jsESLoader').hide();
+            }
+        });
+    }
 	//
 	surveyToken == 0 ? getTemplates() : getCompanySurvey(surveyToken, stepToken);
 	//
@@ -553,7 +591,7 @@ $(function (){
 	            	createTemplatePreview(resp, "jsEmployeeSurveyModalBody", "jsEmployeeSurveyLoader");
 	            },
 	            error: function() {
-	            	alertify.alert("NOTICE!", "Unable to load survey template detail</b>");
+	            	alertify.alert("NOTICE!", "Unable to load survey template detail");
 	            	$('.jsESLoader').hide();
 	            }
 	        }); 
@@ -682,29 +720,35 @@ $(function (){
         saveSurveyDetails(surveyBasicDetails);
     });
 
-    $(document).on('click', '.jsAddNewQuestion', function(event) {
+    $(document).on('click', '#jsAddNewQuestionBTN', function(event) {
     	//
-    	Modal({
-            Id: "jsEmployeeSurveyQuestionModal",
-            Title: "Add Survey Question",
-            Body:  addQuestionTemplate(),
-            Loader: "jsEmployeeSurveyLoader",
-        }, function(){
-        	$('#jsSurveyAddQuestionType').select2({
-		        closeOnSelect: false
-		    });
-		    //
-		    $('.jsVideoRecorderBox').addClass('dn');
-		    //
-            ml(false, "jsEmployeeSurveyLoader")
-        });
+    	$('#jsSurveyQuestionListSection').addClass('dn');
+    	$('#jsSurveyQuestionAddPreviewVideo').addClass('dn');
+    	$('#jsAddNewQuestionSection').removeClass('dn');
+    	$('#jsSurveyQuestionAddPreviewTextBox').removeClass('dn');
+    	$('#jsServerQuestionSaveBTN').addClass('dn');
+		$('#jsServerQuestionUpdateBTN').removeClass('dn');
+        //
+        $('#jsServerQuestionSaveBTN').removeClass('dn');
+        $('#jsServerQuestionUpdateBTN').addClass('dn');
+    });
+
+    $(document).on('click', '#jsbackToQuestionsListBTN', function(event) {
+    	//
+    	$('#jsAddNewQuestionSection').addClass('dn');
+    	$('#jsSurveyQuestionListSection').removeClass('dn');
+    	//
+   		resetAddQuestionSection();
+    });
+
+    $(document).on('click', '#jsResetQuestionSectionBTN', function(event) {
+   		resetAddQuestionSection();
     });
 
     /**
      * 
      */
     $(document).on('click', '.jsSurveyQuestionAddVideoType', function(event) {
-    	console.log("pakistan")
         //
         $('#jsSurveyQuestionAddVideoRecord').addClass('dn');
         $('#jsSurveyQuestionAddVideoUpload').addClass('dn');
@@ -726,7 +770,7 @@ $(function (){
         //
         updatePreview();
     });
-    //
+
     /**
      * 
      */
@@ -744,17 +788,16 @@ $(function (){
     /**
      * 
      */
-    $('#jsServerQuestionSaveBtn').click(function(event) {
+    $('#jsServerQuestionSaveBTN').click(function(event) {
         //
         event.preventDefault();
         //
         var question = {
             text: $('#jsSurveyQuestionAddTitle').val().trim(),
             description: $('#jsSurveyQuestionAddDescription').val().trim(),
-            video_help: $('.jsSurveyQuestionAddVideoType:checked').val(),
             video: "",
-            sort_order: "1",
-            not_applicable: "0",
+            video_type: $('.jsSurveyQuestionAddVideoType:checked').val(),
+            sort_order: questionCount,
             type: $('#jsSurveyAddQuestionType').val()
         };
         //
@@ -762,9 +805,12 @@ $(function (){
 	        alertify.alert("WARNING!", "Please add the question title");
             return;
         }
-
+        //
+        if (question.type == 'rating') {
+        	question['limit'] = 5;
+        }
         // 
-        if (question.video_help == 'record') { // Upload Recorded Video
+        if (question.video_type == 'record') {
             //
             cp.getVideo()
             .then(
@@ -774,8 +820,8 @@ $(function (){
                         alertify.alert("WARNING!", "Please record a video.");
                         return;
                     }
-                    
-                    question.video = video;
+      				//
+                    uploadRecordedVideo(video, question);
                 },
                 function(error) {
                     alertify.alert("WARNING!", "Please record the video first.");
@@ -783,23 +829,219 @@ $(function (){
             );
         }
         //
-        if (question.video_help == 'upload') { // Upload video
+        if (question.video_type == 'upload') {
             //
             if (questionFile == null || Object.keys(questionFile).length === 0 || questionFile.error) {
                 alertify.alert("WARNING!", "Please upload a video.");
                 return;
             }
             //
-            ml(true, 'jsESLoader', 'Please wait, while we are uploading the video.');
-            //
-            question.file = questionFile;
-            console.log(questionFile);
+            uploadVideo(questionFile, question);
         }
         //
-        saveSurveyQuestion(question);
+        if (question.video_type == 'none') {
+            saveSurveyQuestion(question);
+        }
     });
 
+    /**
+     * 
+     */
+    $(document).on('click', '.jsDeleteQuestion', function(event) {
+        alertify.confirm(
+			'Are you sure you want to delete this question?',
+			() => {
+				var questionSid = $(this).data("question_sid");
+				//
+				$.ajax({
+				    url: apiURI+'employee_survey/'+ questionSid ,
+				    type: 'DELETE',
+				    headers: {
+		                'Accept': 'application/json',
+		                'Content-Type': 'application/json'
+		            },
+				    dataType: 'json',
+		            beforeSend: function() {
+		                $('.jsESLoader').show();
+		            },
+				    success: function(result) {
+				    	alertify.alert("SUCCESS!", "Successfully delete survey question");
+            			$('.jsESLoader').hide();
+				    },
+				    error: function(result){
+				    	alertify.alert("NOTICE!", "Unable to delete survey question");
+            			$('.jsESLoader').hide();
+				    }
+				});
+			}
+		).set('labels', {
+			ok: 'Yes',
+			cancel: 'No'
+		});
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsEditQuestion', function(event) {
+    	//
+    	questionSid = $(this).data("question_sid");
+    	//
+        $.ajax({
+		    url: apiURI+'employee_survey/'+ questionSid +'/question' ,
+		    type: 'GET',
+		    headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+		    dataType: 'json',
+            beforeSend: function() {
+                $('.jsESLoader').show();
+            },
+		    success: function(resp) {
+		    	$('#jsSurveyQuestionListSection').addClass('dn');
+		    	$('#jsAddNewQuestionSection').removeClass('dn');
+		    	$('#jsSurveyQuestionAddPreviewTextBox').removeClass('dn');
+		    	$('#jsServerQuestionSaveBTN').addClass('dn');
+		    	$('#jsServerQuestionUpdateBTN').removeClass('dn');
+		    	//
+		    	$('#jsSurveyQuestionAddTitle').val(resp.question_text);
+		        $('#jsSurveyQuestionAddDescription').val(resp.question_description);
+		        //
+		        if (resp.question_type == "text") {
+		        	$('#jsSurveyAddQuestionType').select2('val', "text");
+		        } else {
+		        	$('#jsSurveyAddQuestionType').select2('val', "rating");
+		        }
+                //
+                
+                console.log(questionSid)
+		        //
+		        updatePreview();
+		        //
+		        if(resp.question_video){
+		        	$("#jsSurveyQuestionAddPreviewVideo").removeClass('dn');
+		        	$("input[name=jsSurveyQuestionAddVideoType][value='upload']").prop("checked",true);
+		        	var videoURL = baseURI+"uploads/"+resp.question_video 
+		        	$("#jsVideoPreview").attr('src', videoURL);
+                    peviousVideo = resp.question_video; 
+		        }
+		        //
+		        $('.jsESLoader').hide();
+		    },
+		    error: function(resp){
+		    	alertify.alert("NOTICE!", "Unable to delete survey question");
+    			$('.jsESLoader').hide();
+		    }
+		});
+    });
+
+    /**
+     * 
+     */
+    $('#jsServerQuestionUpdateBTN').click(function(event) {
+        //
+        event.preventDefault();
+        //
+        var question = {
+            text: $('#jsSurveyQuestionAddTitle').val().trim(),
+            description: $('#jsSurveyQuestionAddDescription').val().trim(),
+            video: "",
+            video_type: $('.jsSurveyQuestionAddVideoType:checked').val(),
+            sort_order: questionCount,
+            type: $('#jsSurveyAddQuestionType').val()
+        };
+        //
+        if (question.title == '') {
+            alertify.alert("WARNING!", "Please add the question title");
+            return;
+        }
+        //
+        if (question.type == 'rating') {
+            question['limit'] = 5;
+        }
+        // 
+        if (question.video_type == 'record') { 
+            //
+            cp.getVideo()
+            .then(
+                function(video) {
+                    //
+                    if (video == 'data:') {
+                        alertify.alert("WARNING!", "Please record a video.");
+                        return;
+                    }
+                    //
+                    uploadRecordedVideo(video, question, "update");
+                },
+                function(error) {
+                    alertify.alert("WARNING!", "Please record the video first.");
+                }
+            );
+        }
+        //
+        if (question.video_type == 'upload') { // Upload video
+            //
+            if (questionFile == null || Object.keys(questionFile).length === 0 || questionFile.error) {
+                if (peviousVideo.length == 0){
+                    alertify.alert("WARNING!", "Please upload a video.");
+                    return;
+                } 
+
+                if (peviousVideo.length > 0){
+                    question.video = peviousVideo;
+                    updateSurveyQuestion(question);
+                } 
+            } else {
+                uploadVideo(questionFile, question, "update");
+            }
+            //
+            
+        }
+        //
+        if (question.video_type == 'none') {
+            updateSurveyQuestion(question);
+        }
+    });
     
+    /**
+     * move up:
+     */
+    $(document).on('click', '.jsRearrangeUpQuestion', function(event) {
+        //
+        var sortorder = {};
+        var sid = $(this).data("question_sid");
+        var div = $("#div_"+sid);
+        // 
+        div.prev().insertAfter(div);
+        //
+        $('.jsSurveyQuestionSort').each(function(index,item){
+            sortorder[++index] = parseInt($(item).data('question_sid'));
+        });
+        //
+        resetSortQuestions(sortorder)
+    });
+    
+    /**
+     * move down:
+     */
+    $(document).on('click', '.jsRearrangeDownQuestion', function(event) {
+        //
+        var sortorder = {};
+        var sid = $(this).data("question_sid");
+        var div = $("#div_"+sid);
+        //
+        div.next().insertBefore(div);
+        //
+        $('.jsSurveyQuestionSort').each(function(index,item){
+            sortorder[++index] = parseInt($(item).data('question_sid'));
+        });
+        //
+        resetSortQuestions(sortorder)
+    });
+
+
+
 });	
 
 

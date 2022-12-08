@@ -30,7 +30,7 @@
      */
     var cToken = <?= $session['company_detail']['sid'] ?? 0 ?>;
     var eToken = <?= $session['employer_detail']['sid'] ?? 0 ?>;
-    var surveyToken = <?= $template_id ?? 0 ?>;
+    var surveyToken = <?= $survey_id ?? 0 ?>;
     var stepToken = "<?= $step ?? '' ?>";
     /**
      * Set base url
@@ -44,6 +44,3 @@
     echo '<!-- Dynamic Scripts -->';
     echo GetScripts($PageScripts);
 } ?>
-<!--  -->
-<script src="<?php echo _m(base_url('assets/performance_management/js/video_record'), 'js', time()) ?>"></script>
-<script src="<?php echo _m(base_url('assets/employee_survey/js/create'), 'js', time()) ?>"></script>

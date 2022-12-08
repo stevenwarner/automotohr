@@ -87,11 +87,16 @@ class Employee_surveys extends Public_Controller
         $data['step'] = $step;
         $data['template_id'] = $id;
         $data['load_view'] = 1;
-        $data['template_id'] = $id;
+        $data['survey_id'] = $id;
         $data['session'] = $this->session->userdata('logged_in');
         $data['employee'] = $data['session']['employer_detail'];
         //
         $page = $id == 0 ? "create" : "update";
+        //
+        $data['PageScripts'] = [
+            'performance_management/js/video_record',
+            'employee_survey/js/create'
+        ];
         //
         $this->load
             ->view($this->pages['header'], $data)
