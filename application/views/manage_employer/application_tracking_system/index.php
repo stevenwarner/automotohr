@@ -473,7 +473,7 @@
                                     ?>
 
                                     <article id="manual_row<?php echo $employer_job["sid"]; ?>" class="applicant-box <?php echo check_blue_panel_status() && $employer_job['is_onboarding'] == 1 ? 'onboarding' : '';
-                                                                                                                        echo $employer_job['status'] == 'Do Not Hire' ? 'donothirebox' : ''; ?> ">
+                                                                                                                        echo strtolower(preg_replace('/[^a-z]/i','',$employer_job['status'])) == 'donothire' ? 'donothirebox' : ''; ?> ">
                                         <div class="box-head">
                                             <div class="row date-bar">
                                                 <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1">
@@ -651,7 +651,7 @@
                                                             <div class="selected decline"><?= $employer_job["status"] ?></div>
                                                         <?php } elseif ($employer_job["status"] == 'Placed/Hired' || $employer_job["status"] == 'Ready to Hire') { ?>
                                                             <div class="selected placed">Ready to Hire</div>
-                                                        <?php } elseif ($employer_job["status"] == 'Do Not Hire') { ?>
+                                                        <?php } elseif (strtolower(preg_replace('/[^a-z]/i','',$employer_job["status"])) == 'donothire') { ?>
                                                             <div class="selected donothire">Do Not Hire</div>
                                                         <?php } elseif ($employer_job["status"] == 'Not Contacted Yet') { ?>
                                                             <div class="selected not_contacted"><?= $employer_job["status"] ?></div>
@@ -2803,7 +2803,7 @@
             var id = $(this).parent().find('#id').text();
 
             var status_name = $(this).attr('data-status_name');
-            if (status_name == "Do Not Hire") {
+            if (status_name.replace(/[^a-z]/ig, '').toLowerCase() == "donothire") {
                 $("#manual_row" + id).addClass("donothirebox ");
             } else {
                 $("#manual_row" + id).removeClass("donothirebox ");
