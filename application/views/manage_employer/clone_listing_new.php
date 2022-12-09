@@ -135,7 +135,7 @@
                                         </div>
 
                                         <li class="form-col-100 autoheight">
-                                            <p class="text-danger" style="margin-bottom: -10px;">Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here</p></label>
+                                        <p class="text-danger" style="margin-bottom: -10px; font-size: 16px;"><strong>Note: Your State may have recently mandated a Required Salary Range be added to all jobs that you post.<br> Please Add a Salary or Salary Range here</strong></p></label>
                                         </li>
 
 
