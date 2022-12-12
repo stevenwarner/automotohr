@@ -15,6 +15,7 @@ $(function (){
     var departments = {};
     var respondentSids = {};
     var jobTitles = {};
+    var includedEmployeesSid = [];
 	//
     window.questionFile = questionFile;
     //
@@ -1309,48 +1310,6 @@ $(function (){
         resetSortQuestions(sortorder)
     });
 
-    $(document).on('click', '.jsGetFilterEmployees', function(event) {
-        var obj = {};
-        var included_sids = [];
-        var excludedEmployees = $('#jsExcludedEmployees').val();
-        //
-        obj.job_titles = $('#jsJobTitles').val() || '';
-        obj.department_sids = $('#jsDepartments').val() || '';
-        obj.employee_types = $('#jsDepartments').val() || '';
-        obj.employees = $('#jsEmployees').val() || '';
-        //
-        console.log(excludedEmployees);
-        console.log(typeof excludedEmployees);
-        console.log(Object.values(excludedEmployees));
-
-        if (excludedEmployees) {
-            var arr = $.map(excludedEmployees, function(value, key){
-                return value
-            });
-            //
-            console.log(typeof arr)
-            //    
-            employees.map(function(employee) {
-                console.log(employee.sid);
-                console.log($.inArray(employee.sid, arr))
-                //
-                if($.inArray(employee.sid, arr) == -1) {
-                    included_sids.push(employee.sid)
-                }
-                
-            });
-        }
-        console.log(included_sids)
-    });
-
-    $(document).on('click', '.jsClearFilter', function(event) {
-        //
-        $("#jsExcludedEmployees").select2("val", "");
-        $("#jsJobTitles").select2("val", "");
-        $("#jsDepartments").select2("val", "");
-        $("#jsEmployees").select2("val", "");
-    });
-
     $(document).on('change', '#jsEmployees', function(event) {
         var selectedEmployees = $("#jsEmployees").val();
         //
@@ -1362,9 +1321,71 @@ $(function (){
     $(document).on('change', '#jsExcludedEmployees', function(event) {
         var selectedEmployees = $("#jsExcludedEmployees").val();
         //
-        selectedEmployees.map(function(employeeSid) {
+        var excludedEmployeesArray = selectedEmployees.map(function(employeeSid) {
             $("#jsEmployees option[value='"+employeeSid+"']").remove();
+            //
+             return parseInt(employeeSid);
         });
+        //
+        includedEmployeesSid = [];
+        //
+        employees.map(function(employee) {
+            excludedEmployeesArray.find(function (el) {
+                console.log(el)
+                console.log(employee.sid)
+                if (el != employee.sid) {
+                     includedEmployeesSid.push(employee.sid);
+                }
+            });
+        });
+        //
+        console.log(includedEmployeesSid)
+
+    });
+
+    $(document).on('click', '.jsGetFilterEmployees', function(event) {
+        var obj = {};
+        var included_sids = [];
+        var excludedEmployees = $('#jsExcludedEmployees').val();
+        var selectedEmployees = $('#jsEmployees').val() || '';
+        //
+        obj.job_titles = $('#jsJobTitles').val() || '';
+        obj.department_sids = $('#jsDepartments').val() || '';
+        obj.employee_types = $('#jsDepartments').val() || '';
+        //
+       
+        //
+        if (!selectedEmployees) {
+            if (excludedEmployees) {
+                console.log(excludedEmployees)
+                var excludedEmployeesArray = $.map(excludedEmployees, function(value, key){
+                    //
+                    return parseInt(value);
+                });
+                console.log(excludedEmployeesArray)
+                //  
+                employees.map(function(employee) {
+                    if($.inArray(employee.sid, excludedEmployeesArray)) {
+                        included_sids.push(employee.sid);
+                    }
+                });
+            }
+        } else {
+            included_sids = $.map(selectedEmployees, function(value, key){
+                return parseInt(value);
+            });
+        }
+    
+        //
+        console.log(included_sids)
+    });
+
+    $(document).on('click', '.jsClearFilter', function(event) {
+        //
+        $("#jsExcludedEmployees").select2("val", "");
+        $("#jsJobTitles").select2("val", "");
+        $("#jsDepartments").select2("val", "");
+        $("#jsEmployees").select2("val", "");
     });
 
 });	
