@@ -49,9 +49,17 @@
                         Back To Templates
                     </button>
                     <button class="btn _csB4 _csF2 _csR5 _csF14 jsSaveSurveyDetails">
+                        <i class="fa fa-floppy-o _csF14" aria-hidden="true"></i>
+                        Save
+                    </button>
+                    <button class="btn _csB4 _csF2 _csR5 _csF14 jsUpdateSurveyDetails dn">
+                        <i class="fa fa-floppy-o _csF14" aria-hidden="true"></i>
+                        Update
+                    </button>
+                    <a href="<?php echo base_url('employee/surveys/create/'.$survey_id.'/questions'); ?>" class="btn _csB3 _csF2 _csR5 _csF14 dn jsQuestionDetailNext">
                         <i class="fa fa-long-arrow-right _csF14" aria-hidden="true"></i>
                         Next
-                    </button>
+                    </a>
                 </div>
             </div>
         </form>

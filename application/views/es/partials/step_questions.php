@@ -9,7 +9,7 @@
                 <button class="btn _csB4 _csF2 _csR5 _csMt10 _csF16" id="jsAddNewQuestionBTN">
                     <i class="fa fa-plus-circle _csF16" aria-hidden="true"></i>&nbsp;Add Question
                 </button>
-                <a href="<?php echo base_url("employee/surveys/update/".$survey_id."/details"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16">
+                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/details"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16">
                     <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Detail
                 </a>
                  <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/respondents"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16 jsAddNewRespondenBTN">
@@ -27,7 +27,7 @@
                 
             </div>
             <div class="col-md-6 col-sm-12 text-right">
-                <a href="<?php echo base_url("employee/surveys/update/".$survey_id."/details"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16">
+                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/details"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16">
                     <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Detail
                 </a>
                 <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/respondents"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16 jsAddNewRespondenBTN" >
@@ -132,8 +132,14 @@
         <div class="row">
             <div class="col-md-12 text-right col-sm-12 _csMt10">
                 <button class="btn _csB1 _csF2 _csR5" id="jsResetQuestionSectionBTN">Cancel</button>
-                <button class="btn _csB4 _csF2 _csR5" id="jsServerQuestionSaveBTN">Save</button>
-                <button class="btn _csB4 _csF2 _csR5 dn" id="jsServerQuestionUpdateBTN">Update</button>
+                <button class="btn _csB4 _csF2 _csR5" id="jsServerQuestionSaveBTN">
+                    <i class="fa fa-floppy-o _csF14" aria-hidden="true"></i>
+                    Save
+                </button>
+                <button class="btn _csB4 _csF2 _csR5 dn" id="jsServerQuestionUpdateBTN">
+                    <i class="fa fa-floppy-o _csF14" aria-hidden="true"></i>
+                    Update
+                </button>
             </div>
         </div>
         <hr>

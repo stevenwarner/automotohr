@@ -10,6 +10,11 @@ $(function (){
     var questionSid = 0;
     //
     var peviousVideo = "";
+    //
+    var employees = {};
+    var departments = {};
+    var respondentSids = {};
+    var jobTitles = {};
 	//
     window.questionFile = questionFile;
     //
@@ -246,6 +251,32 @@ $(function (){
             }
         });
 	}
+    //
+    function updateSurveyDetails (surveyDetails) {
+        $.ajax({
+            type: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: apiURI+'employee_survey/'+ surveyToken +'/survey',
+            data: JSON.stringify(surveyDetails),
+            dataType: 'json',
+            beforeSend: function() {
+                $('.jsESLoader').show();
+            },
+            success: function(resp) {
+                //
+                alertify.alert('SUCCESS!','Employee survey update sucessfully.');
+                //
+                $('.jsESLoader').hide();
+            },
+            error: function() {
+                alertify.alert("NOTICE!", "Unable to update employee survey detail");
+                $('.jsESLoader').hide();
+            }
+        });
+    }
 	//
 	function getCompanySurvey (surveyId, step) {
 		$.ajax({
@@ -291,8 +322,14 @@ $(function (){
 	            //
             	if (step == "details") {
             		$("#show_detail_section").show();
+                    //
 		            $(".step").removeClass("_csactive");
         			$(".step2").addClass("_csactive");
+                    //
+                    $(".jsQuestionDetailNext").removeClass("dn");
+                    $(".jsUpdateSurveyDetails").removeClass("dn");
+                    $(".jsSaveSurveyDetails").addClass("dn");
+                    $(".jsBackToTemplates").addClass("dn");
             	}
 
             	if (step == "questions") {
@@ -324,6 +361,8 @@ $(function (){
             		$("#show_respondants_section").show();
 		            $(".step").removeClass("_csactive");
         			$(".step4").addClass("_csactive");
+                    //
+                    createRespondantPreview();
             	}
                 
             },
@@ -571,6 +610,202 @@ $(function (){
             }
         });
     }
+    //
+    function getCompanyEmployees() {
+        return new Promise(resolve => {
+            $.ajax({
+                type: 'GET',
+                url: apiURI+'employee/'+ cToken +'?columns=sid,fullName,role,department&department_sids=all&included_sids=all&employee_types=all&job_titles=all',
+                dataType: 'json',
+                success: function(resp) {
+                   resolve(resp);
+                },
+                error: function() {
+                    resolve(false);
+                }
+            });
+        });    
+    }
+    //
+    function getSurveyRespondents () {
+        return new Promise(resolve => {
+            $.ajax({
+                type: 'GET',
+                url: apiURI+'employee_survey/'+ surveyToken +'/respondents',
+                dataType: 'json',
+                success: function(resp) {
+                   resolve(resp);
+                },
+                error: function() {
+                    resolve(false);
+                }
+            });
+        });
+    }
+    //
+    function getCompanyDepartments () {
+        return new Promise(resolve => {
+            $.ajax({
+                type: 'GET',
+                url: apiURI+'employee/'+ cToken +'/departments',
+                dataType: 'json',
+                success: function(resp) {
+                   resolve(resp);
+                },
+                error: function() {
+                    resolve(false);
+                }
+            });
+        });
+    }
+    //
+    function getCompanyJobTitles () {
+        return new Promise(resolve => {
+            $.ajax({
+                type: 'GET',
+                url: apiURI+'employee/'+ cToken +'/job_titles',
+                dataType: 'json',
+                success: function(resp) {
+                   resolve(resp);
+                },
+                error: function() {
+                    resolve(false);
+                }
+            });
+        });
+    }
+    //
+    async function createRespondantPreview () {
+        $('.jsESLoader').show();
+        //
+        if ($('#jsRoles').data('select2')) {
+            $('#jsRoles').data('select2').destroy()
+            $('#jsRoles').remove()
+        }
+        //
+        if ($('#jsDepartments').data('select2')) {
+            $('#jsDepartments').data('select2').destroy()
+            $('#jsDepartments').remove()
+        }
+        //
+        if ($('#jsEmployees').data('select2')) {
+            $('#jsEmployees').data('select2').destroy()
+            $('#jsEmployees').remove()
+        }
+        //
+        if ($('#jsExcludedEmployees').data('select2')) {
+            $('#jsExcludedEmployees').data('select2').destroy()
+            $('#jsExcludedEmployees').remove()
+        }
+        //
+        employees = await getCompanyEmployees();
+        respondentSids = await getSurveyRespondents();
+        departments = await getCompanyDepartments();
+        jobTitles = await getCompanyJobTitles();
+        //
+        var departmentInfo = [];
+        var employeeRow = "";
+        var employeeOptions = "";
+        var departmentOptions = "";
+        var jobTitleOptions = "";
+        var jobTypeOptions = "";
+        var employeeNo = 0;
+        //
+        //
+        if (departments.length) {
+            departments.map(function(department) {
+                departmentOptions += '<option value="' + (department['sid']) + '">' + (department['name']) + '</option>';
+                departmentInfo[department['sid']] = department['name'];
+            });
+        }
+        //
+        if (employees.length) {
+            employees.map(function(employee) {
+                if($.inArray(employee.sid, respondentSids) !== -1) {
+                    employeeRow += '<tr>';
+                    employeeRow += '<th scope="col">'+remakeEmployeeName(employee)+'</th>';
+
+                    if (departmentInfo.length) {
+                        employeeRow += employee.department_sid != 0 ? '<td>'+departmentInfo[employee.department_sid]+'</td>' :  '<td>No Department</td>';
+                    } else {
+                        employeeRow += '<td>No Department</td>';
+                    }
+                    employeeRow += '</tr>';
+                    //
+                    employeeNo++; 
+                }
+                //
+                employeeOptions += '<option value="' + (employee['sid']) + '">' + (remakeEmployeeName(employee)) + '</option>';
+            });
+        }
+        
+        //
+        if (jobTitles.length) {
+            jobTitles.map(function(title) {
+                jobTitleOptions += '<option value="' + (title) + '">' + (title) + '</option>';
+            });
+        }
+        //
+        jobTypeOptions+= '<option value="fulltime">Full Time</option>';
+        jobTypeOptions+= '<option value="parttime">Part Time</option>';
+        //
+        $("#jsCompanyEmployeesList").html(employeeRow);
+        //
+        $('#jsEmployees')
+            .html(employeeOptions)
+            .select2({
+                closeOnSelect: false
+            });
+        //    
+        $('#jsExcludedEmployees')
+            .html(employeeOptions)
+            .select2({
+                closeOnSelect: false
+            });
+        //
+        $('#jsDepartments')
+            .html(departmentOptions)
+            .select2({
+                closeOnSelect: false
+            });
+        //
+        $('#jsJobTitles')
+            .html(jobTitleOptions)
+            .select2({
+                closeOnSelect: false
+            });   
+        //
+        $('#jsEemployeeType')
+            .html(jobTypeOptions)
+            .select2({
+                closeOnSelect: false
+            });         
+        //
+        $('.jsESLoader').hide();
+        //
+    }
+    //
+    function remakeEmployeeName(o, i) {
+        //
+        var r = '';
+        //
+        if (i == undefined) r += o.first_name + ' ' + o.last_name;
+        //
+        if (o.job_title != '' && o.job_title != null) r += ' (' + (o.job_title) + ')';
+        //
+        r += ' [';
+        //
+        if (typeof(o['is_executive_admin']) !== undefined && o['is_executive_admin'] != 0) r += 'Executive ';
+        //
+        if (o['access_level_plus'] == 1 && o['pay_plan_flag'] == 1) r += o['access_level'] + ' Plus / Payroll';
+        else if (o['access_level_plus'] == 1) r += o['access_level'] + ' Plus';
+        else if (o['pay_plan_flag'] == 1) r += o['access_level'] + ' Payroll';
+        else r += o['access_level'];
+        //
+        r += ']';
+        //
+        return r;
+    }
 	//
 	surveyToken == 0 ? getTemplates() : getCompanySurvey(surveyToken, stepToken);
 	//
@@ -692,10 +927,10 @@ $(function (){
             return false;
         }
         //
-        if (surveyDetails == '') {
-        	alertify.alert("WARNING!", "Please Enter Survey Details");
-            return false;
-        }
+        // if (surveyDetails == '') {
+        // 	alertify.alert("WARNING!", "Please Enter Survey Details");
+        //     return false;
+        // }
         //
         if (surveyStartDate == '') {
         	alertify.alert("WARNING!", "Please Enter Survey Start Date");
@@ -718,6 +953,40 @@ $(function (){
         };
         //
         saveSurveyDetails(surveyBasicDetails);
+    });
+
+    $(document).on('click', '.jsUpdateSurveyDetails', function(event) {
+        //
+        var surveyTitle = $("#jsSurveyTitle").val();
+        var surveyDetails = $("#jsSurveyDescription").val();
+        var surveyStartDate = $("#jsStartDate").val();
+        var surveyEndDate = $("#jsEndDate").val();
+        //
+        if (surveyTitle == '') {
+            alertify.alert("WARNING!", "Please Enter Survey Title");
+            return false;
+        }
+        //
+        if (surveyStartDate == '') {
+            alertify.alert("WARNING!", "Please Enter Survey Start Date");
+            return false;
+
+        }
+        //
+        if (surveyEndDate == '') {
+            alertify.alert("WARNING!", "Please Enter Survey End Date");
+            return false;
+        }
+        //
+        var surveyBasicDetails = {
+            'title': surveyTitle,
+            'start_date': moment(surveyStartDate).format('YYYY-MM-DD'),
+            'end_date': moment(surveyEndDate).format('YYYY-MM-DD'),
+            'description': surveyDetails,
+            'employee_code': eToken,
+        };
+        //
+        updateSurveyDetails(surveyBasicDetails);
     });
 
     $(document).on('click', '#jsAddNewQuestionBTN', function(event) {
@@ -781,14 +1050,14 @@ $(function (){
     /**
      * 
      */
-    $('#jsSurveyAddQuestionType').change(function() {
+    $(document).on('change', '#jsSurveyAddQuestionType', function(event) {
         updatePreview();
     });
 
     /**
      * 
      */
-    $('#jsServerQuestionSaveBTN').click(function(event) {
+    $(document).on('click', '#jsServerQuestionSaveBTN', function(event) {
         //
         event.preventDefault();
         //
@@ -939,7 +1208,7 @@ $(function (){
     /**
      * 
      */
-    $('#jsServerQuestionUpdateBTN').click(function(event) {
+    $(document).on('click', '#jsServerQuestionUpdateBTN', function(event) {
         //
         event.preventDefault();
         //
@@ -1040,7 +1309,63 @@ $(function (){
         resetSortQuestions(sortorder)
     });
 
+    $(document).on('click', '.jsGetFilterEmployees', function(event) {
+        var obj = {};
+        var included_sids = [];
+        var excludedEmployees = $('#jsExcludedEmployees').val();
+        //
+        obj.job_titles = $('#jsJobTitles').val() || '';
+        obj.department_sids = $('#jsDepartments').val() || '';
+        obj.employee_types = $('#jsDepartments').val() || '';
+        obj.employees = $('#jsEmployees').val() || '';
+        //
+        console.log(excludedEmployees);
+        console.log(typeof excludedEmployees);
+        console.log(Object.values(excludedEmployees));
 
+        if (excludedEmployees) {
+            var arr = $.map(excludedEmployees, function(value, key){
+                return value
+            });
+            //
+            console.log(typeof arr)
+            //    
+            employees.map(function(employee) {
+                console.log(employee.sid);
+                console.log($.inArray(employee.sid, arr))
+                //
+                if($.inArray(employee.sid, arr) == -1) {
+                    included_sids.push(employee.sid)
+                }
+                
+            });
+        }
+        console.log(included_sids)
+    });
+
+    $(document).on('click', '.jsClearFilter', function(event) {
+        //
+        $("#jsExcludedEmployees").select2("val", "");
+        $("#jsJobTitles").select2("val", "");
+        $("#jsDepartments").select2("val", "");
+        $("#jsEmployees").select2("val", "");
+    });
+
+    $(document).on('change', '#jsEmployees', function(event) {
+        var selectedEmployees = $("#jsEmployees").val();
+        //
+        selectedEmployees.map(function(employeeSid) {
+            $("#jsExcludedEmployees option[value='"+employeeSid+"']").remove();
+        });
+    });
+
+    $(document).on('change', '#jsExcludedEmployees', function(event) {
+        var selectedEmployees = $("#jsExcludedEmployees").val();
+        //
+        selectedEmployees.map(function(employeeSid) {
+            $("#jsEmployees option[value='"+employeeSid+"']").remove();
+        });
+    });
 
 });	
 
