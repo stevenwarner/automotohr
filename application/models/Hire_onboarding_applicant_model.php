@@ -62,6 +62,13 @@ class Hire_onboarding_applicant_model extends CI_Model
         $this->db->select('portal_job_applications.dob');
         $this->db->select('portal_job_applications.employee_status');
         $this->db->select('portal_job_applications.employee_type');
+        $this->db->select('portal_job_applications.marital_status');
+        $this->db->select('portal_job_applications.gender');
+        $this->db->select('portal_job_applications.ip_address');
+        $this->db->select('portal_job_applications.video_type');
+        $this->db->select('portal_job_applications.middle_name');
+        $this->db->select('portal_job_applications.nick_name');
+        //
 
         $this->db->select('portal_applicant_jobs_list.*, portal_applicant_jobs_list.sid as portal_applicant_jobs_list_sid');
 
@@ -82,6 +89,7 @@ class Hire_onboarding_applicant_model extends CI_Model
     {
         $this->db->insert('users', $employer_data);
         $user_id = $this->db->insert_id(); // check if insert was successful
+    
         if ($this->db->affected_rows() == '1') { // now update applications table
             $this->db->where('sid', $sid);
             $data_applicant = array(
