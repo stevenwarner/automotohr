@@ -533,15 +533,13 @@ class Complynet_lib
      * Set Library Enviorment
      * 
      */
-    public function makeRequest
-    (
+    public function makeRequest(
         $complyNetCompanyId,
         $complyNetLocationId,
         $complyNetDepartmentId,
         $complyNetJobRoleId,
         $employeesList
-    )
-    {
+    ) {
         foreach ($employeesList as $employeeSid) {
             // get employee info from DB
             $employeeInfo = $this->complynetModel->checkOrGetData(
@@ -551,7 +549,7 @@ class Complynet_lib
                 ],
                 'row_array',
                 'users'
-            ); 
+            );
             //
             $employeeData = [
                 "firstName" => $employeeInfo["first_name"],
@@ -569,7 +567,7 @@ class Complynet_lib
             //  
             $result = $this->createUser(
                 $employeeData
-            ); 
+            );
             //
             $insertId = 0;
             //
@@ -591,8 +589,7 @@ class Complynet_lib
                 $employeeData['created_at'] = date('Y-m-d H:i:s', strtotime('now'));
                 //
                 $insertId = $this->complynetModel->insertData('complynet_employees', $employeeData);
-            }    
-
+            }
         }
         //
         if ($insertId > 0) {
@@ -824,5 +821,24 @@ class Complynet_lib
         }
         //
         return $response;
+    }
+
+
+
+    // Get All locations
+    public function getLocationsNew()
+    { 
+        //
+        if ($this->mode == 'fake') {
+            return $this->fakeLocationResponse();
+        }
+        //
+        $result = $this->curlCall(
+            $this->complynetUser->API_URL . 'Location',
+            [],
+            'GET'
+        );
+        //
+        return $result;
     }
 }
