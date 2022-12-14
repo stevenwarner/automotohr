@@ -4859,7 +4859,7 @@ class Onboarding extends CI_Controller
                 $items = $this->convert_array_to_1d($items_data);
                 $credentials = empty($credentials_data) ? array() : unserialize($credentials_data['items']);
 
-                if (!isset($credentials['instructions'])) {
+                if (!isset($credentials['instructions']) || empty($credentials['instructions'])) {
                     $credentials['instructions'] = '<p>Please create your login credentials to access your employee panel</p><p><strong>Suggestion for User Name:</strong><br />You can use your first name and last name all one word all lower case. Example: johnsmith<br />if the username is already taken than you can add any number with it Example: johnsmith123</p><p><strong>Suggestion for Password:</strong><br />Please create secure password with Alpha Numeric and special combination and do not share your password with anyone.</p>';
                 } else {
                     $mystring = 'lorem ipsum';
