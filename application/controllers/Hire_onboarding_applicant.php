@@ -220,6 +220,13 @@ class Hire_onboarding_applicant extends CI_Controller
         }
         $employer_data['ssn'] = $applicant_profile_info['ssn'];
         $employer_data['dob'] = $applicant_profile_info['dob'];
+        $employer_data['marital_status'] = $applicant_profile_info['marital_status'];
+        $employer_data['gender'] = $applicant_profile_info['gender'];
+        $employer_data['ip_address'] = $applicant_profile_info['ip_address'];
+        $employer_data['cover_letter'] = $applicant_profile_info['cover_letter'];
+        $employer_data['video_type'] = $applicant_profile_info['video_type'];
+        $employer_data['middle_name'] = $applicant_profile_info['middle_name'];
+        $employer_data['nick_name'] = $applicant_profile_info['nick_name'];
         //
         // insert employer data to table and get its ID
         $employee_result = $this->hire_onboarding_applicant_model->insert_company_employee($employer_data, $applicant_sid, $applicant_job_sid);
