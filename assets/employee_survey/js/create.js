@@ -612,11 +612,12 @@ $(function (){
         });
     }
     //
-    function getCompanyEmployees() {
+    function getCompanyEmployees(departments, included, excluded, type, title) {
+        
         return new Promise(resolve => {
             $.ajax({
                 type: 'GET',
-                url: apiURI+'employee/'+ cToken +'?columns=sid,fullName,role,department&department_sids=all&included_sids=all&employee_types=all&job_titles=all',
+                url: apiURI+'employee/'+ cToken +'?columns=sid,fullName,role,department&department_sids='+departments+'&included_sids='+included+'&excluded_sids='+excluded+'&employee_types='+type+'&job_titles='+title,
                 dataType: 'json',
                 success: function(resp) {
                    resolve(resp);
@@ -676,6 +677,52 @@ $(function (){
         });
     }
     //
+    function createEmployeeList (employeesList, respondentSids = '') {
+        
+        var employeeRow = "";
+        var employeeNo = 0;
+        //
+        
+        if (employeesList.length) {
+            employeesList.map(function(employee) {
+                
+                if (respondentSids.length) {
+                    if($.inArray(employee.sid, respondentSids) !== -1) {
+                        employeeRow += '<tr class="jsSelectedEmployees" data-employee_sid="'+employee.sid+'">';
+                        employeeRow += '<th scope="col">'+remakeEmployeeName(employee)+'</th>';
+
+                        if (departments.length) {
+                            employeeRow += employee.department_sid != 0 ? '<td>'+departments[employee.department_sid]+'</td>' :  '<td>No Department</td>';
+                        } else {
+                            employeeRow += '<td>No Department</td>';
+                        }
+                        employeeRow += '</tr>';
+                        //
+                        employeeNo++; 
+                    }
+                } else {
+                    employeeRow += '<tr class="jsSelectedEmployees" data-employee_sid="'+employee.sid+'">';
+                    employeeRow += '<th scope="col">'+remakeEmployeeName(employee)+'</th>';
+
+                    if (departments.length) {
+                        employeeRow += employee.department_sid != 0 ? '<td>'+departments[employee.department_sid]+'</td>' :  '<td>No Department</td>';
+                    } else {
+                        employeeRow += '<td>No Department</td>';
+                    }
+                    employeeRow += '</tr>';
+                    //
+                    employeeNo++; 
+                }
+            });
+            //
+        } else {
+            employeeRow += '<tr><td colspan="2" class="text-center"><b>No Employee Found</b></td></tr>';
+        }
+        //
+        $("#jsCompanyEmployeesList").html(employeeRow);
+        $("#jsSurveyRespondentsCount").html('('+employeeNo+')');
+    }
+    //
     async function createRespondantPreview () {
         $('.jsESLoader').show();
         //
@@ -699,13 +746,12 @@ $(function (){
             $('#jsExcludedEmployees').remove()
         }
         //
-        employees = await getCompanyEmployees();
+        employees = await getCompanyEmployees("all", "all", "all", "all", "all");
         respondentSids = await getSurveyRespondents();
         departments = await getCompanyDepartments();
         jobTitles = await getCompanyJobTitles();
         //
         var departmentInfo = [];
-        var employeeRow = "";
         var employeeOptions = "";
         var departmentOptions = "";
         var jobTitleOptions = "";
@@ -721,20 +767,9 @@ $(function (){
         }
         //
         if (employees.length) {
+            createEmployeeList(employees, respondentSids, );
+            //
             employees.map(function(employee) {
-                if($.inArray(employee.sid, respondentSids) !== -1) {
-                    employeeRow += '<tr>';
-                    employeeRow += '<th scope="col">'+remakeEmployeeName(employee)+'</th>';
-
-                    if (departmentInfo.length) {
-                        employeeRow += employee.department_sid != 0 ? '<td>'+departmentInfo[employee.department_sid]+'</td>' :  '<td>No Department</td>';
-                    } else {
-                        employeeRow += '<td>No Department</td>';
-                    }
-                    employeeRow += '</tr>';
-                    //
-                    employeeNo++; 
-                }
                 //
                 employeeOptions += '<option value="' + (employee['sid']) + '">' + (remakeEmployeeName(employee)) + '</option>';
             });
@@ -750,7 +785,7 @@ $(function (){
         jobTypeOptions+= '<option value="fulltime">Full Time</option>';
         jobTypeOptions+= '<option value="parttime">Part Time</option>';
         //
-        $("#jsCompanyEmployeesList").html(employeeRow);
+        
         //
         $('#jsEmployees')
             .html(employeeOptions)
@@ -806,6 +841,59 @@ $(function (){
         r += ']';
         //
         return r;
+    }
+    //
+    async function getFilterCompanyEmployees () {
+        var departmentSids = $('#jsDepartments').val() || 'all';
+        var includedEmployees = $('#jsEmployees').val() || 'all';
+        var excludedEmployees = $('#jsExcludedEmployees').val() || 'no';
+        var jobTitles = $('#jsJobTitles').val() || 'all';
+        var employeeTypes = $('#jsEemployeeType').val() || 'all';
+        //
+        employeesList = await getCompanyEmployees(departmentSids, includedEmployees, excludedEmployees, employeeTypes, jobTitles);
+        //
+        createEmployeeList(employeesList)
+    }
+    //
+    function saveSurveyRespondents (surveyRespondents) {
+        //
+        var obj = {
+            "employee_code" : eToken,
+            "respondents": surveyRespondents
+        };
+        //
+        $.ajax({
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: apiURI+'employee_survey/'+ surveyToken +'/respondents',
+            data: JSON.stringify(obj),
+            dataType: 'json',
+            beforeSend: function() {
+                $('.jsESLoader').show();
+            },
+            success: function(resp) {
+                //
+                alertify.alert('SUCCESS!','Employee survey respondents saved sucessfully.',function () {
+                    if (resp.complete == 1) {
+                        publishCompanySurvey();
+                    }
+                    
+                });
+                //
+                $('.jsESLoader').hide();
+            },
+            error: function() {
+                alertify.alert("NOTICE!", "Unable to save employee survey respondents");
+                $('.jsESLoader').hide();
+            }
+        });
+    }
+    //
+    function publishCompanySurvey () {
+        console.log("do you want to complete this survey")
     }
 	//
 	surveyToken == 0 ? getTemplates() : getCompanySurvey(surveyToken, stepToken);
@@ -1321,63 +1409,15 @@ $(function (){
     $(document).on('change', '#jsExcludedEmployees', function(event) {
         var selectedEmployees = $("#jsExcludedEmployees").val();
         //
-        var excludedEmployeesArray = selectedEmployees.map(function(employeeSid) {
+        selectedEmployees.map(function(employeeSid) {
             $("#jsEmployees option[value='"+employeeSid+"']").remove();
             //
              return parseInt(employeeSid);
         });
-        //
-        includedEmployeesSid = [];
-        //
-        employees.map(function(employee) {
-            excludedEmployeesArray.find(function (el) {
-                console.log(el)
-                console.log(employee.sid)
-                if (el != employee.sid) {
-                     includedEmployeesSid.push(employee.sid);
-                }
-            });
-        });
-        //
-        console.log(includedEmployeesSid)
-
     });
 
     $(document).on('click', '.jsGetFilterEmployees', function(event) {
-        var obj = {};
-        var included_sids = [];
-        var excludedEmployees = $('#jsExcludedEmployees').val();
-        var selectedEmployees = $('#jsEmployees').val() || '';
-        //
-        obj.job_titles = $('#jsJobTitles').val() || '';
-        obj.department_sids = $('#jsDepartments').val() || '';
-        obj.employee_types = $('#jsDepartments').val() || '';
-        //
-       
-        //
-        if (!selectedEmployees) {
-            if (excludedEmployees) {
-                console.log(excludedEmployees)
-                var excludedEmployeesArray = $.map(excludedEmployees, function(value, key){
-                    //
-                    return parseInt(value);
-                });
-                console.log(excludedEmployeesArray)
-                //  
-                employees.map(function(employee) {
-                    if($.inArray(employee.sid, excludedEmployeesArray)) {
-                        included_sids.push(employee.sid);
-                    }
-                });
-            }
-        } else {
-            included_sids = $.map(selectedEmployees, function(value, key){
-                return parseInt(value);
-            });
-        }
-    
-        //
-        console.log(included_sids)
+        getFilterCompanyEmployees();
     });
 
     $(document).on('click', '.jsClearFilter', function(event) {
@@ -1386,8 +1426,27 @@ $(function (){
         $("#jsJobTitles").select2("val", "");
         $("#jsDepartments").select2("val", "");
         $("#jsEmployees").select2("val", "");
+        $("#jsEemployeeType").select2("val", "");
     });
 
+    $(document).on('click', '.jsSaveSurveyRespondents', function(event) {
+        var employees = [];
+            //
+        $('.jsSelectedEmployees').each(function(index,item){
+            employees.push(parseInt($(item).data('employee_sid')));
+        });
+        //
+        if (employees.length) {
+            saveSurveyRespondents(employees);
+        } else {
+            alertify.alert("NOTICE!","Please select respondents first",function () {
+                return false;
+            });
+        }
+    })
+
 });	
+
+
 
 

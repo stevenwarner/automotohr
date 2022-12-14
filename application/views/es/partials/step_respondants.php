@@ -3,7 +3,7 @@
     <div class="panel-heading">
         <div class="row">
             <div class="col-md-6 col-sm-12">
-                <h3 class="_csF16">Survey Questions <span id="jsSurveyQuestionCount">(0)</span></h3>
+                <h3 class="_csF16">Survey Respondents <span id="jsSurveyRespondentsCount">(0)</span></h3>
             </div>
             <div class="col-md-6 col-sm-12 text-right">
                  <a href="<?php echo base_url('employee/surveys/create/'.$survey_id.'/questions'); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16">
@@ -106,7 +106,7 @@
         <div class="row">
             <div class="col-sm-12 text-right">
                 <button class="btn _csF2 _csB1 _csR5">Cancel</button>
-                <button class="btn _csF2 _csB4 _csR5">Save</button>
+                <button class="btn _csF2 _csB4 _csR5 jsSaveSurveyRespondents">Save</button>
             </div>
         </div>
     </div>
