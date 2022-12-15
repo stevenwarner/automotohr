@@ -688,6 +688,7 @@
                                 <?php } ?>
 
                                 <!-- Employee Information Change -->
+                                <?php  if ($access_level_plus == 1 || $pay_plan_flag == 1) {?>
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box">
                                         <div class="dashboard-widget-box">
@@ -710,7 +711,8 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <?php } ?>
+                                
                                 <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
                                     <!-- Documents Library -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">

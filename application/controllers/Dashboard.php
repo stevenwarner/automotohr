@@ -39,6 +39,8 @@ class Dashboard extends Public_Controller
             $data['session']                                                    = $this->session->userdata('logged_in');
             $employer_detail                                                    = $data['session']['employer_detail'];
             $company_detail                                                     = $data['session']['company_detail'];
+            $data['access_level_plus']                                          = $data["session"]["employer_detail"]["access_level_plus"];
+            $data['pay_plan_flag']                                              = $data["session"]["employer_detail"]["pay_plan_flag"];
             $security_sid                                                       = $employer_detail['sid'];
             $security_details                                                   = db_get_access_level_details($security_sid);
             $data['security_details']                                           = $security_details;
