@@ -39,9 +39,8 @@
                         </div>
                         <div class="panel-body">
                             <!-- Tab panes -->
-                            <div class="tab-pane" id="jsActive">
+                            <div class="tab-pane" id="jsCompanySurveysSection">
                                 <div class="table-responsive">
-
                                     <div class="row">
                                         <div class="col-md-4 col-xs-12">
                                             <div class="panel panel-default " data-id="1" data-title="Test Survey">
@@ -73,6 +72,7 @@
                                 </div>
                             </div>
                         </div>
+                        <?php $this->load->view('es/partials/loader'); ?>
                     </div>
                 </div>
             </div>

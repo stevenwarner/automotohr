@@ -32,6 +32,7 @@
                     <div id="show_respondants_section" style="display: none;">
                         <?php $this->load->view('es/partials/step_respondants'); ?>
                     </div>
+                    <?php $this->load->view('es/partials/publish_survey'); ?>
                     <?php $this->load->view('es/partials/loader'); ?>
                 </div>
             </div>

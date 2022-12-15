@@ -585,8 +585,6 @@ $(function (){
             "sortOrder" : sortOrder
         }
         //
-        console.log(obj)
-        //
         $.ajax({
             type: 'PUT',
             headers: {
@@ -877,8 +875,8 @@ $(function (){
             success: function(resp) {
                 //
                 alertify.alert('SUCCESS!','Employee survey respondents saved sucessfully.',function () {
-                    if (resp.complete == 1) {
-                        publishCompanySurvey();
+                    if (resp.Publish == 1) {
+                        publishCompanySurvey(resp);
                     }
                     
                 });
@@ -892,8 +890,42 @@ $(function (){
         });
     }
     //
-    function publishCompanySurvey () {
+    function publishCompanySurvey (surveyInfo) {
         console.log("do you want to complete this survey")
+        //
+        $('#jsSurveyPublishModal').show();
+        var rows = '';
+        rows += '    <div class="row">';
+        rows += '        <div class="col-sm-12">';
+        rows += '            <div class="responsive">';
+        rows += '               <p>Are you sure you want to send the survey to all the <b>' +surveyInfo.respondents+ ' workers</b> starting on <b>'+ surveyInfo.start_date + '</b> ?</p>';
+        rows += '               <p>Notifications will be sent out as follows:</p>';
+        rows += '                   <table class="table table-striped">';
+        rows += '                         <thead>';
+        rows += '                           <tr>';
+        rows += '                              <th>Notification</th>';
+        rows += '                              <th class="text-right">When it will be sent?</th>';
+        rows += '                           </tr>';
+        rows += '                         </thead>';
+        rows += '                         <tbody>';
+        rows += '                           <tr>';
+        rows += '                              <td>Start date</td>';
+        rows += '                              <td class="text-right">'+surveyInfo.start_date+'</td>';
+        rows += '                           </tr>';
+        rows += '                           <tr>';
+        rows += '                              <td>Halfway reminder</td>';
+        rows += '                              <td class="text-right">'+surveyInfo.halfway_date+'</td>';
+        rows += '                           </tr>';
+        rows += '                           <tr>';
+        rows += '                              <td>Final reminder</td>';
+        rows += '                              <td class="text-right">'+surveyInfo.final_date+'</td>';
+        rows += '                           </tr>';
+        rows += '                         </tbody>';
+        rows += '                   </table>';
+        rows += '            </div>';
+        rows += '        </div>';
+        //
+        $('#jsSurveyConfirmationHeading').html(rows);
     }
 	//
 	surveyToken == 0 ? getTemplates() : getCompanySurvey(surveyToken, stepToken);
@@ -1443,7 +1475,40 @@ $(function (){
                 return false;
             });
         }
-    })
+    });
+
+    $(document).on('click', '.jsCancelConfermation', function(event) {
+        $("#jsSurveyPublishModal").hide();
+    });
+
+    $(document).on('click', '.jsPublishSurvey', function(event) {
+        $.ajax({
+            type: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: apiURI+'employee_survey/'+ surveyToken +'/publish',
+            data: JSON.stringify({"employee_code": eToken}),
+            dataType: 'json',
+            beforeSend: function() {
+                $('.jsESLoader').show();
+            },
+            success: function(resp) {
+                //
+                alertify.alert('SUCCESS!','Employee survey Publish sucessfully.',function () {
+                    var URL = baseURI+'employee/surveys/surveys';
+                    window.location.href = URL;  
+                });
+                //
+                $('.jsESLoader').hide();
+            },
+            error: function() {
+                alertify.alert("NOTICE!", "Unable to publish survey");
+                $('.jsESLoader').hide();
+            }
+        });
+    });
 
 });	
 
