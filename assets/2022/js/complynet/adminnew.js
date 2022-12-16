@@ -59,13 +59,8 @@ $(function ComplyNetManagement() {
             return;
         }
 
-
         parentCompanyId = automotocompanySid;
-
-
-        //  var url = '<?= base_url('testing/complynetSync') ?>';
-
-        var url = window.location.origin + '/testing/complynetSync';
+        var url = window.location.origin + '/manage_admin/2022/complynet/complynetSync';
 
         $.ajax({
             url: url,
@@ -94,10 +89,6 @@ $(function ComplyNetManagement() {
         });
 
     });
-
-
-
-
 
 
 
@@ -386,10 +377,11 @@ $(function ComplyNetManagement() {
                     });
 
                     //
+                    $('.jsContentArea').removeClass('hidden');
+                    $('.jsContentArea .locationInfo').removeClass('hidden');
                     $('.jsContentArea .locationInfo tbody').html(locationRow);
 
                     $('.jsContentArea .departmentInfo').removeClass('hidden');
-
                     getCompanyDepartmentsDetail();
                 }
             })

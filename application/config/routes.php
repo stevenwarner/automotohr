@@ -1589,8 +1589,14 @@ $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$
  * 
  * @author Mubashir Ahmed <mubashar@egenienext.com>
  */
-$route['manage_admin/complynet']['get'] = "manage_admin/2022/Complynet/manage";
+//$route['manage_admin/complynet']['get'] = "manage_admin/2022/Complynet/manage";
 $route['manage_admin/complynet/(:num)']['get'] = "manage_admin/2022/Complynet/manage/$1";
+
+
+$route['manage_admin/complynet']['get'] = "manage_admin/2022/Complynet/manage_new";
+$route['manage_admin/complynet/(:num)']['get'] = "manage_admin/2022/Complynet/manage/$1";
+
+
 //
 //Company routes
 $route['complynet/get_company_details/(:num)']['get'] = "2022/Complynet/getCompanyDetails/$1";https://www.youtube.com/shorts/FBpNErz5_ZQ
