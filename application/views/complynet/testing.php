@@ -25,11 +25,11 @@
                                     <div class="col-sm-12">
 
                                         <label>Companies</label>
-
                                         <select id="automotoHRCompany">
                                             <option value="0">Select Location</option>
-                                            <option value="15708">test address</option>
-                                            <option value="662">sdfs</option>
+                                            <?php foreach ($allcompanies as $companiesRow) { ?>
+                                                <option value="<?php echo $companiesRow['sid']?>"><?php echo $companiesRow['CompanyName']?></option>
+                                            <?php } ?>
                                         </select>
                                     </div>
                                 </div>

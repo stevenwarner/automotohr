@@ -10,6 +10,7 @@ class Testing extends CI_Controller
         $this->load->model("test_model", "tm");
         $this->load->model('2022/Company_model', 'company_model');
         $this->load->library('complynet_lib');
+        $this->load->model('hr_documents_management_model');
     }
 
     public function complynet()
@@ -183,6 +184,7 @@ class Testing extends CI_Controller
         // //
         // _e($response, true, true);
 
+        /*
         $response = $this
             ->complynet_lib
             ->setMode('fake')
@@ -193,6 +195,7 @@ class Testing extends CI_Controller
             );
         //
         _e($response, true, true);
+        */
     }
 
 
@@ -202,11 +205,6 @@ class Testing extends CI_Controller
     {
         $automotocompanySid = $_POST['automotocompany_sid'];
         $complyNetLocationId = $_POST['complyNetLocation_Id'];
-        //  $complyNetLocationName = $_POST['complyNetLocation_Name'];
-
-
-        // $userdata = $this->session->userdata('logged_in');
-        //  $employer_sid = $userdata["employer_detail"]["sid"];
 
         //Get Departments
         $departmentsData = $this->getComplynetDepartments($complyNetLocationId);
@@ -271,7 +269,6 @@ class Testing extends CI_Controller
             }
         }
 
-
         //Get Employees On Automotohr
         $automotohrEmployeesData = $this->getautomotoHREmployees($automotocompanySid);
 
@@ -282,11 +279,10 @@ class Testing extends CI_Controller
                     ->setMode('fake')
                     ->authenticate()
                     ->getUser($employeeDataRow['email']);
+                //  $complynetEmployeeData = '';
 
                 if (!empty($complynetEmployeeData)) {
-
                     //Complyenet employee Binde
-
                     // Check employee is already Bind or not
                     $complynetEmployeeBindID = $this->checkComplynetEmployeeBind($automotocompanySid, $complyNetLocationId, $complynetEmployeeData['email']);
 
@@ -317,30 +313,48 @@ class Testing extends CI_Controller
                         }
                     }
 
-
-                    print_r($complynetEmployeeData);
+                    //  print_r($complynetEmployeeData);
                 } else {
 
-                     $cUser = array(
-                         "firstName" => $employeeDataRow['first_name'],
-                         "lastName" => $employeeDataRow['last_name'],
-                         "userName" => $employeeDataRow['email'],
-                         "email" => $employeeDataRow['email'],
-                         "password" => "",
-                         "companyId" => $employeeDataRow['parent_sid'],,
-                         "locationId" => "8AB20AFF-C1AE-4F08-AB1C-160ABD4FEA2F",
-                         "departmentId" => "55A3BBA9-CE0F-4E1C-9587-9E3709CF2F25",
-                         "jobRoleId" => "FE96FEBA-DE91-4DA1-A809-499351D001F7",
-                         "PhoneNumber" => 5556667778,
-                         "TwoFactor" => TRUE,
-                     );
+                    $employeeDataRow['job_title'] = 'Employee';
+                    $complynetDepartmentId = $this->getComplynetDepartmentBindId($employeeDataRow['department_sid']);
+                    $complynetJobRoleId = $this->getComplynetJobRoleBindId($automotocompanySid, $employeeDataRow['job_title']);
+                    if (!empty($complynetDepartmentId) && !empty($complynetJobRoleId)) {
+                        $cUser = array(
+                            "firstName" => $employeeDataRow['first_name'],
+                            "lastName" => $employeeDataRow['last_name'],
+                            "userName" => $employeeDataRow['email'],
+                            "email" => $employeeDataRow['email'],
+                            "password" => "",
+                            "companyId" => '', //$employeeDataRow['parent_sid'],
+                            "locationId" => $complyNetLocationId,
+                            "departmentId" => $complynetDepartmentId['complynet_department_id'],
+                            "jobRoleId" => $complynetJobRoleId['complynet_jobRole_id'],
+                            "PhoneNumber" => $employeeDataRow['PhoneNumber'],
+                            "TwoFactor" => TRUE,
+                        );
+                        //Create Employee 
+                        $complynetEmployeeData = $this->complynet_lib
+                            ->setMode('fake')
+                            ->authenticate()
+                            ->createUser($cUser);
 
+                        // Bind New Complynet User
+                        $employeeDataBind['company_id'] = $automotocompanySid;
+                        $employeeDataBind['complynet_company_id'] = $complyNetLocationId;
+                        $employeeDataBind['complynet_department_id'] = $complynetDepartmentId['complynet_department_id'];
+                        $employeeDataBind['complynet_jobRole_id'] = $complynetJobRoleId['complynet_jobRole_id'];
+                        $employeeDataBind['automotohr_employee_id'] = $employeeDataRow['sid'];
+                        $employeeDataBind['firstName'] = $employeeDataRow['first_name'];
+                        $employeeDataBind['lastName'] = $employeeDataRow['last_name'];
+                        $employeeDataBind['userName'] = $employeeDataRow['email'];
+                        $employeeDataBind['email'] = $employeeDataRow['email'];
+                        $employeeDataBind['PhoneNumber'] = $employeeDataRow['PhoneNumber'];
+                        $employeeDataBind['status'] = 1;
+                        $employeeDataBind['created_at'] = date('Y-m-d H:i:s');
 
-                    //Create Employee 
-                    $complynetEmployeeData = $this->complynet_lib
-                        ->setMode('fake')
-                        ->authenticate()
-                        ->createUser($cUser);
+                        $this->bindeComplynetEmployee($employeeDataBind);
+                    }
                 }
             }
         }
@@ -350,10 +364,15 @@ class Testing extends CI_Controller
     function getComplynetLocations()
     {
 
+        $allCompanies = $this->hr_documents_management_model->get_all_companies();
+        $data['allcompanies'] = $allCompanies;
+
+        //
         $locationsData = $this->complynet_lib
             ->setMode('fake')
             ->authenticate()
             ->getLocationsNew();
+
 
         $data['locations'] = $locationsData;
         $this->load->view('main/header', $data);
@@ -460,9 +479,6 @@ class Testing extends CI_Controller
             ->get('users')
             ->result_array();
     }
-
-
-
 
 
     //
