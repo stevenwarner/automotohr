@@ -175,7 +175,7 @@
                                             <?php }?>
                                             <li class="form-col-50-left">
                                                 <label>Expiration Date</label>
-                                                <input class="invoice-fields startdate" readonly="" type="text"
+                                                <input class="invoice-fields expdate" readonly="" type="text"
                                                     name="license_expiration_date"
                                                     value="<?php if (isset($license_info['license_expiration_date'])) {echo $license_info['license_expiration_date'];}?>">
                                             </li>
@@ -264,6 +264,14 @@ $('.startdate').datepicker({
     changeMonth: true,
     changeYear: true,
     yearRange: "-100:+50",
+}).val();
+
+
+$('.expdate').datepicker({
+    dateFormat: 'mm/dd/yy',
+    changeMonth: true,
+    changeYear: true,
+    yearRange: "-100:+100",
 }).val();
 
 
