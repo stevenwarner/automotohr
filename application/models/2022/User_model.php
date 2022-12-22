@@ -136,12 +136,12 @@ class User_model extends CI_Model
             //
             if (!empty($oldData['license_issue_date'])) {
                 $oldData['license_issue_date'] =
-                formatDate($oldData['license_issue_date'], SITE_DATE, DB_DATE);
+                formatDateToDB($oldData['license_issue_date'], SITE_DATE, DB_DATE);
             }
             //
             if (!empty($oldData['license_expiration_date'])) {
                 // Lets correct the format
-                $oldData['license_expiration_date'] = formatDate($oldData['license_expiration_date'], SITE_DATE, DB_DATE);
+                $oldData['license_expiration_date'] = formatDateToDB($oldData['license_expiration_date'], SITE_DATE, DB_DATE);
             }
             //
             $oldData['license_notes'] = trim($oldData['license_notes']);
