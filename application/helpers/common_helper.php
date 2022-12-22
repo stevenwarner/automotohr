@@ -12397,8 +12397,6 @@ if (!function_exists('formatDate')) {
         //
         if (count(explode(' ', $fromFormat)) == 1) $date = $t[0];
         //
-        $date = formatDateBeforeProcess($date, $fromFormat);
-        //
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }
@@ -12422,7 +12420,13 @@ if (!function_exists('formatDateToDB')) {
         $fromFormat = 'm/d/Y',
         $toFormat = 'Y-m-d'
     ) {
-        if (empty($date)) return $date;
+        //
+        if (empty($date)) {
+            return $date;
+        }
+        //
+        $date = formatDateBeforeProcess($date, $fromFormat);
+        //
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }
