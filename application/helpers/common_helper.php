@@ -12397,6 +12397,8 @@ if (!function_exists('formatDate')) {
         //
         if (count(explode(' ', $fromFormat)) == 1) $date = $t[0];
         //
+        $date = formatDateBeforeProcess($date, $fromFormat);
+        //
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }
@@ -15834,5 +15836,34 @@ if (!function_exists('doNotHireWarning')) {
         $returnArray['row'] = 'bg-danger';
         //
         return $returnArray;
+    }
+}
+
+
+if (!function_exists('formatDateBeforeProcess')) {
+    /**
+     * Format date to correct
+     *
+     * @param string $date
+     * @param string $format
+     * @return string
+     */
+    function formatDateBeforeProcess (
+        string $date,
+        string $format
+    )
+    {
+        //
+        if ( 
+            $format == 'm/d/Y' && 
+            preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $date)
+        ) {
+            return DateTime::createFromFormat(
+                'm-d-Y',
+                $date
+            )->format('m/d/Y');
+        }
+        //
+        return $date;
     }
 }
