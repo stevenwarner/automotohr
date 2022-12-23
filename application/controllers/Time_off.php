@@ -812,6 +812,7 @@ class Time_off extends Public_Controller
                     $ins['employee_sid'] = $employeeId;
                     $ins['timeoff_policy_sid'] = $policyId;
                     $ins['request_from_date'] = $startDate;
+                    $ins['requested_time'] = $timeoff['requested_hours'] * 60;
                     $ins['request_to_date'] = $endDate;
                     $ins['status'] = $ins['level_status'] = strtolower($timeoff['status']);
                     $ins['creator_sid'] = $employerId;
@@ -821,7 +822,7 @@ class Time_off extends Public_Controller
                     $ins['created_at'] = $submittedDate;
                     $ins['updated_at'] = $dateTime;
                     $ins['timeoff_days'] = json_encode([
-                        'totalTime' => $timeoff['requested_hours'] * 8,
+                        'totalTime' => $timeoff['requested_hours'] * 60,
                         'days' => getDatesBetweenDates($startDate, $endDate, $timeoff['requested_hours'])
 
                     ]);
@@ -842,7 +843,7 @@ class Time_off extends Public_Controller
                             'details' => [
                                 'startDate' => $startDate,
                                 'endDate' => $endDate,
-                                'time' => $timeoff['requested_hours'] * 8,
+                                'time' => $timeoff['requested_hours'] * 60,
                                 'policyId' => $policyId,
                                 'policyTitle' => $this->timeoff_model->getPolicyNameById($policyId),
                             ],

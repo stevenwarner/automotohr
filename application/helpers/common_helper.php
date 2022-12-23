@@ -15906,7 +15906,7 @@ if (!function_exists('getDatesBetweenDates')) {
         //
         $datesArray[] = ['date' => $endDate, 'time' => 0];
         //
-        $requestedMinutes = $requestedHours * 8;
+        $requestedMinutes = $requestedHours * 60;
         $requestedMinutesChunk = $requestedMinutes / count($datesArray);
         //
         foreach ($datesArray as $index => $value) {
