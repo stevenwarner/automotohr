@@ -135,7 +135,7 @@ $(function importHistoricalTimeOffs() {
         event.preventDefault();
         //
         return alertify.confirm(
-            'This action will skip rows whose record doesn\'t exists. <br> Do you want to continue?',
+            'This action will skip rows whose record doesn\'t exist. <br> Do you want to continue?',
             startImportProcess,
             cb
         );
