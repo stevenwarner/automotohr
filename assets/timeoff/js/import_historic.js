@@ -49,6 +49,29 @@ $(function importHistoricalTimeOffs() {
     let fileDataVerificationObj = {};
 
     /**
+     * Holds the xhr object
+     */
+    var xhr = null;
+
+    /**
+     * Holds the missing data
+     */
+    let missingEmployeesObj = {},
+        missingPoliciesObj = {};
+
+    /**
+     * Holds the chunk uploader
+     */
+    var chunkOBJ = {
+        current: 0,
+        chunkSize: 100,
+        loaded: 0,
+        records: [],
+        totalChunks: 0,
+        recordsLength: 0
+    };
+
+    /**
      * Set default values
      * 
      * @type array
@@ -104,6 +127,9 @@ $(function importHistoricalTimeOffs() {
         return checkIfEmployeeExists();
     });
 
+    /**
+     * Lets start importing
+     */
     $(document).on('click', '#jsImportForce', function (event) {
         //
         event.preventDefault();
@@ -158,6 +184,8 @@ $(function importHistoricalTimeOffs() {
             );
         }
         //
+        hasFalse = false;
+        //
         tableData = [];
         //
         let parsedData = fileData.split(/\n/g);
@@ -171,8 +199,6 @@ $(function importHistoricalTimeOffs() {
         });
         // Remove columns
         parsedData.splice(0, 1);
-
-
         //
         let columnLength = indexes.length;
         //
@@ -244,9 +270,6 @@ $(function importHistoricalTimeOffs() {
             Object.keys(fileDataVerificationObj.policies)
         );
     }
-
-    let missingEmployeesObj = {},
-        missingPoliciesObj = {};
 
     /**
      * Verify employees and policies
@@ -333,15 +356,6 @@ $(function importHistoricalTimeOffs() {
         });
     }
 
-    //
-    var chunkOBJ = {
-        current: 0,
-        chunkSize: 100,
-        loaded: 0,
-        records: [],
-        totalChunks: 0,
-        recordsLength: 0
-    };
     /**
      * Starts the time off import process
      */
@@ -365,7 +379,10 @@ $(function importHistoricalTimeOffs() {
         uploadChunk();
     }
 
-    //
+    /**
+     * Lets start importing
+     * @returns 
+     */
     function uploadChunk() {
         if (chunkOBJ.records[chunkOBJ.current] === undefined) {
             // TODO
@@ -374,9 +391,12 @@ $(function importHistoricalTimeOffs() {
         }
         startAddProcess(chunkOBJ.records[chunkOBJ.current]);
     }
-    //
-    var xhr = null;
-    //
+
+    /**
+     * Start the uploading process
+     * @param {*} chunk
+     * @returns 
+     */
     function startAddProcess(chunk) {
         //
         if (xhr !== null) {
