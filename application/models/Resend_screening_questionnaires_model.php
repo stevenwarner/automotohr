@@ -44,7 +44,7 @@ class Resend_screening_questionnaires_model extends CI_Model {
         $insert_array['questionnaire_ip_address'] = $result['questionnaire_ip_address'];
         $insert_array['questionnaire_user_agent'] = $result['questionnaire_user_agent'];
         $insert_array['questionnaire_manual_sent'] = $result['questionnaire_manual_sent'];
-        $insert_array['questionnaire_sent_date'] = $result['questionnaire_sent_date'];
+        $insert_array['questionnaire_sent_date'] = empty($result['questionnaire_sent_date']) ? date('Y-m-d H:i:s', strtotime('now')) : $result['questionnaire_sent_date'];
         $insert_array['manual_questionnaire_sid'] = $result['manual_questionnaire_sid'];
 
         $this->db->insert('screening_questionnaire_manual_sent_tracking',$insert_array);
