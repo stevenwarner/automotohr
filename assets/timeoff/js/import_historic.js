@@ -147,6 +147,9 @@ $(function importHistoricalTimeOffs() {
      */
     function readFile(f) {
         //
+        fileData = {};
+        records = [];
+        //
         $('.js-submit-btn').prop('disabled', true).addClass('disabled');
         //
         if (Object.keys(f).length === 0) {
