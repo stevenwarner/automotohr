@@ -2195,7 +2195,8 @@ class Application_tracking_system extends Public_Controller {
                                                             $man_ques = $man_ques . '<div class="panel panel-default">
                                                                             <div class="panel-heading">
                                                                                 <h4 class="panel-title">
-                                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'. $item.'"><span style="float: right;">'.$attendDate.'</span><span class="glyphicon glyphicon-plus"></span>  '. $key.'</a>
+                                                                                <span style="float: right; text-align: right; font-size: 12px; margin-top: -5px">Completed At<br/> '.$attendDate.'</span>
+                                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'. $item.'"><span class="glyphicon glyphicon-plus"></span>  '. $key.'</a>
                                                                                 </h4>
                                                                             </div>
                                                                             <div id="collapse_'. $item.'" class="panel-collapse collapse">'.$man_ans.'<div class="panel-body">
