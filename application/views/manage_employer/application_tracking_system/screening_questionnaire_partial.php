@@ -32,7 +32,7 @@
                             <?php } ?>
                             <?php   if ($job['questionnaire'] != NULL && $job['questionnaire'] != '') { 
                                     $my_questionnaire = unserialize($job['questionnaire']);
-
+                                
                                     if(isset($my_questionnaire['applicant_sid'])) {
                                         $questionnaire_type = 'new';
                                         $questionnaire_name = $my_questionnaire['questionnaire_name']; ?>
@@ -47,6 +47,7 @@
                                                 $passing_score = $questionnaire_answers['passing_score'];
                                                 $score = $questionnaire_answers['score'];
                                                 $status = $questionnaire_answers['status']; 
+                           
                                                 $item ++; ?>
 
                                                 <div class="panel panel-default">
@@ -56,8 +57,10 @@
                                                                    data-parent="#accordion"
                                                                    href="#collapse_<?php echo $item; ?>">
                                                                     <span class="glyphicon glyphicon-minus"></span>
-                                                                    <?php echo $key; ?>
+                                                                    <?php echo $key; ?> 
                                                                 </a>
+                                                                <span style="float: right;"><?php echo  DateTime::createFromFormat('Y-m-d H:i:s', $my_questionnaire['attend_timestamp'])->format('m-d-Y H:i:s'); ?>
+                                                            </span>
                                                             </h4>
                                                         </div>
                                                         <div id="collapse_<?php echo $item; ?>" class="panel-collapse collapse in">
@@ -86,7 +89,7 @@
                                                   <div class="tab-btn-panel">
                                                         <span>Score : <?php echo $job['score'] ?></span>
                                                         <?php if ($job['passing_score'] <= $job['score']) { ?>
-                                                            <a href="javascript:;">Pass</a>
+                                                            <a href="javascript:;">Pass</a> 
                                                         <?php } else { ?>
                                                             <a href="javascript:;">Fail</a>
                                                         <?php } ?>
@@ -105,7 +108,7 @@
                                                                                data-parent="#accordion"
                                                                                href="#collapse_<?php echo $item; ?>">
                                                                                 <span class="glyphicon glyphicon-minus"></span>
-                                                                                <?php echo $key; ?>
+                                                                                <?php echo $key; ?> 
                                                                             </a>
                                                                         </h4>
                                                                     </div>
@@ -168,7 +171,10 @@
                                                             <span>Score: <?php echo $job_man_score; ?></span><a <?php if($job_man_questionnaire_result == 'Fail'){ echo 'style="background-color:#FF0000;"';}?> href="javascript:;"><?php echo $job_man_questionnaire_result; ?></a>                                                       
                                                         </div>
                                                     <div class="questionnaire-body">
-                                                <?php   $questionnaire = $job_manual_questionnaire_array['questionnaire'];
+                                                <?php  
+                                               
+
+                                                $questionnaire = $job_manual_questionnaire_array['questionnaire'];
 
                                                         foreach ($questionnaire as $key => $questionnaire_answers) { 
                                                                     $answer = $questionnaire_answers['answer'];
@@ -185,6 +191,8 @@
                                                                                        href="#collapse_<?php echo $item; ?>">
                                                                                         <span class="glyphicon glyphicon-minus"></span>
                                                                                         <?php echo $key; ?>
+                                                                                        <span style="float: right;"><?php echo  DateTime::createFromFormat('Y-m-d H:i:s', $job_manual_questionnaire_array['attend_timestamp'])->format('m-d-Y H:i:s'); ?>
+
                                                                                     </a>
                                                                                 </h4>
                                                                             </div>
