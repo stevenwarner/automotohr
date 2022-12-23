@@ -18,7 +18,7 @@
                                         <h4>The Provided CSV File must be in Following Format</h4>
                                     </div>
                                     <div class="panel-body">
-                                        <pre><b>First Name, Last Name, Approved By, Leave Type, Requested Hours, Leave From, Leave To, Status, Submitted Date, Approved/Declined Date, Employee Comments, Manager Comments</b><br/><br/>jhondoe@example.dev, jhondoe@example.dev, PTO, 8, <?=date('m/d/Y', strtotime('now'));?>, <?=date('m/d/Y', strtotime('now'));?>, <?=date('m/d/Y', strtotime('now'));?>, Approved, <?=date('m/d/Y', strtotime('now'));?>, <?=date('m/d/Y', strtotime('now'));?>, Sons High school bowling match, Make sure to submit tickets</pre>
+                                        <pre><b>First Name, Last Name, Approved By, Leave Type, Requested Hours, Leave From, Leave To, Status, Submitted Date, Approved/Declined Date, Employee Comments, Manager Comments</b><br/><br/>Jhon, Doe, Steven, Marks, PTO, 8, <?=date('m/d/Y', strtotime('now'));?>, <?=date('m/d/Y', strtotime('now'));?>, <?=date('m/d/Y', strtotime('now'));?>, Approved, <?=date('m/d/Y', strtotime('now'));?>, <?=date('m/d/Y', strtotime('now'));?>, Sons High school bowling match, Make sure to submit tickets</pre>
                                     </div>
                                 </div>
                             </div>
