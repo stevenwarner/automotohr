@@ -2072,6 +2072,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_balance'] = 1;
             $return_access_array['time_off_report'] = 1;
             $return_access_array['import_time_off'] = 1;
+            $return_access_array['import_historical'] = 1;
             $return_access_array['export_time_off'] = 1;
             $return_access_array['time_off_setting'] = 1;
             $return_access_array['time_off_approver'] = 1;
@@ -2091,6 +2092,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_balance'] = 1;
             $return_access_array['time_off_report'] = 1;
             $return_access_array['import_time_off'] = 0;
+            $return_access_array['import_historical'] = 0;
             $return_access_array['export_time_off'] = 0;
             $return_access_array['time_off_setting'] = 0;
             $return_access_array['time_off_approver'] = 0;
@@ -2109,6 +2111,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_balance'] = 0;
             $return_access_array['time_off_report'] = 0;
             $return_access_array['import_time_off'] = 0;
+            $return_access_array['import_historical'] = 0;
             $return_access_array['export_time_off'] = 0;
             $return_access_array['time_off_setting'] = 0;
             $return_access_array['time_off_approver'] = 0;

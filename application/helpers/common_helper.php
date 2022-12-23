@@ -15757,7 +15757,7 @@ if (!function_exists('getAssetTag')) {
      * @param string $tag
      * @return string
      */
-    function getAssetTag ($tag = '1.0.1')
+    function getAssetTag($tag = '1.0.1')
     {
         return MINIFIED === '.min' ? $tag : time();
     }
@@ -15820,7 +15820,7 @@ if (!function_exists('doNotHireWarning')) {
      * @param int   $fontSize
      * @return array
      */
-    function doNotHireWarning($employeeId, $list, $fontSize=20)
+    function doNotHireWarning($employeeId, $list, $fontSize = 20)
     {
         //
         $returnArray = [
@@ -15833,10 +15833,10 @@ if (!function_exists('doNotHireWarning')) {
         }
         // Check if employee exists
         if (!isset($list[$employeeId]) || empty($list[$employeeId])) {
-             return $returnArray;
+            return $returnArray;
         }
         //
-        $returnArray['message'] = '<p class="text-danger" style="font-size: '.$fontSize.'px;"><strong>DO NOT HIRE this person<strong> <i class="fa fa-info-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="' . ($list[$employeeId]['full_name']) . ' marked this employee as DO NOT HIRE on the '.($list[$employeeId]['action_date']).'"></i></p>';
+        $returnArray['message'] = '<p class="text-danger" style="font-size: ' . $fontSize . 'px;"><strong>DO NOT HIRE this person<strong> <i class="fa fa-info-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="' . ($list[$employeeId]['full_name']) . ' marked this employee as DO NOT HIRE on the ' . ($list[$employeeId]['action_date']) . '"></i></p>';
         $returnArray['row'] = 'bg-danger';
         //
         return $returnArray;
@@ -15852,14 +15852,13 @@ if (!function_exists('formatDateBeforeProcess')) {
      * @param string $format
      * @return string
      */
-    function formatDateBeforeProcess (
+    function formatDateBeforeProcess(
         string $date,
         string $format
-    )
-    {
+    ) {
         //
-        if ( 
-            $format == 'm/d/Y' && 
+        if (
+            $format == 'm/d/Y' &&
             preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $date)
         ) {
             return DateTime::createFromFormat(
@@ -15869,5 +15868,58 @@ if (!function_exists('formatDateBeforeProcess')) {
         }
         //
         return $date;
+    }
+}
+
+if (!function_exists('getDatesBetweenDates')) {
+    /**
+     * Get dates array between dates
+     *
+     * @param string $startDate
+     * @param string $endDate
+     * @param int    $requestedHours
+     * @return array
+     */
+    function getDatesBetweenDates(
+        string $startDate,
+        string $endDate,
+        int $requestedHours = 0
+    ) {
+        //
+        $datesArray = [];
+        //
+        $period = new DatePeriod(
+            new DateTime($startDate),
+            new DateInterval('P1D'),
+            new DateTime($endDate)
+        );
+
+        //
+        foreach ($period as $key => $value) {
+            $count++;
+            //
+            $datesArray[] = [
+                'date' => $value->format('Y-m-d'), 
+                'time' => 0
+            ];
+        }
+        //
+        $datesArray[] = ['date' => $endDate, 'time' => 0];
+        //
+        $requestedMinutes = $requestedHours * 8;
+        $requestedMinutesChunk = $requestedMinutes / count($datesArray);
+        //
+        foreach ($datesArray as $index => $value) {
+            //
+            if ($requestedMinutes == 0) {
+                $requestedMinutesChunk = 0;
+            }
+            //
+            $datesArray[$index]['time'] = $requestedMinutesChunk;
+            //
+            $requestedMinutes -= $requestedMinutesChunk;
+        }
+        //
+        return $datesArray;
     }
 }

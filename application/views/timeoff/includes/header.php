@@ -67,6 +67,13 @@
             'url' => 'javascript:void(0)',
             'submenu' => [
                 [
+                    'title' => 'Import Historical',
+                    'url' => 'import/historic',
+                    'slug' => 'import_historical',
+                    'icon' => 'upload',
+                    'segment' => 'import',
+                ],
+                [
                     'title' => 'Import',
                     'url' => 'import',
                     'slug' => 'import_time_off',

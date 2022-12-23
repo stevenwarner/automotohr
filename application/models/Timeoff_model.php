@@ -5401,4 +5401,107 @@ class Timeoff_model extends CI_Model
         return $return_data;
     }
 
+    public function getEmployeesByName ($names, $companyId)
+    {
+        $records =
+        $this->db
+        ->select('sid, first_name, last_name')
+        ->where('parent_sid', $companyId)
+        ->where('is_executive_admin', 0)
+        ->where_in('LOWER(REPLACE(CONCAT(first_name,"",last_name), "", ""))', $names)
+        ->get('users')
+        ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            //
+            $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($record['first_name'].$record['last_name'])));
+            //
+            $tmp[$slug] = $record['sid'];
+        }
+        //
+        return $tmp;
+    }
+
+
+    public function getCompanyPolicies($policies, $companyId)
+    {
+        //
+        $records =
+        $this->db
+        ->select('sid, title')
+        ->from('timeoff_policies')
+        ->where('timeoff_policies.company_sid', $companyId)
+        ->where_in('LOWER(REPLACE(title, "", ""))', $policies)
+        ->get()
+        ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            //
+            $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($record['title'])));
+            //
+            $tmp[$slug] = $record['sid'];
+        }
+        //
+        return $tmp;
+    }
+
+    /**
+     * Check the time off of and employee
+     *
+     * @param int    $companyId
+     * @param int    $employeeId
+     * @param int    $policyId
+     * @param string $startDate
+     * @param string $endDate
+     * 
+     * @return int
+     */
+    public function checkTimeOffForSpecificEmployee(
+        int $companyId,
+        int $employeeId,
+        int $policyId,
+        string $startDate,
+        string $endDate
+    )
+    {
+        //
+        return
+        $this->db
+        ->where([
+            'company_sid' => $companyId,
+            'employee_sid' => $employeeId,
+            'timeoff_policy_sid' => $policyId
+        ])
+        ->where('request_from_date >= ', $startDate)
+        ->where('request_to_date <= ', $endDate)
+        ->count_all_results('timeoff_requests');
+    }
+
+    /**
+     * Get policy title
+     *
+     * @param int $policyId
+     * @return string
+     */
+    public function getPolicyNameById($policyId)
+    {
+        return $this->db
+        ->select('title')
+        ->where('sid', $policyId)
+        ->get('timeoff_policies')
+        ->row_array()['title'];
+    }
+
 }
