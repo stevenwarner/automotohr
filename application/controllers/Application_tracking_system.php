@@ -2106,9 +2106,9 @@ class Application_tracking_system extends Public_Controller {
                                                 $status = $questionnaire_answers['status'];
                                                 $item ++;
 
-                                                $attendDate=  DateTime::createFromFormat('Y-m-d H:i:s', $my_questionnaire['attend_timestamp'])->format('m-d-Y H:i:s');
+                                                $attendDate = formatDateToDB($my_questionnaire['attend_timestamp'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
 
-                                                $ques_start = '<div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$item.'"><span style="float: right;">'.$attendDate.'</span><span class="glyphicon glyphicon-minus"></span>  '.$key.'</a></h4></div><div id="collapse_'.$item.'" class="panel-collapse collapse in">';
+                                                $ques_start = '<div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><span style="float: right; text-align: right; font-size: 12px; margin-top: -5px">Completed At<br/> '.$attendDate.'</span><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$item.'"><span class="glyphicon glyphicon-minus"></span>  '.$key.'</a></h4></div><div id="collapse_'.$item.'" class="panel-collapse collapse in">';
                                                 if (is_array($answer)) {
                                                     foreach ($answer as $multiple_answer) {
                                                         $ques_ans = '<div class="panel-body">'. $multiple_answer .'</div>';
@@ -2191,11 +2191,11 @@ class Application_tracking_system extends Public_Controller {
                                                             } else {
                                                                 $man_ans = '<div class="panel-body">'.$answer.'</div>';
                                                             }
-                                                            $attendDate = DateTime::createFromFormat('Y-m-d H:i:s', $job_manual_questionnaire_array['attend_timestamp'])->format('m-d-Y H:i:s');
+                                                            $attendDate = formatDateToDB($job_manual_questionnaire_array['attend_timestamp'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
                                                             $man_ques = $man_ques . '<div class="panel panel-default">
                                                                             <div class="panel-heading">
                                                                                 <h4 class="panel-title">
-                                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'. $item.'"><span style="float: right;">'.$attendDate.'</span><span class="glyphicon glyphicon-plus"></span>  '. $key.'</a>
+                                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'. $item.'"><span style="float: right;">CA'.$attendDate.'</span><span class="glyphicon glyphicon-plus"></span>  '. $key.'</a>
                                                                                 </h4>
                                                                             </div>
                                                                             <div id="collapse_'. $item.'" class="panel-collapse collapse">'.$man_ans.'<div class="panel-body">
