@@ -381,7 +381,12 @@ class Accurate_background_model extends CI_Model
         if ($do_count) $columns = 'background_check_orders.order_response, background_check_orders.sid as order_sid';
         $this->db->select($columns)
             ->from('background_check_orders')
+            ->group_start()
+            ->where('portal_job_applications.hired_sid','0')
+            ->or_where('portal_job_applications.hired_sid',null)
+            ->group_end()
             ->join('users', 'background_check_orders.employer_sid = users.sid')
+            ->join('portal_job_applications', 'background_check_orders.users_sid = portal_job_applications.sid ', 'left')
             ->join('users as companies', 'background_check_orders.company_sid = companies.sid');
 
         if ($company_sid != 'all') $this->db->where('background_check_orders.company_sid', $company_sid);
