@@ -1255,4 +1255,73 @@ class Attendance_model extends CI_Model
         //
         return $data;
     }
+
+
+
+
+       /**
+     * Get the attendance list
+     * 
+     * @param number $companyId
+     * @param number $employeeId
+     * @param string $date
+     * 
+     * @return array
+     */
+    public function GetAttendanceListNew($companyId, $employeeId, $date){
+        //
+        $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
+        //
+        if($Id === 0){
+            return [];
+        }
+        //
+        $q = $this->db
+        ->where([
+            'portal_attendance_sid' => $Id
+        ])
+        ->order_by('sid', 'asc');
+        //
+        $result = $q->get('portal_attendance_log');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        return $data;
+    }
+
+
+
+
+    public function GetAttendanceListBreak($companyId, $employeeId, $date){
+        //
+        $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
+        //
+        if($Id === 0){
+            return [];
+        }
+        //
+        
+        
+        $q = $this->db
+        ->select('action_date_time,action')
+        ->where('portal_attendance_sid', $Id)
+        ->group_start()
+        ->where('action', 'break_in')
+        ->or_where('action', 'break_out')
+        ->group_end()
+        ->order_by('sid', 'asc');
+        //
+        $result = $q->get('portal_attendance_log');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        return $data;
+    }
+
+
+
 }

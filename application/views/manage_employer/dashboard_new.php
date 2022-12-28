@@ -865,7 +865,7 @@
                                     </div>
                                 <?php } ?>
 
-                                <?php $this->load->view('attendance/2022/clock_green'); ?>
+                                <?php  $this->load->view('attendance/2022/clock_green'); ?>
 
                                 <?php if (checkIfAppIsEnabled(EMPLOYEE_SURVEYS)) { ?>
                                     <!-- Employee Surveyss -->

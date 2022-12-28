@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     //
     var XHR = null;
     //
@@ -14,10 +14,16 @@ $(function() {
     //
     var CountDown;
 
+    var checkInCheck = '';
+
+    var lateCheck = '';
+    var lngeCheck = '';
+
+
     /**
      * Handles clock in/out, break in/out
      */
-    $(document).on('click', '.jsAttendanceClockBTN, .jsAttendanceBTN', function(event) {
+    $(document).on('click', '.jsAttendanceClockBTN, .jsAttendanceBTN', function (event) {
         //
         event.preventDefault();
         //
@@ -27,7 +33,7 @@ $(function() {
     /**
      * Shows the location on map
      */
-    $(document).on('click', '.jsAttendanceViewLocation', function(event) {
+    $(document).on('click', '.jsAttendanceViewLocation', function (event) {
         //
         event.preventDefault();
         //
@@ -38,7 +44,7 @@ $(function() {
             Title: 'Location',
             Loader: 'jsAttendanceViewLocationModalLoader',
             Body: '<div class="container"><iframe style="width:100%; height: 400px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?q=' + (data.lat) + ',' + (data.lon) + '&hl=en&z=17&amp;output=embed"></iframe></div>'
-        }, function() {
+        }, function () {
             ml(false, 'jsAttendanceViewLocationModalLoader');
         });
     });
@@ -46,7 +52,7 @@ $(function() {
     /**
      * 
      */
-    $('.jsAttendanceManageUpdate').click(function(event) {
+    $('.jsAttendanceManageUpdate').click(function (event) {
         //
         event.preventDefault();
         //
@@ -62,12 +68,12 @@ $(function() {
         ml(true, 'jsAttendanceManageLoader');
         //
         XHR = $.post(
-                baseURI + 'attendance/manage', {
-                    Id: id,
-                    time: CheckTime(time)
-                }
-            )
-            .success(function(resp) {
+            baseURI + 'attendance/manage', {
+            Id: id,
+            time: CheckTime(time)
+        }
+        )
+            .success(function (resp) {
                 HandleManualCheckIn(resp, "Time slot updated successfully!");
             })
             .fail(HandleError);
@@ -77,7 +83,7 @@ $(function() {
     /**
      * 
      */
-    $('.jsAttendanceAddNewSlot').click(function(event) {
+    $('.jsAttendanceAddNewSlot').click(function (event) {
         //
         event.preventDefault();
         //
@@ -86,9 +92,9 @@ $(function() {
         ml(true, 'jsAttendanceManageLoader');
         //
         XHR = $.get(
-                baseURI + 'attendance/add_slot/' + id
-            )
-            .done(function(resp) {
+            baseURI + 'attendance/add_slot/' + id
+        )
+            .done(function (resp) {
                 if (resp.success) {
                     $(".jsAddAttendanceSlot").show();
                     $("#jsAttendanceSlotID").val(id);
@@ -105,7 +111,7 @@ $(function() {
     /**
      * Save manual time slot 
      */
-    $(document).on('click', '.jsAttendanceSaveSlot', function(event) {
+    $(document).on('click', '.jsAttendanceSaveSlot', function (event) {
         //
         event.preventDefault();
         //
@@ -134,7 +140,7 @@ $(function() {
     /**
      * Cancel manual time slot 
      */
-    $(document).on('click', '.jsAttendanceCancelSlot', function(event) {
+    $(document).on('click', '.jsAttendanceCancelSlot', function (event) {
         //
         $("#jsAttendanceSlotID").val("");
         $("#jsAttendanceDate").val("");
@@ -177,7 +183,7 @@ $(function() {
     }
 
     function HandleManualCheckIn(resp, message) {
-        alertify.alert("Success", message, function() {
+        alertify.alert("Success", message, function () {
             ml(false, 'jsAttendanceManageLoader');
             window.location.reload();
         });
@@ -194,9 +200,9 @@ $(function() {
         $('.jsAttendanceLoader').show(0);
         // 
         XHR = $.post(
-                baseURI + 'attendance/mark/attendance', props
-            )
-            .done(function(resp) {
+            baseURI + 'attendance/mark/attendance', props
+        )
+            .done(function (resp) {
                 if (props.id) {
                     return HandleManualCheckIn(resp, "Manual time slot added successfully!");
                 }
@@ -214,7 +220,7 @@ $(function() {
                 return alertify.alert(
                     'Success',
                     resp.success,
-                    function() {
+                    function () {
                         LoadClock();
                     }
                 )
@@ -230,17 +236,108 @@ $(function() {
         $('.jsAttendanceLoader').show(0);
         // 
         XHR = $.get(
-                baseURI + 'attendance/get/clock'
-            )
-            .done(function(resp) {
+            baseURI + 'attendance/get/clock'
+        )
+            .done(function (resp) {
                 //
+                var diffHours = 0;
+                var diffMiuntes = 0;
+                var diffSeconds = 0;
+
+                // break record
+                if (resp.success.break_record && resp.success.last_status == "break_in") {
+                    var breakTime = resp.success.break_record;
+
+                    var breakIn = '';
+
+                    let totalBreakduration = moment.duration(0, 'hours');
+
+                    breakTime.map(function (break_record, index) {
+
+                        if (break_record.action == 'break_in') {
+                            breakIn = break_record.action_date_time;
+                        }
+                        if (break_record.action == 'break_out' && breakIn != '') {
+                            breakDifference = moment.duration(moment(break_record.action_date_time).diff(breakIn));
+                            varDif = breakDifference.hours() + '-' + breakDifference.minutes() + '-' + breakDifference.seconds();
+                            console.log(varDif);
+                            totalBreakduration.add(breakDifference.hours(), 'hours');
+                            totalBreakduration.add(breakDifference.minutes(), 'minutes');
+                            totalBreakduration.add(breakDifference.seconds(), 'seconds');
+                            breakIn = '';
+                        }
+
+                        if (index == (breakTime.length - 1) && break_record.action == 'break_in') {
+                            breakDifference = moment.duration(moment().diff(breakIn));
+                            totalBreakduration.add(breakDifference.hours(), 'hours');
+                            totalBreakduration.add(breakDifference.minutes(), 'minutes');
+                            totalBreakduration.add(breakDifference.seconds(), 'seconds');
+                        }
+                    })
+
+                    diffHours = totalBreakduration.hours();
+                    diffMiuntes = totalBreakduration.minutes();
+                    diffSeconds = totalBreakduration.seconds();
+                }
+
+                if (resp.success.last_status == "clock_in") {
+                    // Get Current Date Time 
+                    var checkinTime = resp.success.action_date_time;
+                    var difference = moment.duration(moment().diff(moment(checkinTime, 'Y-M-D H:m:s')));
+                    //
+                    diffHours = difference.hours();
+                    diffMiuntes = difference.minutes();
+                    diffSeconds = difference.seconds();
+                }
+
                 SetClock(resp.success.last_status);
-                //
-                CountDownTimer(resp.success.hours, resp.success.minutes, resp.success.seconds, resp.success.last_status);
+                CountDownTimer(diffHours, diffMiuntes, diffSeconds, resp.success.last_status);
 
             })
             .fail(HandleError);
     }
+
+    function trackEmployeeLocation() {
+      //  console.log(checkInCheck);
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+            
+                //Googlemap
+                 drawLocationMap(lat, lng);
+
+            }, function (error) {
+               // console.log('fail');
+            });
+
+            //
+            if (checkInCheck == 'clock_in') {
+                setTimeout(function () {
+                    trackEmployeeLocation();
+                }, 5000);
+
+            }
+        }
+    }
+
+    
+
+    function drawLocationMap(late, lnge) {
+        var address = late + ',' + lnge;
+        if (address != '') {
+            if (lateCheck !== late || lngeCheck !== lnge) {
+                var map_url = "https://maps.googleapis.com/maps/api/staticmap?latlng=" + address + "&zoom=13&size=180x200&key=" + googleMapKey + "&markers=color:blue|label:|" + address;
+                var map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' + address + '"><img src = "' + map_url + '" alt = "No Map Found!" ></a>';
+                var show_map = '<b>Employee Current Location</b>';
+                show_map += map_anchor;
+                $('#locationbox').html(show_map);
+            }
+        }
+        lateCheck = late;
+        lngeCheck = lnge;
+    }
+
 
     /**
      * Saves settings
@@ -260,11 +357,11 @@ $(function() {
         ml(true, 'jsAttendanceSettingsLoader');
         //
         XHR = $.ajax({
-                url: baseURI + 'attendance/settings',
-                method: "post",
-                data: obj
-            })
-            .success(function(resp) {
+            url: baseURI + 'attendance/settings',
+            method: "post",
+            data: obj
+        })
+            .success(function (resp) {
                 //
                 ml(false, 'jsAttendanceSettingsLoader');
                 //
@@ -331,7 +428,7 @@ $(function() {
             minutes,
             seconds;
         //
-        CountDown = setInterval(function() {
+        CountDown = setInterval(function () {
             //
             id = new Date(md.getTime());
             //
@@ -347,6 +444,16 @@ $(function() {
             $('.jsAttendanceClockMinute').text(minutes.toString().length == 1 ? '0' + minutes : minutes);
             $('.jsAttendanceClockSeconds').text(seconds.toString().length == 1 ? '0' + seconds : seconds);
         }, 1000);
+
+        if (lastStatus == 'clock_in') {
+            checkInCheck = 'clock_in';
+            $('#locationbox').show();
+            trackEmployeeLocation();
+        } else {
+            checkInCheck = '';
+            $('#locationbox').hide();
+        }
+
     }
 
     /**
@@ -473,7 +580,7 @@ $(function() {
     function InitCurrentClock() {
         //
         //
-        setInterval(function() {
+        setInterval(function () {
             //
             $('.jsAttendanceCurrentClockDateTime').text(moment().format('MMM D YYYY, ddd HH:mm:ss'));
         }, 1000);
@@ -482,7 +589,7 @@ $(function() {
     /**
      * Empty callback
      */
-    function CB() {}
+    function CB() { }
 
     //
     if ($('.jsDatePicker').length) {

@@ -1,16 +1,17 @@
 <?php defined('BASEPATH') || exit('No direct script access allowed');
 
-class Attendance_ajax extends Public_Controller {
+class Attendance_ajax extends Public_Controller
+{
     /**
      * Holds the current use session
      */
     private $ses;
-    
+
     /**
      * Holds the company id
      */
     private $companyId;
-    
+
     /**
      * Holds the employee id
      */
@@ -20,7 +21,7 @@ class Attendance_ajax extends Public_Controller {
      * Holds the current datetime
      */
     private $datetime;
-    
+
     /**
      * Holds the current date
      */
@@ -30,17 +31,17 @@ class Attendance_ajax extends Public_Controller {
      * Holds the current day
      */
     private $day;
-    
+
     /**
      * Holds the current month
      */
     private $month;
-    
+
     /**
      * Holds the current year
      */
     private $year;
-    
+
     /**
      * Holds the response array
      */
@@ -49,13 +50,14 @@ class Attendance_ajax extends Public_Controller {
     /**
      * Calls when the object is created
      */
-    public function __construct() {
+    public function __construct()
+    {
         //
         parent::__construct();
         //
         $this->ses = $this->session->userdata('logged_in');
         //
-        if(!$this->ses || ($this->input->method() === 'post' && empty($this->input->post(NULL, TRUE)))){
+        if (!$this->ses || ($this->input->method() === 'post' && empty($this->input->post(NULL, TRUE)))) {
             return SendResponse(401);
         }
         //
@@ -83,7 +85,8 @@ class Attendance_ajax extends Public_Controller {
     /**
      * Handles logged in user clock
      */
-    public function LoadClock(){
+    public function LoadClockOld()
+    {
         //
         $ra = [
             'last_status' => '',
@@ -98,18 +101,22 @@ class Attendance_ajax extends Public_Controller {
             $this->employeeId,
             $this->date
         );
+
+
         // 
-        if(empty($attendanceList)){
+        if (empty($attendanceList)) {
             //
             unset($this->resp['errors']);
             //
-            $this->resp['success'] =$ra;
+            $this->resp['success'] = $ra;
             //
             return SendResponse(200, $this->resp);
         }
         //
         $ct = CalculateTime($attendanceList, $this->employeeId);
         $ra['last_status'] = $attendanceList[0]['action'];
+
+
         //
         $ra = array_merge(
             $ra,
@@ -117,15 +124,89 @@ class Attendance_ajax extends Public_Controller {
         );
         //
         unset($this->resp['errors']);
-        $this->resp['success'] =$ra;
+        $this->resp['success'] = $ra;
         //
         return SendResponse(200, $this->resp);
     }
-    
+
+
+
+
+
+    /**
+     * Handles logged in user clock
+     */
+    public function LoadClock()
+    {
+        //
+        $ra = [
+            'last_status' => '',
+            'action_date_time' => '',
+            'break_record' => ''
+        ];
+        // Let's check if the employee is
+        // clocked in or not
+
+
+        $attendanceListLastRecord = $this->atm->GetAttendanceList(
+            $this->companyId,
+            $this->employeeId,
+            $this->date
+        );
+
+        if ($attendanceListLastRecord[0]['action'] == 'clock_in' || $attendanceListLastRecord[0]['action'] == 'break_out') {
+
+            $attendanceList = $this->atm->GetAttendanceListNew(
+                $this->companyId,
+                $this->employeeId,
+                $this->date
+            );
+
+            $ra['last_status'] = $attendanceList[0]['action'];
+            $ra['action_date_time'] = $attendanceList[0]['action_date_time'];
+        } else if ($attendanceListLastRecord[0]['action'] == 'break_in') {
+
+            // Get all breaks for current day
+            $attendanceListBrak = $this->atm->GetAttendanceListBreak(
+                $this->companyId,
+                $this->employeeId,
+                $this->date
+            );
+
+            $ra['last_status'] = $attendanceListLastRecord[0]['action'];
+            $ra['action_date_time'] = $attendanceListLastRecord[0]['action_date_time'];
+            $ra['break_record'] = $attendanceListBrak;
+        } else {
+
+            $ra['last_status'] = $attendanceListLastRecord[0]['action'];
+            $ra['action_date_time'] = $attendanceListLastRecord[0]['action_date_time'];
+        }
+
+        // 
+        if (empty($attendanceList)) {
+            //
+            unset($this->resp['errors']);
+            //
+            $this->resp['success'] = $ra;
+            //
+            return SendResponse(200, $this->resp);
+        }
+        //
+
+        unset($this->resp['errors']);
+        $this->resp['success'] = $ra;
+
+        //
+        return SendResponse(200, $this->resp);
+    }
+
+
+
     /**
      * Marks attendance
      */
-    public function MarkAttendance(){
+    public function MarkAttendance()
+    {
         //
         $post = $this->input->post(NULL, TRUE);
         //
@@ -140,7 +221,7 @@ class Attendance_ajax extends Public_Controller {
         $year = $this->year;
         $added_by = "";
         //
-        if(isset($post["id"])) {
+        if (isset($post["id"])) {
             $attendanceInfo = $this->atm->GetAttendanceDateAndStatusById($post["id"]);
             $date = $attendanceInfo["action_date"];
             $employee_date = ConvertDateTime($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"], $attendanceInfo["action_date"])["modified"];
@@ -149,7 +230,7 @@ class Attendance_ajax extends Public_Controller {
             $month = explode("-", $employee_date)[1];
             $year = explode("-", $employee_date)[0];
             //
-            $employee_date = $employee_date." ".$post["time"].":00";
+            $employee_date = $employee_date . " " . $post["time"] . ":00";
             $datetime = ConvertDateTime($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"], $employee_date, DB_DATE_WITH_TIME, true)["modified"];
             $employeeId = $attendanceInfo["employee_sid"];
             $added_by = $this->employerId;
@@ -163,24 +244,26 @@ class Attendance_ajax extends Public_Controller {
             $date
         );
         // 
-        if(!empty($attendanceList)){
+        if (!empty($attendanceList)) {
             //
             $ct = CalculateTime($attendanceList, $employeeId);
             //
             $this->db->update(
-                'portal_attendance', [
+                'portal_attendance',
+                [
                     'total_minutes' => $ct['total_minutes'],
                     'total_worked_minutes' => $ct['total_worked_minutes'],
                     'total_break_minutes' => $ct['total_break_minutes'],
                     'total_overtime_minutes' => $ct['total_overtime_minutes']
-                ], [
+                ],
+                [
                     'sid' => $attendanceList[0]['portal_attendance_sid']
                 ]
             );
             //
             $this->HandleConditions($attendanceList[0]['action'], $post['action']);
             // Check if clock out was triggered while on break
-            if($attendanceList[0]['action'] === 'break_in' && $post['action'] === 'clock_out'){
+            if ($attendanceList[0]['action'] === 'break_in' && $post['action'] === 'clock_out') {
                 // Now we have to end the break first
                 $this->LogAttendance(
                     'break_out',
@@ -210,13 +293,13 @@ class Attendance_ajax extends Public_Controller {
             $year,
             $added_by
         );
-        
     }
-    
+
     /**
      * Updates date time
      */
-    public function ManageTimeSheet(){
+    public function ManageTimeSheet()
+    {
         //
         $post = $this->input->post(NULL, TRUE);
         //
@@ -225,7 +308,7 @@ class Attendance_ajax extends Public_Controller {
         $date = $attendanceInfo["action_date"];
         $employee_date = ConvertDateTime($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"], $attendanceInfo["action_date"])["modified"];
         //
-        $employee_date = $employee_date." ".$post["time"].":00";
+        $employee_date = $employee_date . " " . $post["time"] . ":00";
         $datetime = ConvertDateTime($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"], $employee_date, DB_DATE_WITH_TIME, true)["modified"];
         $added_by = $this->employerId;
         //
@@ -233,17 +316,19 @@ class Attendance_ajax extends Public_Controller {
         //
         $attendanceList = $this->atm->GetAttendanceListByID($sid);
         // 
-        if(!empty($attendanceList)){
+        if (!empty($attendanceList)) {
             //
             $ct = CalculateTime($attendanceList, $attendanceInfo["employee_sid"]);
             //
             $this->db->update(
-                'portal_attendance', [
+                'portal_attendance',
+                [
                     'total_minutes' => $ct['total_minutes'],
                     'total_worked_minutes' => $ct['total_worked_minutes'],
                     'total_break_minutes' => $ct['total_break_minutes'],
                     'total_overtime_minutes' => $ct['total_overtime_minutes']
-                ], [
+                ],
+                [
                     'sid' => $sid
                 ]
             );
@@ -253,12 +338,13 @@ class Attendance_ajax extends Public_Controller {
         return SendResponse(200, $this->resp);
     }
 
-    
-    
+
+
     /**
      * Updates date time
      */
-    public function GetAddSlot ($id) {
+    public function GetAddSlot($id)
+    {
         //
         $get = $this->input->get(NULL, TRUE);
         //
@@ -282,12 +368,12 @@ class Attendance_ajax extends Public_Controller {
 
         $timezone = getTimeZone($attendanceInfo["company_sid"], $attendanceInfo["employee_sid"]);
         $action_date = reset_datetime([
-                            'datetime' => $attendanceInfo["action_date"],
-                            'format' => DATE,
-                            'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
-                            'new_zone' => $timezone,
-                            '_this' => $this
-                        ]);
+            'datetime' => $attendanceInfo["action_date"],
+            'format' => DATE,
+            'from_timezone' => STORE_DEFAULT_TIMEZONE_ABBR,
+            'new_zone' => $timezone,
+            '_this' => $this
+        ]);
         //
         $ra = [
             'option' => $option,
@@ -303,7 +389,8 @@ class Attendance_ajax extends Public_Controller {
     /**
      * Update settings
      */
-    public function UpdateSettings () {
+    public function UpdateSettings()
+    {
         //
         $post = $this->input->post(NULL, TRUE);
         //
@@ -331,7 +418,8 @@ class Attendance_ajax extends Public_Controller {
      * @param string $action
      * @return string
      */
-    private function GetCleanedAction($action){
+    private function GetCleanedAction($action)
+    {
         return ucwords(str_replace('_', ' ', $action));
     }
 
@@ -345,18 +433,18 @@ class Attendance_ajax extends Public_Controller {
      * @return response
      */
     private function LogAttendance(
-            $action, 
-            $lat, 
-            $lon,
-            $employeeId,
-            $date,
-            $datetime,
-            $day,
-            $month,
-            $year,
-            $added_by, 
-            $return = true)
-    {
+        $action,
+        $lat,
+        $lon,
+        $employeeId,
+        $date,
+        $datetime,
+        $day,
+        $month,
+        $year,
+        $added_by,
+        $return = true
+    ) {
         // Mark the attendance
 
         $Id = $this->atm->MarkAttendance(
@@ -374,17 +462,17 @@ class Attendance_ajax extends Public_Controller {
             $added_by
         );
         //
-        if(!$Id){
+        if (!$Id) {
             //
             $this->resp['errors'] = ['Something went wrong while marking attendance.'];
-        } else{
+        } else {
             //
             unset($this->resp['errors']);
             //
-            $this->resp['success'] = 'Hurray! you are successfully "'.(GetAttendanceActionText($action)).'".';
+            $this->resp['success'] = 'Hurray! you are successfully "' . (GetAttendanceActionText($action)) . '".';
         }
         //
-        if($return){
+        if ($return) {
             return SendResponse(200, $this->resp);
         }
     }
@@ -396,23 +484,24 @@ class Attendance_ajax extends Public_Controller {
      * @param string  $action
      * @return response
      */
-    private function HandleConditions($lastAction, $action){
+    private function HandleConditions($lastAction, $action)
+    {
         // Check for clock out status
-        if($lastAction === 'clock_out' && $action != 'clock_in'){
+        if ($lastAction === 'clock_out' && $action != 'clock_in') {
             //
             $this->resp['errors'] = ['You haven\'t clock in.'];
             //
             return SendResponse(200, $this->resp);
         }
         // Compare the last and current status
-        if($lastAction === $action){
+        if ($lastAction === $action) {
             //
-            $this->resp['errors'] = ['You are already "'.($this->GetCleanedAction($action)).'".'];
+            $this->resp['errors'] = ['You are already "' . ($this->GetCleanedAction($action)) . '".'];
             //
             return SendResponse(200, $this->resp);
         }
         // Check if break end was triggered
-        if($lastAction != 'break_in' && $action === 'break_out'){
+        if ($lastAction != 'break_in' && $action === 'break_out') {
             //
             $this->resp['errors'] = ['You haven\'t started the break.'];
             //
