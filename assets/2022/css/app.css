@@ -449,6 +449,13 @@ body{
     resize: none;
 }
 
+._csTAD {
+    width: 100%;
+    height: 15vh !important;
+    display: block;
+    resize: none;
+}
+
 ._csFb6 {
     font-weight: 600;
 }
