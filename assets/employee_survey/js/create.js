@@ -133,7 +133,7 @@ $(function (){
         textQuestion += '<div class="row"><br>';
         textQuestion += '	<div class="col-xs-12">';
         textQuestion += '		<p class="_csF14 _csB2"><b>Feedback (Elaborate)</b></p>';
-        textQuestion += '		<textarea rows="5" class="form-control" readonly></textarea>';
+        textQuestion += '		<textarea rows="5" class="form-control _csTAD" readonly></textarea>';
         textQuestion += '	</div>';
         textQuestion += '</div>';
         //
