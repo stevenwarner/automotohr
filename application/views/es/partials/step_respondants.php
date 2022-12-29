@@ -6,7 +6,7 @@
                 <h3 class="_csF16">Survey Respondents <span id="jsSurveyRespondentsCount">(0)</span></h3>
             </div>
             <div class="col-md-6 col-sm-12 text-right">
-                 <a href="<?php echo base_url('employee/surveys/create/'.$survey_id.'/questions'); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16">
+                 <a href="<?php echo base_url('employee/surveys/create/'.$survey_id.'/questions'); ?>" class="btn _csB1 _csF2 _csR5 _csMt10 _csF16">
                     <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Question
                 </a>
             </div>
@@ -116,7 +116,7 @@
                 
             </div>
             <div class="col-md-6 col-sm-12 text-right">
-                <a href="<?php echo base_url('employee/surveys/create/'.$survey_id.'/questions'); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16" >
+                <a href="<?php echo base_url('employee/surveys/create/'.$survey_id.'/questions'); ?>" class="btn _csB1 _csF2 _csR5 _csMt10 _csF16" >
                     <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Question
                 </a>
             </div>

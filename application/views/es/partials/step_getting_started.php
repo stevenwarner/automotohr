@@ -5,7 +5,7 @@
     </div>
     <div class="panel-body">
         <p class="_csF14">Select the best template based on the suggestions below or create your own survey from the ground up.</p>
-        <strong class="_csF14 text-danger">Need help getting started your survey? <span class="_csF3">Check out this how-to guide.</span></strong>
+        <strong class="_csF14 text-danger">Need help getting your survey started? <span class="_csF3">Check out this how-to guide.</span></strong>
         <hr>
         <!--  -->
         <h3 class="_csF14">TEMPLATES</h3>

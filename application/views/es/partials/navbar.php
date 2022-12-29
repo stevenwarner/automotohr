@@ -1,20 +1,31 @@
 <?php
 //
-$navpills[] = [
-    'title' => 'Overview',
-    'url' => 'overview',
-    'slug' => '',
-    'icon' => 'pie-chart',
-    'segment' => 'employee/surveys/overview'
-];
+if ($page == "assigned_surveys") {
+    $navpills[] = [
+        'title' => 'Engagements',
+        'url' => 'assigned_survey',
+        'slug' => '',
+        'icon' => 'clipboard',
+        'segment' => 'employee/surveys/assigned_survey'
+    ];
+} else {
+    $navpills[] = [
+        'title' => 'Overview',
+        'url' => 'overview',
+        'slug' => '',
+        'icon' => 'pie-chart',
+        'segment' => 'employee/surveys/overview'
+    ];
 
-$navpills[] = [
-    'title' => 'Surveys',
-    'url' => 'surveys',
-    'slug' => '',
-    'icon' => 'clipboard',
-    'segment' => 'employee/surveys/surveys'
-];
+    $navpills[] = [
+        'title' => 'Engagements',
+        'url' => 'surveys',
+        'slug' => '',
+        'icon' => 'clipboard',
+        'segment' => 'employee/surveys/surveys'
+    ];
+}
+
 
 // $navpills[] = [
 //     'title' => 'My Reviews',

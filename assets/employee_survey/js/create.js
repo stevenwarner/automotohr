@@ -46,15 +46,15 @@ $(function (){
 
                     templateBox += '<div class="col-md-4 col-sm-12">';
                     templateBox += '    <div id="EST_'+template.sid+'"class="csESBox _csBD _csBD6 _csR5 _csP10 _csMt10 jsTemplateSeleceted" data-sid="' +template.sid+ '">';
-                    templateBox += '        <i class="fa fa-tachometer"></i>';
-                    templateBox += '        <p class="_csF16">' + template.title + '</p>';
+                    templateBox += '        <img class="_csMb10" src="'+baseURI+'assets/images/engagement/'+template.logo+'"/>';
+                    templateBox += '        <p class="_csF18 _csFb6">' + template.title + '</p>';
                     templateBox += '        <br>';
                     templateBox += '        <dl>';
                     templateBox += '            <dt>Length</dt>';
                     templateBox += '            <dd>' + template.questions_count + ' Questions</dd>';
                     templateBox += '            <br>';
                     templateBox += '            <dt>Suggested frequency</dt>';
-                    templateBox += '            <dd>' + template.frequency + '</dd>';
+                    templateBox += '            <dd>' + template.frequency.charAt(0).toUpperCase() + template.frequency.slice(1) + '</dd>';
                     templateBox += '        </dl>';
                     templateBox += '        <hr>';
                     templateBox += '        <div class="text-center">';
@@ -74,6 +74,13 @@ $(function (){
             }
         });
 	}
+    //
+    function resetSurveyDetailInfo () {
+        $("#jsSurveyTitle").val("");
+        $("#jsSurveyDescription").val("");
+        $("#jsStartDate").val("");
+        $("#jsEndDate").val("");
+    }
 	//
 	function getTemplateDetails (templateId) {
 		$.ajax({
@@ -126,7 +133,7 @@ $(function (){
         textQuestion += '<div class="row"><br>';
         textQuestion += '	<div class="col-xs-12">';
         textQuestion += '		<p class="_csF14 _csB2"><b>Feedback (Elaborate)</b></p>';
-        textQuestion += '		<textarea rows="5" class="form-control"></textarea>';
+        textQuestion += '		<textarea rows="5" class="form-control" readonly></textarea>';
         textQuestion += '	</div>';
         textQuestion += '</div>';
         //
@@ -165,11 +172,13 @@ $(function (){
 		var questionNo = 1;
     	var returnQuestions = '';
     	var questionBox = '';
+        var tagTemplate = 0;
     	const templateQuestions = JSON.parse(questions);
     	//
         templateQuestions.map(function(templatequestion) {
         	//
         	if (templatequestion.tag) {
+                tagTemplate = 1;
         		var tagQuestionNo = 1;
 		    	//
 		        questionBox += '<div class="panel panel-default _csMt10">';
@@ -194,9 +203,22 @@ $(function (){
 
         });
         //
-		returnQuestions += '<div>';
-        returnQuestions += 		questionBox;
-        returnQuestions += '</div>';
+        if (tagTemplate == 1) {
+            returnQuestions += '<div>';
+            returnQuestions +=      questionBox;
+            returnQuestions += '</div>';
+        } else {
+            //
+            returnQuestions += '<div class="panel panel-default _csMt10">';
+            returnQuestions += '    <div class="panel-body">';
+            returnQuestions += '        <div class="row">';
+            returnQuestions += '            <div class="col-md-12 col-xs-12">';
+            returnQuestions +=                  questionBox;
+            returnQuestions += '            </div>';
+            returnQuestions += '        </div>';
+            returnQuestions += '    </div>';
+            returnQuestions += '</div>';
+        }
         //
         return returnQuestions;
 	}
@@ -285,15 +307,15 @@ $(function (){
             url: apiURI+'employee_survey/'+ surveyId +'/survey',
             success: function(resp) {
             	//
-                $("#jsSurveyTitle").val(resp.title);
-	            $("#jsSurveyDescription").val(resp.description);
-	            $("#jsStartDate").val(moment(resp.start_date).utc().format("MM-DD-YYYY"));
-	            $("#jsEndDate").val(moment(resp.end_date).utc().format("MM-DD-YYYY"));
+                $("#jsSurveyTitle").val(resp.surveyInfo.title);
+	            $("#jsSurveyDescription").val(resp.surveyInfo.description);
+	            $("#jsStartDate").val(moment(resp.surveyInfo.start_date).utc().format("MM-DD-YYYY"));
+	            $("#jsEndDate").val(moment(resp.surveyInfo.end_date).utc().format("MM-DD-YYYY"));
 	            //
 	            let questionBox = "";
 	            let questionNo = 1;
 	            //
-	            resp.questions.map(function(question) {
+	            resp.surveyQuestion.map(function(question) {
 	            	questionBox += '<div class="jsBox _csBox _csP10 jsSurveyQuestionSort" id="div_'+question.sid+'" data-question_sid="'+question.sid+'">';
 			        questionBox += '    <div class="row">';
 			        questionBox += '        <div class="col-md-6">';
@@ -311,6 +333,28 @@ $(function (){
 					questionBox += '			<h4 class="_csF14">'+question.question_text+'</h4>';
 					questionBox += '		</div>';
 					questionBox += '	</div>';
+                    questionBox += '    <div class="row">';
+                    questionBox += '    <div class="col-md-8 col-xs-12">';
+                    
+                    if (question.question_description && question.question_description.length > 0) {
+                        questionBox += '        <p class="_csF14">';
+                        questionBox +=              question.question_description;
+                        questionBox += '        </p>';
+                    }    
+                    questionBox += '    </div>';
+                    questionBox += '    <div class="col-md-4 col-xs-12 jsQuestionHelpVideo">';
+                    if (question.question_video && question.question_video.length > 0) {
+                        var videoURL = baseURI+"uploads/"+question.question_video;
+                        questionBox += '        <video autoplay controls style="width: 100%;" preload="metadata">';
+                        questionBox += '            <source src="'+videoURL+'" type="video/webm">';
+                        questionBox += '            </source>';
+                        questionBox += '            <track label="English" kind="captions" srclang="en" default />';
+                        questionBox += '        </video>';
+                    } 
+                    
+                    questionBox += '    </div>';
+                    questionBox += '</div>';
+
 					questionBox += 		question.question_type == 'rating' ? createRationQuestion() : createTextQuestion();
 					questionBox += '</div>';
 					//
@@ -318,8 +362,9 @@ $(function (){
 		        });
 		        //
 		        $("#jsSurveyQuestionsList").html(questionBox);
-		        $("#jsSurveyQuestionCount").html("("+resp.questions_count+")");
-		        questionCount = resp.questions_count
+		        $("#jsSurveyQuestionCount").html("("+resp.surveyQuestionCount+")");
+		        questionCount = resp.surveyQuestionCount
+                $(".jsQuestionHelpVideo video")[0].load();
 	            //
             	if (step == "details") {
             		$("#show_detail_section").show();
@@ -1005,6 +1050,7 @@ $(function (){
         $(".step").removeClass("_csactive");
         $(".step2").addClass("_csactive");
         $("#show_default_templates_section").hide();
+        resetSurveyDetailInfo();
         $("#show_detail_section").show();
 
         if (selectedTemplate == 0) {
@@ -1021,6 +1067,7 @@ $(function (){
         changeMonth: true,
         changeYear: true,
         yearRange: '-0:+3',
+        minDate: 0,
         onSelect: function (value) {
             $('#jsEndDate').datepicker('option', 'minDate', value);
         }
@@ -1031,6 +1078,7 @@ $(function (){
         changeMonth: true,
         changeYear: true,
         yearRange: '-0:+3',
+        minDate: 0,
         onSelect: function (value) {
             $('#jsStartDate').datepicker('option', 'maxDate', value);
         }
@@ -1084,18 +1132,23 @@ $(function (){
         var surveyEndDate = $("#jsEndDate").val();
         //
         if (surveyTitle == '') {
-            alertify.alert("WARNING!", "Please Enter Survey Title");
+            alertify.alert("WARNING!", "Please enter survey title");
             return false;
         }
         //
         if (surveyStartDate == '') {
-            alertify.alert("WARNING!", "Please Enter Survey Start Date");
+            alertify.alert("WARNING!", "Please enter survey start date");
             return false;
 
         }
         //
         if (surveyEndDate == '') {
-            alertify.alert("WARNING!", "Please Enter Survey End Date");
+            alertify.alert("WARNING!", "Please enter survey end date");
+            return false;
+        }
+        //
+        if (moment(surveyStartDate).isSameOrAfter(surveyEndDate)) {
+            alertify.alert("WARNING!", "Please select end date greater then start date");
             return false;
         }
         //
@@ -1433,19 +1486,24 @@ $(function (){
     $(document).on('change', '#jsEmployees', function(event) {
         var selectedEmployees = $("#jsEmployees").val();
         //
-        selectedEmployees.map(function(employeeSid) {
-            $("#jsExcludedEmployees option[value='"+employeeSid+"']").remove();
-        });
+        if (selectedEmployees) {
+            selectedEmployees.map(function(employeeSid) {
+                $("#jsExcludedEmployees option[value='"+employeeSid+"']").remove();
+            });
+        }    
     });
 
     $(document).on('change', '#jsExcludedEmployees', function(event) {
         var selectedEmployees = $("#jsExcludedEmployees").val();
         //
-        selectedEmployees.map(function(employeeSid) {
-            $("#jsEmployees option[value='"+employeeSid+"']").remove();
-            //
-             return parseInt(employeeSid);
-        });
+        if (selectedEmployees) {
+            selectedEmployees.map(function(employeeSid) {
+                $("#jsEmployees option[value='"+employeeSid+"']").remove();
+                //
+                 return parseInt(employeeSid);
+            });
+        }
+        
     });
 
     $(document).on('click', '.jsGetFilterEmployees', function(event) {
@@ -1454,11 +1512,13 @@ $(function (){
 
     $(document).on('click', '.jsClearFilter', function(event) {
         //
-        $("#jsExcludedEmployees").select2("val", "");
         $("#jsJobTitles").select2("val", "");
         $("#jsDepartments").select2("val", "");
-        $("#jsEmployees").select2("val", "");
         $("#jsEemployeeType").select2("val", "");
+        $("#jsEmployees").select2("val", "");
+        $("#jsExcludedEmployees").select2("val", "");
+        //
+        getFilterCompanyEmployees();
     });
 
     $(document).on('click', '.jsSaveSurveyRespondents', function(event) {

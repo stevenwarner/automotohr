@@ -9,11 +9,11 @@
                 <button class="btn _csB4 _csF2 _csR5 _csMt10 _csF16" id="jsAddNewQuestionBTN">
                     <i class="fa fa-plus-circle _csF16" aria-hidden="true"></i>&nbsp;Add Question
                 </button>
-                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/details"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16">
+                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/details"); ?>" class="btn _csB1 _csF2 _csR5 _csMt10 _csF16">
                     <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Detail
                 </a>
-                 <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/respondents"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16 jsAddNewRespondenBTN">
-                    <i class="fa fa-long-arrow-right _csF16" aria-hidden="true"></i>&nbsp;Next
+                 <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/respondents"); ?>" class="btn _csB4 _csF2 _csR5 _csMt10 _csF16 jsAddNewRespondenBTN">
+                    <i class="fa fa-long-arrow-right _csF16" aria-hidden="true"></i>&nbsp;Save & Next
                 </a>
             </div>
         </div>
@@ -27,11 +27,11 @@
                 
             </div>
             <div class="col-md-6 col-sm-12 text-right">
-                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/details"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16">
+                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/details"); ?>" class="btn _csB1 _csF2 _csR5 _csMt10 _csF16">
                     <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Detail
                 </a>
-                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/respondents"); ?>" class="btn _csB3 _csF2 _csR5 _csMt10 _csF16 jsAddNewRespondenBTN" >
-                    <i class="fa fa-long-arrow-right _csF16" aria-hidden="true"></i>&nbsp;Next
+                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/respondents"); ?>" class="btn _csB4 _csF2 _csR5 _csMt10 _csF16 jsAddNewRespondenBTN" >
+                    <i class="fa fa-long-arrow-right _csF16" aria-hidden="true"></i>&nbsp;Save & Next
                 </a>
             </div>
         </div>

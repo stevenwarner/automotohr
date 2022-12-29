@@ -928,7 +928,26 @@
                             </div>
                         <?php } ?>
 
-                        
+                        <?php if (checkIfAppIsEnabled(EMPLOYEE_SURVEYS)) { ?>
+                            <!-- Employee survey -->
+                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                <div class="widget-box">
+                                    <a href="<?=base_url('employee/surveys/assigned_survey');?>">
+                                        <div class="link-box bg-redish full-width">
+                                            <h2>Engagement</h2>
+                                            <div><span>&nbsp;</span></div>
+                                            <div class="current-date">
+                                                <span><?php echo $totalPendingSurveys?? 0; ?><sub>Assigned</sub></span>
+                                            </div>
+                                            <div class="status-panel">
+                                                <h3>View Engagements</h3>
+                                                <span>Show</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>

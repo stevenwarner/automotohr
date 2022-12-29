@@ -55,6 +55,10 @@ class Employee_surveys extends Public_Controller
         $data['session'] = $this->session->userdata('logged_in');
         $data['employee'] = $data['session']['employer_detail'];
         //
+        $data['PageScripts'] = [
+            'employee_survey/js/overview'
+        ];
+        //
         $this->load
             ->view($this->pages['header'], $data)
             ->view("{$this->mp}es/overview/overview")
@@ -107,7 +111,7 @@ class Employee_surveys extends Public_Controller
             ->view($this->pages['header'], $data)
             ->view("{$this->mp}es/{$page}")
             ->view($this->pages['footer']);
-    }
+    } 
 
 
 
@@ -119,8 +123,13 @@ class Employee_surveys extends Public_Controller
         //
         $data = [];
         $data['load_view'] = 1;
+        $data['survey_id'] = $id;
         $data['session'] = $this->session->userdata('logged_in');
         $data['employee'] = $data['session']['employer_detail'];
+        //
+        $data['PageScripts'] = [
+            'employee_survey/js/surveys'
+        ];
         //
         $this->load
             ->view($this->pages['header'], $data)
@@ -169,7 +178,7 @@ class Employee_surveys extends Public_Controller
     /**
      *
      */
-    public function reports()
+    public function reports($survey_id)
     {
         //
         $data = [];
@@ -221,7 +230,7 @@ class Employee_surveys extends Public_Controller
     }
 
 
-  /**
+    /**
      *
      */
     public function surveyTemplateSelect($id)
@@ -243,6 +252,30 @@ class Employee_surveys extends Public_Controller
             ->view($this->pages['footer']);
     }
 
-
+    /**
+     *
+     */
+    public function surveyAssigned($id = 0, $type = "pending")
+    {
+        //
+        $data = [];
+        $data['load_view'] = 1;
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['employee'] = $data['session']['employer_detail'];
+        $data['page'] = "assigned_surveys";
+        $data['survey_id'] = $id;
+        $data['step'] = $type;
+        //
+        $data['PageScripts'] = [
+            'employee_survey/js/assigned'
+        ];
+        //
+        $page = $id == 0 ? "assigned_surveys" : "surveyfeedback";
+        //
+        $this->load
+            ->view($this->pages['header'], $data)
+            ->view("{$this->mp}es/{$page}")
+            ->view($this->pages['footer']);  
+    }
 
 }

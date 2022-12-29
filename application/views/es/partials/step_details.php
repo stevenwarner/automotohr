@@ -21,7 +21,7 @@
                     <p>What this survey is about.</p>
                 </div>
                 <div class="col-md-9 col-sm-12 _csMt10">
-                    <textarea class="form-control" row="30" id="jsSurveyDescription"></textarea>
+                    <textarea class="form-control _csTA" row="30" id="jsSurveyDescription"></textarea>
                 </div>
             </div>
             <hr>

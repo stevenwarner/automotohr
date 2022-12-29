@@ -1,3 +1,4 @@
+
 <!-- Main page -->
 <div class="csPage">
     <!--  -->
@@ -17,8 +18,12 @@
                     <!--  -->
                     <div class="row">
                         <span class="col-sm-12 text-right">
-                            <a href="#" target="blank" class="btn _csB4 _csF2 _csR5  _csF16"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>
-                            <a href="#" target="blank" class="btn _csB4 _csF2 _csR5  _csF16"><i class="fa fa-download" aria-hidden="true"></i>&nbsp; Download</a>
+                            <!-- <a href="#" target="blank" class="btn _csB4 _csF2 _csR5  _csF16"><i class="fa fa-print" aria-hidden="true"></i>&nbsp; Print</a>
+                            <a href="#" target="blank" class="btn _csB4 _csF2 _csR5  _csF16"><i class="fa fa-download" aria-hidden="true"></i>&nbsp; Download</a> -->
+                            <button class="btn _csB4 _csF2 _csR5 _csF16 dn pull-right jsFinisyMySurvey">Finish Survey</button>
+                            <a class="btn _csB1 _csF2 _csR5 _csF16 _csMr10" href="<?=base_url('employee/surveys/assigned_survey');?>">
+                                <i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp; Back to Surveys 
+                            </a>
                         </span>
                     </div>
 
@@ -29,10 +34,11 @@
                                 <div class="col-md-6 col-xs-12">
                                     <div>
                                         <p class="_csF16 _csB2">
-                                            <b> Title </b>
+                                            <b id="jsSurveyTitle"> Title </b>
                                         </p>
-                                        <p class="_csF14">
+                                        <p class="_csF14" id="jsSurveyTimePeriod">
                                             Nov 01 2022, Tue - Nov 30 2022, Wed
+                                        
                                             <br />Due in 2 weeks, 1 day
                                         </p>
                                         <p class="_csF14 _csB2">
@@ -43,7 +49,7 @@
                                 <!--  -->
                                 <div class="col-md-6 col-xs-12">
                                     <span class="pull-right _csF16 _csB2">
-                                        <strong class="._csF1">PENDING</strong>
+                                        <strong class="._csF1" id="jsSurveyStatus">PENDING</strong>
                                     </span>
                                 </div>
                             </div>
@@ -52,7 +58,7 @@
                             <div class="row">
                                 <div class="col-md-12 col-xs-12">
                                     <div>
-                                        <p class="_csF16 _csB2">
+                                        <p class="_csF16 _csB2" id="jsRemainingQuestions">
                                             <b> Completed 3 out of 5 Question(s) </b>
                                         </p>
                                     </div>
@@ -63,7 +69,7 @@
                                 <br>
                                 <div class="col-md-12 col-xs-12">
                                     <div>
-                                        <ul class="_csPaginationMenu text-left">
+                                        <ul class="_csPaginationMenu text-left" id="jsQuestionMenu">
                                             <li class="active">
                                                 <a href="#" title="Pending" placement="top">1</a>
                                             </li>
@@ -73,7 +79,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </div>   
                         </div>
                     </div>
 
@@ -85,63 +91,47 @@
                                 <!-- feedback -->
                                 <div class="panel-heading _csB1">
                                     <p class="_csF14 _csF2">
-                                        <b> Q1: Title </b>
+                                        <b id="jsQuestionTitle"> Q1: Title </b>
                                     </p>
                                 </div>
                                 <div class="panel-body">
                                     <!-- Description -->
                                     <div class="row">
                                         <div class="col-md-8 col-xs-12">
-                                            <p class="_csF14">
+                                            <p class="_csF14" id="jsQuestionDescription">
                                                 Question description
                                             </p>
                                         </div>
-                                        <div class="col-md-4 col-xs-12">
-                                            <video controls style="width: 100%;" preload="metadata">
-                                                <source src="" type="video/mp4">
+                                        <div class="col-md-4 col-xs-12" id ="jsQuestionHelpSection">
+                                            <video autoplay controls style="width: 100%;" preload="metadata">
+                                                <source id ="jsVideoQuestionHelp" src="" type="video/webm">
                                                 </source>
                                                 <track label="English" kind="captions" srclang="en" default />
                                             </video>
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <br />
-                                        <div class="col-xs-12">
-                                            <label class="control control--radio _csF14">
-                                                <input type="radio" name="jsReviewChoice" value="1" />
-                                                Yes
-                                                <span class="control__indicator"></span>
-                                            </label> <br />
-                                            <label class="control control--radio _csF14">
-                                                <input type="radio" name="jsReviewChoice" value="0" />
-                                                No
-                                                <span class="control__indicator"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-
                                     <!-- Rating -->
-                                    <div class="row">
+                                    <div class="row dn" id="jsRatingQuestion">
                                         <br />
                                         <ul class="_csRatingBar pl10 pr10">
-                                            <li data-id="1" class=" active ">
+                                            <li data-id="1" class="active surveyRating surveyRatingDefault">
                                                 <p class="_csF20 _csF2">1</p>
                                                 <p class="_csF14 _csF2">Strongly Agree</p>
                                             </li>
-                                            <li data-id="2">
+                                            <li data-id="2" class="surveyRating">
                                                 <p class="_csF20 ">2</p>
                                                 <p class="_csF14 ">Agree</p>
                                             </li>
-                                            <li data-id="3">
+                                            <li data-id="3" class="surveyRating">
                                                 <p class="_csF20">3</p>
                                                 <p class="_csF14 ">Neutral</p>
                                             </li>
-                                            <li data-id="4">
+                                            <li data-id="4" class="surveyRating">
                                                 <p class="_csF20 ">4</p>
                                                 <p class="_csF14 ">Disagree</p>
                                             </li>
-                                            <li data-id="5">
+                                            <li data-id="5" class="surveyRating">
                                                 <p class="_csF20 ">5</p>
                                                 <p class="_csF14 ">Strongly Disagree</p>
                                             </li>
@@ -149,11 +139,11 @@
                                     </div>
 
                                     <!-- Text -->
-                                    <div class="row">
+                                    <div class="row dn" id="jsTextQuestion">
                                         <br />
                                         <div class="col-xs-12">
                                             <p class="_csF14 _csB2"><b>Feedback (Elaborate)</b></p>
-                                            <textarea rows="5" class="form-control jsReviewText">fsfsfsf</textarea>
+                                            <textarea rows="5" class="form-control jsRespondentText" placeholder="Enter text here"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -163,8 +153,9 @@
                                     <div class="row">
                                         <div class="col-xs-12">
                                             <span class="pull-right">
-                                                <button class="btn _csB4 _csF2 _csR5  _csF16">
-                                                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp; Save & Next </button>
+                                                <button class="btn _csB4 _csF2 _csR5 _csF16" id="jsSaveSurveyQuestionAnswer">
+                                                    <i class="fa fa-long-arrow-right" aria-hidden="true"></i>&nbsp; Save & Next 
+                                                </button>
                                             </span>
                                         </div>
                                         <div class="clearfix"></div>
@@ -175,7 +166,7 @@
                     </div>
 
                     <!-- Attachments -->
-                    <div class="row">
+                    <div class="row dn">
                         <br />
                         <div class="col-xs-12">
                             <div class="panel panel-default">
@@ -233,6 +224,15 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="row">
+                        <span class="col-sm-12 text-right">
+                            <button class="btn _csB4 _csF2 _csR5 _csF16 _csMb10 dn pull-right jsFinisyMySurvey">Finish Survey</button>
+                            <a class="btn _csB1 _csF2 _csR5 _csF16 _csMr10 _csMb10" href="<?=base_url('employee/surveys/assigned_survey');?>">
+                                <i class="fa fa-long-arrow-left" aria-hidden="true"></i>&nbsp; Back to Surveys 
+                            </a>
+                        </span>
                     </div>
                 </div>
             </div>

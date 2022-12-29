@@ -17,7 +17,7 @@
                             <h3 class="_csF26">Let's get started</h3>
                         </div>
                         <div class="col-md-4 col-sm-12 text-right _csVm">
-                            <a href="" class="btn _csB1 _csF16 _csF2 _csR5 _csMt20">
+                            <a href="<?php echo base_url("employee/surveys/surveys"); ?>" class="btn _csB1 _csF16 _csF2 _csR5 _csMt20">
                                 <i class="fa fa-times-circle _csF16" aria-hidden="true"></i>&nbsp;Cancel
                             </a>
                         </div>

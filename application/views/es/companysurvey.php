@@ -29,7 +29,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <h5 class=" _csF1 _csF16">
-                                        <b> Title </b> &nbsp;
+                                        <b id="jsSurveyTitle"> Title </b> &nbsp;
                                         <a class="btn _csB3 _csF2 _csF16 _csR5" href="#">Started</a>
                                     </h5>
                                 </div>
@@ -39,10 +39,10 @@
                             <div class="row">
                                 <div class="col-sm-6 col-xs-12">
                                     <h5 class=" _csF1 _csF16">
-                                        <b>10% Completed</b>
+                                        <b><span id="jsSurveyPercentage">10</span>% Completed</b>
                                     </h5>
                                     <h5 class=" _csF1 _csF14">
-                                        3 out of 12 survey(s) submitted their feedback.
+                                        <span id="jsSurveyCompletedRespondents">10</span> out of <span id="jsSurveyTotalRespondents">10</span> survey(s) submitted their feedback.
                                     </h5>
                                 </div>
 
@@ -64,54 +64,51 @@
                                 <caption></caption>
                                 <thead>
                                     <tr>
-                                        <th scope="col" class="_csF16 _csB1 _csF2">Employee</th>
-                                        <th scope="col" class="_csF16 _csB1 _csF2">Progress</th>
+                                        <!-- <th scope="col" class="_csF16 _csB1 _csF2">Employee</th> -->
+                                        <th scope="col" class="_csF16 _csB1 _csF2">Created By</th>
+                                        <!-- <th scope="col" class="_csF16 _csB1 _csF2">Progress</th> -->
+                                        <th scope="col" class="_csF16 _csB1 _csF2">Question(s)</th>
+                                        <th scope="col" class="_csF16 _csB1 _csF2">Respondent(s)</th>
                                         <th scope="col" class="_csF16 _csB1 _csF2">Period Cycle</th>
                                         <th scope="col" class="_csF16 _csB1 _csF2">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-
                                     <tr data-review_id="<?= $review['sid']; ?>" data-id="<?= $reviewee['reviewee_sid']; ?>">
                                         <td style="vertical-align: middle">
-                                            <p class="_csF14">
-                                                <b>survey1</b>
+                                            <p class="_csF14" id="jsSurveyCreaterName"> Jhon Doe </p>
+                                        </td>
+                                        <td style="vertical-align: middle">
+                                            <p class="_csF14 jsSurveyDetail" data-type="questions" title="Click to view questions" placement="top">
+                                                <b><span id="jsSurveyQuestionsCount">1</span> Question(s) Added </b>
                                             </p>
-                                            <p class="_csF14"> asmin aaa </p>
                                         </td>
                                         <td style="vertical-align: middle">
-                                            <a class="_csF14" title="Click to view employees" placement="top">
-                                                <b> 2 Reviewer(s) Added </b>
-                                            </a>
+                                            <p class="_csF14 jsSurveyDetail" data-type="respondents" title="Click to view respondents" placement="top">
+                                                <b> <span id="jsSurveyRespondentsCount">1</span> Respondent(s) Added </b>
+                                            </p>
                                         </td>
                                         <td style="vertical-align: middle">
-                                            <p class="_csF14"> sss </p>
+                                            <p class="_csF14" id="jsSurveyTimePeriod">  </p>
                                         </td>
                                         <td style="vertical-align: middle">
-                                            <a class="btn _csB4 _csF2 _csR5  _csF16" title="View Reviewers" placement="top" href="<?= base_url("employee/surveys/surveys/12/11/22"); ?>">
+                                            <a class="btn _csB4 _csF2 _csR5  _csF16" title="View Survey Report" placement="top" href="<?= base_url("employee/surveys/reports/1"); ?>">
                                                 <i class="fa fa-eye" aria-hidden="true"></i>
                                             </a>
-                                            <?php
-                                            if ($reviewee['is_started']) {
-                                            ?>
-                                                <button class="btn _csB4 _csF2 _csR5  _csF16" title="Stop Review" placement="top">
-                                                    <i class="fa fa-stop" aria-hidden="true"></i>
-                                                </button>
-                                            <?php
-                                            } else {
-                                            ?>
-                                                <button class="btn _csB4 _csF2 _csR5  _csF16" title="Start Review" placement="top">
-                                                    <i class="fa fa-play" aria-hidden="true"></i>
-                                                </button>
-                                            <?php
-                                            }
-                                            ?>
-                                            <button class="btn _csB4 _csF2 _csR5  _csF16" title="Manage" placement="top">
-                                                <i class="fa fa-cogs" aria-hidden="true"></i>
+                                            
+                                            <button class="btn _csB4 _csF2 _csR5  _csF16 jsActionButton dn" data-survey_status="stop" id="jsStopSurvey" title="Stop Survey" placement="top">
+                                                <i class="fa fa-stop" aria-hidden="true"></i>
                                             </button>
+                                       
+                                            <button class="btn _csB4 _csF2 _csR5  _csF16 jsActionButton dn" data-survey_status="start" id="jsStartSurvey" title="Start Survey" placement="top">
+                                                <i class="fa fa-play" aria-hidden="true"></i>
+                                            </button>
+                                            
+                                            <a class="btn _csB4 _csF2 _csR5  _csF16" title="Manage Survey" placement="top" href="<?= base_url("employee/surveys/create/".$survey_id."/details"); ?>">
+                                                <i class="fa fa-cogs" aria-hidden="true"></i>
+                                            </a>
                                         </td>
                                     </tr>
-
                                 </tbody>
                             </table>
                         </div>

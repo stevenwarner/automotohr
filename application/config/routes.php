@@ -1600,7 +1600,7 @@ $route['employee/surveys/surveys/(:num)']['get'] = '2022/Employee_surveys/compan
 $route['employee/surveys/surveys/(:num)/(:num)/(:num)']['get'] = '2022/Employee_surveys/surveyfeedback/$1/$2/$3';
 
 $route['employee/surveys/settings']= '2022/Employee_surveys/settings';
-$route['employee/surveys/reports']= '2022/Employee_surveys/reports';
+$route['employee/surveys/reports/(:num)']= '2022/Employee_surveys/reports/$1';
 $route['employee/surveys/faqs']= '2022/Employee_surveys/faqs';
 
 
@@ -1608,3 +1608,5 @@ $route['employee/surveys/faqs']= '2022/Employee_surveys/faqs';
 $route['employee/surveys/templatedetail/(:num)']['get'] = '2022/Employee_surveys/surveyTemplateDetail/$1';
 
 $route['employee/surveys/templateselect/(:num)']['get'] = '2022/Employee_surveys/surveyTemplateSelect/$1';
+$route['employee/surveys/assigned_survey']['get'] = '2022/Employee_surveys/surveyAssigned';
+$route['employee/surveys/assigned_survey/(:num)']['get'] = '2022/Employee_surveys/surveyAssigned/$1';

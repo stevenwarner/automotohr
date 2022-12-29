@@ -366,6 +366,7 @@ body{
 
 /* --- New ---*/
 
+
 ._csPaginationMenu li.active a,
 ._csPaginationMenu li:hover a {
     background: #fd7a2a;
@@ -439,5 +440,16 @@ body{
 
 .dn {
     display: none;
+}
+
+._csTA {
+    width: 100%;
+    height: 30vh !important;
+    display: block;
+    resize: none;
+}
+
+._csFb6 {
+    font-weight: 600;
 }
 
