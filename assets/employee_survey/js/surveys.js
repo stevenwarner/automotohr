@@ -236,6 +236,7 @@ $(function (){
         var questionNo = 1;
         var questionBox = '';
         var tagTemplate = 0;
+        var questionCount = 0;
         //
         if (surveyQuestions.length) {
             surveyQuestions.map(function(surveyQuestion, index) {
@@ -261,12 +262,13 @@ $(function (){
                     questionBox += '    </div>';
                     questionBox += '</div>';
 
-                    questionNo = tagQuestionNo;
+                    questionCount = tagQuestionNo;
                 } else {
                     
                     questionBox += createQuestionBlock(questionNo, surveyQuestion);
                     //
                     questionNo++;
+                    questionCount = surveyQuestions.length;
                 }
             });
         } else {
@@ -288,7 +290,7 @@ $(function (){
             returnQuestions = questionBox;
         }
         //
-        return {"html": returnQuestions,"count": questionNo}
+        return {"html": returnQuestions,"count": questionCount}
     }
     //
     function getCompanyEmployees(departments, included, excluded, type, title) {
