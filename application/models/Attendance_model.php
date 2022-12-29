@@ -291,7 +291,6 @@ class Attendance_model extends CI_Model
             unset($record['sid']);
             $record['attendance_sid'] = $attendance_sid;
             $this->db->insert('attendance_modification_history', $record);
-
         }
     }
 
@@ -423,7 +422,8 @@ class Attendance_model extends CI_Model
         }
     }
 
-    function get_attendance_records_by_clock_in_sid($clock_in_sid) {
+    function get_attendance_records_by_clock_in_sid($clock_in_sid)
+    {
         $this->db->select('*');
         $this->db->where('clock_in_sid', $clock_in_sid);
         $this->db->or_where('sid', $clock_in_sid);
@@ -447,9 +447,9 @@ class Attendance_model extends CI_Model
         $this->db->where('attendance_date BETWEEN \'' . $date_start . '\' AND \'' . $date_end . '\'');
         $this->db->order_by('created_date', 'ASC');
         $records = $this->db->get('attendance')->result_array();
-        if(!empty($records)){
-            foreach($records as $key => $record){
-                if($record['attendance_type'] == 'clock_in'){
+        if (!empty($records)) {
+            foreach ($records as $key => $record) {
+                if ($record['attendance_type'] == 'clock_in') {
                     $count = $this->get_records_count_by_clock_in_sid($record['sid']);
                     //echo $this->db->last_query();
                     $records[$key]['linked_records_count'] = $count;
@@ -461,17 +461,18 @@ class Attendance_model extends CI_Model
 
         return $records;
     }
-    
-    function manage_attendance_records($company_sid, $employer_sid, $date_start, $date_end) {
+
+    function manage_attendance_records($company_sid, $employer_sid, $date_start, $date_end)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employer_sid', $employer_sid);
         $this->db->where('attendance_date BETWEEN \'' . $date_start . '\' AND \'' . $date_end . '\'');
         $this->db->order_by('attendance_date', 'ASC');
         $records = $this->db->get('attendance')->result_array();
-        if(!empty($records)){
-            foreach($records as $key => $record){
-                if($record['attendance_type'] == 'clock_in'){
+        if (!empty($records)) {
+            foreach ($records as $key => $record) {
+                if ($record['attendance_type'] == 'clock_in') {
                     $count = $this->get_records_count_by_clock_in_sid($record['sid']);
                     $records[$key]['linked_records_count'] = $count;
                 } else {
@@ -483,7 +484,8 @@ class Attendance_model extends CI_Model
         return $records;
     }
 
-    function get_last_clock_in($company_sid, $employer_sid) {
+    function get_last_clock_in($company_sid, $employer_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employer_sid', $employer_sid);
@@ -499,7 +501,8 @@ class Attendance_model extends CI_Model
         }
     }
 
-    function get_last_clock_out($company_sid, $employer_sid) {
+    function get_last_clock_out($company_sid, $employer_sid)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employer_sid', $employer_sid);
@@ -515,7 +518,8 @@ class Attendance_model extends CI_Model
         }
     }
 
-    function get_last_clock_out_for_clock_in($company_sid, $employer_sid, $clock_in) {
+    function get_last_clock_out_for_clock_in($company_sid, $employer_sid, $clock_in)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employer_sid', $employer_sid);
@@ -543,7 +547,8 @@ class Attendance_model extends CI_Model
         return $this->db->get('attendance')->result_array();
     }
 
-    function get_all_attendance_total_records($company_sid, $employer_sid, $start_date, $end_date){
+    function get_all_attendance_total_records($company_sid, $employer_sid, $start_date, $end_date)
+    {
         //echo $company_sid.'<br>'.$employer_sid.'<br>'.$start_date.'<br>'.$end_date;
         //exit;
         $this->db->select('attendance_totals.*');
@@ -555,7 +560,7 @@ class Attendance_model extends CI_Model
         $this->db->where('attendance_totals.employer_sid', $employer_sid);
         $this->db->where('attendance_totals.status', 1);
 
-        if(!empty($start_date) && !empty($end_date)) {
+        if (!empty($start_date) && !empty($end_date)) {
             $this->db->where('attendance_totals.attendance_date BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
         }
         $this->db->order_by('attendance_totals.attendance_date', 'DESC');
@@ -566,45 +571,45 @@ class Attendance_model extends CI_Model
         $records_array = $records->result_array();
         $records->free_result();
 
-        if(!empty($records_array)){
-//            echo "<br>I am IN Model <br><pre>";
-//            print_r($records_array);
-//            exit;
+        if (!empty($records_array)) {
+            //            echo "<br>I am IN Model <br><pre>";
+            //            print_r($records_array);
+            //            exit;
             return $records_array;
         } else {
             return array();
         }
-
     }
-    
-    function get_all_attendance_total_records_modified($company_sid, $employer_sid, $start_date, $end_date){
+
+    function get_all_attendance_total_records_modified($company_sid, $employer_sid, $start_date, $end_date)
+    {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employer_sid', $employer_sid);
         //$this->db->where('attendance_totals.status', 1);
-        if(!empty($start_date) && !empty($end_date)) {
+        if (!empty($start_date) && !empty($end_date)) {
             $this->db->where('attendance_date BETWEEN \'' . $start_date . '\' AND \'' . $end_date . '\'');
         }
 
         $this->db->order_by('attendance_date', 'DESC');
         $records = $this->db->get('attendance_totals');
-      
-//exit;
+
+        //exit;
         $records_array = $records->result_array();
         $records->free_result();
 
-        if(!empty($records_array)){
-//            echo "<br>I am IN Model <br><pre>";
-//            print_r($records_array);
-//            exit;
+        if (!empty($records_array)) {
+            //            echo "<br>I am IN Model <br><pre>";
+            //            print_r($records_array);
+            //            exit;
             return $records_array;
         } else {
             return array();
         }
-
     }
 
-    function get_attendance_clock_in_sid($company_sid, $employer_sid, $entry_datetime){
+    function get_attendance_clock_in_sid($company_sid, $employer_sid, $entry_datetime)
+    {
         $entry_datetime = date('Y-m-d H:i:s', strtotime($entry_datetime));
         $this->db->select_max('sid');
         //$this->db->where('attendance_date BETWEEN \'' . $filter_start . '\' AND \'' . $filter_end . '\'');
@@ -620,47 +625,49 @@ class Attendance_model extends CI_Model
         $record_array = $record->result_array();
         $record->free_result();
 
-        if(!empty($record_array)){
+        if (!empty($record_array)) {
             return $record_array[0]['sid'];
         } else {
             return 0;
         }
     }
 
-    function set_status_for_attendance_totals_records($date, $status = 0){
+    function set_status_for_attendance_totals_records($date, $status = 0)
+    {
         $this->db->where('attendance_date', date('Y-m-d', strtotime($date)));
         $data_to_update = array();
         $data_to_update['status'] = $status;
         $this->db->update('attendance_totals', $data_to_update);
-
     }
 
-    function get_records_count_by_clock_in_sid($clock_in_sid){
+    function get_records_count_by_clock_in_sid($clock_in_sid)
+    {
         $this->db->select('sid');
         $this->db->where('clock_in_sid', $clock_in_sid);
         return $this->db->count_all_results('attendance');
     }
-    
-    function verify_manual_entry($company_sid, $employer_sid, $new_datetime, $attendance_type){
-        $date_object                                                            = new DateTime($new_datetime);                        
-        $current_month                                                          = $date_object->format('m'); 
-        $date_object->modify('first day of previous month');                        
-        $current_year                                                           = $date_object->format('Y'); 
-        $previous_month                                                         = $date_object->format('m'); 
+
+    function verify_manual_entry($company_sid, $employer_sid, $new_datetime, $attendance_type)
+    {
+        $date_object                                                            = new DateTime($new_datetime);
+        $current_month                                                          = $date_object->format('m');
+        $date_object->modify('first day of previous month');
+        $current_year                                                           = $date_object->format('Y');
+        $previous_month                                                         = $date_object->format('m');
         $entry_date                                                             = date('Y-m-d', strtotime($new_datetime));
         $from_date                                                              = $entry_date . ' 00:00:00';
         $to_date                                                                = $entry_date . ' 23:59:59';
         $return_data                                                            = array();
-        
+
         // we need to verify few things before manual entry.
         // 1) check clocked status for the type of entry is required.
         // 2) if clocked status is already set for the employee then no need to do second entry
         // 3) if it is break or clockout then we need to verify that it is against any clocked in sid
         // 4) get clocked in sid for the entry
-        
+
         // $this->db->where('month(created)', date('m'));
-        
-        switch ($attendance_type){
+
+        switch ($attendance_type) {
             case 'break_start':
             case 'break_end':
             case 'clock_out':
@@ -680,39 +687,40 @@ class Attendance_model extends CI_Model
                 $newDate                                                        = array();
                 $manual_date                                                    = date_create($new_datetime);
                 $manual_date_time                                               = strtotime($new_datetime);
-                if(!empty($record_array)){
-                    for($i=0; $i<count($record_array); $i++){
+                if (!empty($record_array)) {
+                    for ($i = 0; $i < count($record_array); $i++) {
                         $clock_in_datatime = $record_array[$i]['attendance_date'];
                         $clock_in_datatime_time                                 = strtotime($clock_in_datatime);
                         $diff = $clock_in_datatime_time - $manual_date_time;
-                        if($diff > 0){
+                        if ($diff > 0) {
                             $resultArrFuture[$diff] = $clock_in_datatime;
                         } else {
                             //$diff = abs($diff);
                             $resultArrPast[$diff] = $clock_in_datatime;
                         }
-                        
+
                         $baseDate = date_create($clock_in_datatime); // verify the break that manager wants to add is correct in terms of login status.
                         $interval = date_diff($baseDate, $manual_date);
 
                         $key = $interval->format('%s');
-                        if(key_exists($key, $newDate)){
-                            $key+1;
+                        if (key_exists($key, $newDate)) {
+                            $key + 1;
                         }
 
-                        $newDate[$key] = array   (   'clock_in_sid' => $record_array[$i]['sid'],
-                                                                        'datetime' =>$clock_in_datatime
-                                                                    );
+                        $newDate[$key] = array(
+                            'clock_in_sid' => $record_array[$i]['sid'],
+                            'datetime' => $clock_in_datatime
+                        );
                     }
                 }
-                
-                if($attendance_type == 'clock_out'){
+
+                if ($attendance_type == 'clock_out') {
                     $attendance_status = 'working_hours';
                 }
                 ksort($newDate);
                 @ksort($resultArrFuture);
                 @krsort($resultArrPast);
-                foreach($newDate as $value){
+                foreach ($newDate as $value) {
                     $clock_in_sid                                               = $value['clock_in_sid'];
                     $this->db->select('sid, clock_in_sid, last_attendance_sid, attendance_type, is_manual, attendance_date, company_sid, employer_sid, attendance_year, attendance_week');
                     $this->db->where('clock_in_sid', $clock_in_sid);
@@ -722,20 +730,20 @@ class Attendance_model extends CI_Model
                     $record_array                                               = $record->result_array();
                     $record->free_result();
                     $return_data = array(
-                                            'clock_in_sid'                      => $clock_in_sid,
-                                            'datatime'                          => $value['datetime'],
-                                            'all_records'                       => $record_array
-                                        );
+                        'clock_in_sid'                      => $clock_in_sid,
+                        'datatime'                          => $value['datetime'],
+                        'all_records'                       => $record_array
+                    );
                     break; // break the foreach loop
                 }
-            break; 
+                break;
         }
-         
+
         return $return_data;
     }
 
     // ----------------------------------------AS of 2022-------------------------------------- //
-    
+
     /**
      * Get the attendance id
      * 
@@ -745,16 +753,17 @@ class Attendance_model extends CI_Model
      * 
      * @return number
      */
-    public function GetAttendanceId($companyId, $employeeId, $date){
+    public function GetAttendanceId($companyId, $employeeId, $date)
+    {
         //
         $q = $this->db
-        ->select('sid')
-        ->where([
-            'company_sid' => $companyId,
-            'employee_sid' => $employeeId,
-            'action_date' => $date
-        ])
-        ->limit(1);
+            ->select('sid')
+            ->where([
+                'company_sid' => $companyId,
+                'employee_sid' => $employeeId,
+                'action_date' => $date
+            ])
+            ->limit(1);
         //
         $result = $q->get('portal_attendance');
         //
@@ -762,12 +771,11 @@ class Attendance_model extends CI_Model
         //
         $result = $result->free_result();
         //
-        if(empty($data)){
+        if (empty($data)) {
             return 0;
         }
         //
         return $data['sid'];
-        
     }
 
     /**
@@ -779,19 +787,20 @@ class Attendance_model extends CI_Model
      * 
      * @return array
      */
-    public function GetAttendanceList($companyId, $employeeId, $date){
+    public function GetAttendanceList($companyId, $employeeId, $date)
+    {
         //
         $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
         //
-        if($Id === 0){
+        if ($Id === 0) {
             return [];
         }
         //
         $q = $this->db
-        ->where([
-            'portal_attendance_sid' => $Id
-        ])
-        ->order_by('sid', 'desc');
+            ->where([
+                'portal_attendance_sid' => $Id
+            ])
+            ->order_by('sid', 'desc');
         //
         $result = $q->get('portal_attendance_log');
         //
@@ -832,14 +841,15 @@ class Attendance_model extends CI_Model
         $latitude = 0,
         $longitude = 0,
         $added_by
-    ){
+    ) {
         //
         $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
         // Insert if attendance is not found
-        if($Id === 0){
+        if ($Id === 0) {
             //
             $this->db->insert(
-                'portal_attendance', [
+                'portal_attendance',
+                [
                     'company_sid' => $companyId,
                     'employee_sid' => $employeeId,
                     'employer_sid' => $employerId,
@@ -858,12 +868,13 @@ class Attendance_model extends CI_Model
             $Id = $this->db->insert_id();
         }
         // Let's check if the data is inserted or not
-        if(!$Id){
+        if (!$Id) {
             return 0;
         }
         // Let's add the attendance log
         $this->db->insert(
-            'portal_attendance_log', [
+            'portal_attendance_log',
+            [
                 'portal_attendance_sid' => $Id,
                 'action' => $action,
                 'latitude' => $latitude,
@@ -883,7 +894,7 @@ class Attendance_model extends CI_Model
         $data_to_update = array();
         $data_to_update['last_action'] = $action;
         //
-        if(!empty($attendanceList)){
+        if (!empty($attendanceList)) {
             //
             $ct = CalculateTime($attendanceList, $employeeId);
             //
@@ -895,7 +906,9 @@ class Attendance_model extends CI_Model
         }
         // Update the last record
         $this->db->update(
-            'portal_attendance', $data_to_update, [
+            'portal_attendance',
+            $data_to_update,
+            [
                 'sid' => $Id
             ]
         );
@@ -918,7 +931,7 @@ class Attendance_model extends CI_Model
         $employeeId,
         $fromDate,
         $toDate
-    ){
+    ) {
         //
         $ra = [
             'total_minutes' => 0,
@@ -930,11 +943,11 @@ class Attendance_model extends CI_Model
         //
         $currentDate = $fromDate;
         //
-        while($currentDate <= $toDate){
+        while ($currentDate <= $toDate) {
             //
             $lists = $this->GetAttendanceList($companyId, $employeeId, $currentDate);
             //
-            if(!empty($lists)){
+            if (!empty($lists)) {
                 //
                 $ct = CalculateTime($lists, $employeeId);
                 //
@@ -962,15 +975,16 @@ class Attendance_model extends CI_Model
      * 
      * @return number
      */
-    public function VerifyAttendanceById($companyId, $id){
+    public function VerifyAttendanceById($companyId, $id)
+    {
         //
         $q = $this->db
-        ->select('employee_sid')
-        ->where([
-            'company_sid' => $companyId,
-            'sid' => $id
-        ])
-        ->limit(1);
+            ->select('employee_sid')
+            ->where([
+                'company_sid' => $companyId,
+                'sid' => $id
+            ])
+            ->limit(1);
         //
         $result = $q->get('portal_attendance');
         //
@@ -978,12 +992,11 @@ class Attendance_model extends CI_Model
         //
         $result = $result->free_result();
         //
-        if(empty($data)){
+        if (empty($data)) {
             return 0;
         }
         //
         return $data;
-        
     }
 
     /**
@@ -993,13 +1006,14 @@ class Attendance_model extends CI_Model
      * 
      * @return array
      */
-    public function GetAttendanceListById($Id){
+    public function GetAttendanceListById($Id)
+    {
         //
         $q = $this->db
-        ->where([
-            'portal_attendance_sid' => $Id
-        ])
-        ->order_by('sid', 'desc');
+            ->where([
+                'portal_attendance_sid' => $Id
+            ])
+            ->order_by('sid', 'desc');
         //
         $result = $q->get('portal_attendance_log');
         //
@@ -1017,14 +1031,15 @@ class Attendance_model extends CI_Model
      * 
      * @return array
      */
-    public function GetAttendanceDateAndStatusById($sid){
+    public function GetAttendanceDateAndStatusById($sid)
+    {
         //
         $q = $this->db
-        ->select('company_sid, employee_sid, action_date, last_action')
-        ->where([
-            'sid' => $sid
-        ])
-        ->limit(1);
+            ->select('company_sid, employee_sid, action_date, last_action')
+            ->where([
+                'sid' => $sid
+            ])
+            ->limit(1);
         //
         $result = $q->get('portal_attendance');
         //
@@ -1032,7 +1047,7 @@ class Attendance_model extends CI_Model
         //
         $result = $result->free_result();
         //
-        if(empty($data)){
+        if (empty($data)) {
             return 0;
         }
         //
@@ -1046,14 +1061,15 @@ class Attendance_model extends CI_Model
      * 
      * @return array
      */
-    public function GetAttendanceIDByListId($sid){
+    public function GetAttendanceIDByListId($sid)
+    {
         //
         $q = $this->db
-        ->select('portal_attendance_sid')
-        ->where([
-            'sid' => $sid
-        ])
-        ->limit(1);
+            ->select('portal_attendance_sid')
+            ->where([
+                'sid' => $sid
+            ])
+            ->limit(1);
         //
         $result = $q->get('portal_attendance_log');
         //
@@ -1061,7 +1077,7 @@ class Attendance_model extends CI_Model
         //
         $result = $result->free_result();
         //
-        if(empty($data)){
+        if (empty($data)) {
             return 0;
         }
         //
@@ -1083,10 +1099,10 @@ class Attendance_model extends CI_Model
     public function GetActiveEmployee($date, $employeeSids)
     {
         $q = $this->db
-        ->select('sid, employee_sid, last_action')
-        ->where([
-            'action_date' => $date
-        ]);
+            ->select('sid, employee_sid, last_action')
+            ->where([
+                'action_date' => $date
+            ]);
         //
         if (!empty($employeeSids)) {
             $this->db->where_in('employee_sid', $employeeSids);
@@ -1096,7 +1112,7 @@ class Attendance_model extends CI_Model
         //
         $data = $result->result_array();
 
-        if(empty($data)){
+        if (empty($data)) {
             return [];
         }
         //
@@ -1111,14 +1127,15 @@ class Attendance_model extends CI_Model
      * 
      * @return array
      */
-    public function GetSettings($companyId, $columns = '*'){
+    public function GetSettings($companyId, $columns = '*')
+    {
         //
         $q = $this->db
-        ->select(is_array($columns) ? implode(',', $columns) : $columns)
-        ->where([
-            'company_sid' => $companyId
-        ])
-        ->limit(1);
+            ->select(is_array($columns) ? implode(',', $columns) : $columns)
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->limit(1);
         //
         $result = $q->get('portal_attendance_settings');
         //
@@ -1126,13 +1143,13 @@ class Attendance_model extends CI_Model
         //
         $result = $result->free_result();
         //
-        if(empty($data)){
+        if (empty($data)) {
             return [];
         }
         //
         return $data;
     }
-    
+
     /**
      * Add attendance settings
      * 
@@ -1141,7 +1158,8 @@ class Attendance_model extends CI_Model
      * 
      * @return number
      */
-    public function AddSettings($companyId, $employeeId){
+    public function AddSettings($companyId, $employeeId)
+    {
         //
         $insertArray = [];
         $insertArray['company_sid'] = $companyId;
@@ -1153,20 +1171,21 @@ class Attendance_model extends CI_Model
         //
         return $this->db->insert_id();
     }
-    
+
     /**
      * Add attendance settings
      * 
      * @param number $companyId
      * @param number $employeeId
      */
-    public function UpdateSettings($updateArray, $whereArray){
+    public function UpdateSettings($updateArray, $whereArray)
+    {
         //
         $this->db
-        ->where($whereArray)
-        ->update('portal_attendance_settings', $updateArray);
+            ->where($whereArray)
+            ->update('portal_attendance_settings', $updateArray);
     }
-    
+
     /**
      * Get overtime employees
      * 
@@ -1177,17 +1196,18 @@ class Attendance_model extends CI_Model
      * @param string|array $columns
      * @param boolean $count
      */
-    public function GetEmployeeWithOverTime($companyId, $fromDate, $toDate, $employeeIds = [], $columns = '*', $count = true){
+    public function GetEmployeeWithOverTime($companyId, $fromDate, $toDate, $employeeIds = [], $columns = '*', $count = true)
+    {
         //
         $q = $this->db
-        ->select(is_array($columns) ? implode(',', $columns) : $columns)
-        ->where([
-            'company_sid' => $companyId,
-            'action_date >=' => $fromDate,
-            'action_date <=' => $toDate
-        ]);
+            ->select(is_array($columns) ? implode(',', $columns) : $columns)
+            ->where([
+                'company_sid' => $companyId,
+                'action_date >=' => $fromDate,
+                'action_date <=' => $toDate
+            ]);
         //
-        if($employeeIds){
+        if ($employeeIds) {
             $q = $q->where_in('employee_sid', $employeeIds);
         }
         //
@@ -1197,21 +1217,21 @@ class Attendance_model extends CI_Model
         //
         $result = $result->free_result();
         //
-        if(empty($data)){
+        if (empty($data)) {
             return [];
         }
         //
         $ote = $count ? 0 : [];
         //
-        foreach($data as $d){
+        foreach ($data as $d) {
             //
             $list = $this->GetAttendanceWeekList($companyId, $d['employee_sid'], $fromDate, $toDate);
             //
-            if($list['total_overtime_minutes'] > 0){
+            if ($list['total_overtime_minutes'] > 0) {
                 //
-                if($count){
+                if ($count) {
                     $ote++;
-                } else{
+                } else {
                     $ote[] = $d;
                 }
             }
@@ -1229,17 +1249,18 @@ class Attendance_model extends CI_Model
      * @param array  $employeeIds
      * @param string|array $columns
      */
-    public function GetEmployeesByFilter($companyId, $fromDate, $toDate, $employeeIds = [], $columns = '*'){
+    public function GetEmployeesByFilter($companyId, $fromDate, $toDate, $employeeIds = [], $columns = '*')
+    {
         //
         $q = $this->db
-        ->select(is_array($columns) ? implode(',', $columns) : $columns)
-        ->where([
-            'company_sid' => $companyId,
-            'action_date >=' => $fromDate,
-            'action_date <=' => $toDate
-        ]);
+            ->select(is_array($columns) ? implode(',', $columns) : $columns)
+            ->where([
+                'company_sid' => $companyId,
+                'action_date >=' => $fromDate,
+                'action_date <=' => $toDate
+            ]);
         //
-        if($employeeIds){
+        if ($employeeIds) {
             $q = $q->where_in('employee_sid', $employeeIds);
         }
         //
@@ -1249,7 +1270,7 @@ class Attendance_model extends CI_Model
         //
         $result = $result->free_result();
         //
-        if(empty($data)){
+        if (empty($data)) {
             return [];
         }
         //
@@ -1259,7 +1280,7 @@ class Attendance_model extends CI_Model
 
 
 
-       /**
+    /**
      * Get the attendance list
      * 
      * @param number $companyId
@@ -1268,19 +1289,20 @@ class Attendance_model extends CI_Model
      * 
      * @return array
      */
-    public function GetAttendanceListNew($companyId, $employeeId, $date){
+    public function GetAttendanceListNew($companyId, $employeeId, $date)
+    {
         //
         $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
         //
-        if($Id === 0){
+        if ($Id === 0) {
             return [];
         }
         //
         $q = $this->db
-        ->where([
-            'portal_attendance_sid' => $Id
-        ])
-        ->order_by('sid', 'asc');
+            ->where([
+                'portal_attendance_sid' => $Id
+            ])
+            ->order_by('sid', 'asc');
         //
         $result = $q->get('portal_attendance_log');
         //
@@ -1294,24 +1316,25 @@ class Attendance_model extends CI_Model
 
 
 
-    public function GetAttendanceListBreak($companyId, $employeeId, $date){
+    public function GetAttendanceListBreak($companyId, $employeeId, $date)
+    {
         //
         $Id = $this->GetAttendanceId($companyId, $employeeId, $date);
         //
-        if($Id === 0){
+        if ($Id === 0) {
             return [];
         }
         //
-        
-        
+
+
         $q = $this->db
-        ->select('action_date_time,action')
-        ->where('portal_attendance_sid', $Id)
-        ->group_start()
-        ->where('action', 'break_in')
-        ->or_where('action', 'break_out')
-        ->group_end()
-        ->order_by('sid', 'asc');
+            ->select('action_date_time,action')
+            ->where('portal_attendance_sid', $Id)
+            ->group_start()
+            ->where('action', 'break_in')
+            ->or_where('action', 'break_out')
+            ->group_end()
+            ->order_by('sid', 'asc');
         //
         $result = $q->get('portal_attendance_log');
         //
@@ -1324,4 +1347,42 @@ class Attendance_model extends CI_Model
 
 
 
+
+
+    // Add Employee Map Location
+
+    public function saveEmployeeMapLocation($insertArray)
+    {
+        //
+        $this->db->insert('attendance_map_history', $insertArray);
+    }
+
+    public function GetEmployeeMapLocations($companyId, $fromDate, $toDate, $employeeIds = [])
+    {
+        //
+        $q = $this->db
+            ->select('CONCAT(lat, ",", lon) AS location')
+            ->where([
+                'company_sid' => $companyId,
+                'created_at >=' => $fromDate,
+                'created_at <=' => $toDate
+            ]);
+        //
+        if ($employeeIds) {
+            $q = $q->where_in('employee_sid', $employeeIds);
+        }
+        //
+        $q = $q->group_by('location');
+        $result = $q->get('attendance_map_history');
+        //
+        $data = $result->result_array();
+        //
+        $result = $result->free_result();
+        //
+        if (empty($data)) {
+            return [];
+        }
+        //
+        return $data;
+    }
 }

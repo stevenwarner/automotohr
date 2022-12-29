@@ -32,23 +32,7 @@
     </div>
 
 
-    <div class="dash-box" id="locationbox">
-
-        <?php
-
-//echo GOOGLE_API_KEY;
-//die();
-/*
-        $address = "31.4544132,74.2766072";
-        if (!empty($address)) {
-            $map_url = "https://maps.googleapis.com/maps/api/staticmap?latlng=" . $address . "&zoom=13&size=180x200&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . $address;
-            $map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' . $address . '"><img src = "' . $map_url . '" alt = "No Map Found!" ></a>';
-            $show_map = '<b>Employee Current Location</b>';
-            $show_map .= $map_anchor;
-            echo $show_map;
-        }
-        */
-        ?>
+    <div class="dash-box" id="locationbox" style="display: none;">
 
     </div>
 

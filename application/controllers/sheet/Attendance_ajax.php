@@ -508,4 +508,24 @@ class Attendance_ajax extends Public_Controller
             return SendResponse(200, $this->resp);
         }
     }
+
+
+
+    /**
+     * Save employee map location
+     */
+    public function saveLocation()
+    {
+
+        $post = $this->input->post(NULL, TRUE);
+        //
+         $this->atm->saveEmployeeMapLocation([
+            'employee_sid' => $this->employeeId,
+            'company_sid' => $this->companyId,
+            'created_at' => $this->datetime,
+            'lat' => isset($post['lat']) ? $post['lat'] : 0,
+            'lon' => isset($post['lng']) ? $post['lng'] : 0
+        ]);
+        
+    }
 }

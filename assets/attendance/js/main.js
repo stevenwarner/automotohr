@@ -298,17 +298,30 @@ $(function () {
     }
 
     function trackEmployeeLocation() {
-      //  console.log(checkInCheck);
+        //  console.log(checkInCheck);
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var lat = position.coords.latitude;
                 var lng = position.coords.longitude;
-            
-                //Googlemap
-                 drawLocationMap(lat, lng);
+                /// drawLocationMap(lat, lng);
 
+                var obj = {};
+                obj.lat = lat;
+                obj.lng = lng;
+
+                //
+                XHR = $.ajax({
+                    url: baseURI + 'attendance/savelocation',
+                    method: "post",
+                    data: obj
+                })
+                    .success(function (resp) {
+                    })
+                    .fail(HandleError);
+
+                lateCheck = lat;
+                lngeCheck = lng;
             }, function (error) {
-               // console.log('fail');
             });
 
             //
@@ -318,26 +331,29 @@ $(function () {
                 }, 5000);
 
             }
+
+            //  lateCheck = lat;
+            //  lngeCheck = lng;
         }
     }
 
-    
 
-    function drawLocationMap(late, lnge) {
-        var address = late + ',' + lnge;
-        if (address != '') {
-            if (lateCheck !== late || lngeCheck !== lnge) {
-                var map_url = "https://maps.googleapis.com/maps/api/staticmap?latlng=" + address + "&zoom=13&size=180x200&key=" + googleMapKey + "&markers=color:blue|label:|" + address;
-                var map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' + address + '"><img src = "' + map_url + '" alt = "No Map Found!" ></a>';
-                var show_map = '<b>Employee Current Location</b>';
-                show_map += map_anchor;
-                $('#locationbox').html(show_map);
+    /*
+        function drawLocationMap(late, lnge) {
+            var address = late + ',' + lnge;
+            if (address != '') {
+                if (lateCheck !== late || lngeCheck !== lnge) {
+                    var map_url = "https://maps.googleapis.com/maps/api/staticmap?latlng=" + address + "&zoom=13&size=180x200&key=" + googleMapKey + "&markers=color:blue|label:|" + address;
+                    var map_anchor = '<a href = "https://maps.google.com/maps?z=12&t=m&q=' + address + '"><img src = "' + map_url + '" alt = "No Map Found!" ></a>';
+                    var show_map = '<b>Employee Current Location</b>';
+                    show_map += map_anchor;
+                    $('#locationbox').html(show_map);
+                }
             }
+            lateCheck = late;
+            lngeCheck = lnge;
         }
-        lateCheck = late;
-        lngeCheck = lnge;
-    }
-
+    */
 
     /**
      * Saves settings

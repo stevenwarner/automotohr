@@ -1628,3 +1628,7 @@ $route['employee/information/report']['get'] = '2022/Employee/employeeProfileRep
 $route['timeoff/import/historic']['get'] = 'Time_off/importHistoricTimeOff';
 $route['timeoff/import/historic/verify']['post'] = 'Time_off/verifyEmployeeAndPolicies';
 $route['timeoff/import/historic/upload']['post'] = 'Time_off/importHistoricProcess';
+
+$route['attendance/savelocation']['post'] = "sheet/Attendance_ajax/saveLocation";
+
+$route['attendance/maplocation']['get'] = "sheet/Attendance/mapLocation";
