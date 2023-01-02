@@ -326,6 +326,9 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="emp-info-box">
+
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 ">
+
                                 <div class="figure">
                                     <?php if(isset($employee['profile_picture']) && !empty($employee['profile_picture'])) { ?>
                                         <div class="container-fig">
@@ -351,14 +354,18 @@
                                         <li><?php echo $session['company_detail']['CompanyName']; ?></li> 
                                     </ul>
                                 </div>
+                            </div>
+
+                            <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3 pull-right cs-full-width">
                                 <?php $this->load->view('attendance/2022/clock_header_blue'); ?>
                                 <?php if ($employee['is_executive_admin'] == 0) { ?>
-                                    <br>
-                                    <br>
+                                   
                                 <div class="btn-link-wrp">
                                     <a href="<?php echo base_url('my_profile'); ?>"><i class="fa fa-pencil" aria-hidden="true"></i> my profile</a>
                                 </div>
                                 <?php } ?>
+                            </div>
+
                             </div>
                         </div>
                     </div>

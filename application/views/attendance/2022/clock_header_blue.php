@@ -1,5 +1,5 @@
 <?php if (checkIfAppIsEnabled('attendance') && $this->session->userdata['logged_in']) { ?>
-    <div style="position: absolute; right: 0; top: 0">
+    <div style="margin-bottom: 50px;">
         <!--  -->
         <p class="csF26 csW text-center">
             <h4 class="jsAttendanceCurrentClockDateTime csW csFC20"></h4>
