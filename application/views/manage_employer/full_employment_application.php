@@ -678,7 +678,7 @@
                                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                         <li class="form-col-100 autoheight">
                                                             <div class="hr-radio-btns">
-                                                                <input id="RadioButtonListPostionTime_0" type="radio" value="full_time" name="RadioButtonListPostionTime"
+                                                                <input id="RadioButtonListPostionTime_0" type="radio" value="fulltime" name="RadioButtonListPostionTime"
                                                                 <?php
                                                                 if ((isset($formpost['RadioButtonListPostionTime']) && $formpost['RadioButtonListPostionTime'] == 'full_time') || $employer['employee_type'] == 'full-time' || $employer['employee_type'] == 'fulltime'){
                                                                     echo " checked";

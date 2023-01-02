@@ -99,7 +99,7 @@
                                                 <li class="form-col-100 autoheight">
                                                     <label>Employment Type<span class="staric">*</span></label>
                                                     <select class="invoice-fields" name="employee-type" id="employee-type">
-                                                        <option value="fulltime">Full-time</option>
+                                                        <option value="fulltime">Fulltime</option>
                                                         <option value="parttime">Part-time</option>
                                                         <!-- <option value="casual">Casual</option>
                                                         <option value="fixedterm">Fixed term</option>
