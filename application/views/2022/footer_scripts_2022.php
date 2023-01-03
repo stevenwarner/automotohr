@@ -24,6 +24,7 @@
 <script src="<?=base_url('assets/mFileUploader/index.js');?>"></script>
 <!--  -->
 <?php if($this->session->userdata('logged_in')): ?>
+
 <script>
     /**
      * Token
@@ -32,6 +33,7 @@
     var eToken = <?= $session['employer_detail']['sid'] ?? 0 ?>;
     var surveyToken = <?= $survey_id ?? 0 ?>;
     var stepToken = "<?= $step ?? '' ?>";
+    var surveyType = "<?= $surveyType ?? '' ?>";
     /**
      * Set base url
      * @type {string}

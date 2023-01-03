@@ -8,46 +8,48 @@ $(function (){
         //
         if (surveys.length > 0) {
             surveys.map(function(survey) {
-                surveyBox += surveyCount == 0 ? '<div class="csSurveyRow">' : '<div class="csSurveyRow _csBDt _csBD6 _csPt20">';
-                surveyBox += '    <div class="row">';
-                if (type == "Finished") {
-                   surveyBox += '        <div class="col-md-10 col-sm-12">';
-                } else {
-                    surveyBox += '        <div class="col-md-12 col-sm-12">';
-                }
-                
-                surveyBox += '            <div>';
-                surveyBox += '                <span>'+survey.title+'</span>';
-                //
-                if (type == "Finished") {
-                   surveyBox += '                <span class="pull-right"> Finishad at: '+survey.display_end_date+'</span>'; 
-                }
-                //
-                if (type == "Running") {
-                   surveyBox += '                <span class="pull-right">Running between: '+survey.display_start_date+' to '+ survey.display_end_date +'</span>'; 
-                }
-                //
-                if (type == "Assigned") {
-                   surveyBox += '                <span class="pull-right">Starting on: '+survey.display_start_date+'</span>'; 
-                }
-                //
-                surveyBox += '            </div>';
-                surveyBox += '            <div class="progress _csMt10">';
-                surveyBox += '                <div class="progress-bar _csB4" role="progressbar" aria-valuenow="" aria-valuemin="" aria-valuemax="" style="width: '+survey.surveyCompletedRespondentsPercentage+'%;"></div>';
-                surveyBox += '            </div>';
-                surveyBox += '            <p>'+survey.surveyCompletedRespondentsPercentage+'% Completed</p>';
-                surveyBox += '        </div>';
-                //
-                if (type == "Finished") {
-                    surveyBox += '        <div class="col-md-2 col-sm-12 text-left">';
-                    surveyBox += '            <a href="'+baseURI+'/employee/surveys/reports/'+survey.sid+'" class="btn _csB4 _csF2 _csMt20 _csR5">Results</a>';
+                if (surveyCount < 5) {
+                    surveyBox += surveyCount == 0 ? '<div class="csSurveyRow">' : '<div class="csSurveyRow _csBDt _csBD6 _csPt20">';
+                    surveyBox += '    <div class="row">';
+                    if (type == "Finished") {
+                       surveyBox += '        <div class="col-md-10 col-sm-12">';
+                    } else {
+                        surveyBox += '        <div class="col-md-12 col-sm-12">';
+                    }
+                    
+                    surveyBox += '            <div>';
+                    surveyBox += '                <span class="_csF16 _csFb6">'+survey.title+'</span>';
+                    //
+                    if (type == "Finished") {
+                       surveyBox += '                <span class="pull-right"> Finishad at: '+survey.display_end_date+'</span>'; 
+                    }
+                    //
+                    if (type == "Running") {
+                       surveyBox += '                <span class="pull-right">Running between: '+survey.display_start_date+' to '+ survey.display_end_date +'</span>'; 
+                    }
+                    //
+                    if (type == "Assigned") {
+                       surveyBox += '                <span class="pull-right">Starting on: '+survey.display_start_date+'</span>'; 
+                    }
+                    //
+                    surveyBox += '            </div>';
+                    surveyBox += '            <div class="progress _csMt10">';
+                    surveyBox += '                <div class="progress-bar _csB4" role="progressbar" aria-valuenow="" aria-valuemin="" aria-valuemax="" style="width: '+survey.surveyCompletedRespondentsPercentage+'%;"></div>';
+                    surveyBox += '            </div>';
+                    surveyBox += '            <p>'+survey.surveyCompletedRespondentsPercentage+'% Completed</p>';
                     surveyBox += '        </div>';
+                    //
+                    if (type == "Finished") {
+                        surveyBox += '        <div class="col-md-2 col-sm-12 text-left">';
+                        surveyBox += '            <a href="'+baseURI+'/employee/surveys/reports/'+survey.sid+'" class="btn _csB4 _csF2 _csMt20 _csR5">Results</a>';
+                        surveyBox += '        </div>';
+                    }
+                    //
+                    surveyBox += '    </div>';
+                    surveyBox += '</div>';
+                    //
+                    surveyCount++;
                 }
-                //
-                surveyBox += '    </div>';
-                surveyBox += '</div>';
-                //
-                surveyCount++;
             });
         } else {
 
@@ -96,15 +98,27 @@ $(function (){
     }
     //
     async function generateCompanySurveysOverviewPreview (resp) {
-
+        //
         await generateSurveyOverviewSection(resp.finishedSurveys, "Finished");
         graphData.push(resp.finishedSurveys.length);
+        //
+        if (resp.finishedSurveys.length > 5) {
+            $("#jsSeeAllFinished").removeClass("dn");
+        }
         //
         await generateSurveyOverviewSection(resp.runningSurveys, "Running");
         graphData.push(resp.runningSurveys.length);
         //
+        if (resp.runningSurveys.length > 5) {
+            $("#jsSeeAllRunning").removeClass("dn");
+        }
+        //
         await generateSurveyOverviewSection(resp.assignedSurveys, "Assigned");
         graphData.push(resp.assignedSurveys.length);
+        //
+        if (resp.assignedSurveys.length > 5) {
+            $("#jsSeeAllAssigneded").removeClass("dn");
+        }
         //
         drawSurveyGraph();
         //
@@ -130,7 +144,113 @@ $(function (){
         }); 
 	}
 
-    getCompanySurveysOverviewInfo();
+    function generateSpecificSurveys (surveys, type, info) {
+        //
+        var surveyBox = '';
+        var surveyCount = 0
+        //
+        if (surveys.length > 0) {
+            surveys.map(function(survey) {
+                
+                surveyBox += surveyCount == 0 ? '<div class="csSurveyRow">' : '<div class="csSurveyRow _csBDt _csBD6 _csPt20">';
+                surveyBox += '    <div class="row">';
+                if (type == "Finished") {
+                   surveyBox += '        <div class="col-md-10 col-sm-12">';
+                } else {
+                    surveyBox += '        <div class="col-md-12 col-sm-12">';
+                }
+                
+                surveyBox += '            <div>';
+                surveyBox += '                <span class="_csF16 _csFb6">'+survey.title+'</span>';
+                //
+                if (type == "Finished") {
+                   surveyBox += '                <span class="pull-right"> Finishad at: '+survey.display_end_date+'</span>'; 
+                }
+                //
+                if (type == "Running") {
+                   surveyBox += '                <span class="pull-right">Running between: '+survey.display_start_date+' to '+ survey.display_end_date +'</span>'; 
+                }
+                //
+                if (type == "Assigned") {
+                   surveyBox += '                <span class="pull-right">Starting on: '+survey.display_start_date+'</span>'; 
+                }
+                //
+                surveyBox += '            </div>';
+                surveyBox += '            <div class="progress _csMt10">';
+                surveyBox += '                <div class="progress-bar _csB4" role="progressbar" aria-valuenow="" aria-valuemin="" aria-valuemax="" style="width: '+survey.surveyCompletedRespondentsPercentage+'%;"></div>';
+                surveyBox += '            </div>';
+                surveyBox += '            <p>'+survey.surveyCompletedRespondentsPercentage+'% Completed</p>';
+                surveyBox += '        </div>';
+                //
+                if (type == "Finished") {
+                    surveyBox += '        <div class="col-md-2 col-sm-12 text-left">';
+                    surveyBox += '            <a href="'+baseURI+'/employee/surveys/reports/'+survey.sid+'" class="btn _csB4 _csF2 _csMt20 _csR5">Results</a>';
+                    surveyBox += '        </div>';
+                }
+                //
+                surveyBox += '    </div>';
+                surveyBox += '</div>';
+                //
+                surveyCount++;
+            })
+        } else {
+            surveyBox += '<p class="text-center _csPt20 _csPb20">';
+            surveyBox += '    <i class="fa fa-info-circle _csF40" aria-hidden="true"></i> <br>';
+            surveyBox += '    <span class="_csF16">No engagement '+type.toLowerCase()+' yet.</span>';
+            surveyBox += '</p>';
+        }
+        //
+        $("#jsSurveysSection").html(surveyBox);
+        $("#jsSurveysCount").html(surveys.length);
+        $("#jsSurveysTypeInfo").html(info);
+        $("#jsSurveysType").html(type.charAt(0).toUpperCase() + type.slice(1));
+        //
+        return true;
+    }
+
+    function getCompanySpecificSurvey (type) {
+        var textInfo = "";
+        var surveys = "";
+        //
+        $.ajax({
+            type: 'GET',
+            url: apiURI+'survey_overview/'+ cToken,
+            beforeSend: function() {
+                $('.jsESLoader').show();
+            },
+            success: function(resp) {
+                if (type == "finished") {
+                    surveys = resp.finishedSurveys;
+                    textInfo = "The engagements whose end date passes away.";
+                }
+
+                if (type == "running") {
+                    surveys = resp.runningSurveys;
+                    textInfo = "The Engagements whose end date is greater than today.";
+                }
+
+                if (type == "assigneded") {
+                    surveys = resp.assignedSurveys;
+                    textInfo = "The Engagements whose start date is greater than today.";
+                }
+
+                generateSpecificSurveys(surveys, type, textInfo);
+            },
+            error: function() {
+                $("#surveysBoxContainer").html('<p class="_csF14">Unable to load survey templates</p>');
+                $('.jsESLoader').hide();
+            }
+        });
+    }
+
+    surveyType == "all" ? getCompanySurveysOverviewInfo() : getCompanySpecificSurvey(surveyType);
+
+    $(document).on('click', '.jsSeeAllEngagement', function(event) {
+        var type = $(this).data("type");
+        //
+        var URL = baseURI+'employee/surveys/overview/'+type;
+        window.location.href = URL; 
+    })
 });
 
    

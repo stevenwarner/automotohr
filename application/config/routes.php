@@ -1610,3 +1610,4 @@ $route['employee/surveys/templatedetail/(:num)']['get'] = '2022/Employee_surveys
 $route['employee/surveys/templateselect/(:num)']['get'] = '2022/Employee_surveys/surveyTemplateSelect/$1';
 $route['employee/surveys/assigned_survey']['get'] = '2022/Employee_surveys/surveyAssigned';
 $route['employee/surveys/assigned_survey/(:num)']['get'] = '2022/Employee_surveys/surveyAssigned/$1';
+$route['employee/surveys/overview/([a-z]+)']['get'] = '2022/Employee_surveys/overview/$1';

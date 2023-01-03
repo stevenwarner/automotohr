@@ -31,7 +31,7 @@
                             <h3 class="_csM0 _csF16">
                                 Finished Engagements (<span id="jsFinishedSurveysCount">0</span>) 
                                 <span class="pull-right">
-                                    <a href="javascript:;" data-type="finished" class="_csF14 _csF3 jsSeeAllEngagement">See All</a>
+                                    <a href="javascript:;" data-type="finished" id="jsSeeAllFinished" class="_csF14 _csF3 jsSeeAllEngagement dn">See All</a>
                                 </span>
                             </h3>
                             <p class="_csF12 _csF4 _csMt10">
@@ -48,9 +48,12 @@
                         <div class="panel-heading">
                             <h3 class="_csM0 _csF16">
                                 Running Engagements (<span id="jsRunningSurveysCount">0</span>)
+                                <span class="pull-right">
+                                    <a href="javascript:;" data-type="running" id="jsSeeAllRunning" class="_csF14 _csF3 jsSeeAllEngagement dn ">See All</a>
+                                </span>
                             </h3>
                             <p class="_csF12 _csF4 _csMt10">
-                                <i class="fa fa-info-circle" aria-hidden="true"></i> The Engagements whose end date is greater than today
+                                <i class="fa fa-info-circle" aria-hidden="true"></i> The Engagements whose end date is greater than today.
                             </p>
                         </div>
                         <div class="panel-body" id="jsRunningSurveysSection">
@@ -63,9 +66,12 @@
                         <div class="panel-heading">
                             <h3 class="_csM0 _csF16">
                                 Assigned Engagements (<span id="jsAssignedSurveysCount">0</span>)
+                                <span class="pull-right">
+                                    <a href="javascript:;" data-type="assigneded" id="jsSeeAllAssigneded" class="_csF14 _csF3 jsSeeAllEngagement dn">See All</a>
+                                </span>
                             </h3>
                             <p class="_csF12 _csF4 _csMt10">
-                                <i class="fa fa-info-circle" aria-hidden="true"></i> The Engagements whose start date is greater than today
+                                <i class="fa fa-info-circle" aria-hidden="true"></i> The Engagements whose start date is greater than today.
                             </p>
                         </div>
                         <div class="panel-body" id="jsAssignedSurveysSection">

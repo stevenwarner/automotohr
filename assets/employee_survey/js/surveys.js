@@ -660,7 +660,7 @@ $(function (){
 
     $(document).on('click', '.jsReadyToPublish', function(event) {
         var surveyID = $(this).data("sid");
-
+        //
         $.ajax({
             type: 'GET',
             headers: {
@@ -699,6 +699,8 @@ $(function (){
                 $('.jsESLoader').show();
             },
             success: function(resp) {
+                //
+                $("#jsSurveyPublishModal").hide();
                 //
                 alertify.alert('SUCCESS!','Employee survey Publish sucessfully.',function () {
                     var URL = baseURI+'employee/surveys/surveys';

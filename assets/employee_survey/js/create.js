@@ -16,6 +16,7 @@ $(function (){
     var respondentSids = {};
     var jobTitles = {};
     var includedEmployeesSid = [];
+    var departmentInfo = [];
 	//
     window.questionFile = questionFile;
     //
@@ -314,6 +315,7 @@ $(function (){
 	            //
 	            let questionBox = "";
 	            let questionNo = 1;
+                let haveQuestionVideo = 0;
 	            //
 	            resp.surveyQuestion.map(function(question) {
 	            	questionBox += '<div class="jsBox _csBox _csP10 jsSurveyQuestionSort" id="div_'+question.sid+'" data-question_sid="'+question.sid+'">';
@@ -344,6 +346,7 @@ $(function (){
                     questionBox += '    </div>';
                     questionBox += '    <div class="col-md-4 col-xs-12 jsQuestionHelpVideo">';
                     if (question.question_video && question.question_video.length > 0) {
+                        haveQuestionVideo = 1;
                         var videoURL = baseURI+"uploads/"+question.question_video;
                         questionBox += '        <video autoplay controls style="width: 100%;" preload="metadata">';
                         questionBox += '            <source src="'+videoURL+'" type="video/webm">';
@@ -364,7 +367,10 @@ $(function (){
 		        $("#jsSurveyQuestionsList").html(questionBox);
 		        $("#jsSurveyQuestionCount").html("("+resp.surveyQuestionCount+")");
 		        questionCount = resp.surveyQuestionCount
-                $(".jsQuestionHelpVideo video")[0].load();
+                if (haveQuestionVideo == 1) {
+                    $(".jsQuestionHelpVideo video")[0].load();
+                }
+                
 	            //
             	if (step == "details") {
             		$("#show_detail_section").show();
@@ -726,6 +732,8 @@ $(function (){
         var employeeNo = 0;
         //
         
+        console.log(employeesList)
+        //
         if (employeesList.length) {
             employeesList.map(function(employee) {
                 
@@ -734,8 +742,8 @@ $(function (){
                         employeeRow += '<tr class="jsSelectedEmployees" data-employee_sid="'+employee.sid+'">';
                         employeeRow += '<th scope="col">'+remakeEmployeeName(employee)+'</th>';
 
-                        if (departments.length) {
-                            employeeRow += employee.department_sid != 0 ? '<td>'+departments[employee.department_sid]+'</td>' :  '<td>No Department</td>';
+                        if (departmentInfo.length) {
+                            employeeRow += employee.department_sid != 0 ? '<td>'+departmentInfo[employee.department_sid]+'</td>' :  '<td>No Department</td>';
                         } else {
                             employeeRow += '<td>No Department</td>';
                         }
@@ -747,8 +755,8 @@ $(function (){
                     employeeRow += '<tr class="jsSelectedEmployees" data-employee_sid="'+employee.sid+'">';
                     employeeRow += '<th scope="col">'+remakeEmployeeName(employee)+'</th>';
 
-                    if (departments.length) {
-                        employeeRow += employee.department_sid != 0 ? '<td>'+departments[employee.department_sid]+'</td>' :  '<td>No Department</td>';
+                    if (departmentInfo.length) {
+                        employeeRow += employee.department_sid != 0 ? '<td>'+departmentInfo[employee.department_sid]+'</td>' :  '<td>No Department</td>';
                     } else {
                         employeeRow += '<td>No Department</td>';
                     }
@@ -794,7 +802,6 @@ $(function (){
         departments = await getCompanyDepartments();
         jobTitles = await getCompanyJobTitles();
         //
-        var departmentInfo = [];
         var employeeOptions = "";
         var departmentOptions = "";
         var jobTitleOptions = "";
@@ -936,9 +943,9 @@ $(function (){
     }
     //
     function publishCompanySurvey (surveyInfo) {
-        console.log("do you want to complete this survey")
         //
         $('#jsSurveyPublishModal').show();
+        //
         var rows = '';
         rows += '    <div class="row">';
         rows += '        <div class="col-sm-12">';
@@ -1542,6 +1549,7 @@ $(function (){
     });
 
     $(document).on('click', '.jsPublishSurvey', function(event) {
+        //
         $.ajax({
             type: 'PUT',
             headers: {
@@ -1556,6 +1564,8 @@ $(function (){
             },
             success: function(resp) {
                 //
+                $('#jsSurveyPublishModal').hide();
+                //
                 alertify.alert('SUCCESS!','Employee survey Publish sucessfully.',function () {
                     var URL = baseURI+'employee/surveys/surveys';
                     window.location.href = URL;  
@@ -1569,7 +1579,7 @@ $(function (){
             }
         });
     });
-
+    //
 });	
 
 

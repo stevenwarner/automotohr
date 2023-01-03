@@ -47,21 +47,24 @@ class Employee_surveys extends Public_Controller
     /**
      *
      */
-    public function overview()
+    public function overview($type = 'all')
     {
         //
         $data = [];
         $data['load_view'] = 1;
         $data['session'] = $this->session->userdata('logged_in');
         $data['employee'] = $data['session']['employer_detail'];
+        $data['surveyType'] = $type;
         //
         $data['PageScripts'] = [
             'employee_survey/js/overview'
         ];
         //
+        $page = $type == 'all' ? "overview" : "overview_specific";
+        //
         $this->load
             ->view($this->pages['header'], $data)
-            ->view("{$this->mp}es/overview/overview")
+            ->view("{$this->mp}es/overview/{$page}")
             ->view($this->pages['footer']);
     }
 
