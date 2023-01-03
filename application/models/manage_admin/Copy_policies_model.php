@@ -1,13 +1,15 @@
 <?php
 
-class copy_policies_model extends CI_Model {
+class copy_policies_model extends CI_Model
+{
 
     private $companyId;
     private $employeeId;
     private $dateTime;
     private $catArray;
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->companyId = 0;
         $this->employeeId = 0;
@@ -15,15 +17,16 @@ class copy_policies_model extends CI_Model {
         $this->catArray = [];
     }
 
-    function getAllCompanies($active = 1) {
+    function getAllCompanies($active = 1)
+    {
         $result = $this->db
-        ->select('sid as company_id, CompanyName as title')
-        ->where('parent_sid', 0)
-        ->where('active', $active)
-        ->where('is_paid', 1)
-        ->where('career_page_type', 'standard_career_site')
-        ->order_by('CompanyName', 'ASC')
-        ->get('users');
+            ->select('sid as company_id, CompanyName as title')
+            ->where('parent_sid', 0)
+            ->where('active', $active)
+            ->where('is_paid', 1)
+            ->where('career_page_type', 'standard_career_site')
+            ->order_by('CompanyName', 'ASC')
+            ->get('users');
         //
         $companies = $result->result_array();
         $result = $result->free_result();
@@ -32,23 +35,24 @@ class copy_policies_model extends CI_Model {
     }
 
 
-    function getCompanyPolicies($formpost, $limit){
+    function getCompanyPolicies($formpost, $limit)
+    {
         $start = $formpost['page'] == 1 ? 0 : ($formpost['page'] * $limit) - $limit;
         $this->db
-        ->select('
+            ->select('
             timeoff_policies.sid as policie_id, 
             timeoff_policies.title, 
             timeoff_policies.is_archived,
             timeoff_category_list.category_name as category,
             "policy" as type
         ')
-        ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
-        ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
-        ->where('timeoff_policies.company_sid', $formpost['fromCompanyId'])
-        ->order_by('timeoff_policies.title')
-        ->limit($limit, $start);
+            ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
+            ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
+            ->where('timeoff_policies.company_sid', $formpost['fromCompanyId'])
+            ->order_by('timeoff_policies.title')
+            ->limit($limit, $start);
 
-        if($formpost['status'] != 'all') $this->db->where('timeoff_policies.is_archived', $formpost['status']);
+        if ($formpost['status'] != 'all') $this->db->where('timeoff_policies.is_archived', $formpost['status']);
 
         $result = $this->db->get('timeoff_policies');
         //
@@ -56,48 +60,50 @@ class copy_policies_model extends CI_Model {
         $result = $result->free_result();
         //
         $returnArray = array('policies' => $policies, 'PoliciesCount' => 0);
-        if($formpost['page'] == 1 && !sizeof($policies)) return $returnArray;
-        if($formpost['page'] != 1) return $returnArray;
+        if ($formpost['page'] == 1 && !sizeof($policies)) return $returnArray;
+        if ($formpost['page'] != 1) return $returnArray;
         //
         $this->db
-        ->where('company_sid', $formpost['fromCompanyId'])
-        ->order_by('title');
-        if($formpost['status'] != 'all') $this->db->where('is_archived', $formpost['status']);
+            ->where('company_sid', $formpost['fromCompanyId'])
+            ->order_by('title');
+        if ($formpost['status'] != 'all') $this->db->where('is_archived', $formpost['status']);
         $returnArray['PoliciesCount'] = $this->db->count_all_results('timeoff_policies');
         //
         return $returnArray;
     }
 
-    function checkPolicyCopied($formpost){
+    function checkPolicyCopied($formpost)
+    {
         return $this->db
-        ->where('from_company_sid', $formpost['fromCompanyId'])
-        ->where('to_company_sid', $formpost['toCompanyId'])
-        ->where('policy_sid', $formpost['policy']['policy_id'])
-        ->where('policy_category', $formpost['policy']['policy_category'])
-        ->count_all_results('copy_timeoff_policy_track');
+            ->where('from_company_sid', $formpost['fromCompanyId'])
+            ->where('to_company_sid', $formpost['toCompanyId'])
+            ->where('policy_sid', $formpost['policy']['policy_id'])
+            ->where('policy_category', $formpost['policy']['policy_category'])
+            ->count_all_results('copy_timeoff_policy_track');
     }
 
-    function movePolicy($formpost, $id){
+    function movePolicy($formpost, $id)
+    {
         // Fetch document details
         $result = $this->db
-        ->select('*')
-        ->where('sid', $formpost['policy']['policy_id'])
-        ->get('timeoff_policies');
+            ->select('*')
+            ->where('sid', $formpost['policy']['policy_id'])
+            ->get('timeoff_policies');
         //
         $policy = $result->row_array();
         $result = $result->free_result();
         //
-        if (!sizeof($policy)){
+        if (!sizeof($policy)) {
             return false;
         }
         //
         $creatorId = $this->getCompanyCreator($formpost['toCompanyId']);
         $typeSid = $this->checkPolicyType($policy['type_sid'], $formpost['toCompanyId'], $creatorId);
         // Check
-        if(!$this->db->where([
+        if (!$this->db->where([
             'lower(title)' => strtolower($policy['title']),
             'company_sid' => $formpost['toCompanyId']
-        ])->count_all_results('timeoff_policies')){
+        ])->count_all_results('timeoff_policies')) {
             //
             unset(
                 $policy['sid'],
@@ -124,39 +130,39 @@ class copy_policies_model extends CI_Model {
             $insertArray['policy_category'] = $formpost['policy']['policy_category'];
             //
             // $this->db->insert('copy_timeoff_policy_track', $insertArray);
-    
-            if(!$policyId) {
+
+            if (!$policyId) {
                 return $this->db->trans_rollback();
-            }
-            else $this->db->trans_commit();
+            } else $this->db->trans_commit();
         }
         //
         return true;
     }
 
-    private function checkPolicyType ($typeId, $companyId, $creatorId) {
+    private function checkPolicyType($typeId, $companyId, $creatorId)
+    {
         //
         $result = $this->db
-        ->select('timeoff_category_list_sid')
-        ->where('sid', $typeId)
-        ->get('timeoff_categories');
+            ->select('timeoff_category_list_sid')
+            ->where('sid', $typeId)
+            ->get('timeoff_categories');
         //
         $category = $result->row_array();
         $result = $result->free_result();
 
-        if(empty($category)){
+        if (empty($category)) {
             return 0;
         }
         //
         $categoryArray =  $this->db
-        ->select('sid')
-        ->where('company_sid', $companyId)
-        ->where('timeoff_category_list_sid', $category['timeoff_category_list_sid'])
-        ->get('timeoff_categories')
-        ->row_array();
-        
+            ->select('sid')
+            ->where('company_sid', $companyId)
+            ->where('timeoff_category_list_sid', $category['timeoff_category_list_sid'])
+            ->get('timeoff_categories')
+            ->row_array();
+
         //
-        if(empty($categoryArray)){
+        if (empty($categoryArray)) {
             //
             $cat = [];
             $cat['company_sid'] = $companyId;
@@ -166,8 +172,8 @@ class copy_policies_model extends CI_Model {
             $cat['is_archived'] = 0;
             $cat['is_default'] = 0;
             $cat['default_type'] = 0;
-            $cat['created_at'] = 
-            $cat['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+            $cat['created_at'] =
+                $cat['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
             //
             $this->db->insert('timeoff_categories', $cat);
             //
@@ -177,19 +183,20 @@ class copy_policies_model extends CI_Model {
         return $categoryArray['sid'];
     }
 
-    public function addDefaultPolicies ($companyId) {
+    public function addDefaultPolicies($companyId)
+    {
         //
         $result = $this->db
-        ->select('*')
-        ->where('company_sid', 11276)
-        ->where('is_archived', 0)
-        ->where('status', 1)
-        ->get('timeoff_policies');
+            ->select('*')
+            ->where('company_sid', 11276)
+            ->where('is_archived', 0)
+            ->where('status', 1)
+            ->get('timeoff_policies');
         //
         $policies = $result->result_array();
         $result = $result->free_result();
         //
-        if (!sizeof($policies)){
+        if (!sizeof($policies)) {
             return false;
         }
         //
@@ -197,10 +204,10 @@ class copy_policies_model extends CI_Model {
         //
         foreach ($policies as $policy) {
             //
-            if(!$this->db->where([
+            if (!$this->db->where([
                 'lower(title)' => strtolower($policy['title']),
                 'company_sid' => $companyId
-            ])->count_all_results('timeoff_policies')){
+            ])->count_all_results('timeoff_policies')) {
                 //
                 $typeSid = $this->checkPolicyType($policy['type_sid'], $companyId, $creatorId);
                 //
@@ -220,24 +227,24 @@ class copy_policies_model extends CI_Model {
                 $this->db->insert('timeoff_policies', $policy);
                 $policyId = $this->db->insert_id();
                 //
-                if(!$policyId) {
+                if (!$policyId) {
                     return $this->db->trans_rollback();
-                }
-                else $this->db->trans_commit();
+                } else $this->db->trans_commit();
             }
         }
     }
 
-    public function getCompanyCreator ($companyId) {
+    public function getCompanyCreator($companyId)
+    {
         $result = $this->db
-        ->select('sid')
-        ->where('parent_sid', $companyId)
-        ->group_start()
-        ->where('access_level_plus', 1)
-        ->or_where('access_level', 'Admin')
-        ->group_end()
-        ->order_by('access_level_plus', 'desc')
-        ->get('users');
+            ->select('sid')
+            ->where('parent_sid', $companyId)
+            ->group_start()
+            ->where('access_level_plus', 1)
+            ->or_where('access_level', 'Admin')
+            ->group_end()
+            ->order_by('access_level_plus', 'desc')
+            ->get('users');
         //
         $employeesList = $result->result_array();
         $result = $result->free_result();
@@ -247,10 +254,10 @@ class copy_policies_model extends CI_Model {
         }
         //
         $result = $this->db
-        ->select('sid')
-        ->where('parent_sid', $companyId)
-        ->limit(1)
-        ->get('users');
+            ->select('sid')
+            ->where('parent_sid', $companyId)
+            ->limit(1)
+            ->get('users');
         //
         $employeeInfo = $result->row_array();
         $result = $result->free_result();
@@ -299,9 +306,8 @@ class copy_policies_model extends CI_Model {
         $this->checkAndAddSettings();
         // Check and add holidays
         $this->checkAndAddHolidays();
-
     }
-    
+
     /**
      * Check and add time off types
      *
@@ -315,19 +321,19 @@ class copy_policies_model extends CI_Model {
         } else {
             // Load all the types
             $categories = json_decode(
-                loadFileData(ROOTPATH.'../protected_files/timeoff/categories.json'),
+                loadFileData(ROOTPATH . '../protected_files/timeoff/categories.json'),
                 true
             );
         }
         //
-        foreach ($categories as $category){
+        foreach ($categories as $category) {
             //
             $id = $category['sid'];
             //
             if (!$this->db->where([
                 'company_sid' => $this->companyId,
                 'timeoff_category_list_sid' => $category['timeoff_category_list_sid']
-            ])->count_all_results('timeoff_categories')){
+            ])->count_all_results('timeoff_categories')) {
                 //
                 unset($category['sid']);
                 $category['company_sid'] = $this->companyId;
@@ -347,8 +353,8 @@ class copy_policies_model extends CI_Model {
                     'company_sid' => $this->companyId,
                     'timeoff_category_list_sid' => $category['timeoff_category_list_sid']
                 ])
-                ->get('timeoff_categories')
-                ->row_array();
+                    ->get('timeoff_categories')
+                    ->row_array();
                 //
                 $this->catArray[$id] = $row['sid'];
             }
@@ -367,17 +373,24 @@ class copy_policies_model extends CI_Model {
         } else {
             // Load all the types
             $policies = json_decode(
-                loadFileData(ROOTPATH.'../protected_files/timeoff/policies.json'),
+                loadFileData(ROOTPATH . '../protected_files/timeoff/policies.json'),
                 true
             );
         }
         //
-        foreach ($policies as $policy){
+        foreach ($policies as $policy) {
             //
-            if (!$this->db->where([
-                'company_sid' => $this->companyId,
-                'LOWER(title)' => strtolower($policy['title'])
-            ])->count_all_results('timeoff_policies')){
+            $policyRecord =
+                $this->db
+                ->select('sid')
+                ->where([
+                    'company_sid' => $this->companyId,
+                    'LOWER(title)' => strtolower($policy['title'])
+                ])
+                ->get('timeoff_policies')
+                ->row_array();
+            //
+            if (empty($policyRecord)) {
                 //
                 unset(
                     $policy['sid']
@@ -393,6 +406,18 @@ class copy_policies_model extends CI_Model {
                     'timeoff_policies',
                     $policy
                 );
+            } else {
+                if ($policy['is_archived'] == 1 || $policy['status'] == 0) {
+
+                    $this->db
+                        ->where([
+                            'sid' => $policyRecord['sid']
+                        ])
+                        ->update('timeoff_policies', [
+                            'is_archived' => $policy['is_archived'],
+                            'status' => $policy['status']
+                        ]);
+                }
             }
         }
     }
@@ -425,7 +450,7 @@ class copy_policies_model extends CI_Model {
             $ia['off_days'] = '';
             $ia['theme'] = 2;
             $ia['team_visibility_check'] = 1;
-                // insert
+            // insert
             $this->db->insert('timeoff_settings', $ia);
         }
     }
@@ -449,20 +474,20 @@ class copy_policies_model extends CI_Model {
         }
         //
         $publicHolidays = $this->db
-        ->select(['holiday_title', 'holiday_year', 'from_date', 'to_date', 'event_link', 'status'])
-        ->where([
-            'holiday_year' => $year
-        ])
-        ->get('timeoff_holiday_list')
-        ->result_array();
+            ->select(['holiday_title', 'holiday_year', 'from_date', 'to_date', 'event_link', 'status'])
+            ->where([
+                'holiday_year' => $year
+            ])
+            ->get('timeoff_holiday_list')
+            ->result_array();
         //
-        foreach ($publicHolidays as $holiday){
+        foreach ($publicHolidays as $holiday) {
             //
             if ($this->db->where([
                 'company_sid' => $this->companyId,
                 'holiday_year' => $year,
                 'LOWER(holiday_title)' => strtolower($holiday['holiday_title'])
-            ])->count_all_results('timeoff_holidays')){
+            ])->count_all_results('timeoff_holidays')) {
                 continue;
             }
             //
@@ -484,16 +509,17 @@ class copy_policies_model extends CI_Model {
      *
      * @author Mubashir Ahmed
      */
-    private function getCurrentYearHolidaysFromGoogle(){
+    private function getCurrentYearHolidaysFromGoogle()
+    {
         //
         $holidays = json_decode(
-            getFileData("https://www.googleapis.com/calendar/v3/calendars/en.usa%23holiday%40group.v.calendar.google.com/events?key=".(getCreds('AHR')->GoogleAPIKey).""),
+            getFileData("https://www.googleapis.com/calendar/v3/calendars/en.usa%23holiday%40group.v.calendar.google.com/events?key=" . (getCreds('AHR')->GoogleAPIKey) . ""),
             true
         )['items'];
         // Extract current year holidays
         $holidays = array_filter(
             $holidays,
-            function ($holiday){
+            function ($holiday) {
                 $year = date('Y');
                 return preg_match("/$year/", $holiday['start']['date']);
             }
@@ -501,7 +527,7 @@ class copy_policies_model extends CI_Model {
         //
         $year = date('Y');
         // Let's insert to database
-        foreach($holidays as $holiday){
+        foreach ($holidays as $holiday) {
             //
             $ia = [];
             $ia['holiday_year'] = $year;
@@ -518,38 +544,40 @@ class copy_policies_model extends CI_Model {
                 $ia
             );
         }
-
     }
 
     /**
      *
      */
-    private function getCompanyTypes($companyId){
+    private function getCompanyTypes($companyId)
+    {
         //
         return $this->db
-        ->where('company_sid', $companyId)
-        ->get('timeoff_categories')
-        ->result_array();
+            ->where('company_sid', $companyId)
+            ->get('timeoff_categories')
+            ->result_array();
     }
-    
+
     /**
      *
      */
-    private function getCompanyPoliciesById($companyId){
+    private function getCompanyPoliciesById($companyId)
+    {
         //
         return $this->db
-        ->where('company_sid', $companyId)
-        ->get('timeoff_policies')
-        ->result_array();
+            ->where('company_sid', $companyId)
+            ->get('timeoff_policies')
+            ->result_array();
     }
-    
+
     /**
      *
      */
-    private function updateCompanyTimeOffSettings($companyId){
+    private function updateCompanyTimeOffSettings($companyId)
+    {
         // set
         $ia = [];
-        $ia['company_sid'] = $companyId;
+        $ia['company_sid'] = $this->companyId;
         $ia['default_timeslot'] = 8;
         $ia['pto_approval_check'] = 0;
         $ia['pto_email_receiver'] = 0;
@@ -566,39 +594,40 @@ class copy_policies_model extends CI_Model {
         $ia['team_visibility_check'] = 1;
         // Check if already exists
         if (!$this->db->where([
-            'company_sid' => $companyId
+            'company_sid' => $this->companyId
         ])->count_all_results('timeoff_settings')) {
             // Insert
             return $this->db
-            ->insert('timeoff_settings', $ia);
+                ->insert('timeoff_settings', $ia);
         }
         // Update
         $this->db
-        ->where('company_sid', $companyId)
-        ->update('timeoff_settings', $ia);
+            ->where('company_sid', $this->companyId)
+            ->update('timeoff_settings', $ia);
     }
 
-    private function addCompanyHolidays($companyId){
+    private function addCompanyHolidays($companyId)
+    {
         //
         $year = date('Y', strtotime('now'));
         //
         $holidays = $this->db
-        ->where([
-            'company_sid' => $companyId,
-            'holiday_year' => $year
-        ])
-        ->get('timeoff_holidays')
-        ->result_array();
+            ->where([
+                'company_sid' => $companyId,
+                'holiday_year' => $year
+            ])
+            ->get('timeoff_holidays')
+            ->result_array();
         //
         if (empty($holidays)) {
             //
             $holidays = $this->db
-            ->where([
-                'company_sid' => $companyId,
-                'holiday_year' => $year - 1
-            ])
-            ->get('timeoff_holidays')
-            ->result_array();
+                ->where([
+                    'company_sid' => $companyId,
+                    'holiday_year' => $year - 1
+                ])
+                ->get('timeoff_holidays')
+                ->result_array();
             //
             if (empty($holidays)) {
                 return false;
@@ -606,9 +635,9 @@ class copy_policies_model extends CI_Model {
         }
         //
         $publicHolidays = $this->db
-        ->where('holiday_year', $year)
-        ->get('timeoff_holiday_list')
-        ->result_array();
+            ->where('holiday_year', $year)
+            ->get('timeoff_holiday_list')
+            ->result_array();
         //
         $ph = [];
         //
@@ -628,7 +657,7 @@ class copy_policies_model extends CI_Model {
             $ia['company_sid'] = $this->companyId;
             $ia['holiday_year'] = $year;
             $ia['created_at'] =
-            $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
             // Check for public holiday
             if (isset($ph[$holiday['holiday_title']])) {
                 $ii = $ph[$holiday['holiday_title']];
