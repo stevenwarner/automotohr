@@ -398,8 +398,8 @@ class copy_policies_model extends CI_Model
                 $policy['company_sid'] = $this->companyId;
                 $policy['creator_sid'] = $this->employeeId;
                 $policy['type_sid'] = $this->catArray[$policy['type_sid']];
-                $policy['status'] = 1;
-                $policy['is_archived'] = 0;
+                $policy['status'] = $policy['status'];
+                $policy['is_archived'] = $policy['is_archived'];
                 $policy['created_at'] = $policy['updated_at'] = $this->dateTime;
                 //
                 $this->db->insert(
@@ -409,14 +409,15 @@ class copy_policies_model extends CI_Model
             } else {
                 if ($policy['is_archived'] == 1 || $policy['status'] == 0) {
 
+                    $policy['type_sid'] = $this->catArray[$policy['type_sid']];
+                    $policy['status'] = $policy['status'];
+                    $policy['is_archived'] = $policy['is_archived'];
+
                     $this->db
                         ->where([
                             'sid' => $policyRecord['sid']
                         ])
-                        ->update('timeoff_policies', [
-                            'is_archived' => $policy['is_archived'],
-                            'status' => $policy['status']
-                        ]);
+                        ->update('timeoff_policies', $policy);
                 }
             }
         }
