@@ -3172,4 +3172,21 @@ class Onboarding_model extends CI_Model
             ->where('general_information_status', 1)
             ->get('notifications_emails_configuration')->count_all_results();
     }
+
+
+
+        //
+    public function getOnboartingDefaultLocation($companySid){
+
+        $this->db->select('sid');
+        $this->db->where('company_sid', $companySid);
+        $this->db->where('is_default', 1);
+        $records_obj = $this->db->get('onboarding_office_locations');
+        $records_arr = $records_obj->row_array();
+        return $records_arr;
+
+    }
+
+
+
 }

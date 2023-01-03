@@ -2830,4 +2830,21 @@ class Company_model extends CI_Model
         return true;
     }
 
+
+    //
+    function setOnboardingAddress($inserData){
+    
+        $this->db->select('sid');
+        $this->db->where('company_sid', $inserData['company_sid']);
+        $this->db->where('is_default', 1);
+        $records_obj = $this->db->get('onboarding_office_locations');
+        $records_arr = $records_obj->result_array();
+        //
+        if(empty($records_arr)){
+            $this->db->insert('onboarding_office_locations', $inserData);
+        }
+  
+    }
+ 
+
 }

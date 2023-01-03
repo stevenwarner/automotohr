@@ -526,11 +526,25 @@ class Companies extends Admin_Controller
 
             $result = $this->users_model->insert($company_data, $employer_data, $employer_portal_data);
 
+
             if (!empty($result)) { //making sub domain
                 //Add Company Portal Templates Information - Start
                 $company_sid = $result['company_id'];
                 $company_name = $this->input->post('CompanyName');
                 $company_email = $this->input->post('email');
+
+
+                //Add Applicant Default Location
+                $inserDataLocation['company_sid'] = $result['company_id'];
+                $inserDataLocation['location_title'] = $this->input->post('CompanyName');
+                $inserDataLocation['location_address'] = $company_data['Location_Address'];
+                $inserDataLocation['location_telephone'] = $company_data['PhoneNumber'];
+                $inserDataLocation['location_status'] = 1;
+                $inserDataLocation['is_default'] = 1;
+
+                $this->company_model->setOnboardingAddress($inserDataLocation);
+
+
 
                 if ($company_sid > 0) {
                     $this->portal_email_templates_model->check_default_tables($company_sid, $company_email, $company_name);

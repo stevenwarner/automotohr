@@ -1189,6 +1189,7 @@ class Onboarding extends CI_Controller
 
                 $assign_links = $this->onboarding_model->onboarding_assign_useful_links($applicant_sid, $company_sid);
                 $data['locations'] = array_merge($locations, $custom_office_locations);
+              
                 $data['timings'] = $timings;
                 $data['people'] = $people;
                 $data['items'] = $items_data;
@@ -4853,7 +4854,22 @@ class Onboarding extends CI_Controller
                 $items_data = $this->onboarding_model->get_assigned_custom_office_record_sids($company_sid, $user_sid, $user_type, 'item', 0); // fetch items from new table
                 $credentials_data = $this->get_single_record_from_array($configuration, 'section', 'credentials');
                 $sections = empty($sections_data) ? array() : unserialize($sections_data['items']);
-                $locations = empty($locations_data) ? array() : unserialize($locations_data['items']);
+              //  $locations = empty($locations_data) ? array() : unserialize($locations_data['items']);
+              
+                if(!empty(unserialize($locations_data['items'])) && unserialize($locations_data['items'])!='NULL' ){
+                    $locations =  unserialize($locations_data['items']);
+                }else{
+
+                         $onboardingdefaultLocation = $this->onboarding_model->getOnboartingDefaultLocation($company_sid);
+                if($onboardingdefaultLocation){
+                       $locations = array($onboardingdefaultLocation['sid']);
+                }else{
+                      $locations = array();
+                  }
+
+                }
+          
+
                 $timings = empty($timings_data) ? array() : unserialize($timings_data['items']);
                 $people = empty($people_data) ? array() : unserialize($people_data['items']);
                 $items = $this->convert_array_to_1d($items_data);
