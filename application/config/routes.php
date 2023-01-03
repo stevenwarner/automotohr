@@ -1633,6 +1633,8 @@ $route['timeoff/import/historic/upload']['post'] = 'Time_off/importHistoricProce
 /**
  * ComplyNet Routes
  */
-$route['cn/dashboard'] = "2022/Complynet/dashboard";
-$route['cn/check_company_status/(:num)'] = "2022/Complynet/checkCompanyIntegration/$1";
-$route['cn/getting_started/(:num)'] = "2022/Complynet/gettingStarted/$1";
+$route['cn/dashboard']['get'] = "2022/Complynet/dashboard";
+$route['cn/check_company_status/(:num)']['get'] = "2022/Complynet/checkCompanyIntegration/$1";
+$route['cn/getting_started/(:num)']['get'] = "2022/Complynet/gettingStarted/$1";
+$route['cn/locations/(:any)']['get'] = "2022/Complynet/getComplyNetLocations/$1";
+$route['cn/integrate']['post'] = "2022/Complynet/integrate";

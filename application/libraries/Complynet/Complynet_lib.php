@@ -47,6 +47,84 @@ class Complynet_lib
             'GET'
         );
     }
+    
+    /**
+     * Get locations from ComplyNet
+     *
+     * @param string $companyId
+     * @return array
+     */
+    public function getComplyNetCompanyLocations(
+        $companyId
+    )
+    {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'Location?companyId='.$companyId,
+            'GET'
+        );
+    }
+
+    /**
+     * Get departments from ComplyNet
+     *
+     * @param string $locationId
+     * @return array
+     */
+    public function getComplyNetDepartments(
+        $locationId
+    )
+    {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'Department?LocationId='.$locationId,
+            'GET'
+        );
+    }
+    
+    /**
+     * Insert department to ComplyNet
+     *
+     * @param array $ins
+     * @return array
+     */
+    public function addDepartmentToComplyNet(
+        array $ins
+    )
+    {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'Department',
+            'POST',
+            $ins
+        );
+    }
+    
+    /**
+     * Get job role from department
+     *
+     * @param array $departmentIds
+     * @return array
+     */
+    public function getComplyNetJobRoles(
+        array $ins
+    )
+    {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'Department',
+            'POST',
+            $ins
+        );
+    }
 
 
     /**
@@ -113,7 +191,7 @@ class Complynet_lib
     private function execute(
         string $url,
         string $method = "GET",
-        array $options = []
+        array $postFields = []
     ) {
         //
         $curl = curl_init();
@@ -133,7 +211,10 @@ class Complynet_lib
             ),
         ];
         //
-        $lists = $lists+$options;
+        if ($method == 'POST') {
+            $lists[CURLOPT_POSTFIELDS] = json_encode($postFields);
+            $lists[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
+        }
         //
         curl_setopt_array($curl, $lists);
         //

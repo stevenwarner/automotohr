@@ -15923,3 +15923,18 @@ if (!function_exists('getDatesBetweenDates')) {
         return $datesArray;
     }
 }
+
+
+if (!function_exists('getSystemDate')) {
+    /**
+     * Get the current datetime
+     *
+     * @param string $format
+     * @param string $timestamp
+     * @return string
+     */
+    function getSystemDate(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now')
+    {
+        return date($format, strtotime($timestamp));
+    }
+}

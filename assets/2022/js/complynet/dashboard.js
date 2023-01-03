@@ -7,6 +7,12 @@ $(function ComplyNet() {
     let companyId = 0;
 
     /**
+     * CompanyName
+     * @type string
+     */
+    let companyName = '';
+
+    /**
      * Holds loader
      * @type string
      */
@@ -31,6 +37,68 @@ $(function ComplyNet() {
         loader(true);
         //
         checkTheCompanyIntegration();
+    });
+
+    /**
+     * Get the ComplyNet locations
+     */
+    $(document).on('change', '#jsCIComplyNetCompanies', function(){
+        //
+        if($(this).val() === 0) {
+            return alertify.alert(
+                'Warning!',
+                'Please select a valid ComplyNet company.',
+                CB
+            );
+        }
+        //
+        ml(true, 'jsModalLoader');
+        //
+        $('#jsCIComplyNetLocations').closest('.row').addClass('hidden');
+        //
+        $('.jsCIBTNBox').addClass('hidden')
+        //
+        getComplyNetCompanyLocations(
+            $(this).val()
+        );
+    });
+
+    /**
+     * Integrate event
+     */
+    $(document).on('click', '.jsCISubmit', function(event){
+        //
+        event.preventDefault();
+        //
+        let obj = {
+            companyId: companyId,
+            companyName: companyName,
+            complyCompanyId: $('#jsCIComplyNetCompanies').val(),
+            complyLocationId: $('#jsCIComplyNetLocations').val()
+        };
+        //
+        if (!obj.complyCompanyId || obj.complyCompanyId == 0) {
+            return alertify.alert(
+                'Warning!',
+                'Please select the ComplyNet company.',
+                CB
+            );
+        }
+        //
+        if (!obj.complyLocationId || obj.complyLocationId == 0) {
+            return alertify.alert(
+                'Warning!',
+                'Please select the ComplyNet location.',
+                CB
+            );
+        }
+        //
+        obj.complyCompanyName = $('#jsCIComplyNetCompanies option:selected').text();
+        obj.complyLocationName = $('#jsCIComplyNetLocations option:selected').text();
+        //
+        ml(true, 'jsModalLoader');
+        //
+        integrateCompany(obj);
     });
 
     /**
@@ -63,7 +131,7 @@ $(function ComplyNet() {
             Id: "jsModal",
             Title: "ComplyNet Integration",
             Loader: "jsModalLoader",
-            Body: '<div class="container-fluid"><div class="jsModalBody"></div></div>'
+            Body: '<div class="container"><div id="jsModalBody"></div></div>'
         }, function () {
             // Get the companies and view
             getIntegrationPage();
@@ -71,12 +139,76 @@ $(function ComplyNet() {
     }
 
     /**
-     * 
+     * Get the integration page
      */
     function getIntegrationPage(){
         //
         xhr = $.get(
             baseURI+'cn/getting_started/'+companyId
+        )
+        .success(function(resp){
+            //
+            $('#jsModalBody').html(resp.view);
+            //
+            $('#jsCICompanyName').select2();
+            $('#jsCIComplyNetCompanies').select2();
+            //
+            companyName = resp.companyName;
+            //
+            ml(false, 'jsModalLoader');
+        })
+        .fail(handleFailure);
+    }
+    
+    /**
+     * Get ComplyNet locations
+     * @param {int} complyCompanyId 
+     */
+    function getComplyNetCompanyLocations(complyCompanyId){
+        //
+        xhr = $.get(
+            baseURI+'cn/locations/'+complyCompanyId
+        )
+        .success(function(resp) {
+            //
+            xhr = null;
+            //
+            if(resp.length === 0) {
+                return alertify.alert(
+                    'Error!',
+                    'Failed to fetch locations',
+                    CB
+                );
+            }
+            //
+            let options = '';
+            options += '<option value="0">[Select location]</option>';
+            //
+            resp.map(function(record){
+                //
+                options += '<option value="'+(record.Id)+'">'+(record.Name)+'</option>';
+            });
+            //
+            $('#jsCIComplyNetLocations').html(options);
+            $('#jsCIComplyNetLocations').select2();
+            $('#jsCIComplyNetLocations').closest('.row').removeClass('hidden');
+            //
+            $('.jsCIBTNBox').removeClass('hidden');
+            //
+            ml(false, 'jsModalLoader');
+        })
+        .fail(handleFailure);
+    }
+
+    /**
+     * Integrate the company
+     * @param {object} integrationObject 
+     */
+    function integrateCompany(integrationObject){
+        //
+        xhr = $.post(
+            baseURI+'cn/integrate',
+            integrationObject
         )
         .success(function(resp){
             console.log(resp)
@@ -122,4 +254,7 @@ $(function ComplyNet() {
      * Empty callback function
      */
     function CB() { }
+
+    companyId = 5664;
+    startIntegrationProcess();
 });
