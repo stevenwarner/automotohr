@@ -115,6 +115,20 @@ $(function ComplyNet() {
         //
         loadView();
     });
+    //
+    $(document).on('click', '.jsShowAllDepartments', function (event) {
+        //
+        event.preventDefault();
+        //
+        showComplyDepartments();
+    });
+    //
+    $(document).on('click', '.jsShowAllJobRoles', function (event) {
+        //
+        event.preventDefault();
+        //
+        showComplyJobRoles();
+    });
 
     /**
      * Checks
@@ -275,6 +289,48 @@ $(function ComplyNet() {
                 )
             })
             .fail(handleFailure);
+    }
+    
+    function showComplyDepartments() {
+        //
+        Modal({
+            Id: "jsComplyModal",
+            Title: "ComplyNet Departments",
+            Loader: "jsComplyModalLoader",
+            Body: '<div class="container"><div id="jsComplyModalBody"></div></div>'
+        }, function () {
+            // Get the companies and view
+            $
+            .get(
+                baseURI+'cn/comply/departments/'+companyId
+            )
+            .success(function(resp){
+                $('#jsComplyModalBody').html(resp.view);
+                ml(false, 'jsComplyModalLoader');
+            })
+            .fail(handleFailure)
+        });
+    }
+    
+    function showComplyJobRoles() {
+        //
+        Modal({
+            Id: "jsComplyModal",
+            Title: "ComplyNet Job Roles",
+            Loader: "jsComplyModalLoader",
+            Body: '<div class="container"><div id="jsComplyModalBody"></div></div>'
+        }, function () {
+            // Get the companies and view
+            $
+            .get(
+                baseURI+'cn/comply/job_roles/'+companyId
+            )
+            .success(function(resp){
+                $('#jsComplyModalBody').html(resp.view);
+                ml(false, 'jsComplyModalLoader');
+            })
+            .fail(handleFailure)
+        });
     }
 
     /**

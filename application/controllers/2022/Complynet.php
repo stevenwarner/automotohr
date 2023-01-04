@@ -200,32 +200,36 @@ class Complynet extends Admin_Controller
         $data = [];
         // Get company
         $data['company'] = $this->complynet_model->getTableData(
-            'complynet_companies', [
+            'complynet_companies',
+            [
                 'company_sid' => $companyId
             ]
         )[0];
 
         // Get departments
         $data['departments'] = $this->complynet_model->getTableData(
-            'complynet_departments', [
+            'complynet_departments',
+            [
                 'company_sid' => $companyId
             ]
         );
-        
+
         // Get job roles
         $data['employees'] = $this->complynet_model->getTableData(
-            'complynet_employees', [
+            'complynet_employees',
+            [
                 'company_sid' => $companyId
             ]
         );
 
         //
-        return SendResponse(200,[
+        return SendResponse(200, [
             'view' => $this->load->view('2022/complynet/partials/company_integration_view', $data, true)
         ]);
     }
 
-    public function syncCompany(){
+    public function syncCompany()
+    {
         //
         $companyId = $this->input->post('companyId', true);
         //
@@ -472,6 +476,69 @@ class Complynet extends Admin_Controller
         }
 
         return false;
+    }
+
+
+    public function getComplyCompanyDepartments(
+        $companyId
+    ) {
+        $company = $this->complynet_model->getIntegratedCompany(
+            $companyId
+        );
+        //
+        $complyCompanyId = $company['complynet_company_sid'];
+        $complyLocationId = $company['complynet_location_sid'];
+
+        // Get all departments from ComplyNet
+        $complyDepartments = $this->clib->getComplyNetDepartments(
+            $complyLocationId
+        );
+        //
+        $data = [];
+        $data['title'] = 'Departments';
+        $data['records'] = $complyDepartments;
+
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('2022/complynet/partials/show_table', $data, true)
+            ]
+        );
+    }
+
+    public function getComplyCompanyJobRoles(
+        $companyId
+    ) {
+        $company = $this->complynet_model->getIntegratedCompany(
+            $companyId
+        );
+        //
+        $complyCompanyId = $company['complynet_company_sid'];
+        $complyLocationId = $company['complynet_location_sid'];
+
+        // Get all departments from ComplyNet
+        $complyDepartments = $this->clib->getComplyNetDepartments(
+            $complyLocationId
+        );
+        //
+        $data = [];
+        $data['title'] = 'Job Roles';
+        $records = [];
+        //
+        foreach ($complyDepartments as $department) {
+            //
+            $records[$department['Name']] = $this->clib->getJobRolesByDepartmentId($department['Id']);
+        }
+        $data['records'] = $records;
+
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('2022/complynet/partials/show_table_jobs', $data, true)
+            ]
+        );
     }
 
     /**

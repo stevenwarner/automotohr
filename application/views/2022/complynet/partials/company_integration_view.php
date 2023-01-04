@@ -1,7 +1,8 @@
 <hr>
 <div class="row">
     <div class="col-sm-12 text-right">
-        <!-- <button class="btn btn-success">View ComplyNet Departments</button> -->
+        <button class="btn btn-success jsShowAllJobRoles">Show ComplyNet Job Roles</button>
+        <button class="btn btn-success jsShowAllDepartments">Show ComplyNet Departments</button>
         <button class="btn btn-success jsRefreshCompany">Refresh</button>
         <button class="btn btn-success jsSyncCompany">Sync</button>
     </div>
