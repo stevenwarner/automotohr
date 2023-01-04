@@ -62,7 +62,7 @@
                             <div class="col-sm-2 bg-danger" style="height: 30px;"></div>
                             <div class="col-sm-12 pl0">
                                 <br />
-                                <span>Represents the policies that are not available to employees because they meet the accrual.<br /> To see reason, click '<i class="fa fa-question-circle"></i>' icon next to the policy title.</span>
+                                <span>Represents the policies that are not available to employees until they meet the Accrual or Qualify.<br /> To see a reason, click '<i class="fa fa-question-circle"></i>' icon next to the policy title.</span>
                             </div>
                         </div>
                     </div>
