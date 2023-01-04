@@ -1815,6 +1815,7 @@ class Timeoff_model extends CI_Model
         ->order_by('first_name', 'ASC')
         ->where('parent_sid', $post['companyId'])
         ->where('active', 1)
+        ->where('is_executive_admin', 0)
         ->limit($post['offset'], $post['inset'])
         ->where('terminated_status', 0);
         //

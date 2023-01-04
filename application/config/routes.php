@@ -1638,3 +1638,5 @@ $route['cn/check_company_status/(:num)']['get'] = "2022/Complynet/checkCompanyIn
 $route['cn/getting_started/(:num)']['get'] = "2022/Complynet/gettingStarted/$1";
 $route['cn/locations/(:any)']['get'] = "2022/Complynet/getComplyNetLocations/$1";
 $route['cn/integrate']['post'] = "2022/Complynet/integrate";
+$route['cn/integrate/view/(:num)']['get'] = "2022/Complynet/integrateView/$1";
+$route['cn/sync']['post'] = "2022/Complynet/syncCompany";

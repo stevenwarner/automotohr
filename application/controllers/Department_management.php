@@ -139,6 +139,10 @@ class Department_management extends Public_Controller {
                             $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers, 1);
                         }    
 
+                        // Check and add to complynet
+                        $this->load->model('2022/complynet_model');
+                        $this->complynet_model->syncDepartments($company_sid);
+
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Department Created Successfully!');
                         redirect('department_management', 'refresh');
                         break;

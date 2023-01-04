@@ -47,7 +47,7 @@ class Complynet_lib
             'GET'
         );
     }
-    
+
     /**
      * Get locations from ComplyNet
      *
@@ -56,13 +56,12 @@ class Complynet_lib
      */
     public function getComplyNetCompanyLocations(
         $companyId
-    )
-    {
+    ) {
         // Check and set token
         $this->checkAndSetAccessToken();
         //
         return $this->execute(
-            'Location?companyId='.$companyId,
+            'Location?companyId=' . $companyId,
             'GET'
         );
     }
@@ -75,17 +74,16 @@ class Complynet_lib
      */
     public function getComplyNetDepartments(
         $locationId
-    )
-    {
+    ) {
         // Check and set token
         $this->checkAndSetAccessToken();
         //
         return $this->execute(
-            'Department?LocationId='.$locationId,
+            'Department?LocationId=' . $locationId,
             'GET'
         );
     }
-    
+
     /**
      * Insert department to ComplyNet
      *
@@ -94,8 +92,7 @@ class Complynet_lib
      */
     public function addDepartmentToComplyNet(
         array $ins
-    )
-    {
+    ) {
         // Check and set token
         $this->checkAndSetAccessToken();
         //
@@ -105,22 +102,78 @@ class Complynet_lib
             $ins
         );
     }
-    
+
     /**
      * Get job role from department
      *
-     * @param array $departmentIds
+     * @param string $departmentId
      * @return array
      */
-    public function getComplyNetJobRoles(
-        array $ins
-    )
-    {
+    public function getJobRolesByDepartmentId(
+        string $departmentId
+    ) {
         // Check and set token
         $this->checkAndSetAccessToken();
         //
         return $this->execute(
-            'Department',
+            'JobRole?DepartmentId=' . $departmentId,
+            'GET'
+        );
+    }
+
+    /**
+     * Get job role from department
+     *
+     * @param array $ins
+     * @return array
+     */
+    public function addJobRole(
+        array $ins
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        $response =  $this->execute(
+            'JobRole',
+            'POST',
+            $ins
+        );
+        //
+        return $response['Id'] ? $response['Id'] : 0;
+    }
+
+    /**
+     * Get job role from department
+     *
+     * @param string $email
+     * @return array
+     */
+    public function getEmployeeByEmail(
+        string $email
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'User?username=' . (strtolower($email)),
+            'GET'
+        );
+    }
+
+    /**
+     * Get job role from department
+     *
+     * @param array $ins
+     * @return array
+     */
+    public function addEmployee(
+        array $ins
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'User',
             'POST',
             $ins
         );

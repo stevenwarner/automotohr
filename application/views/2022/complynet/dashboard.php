@@ -30,6 +30,9 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <!--  -->
+                            <div id="jsIntegrationView"></div>
                             <!-- Loader -->
                             <?php $this->load->view('loader', [
                                 "props" => 'id="jsMainLoader"'
