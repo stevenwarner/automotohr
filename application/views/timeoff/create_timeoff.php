@@ -6,14 +6,8 @@
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <div class="right-content">
                         <!-- loader -->
-                        <div 
-                            class="loader js-ilcr"
-                            style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,.8); z-index: 9999 !important; display: none;"
-                        >
-                            <i 
-                                class="fa fa-spinner fa-spin"
-                                style="text-align: center; top: 50%; left: 50%; font-size: 40px; position: relative;"
-                            ></i>
+                        <div class="loader js-ilcr" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,.8); z-index: 9999 !important; display: none;">
+                            <i class="fa fa-spinner fa-spin" style="text-align: center; top: 50%; left: 50%; font-size: 40px; position: relative;"></i>
                         </div>
                         <!-- Header -->
                         <div class="border-top-section border-bottom">
@@ -21,7 +15,7 @@
                                 <div class="pto-top-heading-left">
                                     <p>Create Time Off Request</p>
                                 </div>
-                            </div>                       
+                            </div>
                         </div>
                         <!-- Body -->
                         <div class="row m15">
@@ -50,10 +44,10 @@
                                         <label>Start Date - End Date <span class="cs-required">*</span></label>
                                         <div class="row">
                                             <div class="col-sm-6" style="padding-right: 0">
-                                                <input readonly="true" type="text" id="js-timeoff-start-date" class="form-control js-request-start-date" style="height: 43px; border-right:0; border-top-right-radius: 0; border-bottom-right-radius: 0"/>
+                                                <input readonly="true" type="text" id="js-timeoff-start-date" class="form-control js-request-start-date" style="height: 43px; border-right:0; border-top-right-radius: 0; border-bottom-right-radius: 0" />
                                             </div>
                                             <div class="col-sm-6" style="padding-left: 0">
-                                                <input readonly="true" type="text" id="js-timeoff-end-date" class="form-control js-request-end-date" style="height: 43px; border-left:0;  border-top-left-radius: 0; border-bottom-left-radius: 0"/>
+                                                <input readonly="true" type="text" id="js-timeoff-end-date" class="form-control js-request-end-date" style="height: 43px; border-left:0;  border-top-left-radius: 0; border-bottom-left-radius: 0" />
                                             </div>
                                         </div>
                                     </div>
@@ -143,7 +137,7 @@
                                     </label>
                                 </div>
                             </div>
-                            
+
                             <div class="row m15 js-fmla-wrap" style="display: none;">
                                 <hr />
                                 <div class="col-sm-12 col-sm-12">
@@ -163,29 +157,29 @@
                                     <div class="js-fmla-box" style="display: none;">
                                         <br />
                                         <label class="control control--radio font-normal">
-                                            Designation Notice 
+                                            Designation Notice
                                             <input class="js-fmla-type-check" name="fmla_check" value="designation" type="radio" />
                                             <div class="control__indicator"></div>
-                                        </label> 
-                                        &nbsp;<i title="Designation Notice" data-content="<?=FMLA_DESIGNATION;?>" class="fa fa-question-circle js-popover"></i>
+                                        </label>
+                                        &nbsp;<i title="Designation Notice" data-content="<?= FMLA_DESIGNATION; ?>" class="fa fa-question-circle js-popover"></i>
                                         <br />
                                         <label class="control control--radio font-normal">
-                                            Certification of Health Care Provider for Employee’s Serious Health Condition 
+                                            Certification of Health Care Provider for Employee’s Serious Health Condition
                                             <input class="js-fmla-type-check" name="fmla_check" value="health" type="radio" />
                                             <div class="control__indicator"></div>
                                         </label>
-                                        &nbsp;<i title="Certification of Health Care" data-content="<?=FMLA_CERTIFICATION_OF_HEALTH;?>" class="fa fa-question-circle js-popover"></i>
+                                        &nbsp;<i title="Certification of Health Care" data-content="<?= FMLA_CERTIFICATION_OF_HEALTH; ?>" class="fa fa-question-circle js-popover"></i>
                                         <br />
                                         <label class="control control--radio font-normal">
-                                            Notice of Eligibility and Rights & Responsibilities 
+                                            Notice of Eligibility and Rights & Responsibilities
                                             <input class="js-fmla-type-check" name="fmla_check" value="medical" type="radio" />
                                             <div class="control__indicator"></div>
                                         </label>
-                                        &nbsp;<i title="Notice of Eligibility and Rights & Responsibilities" data-content="<?=FMLA_RIGHTS;?>" class="fa fa-question-circle js-popover"></i>
+                                        &nbsp;<i title="Notice of Eligibility and Rights & Responsibilities" data-content="<?= FMLA_RIGHTS; ?>" class="fa fa-question-circle js-popover"></i>
                                     </div>
                                 </div>
                             </div>
-                           
+
 
                             <!-- Section Four -->
                             <div class="row m15 js-vacation-row" style="display: none;">
@@ -251,12 +245,12 @@
                             </div>
                             <!--  -->
                             <div class="row m15">
-                                 <hr />
+                                <hr />
                                 <div class="col-sm-12">
                                     <h4>Reason</h4>
                                 </div>
                                 <div class="col-sm-12">
-                                   <textarea id="js-reason"></textarea>
+                                    <textarea id="js-reason"></textarea>
                                 </div>
                             </div>
                             <hr />
@@ -266,7 +260,7 @@
                                     <h4>Comment</h4>
                                 </div>
                                 <div class="col-sm-12">
-                                   <textarea id="js-comment"></textarea>
+                                    <textarea id="js-comment"></textarea>
                                 </div>
                             </div>
                             <!-- Supporting Documents -->
@@ -310,10 +304,10 @@
                                     <div class="btn-filter-reset full-width">
                                         <button id="js-cancel-btn" type="button" class="btn btn-reset">CANCEL</button>
                                         <button id="js-save-btn" type="button" class="btn btn-apply">CREATE</button>
-                                    </div>  
+                                    </div>
                                 </div>
                             </div>
-                        </div>                  
+                        </div>
                     </div>
                     <!-- Content Section -->
                     <div class="employee-bottom-section">
@@ -321,11 +315,11 @@
                             <div class="col-md-12">
                                 <div class="employee-add-heading">
                                     <p>Employee Section</p>
-                                </div> 
+                                </div>
                             </div>
                             <div class="col-md-12">
                                 <h5> Instructions: To ensure that your information remains completely confidential, and to ensure that Family or Medical leave is properly designated, there are three forms available for you to choose from if you are
-                                requesting time off from work.</h5>
+                                    requesting time off from work.</h5>
                                 <ul>
                                     <li>To request time off for Vacation, Personal Time, Jury day, or any other reason not related to your health, use the Non-Medical Time-Off Request.
                                     </li>
@@ -338,12 +332,10 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="employee-bottom-section">
-                        <div class="col-sm-2 bg-danger" style="height: 30px;"></div>
-                        <div class="col-sm-12 pl0">
-                            <br />
-                            <span>Represents the policies that are not available to employees because they meet the accrual.<br /> To see why, hover '<i class="fa fa-question-circle"></i>' icon next to the policy title.</span>
+                        <div class="col-sm-12 bg-danger p10">
+                            <span><strong><em>Note: Represents the policies that are not available to employees until they meet the Accrual or Qualify. <br /><br />To see why, click '<i class="fa fa-question-circle"></i>' icon next to the policy title.</strong></em></span>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -362,17 +354,17 @@
                 <h4 class="modal-title"></h4>
             </div>
             <div class="modal-body" style="float: none;">
-               <!-- FMLA forms -->
+                <!-- FMLA forms -->
                 <div class="js-page" id="js-fmla">
                     <span class="pull-right" style="margin: 5px 10px 20px;"><button class="btn btn-info btn-5 js-shift-page">Back</button></span>
-                    
+
                     <div class="js-form-area" data-type="health" style="display: none;">
                         <?php $this->load->view('timeoff/fmla/employee/health'); ?>
                     </div>
                     <div class="js-form-area" data-type="medical" style="display: none;">
                         <?php $this->load->view('timeoff/fmla/employee/medical'); ?>
                     </div>
-                </div> 
+                </div>
             </div>
         </div>
     </div>
@@ -384,6 +376,13 @@
 <?php $this->load->view('timeoff/scripts/create_timeoff'); ?>
 
 <style>
-    #js-fmla-modal .btn-info{ background-color: #81b431 !important; border-color: #81b431 !important; }
-    .select2-container--default .select2-selection--single .select2-selection__arrow{ top: 50% !important; transform: translateY(-50%); }
+    #js-fmla-modal .btn-info {
+        background-color: #81b431 !important;
+        border-color: #81b431 !important;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 50% !important;
+        transform: translateY(-50%);
+    }
 </style>
