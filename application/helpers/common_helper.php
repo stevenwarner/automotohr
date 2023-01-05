@@ -15923,3 +15923,19 @@ if (!function_exists('getDatesBetweenDates')) {
         return $datesArray;
     }
 }
+
+
+if (!function_exists('getCurrentLoginEmployeeId')) {
+    /**
+     * Get the logged in employee index
+     *
+     * @param string $index
+     * @return string|array
+     */
+    function getCurrentLoginEmployeeDetails($index = ''){
+        //
+        $CI = &get_instance();
+        //
+        return $index != '' ? $CI->session->userdata('logged_in')['employer_detail'][$index] : $CI->session->userdata('logged_in')['employer_detail'];
+    }
+}
