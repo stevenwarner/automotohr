@@ -559,10 +559,16 @@ class copy_policies_model extends CI_Model
             $ia['icon'] = NULL;
             $ia['created_at'] = $ia['updated_at'] = $this->dateTime;
             //
-            $this->db->insert(
-                'timeoff_holiday_list',
-                $ia
-            );
+            if (!$this->db->where([
+                'holiday_title' => $ia['holiday_title'],
+                'holiday_year' => $year
+            ])->count_all_results('timeoff_holiday_list')) {
+                //
+                $this->db->insert(
+                    'timeoff_holiday_list',
+                    $ia
+                );
+            }
         }
     }
 

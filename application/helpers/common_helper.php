@@ -15899,7 +15899,7 @@ if (!function_exists('getDatesBetweenDates')) {
             $count++;
             //
             $datesArray[] = [
-                'date' => $value->format('Y-m-d'), 
+                'date' => $value->format('Y-m-d'),
                 'time' => 0
             ];
         }
@@ -15932,10 +15932,69 @@ if (!function_exists('getCurrentLoginEmployeeId')) {
      * @param string $index
      * @return string|array
      */
-    function getCurrentLoginEmployeeDetails($index = ''){
+    function getCurrentLoginEmployeeDetails($index = '')
+    {
         //
         $CI = &get_instance();
         //
         return $index != '' ? $CI->session->userdata('logged_in')['employer_detail'][$index] : $CI->session->userdata('logged_in')['employer_detail'];
+    }
+}
+
+if (!function_exists('getCurrentYearHolidaysFromGoogle')) {
+    /**
+     * Get current year holidays
+     *
+     * @return array
+     */
+    function getCurrentYearHolidaysFromGoogle()
+    {
+        //
+        $CI = &get_instance();
+        //
+        $holidays = json_decode(
+            getFileData("https://www.googleapis.com/calendar/v3/calendars/en.usa%23holiday%40group.v.calendar.google.com/events?key=" . (getCreds('AHR')->GoogleAPIKey) . ""),
+            true
+        )['items'];
+        // Extract current year holidays
+        $holidays = array_filter(
+            $holidays,
+            function ($holiday) {
+                $year = date('Y');
+                return preg_match("/$year/", $holiday['start']['date']);
+            }
+        );
+        //
+        $ra = [];
+        //
+        $year = date('Y');
+        // Let's insert to database
+        foreach ($holidays as $holiday) {
+            //
+            $ia = [];
+            $ia['holiday_year'] = $year;
+            $ia['holiday_title'] = trim($holiday['summary']);
+            $ia['from_date'] = trim($holiday['start']['date']);
+            $ia['to_date'] = trim($holiday['end']['date']);
+            $ia['event_link'] = trim($holiday['htmlLink']);
+            $ia['status'] = trim($holiday['status']);
+            $ia['icon'] = NULL;
+            $ia['created_at'] = $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('noe'));
+            //
+            $ra[] = $ia;
+            //
+            if (!$CI->db->where([
+                'holiday_title' => $ia['holiday_title'],
+                'holiday_year' => $year
+            ])->count_all_results('timeoff_holiday_list')){
+                //
+                $CI->db->insert(
+                    'timeoff_holiday_list',
+                    $ia
+                );
+            }
+        }
+        //
+        return $ra;
     }
 }

@@ -403,7 +403,7 @@ class Cron_common extends CI_Controller
         $this->load->model('Hr_documents_management_model', 'HRDMM');
         foreach ($toArray as $record) {
             //
-            if(!$this->HRDMM->isActiveUser($record['userId'])){
+            if (!$this->HRDMM->isActiveUser($record['userId'])) {
                 continue;
             }
             //
@@ -469,236 +469,19 @@ class Cron_common extends CI_Controller
     }
 
     /**
-     * Creates log of DB queries
-     * 
-     * @param string $verificationToken
-     * @return void
-     */
-    public function log_records($verificationToken)
-    {
-        //
-        if ($verificationToken != $this->verifyToken) {
-            echo "All done!";
-            exit(0);
-        }
-        // Define file paths and names
-        $logurl = APPPATH . "../../app_logs/db_log.json";
-        $countFile = APPPATH . "../../app_logs/db_count_log.json";
-        // Define default array for count
-        $defaultArray = [
-            'total_queries' => 0,
-            'total_select' => 0,
-            'total_update' => 0,
-            'total_insert' => 0,
-            'total_delete' => 0
-        ];
-        // Check if count file created
-        if (!is_file($countFile)) {
-            //
-            $defaultArray['history'] = [];
-            //
-            $handler = fopen($countFile, 'w');
-            fwrite($handler, json_encode($defaultArray));
-            fclose($handler);
-            //
-            unset($defaultArray['history']);
-        }
-        // Check if log file is created
-        if (!is_file($logurl)) {
-            //
-            $handler = fopen($logurl, 'w');
-            fwrite($handler, json_encode([]));
-            fclose($handler);
-        }
-        // Get the data from count file
-        $handler = fopen($countFile, 'r');
-        $countFileData = json_decode(fread($handler, filesize($countFile)), true);
-        fclose($handler);
-        // Get the data from log file
-        $handler = fopen($logurl, 'r');
-        $logurlData = json_decode(fread($handler, filesize($logurl)), true);
-        fclose($handler);
-        // Check and get the query logs
-        $results = $this->common_model->get_records_from_log();
-        //
-        if (!$results) {
-            echo ('All done buddy.');
-            exit(0);
-        }
-        //
-        $lastId = 0;
-        //
-        foreach ($results as $log_row) {
-            //
-            $lastId = $log_row->sid;
-            //
-            $typeSlug = 'total_' . strtolower($log_row->query_type);
-            //
-            if (!isset($countFileData['history'][$log_row->created_date])) {
-                $countFileData['history'][$log_row->created_date] = $defaultArray;
-            }
-            //
-            $countFileData['total_queries']++;
-            if (isset($countFileData[$typeSlug])) {
-                $countFileData[$typeSlug]++;
-                $countFileData['history'][$log_row->created_date][$typeSlug]++;
-            }
-            //
-            unset($log_row->sid);
-            //
-            $logurlData[] = $log_row;
-        }
-        //
-        $handler = fopen($countFile, 'w');
-        fwrite($handler, json_encode($countFileData));
-        fclose($handler);
-        //
-        $handler = fopen($logurl, 'w');
-        fwrite($handler, json_encode($logurlData));
-        fclose($handler);
-        //
-        $this->common_model->update_from_log($lastId);
-        //
-        die('All Done');
-    }
-
-    public function log_records_remove($ndays)
-    {
-        //
-        if (!is_numeric($ndays)) {
-            die('Days Are not Numeric');
-        }
-        // Define file paths and names
-        $logurl = APPPATH . "../../logs/automotologs.json";
-        // Check if log file is created
-        if (!is_file($logurl)) {
-            die("No File");
-        }
-        //
-        $handler = fopen($logurl, 'r');
-        $logurlData = json_decode(fread($handler, filesize($logurl)), true);
-        fclose($handler);
-        //
-        if (!$logurlData) {
-            die('No Data');
-        }
-        //
-        $now = date('Y-m-d', strtotime("-{$ndays}days"));
-        //
-        $logurlData = array_filter($logurlData, function ($item) use ($now) {
-            return $item['created_date'] > $now;
-        });
-        //
-        $handler = fopen($logurl, 'w');
-        fwrite($handler, json_encode($logurlData));
-        fclose($handler);
-        die('All Done');
-    }
-
-    public function log_records_filter()
-    {
-        $data['ip'] = $this->input->get('ip', true);
-        $data['benchmark'] = $this->input->get('benchmark', true);
-        $data['date'] = $this->input->get('date', true);
-        $data['limit'] = $this->input->get('limit', true);
-        //
-        header('content-type: application/json');
-        //
-        echo json_encode($this->common_model->get_records_from_log_filter($data));
-        //
-        exit(0);
-    }
-
-    //
-    public function applicant_fixer($date){
-        //
-        $folders = [ 
-            [
-                'folder' => 'autocareers',
-                'link' => 'Auto_careers/add_applicant'
-            ],
-            [
-                'folder' => 'Facebook',
-                'link' => 'Facebook_feed/jobXmlCallback'
-            ],
-            [
-                'folder' => 'indeed',
-                'link' => 'Indeed_feed/indeedPostUrl'
-            ],
-            [
-                'folder' => 'zipRecruiter',
-                'link' => 'Zip_recruiter_organic/zipPostUrl'
-            ]
-        ];
-        //
-        foreach($folders as $folder){
-            //
-            $this->putBackApplicants(
-                $date,
-                $folder['folder'],
-                $folder['link']
-            );
-            //
-            usleep(1);
-        }
-        //
-        die ('All Done');
-    }
-
-    //
-    private function putBackApplicants($date, $folder, $link){
-        //
-        $file_path = APPPATH.'../../applicant/'.($folder).'/';
-        //
-        $files = scandir($file_path, 1);
-        //
-        foreach($files as $file){
-            //
-            if(!preg_match("/$date/", $file)){
-                continue;
-            }
-            //
-            $content = file_get_contents($file_path.$file);
-            //
-            $curl = curl_init();
-            //
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://www.automotohr.com/'.$link,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'POST',
-                CURLOPT_POSTFIELDS => $content,
-                CURLOPT_HTTPHEADER => array(
-                  'Content-Type: application/json',
-                ),
-            ));
-            //
-            curl_exec($curl);
-            //
-            curl_close($curl);
-            //
-            sleep(1);
-        }
-    }
-
-    /**
      * Employee rehire status fixer
      */
     public function employeeStatusFixer()
     {
         //
         $employees = $this->db
-        ->select('sid')
-        ->where([
-            'general_status' => 'rehired',
-            'active' => 0
-        ])
-        ->get('users')
-        ->result_array();
+            ->select('sid')
+            ->where([
+                'general_status' => 'rehired',
+                'active' => 0
+            ])
+            ->get('users')
+            ->result_array();
         //
         if (empty($employees)) {
             exit(0);
@@ -709,12 +492,12 @@ class Cron_common extends CI_Controller
         $rows = [];
         //
         $lastStatuses =
-        $this->db
-        ->select('employee_status, employee_sid, termination_date')
-        ->where_in('employee_sid', $ids)
-        ->order_by('sid', 'desc')
-        ->get('terminated_employees')
-        ->result_array();
+            $this->db
+            ->select('employee_status, employee_sid, termination_date')
+            ->where_in('employee_sid', $ids)
+            ->order_by('sid', 'desc')
+            ->get('terminated_employees')
+            ->result_array();
         // Save the last record of each employee
         foreach ($lastStatuses as $status) {
             //
@@ -723,7 +506,7 @@ class Cron_common extends CI_Controller
             }
         }
         //
-        $handler = fopen(ROOTPATH.'../app_logs/'.time().'-rehired.json', 'w');
+        $handler = fopen(ROOTPATH . '../app_logs/' . time() . '-rehired.json', 'w');
         fwrite($handler, json_encode(['ids' => $ids, 'status' => $rows]));
         fclose($handler);
         //
@@ -746,7 +529,7 @@ class Cron_common extends CI_Controller
                     $upd['general_status'] = 'active';
                     $upd['active'] = 1;
                 }
-                
+
                 $found++;
             } else {
                 //
@@ -757,13 +540,99 @@ class Cron_common extends CI_Controller
             }
             //
             $this->db
-            ->reset_query()
-            ->set($upd)
-            ->where('sid', $id)
-            ->update('users');
+                ->reset_query()
+                ->set($upd)
+                ->where('sid', $id)
+                ->update('users');
         }
         //
         _e($found, true);
         _e($notFound, true, true);
+    }
+
+    /**
+     * Get and set Google holidays
+     */
+    public function holidayShifter($companyId = 0)
+    {
+        // Get public holidays
+        $publicHolidays = getCurrentYearHolidaysFromGoogle();
+        //
+        $ph = [];
+        //
+        if ($publicHolidays) {
+            foreach ($publicHolidays as $holiday) {
+                $ph[preg_replace('/[^a-zA-Z]/', '', strtolower(trim($holiday['holiday_title'])))] = $holiday;
+            }
+        }
+        //
+        $where = [
+            'holiday_year' => date('Y', strtotime('-1 year'))
+        ];
+        //
+        if ($companyId != 0) {
+            $where['company_sid'] = $companyId;
+        }
+        // Get all companies
+        $holidays = $this->db
+            ->where($where)
+            ->get('timeoff_holidays')
+            ->result_array();
+        //
+        $nf = [
+            'found' => 0,
+            'notFound' => 0
+        ];
+        //
+        if (empty($holidays)) {
+            // No holiday of companies are found
+            exit(0);
+        } else {
+            //
+            $year = date('Y', strtotime('now'));
+            $lastYear = date('Y', strtotime('-1 year'));
+            //
+            foreach ($holidays as $holiday) {
+                //
+                $title = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($holiday['holiday_title'])));
+                //
+                $doExists = $this->db
+                    ->where([
+                        'holiday_title' => $holiday['holiday_title'],
+                        'company_sid' => $holiday['company_sid'],
+                        'holiday_year' => $year
+                    ])
+                    ->count_all_results('timeoff_holidays');
+                //
+                if (
+                    $doExists
+                ) {
+                    $nf['found']++;
+                    continue;
+                }
+                //
+                $ins = $holiday;
+                //
+                unset($ins['sid'], $ins['created_at'], $ins['updated_at']);
+                //
+                $ins['holiday_year'] = $year;
+                $ins['created_at'] = $ins['updated_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                //
+                if (isset($ph[$title])) {
+                    $ins['from_date'] = $ph[$title]['from_date'];
+                    $ins['to_date'] = $ph[$title]['to_date'];
+                } else {
+                    $ins['from_date'] = preg_replace("/$lastYear/", $year, $ins['from_date']);
+                    $ins['to_date'] = preg_replace("/$lastYear/", $year, $ins['to_date']);
+                }
+                //
+                $this->db->insert('timeoff_holidays', $ins);
+                //
+                $nf['notFound']++;
+            }
+        }
+        //
+        _e($nf, true);
+        exit(0);
     }
 }
