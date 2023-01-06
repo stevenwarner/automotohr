@@ -374,4 +374,49 @@ $(function ComplyNet() {
 
     // companyId = 5664;
     // setInterval(syncCompany, 1000);
+
+
+    //
+    $(document).on('click', '.jsSyncEmployee', function (event) {
+        //
+        event.preventDefault();
+        //
+        var employeeSid = $(this).attr('employee-sid');
+        //employee-sid
+      syncEmployee(employeeSid);
+    });
+
+
+    function syncEmployee(employeeSid) {
+        //
+        loader(true, 'Please wait while we are syncing company.');
+        //
+
+        xhr = $.post(
+            baseURI + 'cn/syncemp', {
+            companyId: companyId,
+            employeeId: employeeSid,
+
+        }
+        )
+            .success(function (resp) {
+                //
+                loader(false);
+                return alertify.alert(
+                    'Success',
+                    'Company is synced',
+                    function () {
+
+                        window.location.reload();
+                    }
+                )
+            })
+            .fail(handleFailure);
+
+
+    }
+    
+
+
+
 });

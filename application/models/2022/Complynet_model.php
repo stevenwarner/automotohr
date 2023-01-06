@@ -567,4 +567,46 @@ class Complynet_model extends CI_Model
             }
         }
     }
+
+//
+    public function getOffComplyNetEmployees($employeesArray, $companySid)
+    {
+        
+            $this->db->select('sid,first_name,last_name,email,created_at,job_title,department_sid');
+            $this->db->where('parent_sid',$companySid);
+            if(!empty($employeesArray)){
+            $this->db->where_not_in('sid',$employeesArray);
+            }
+            $this->db->order_by('sid', 'desc');
+            $result = $this->db->get('users')->result_array();
+            return $result; 
+            
+    }
+   
+
+
+    public function getCompanyEmployee(
+        int $employeeId
+    ) {
+        //
+        $records =
+            $this->db
+            ->select('sid, email, first_name, last_name, PhoneNumber, job_title')
+            ->where([
+                'sid' => $employeeId,
+                'email != ' => ''
+            ])
+            ->group_start()
+            ->where('job_title != ', null)
+            ->where('job_title != ', '')
+            ->group_end()
+            ->get('users')
+            ->result_array();
+        //
+        return $records;
+    }
+
+
+
+
 }
