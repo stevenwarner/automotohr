@@ -115,7 +115,7 @@
                                     <div class="row dn" id="jsRatingQuestion">
                                         <br />
                                         <ul class="_csRatingBar pl10 pr10">
-                                            <li data-id="1" class="active surveyRating surveyRatingDefault">
+                                            <li data-id="1" class="surveyRating surveyRatingDefault">
                                                 <p class="_csF20 _csF2">1</p>
                                                 <p class="_csF14 _csF2">Strongly Agree</p>
                                             </li>

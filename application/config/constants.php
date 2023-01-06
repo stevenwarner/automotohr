@@ -668,3 +668,5 @@ define('PRIVATE_MESSAGE_NOTIFICATION', 424);
  * Employee survey constants
  */
 define('EMPLOYEE_SURVEYS', 'employeesurvey');
+// Added on: 05-01-2023
+define('EMPLOYEE_SURVEY_NOTIFICATION', 425);

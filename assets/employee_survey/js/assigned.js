@@ -66,8 +66,8 @@ $(function (){
     function resetQuestionRating () {
         removePreviousRating();
         //
-        $('.surveyRatingDefault').addClass('active')
-        $('.surveyRatingDefault').find("p").addClass('_csF2')
+        // $('.surveyRatingDefault').addClass('active')
+        // $('.surveyRatingDefault').find("p").addClass('_csF2')
     }
     //
     function removePreviousRating () {

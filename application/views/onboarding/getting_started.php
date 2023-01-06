@@ -937,7 +937,7 @@
                                             <h2>Engagement</h2>
                                             <div><span>&nbsp;</span></div>
                                             <div class="current-date">
-                                                <span><?php echo $totalPendingSurveys?? 0; ?><sub>Assigned</sub></span>
+                                                <span><?php echo $assignedPendingSurveys?? 0; ?><sub>Assigned</sub></span>
                                             </div>
                                             <div class="status-panel">
                                                 <h3>View Engagements</h3>

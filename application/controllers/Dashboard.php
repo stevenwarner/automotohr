@@ -974,6 +974,9 @@ class Dashboard extends Public_Controller {
                 $employer_id,
                 'employee'
             )) + $this->dashboard_model->get_all_library_doc_count($company_id);
+
+            $this->load->model('2022/Employee_survey_model', 'ES_model');
+            $data["assignedPendingSurveys"] = $this->ES_model->getRespondentPendingCount($data['session']['employer_detail']['sid']);
            
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
