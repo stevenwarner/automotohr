@@ -167,6 +167,14 @@
                                        } ?>">
                                 <?php echo form_error('referred_by_email'); ?>
                             </li>
+                            
+                            <li class="full-width" id='contactpreference'> 
+                            <label>Contact Preference</label>
+                            <p class="text-danger">You must enter a valid US phone number to enable SMS </p>
+                            <input type="radio" id="email" name="contact_preference" value="email" checked> <span> Email &nbsp;</span>
+                            <input type="radio" id="sms" name="contact_preference" value="sms"> <span> SMS </span>
+                            </li>
+                         
                             <li class="questionare-section" id="show_questionnaire"></li>
                             <?php if($eeo_form_status == 1) { ?>
                             <li class="employment-opertinity-form">
@@ -402,7 +410,12 @@
         $('.spinner').hide();
     });
 
-    function show_popup(val) {
+    function show_popup(val,iscontactpreference) {
+        if(iscontactpreference==1){
+             $("#contactpreference").show();
+        }else{
+            $("#contactpreference").hide();
+        }
 //        console.log('ba bu show popup: ' + val);
         job_title = $('#job_title' + val).html();
         questionnaire_sid = $('#questionnaire_sid' + val).html();
@@ -414,7 +427,6 @@
         document.getElementById("job_sid").value = val;
         document.getElementById("questionnaire_sid").value = questionnaire_sid;
     }
-
 
     function getStates(val, states) {
         states = jQuery.parseJSON(states);
@@ -524,6 +536,7 @@
             }
         });
     }
+
     function check_file(val) {
         var fileName = $("#" + val).val();
         if (fileName.length > 0) {
@@ -571,7 +584,6 @@
                 $("input[name='veteran']").prop('required', true);
                 $("input[name='disability']").prop('required', true);
                 $("input[name='gender']").prop('required', true);
-
 
             }
             else {

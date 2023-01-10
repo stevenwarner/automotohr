@@ -152,7 +152,7 @@
                                         </div>
                                         <div class="btn-area">
                                             <ul>
-                                                <li><button type="button" class="site-btn bg-color" onclick="show_popup(<?php echo $job['sid'] ?>)">Apply Now</button></li>
+                                                <li><button type="button" class="site-btn bg-color" onclick="show_popup(<?php echo $job['sid'] ?>,<?php echo get_company_sms_status($job['user_sid'])?>)">Apply Now</button></li>
                                                 <li><a href="<?php echo $job['url'];?>" class="site-btn bg-color-v2">View Details</a></li>
                                                 <a style="display:none;" id="show_hide<?php echo $job['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                             </ul>
@@ -308,8 +308,14 @@
 <script language="JavaScript" type="text/javascript" src="<?php echo base_url('assets/theme-1/js/jquery.validate.min.js'); ?>"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets/theme-1/') ?>/js/additional-methods.min.js"></script>
 <script type="text/javascript">
-    function show_popup(val) {
+    function show_popup(val,iscontactpreference) {
         //console.log('show popup: ' + val);
+        if(iscontactpreference==1){
+             $("#contactpreference").show();
+        }else{
+            $("#contactpreference").hide();
+        }
+
         job_title = $('#job_title' + val).html();
         questionnaire_sid = $('#questionnaire_sid' + val).html();
 

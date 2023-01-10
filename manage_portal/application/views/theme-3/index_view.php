@@ -142,7 +142,7 @@
                                     </div>	
                                 </div>							
                                 <div class="show-job">
-                                    <a class="siteBtn apply-now-btn" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>)">apply now</a>
+                                    <a class="siteBtn apply-now-btn" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>,<?php echo get_company_sms_status($value['user_sid'])?>)">apply now</a>
                                     <a style="display:none;" id="show_hide<?= $value['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                     <a class="siteBtn showDetail" href="javascript:void(0)" id="show_full_time<?= $value['sid'] ?>">show details</a>
                                 </div>
@@ -219,7 +219,7 @@
                                     </div>
                                     <div class="btn-wrap">
                                     <?php echo anchor(job_title_uri($value), "more details", array('class' => 'siteBtn btn-deatil-more')); ?> 
-                                        <a class="siteBtn apply-now-btn" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>)">apply now</a>
+                                        <a class="siteBtn apply-now-btn" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>,<?php echo get_company_sms_status($value['user_sid'])?>)">apply now</a>
                                         <a style="display:none;" id="show_hide<?= $value['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                         <a class="siteBtn hideDetail btn-hide" href="javascript:void(0)" id="hide_full_time<?= $value['sid'] ?>">hide details</a>
                                     </div>									

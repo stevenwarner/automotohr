@@ -1083,6 +1083,7 @@ class Home extends CI_Controller
                             $this->load->view($theme_name . '/_parts/footer_view');
                         }
                     } else { //Handle Post
+
                         $action = '';
                         if (isset($_POST['action'])) {
                             $action                                             = $this->input->post('action');
@@ -1146,16 +1147,21 @@ class Home extends CI_Controller
                                     return redirect( $redirecturl, 'refresh');
                                 }
                                 //
-                                $gr = verifyCaptcha($formpost['g-recaptcha-response']);
-                                //
-                                if (!$gr['success']) {
-                                    $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
-                                    if($this->input->post('dr',true)){
-                                        echo "Google captcha not set";
-                                        exit();
-                                    }
-                                    return redirect( $redirecturl, 'refresh');
-                                }
+
+                                
+                                 $gr = verifyCaptcha($formpost['g-recaptcha-response']);
+                                // //
+                                 if (!$gr['success']) {
+                                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
+                                     if($this->input->post('dr',true)){
+                                         echo "Google captcha not set";
+                                         exit();
+                                     }
+                                     return redirect( $redirecturl, 'refresh');
+                                 }
+
+                                
+
 
                               $my_ip = getUserIP();
 
@@ -1168,6 +1174,13 @@ class Home extends CI_Controller
                                     $YouTube_Video                                  = $this->input->post('YouTube_Video');
                                     $email                                          = $this->input->post('email');
                                     $is_blocked_email                               = $this->check_domain->check_if_blocked($email);
+
+                                    $contact_preference                                       = 'email';
+
+                                    if ($this->input->post('contact_preference')) {
+                                        $contact_preference                                   = $this->input->post('contact_preference');
+                                    }
+
 
                                     if ($is_blocked_email == 'blocked') {
                                         $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
@@ -1202,6 +1215,7 @@ class Home extends CI_Controller
                                     $eeo_form                                       = 'No';
                                     $job_details                                    = $this->job_details->fetch_jobs_details($job_sid);
                                     $original_job_title                             = $job_details['Title'];
+                                   
 
                                     if ($this->input->post('EEO') != NULL) {
                                         $eeo_form                                   = $this->input->post('EEO');
@@ -1225,6 +1239,7 @@ class Home extends CI_Controller
                                     $already_applied                                = $this->job_details->check_job_applicant($job_sid, $email, $company_sid); //check if the user has already applied for this job
 
                                     if ($already_applied > 0) { // appliant has already applied for the job. He can't apply again.
+                                       
                                         $this->session->set_flashdata('message', "<b>Error!</b> You have already applied for this Job '" . $data['job_details']['Title'] . "'");
                                         $applied_from                               = $this->input->post('applied_from');
                                         if($this->input->post('dr',true)){
@@ -1366,8 +1381,11 @@ class Home extends CI_Controller
                                                 'cover_letter'                      => $cover_letter,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email
+                                                'preferred_contact'                 => $contact_preference
+                                                                                                
                                             );
+
+
 
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
 
@@ -1411,7 +1429,8 @@ class Home extends CI_Controller
                                                 'state'                             => $state,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email
+                                                'referred_by_email'                 => $referred_by_email,
+                                                'preferred_contact'                 => $contact_preference
                                             );
 
                                             if ($YouTube_code != '') { // check if youtube link is updated
@@ -2032,7 +2051,8 @@ class Home extends CI_Controller
                                                 'cover_letter'                      => $cover_letter,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email
+                                                'referred_by_email'                 => $referred_by_email,
+                                                'preferred_contact'                 => $contact_preference
                                             );
 
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
@@ -4579,7 +4599,8 @@ class Home extends CI_Controller
                                                 'cover_letter'                      => $cover_letter,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email
+                                                'referred_by_email'                 => $referred_by_email,
+                                                'preferred_contact'                 => $contact_preference
                                             );
 
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
@@ -5202,7 +5223,8 @@ class Home extends CI_Controller
                                                 'cover_letter'                      => $cover_letter,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
-                                                'referred_by_email'                 => $referred_by_email
+                                                'referred_by_email'                 => $referred_by_email,
+                                                'preferred_contact'                 => $contact_preference
                                             );
 
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);

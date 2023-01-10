@@ -140,7 +140,7 @@
                                         </div>									
                                     </div>								
                                     <div class="show-job">
-                                        <a class="siteBtn apply-now-btn bg-color custom-theme" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>)">apply now</a>
+                                        <a class="siteBtn apply-now-btn bg-color custom-theme" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>,<?php echo get_company_sms_status($value['user_sid'])?>)">apply now</a>
                                         <a style="display:none;" id="show_hide<?= $value['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                         <a class="siteBtn bg-color showDetail custom-theme" href="javascript:void(0)">show details</a>
                                     </div>
@@ -157,7 +157,7 @@
                                         <?php } ?>
                                         <div class="btn-wrap">                                            
                                             <?php echo anchor(job_title_uri($value), "more details", array('class' => 'siteBtn custom-theme')); ?>                                             
-                                            <a class="siteBtn apply-now-btn apply-v2 bg-color custom-theme " href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>)">apply now</a>
+                                            <a class="siteBtn apply-now-btn apply-v2 bg-color custom-theme " href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>,<?php echo get_company_sms_status($value['user_sid'])?>)">apply now</a>
                                             <a style="display:none;" id="show_hide<?= $value['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                             <a class="siteBtn hideDetail btn-hide" href="javascript:void(0)">hide details</a>
                                         </div>									

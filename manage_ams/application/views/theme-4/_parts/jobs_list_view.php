@@ -118,7 +118,7 @@
                                 </div>
                                 <div class="btn-area">
                                     <ul>
-                                        <li><button type="button" class="site-btn bg-color" onclick="show_popup(<?php echo $job['sid'] ?>)">Apply Now</button></li>
+                                        <li><button type="button" class="site-btn bg-color" onclick="show_popup(<?php echo $job['sid'] ?>,<?php echo get_company_sms_status($job['user_sid'])?>)">Apply Now</button></li>
                                         <li><a href="<?= base_url(job_title_uri($job)) ?>" class="site-btn bg-color-v2">View Details</a></li>
                                         <a style="display:none;" id="show_hide<?php echo $job['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                     </ul>
@@ -262,8 +262,9 @@
                                     </div>
                                 </div>
                                 <div class="btn-area">
+                                
                                     <ul>
-                                        <li><button type="button" class="site-btn bg-color" onclick="show_popup(<?php echo $job['sid'] ?>)">Apply Now</button></li>
+                                        <li><button type="button" class="site-btn bg-color" onclick="show_popup(<?php echo $job['sid'] ?>,<?php echo get_company_sms_status($job['user_sid'])?>)">Apply Now</button></li>
                                         <li><a href="<?= base_url(job_title_uri($job)) ?>" class="site-btn bg-color-v2">View Details</a></li>
                                         <a style="display:none;" id="show_hide<?php echo $job['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                     </ul>

@@ -1802,4 +1802,22 @@ if (!function_exists('_e')) {
         if ($isHidden) echo ' -->';
         if ($die) exit(0);
     }
+
 }
+
+//
+
+    if (!function_exists('get_company_sms_status')) {
+        function get_company_sms_status($company_sid)
+        {
+                $CI = &get_instance();
+                $CI->db->select('sms_module_status');
+                $CI->db->where('sid', $company_sid);
+                $sms_module = $CI->db->get('users')->result_array();
+                return $sms_module[0]['sms_module_status'];
+     
+
+        }
+    }
+
+

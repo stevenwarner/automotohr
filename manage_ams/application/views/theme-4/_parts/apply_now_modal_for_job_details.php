@@ -62,6 +62,7 @@
     }  
 
     function validate_form() {
+
         youtube_check()
         $("#register-form").validate({
             ignore: ":hidden:not(select)",
@@ -133,7 +134,6 @@
             },
             submitHandler: function (form) {
 
-
                 if(googleCaptchaToken === null){
                     
                     $("#captchaerror").show();
@@ -160,7 +160,6 @@
                 receiver_name: {required: true},
                 receiver_email: {required: true}
 
-
             },
             messages: {
                 sender_name: "Please provide your name",
@@ -173,7 +172,6 @@
            
                 $('#friend-form').submit();
            
-
         }
 
     }
@@ -381,6 +379,8 @@
                                 } ?>">
                                 <?php echo form_error('referred_by_name'); ?>
                             </li>
+
+
                             <li>
                                 <label for="referred_by_email">Referred By Email</label>
                                 <input class="form-fields" type="email" id="referred_by_email" name="referred_by_email" placeholder="Enter Referrer Email"
@@ -389,6 +389,20 @@
                                        } ?>">
                                 <?php echo form_error('referred_by_email'); ?>
                             </li>
+
+
+                            <?php 
+                            if(get_company_sms_status($job_details['user_sid'])==1){
+                            ?>
+                            <li class="full-width"> 
+                            <label>Contact Preference</label>
+                            <p class="text-danger">You must enter a valid US phone number to enable SMS </p>
+                            <input type="radio" id="email" name="contact_preference" value="email" checked> <span> Email &nbsp;</span>
+                            <input type="radio" id="sms" name="contact_preference" value="sms"> <span> SMS </span>
+                            </li>
+                            <?php }?>
+
+
                             <li class="questionare-section" id="show_questionnaire">
                                 <label>Attach Resume (.pdf .docx .doc .jpg .jpe .jpeg .png .gif) Attach Cover (.pdf .docx .doc .jpg .jpe .jpeg .png .gif)</label>
                                 <?php if ($job_details['questionnaire_sid'] > 0) { ?>
@@ -402,7 +416,7 @@
                                             <input type='hidden' name="q_send_fail" value="<?php echo $job_details['q_send_fail']; ?>">
                                             <input type='hidden' name="q_fail_text" value="<?php echo $job_details['q_fail_text']; ?>">
                                             <input type='hidden' name="my_id" value="<?php echo $job_details['my_id']; ?>">
-                                <?php       $my_id = $job_details['my_id'];
+                                     <?php   $my_id = $job_details['my_id'];
                                 
                                             foreach ($job_details[$my_id] as $questions_list) { ?>
                                                     <input type="hidden" name="all_questions_ids[]" value="<?php echo $questions_list['questions_sid']; ?>">
@@ -668,6 +682,7 @@
                                 <input id="mySubmitBtn" class="siteBtn bg-color" type="submit" onclick="validate_form()" value="apply now">
                                 <!-- <input class="siteBtn bg-color" type="submit" value="apply now">-->
                             </li>
+                            
                         </form>
                     </ul>
                 </div>

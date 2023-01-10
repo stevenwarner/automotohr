@@ -69,7 +69,8 @@
     }  
 
     function validate_form() {
-        youtube_check()
+        youtube_check();
+
         $("#register-form").validate({
             ignore: ":hidden:not(select)",
             rules: {
@@ -86,10 +87,11 @@
                     email: true
                 },
                 phone_number: {
+      
                     <?php if($is_regex === 1){ ?>
                     pattern: /(\(\d{3}\))\s(\d{3})-(\d{4})$/ // (555) 123-4567
                     <?php } else { ?>
-                    pattern: /^[0-9\-]+$/
+                   pattern: /^[0-9\-]+$/
                     <?php } ?>
                 },
                 city: {
@@ -151,6 +153,36 @@
                 <?php if($is_regex === 1){ ?>
                     $("#register-form").append('<input type="hidden" name="txt_phonenumber" id="txt_phonenumber" value="+1'+($('#PhoneNumber').val().replace(/\D/g, ''))+'" />')
                 <?php } ?>
+
+                //
+                var ContactPreferenceText = $("input[name='contact_preference']:checked").val();
+                //
+                if(ContactPreferenceText == 'sms'){
+                    // +1 (123)-456-7895
+                    let phoneNumber = $('#PhoneNumber').val().replace(/[^0-9+]/ig, ''); // +11234567895
+                    //
+                    let phoneNumberCount = 10;
+                    //
+                    if (phoneNumber.indexOf('+') !== -1) {
+                        //  found
+                        phoneNumberCount = 11;
+                    }
+                    phoneNumber = phoneNumber.replace('+', ''); 
+                    //
+                    if(phoneNumber.length != phoneNumberCount) {
+                     
+                     alertify.alert(
+                            'Warning!',
+                            'Please provide a valid US number. E.g +1 (XXX)-XXX-XXXX.',
+                            function (){}
+                        );
+
+                       $('#mySubmitBtn').prop('disabled', false);
+                       return ;
+                        
+                    }
+
+                }
 
                 
                     form.submit();
@@ -393,6 +425,18 @@
                                        } ?>">
                                 <?php echo form_error('referred_by_email'); ?>
                             </li>
+
+                            <?php 
+                            if(get_company_sms_status($job_details['user_sid'])==1){
+                            ?>
+                            <li class="full-width"> 
+                            <label>Contact Preference</label>
+                            <p class="text-danger">You must enter a valid US phone number to enable SMS </p>
+                            <input type="radio" id="email" name="contact_preference" value="email" checked> <span> Email &nbsp;</span>
+                            <input type="radio" id="sms" name="contact_preference" value="sms"> <span> SMS </span>
+                            </li>
+                            <?php }?>
+
                             <li class="questionare-section" id="show_questionnaire">
                                 <label>Attach Resume (.pdf .docx .doc .jpg .jpe .jpeg .png .gif) Attach Cover (.pdf .docx .doc .jpg .jpe .jpeg .png .gif)</label>
                                 <?php if ($job_details['questionnaire_sid'] > 0) { ?>

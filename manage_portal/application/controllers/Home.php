@@ -1454,6 +1454,12 @@ class Home extends CI_Controller
                                 $email                                          = $this->input->post('email');
                                 $is_blocked_email                               = $this->check_domain->check_if_blocked($email);
 
+                                $contact_preference                                       = 'email';
+
+                                if ($this->input->post('contact_preference')) {
+                                    $contact_preference                                   = $this->input->post('contact_preference');
+                                }
+
                                 if ($is_blocked_email == 'blocked') {
                                     $this->session->set_flashdata('message', '<b>Success: </b>Job application added successfully.');
                                     $applied_from                               = $this->input->post('applied_from');
@@ -1634,7 +1640,8 @@ class Home extends CI_Controller
                                                 'cover_letter'          => $cover_letter,
                                                 'country'               => $country,
                                                 'referred_by_name'      => $referred_by_name,
-                                                'referred_by_email'     => $referred_by_email
+                                                'referred_by_email'     => $referred_by_email,
+                                                'preferred_contact'     => $contact_preference
                                             );
                                             // echo "<pre>"; print_r($insert_data_primary); exit;
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
@@ -1678,7 +1685,8 @@ class Home extends CI_Controller
                                                 'state'                 => $state,
                                                 'country'               => $country,
                                                 'referred_by_name'      => $referred_by_name,
-                                                'referred_by_email'     => $referred_by_email
+                                                'referred_by_email'     => $referred_by_email,
+                                                'preferred_contact'     => $contact_preference
                                             );
 
                                             if ($YouTube_code != '') { // check if youtube link is updated

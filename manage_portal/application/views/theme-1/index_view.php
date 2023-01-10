@@ -119,7 +119,7 @@
                                     </div>									
                                 </div>							
                                 <div class="show-job">
-                                    <a class="siteBtn apply-now-btn custom-apply-now" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>)">apply now</a>
+                                    <a class="siteBtn apply-now-btn custom-apply-now" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>,<?php echo get_company_sms_status($value['user_sid'])?>)">apply now</a>
                                     <a style="display:none;" id="show_hide<?= $value['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                     <a class="siteBtn showDetail" href="javascript:void(0)">show details</a>
                                 </div>
@@ -198,7 +198,7 @@
                                     <!-- screening questionnaire data ***  END *** -->
                                     <div class="btn-wrap">
                                         <?php echo anchor(job_title_uri($value), "more details", array('class' => 'siteBtn btn-deatil-more')); ?> 
-                                        <a class="siteBtn apply-now-btn custom-apply-now" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>)">apply now</a>
+                                        <a class="siteBtn apply-now-btn custom-apply-now" href="javascript:void(0)" onclick="show_popup(<?= $value['sid'] ?>,<?php echo get_company_sms_status($value['user_sid'])?>)">apply now</a>
                                         <a style="display:none;" id="show_hide<?= $value['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                         <?php //echo anchor("javascript:void(0)","hide details",array('class'=>'siteBtn hideDetail btn-hide'));         ?> 
                                         <a class="siteBtn hideDetail btn-hide" href="javascript:void(0)">hide details</a>
