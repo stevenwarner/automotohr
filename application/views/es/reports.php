@@ -149,25 +149,26 @@
                         <div class="col-sm-4 col-sm-4 col-xs-12">
                             <label class="_csF14">Filter by Department</label>
                             <select id="jsDepartmentFilter" multiple>
-                                <?php foreach (getRoles() as $index => $role) : ?>
-                                    <option value="<?= $index; ?>" <?= !empty($roles) && in_array($index, $roles) ? 'selected' : ''; ?>><?= $role; ?></option>
-                                <?php endforeach; ?>
                             </select>
                         </div>
 
                         <div class="col-sm-4 col-sm-4 col-xs-12">
                             <label class="_csF14">Filter by Gender</label>
                             <select id="jsGenderFilter" multiple>
-                                <option value="1">Test1 </option>
-                                <option value="2">Test2 </option>
+                                <option value="male">Males </option>
+                                <option value="female">Female </option>
+                                <option value="other">Other </option>
                             </select>
                         </div>
 
                         <div class="col-sm-4 col-sm-4 col-xs-12">
                             <label class="_csF14">Filter Tenure Band</label>
                             <select id="jsTenureFilter" multiple>
-                                <option value="1">Team1</option>
-                                <option value="2">Team2</option>
+                                <option value="1">Less then 3 months</option>
+                                <option value="2">3-6 months</option>
+                                <option value="2">6-12 months</option>
+                                <option value="2">1-2 years</option>
+                                <option value="2">6-10 years</option>
                             </select>
                         </div>
 
@@ -217,13 +218,9 @@
                                 <div class="panel-heading">
                                     <p class="_csF14 "><b>Overall Score per Question</b></p>
                                 </div>
-                                <div class="panel-body">
-                                    <div class="col-sm-12 col-sm-12 col-xs-12 csline"> 1 sdfsd sdfsdfsdfsdf s<span class="_csFloatRight">10%</span></div>
-                                    <div class="col-sm-12 col-sm-12 col-xs-12 csline"> 2 sdfsd sdfsdfsdfsdf s <span class="_csFloatRight">10%</span></div>
-                                    <div class="col-sm-12 col-sm-12 col-xs-12 "> 3 sdfsd sdfsdfsdfsdf s<span class="_csFloatRight">10%</span></div>
+                                <div class="panel-body" id="jsOverallScorePerQuestion">
 
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -242,9 +239,7 @@
                                         <div class="col-sm-4 col-sm-4 col-xs-12">
                                             <label class="_csF12">Department</label>
                                             <select id="jsDepartmentFilter2" multiple>
-                                                <?php foreach (getRoles() as $index => $role) : ?>
-                                                    <option value="<?= $index; ?>" <?= !empty($roles) && in_array($index, $roles) ? 'selected' : ''; ?>><?= $role; ?></option>
-                                                <?php endforeach; ?>
+
                                             </select>
                                         </div>
                                     </div>
@@ -340,67 +335,68 @@
                                                 }]
                                             });
                                         </script>
+                                    </figure>
+
+                                    <hr>
 
 
-                                        <hr>
-
-
-                                        <span>Question 2 <br>
-                                            testing question111 dfgdfg dfg
-                                        </span>
-                                        <figure class="highcharts-figureresponse">
-                                            <div id="barchart2" style="height: 95px;"></div>
-                                            <script>
-                                                Highcharts.chart('barchart2', {
-                                                    chart: {
-                                                        type: 'bar'
-                                                    },
-                                                    credits: {
-                                                        enabled: false
-                                                    },
-                                                    exporting: {
-                                                        enabled: false
-                                                    },
+                                    <span>Question 2 <br>
+                                        testing question111 dfgdfg dfg
+                                    </span>
+                                    <figure class="highcharts-figureresponse">
+                                        <div id="barchart2" style="height: 95px;"></div>
+                                        <script>
+                                            Highcharts.chart('barchart2', {
+                                                chart: {
+                                                    type: 'bar'
+                                                },
+                                                credits: {
+                                                    enabled: false
+                                                },
+                                                exporting: {
+                                                    enabled: false
+                                                },
+                                                title: {
+                                                    text: ''
+                                                },
+                                                xAxis: {
+                                                    categories: ['']
+                                                },
+                                                yAxis: {
+                                                    min: 0,
+                                                    max:100,
                                                     title: {
-                                                        text: ''
-                                                    },
-                                                    xAxis: {
-                                                        categories: ['']
-                                                    },
-                                                    yAxis: {
-                                                        min: 0,
-                                                        title: {
-                                                            text: 'Percentage of respondents.'
-                                                        }
-                                                    },
-                                                    legend: {
-                                                        reversed: true
-                                                    },
-                                                    plotOptions: {
-                                                        series: {
-                                                            stacking: 'normal'
-                                                        }
+                                                        text: 'Percentage of respondents.'
+                                                    }
+                                                },
+                                                legend: {
+                                                    reversed: true
+                                                },
+                                                plotOptions: {
+                                                    series: {
+                                                        stacking: 'normal'
+                                                    }
 
-                                                    },
-                                                    series: [{
-                                                        showInLegend: false,
-                                                        name: 'Disagree',
-                                                        color: '#000000',
-                                                        data: [4]
-                                                    }, {
-                                                        showInLegend: false,
-                                                        name: 'Neutral',
-                                                        data: [5]
-                                                    }, {
-                                                        showInLegend: false,
-                                                        name: 'Agree',
-                                                        color: '#fd7a2a',
-                                                        data: [8]
-                                                    }]
-                                                });
-                                            </script>
+                                                },
+                                                series: [{
+                                                    showInLegend: false,
+                                                    name: 'Disagree',
+                                                    color: '#000000',
+                                                    data: [14]
+                                                }, {
+                                                    showInLegend: false,
+                                                    name: 'Neutral',
+                                                    data: [68]
+                                                }, {
+                                                    showInLegend: false,
+                                                    name: 'Agree',
+                                                    color: '#fd7a2a',
+                                                    data: [18]
+                                                }]
+                                            });
+                                        </script>
 
-                                        </figure>
+                                    </figure>
                                 </div>
 
                             </div>
@@ -412,139 +408,3 @@
         </div>
     </div>
 </div>
-
-
-<script>
-    //
-    $('#jsDepartmentFilter').select2({
-        closeOnSelect: false
-    });
-    $('#jsGenderFilter').select2({
-        closeOnSelect: false
-    });
-    $('#jsTenureFilter').select2({
-        closeOnSelect: false
-    });
-
-    $('#jsDepartmentFilter2').select2({
-        closeOnSelect: false
-    });
-
-    // Charts Data
-
-    var gaugeOptions = {
-        chart: {
-            type: 'solidgauge'
-        },
-
-        title: null,
-
-        pane: {
-            center: ['50%', '85%'],
-            size: '140%',
-            startAngle: -90,
-            endAngle: 90,
-            background: {
-                backgroundColor: Highcharts.defaultOptions.legend.backgroundColor || '#EEE',
-                innerRadius: '60%',
-                outerRadius: '100%',
-                shape: 'arc'
-            }
-        },
-
-        exporting: {
-            enabled: false
-        },
-
-        tooltip: {
-            enabled: false
-        },
-
-        // the value axis
-        yAxis: {
-            stops: [
-                [0.1, '#fd7a2a'], // green
-
-            ],
-            lineWidth: 0,
-            tickWidth: 0,
-            minorTickInterval: null,
-            tickAmount: 2,
-            title: {
-                y: -70
-            },
-            labels: {
-                y: 16
-            }
-        },
-
-        plotOptions: {
-            solidgauge: {
-                dataLabels: {
-                    y: 5,
-                    borderWidth: 0,
-                    useHTML: true
-                }
-            }
-        }
-    };
-
-    // The speed gauge
-    var chartSpeed = Highcharts.chart('surveyresults', Highcharts.merge(gaugeOptions, {
-        yAxis: {
-            min: 0,
-            max: 200,
-            title: {
-                text: ''
-            }
-        },
-
-        credits: {
-            enabled: false
-        },
-
-        series: [{
-            name: 'Speed',
-            data: [80],
-            dataLabels: {
-                format: '<div style="text-align:center">' +
-                    '<span style="font-size:25px">{y}</span><br/>' +
-                    '<span style="font-size:12px;opacity:0.4">Score</span>' +
-                    '</div>'
-            },
-            tooltip: {
-                valueSuffix: 'Score'
-            }
-        }]
-
-    }));
-
-
-
-
-    //Response Rate 
-    const chart = Highcharts.chart('container', {
-        title: {
-            text: ''
-        },
-        credits: {
-            enabled: false
-        },
-        exporting: {
-            enabled: false
-        },
-        subtitle: {
-            text: ''
-        },
-        xAxis: {
-            categories: ['company1', 'company2']
-        },
-        series: [{
-            type: 'column',
-            name: '',
-            colorByPoint: false,
-            data: [10, 100],
-            showInLegend: false
-        }]
-    });
-</script>

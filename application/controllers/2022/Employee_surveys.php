@@ -188,6 +188,11 @@ class Employee_surveys extends Public_Controller
         $data['load_view'] = 1;
         $data['session'] = $this->session->userdata('logged_in');
         $data['employee'] = $data['session']['employer_detail'];
+        $data['survey_id'] = $survey_id;
+        //
+        $data['PageScripts'] = [
+            'employee_survey/js/report'
+        ];
         //
         $this->load
             ->view($this->pages['header'], $data)
