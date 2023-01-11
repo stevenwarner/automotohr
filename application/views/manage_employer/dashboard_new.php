@@ -552,7 +552,6 @@
                                                         <a href="<?php echo base_url('attendance'); ?>" class="site-btn">Manage</a>
                                                     </div>
                                                 </div>
-                                                <span class="beta-label">beta</span>
                                             </div>
                                         </div>
                                     <?php } ?>
