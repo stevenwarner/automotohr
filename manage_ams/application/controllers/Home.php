@@ -1146,7 +1146,7 @@ class Home extends CI_Controller
                                     return redirect( $redirecturl, 'refresh');
                                 }
                                 //
-                                $gr = verifyCaptcha($formpost['g-recaptcha-response']);
+                                $gr = verifyCaptcha(getCreds('AHR')->GOOGLE_CAPTCHA_API_SECRET_V2,$formpost['g-recaptcha-response']);
                                 //
                                 if (!$gr['success']) {
                                     $this->session->set_flashdata('message', '<strong>Error: </strong>Failed to verify captcha.');
