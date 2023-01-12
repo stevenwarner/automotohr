@@ -11411,74 +11411,79 @@ if (!function_exists('isDocumentCompleted')) {
             //
             if (!$is_magic_tag_exist) $is_magic_tag_exist = preg_match('/<select(.*?)>/', $document['document_description']);
             $is_document_completed = 0;
-            //
-            if ($document['acknowledgment_required'] || $document['download_required'] || $document['signature_required'] || $is_magic_tag_exist) {
-
-                if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1 && $document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1) {
-                    if ($is_magic_tag_exist == 1) {
+            // Check for uploaded manual dcoument
+            if($document['document_sid'] == 0) {
+                $is_document_completed = 1;
+            } else {
+                //
+                if ($document['acknowledgment_required'] || $document['download_required'] || $document['signature_required'] || $is_magic_tag_exist) {
+    
+                    if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1 && $document['signature_required'] == 1) {
                         if ($document['uploaded'] == 1) {
                             $is_document_completed = 1;
                         } else {
                             $is_document_completed = 0;
                         }
-                    } else if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else if ($document['acknowledged'] == 1 && $document['downloaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
+                    } else if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1) {
+                        if ($is_magic_tag_exist == 1) {
+                            if ($document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($document['acknowledged'] == 1 && $document['downloaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['acknowledgment_required'] == 1 && $document['signature_required'] == 1) {
+                        if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['download_required'] == 1 && $document['signature_required'] == 1) {
+                        if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['acknowledgment_required'] == 1) {
+                        if ($document['acknowledged'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['download_required'] == 1) {
+                        if ($document['downloaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['signature_required'] == 1) {
+                        if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($is_magic_tag_exist == 1) {
+                        if ($document['user_consent'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
                     }
-                } else if ($document['acknowledgment_required'] == 1 && $document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
+    
+                    if ($is_document_completed == 0) {
+                        unset($documents[$k0]);
+                        continue;
                     }
-                } else if ($document['download_required'] == 1 && $document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['acknowledgment_required'] == 1) {
-                    if ($document['acknowledged'] == 1) {
-                        $is_document_completed = 1;
-                    } else if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['download_required'] == 1) {
-                    if ($document['downloaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($is_magic_tag_exist == 1) {
-                    if ($document['user_consent'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                }
-
-                if ($is_document_completed == 0) {
-                    unset($documents[$k0]);
-                    continue;
                 }
             }
         }
