@@ -11410,10 +11410,15 @@ if (!function_exists('isDocumentCompleted')) {
             $is_magic_tag_exist = preg_match('/{{(.*?)}}/', $document['document_description']) ? true : false;
             //
             if (!$is_magic_tag_exist) $is_magic_tag_exist = preg_match('/<select(.*?)>/', $document['document_description']);
+            //
             $is_document_completed = 0;
+            //
+            if (str_replace('/'.(EFFECT_MAGIC_CODES).'/i', '', $document['document_description']) != $document['document_description']) {
+                $is_magic_tag_exist = 1;
+            }
             // Check for uploaded manual dcoument
             if($document['document_sid'] == 0) {
-                $is_document_completed = 1;
+                continue;
             } else {
                 //
                 if ($document['acknowledgment_required'] || $document['download_required'] || $document['signature_required'] || $is_magic_tag_exist) {

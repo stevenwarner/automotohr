@@ -634,7 +634,7 @@ word-break: break-all;
                 getSubmittedDocument(dct);
             } else {
                 //
-                if (dct.document_sid == 0) {
+                if (dct.document_sid == '0') {
                     obj = {
                         title: dct.document_title,
                         orig_filename: dct.document_original_name,

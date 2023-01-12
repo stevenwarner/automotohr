@@ -671,3 +671,7 @@ define('TIMEOFF_THEME_TWO', 2);
  * Employee survey constants
  */
 define('EMPLOYEE_SURVEYS', 'employeesurvey');
+
+
+// Holds the EFFECT MAGIC CODES
+define('EFFECT_MAGIC_CODES', '{{signature}}|{{inital}}');
