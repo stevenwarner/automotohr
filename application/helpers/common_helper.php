@@ -11413,7 +11413,9 @@ if (!function_exists('isDocumentCompleted')) {
             //
             $is_document_completed = 0;
             //
-            if (str_replace('/'.(EFFECT_MAGIC_CODES).'/i', '', $document['document_description']) != $document['document_description']) {
+            $is_magic_tag_exist = 0;
+            //
+            if (str_replace(EFFECT_MAGIC_CODE_LIST, '', $document['document_description']) != $document['document_description']) {
                 $is_magic_tag_exist = 1;
             }
             // Check for uploaded manual dcoument

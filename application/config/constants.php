@@ -674,4 +674,4 @@ define('EMPLOYEE_SURVEYS', 'employeesurvey');
 
 
 // Holds the EFFECT MAGIC CODES
-define('EFFECT_MAGIC_CODES', '{{signature}}|{{inital}}');
+define('EFFECT_MAGIC_CODE_LIST', ['{{signature}}', '{{inital}}']);
