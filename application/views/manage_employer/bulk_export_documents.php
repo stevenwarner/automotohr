@@ -936,7 +936,7 @@ word-break: break-all;
             //
             r += ' [';
             //
-            if (typeof(o['is_executive_admin']) !== undefined && o['is_executive_admin'] != 0) r += 'Executive ';
+            if (o.hasOwnProperty('is_executive_admin') && o['is_executive_admin'] != 0) r += 'Executive ';
             //
             if (o['access_level_plus'] == 1 && o['pay_plan_flag'] == 1) r += o['access_level'] + ' Plus / Payroll';
             else if (o['access_level_plus'] == 1) r += o['access_level'] + ' Plus';
