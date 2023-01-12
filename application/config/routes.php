@@ -834,6 +834,10 @@ $route['eeo/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3';
 $route['eeo/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4';
 $route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4/$5';
 $route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4/$5/$6';
+$route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4/$5/$6/$7';
+$route['eeo/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/index/$1/$2/$3/$4/$5/$6/$7/$8';
+
+
 $route['EEOC/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2';
 $route['EEOC/(:any)/(:any)/(:any)'] = 'eeo/EEOC_form/$1/$2/$3';
 
@@ -1238,7 +1242,7 @@ $route['general_info/(:any)'] = 'general_info/index/$1';
  * @employee: Mubashir Ahmed
  * @date: 10/20/2020 
  * @desc: Modify document categories
- * */ 
+ * */
 $route['category_manager/(:any)'] = 'Hr_documents_management/categoryManager/$1';
 $route['category_manager/(:any)/(:any)'] = 'Hr_documents_management/categoryManager/$1/$2';
 $route['category_manager/(:any)/(:any)/(:any)'] = 'Hr_documents_management/categoryManager/$1/$2/$3';
@@ -1246,7 +1250,7 @@ $route['category_manager/(:any)/(:any)/(:any)'] = 'Hr_documents_management/categ
  * @employee: Mubashir Ahmed
  * @date: 10/29/2020 
  * @desc: Scheduled documents
- * */ 
+ * */
 $route['scheduled_documents'] = 'Hr_documents_management/scheduled_documents';
 $route['scheduled_documents/(:any)'] = 'Hr_documents_management/get_scheduled_documents/$1';
 
@@ -1607,9 +1611,9 @@ $route['employee/surveys/create/(:num)/([a-z]+)']['get'] = '2022/Employee_survey
 $route['employee/surveys/surveys/(:num)']['get'] = '2022/Employee_surveys/companysurveys/$1';
 $route['employee/surveys/surveys/(:num)/(:num)/(:num)']['get'] = '2022/Employee_surveys/surveyfeedback/$1/$2/$3';
 
-$route['employee/surveys/settings']= '2022/Employee_surveys/settings';
-$route['employee/surveys/reports']= '2022/Employee_surveys/reports';
-$route['employee/surveys/faqs']= '2022/Employee_surveys/faqs';
+$route['employee/surveys/settings'] = '2022/Employee_surveys/settings';
+$route['employee/surveys/reports'] = '2022/Employee_surveys/reports';
+$route['employee/surveys/faqs'] = '2022/Employee_surveys/faqs';
 
 
 

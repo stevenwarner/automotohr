@@ -259,13 +259,20 @@ class eeo_model extends CI_Model
     }
 
 
-    function get_all_eeo_employees($keyword, $opt_status, $start_date, $end_date, $company_id, $records_per_page = null, $my_offset = 0, $count_only = false, $type)
+    function get_all_eeo_employees($keyword, $opt_status, $start_date, $end_date, $company_id, $records_per_page = null, $my_offset = 0, $count_only = false, $type, $gender, $employeespenttime)
     {
 
-        $employes_records = $this->fetch_company_employees($company_id, $type);
+        $employes_records = $this->fetch_company_employees($company_id, $type, $gender, $employeespenttime);
 
         foreach ($employes_records as $ekey => $employees) {
             $employee_eeoc = $this->db->where('users_type', 'employee')->where("application_sid", $employees['sid'])->where("gender!=", '')->get('portal_eeo_form')->row();
+
+            $toDate = date('Y-m-d');
+            $employeeSpentTime = '';
+            if ($employees['joined_at'] != '') {
+                $employeeSpentTime = $this->getDifInDate($employees['joined_at'], $toDate);
+            }
+
             if ($opt_status == "all") {
                 if (!empty($employee_eeoc)) {
                     $employes_records[$ekey]['us_citizen'] = $employee_eeoc->us_citizen;
@@ -275,28 +282,34 @@ class eeo_model extends CI_Model
                     $employes_records[$ekey]['disability'] = $employee_eeoc->disability;
                     $employes_records[$ekey]['gender'] = $employee_eeoc->gender;
                     $employes_records[$ekey]['date_applied'] = $employee_eeoc->last_sent_at;
-                    $employes_records[$ekey]['applicant_type'] ='Employee';
-                    
-                    if($employee_eeoc->gender!=''){
+                    $employes_records[$ekey]['applicant_type'] = 'Employee';
+                    $employes_records[$ekey]['job_title'] = $employees['job_title'];
+                    $employes_records[$ekey]['hourly_rate'] = $employees['hourly_rate'];
+                    $employes_records[$ekey]['number_of_years_with_company'] = $employeeSpentTime;
+                    $employes_records[$ekey]['state_name'] = $employees['state_name'];
+
+                    if ($employee_eeoc->gender != '') {
                         $employes_records[$ekey]['eeo_form'] = 'Yes';
-                    }else{
+                    } else {
                         $employes_records[$ekey]['eeo_form'] = 'No';
                     }
-                    
                 } else {
                     $employes_records[$ekey]['us_citizen'] = "";
                     $employes_records[$ekey]['visa_status'] = "";
                     $employes_records[$ekey]['group_status'] = "";
                     $employes_records[$ekey]['veteran'] = "";
                     $employes_records[$ekey]['disability'] = "";
-                    $employes_records[$ekey]['gender'] = "";
-                    $employes_records[$ekey]['date_applied'] = '';
+                    $employes_records[$ekey]['gender'] = $employees['gender'];
+                    $employes_records[$ekey]['date_applied'] = $employees['joined_at'];
                     $employes_records[$ekey]['eeo_form'] = 'No';
-                    $employes_records[$ekey]['applicant_type'] ='Employee';
-                    
+                    $employes_records[$ekey]['applicant_type'] = 'Employee';
+
+                    $employes_records[$ekey]['job_title'] = $employees['job_title'];
+                    $employes_records[$ekey]['hourly_rate'] = $employees['hourly_rate'];
+                    $employes_records[$ekey]['number_of_years_with_company'] = $employeeSpentTime;
+                    $employes_records[$ekey]['state_name'] = $employees['state_name'];
                 }
             } else if ($opt_status == "completed") {
-
                 if (!empty($employee_eeoc)) {
 
                     $employes_records[$ekey]['us_citizen'] = $employee_eeoc->us_citizen;
@@ -307,8 +320,11 @@ class eeo_model extends CI_Model
                     $employes_records[$ekey]['gender'] = $employee_eeoc->gender;
                     $employes_records[$ekey]['date_applied'] = $employee_eeoc->last_sent_at;
                     $employes_records[$ekey]['eeo_form'] = 'Yes';
-                    $employes_records[$ekey]['applicant_type'] ='Employee';
-                    
+                    $employes_records[$ekey]['applicant_type'] = 'Employee';
+                    $employes_records[$ekey]['job_title'] = $employees['job_title'];
+                    $employes_records[$ekey]['hourly_rate'] = $employees['hourly_rate'];
+                    $employes_records[$ekey]['number_of_years_with_company'] = $employeeSpentTime;
+                    $employes_records[$ekey]['state_name'] = $employees['state_name'];
                 } else {
                     unset($employes_records[$ekey]);
                 }
@@ -322,30 +338,57 @@ class eeo_model extends CI_Model
                     $employes_records[$ekey]['group_status'] = "";
                     $employes_records[$ekey]['veteran'] = "";
                     $employes_records[$ekey]['disability'] = "";
-                    $employes_records[$ekey]['gender'] = "";
-                    $employes_records[$ekey]['date_applied'] = '';
+                    $employes_records[$ekey]['gender'] = $employees['gender'];
+                    $employes_records[$ekey]['date_applied'] = $employees['joined_at'];
                     $employes_records[$ekey]['eeo_form'] = 'No';
-                    $employes_records[$ekey]['applicant_type'] ='Employee';
+                    $employes_records[$ekey]['applicant_type'] = 'Employee';
+                    $employes_records[$ekey]['job_title'] = $employees['job_title'];
+                    $employes_records[$ekey]['hourly_rate'] = $employees['hourly_rate'];
+                    $employes_records[$ekey]['number_of_years_with_company'] = $employeeSpentTime;
+                    $employes_records[$ekey]['state_name'] = $employees['state_name'];
                 }
             }
         }
-     
+
         return $employes_records;
     }
 
-
-
-
-    function fetch_company_employees($company_sid, $type)
+    function fetch_company_employees($company_sid, $type, $gender, $employeespenttime)
     {
-
-        $this->db->select('sid, first_name, last_name, access_level_plus, pay_plan_flag, job_title, access_level, is_executive_admin, concat(first_name," ",last_name) as employee_name, applicant_sid');
+        $this->db->select('users.sid, users.first_name, users.last_name, users.access_level_plus, users.pay_plan_flag, users.job_title, users.access_level, users.is_executive_admin, concat(users.first_name," ",users.last_name) as employee_name , DATEDIFF(now(),users.joined_at) AS DateDiff , users.applicant_sid,users.gender,users.job_title,users.hourly_rate,users.joined_at,states.state_name');
+        $this->db->join('states', 'states.sid = users.Location_State', 'left');
         $this->db->where('parent_sid', $company_sid);
+
         if ($type == "active") {
-            $this->db->where('terminated_status', 0);
-            $this->db->where('active', 1);
+            $this->db->where('users.terminated_status', 0);
+            $this->db->where('users.active', 1);
         } else if ($type == "inactive") {
-            $this->db->where('active', 0);
+            $this->db->where('users.active', 0);
+        }
+
+        if ($gender != "all") {
+            $this->db->where('users.gender', $gender);
+        }
+
+        if ($employeespenttime != "all") {
+            $yearMondDays = 0;
+            if ($employeespenttime == '6month') {
+                $yearMondDays = 365 / 2;
+            }
+
+            if ($employeespenttime == '1year') {
+                $yearMondDays = 365;
+            }
+            if ($employeespenttime == '2year') {
+                $yearMondDays = 365 * 2;
+            }
+            if ($employeespenttime == '5year') {
+                $yearMondDays = 365 * 5;
+            }
+            //
+            if ($yearMondDays != 0) {
+                $this->db->where('DATEDIFF(now(),users.joined_at) <= ', $yearMondDays);
+            }
         }
 
         $this->db->order_by('employee_name', 'ASC');
@@ -354,11 +397,8 @@ class eeo_model extends CI_Model
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
 
-        if (!empty($record_arr)) {
-            return $record_arr;
-        } else {
-            return array();
-        }
+        //
+        return $record_arr;
     }
 
 
@@ -369,14 +409,14 @@ class eeo_model extends CI_Model
         $this->db->select('portal_applicant_jobs_list.sid as application_list_sid');
         $this->db->select('portal_applicant_jobs_list.job_sid');
         $this->db->select('portal_applicant_jobs_list.eeo_form');
-     //   $this->db->select('portal_applicant_jobs_list.date_applied');
-    //    $this->db->select('portal_applicant_jobs_list.ip_address');
-     //   $this->db->select('portal_applicant_jobs_list.applicant_source');
-      //  $this->db->select('portal_applicant_jobs_list.applicant_type');
-     //   $this->db->select('portal_applicant_jobs_list.desired_job_title');
-     //   $this->db->select('portal_job_applications.sid as applicant_sid');
-    //    $this->db->select('portal_job_applications.first_name');
-       // $this->db->select('portal_job_applications.last_name');
+        //   $this->db->select('portal_applicant_jobs_list.date_applied');
+        //    $this->db->select('portal_applicant_jobs_list.ip_address');
+        //   $this->db->select('portal_applicant_jobs_list.applicant_source');
+        //  $this->db->select('portal_applicant_jobs_list.applicant_type');
+        //   $this->db->select('portal_applicant_jobs_list.desired_job_title');
+        //   $this->db->select('portal_job_applications.sid as applicant_sid');
+        //    $this->db->select('portal_job_applications.first_name');
+        // $this->db->select('portal_job_applications.last_name');
 
         $this->db->select('portal_eeo_form.*, count(portal_eeo_form.gender) as eeogender');
 
@@ -405,21 +445,21 @@ class eeo_model extends CI_Model
             $this->db->where('portal_applicant_jobs_list.eeo_form', $opt_status);
             // $this->db->where('portal_applicant_jobs_list.eeo_form', 'Yes');
         }
-        
+
         $this->db->group_by('portal_eeo_form.gender');
         $this->db->order_by('portal_applicant_jobs_list.sid', 'DESC');
-     
+
 
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
         $this->db->join('portal_eeo_form', 'portal_applicant_jobs_list.sid = portal_eeo_form.portal_applicant_jobs_list_sid', 'left');
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
         $this->db->from('portal_applicant_jobs_list');
 
-        
-            $record_obj = $this->db->get();
-            $record_arr = $record_obj->result_array();
-            $record_obj->free_result();
-        
+
+        $record_obj = $this->db->get();
+        $record_arr = $record_obj->result_array();
+        $record_obj->free_result();
+
 
         //my_print_r($this->db->last_query(), '39.42.6.226');
 
@@ -427,4 +467,23 @@ class eeo_model extends CI_Model
     }
 
 
+
+
+    function getDifInDate($fromDate, $toDate)
+    {
+
+        $diff = abs(strtotime($toDate) - strtotime($fromDate));
+
+        $years = floor($diff / (365 * 60 * 60 * 24));
+        $months = floor(($diff - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
+        $days = floor(($diff - $years * 365 * 60 * 60 * 24 - $months * 30 * 60 * 60 * 24) / (60 * 60 * 24));
+        $timeDuration = '';
+        if ($years >= 1) {
+            $timeDuration .= $years . " Years ";
+        }
+        if ($months >= 1) {
+            $timeDuration .= $months . " Months";
+        }
+        return $timeDuration;
+    }
 }

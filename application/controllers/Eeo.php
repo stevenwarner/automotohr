@@ -12,7 +12,7 @@ class Eeo extends Public_Controller
         $this->load->library('pagination');
     }
 
-    public function index($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null, $page = null)
+    public function index($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null, $gender = null, $employeespenttime = null, $page = null)
     {
 
         if ($this->session->userdata('logged_in')) {
@@ -47,9 +47,9 @@ class Eeo extends Public_Controller
 
             $records_per_page = 5; //PAGINATION_RECORDS_PER_PAGE;
             if ($keyword == 'employee') {
-                $page = ($this->uri->segment(7)) ? $this->uri->segment(7) : 0;
+                $page = ($this->uri->segment(9)) ? $this->uri->segment(9) : 0;
             } else {
-                $page = ($this->uri->segment(6)) ? $this->uri->segment(6) : 0;
+                $page = ($this->uri->segment(8)) ? $this->uri->segment(8) : 0;
             }
 
             $my_offset = 0;
@@ -114,9 +114,10 @@ class Eeo extends Public_Controller
                 $eeo_candidates = '';
 
                 $segement6 = '/' . $employee_status;
-                $uri_segment = 7;
-
-                $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
+                $segement7 = '/' . $gender;
+                $segement8 = '/' . $employeespenttime;
+                $uri_segment = 9;
+                $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status, $gender, $employeespenttime);
                 $total_records = count($eeo_candidates);
 
                 foreach ($eeo_candidates as $employee_row) {
@@ -235,7 +236,7 @@ class Eeo extends Public_Controller
                 $data['recordsfor'] = 'Employees';
             } else {
                 $segement6 = '';
-                $uri_segment = 6;
+                $uri_segment = 7;
                 $total_records = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, true);
                 $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset);
 
@@ -309,7 +310,6 @@ class Eeo extends Public_Controller
                                     $notdefined_cout_nogroup++;
                                 }
                             }
-
                         } else {
                             if ($eeo_detail['gender'] == 'Male') {
                                 $male_cout++;
@@ -371,7 +371,7 @@ class Eeo extends Public_Controller
                             }
                         }
                     }
-                }    
+                }
 
                 $data['totalrecords'] = $total_records;
                 $data['recordsfor'] = 'Applicants';
@@ -380,7 +380,7 @@ class Eeo extends Public_Controller
 
             $start_date = DateTime::createFromFormat('Y-m-d H:i:s', $start_date)->format('m-d-Y');
             $end_date = DateTime::createFromFormat('Y-m-d H:i:s', $end_date)->format('m-d-Y');
-            $baseUrl = base_url('eeo') . '/' . urlencode($keyword) . '/' . $opt_type . '/' . urlencode($start_date) . '/' . urlencode($end_date) . $segement6;
+            $baseUrl = base_url('eeo') . '/' . urlencode($keyword) . '/' . $opt_type . '/' . urlencode($start_date) . '/' . urlencode($end_date) . $segement6 . $segement7 . $segement8;
 
             $config = array();
             $config['base_url'] = $baseUrl;
@@ -423,6 +423,8 @@ class Eeo extends Public_Controller
             $data['enddate'] = $display_end_day;
             $data['opt_type'] = $opt_type;
             $data['employee_status'] = $employee_status;
+            $data['gender'] = $gender;
+            $data['employeespenttime'] = $employeespenttime;
 
             $data['male_cout'] = $male_cout;
             $data['female_cout'] = $female_cout;
@@ -536,7 +538,7 @@ class Eeo extends Public_Controller
                 $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, null, 0, false);
 
                 if (!empty($eeo_candidates)) {
-                   foreach ($eeo_candidates as $key => $eeo_detail) {
+                    foreach ($eeo_candidates as $key => $eeo_detail) {
                         if (empty($eeo_detail["gender"])) {
                             $eeoc_form = $this->eeo_model->get_user_eeo_form_info($eeo_detail["applicant_sid"], "applicant");
                             //
@@ -546,11 +548,9 @@ class Eeo extends Public_Controller
                             $eeo_candidates[$key]["veteran"] = $eeoc_form['veteran'];
                             $eeo_candidates[$key]["disability"] = $eeoc_form['disability'];
                             $eeo_candidates[$key]["gender"] = $eeoc_form['gender'];
-
                         }
-                    } 
+                    }
                 }
-                
             }
 
 

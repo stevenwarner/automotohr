@@ -58,11 +58,11 @@
                                                     <label for="enddate">Opt Type</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="opt_type1" id="opt_type1">
-                                                            <!-- <option value="all" <?php //echo $opt_type == 'all' ? 'selected="selected"' : "" 
-                                                                                        ?>>All</option>-->
+                                                            <option value="all" <?php echo $opt_type == 'all' ? 'selected="selected"' : ""
+                                                                                ?>>All</option>
                                                             <option value="completed" <?php echo $opt_type == 'completed' ? 'selected="selected"' : "" ?>>Completed</option>
-                                                            <!---<option value="notcompleted" <?php //echo $opt_type == 'notcompleted' ? 'selected="selected"' : "" 
-                                                                                                ?>>Not completed</option>-->
+                                                            <option value="notcompleted" <?php echo $opt_type == 'notcompleted' ? 'selected="selected"' : ""
+                                                                                            ?>>Not completed</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -93,31 +93,51 @@
                                             </div>
                                         </div>
                                         <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3" id="div_opt_type_space"></div>
-                                        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
-                                            <div class="report-btns">
-                                                <div class="row">
-                                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                                        <button type="button" class="form-btn" onclick="fclearDateFilters();">Clear Filter</button>
-                                                    </div>
-                                                </div>
+
+
+                                        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3" id="div_employee_gender">
+                                            <label for="enddate">Gender</label>
+                                            <div class="hr-select-dropdown">
+                                                <select class="invoice-fields" name="gender" id="gender">
+                                                    <option value="all" <?php echo $gender == 'all' ? 'selected="selected"' : "" ?>>All</option>
+                                                    <option value="male" <?php echo $gender == 'male' ? 'selected="selected"' : "" ?>>Male</option>
+                                                    <option value="female" <?php echo $gender == 'female' ? 'selected="selected"' : "" ?>>Female</option>
+                                                    <option value="other" <?php echo $gender == 'other' ? 'selected="selected"' : "" ?>>Other</option>
+                                                </select>
                                             </div>
                                         </div>
 
-                                        <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                        <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3" id="div_employee_spenttime">
+                                            <label for="enddate">Number Of Years </label>
+                                            <div class="hr-select-dropdown">
+                                                <select class="invoice-fields" name="employeespenttime" id="employeespenttime">
+                                                    <option value="all" <?php echo $employeespenttime == 'all' ? 'selected="selected"' : "" ?>>All</option>
+                                                    <option value="6month" <?php echo $employeespenttime == '6month' ? 'selected="selected"' : "" ?>>Less Than 6 Month</option>
+                                                    <option value="1year" <?php echo $employeespenttime == '1year' ? 'selected="selected"' : "" ?>>1 Yesr </option>
+                                                    <option value="2year" <?php echo $employeespenttime == '2year' ? 'selected="selected"' : "" ?>>2 Years </option>
+                                                    <option value="5year" <?php echo $employeespenttime == '5year' ? 'selected="selected"' : "" ?>>5 Years </option>
+                                                    <option value="5more" <?php echo $employeespenttime == '5more' ? 'selected="selected"' : "" ?>>More Than 5 Years </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                             <div class="report-btns">
                                                 <div class="row">
-                                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+
+                                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
+                                                        <button type="button" class="form-btn" onclick="fclearDateFilters();">Clear Filter</button>
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                                         <button type="submit" class="form-btn">Export CSV</button>
                                                     </div>
-                                                    <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                                                    <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4">
                                                         <button type="button" class="form-btn-orange" onclick="fApplyDateFilters();">Apply Filter</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </form>
-
                                 </div>
                             </div>
                         </div>
@@ -277,9 +297,8 @@
                                             <th>Date</th>
                                             <th>Name</th>
                                             <th>Opt Status</th>
-                                            <th>
-                                                EEO Information
-                                            </th>
+                                            <th> EEO Information</th>
+                                            <th>General Information</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -315,7 +334,7 @@
                                                         <table class="table table-bordered table-condensed table-hover">
                                                             <tbody>
                                                                 <tr>
-                                                                    <th class="col-xs-4">Us Citizen</th>
+                                                                    <th class="col-xs-4">US Citizen</th>
                                                                     <td class="col-xs-8"><?php echo $item['eeo_form'] != null && !empty($item["us_citizen"]) ? $item["us_citizen"] : '<small>Not Available</small>'; ?></td>
                                                                 </tr>
                                                                 <tr>
@@ -338,6 +357,30 @@
                                                                     <th>Gender</th>
                                                                     <td><?php echo $item['eeo_form'] != null && !empty($item["gender"]) ? $item["gender"] : '<small>Not Available</small>'; ?></td>
                                                                 </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+
+                                                    <td>
+                                                        <table class="table table-bordered table-condensed table-hover">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th class="col-xs-4">Job title</th>
+                                                                    <td class="col-xs-8"><?php echo $item['job_title'] != null && !empty($item["job_title"]) ? $item["job_title"] : '<small>Not Available</small>'; ?></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th class="col-xs-4">Pay Rate</th>
+                                                                    <td class="col-xs-8"><?php echo $item['hourly_rate'] != null && !empty($item["hourly_rate"]) ? $item["hourly_rate"] : '<small>Not Available</small>'; ?></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Number Of Years With company</th>
+                                                                    <td><?php echo $item['number_of_years_with_company'] != null && !empty($item["number_of_years_with_company"]) ? $item["number_of_years_with_company"] : '<small>Not Available</small>'; ?></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>State</th>
+                                                                    <td><?php echo $item['state_name'] != null && !empty($item["state_name"]) ? $item["state_name"] : '<small>Not Available</small>'; ?></td>
+                                                                </tr>
+
                                                             </tbody>
                                                         </table>
                                                     </td>
@@ -368,18 +411,18 @@
         </div>
     </div>
 </div>
-<?php //echo '<pre>'; print_r($eeo_candidates);
+<?php 
 ?>
 <script type="text/javascript">
     $(document).ready(function() {
         <?php if ($keyword != 'employee') { ?>
             $('#div_employee').hide();
             $('#div_employee_status').hide();
-            $('#div_opt_type_space').hide();
         <?php } else { ?>
             $('#keyword').hide();
             $('#lblkeyword').hide();
-            $('#div_opt_type').hide();
+            $("#div_opt_type").css("display", "none");
+            $("#div_opt_type_space").css("display", "none");
 
         <?php } ?>
 
@@ -430,6 +473,9 @@
         var eeo_form_candidates = $('input[name="applicantoption"]:checked').val();
 
         var employee_status = $('#employee_status').val();
+        var gender = $('#gender').val();
+        var employeespenttime = $('#employeespenttime').val();
+
 
         if (eeo_form_candidates == 'employee') {
             keyword = 'employee';
@@ -442,11 +488,15 @@
         startDate = startDate != '' && startDate != null && startDate != undefined ? encodeURIComponent(startDate) : 'all';
         endDate = endDate != '' && endDate != null && endDate != undefined ? encodeURIComponent(endDate) : 'all';
         opt_type = opt_type != '' && opt_type != null && opt_type != undefined ? encodeURIComponent(opt_type) : 'all';
+        gender = gender != '' && gender != null && gender != undefined ? encodeURIComponent(gender) : 'all';
+        employeespenttime = employeespenttime != '' && employeespenttime != null && employeespenttime != undefined ? encodeURIComponent(employeespenttime) : 'all';
+
+
 
         if (eeo_form_candidates == 'employee') {
-            url += '/' + keyword + '/' + opt_type + '/' + startDate + '/' + endDate + '/' + employee_status
+            url += '/' + keyword + '/' + opt_type + '/' + startDate + '/' + endDate + '/' + employee_status + '/' + gender + '/' + employeespenttime
         } else {
-            url += '/' + keyword + '/' + opt_type + '/' + startDate + '/' + endDate + '/'
+            url += '/' + keyword + '/' + opt_type + '/' + startDate + '/' + endDate + '/' + gender + '/' + employeespenttime
         }
 
         //console.log(url);
@@ -502,10 +552,11 @@
     $('#employee').on('click', function() {
         $('#keyword').hide();
         $('#lblkeyword').hide();
-        $('#div_opt_type').hide();
+        $("#div_opt_type").css("display", "none");
+
+
         $('#div_employee').show();
         $('#div_employee_status').show();
-        $('#div_opt_type_space').show();
     });
 </script>
 
