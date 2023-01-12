@@ -12519,7 +12519,7 @@ class Hr_documents_management extends Public_Controller
             $dt = ROOTPATH . 'temp_files/employee_export/' . $download_file;
             //
             if (is_dir($dt)) {
-                unlink($dr);
+                unlink($dt);
             }
             //
             shell_exec("cd $dir; zip -r $dt *");
