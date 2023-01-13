@@ -460,7 +460,7 @@ class Users_model extends CI_Model {
             $address .= !empty($companyAddress['state_name']) ? $companyAddress['state_name'] . ', ' : '';
             $address .= !empty($companyAddress['country_name']) ? $companyAddress['country_name'] : '';
             //
-            $address = trim(rtrim($address), ', ');
+            $address = trim(ltrim(rtrim($address, ', '), ', '));
         } else {
             //
             $companyAddress = $this->getCompanyAddressLocation($companyId);

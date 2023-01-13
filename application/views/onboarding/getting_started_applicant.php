@@ -60,6 +60,7 @@
                             <?php
                             //
                             if (empty($locations) && !empty($companyDefaultAddress)) {
+                                $companyDefaultAddress['location_address'] = ltrim($companyDefaultAddress['location_address'], ', ');
                                 $locations[] = $companyDefaultAddress;
                             }
                             $address = '';
