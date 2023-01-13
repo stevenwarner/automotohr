@@ -491,7 +491,7 @@ class Users_model extends CI_Model {
         ->or_like('users.email', $query)
         ->group_end()
         ->limit( $offset, $inset)
-        ->order_by('user_name', 'ASC')
+        ->order_by('first_name', 'ASC')
         ->where_in('users.parent_sid', $executiveCompanyIds, false)
         ->get();
         //
@@ -519,7 +519,7 @@ class Users_model extends CI_Model {
         ->or_like('portal_job_applications.email', $query)
         ->group_end()
         ->limit($offset, $inset)
-        ->order_by('first_name', 'ASC')
+        ->order_by('user_name', 'ASC')
         ->where_in('portal_job_applications.employer_sid', $executiveCompanyIds, false)
         ->where('portal_job_applications.hired_sid IS NULL', NULL)
         ->get();
