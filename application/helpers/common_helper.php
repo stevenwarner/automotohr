@@ -16010,3 +16010,10 @@ if (!function_exists('getCurrentYearHolidaysFromGoogle')) {
         return $ra;
     }
 }
+
+
+if(!function_exists('isDevServer')) {
+    function isDevServer() {
+        return strpos($_SERVER['SERVER_NAME'], '.com') === false ? true : false;
+    }
+}

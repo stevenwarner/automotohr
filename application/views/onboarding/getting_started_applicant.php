@@ -39,7 +39,7 @@
                     <?php if (!empty($onboarding_disclosure)) { ?>
                         <hr>
                         <p><?php echo $onboarding_disclosure; ?></p>
-                    <?php } ?>    
+                    <?php } ?>
                     <!--                    <p>--><?php //echo '<pre>';print_r($company_info);die(); 
                                                     ?>
                     <!--</p>-->
@@ -58,6 +58,10 @@
                         <h2 class="text-blue">Your first day is</h2>
                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 calendar-icon text-right">
                             <?php
+                            //
+                            if (empty($locations) && !empty($companyDefaultAddress)) {
+                                $locations[] = $companyDefaultAddress;
+                            }
                             $address = '';
                             if (!empty($locations)) {
                                 $address = $locations[0]['location_address'];

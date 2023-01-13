@@ -3172,4 +3172,28 @@ class Onboarding_model extends CI_Model
             ->where('general_information_status', 1)
             ->get('notifications_emails_configuration')->count_all_results();
     }
+
+
+    /**
+     * 
+     */
+    public function getPrimaryAddress(
+        int $companyId
+    )
+    {
+        return $this->db
+        ->select(
+            '
+                location_address,
+                location_telephone,
+                location_fax
+            '
+        )
+        ->where([
+            'company_sid' => $companyId,
+            'is_primary' => 1
+        ])
+        ->get('onboarding_office_locations')
+        ->row_array();
+    }
 }
