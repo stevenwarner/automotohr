@@ -552,7 +552,7 @@ class Users_model extends CI_Model {
         //
         if(!empty($employees)){
             foreach($employees as $index => $value){
-                $employees[$index]['username'] = remakeEmployeeName($value);
+                $employees[$index]['user_name'] = remakeEmployeeName($value);
             }
         }
         //
