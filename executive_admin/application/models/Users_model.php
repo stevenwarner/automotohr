@@ -474,6 +474,10 @@ class Users_model extends CI_Model {
             users.active as is_active,
             users.archived as is_archived,
             users.terminated_status as is_terminated,
+            users.access_level,
+            users.access_level_plus,
+            users.pay_plan_flag,
+            users.is_executive_admin,
             "employee" as user_type,
             "0" as job_count
         ')
