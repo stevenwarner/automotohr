@@ -198,7 +198,7 @@ class Job_details extends CI_Model {
     }
 
     function fetch_company_jobs_details($sid, $user_sid = NULL) {
-        $this->db->select('portal_job_listings.*, users.CompanyName');
+        $this->db->select('portal_job_listings.*, users.sms_module_status, users.CompanyName');
         $this->db->where('portal_job_listings.sid', $sid);
         $this->db->join('users', 'users.sid = portal_job_listings.user_sid', 'inner');
 
@@ -651,7 +651,7 @@ class Job_details extends CI_Model {
 
     function get_all_company_jobs_ams($paid_jobs, $country = NULL, $state = NULL, $city = NULL, $categoryId = NULL, $keyword = NULL, $career_site_company_sid = array(), $limit = null, $offset = null, $count_record = false, $filter = []) {
         if(!$count_record){
-            $this->db->select('portal_job_listings.*, users.CompanyName, users.YouTubeVideo, users.Logo, users.ContactName, users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, portal_employer.domain_type, users.has_job_approval_rights');
+            $this->db->select('portal_job_listings.*, users.sms_module_status, users.CompanyName, users.YouTubeVideo, users.Logo, users.ContactName, users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, portal_employer.domain_type, users.has_job_approval_rights');
         }
         $this->db->where('portal_job_listings.active', 1);
         $this->db->where('portal_job_listings.organic_feed', 1);
@@ -767,7 +767,7 @@ class Job_details extends CI_Model {
 
     function paid_job_details($paid_jobs, $country = NULL, $state = NULL, $city = NULL, $categoryId = NULL, $keyword = NULL, $limit = null, $offset = null, $count_record = false, $filter = []) {
         if(!$count_record){
-            $this->db->select('portal_job_listings.*, users.CompanyName, users.YouTubeVideo, users.Logo, users.ContactName, users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, portal_employer.domain_type, users.has_job_approval_rights');
+            $this->db->select('portal_job_listings.*, users.sms_module_status, users.CompanyName, users.YouTubeVideo, users.Logo, users.ContactName, users.YouTubeVideo, portal_employer.sub_domain, portal_employer.job_title_location, portal_employer.domain_type, users.has_job_approval_rights');
         }
         $this->db->where_in('portal_job_listings.sid', $paid_jobs);
 

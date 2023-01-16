@@ -1097,27 +1097,7 @@ class Home extends CI_Controller
                             $txt_phone_number = $this->input->post('txt_phonenumber', true);
 
                         switch ($action) {
-                            case 'job_applicant':
-
-                                // $recaptcha_response = $this->input->post('g-recaptcha-response');
-                                // $google_secret = $this->config->item('google_secret');
-
-                                // $recaptcha = verifyCaptcha($google_secret, $recaptcha_response);
-
-                                // if ($recaptcha == false) {
-                                //     $this->session->set_flashdata('message', '<b>Error: </b>Sorry Google Recaptcha Failed.');
-                                //     $applied_from                               = $this->input->post('applied_from');
-
-                                //     if ($applied_from == 'job') {
-                                //         redirect('/job_details/' . $sid, 'refresh');
-                                //     } else if ($applied_from == 'jobs_list_view') {
-                                //         redirect('/jobs/');
-                                //     } else {
-                                //         redirect('/', 'refresh');
-                                //     }
-
-                                //     break;
-                                // } 
+                            case 'job_applicant': 
 
                                 $redirecturl = "";
                                 $applied_from   = $this->input->post('applied_from');
@@ -1366,6 +1346,7 @@ class Home extends CI_Controller
                                                 'cover_letter'                      => $cover_letter,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
+                                                'notified_by'                       => $this->input->post('contactPreference', true),
                                                 'referred_by_email'                 => $referred_by_email
                                             );
 
@@ -1411,6 +1392,7 @@ class Home extends CI_Controller
                                                 'state'                             => $state,
                                                 'country'                           => $country,
                                                 'referred_by_name'                  => $referred_by_name,
+                                                'notified_by'                       => $this->input->post('contactPreference', true),
                                                 'referred_by_email'                 => $referred_by_email
                                             );
 
