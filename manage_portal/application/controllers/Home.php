@@ -41,11 +41,13 @@ class Home extends CI_Controller
     {
         $server_name = clean_domain($_SERVER['SERVER_NAME']);
         $data = $this->check_domain->check_portal_status($server_name);
-
         $company_sid = $data['company_details']['sid'];
         $data['customize_career_site'] = $this->themes_pages_model->getCustomizeCareerSiteData($company_sid);
         $data['remarket_company_settings'] = $this->themes_pages_model->get_remarket_company_settings();
         company_phone_regex_module_check($company_sid, $data, $this);
+
+        //
+        $data['sms_module_status'] = $data['company_details']['sms_module_status'];
 
         if (!$this->session->userdata('portal_info')) {
             $this->session->set_userdata('portal_info', $data);
@@ -1098,6 +1100,8 @@ class Home extends CI_Controller
         }
         $server_name = clean_domain($_SERVER['SERVER_NAME']);
         $data = $this->check_domain->check_portal_status($server_name);
+        //
+        $data['sms_module_status'] = $data['company_details']['sms_module_status'];
         $theme_name = $data['theme_name'];
 
         $company_sid = $data['company_details']['sid'];
@@ -1634,7 +1638,8 @@ class Home extends CI_Controller
                                                 'cover_letter'          => $cover_letter,
                                                 'country'               => $country,
                                                 'referred_by_name'      => $referred_by_name,
-                                                'referred_by_email'     => $referred_by_email
+                                                'referred_by_email'     => $referred_by_email,
+                                                'notified_by'                       => $this->input->post('contactPreference', true)
                                             );
                                             // echo "<pre>"; print_r($insert_data_primary); exit;
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
@@ -1678,7 +1683,8 @@ class Home extends CI_Controller
                                                 'state'                 => $state,
                                                 'country'               => $country,
                                                 'referred_by_name'      => $referred_by_name,
-                                                'referred_by_email'     => $referred_by_email
+                                                'referred_by_email'     => $referred_by_email,
+                                                'notified_by'                       => $this->input->post('contactPreference', true)
                                             );
 
                                             if ($YouTube_code != '') { // check if youtube link is updated
