@@ -635,4 +635,35 @@ class Cron_common extends CI_Controller
         _e($nf, true);
         exit(0);
     }
+
+
+    /**
+     * Sends the information
+     */
+    public function issueNotificationGenerator()
+    {
+        $path = '/tmp';
+        $result = shell_exec("df -H --output=pcent $path");
+        $tmp = explode("\n", $result);
+        $values = preg_replace('/[^0-9]/', '', $tmp[1]);
+        //
+        $filename = ROOTPATH . '../app_logs/tmp.txt';
+        //
+        $mode = 'a';
+        //
+        if (!is_file($filename)) {
+            $mode = 'w';
+        }
+        //
+        $handler = fopen($filename, $mode);
+        //
+        fwrite($handler, "[" . (date('c')) . "] $path $values\n");
+        //
+        fclose($handler);
+        //
+        if ($values >= 50) {
+            @mail('mkhurram@egenienext.com', "/tmp memory exceeded to $values", $result);
+            mail('mubashar@automotohr.com', "/tmp memory exceeded to $values", $result);
+        }
+    }
 }
