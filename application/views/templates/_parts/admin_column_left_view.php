@@ -67,6 +67,7 @@ if (
     $this->uri->segment(2) == 'copy_employees' ||
     $this->uri->segment(1) == 'migrate_company_groups' ||
     $this->uri->segment(2) == 'merge_employees' ||
+    $this->uri->segment(2) == 'cn' ||
     $this->uri->segment(2) == 'pending_documents' ||
     ($this->uri->segment(2) == 'documents' && $this->uri->segment(3) > 0)
 
@@ -457,6 +458,13 @@ if (
                                 <a <?php if (strpos(base_url(uri_string()), site_url('manage_admin/merge_employees')) !== false) {
                                         echo 'class="active"';
                                     } ?> href="<?php echo site_url('manage_admin/merge_employees'); ?>">Merge Employees</a>
+                            </div>
+                        <?php } ?>
+                        <?php if (check_access_permissions_for_view($security_details, 'complynet')) { ?>
+                            <div class="menu-item">
+                                <a <?php if (strpos(base_url(uri_string()), site_url('cn/dashboard')) !== false) {
+                                        echo 'class="active"';
+                                    } ?> href="<?php echo site_url('cn/dashboard'); ?>">ComplyNet</a>
                             </div>
                         <?php } ?>
                     </div>

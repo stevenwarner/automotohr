@@ -11419,12 +11419,12 @@ if (!function_exists('isDocumentCompleted')) {
                 $is_magic_tag_exist = 1;
             }
             // Check for uploaded manual dcoument
-            if($document['document_sid'] == 0) {
+            if ($document['document_sid'] == 0) {
                 continue;
             } else {
                 //
                 if ($document['acknowledgment_required'] || $document['download_required'] || $document['signature_required'] || $is_magic_tag_exist) {
-    
+
                     if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1 && $document['signature_required'] == 1) {
                         if ($document['uploaded'] == 1) {
                             $is_document_completed = 1;
@@ -11486,7 +11486,7 @@ if (!function_exists('isDocumentCompleted')) {
                             $is_document_completed = 0;
                         }
                     }
-    
+
                     if ($is_document_completed == 0) {
                         unset($documents[$k0]);
                         continue;
@@ -15998,7 +15998,7 @@ if (!function_exists('getCurrentYearHolidaysFromGoogle')) {
             if (!$CI->db->where([
                 'holiday_title' => $ia['holiday_title'],
                 'holiday_year' => $year
-            ])->count_all_results('timeoff_holiday_list')){
+            ])->count_all_results('timeoff_holiday_list')) {
                 //
                 $CI->db->insert(
                     'timeoff_holiday_list',
@@ -16012,8 +16012,23 @@ if (!function_exists('getCurrentYearHolidaysFromGoogle')) {
 }
 
 
-if(!function_exists('isDevServer')) {
-    function isDevServer() {
+if (!function_exists('isDevServer')) {
+    function isDevServer()
+    {
         return strpos($_SERVER['SERVER_NAME'], '.com') === false ? true : false;
+    }
+}
+
+if (!function_exists('getSystemDate')) {
+    /**
+     * Get the current datetime
+     *
+     * @param string $format
+     * @param string $timestamp
+     * @return string
+     */
+    function getSystemDate(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now')
+    {
+        return date($format, strtotime($timestamp));
     }
 }
