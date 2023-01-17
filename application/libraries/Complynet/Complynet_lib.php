@@ -287,11 +287,13 @@ class Complynet_lib
     private function saveAccessToken($response)
     {
         $ins = [];
-        $ins['token'] = $response['access_token'];
+        $ins['access_token'] = $response['access_token'];
         $ins['token_type'] = $response['token_type'];
         $ins['issued'] = formatDateToDB($response['.issued'], 'D, d M Y H:i:s e', DB_DATE_WITH_TIME);
         $ins['expires'] = formatDateToDB($response['.expires'], 'D, d M Y H:i:s e', DB_DATE_WITH_TIME);
         $ins['expires_in'] = $response['expires_in'];
+        $ins['userName'] = $response['userName'];
+        $ins['created_at'] = $ins['updated_at'] = getSystemDate();
         //
         $this->CI->db->insert('complynet_access_token', $ins);
         //

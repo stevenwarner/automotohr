@@ -1643,4 +1643,4 @@ $route['cn/sync']['post'] = "2022/Complynet/syncCompany";
 $route['cn/comply/departments/(:num)']['get'] = "2022/Complynet/getComplyCompanyDepartments/$1";
 $route['cn/comply/job_roles/(:num)']['get'] = "2022/Complynet/getComplyCompanyJobRoles/$1";
 
-$route['cn/syncemp']['post'] = "2022/Complynet/syncEmployee";
+$route['cn/(:num)/employee/sync']['post'] = "2022/Complynet/syncSingleEmployee/$1";

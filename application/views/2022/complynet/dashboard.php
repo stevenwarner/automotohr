@@ -20,7 +20,7 @@
                             <br />
                             <!--  -->
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="col-sm-10">
                                     <label>Select a Company <strong class="text-danger">*</strong></label> <br>
                                     <select id="jsCompany" style="width: 100%;">
                                         <option value="0">[Select a Company]</option>
@@ -28,6 +28,13 @@
                                             <option value="<?=$company['sid'];?>"><?=$company['CompanyName'];?></option>
                                         <?php endforeach; ?>
                                     </select>
+                                </div>
+                                <!--  -->
+                                <div class="row">
+                                    <div class="col-sm-2 text-right">
+                                        <br />
+                                        <button class="btn btn-success jsStartProcess">Start Onboard</button>
+                                    </div>
                                 </div>
                             </div>
 

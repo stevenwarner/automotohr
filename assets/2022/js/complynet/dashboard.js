@@ -26,9 +26,11 @@ $(function ComplyNet() {
     /**
      * Captures the select2 change
      */
-    $('#jsCompany').change(function () {
+    $('.jsStartProcess').click(function (event) {
         //
-        companyId = parseInt($(this).val().trim());
+        event.preventDefault();
+        //
+        companyId = parseInt($('#jsCompany').val().trim());
         //
         if (companyId === 0) {
             return alertify.alert('Please select a company.', CB);
@@ -108,6 +110,7 @@ $(function ComplyNet() {
         //
         syncCompany();
     });
+
     //
     $(document).on('click', '.jsRefreshCompany', function (event) {
         //
@@ -115,6 +118,7 @@ $(function ComplyNet() {
         //
         loadView();
     });
+
     //
     $(document).on('click', '.jsShowAllDepartments', function (event) {
         //
@@ -122,12 +126,21 @@ $(function ComplyNet() {
         //
         showComplyDepartments();
     });
+
     //
     $(document).on('click', '.jsShowAllJobRoles', function (event) {
         //
         event.preventDefault();
         //
         showComplyJobRoles();
+    });
+
+    //
+    $(document).on('click', '.jsSyncSingleEmployee', function (event) {
+        //
+        event.preventDefault();
+        //
+        startEmployeeSyncProcess($(this).data('id'));
     });
 
     /**
@@ -283,14 +296,13 @@ $(function ComplyNet() {
                     'Success',
                     'Company is synced',
                     function () {
-
-                        window.location.reload();
+                        loadView();
                     }
                 )
             })
             .fail(handleFailure);
     }
-    
+
     function showComplyDepartments() {
         //
         Modal({
@@ -301,17 +313,17 @@ $(function ComplyNet() {
         }, function () {
             // Get the companies and view
             $
-            .get(
-                baseURI+'cn/comply/departments/'+companyId
-            )
-            .success(function(resp){
-                $('#jsComplyModalBody').html(resp.view);
-                ml(false, 'jsComplyModalLoader');
-            })
-            .fail(handleFailure)
+                .get(
+                    baseURI + 'cn/comply/departments/' + companyId
+                )
+                .success(function (resp) {
+                    $('#jsComplyModalBody').html(resp.view);
+                    ml(false, 'jsComplyModalLoader');
+                })
+                .fail(handleFailure)
         });
     }
-    
+
     function showComplyJobRoles() {
         //
         Modal({
@@ -322,15 +334,56 @@ $(function ComplyNet() {
         }, function () {
             // Get the companies and view
             $
-            .get(
-                baseURI+'cn/comply/job_roles/'+companyId
-            )
-            .success(function(resp){
-                $('#jsComplyModalBody').html(resp.view);
-                ml(false, 'jsComplyModalLoader');
-            })
-            .fail(handleFailure)
+                .get(
+                    baseURI + 'cn/comply/job_roles/' + companyId
+                )
+                .success(function (resp) {
+                    $('#jsComplyModalBody').html(resp.view);
+                    ml(false, 'jsComplyModalLoader');
+                })
+                .fail(handleFailure)
         });
+    }
+
+    /**
+     * Sync single employee
+     *
+     * @param {int} employeeId 
+     */
+    function startEmployeeSyncProcess(employeeId) {
+        //
+        loader(true, 'Please wait while we are syncing employee.');
+        //
+        xhr = $.post(
+            baseURI + 'cn/' + (companyId) + '/employee/sync', {
+            companyId: companyId,
+            employeeId: employeeId,
+
+        })
+            .success(function (resp) {
+                //
+                loader(false);
+                //
+                if (resp.hasOwnProperty('errors')) {
+                    return alertify.alert(
+                        'ERROR',
+                        resp.errors.join('<br />'),
+                        function () { }
+                    )
+                }
+
+                return alertify.alert(
+                    'Success',
+                    'Employee is synced.',
+                    function () {
+                        //
+                        checkTheCompanyIntegration();
+                    }
+                )
+            })
+            .fail(handleFailure);
+
+
     }
 
     /**
@@ -371,52 +424,5 @@ $(function ComplyNet() {
      * Empty callback function
      */
     function CB() { }
-
-    // companyId = 5664;
-    // setInterval(syncCompany, 1000);
-
-
-    //
-    $(document).on('click', '.jsSyncEmployee', function (event) {
-        //
-        event.preventDefault();
-        //
-        var employeeSid = $(this).attr('employee-sid');
-        //employee-sid
-      syncEmployee(employeeSid);
-    });
-
-
-    function syncEmployee(employeeSid) {
-        //
-        loader(true, 'Please wait while we are syncing company.');
-        //
-
-        xhr = $.post(
-            baseURI + 'cn/syncemp', {
-            companyId: companyId,
-            employeeId: employeeSid,
-
-        }
-        )
-            .success(function (resp) {
-                //
-                loader(false);
-                return alertify.alert(
-                    'Success',
-                    'Company is synced',
-                    function () {
-
-                        window.location.reload();
-                    }
-                )
-            })
-            .fail(handleFailure);
-
-
-    }
-    
-
-
 
 });

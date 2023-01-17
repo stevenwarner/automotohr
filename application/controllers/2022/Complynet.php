@@ -41,7 +41,7 @@ class Complynet extends Admin_Controller
         //
         $this->load->library('Complynet/Complynet_lib', '', 'clib');
         //
-        $this->load->model('2022/complynet_model');
+        $this->load->model('2022/complynet_model', 'complynet_model');
         //
         $this->companyId = 0;
     }
@@ -55,6 +55,7 @@ class Complynet extends Admin_Controller
         $this->data['page_title'] = 'ComplyNet Dashboard';
         $this->data['security_details'] = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
         $this->data['PageScripts'] = [
+            'https://cdn.jsdelivr.net/npm/chart.js',
             'js/SystemModal',
             '1.0' => '2022/js/complynet/dashboard'
         ];
@@ -192,7 +193,10 @@ class Complynet extends Admin_Controller
         return $this->sync($companyId);
     }
 
-
+    /**
+     * Integrate view
+     * @return
+     */
     public function integrateView(
         int $companyId
     ) {
@@ -205,6 +209,9 @@ class Complynet extends Admin_Controller
                 'company_sid' => $companyId
             ]
         )[0];
+
+        // Get company all departments
+        $data['allDepartmentCount'] = $this->complynet_model->getCompanyAllDepartments($companyId, 'count');
 
         // Get departments
         $data['departments'] = $this->complynet_model->getTableData(
@@ -221,11 +228,11 @@ class Complynet extends Admin_Controller
                 'company_sid' => $companyId
             ]
         );
-
-        // 
-        $complyNetemployees = array_column($data['employees'],'employee_sid');
-
-       $data['offcomplynetmployees'] = $this->complynet_model->getOffComplyNetEmployees($complyNetemployees, $companyId);
+        //
+        $data['offComplyNetEmployees'] = $this->complynet_model->getOffComplyNetEmployees(
+            array_column($data['employees'], 'employee_sid'),
+            $companyId
+        );
         //
         return SendResponse(200, [
             'view' => $this->load->view('2022/complynet/partials/company_integration_view', $data, true)
@@ -435,6 +442,7 @@ class Complynet extends Admin_Controller
                     $ins['employee_sid'] = $employee['sid'];
                     $ins['email'] = $email;
                     $ins['complynet_json'] = json_encode($employeeObj);
+                    $ins['created_at'] = $ins['updated_at'] = getSystemDate();
                     //
                     $this->db->insert(
                         'complynet_employees',
@@ -467,6 +475,7 @@ class Complynet extends Admin_Controller
                         $ins['employee_sid'] = $employee['sid'];
                         $ins['email'] = $email;
                         $ins['complynet_json'] = json_encode($employeeObj);
+                        $ins['created_at'] = $ins['updated_at'] = getSystemDate();
                         //
                         $this->db->insert(
                             'complynet_employees',
@@ -526,7 +535,7 @@ class Complynet extends Admin_Controller
         $complyDepartments = $this->clib->getComplyNetDepartments(
             $complyLocationId
         );
-         //
+        //
         $data = [];
         $data['title'] = 'Job Roles';
         $records = [];
@@ -547,144 +556,24 @@ class Complynet extends Admin_Controller
     }
 
     /**
+     * Sync single employee with complynet
+     *
+     * @param int $companyId
+     * @return json
+     */
+    public function syncSingleEmployee(int $companyId)
+    {
+        //
+        $employeeId = $this->input->post('employeeId', true);
+        //
+        return $this->complynet_model->syncSingleEmployee($companyId, $employeeId);
+    }
+
+    /**
      * Checks the login
      */
     private function checkLogin()
     {
         return (bool) $this->ion_auth->user()->row()->id;
     }
-
-
-
-    public function syncEmployee()
-    {
-        //
-        $companyId = $this->input->post('companyId', true);
-        $employeeId = $this->input->post('employeeId', true);
-       // echo $companyId.'#'.$employeeId;
-        //
-        $this->syncEmployeeComplynet($companyId,$employeeId);
-        return SendResponse(200, ['message' => 'Success']);
-    }
-
-
-
-
-    /**
-     * Sync company single employee with complynet
-     */
-    private function syncEmployeeComplynet($companyId,$employeeId)
-    {
-
-        $company = $this->complynet_model->getIntegratedCompany(
-            $companyId
-        );
-        //
-        $this->complyCompanyId = $company['complynet_company_sid'];
-        $this->complyLocationId = $company['complynet_location_sid'];
-
-        $this->companyId = $companyId;
-
-        $employees = $this->complynet_model->getCompanyEmployee(
-            $employeeId
-        );
-        //
-        if (!empty($employees)) {
-            //
-            foreach ($employees as $employee) {
-                //
-                $email = strtolower($employee['email']);
-                //
-                if ($this->complynet_model->isEmployeeAdded($email, $this->companyId)) {
-                    continue;
-                }
-                //
-                $complyDepartmentId = $this->complynet_model->getEmployeeDepartmentId(
-                    $employee['sid']
-                );
-                //
-                if ($complyDepartmentId === 0) {
-                    continue;
-                }
-                //
-                $complyJobRoleId = $this->complynet_model->getAndSetJobRoleId(
-                    $complyDepartmentId,
-                    $employee['job_title']
-                );
-              
-                //
-                if ($complyJobRoleId === 0) {
-                    continue;
-                }
-                //
-                if (empty($complyJobRoleId)) {
-                    continue;
-                }
-
-                // Check if exists in ComplyNet
-                $employeeObj = $this->clib->getEmployeeByEmail($email);
-                 //
-                if (isset($employeeObj[0]['Id'])) {
-                    // Just link it
-                    $ins = [];
-                    $ins['company_sid'] = $this->companyId;
-                    $ins['complynet_employee_sid'] = $employeeObj[0]['Id'];
-                    $ins['complynet_company_sid'] = $this->complyCompanyId;
-                    $ins['complynet_location_sid'] = $this->complyLocationId;
-                    $ins['complynet_department_sid'] = $complyDepartmentId;
-                    $ins['complynet_job_role_sid'] = $complyJobRoleId;
-                    $ins['employee_sid'] = $employee['sid'];
-                    $ins['email'] = $email;
-                    $ins['complynet_json'] = json_encode($employeeObj);
-                    //
-                    $this->db->insert(
-                        'complynet_employees',
-                        $ins
-                    );
-                } else {
-                    $ins = [];
-                    $ins['firstName'] = $employee['first_name'];
-                    $ins['lastName'] = $employee['last_name'];
-                    $ins['userName'] = $email;
-                    $ins['email'] = $email;
-                    $ins['password'] = '';
-                    $ins['companyId'] = $this->complyCompanyId;
-                    $ins['locationId'] = $this->complyLocationId;
-                    $ins['departmentId'] = $complyDepartmentId;
-                    $ins['jobRoleId'] = $complyJobRoleId;
-                    $ins['PhoneNumber'] = $employee['PhoneNumber'];
-                    $ins['TwoFactor'] = true;
-                    //
-                    $employeeObj = $this->clib->addEmployee($ins);
-                     //
-                    if (isset($employeeObj[0]['Id'])) {
-                        $ins = [];
-                        $ins['company_sid'] = $this->companyId;
-                        $ins['complynet_employee_sid'] = $employeeObj[0]['Id'];
-                        $ins['complynet_company_sid'] = $this->complyCompanyId;
-                        $ins['complynet_location_sid'] = $this->complyLocationId;
-                        $ins['complynet_department_sid'] = $complyDepartmentId;
-                        $ins['complynet_job_role_sid'] = $complyJobRoleId;
-                        $ins['employee_sid'] = $employee['sid'];
-                        $ins['email'] = $email;
-                        $ins['complynet_json'] = json_encode($employeeObj);
-                        //
-                        $this->db->insert(
-                            'complynet_employees',
-                            $ins
-                        );
-                    }
-                }
-            }
-            //
-            return true;
-        }
-
-        return false;
-    }
-
-
-
-
-
 }
