@@ -3183,7 +3183,7 @@ class Hr_documents_management_model extends CI_Model
             //
             $documentIds = array_column($records_arr, 'sid');
             //
-            $skipIdObj = $this->getDocumentCategoryIds($documentIds);
+            $skipIdObj = $this->getDocumentGroupIds($documentIds);
             //
             if ($skipIdObj) {
                 //
@@ -3208,15 +3208,14 @@ class Hr_documents_management_model extends CI_Model
      * @param string $type optional
      * @return array
      */
-    public function getDocumentCategoryIds(array $ids, string $type = 'documents_management')
+    public function getDocumentGroupIds(array $ids, string $type = 'documents_management')
     {
         $records =
         $this->db->select('DISTINCT(document_sid)')
         ->where_in([
-            'document_sid' => $ids,
-            'document_type' => $type
+            'document_sid' => $ids
         ])
-        ->get('documents_2_category')
+        ->get('documents_2_group')
         ->result_array();
         //
         if (!$records) {
