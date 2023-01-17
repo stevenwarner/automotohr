@@ -1769,7 +1769,7 @@ class Home extends CI_Controller
                                                 'user_type' => 'applicant',
                                                 'requested_job_sid' => $job_sid,
                                                 'requested_job_type' => 'job'
-                                            ]);
+                                            ], false);
                                         }
 
                                         if ($job_added_successfully == 1) { // send confirmation emails to Primary admin

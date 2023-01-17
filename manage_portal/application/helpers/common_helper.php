@@ -1469,12 +1469,19 @@ if (!function_exists('replace_tags_for_document')) {
             $user_info = $_this->resume_model->get_applicant_information($user_sid);
 
             if (empty($user_info)) {
-                $resp = array();
-                $resp['Status'] = FALSE;
-                $resp['Response'] = '<strong>Success: </strong> Applicant not found!';
-                header('Content-Type: application/json');
-                echo @json_encode($resp);
-                exit(0);
+
+                if($ec){
+
+                    $resp = array();
+                    $resp['Status'] = FALSE;
+                    $resp['Response'] = '<strong>Success: </strong> Applicant not found!';
+                    header('Content-Type: application/json');
+                    echo @json_encode($resp);
+                    exit(0);
+                }
+                else {
+                    return false;
+                }
             }
 
             $verification_key = '';
