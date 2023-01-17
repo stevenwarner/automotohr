@@ -83,7 +83,7 @@ class eeo_model extends CI_Model
         return $job_title;
     }
 
-    function get_all_eeo_applicants($keyword, $opt_status, $start_date, $end_date, $company_id, $records_per_page = null, $my_offset = 0, $count_only = false)
+    function get_all_eeo_applicants($keyword, $opt_status, $start_date, $end_date, $company_id, $records_per_page = null, $my_offset = 0, $count_only = false, $gender , $employeespenttime)
     {
 
         $this->db->select('portal_applicant_jobs_list.sid as application_list_sid');
@@ -97,12 +97,21 @@ class eeo_model extends CI_Model
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.first_name');
         $this->db->select('portal_job_applications.last_name');
-
+        $this->db->select('portal_job_applications.gender as applicantgender');
+        $this->db->select('portal_job_applications.hourly_rate');
+        $this->db->select('portal_job_applications.desired_job_title');
+        $this->db->select('portal_job_applications.created_date');
+        $this->db->select('states.state_name');
         $this->db->select('portal_eeo_form.*');
-
         $this->db->select('portal_job_listings.Title as job_title');
 
+
+        $this->db->where('portal_job_applications.hired_status!=', 1);
+        $this->db->group_start();
         $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
+        $this->db->or_where('portal_applicant_jobs_list.applicant_type', 'Manual Candidate');
+        $this->db->group_end();
+
 
         if ($keyword != 'all' && $keyword != null && !empty($keyword)) {
             $keyword = trim($keyword);
@@ -120,13 +129,51 @@ class eeo_model extends CI_Model
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_id);
 
         if ($opt_status != 'all' && !empty($opt_status)) {
-            $opt_status = $opt_status == 'other' ? null : $opt_status;
-
-            $this->db->where('portal_applicant_jobs_list.eeo_form', $opt_status);
+            if ($opt_status == 'Yes') {
+                $this->db->where('portal_eeo_form.last_completed_on!=', null);
+            } else {
+                $this->db->where('portal_eeo_form.last_completed_on', null);
+            }
         }
 
-        $this->db->order_by('portal_applicant_jobs_list.sid', 'DESC');
+        if ($gender != "all") {
+            
+            $this->db->group_start();
+            $this->db->where('LOWER(portal_eeo_form.gender)', $gender);
+            $this->db->or_where('LOWER(portal_job_applications.gender)', $gender);
+            $this->db->group_end();
+        
+        }
 
+        
+        if ($employeespenttime != "all") {
+            $yearMondDays = 0;
+            if ($employeespenttime == '6month') {
+                $yearMondDays = 365 / 2;
+            }
+
+            if ($employeespenttime == '1year') {
+                $yearMondDays = 365;
+            }
+            if ($employeespenttime == '2year') {
+                $yearMondDays = 365 * 2;
+            }
+            if ($employeespenttime == '5year') {
+                $yearMondDays = 365 * 5;
+            }
+            //
+                        
+            if ($yearMondDays != 0) {
+                $this->db->group_start();
+                $this->db->where('DATEDIFF(now(),portal_job_applications.created_date) <= ', $yearMondDays);
+                $this->db->group_end();
+            }
+
+        }
+
+        
+
+        $this->db->order_by('portal_applicant_jobs_list.sid', 'DESC');
         if ($records_per_page != null && $count_only == false) {
             $this->db->limit($records_per_page, $my_offset);
         }
@@ -134,6 +181,7 @@ class eeo_model extends CI_Model
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
         $this->db->join('portal_eeo_form', 'portal_applicant_jobs_list.sid = portal_eeo_form.portal_applicant_jobs_list_sid', 'left');
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
+        $this->db->join('states', 'states.sid = portal_job_applications.state', 'left');
         $this->db->from('portal_applicant_jobs_list');
 
         if (!$count_only) {
@@ -143,8 +191,7 @@ class eeo_model extends CI_Model
         } else {
             $record_arr = $this->db->count_all_results();
         }
-
-        //my_print_r($this->db->last_query(), '39.42.6.226');
+       //   echo $this->db->last_query();
 
         return $record_arr;
     }
@@ -271,6 +318,8 @@ class eeo_model extends CI_Model
             $employeeSpentTime = '';
             if ($employees['joined_at'] != '') {
                 $employeeSpentTime = $this->getDifInDate($employees['joined_at'], $toDate);
+            } elseif ($employees['registration_date'] != '') {
+                $employeeSpentTime = $this->getDifInDate($employees['registration_date'], $toDate);
             }
 
             if ($opt_status == "all") {
@@ -280,7 +329,7 @@ class eeo_model extends CI_Model
                     $employes_records[$ekey]['group_status'] = $employee_eeoc->group_status;
                     $employes_records[$ekey]['veteran'] = $employee_eeoc->veteran;
                     $employes_records[$ekey]['disability'] = $employee_eeoc->disability;
-                    $employes_records[$ekey]['gender'] = $employee_eeoc->gender;
+                    $employes_records[$ekey]['gender'] = $employee_eeoc->gender ? $employee_eeoc->gender : $employees['gender'];
                     $employes_records[$ekey]['date_applied'] = $employee_eeoc->last_sent_at;
                     $employes_records[$ekey]['applicant_type'] = 'Employee';
                     $employes_records[$ekey]['job_title'] = $employees['job_title'];
@@ -300,7 +349,7 @@ class eeo_model extends CI_Model
                     $employes_records[$ekey]['veteran'] = "";
                     $employes_records[$ekey]['disability'] = "";
                     $employes_records[$ekey]['gender'] = $employees['gender'];
-                    $employes_records[$ekey]['date_applied'] = $employees['joined_at'];
+                    $employes_records[$ekey]['date_applied'] = $employees['joined_at'] ? $employees['joined_at'] : $employees['registration_date'];
                     $employes_records[$ekey]['eeo_form'] = 'No';
                     $employes_records[$ekey]['applicant_type'] = 'Employee';
 
@@ -317,7 +366,7 @@ class eeo_model extends CI_Model
                     $employes_records[$ekey]['group_status'] = $employee_eeoc->group_status;
                     $employes_records[$ekey]['veteran'] = $employee_eeoc->veteran;
                     $employes_records[$ekey]['disability'] = $employee_eeoc->disability;
-                    $employes_records[$ekey]['gender'] = $employee_eeoc->gender;
+                    $employes_records[$ekey]['gender'] = $employee_eeoc->gender ? $employee_eeoc->gender : $employees['gender'];
                     $employes_records[$ekey]['date_applied'] = $employee_eeoc->last_sent_at;
                     $employes_records[$ekey]['eeo_form'] = 'Yes';
                     $employes_records[$ekey]['applicant_type'] = 'Employee';
@@ -339,7 +388,7 @@ class eeo_model extends CI_Model
                     $employes_records[$ekey]['veteran'] = "";
                     $employes_records[$ekey]['disability'] = "";
                     $employes_records[$ekey]['gender'] = $employees['gender'];
-                    $employes_records[$ekey]['date_applied'] = $employees['joined_at'];
+                    $employes_records[$ekey]['date_applied'] = $employees['joined_at'] ? $employees['joined_at'] : $employees['registration_date'];
                     $employes_records[$ekey]['eeo_form'] = 'No';
                     $employes_records[$ekey]['applicant_type'] = 'Employee';
                     $employes_records[$ekey]['job_title'] = $employees['job_title'];
@@ -355,7 +404,7 @@ class eeo_model extends CI_Model
 
     function fetch_company_employees($company_sid, $type, $gender, $employeespenttime)
     {
-        $this->db->select('users.sid, users.first_name, users.last_name, users.access_level_plus, users.pay_plan_flag, users.job_title, users.access_level, users.is_executive_admin, concat(users.first_name," ",users.last_name) as employee_name , DATEDIFF(now(),users.joined_at) AS DateDiff , users.applicant_sid,users.gender,users.job_title,users.hourly_rate,users.joined_at,states.state_name');
+        $this->db->select('users.sid, users.first_name, users.last_name, users.access_level_plus, users.pay_plan_flag, users.job_title, users.access_level, users.is_executive_admin, concat(users.first_name," ",users.last_name) as employee_name , DATEDIFF(now(),users.joined_at) AS DateDiff , users.applicant_sid,users.gender,users.job_title,users.hourly_rate,users.joined_at,users.registration_date,states.state_name');
         $this->db->join('states', 'states.sid = users.Location_State', 'left');
         $this->db->where('parent_sid', $company_sid);
 
@@ -387,7 +436,10 @@ class eeo_model extends CI_Model
             }
             //
             if ($yearMondDays != 0) {
+                $this->db->group_start();
                 $this->db->where('DATEDIFF(now(),users.joined_at) <= ', $yearMondDays);
+                $this->db->or_where('DATEDIFF(now(),users.registration_date) <= ', $yearMondDays);
+                $this->db->group_end();
             }
         }
 
@@ -419,10 +471,14 @@ class eeo_model extends CI_Model
         // $this->db->select('portal_job_applications.last_name');
 
         $this->db->select('portal_eeo_form.*, count(portal_eeo_form.gender) as eeogender');
-
         $this->db->select('portal_job_listings.Title as job_title');
 
+        $this->db->where('portal_job_applications.hired_status!=', 1);
+        $this->db->group_start();
         $this->db->where('portal_applicant_jobs_list.applicant_type', 'Applicant');
+        $this->db->or_where('portal_applicant_jobs_list.applicant_type', 'Manual Candidate');
+        $this->db->group_end();
+
 
         if ($keyword != 'all' && $keyword != null && !empty($keyword)) {
             $keyword = trim($keyword);
@@ -440,11 +496,13 @@ class eeo_model extends CI_Model
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_id);
 
         if ($opt_status != 'all' && !empty($opt_status)) {
-            $opt_status = $opt_status == 'other' ? null : $opt_status;
-
-            $this->db->where('portal_applicant_jobs_list.eeo_form', $opt_status);
-            // $this->db->where('portal_applicant_jobs_list.eeo_form', 'Yes');
+            if ($opt_status == 'Yes') {
+                $this->db->where('portal_eeo_form.last_completed_on!=', null);
+            } else {
+                $this->db->where('portal_eeo_form.last_completed_on', null);
+            }
         }
+
 
         $this->db->group_by('portal_eeo_form.gender');
         $this->db->order_by('portal_applicant_jobs_list.sid', 'DESC');
@@ -453,6 +511,8 @@ class eeo_model extends CI_Model
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'left');
         $this->db->join('portal_eeo_form', 'portal_applicant_jobs_list.sid = portal_eeo_form.portal_applicant_jobs_list_sid', 'left');
         $this->db->join('portal_job_listings', 'portal_job_listings.sid = portal_applicant_jobs_list.job_sid', 'left');
+        $this->db->join('states', 'states.sid = portal_job_applications.state', 'left');
+
         $this->db->from('portal_applicant_jobs_list');
 
 
@@ -460,8 +520,7 @@ class eeo_model extends CI_Model
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
 
-
-        //my_print_r($this->db->last_query(), '39.42.6.226');
+        // my_print_r($this->db->last_query(), '39.42.6.226');
 
         return $record_arr;
     }
@@ -483,6 +542,10 @@ class eeo_model extends CI_Model
         }
         if ($months >= 1) {
             $timeDuration .= $months . " Months";
+        }
+
+        if ($days >= 0) {
+            $timeDuration .= $days . " Days";
         }
         return $timeDuration;
     }

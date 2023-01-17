@@ -14,11 +14,20 @@ class Eeo extends Public_Controller
 
     public function index($keyword = 'all', $opt_type = 'no', $start_date = null, $end_date = null, $employee_status = null, $gender = null, $employeespenttime = null, $page = null)
     {
-
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
+
+            $userAccessData = db_get_employee_profile($data['session']['employer_detail']['sid']);
+            if($userAccessData[0]['access_level_plus']!=1 && $userAccessData[0]['pay_plan_flag']!=1 ){
+                redirect('my_settings');
+            }
+
+
+
+
             $security_sid = $data['session']['employer_detail']['sid'];
             $security_details = db_get_access_level_details($security_sid);
+
             $data['security_details'] = $security_details;
             check_access_permissions($security_details, 'my_settings', 'eeo'); // Param2: Redirect URL, Param3: Function Name
             $company_id = $data['session']['company_detail']['sid'];
@@ -45,12 +54,14 @@ class Eeo extends Public_Controller
                 $end_date = $end_date->format('Y-m-t 23:59:59');
             }
 
-            $records_per_page = 5; //PAGINATION_RECORDS_PER_PAGE;
-            if ($keyword == 'employee') {
+            $records_per_page = 10; //PAGINATION_RECORDS_PER_PAGE;
+        //    if ($keyword == 'employee') {
                 $page = ($this->uri->segment(9)) ? $this->uri->segment(9) : 0;
-            } else {
-                $page = ($this->uri->segment(8)) ? $this->uri->segment(8) : 0;
-            }
+           // } else {
+               // $page = ($this->uri->segment(8)) ? $this->uri->segment(8) : 0;
+          //      $page = ($this->uri->segment(9)) ? $this->uri->segment(9) : 0;
+
+          //  }
 
             $my_offset = 0;
 
@@ -107,16 +118,17 @@ class Eeo extends Public_Controller
             $notdefined_cout_races = 0;
             $notdefined_cout_nogroup = 0;
 
+            $segement6 = '/' . $employee_status;
+            $segement7 = '/' . $gender;
+            $segement8 = '/' . $employeespenttime;
+            $uri_segment = 9;
 
             if ($keyword == 'employee') {
 
                 $total_records = '';
                 $eeo_candidates = '';
 
-                $segement6 = '/' . $employee_status;
-                $segement7 = '/' . $gender;
-                $segement8 = '/' . $employeespenttime;
-                $uri_segment = 9;
+               
                 $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status, $gender, $employeespenttime);
                 $total_records = count($eeo_candidates);
 
@@ -235,144 +247,107 @@ class Eeo extends Public_Controller
                 $data['totalrecords'] = $total_records;
                 $data['recordsfor'] = 'Employees';
             } else {
-                $segement6 = '';
-                $uri_segment = 7;
-                $total_records = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, true);
-                $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset);
 
-                if (!empty($eeo_candidates)) {
+              $total_records = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, true, $gender, $employeespenttime);
+                          
+              $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $gender, $employeespenttime);
+               
+                   if (!empty($eeo_candidates)) {
                     foreach ($eeo_candidates as $key => $eeo_detail) {
-                        if (empty($eeo_detail["gender"])) {
-                            $eeoc_form = $this->eeo_model->get_user_eeo_form_info($eeo_detail["applicant_sid"], "applicant");
-                            //
-                            $eeo_candidates[$key]["us_citizen"] = $eeoc_form['us_citizen'];
-                            $eeo_candidates[$key]["visa_status"] = $eeoc_form['visa_status'];
-                            $eeo_candidates[$key]["group_status"] = $eeoc_form['group_status'];
-                            $eeo_candidates[$key]["veteran"] = $eeoc_form['veteran'];
-                            $eeo_candidates[$key]["disability"] = $eeoc_form['disability'];
-                            $eeo_candidates[$key]["gender"] = $eeoc_form['gender'];
 
-                            if ($eeoc_form['gender'] == 'Male') {
-                                $male_cout++;
-                                if ($eeoc_form['group_status'] == 'Hispanic or Latino') {
-                                    $male_cout_hispanic++;
-                                } else if ($eeoc_form['group_status'] == 'White') {
-                                    $male_cout_white++;
-                                } else if ($eeoc_form['group_status'] == 'Black or African American') {
-                                    $male_cout_black++;
-                                } else if ($eeoc_form['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
-                                    $male_cout_native++;
-                                } else if ($eeoc_form['group_status'] == 'Asian') {
-                                    $male_cout_asian++;
-                                } else if ($eeoc_form['group_status'] == 'American Indian or Alaska Native') {
-                                    $male_cout_american++;
-                                } else if ($eeoc_form['group_status'] == 'Two or More Races') {
-                                    $male_cout_races++;
-                                } else {
-                                    $male_cout_nogroup++;
-                                }
-                            } elseif ($eeoc_form['gender'] == 'Female') {
-                                $female_cout++;
-                                if ($eeoc_form['group_status'] == 'Hispanic or Latino') {
-                                    $female_cout_hispanic++;
-                                } else if ($eeoc_form['group_status'] == 'White') {
-                                    $female_cout_white++;
-                                } else if ($eeoc_form['group_status'] == 'Black or African American') {
-                                    $female_cout_black++;
-                                } else if ($eeoc_form['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
-                                    $female_cout_native++;
-                                } else if ($eeoc_form['group_status'] == 'Asian') {
-                                    $female_cout_asian++;
-                                } else if ($eeoc_form['group_status'] == 'American Indian or Alaska Native') {
-                                    $female_cout_american++;
-                                } else if ($eeoc_form['group_status'] == 'Two or More Races') {
-                                    $female_cout_races++;
-                                } else {
-                                    $female_cout_nogroup++;
-                                }
+                        if ($eeo_detail["last_completed_on"] != null) {
+                            $eeo_candidates[$key]["eeo_form"] = 'Yes';
+                        } else {
+                            $eeo_candidates[$key]["eeo_form"] = 'No';
+                        }
+
+                        $eeo_candidates[$key]["job_title"] = $eeo_detail['desired_job_title'];
+
+                        $toDate = date('Y-m-d');
+                        $employeeSpentTime = '';
+                        if ($eeo_detail['created_date'] != '' && $eeo_detail['created_date'] != null) {
+                            $employeeSpentTime = $this->eeo_model->getDifInDate($eeo_detail['created_date'], $toDate);
+                        }
+
+                        $eeo_candidates[$key]["number_of_years_with_company"] = $employeeSpentTime;
+
+                        //   if (empty($eeo_detail["gender"])) {
+
+                        //   $eeoc_form = $this->eeo_model->get_user_eeo_form_info($eeo_detail["applicant_sid"], "applicant");
+                        //
+                        //  $eeo_candidates[$key]["us_citizen"] = $eeoc_form['us_citizen'];
+                        //  $eeo_candidates[$key]["visa_status"] = $eeoc_form['visa_status'];
+                        //    $eeo_candidates[$key]["group_status"] = $eeoc_form['group_status'];
+                        //    $eeo_candidates[$key]["veteran"] = $eeoc_form['veteran'];
+                        //   $eeo_candidates[$key]["disability"] = $eeoc_form['disability'];
+
+                        if (empty($eeo_detail["gender"])) {
+                            $eeo_candidates[$key]["gender"] = $eeo_detail['applicantgender'];
+                        }
+
+                        if (strtolower($eeo_candidates[$key]["gender"]) == 'male') {
+                            $male_cout++;
+                            if ($eeo_detail['group_status'] == 'Hispanic or Latino') {
+                                $male_cout_hispanic++;
+                            } else if ($eeo_detail['group_status'] == 'White') {
+                                $male_cout_white++;
+                            } else if ($eeo_detail['group_status'] == 'Black or African American') {
+                                $male_cout_black++;
+                            } else if ($eeo_detail['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                                $male_cout_native++;
+                            } else if ($eeo_detail['group_status'] == 'Asian') {
+                                $male_cout_asian++;
+                            } else if ($eeo_detail['group_status'] == 'American Indian or Alaska Native') {
+                                $male_cout_american++;
+                            } else if ($eeo_detail['group_status'] == 'Two or More Races') {
+                                $male_cout_races++;
                             } else {
-                                $notdefined_cout++;
-                                if ($eeoc_form['group_status'] == 'Hispanic or Latino') {
-                                    $notdefined_cout_hispanic++;
-                                } else if ($eeoc_form['group_status'] == 'White') {
-                                    $notdefined_cout_white++;
-                                } else if ($eeoc_form['group_status'] == 'Black or African American') {
-                                    $notdefined_cout_black++;
-                                } else if ($eeoc_form['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
-                                    $notdefined_cout_native++;
-                                } else if ($eeoc_form['group_status'] == 'Asian') {
-                                    $notdefined_cout_asian++;
-                                } else if ($eeoc_form['group_status'] == 'American Indian or Alaska Native') {
-                                    $notdefined_cout_american++;
-                                } else if ($eeoc_form['group_status'] == 'Two or More Races') {
-                                    $notdefined_cout_races++;
-                                } else {
-                                    $notdefined_cout_nogroup++;
-                                }
+                                $male_cout_nogroup++;
+                            }
+                        } elseif (strtolower($eeo_candidates[$key]["gender"]) == 'female') {
+                            $female_cout++;
+                            if ($eeo_detail['group_status'] == 'Hispanic or Latino') {
+                                $female_cout_hispanic++;
+                            } else if ($eeo_detail['group_status'] == 'White') {
+                                $female_cout_white++;
+                            } else if ($eeo_detail['group_status'] == 'Black or African American') {
+                                $female_cout_black++;
+                            } else if ($eeo_detail['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                                $female_cout_native++;
+                            } else if ($eeo_detail['group_status'] == 'Asian') {
+                                $female_cout_asian++;
+                            } else if ($eeo_detail['group_status'] == 'American Indian or Alaska Native') {
+                                $female_cout_american++;
+                            } else if ($eeo_detail['group_status'] == 'Two or More Races') {
+                                $female_cout_races++;
+                            } else {
+                                $female_cout_nogroup++;
                             }
                         } else {
-                            if ($eeo_detail['gender'] == 'Male') {
-                                $male_cout++;
-                                if ($eeo_detail['group_status'] == 'Hispanic or Latino') {
-                                    $male_cout_hispanic++;
-                                } else if ($eeo_detail['group_status'] == 'White') {
-                                    $male_cout_white++;
-                                } else if ($eeo_detail['group_status'] == 'Black or African American') {
-                                    $male_cout_black++;
-                                } else if ($eeo_detail['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
-                                    $male_cout_native++;
-                                } else if ($eeo_detail['group_status'] == 'Asian') {
-                                    $male_cout_asian++;
-                                } else if ($eeo_detail['group_status'] == 'American Indian or Alaska Native') {
-                                    $male_cout_american++;
-                                } else if ($eeo_detail['group_status'] == 'Two or More Races') {
-                                    $male_cout_races++;
-                                } else {
-                                    $male_cout_nogroup++;
-                                }
-                            } elseif ($eeo_detail['gender'] == 'Female') {
-                                $female_cout++;
-                                if ($eeo_detail['group_status'] == 'Hispanic or Latino') {
-                                    $female_cout_hispanic++;
-                                } else if ($eeo_detail['group_status'] == 'White') {
-                                    $female_cout_white++;
-                                } else if ($eeo_detail['group_status'] == 'Black or African American') {
-                                    $female_cout_black++;
-                                } else if ($eeo_detail['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
-                                    $female_cout_native++;
-                                } else if ($eeo_detail['group_status'] == 'Asian') {
-                                    $female_cout_asian++;
-                                } else if ($eeo_detail['group_status'] == 'American Indian or Alaska Native') {
-                                    $female_cout_american++;
-                                } else if ($eeo_detail['group_status'] == 'Two or More Races') {
-                                    $female_cout_races++;
-                                } else {
-                                    $female_cout_nogroup++;
-                                }
+                            $notdefined_cout++;
+                            if ($eeo_detail['group_status'] == 'Hispanic or Latino') {
+                                $notdefined_cout_hispanic++;
+                            } else if ($eeo_detail['group_status'] == 'White') {
+                                $notdefined_cout_white++;
+                            } else if ($eeo_detail['group_status'] == 'Black or African American') {
+                                $notdefined_cout_black++;
+                            } else if ($eeo_detail['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
+                                $notdefined_cout_native++;
+                            } else if ($eeo_detail['group_status'] == 'Asian') {
+                                $notdefined_cout_asian++;
+                            } else if ($eeo_detail['group_status'] == 'American Indian or Alaska Native') {
+                                $notdefined_cout_american++;
+                            } else if ($eeo_detail['group_status'] == 'Two or More Races') {
+                                $notdefined_cout_races++;
                             } else {
-                                $notdefined_cout++;
-                                if ($eeo_detail['group_status'] == 'Hispanic or Latino') {
-                                    $notdefined_cout_hispanic++;
-                                } else if ($eeo_detail['group_status'] == 'White') {
-                                    $notdefined_cout_white++;
-                                } else if ($eeo_detail['group_status'] == 'Black or African American') {
-                                    $notdefined_cout_black++;
-                                } else if ($eeo_detail['group_status'] == 'Native Hawaiian or Other Pacific Islander') {
-                                    $notdefined_cout_native++;
-                                } else if ($eeo_detail['group_status'] == 'Asian') {
-                                    $notdefined_cout_asian++;
-                                } else if ($eeo_detail['group_status'] == 'American Indian or Alaska Native') {
-                                    $notdefined_cout_american++;
-                                } else if ($eeo_detail['group_status'] == 'Two or More Races') {
-                                    $notdefined_cout_races++;
-                                } else {
-                                    $notdefined_cout_nogroup++;
-                                }
+                                $notdefined_cout_nogroup++;
                             }
                         }
+                        // }
                     }
                 }
 
+              
                 $data['totalrecords'] = $total_records;
                 $data['recordsfor'] = 'Applicants';
             }
@@ -531,11 +506,16 @@ class Eeo extends Public_Controller
                 $display_end_day = $end_date->format('m-t-Y');
                 $end_date = $end_date->format('Y-m-t 23:59:59');
             }
+            
+
+            $gender = $_POST['gender'];
+            $employeespenttime = $_POST['employeespenttime'];
+
 
             if ($_POST['applicantoption'] == 'employee') {
-                $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status);
+                $eeo_candidates = $this->eeo_model->get_all_eeo_employees($keyword, $opt_type, $start_date, $end_date, $company_id, $records_per_page, $my_offset, false, $employee_status, $gender, $employeespenttime);
             } else {
-                $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, null, 0, false);
+                $eeo_candidates = $this->eeo_model->get_all_eeo_applicants($keyword, $opt_type, $start_date, $end_date, $company_id, null, 0, false ,$gender, $employeespenttime );
 
                 if (!empty($eeo_candidates)) {
                     foreach ($eeo_candidates as $key => $eeo_detail) {
@@ -547,14 +527,11 @@ class Eeo extends Public_Controller
                             $eeo_candidates[$key]["group_status"] = $eeoc_form['group_status'];
                             $eeo_candidates[$key]["veteran"] = $eeoc_form['veteran'];
                             $eeo_candidates[$key]["disability"] = $eeoc_form['disability'];
-                            $eeo_candidates[$key]["gender"] = $eeoc_form['gender'];
+                            $eeo_candidates[$key]["gender"] = $eeoc_form['gender']? $eeoc_form['gender'] : $eeo_detail['applicantgender'];
                         }
                     }
                 }
             }
-
-
-
 
 
             header('Content-Type: text/csv; charset=utf-8');
@@ -562,14 +539,14 @@ class Eeo extends Public_Controller
 
             $output = fopen('php://output', 'w');
 
-            fputcsv($output, array('Name', 'Opt Out', 'Date', 'IP Address', 'US Citizen', 'Visa Status', 'Group Status', 'Veteran', 'Disability', 'Gender', 'Applicant Type', 'Applicant Source'));
+            fputcsv($output, array('Name', 'Job Title', 'Opt Out', 'Date', 'IP Address', 'US Citizen', 'Visa Status', 'Group Status', 'Veteran', 'Disability', 'Gender', 'Applicant Type', 'Applicant Source'));
 
             if (sizeof($eeo_candidates) > 0) {
                 foreach ($eeo_candidates as $candidate) {
                     $input = array();
                     $input['name'] = ucwords($candidate['first_name']) . ' ' . ucwords($candidate['last_name']);
+                    $input['job_title'] = $candidate['job_title']? $candidate['job_title']: $candidate['desired_job_title'];
                     $input['opt_out'] = ucwords($opt_type);
-                    // $input['date_applied'] = date_with_time($candidate['date_applied']);
                     $input['date_applied'] = reset_datetime(array('datetime' => $candidate['date_applied'], '_this' => $this, 'from_format' => 'Y-m-d H:i:s'));
                     $input['ip_address'] = $candidate['ip_address'];
                     $input['us_citizen'] = $candidate['us_citizen'];

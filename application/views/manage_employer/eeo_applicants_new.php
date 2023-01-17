@@ -86,9 +86,8 @@
                                             <div class="hr-select-dropdown">
                                                 <select class="invoice-fields" name="opt_type" id="opt_type">
                                                     <option value="all" <?php echo $opt_type == 'all' ? 'selected="selected"' : "" ?>>All Applicants</option>
-                                                    <option value="no" <?php echo $opt_type == 'no' ? 'selected="selected"' : "" ?>>Opted Out Applicants</option>
-                                                    <option value="yes" <?php echo $opt_type == 'yes' ? 'selected="selected"' : "" ?>>Opted In Applicants</option>
-                                                    <option value="other" <?php echo $opt_type == 'other' ? 'selected="selected"' : "" ?>>Opt Status Not Available</option>
+                                                    <option value="No" <?php echo $opt_type == 'No' ? 'selected="selected"' : "" ?>>Opted Out Applicants</option>
+                                                    <option value="Yes" <?php echo $opt_type == 'Yes' ? 'selected="selected"' : "" ?>>Opted In Applicants</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -324,38 +323,37 @@
                                                         <?php $opt_status = $item['eeo_form']; ?>
                                                         <?php if ($opt_status == 'Yes') { ?>
                                                             <span class="text-success">Opted In</span>
-                                                        <?php } else if ($opt_status == 'No') { ?>
+                                                        <?php } else { ?>
                                                             <span class="text-danger">Opted Out</span>
-                                                        <?php } else if ($opt_status == null) { ?>
-                                                            <span class="">Not Available</span>
-                                                        <?php } ?>
+                                                        <?php }  ?>
+
                                                     </td>
                                                     <td>
                                                         <table class="table table-bordered table-condensed table-hover">
                                                             <tbody>
                                                                 <tr>
                                                                     <th class="col-xs-4">US Citizen</th>
-                                                                    <td class="col-xs-8"><?php echo $item['eeo_form'] != null && !empty($item["us_citizen"]) ? $item["us_citizen"] : '<small>Not Available</small>'; ?></td>
+                                                                    <td class="col-xs-8"><?php echo !empty($item["us_citizen"]) ? $item["us_citizen"] : '<small>Not Available</small>'; ?></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th>Visa Status</th>
-                                                                    <td><?php echo $item['eeo_form'] != null && !empty($item["visa_status"]) ? $item["visa_status"] : '<small>Not Available</small>'; ?></td>
+                                                                    <td><?php echo !empty($item["visa_status"]) ? $item["visa_status"] : '<small>Not Available</small>'; ?></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th>Group Status</th>
-                                                                    <td><?php echo $item['eeo_form'] != null && !empty($item["group_status"]) ? $item["group_status"] : '<small>Not Available</small>'; ?></td>
+                                                                    <td><?php echo !empty($item["group_status"]) ? $item["group_status"] : '<small>Not Available</small>'; ?></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th>Veteran</th>
-                                                                    <td><?php echo $item['eeo_form'] != null && !empty($item["veteran"]) ? $item["veteran"] : '<small>Not Available</small>'; ?></td>
+                                                                    <td><?php echo  !empty($item["veteran"]) ? $item["veteran"] : '<small>Not Available</small>'; ?></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th>Disability</th>
-                                                                    <td><?php echo $item['eeo_form'] != null && !empty($item["disability"]) ? $item["disability"] : '<small>Not Available</small>'; ?></td>
+                                                                    <td><?php echo !empty($item["disability"]) ? $item["disability"] : '<small>Not Available</small>'; ?></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th>Gender</th>
-                                                                    <td><?php echo $item['eeo_form'] != null && !empty($item["gender"]) ? $item["gender"] : '<small>Not Available</small>'; ?></td>
+                                                                    <td><?php echo  !empty($item["gender"]) ? $item["gender"] : '<small>Not Available</small>'; ?></td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -411,13 +409,16 @@
         </div>
     </div>
 </div>
-<?php 
+<?php
 ?>
 <script type="text/javascript">
     $(document).ready(function() {
         <?php if ($keyword != 'employee') { ?>
             $('#div_employee').hide();
             $('#div_employee_status').hide();
+            $("#div_opt_type_space").css("display", "none");
+
+            
         <?php } else { ?>
             $('#keyword').hide();
             $('#lblkeyword').hide();
@@ -492,11 +493,10 @@
         employeespenttime = employeespenttime != '' && employeespenttime != null && employeespenttime != undefined ? encodeURIComponent(employeespenttime) : 'all';
 
 
-
         if (eeo_form_candidates == 'employee') {
             url += '/' + keyword + '/' + opt_type + '/' + startDate + '/' + endDate + '/' + employee_status + '/' + gender + '/' + employeespenttime
         } else {
-            url += '/' + keyword + '/' + opt_type + '/' + startDate + '/' + endDate + '/' + gender + '/' + employeespenttime
+            url += '/' + keyword + '/' + opt_type + '/' + startDate + '/' + endDate + '/all' + '/' + gender + '/' + employeespenttime
         }
 
         //console.log(url);
@@ -512,13 +512,21 @@
         var keyword = $('#keyword').val();
         var opt_type = $('#opt_type').val();
 
+
+        var gender = $('#gender').val();
+        var employeespenttime = $('#employeespenttime').val();
+
+
         var url = '<?php echo base_url('eeo/export_excel'); ?>';
         var dataToSend = {
             'startDate': startDate,
             'endDate': endDate,
             'keyword': keyword,
             'opt_type': opt_type,
-            'action': 'export_csv'
+            'action': 'export_csv',
+            'gender': gender,
+            'employeespenttime': employeespenttime,
+
         };
 
         var myRequest;

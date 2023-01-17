@@ -324,9 +324,14 @@
                                         <p>Generate reports related to jobs and Equal Employment Opportunity </p>
                                     </div>
                                     <ul>
-                                        <?php if (check_access_permissions_for_view($security_details, 'eeo')) { ?>
+                                        <?php if (check_access_permissions_for_view($security_details, 'eeo')) {
+                                             $userAccessData = db_get_employee_profile($session['employer_detail']['sid']);
+                                             if($userAccessData[0]['access_level_plus']==1 || $userAccessData[0]['pay_plan_flag']==1 ){
+                                             ?>
                                             <li><a href="<?php echo base_url('eeo') ?>">EEO Report</a></li>
-                                        <?php } ?>
+                                        <?php 
+                                             }
+                                    } ?>
                                         <?php if (check_access_permissions_for_view($security_details, 'accurate_background')) { ?>
                                             <li><a href="<?php echo base_url('accurate_background') ?>">Accurate Background Report</a></li>
                                         <?php } ?>
