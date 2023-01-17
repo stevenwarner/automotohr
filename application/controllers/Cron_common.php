@@ -556,7 +556,7 @@ class Cron_common extends CI_Controller
         }
         //
         _e($found, true);
-        _e($notFound, true, true);
+        _e($notFound, true);
     }
 
     /**
