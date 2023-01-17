@@ -473,6 +473,15 @@ class Cron_common extends CI_Controller
      */
     public function employeeStatusFixer()
     {
+        // $this->employeeStatusRehiredFixer();
+        $this->employeeStatusTerminatedFixer();
+    }
+
+    /**
+     * Employee rehire status fixer
+     */
+    public function employeeStatusRehiredFixer()
+    {
         //
         $employees = $this->db
             ->select('sid')
@@ -484,7 +493,7 @@ class Cron_common extends CI_Controller
             ->result_array();
         //
         if (empty($employees)) {
-            exit(0);
+            return;
         }
         //
         $ids = array_column($employees, 'sid');
@@ -544,6 +553,91 @@ class Cron_common extends CI_Controller
                 ->set($upd)
                 ->where('sid', $id)
                 ->update('users');
+        }
+        //
+        _e($found, true);
+        _e($notFound, true, true);
+    }
+
+    /**
+     * Employee terminated status fixer
+     */
+    public function employeeStatusTerminatedFixer()
+    {
+        //
+        $employees = $this->db
+            ->select('sid, general_status')
+            ->where([
+                'general_status <> ' => 'terminated',
+                'active' => 1,
+                'terminated_status' => 1
+            ])
+            ->get('users')
+            ->result_array();
+        //
+        if (empty($employees)) {
+            return;
+        }
+        _E($employees, true, true);
+
+        //
+        $ids = array_column($employees, 'sid');
+        //
+        $rows = [];
+        //
+        $lastStatuses =
+            $this->db
+            ->select('employee_status, employee_sid, termination_date')
+            ->where_in('employee_sid', $ids)
+            ->order_by('sid', 'desc')
+            ->get('terminated_employees')
+            ->result_array();
+        // Save the last record of each employee
+        foreach ($lastStatuses as $status) {
+            //
+            if (!isset($rows[$status['employee_sid']])) {
+                $rows[$status['employee_sid']] = $status;
+            }
+        }
+
+        //
+        $handler = fopen(ROOTPATH . '../app_logs/' . time() . '-terminated.json', 'w');
+        fwrite($handler, json_encode(['ids' => $ids, 'status' => $rows]));
+        fclose($handler);
+        //
+        $found = 0;
+        $notFound = 0;
+        // Loop through the original ids
+        foreach ($ids as $id) {
+            //
+            $upd = [];
+            // Check if record found in terminated
+            if (isset($rows[$id])) {
+                // Transform
+                $employeeLastStatus = strtolower(GetEmployeeStatusText($rows[$id]['employee_status']));
+                //
+                // Check the last status
+                // for rehired
+                if (
+                    $employeeLastStatus == 'rehired'
+                    || $employeeLastStatus == 'active'
+                ) {
+                    $upd['terminated_status'] = 0;
+                }
+
+                $found++;
+            } else {
+                //
+                $notFound++;
+            }
+            if (!empty($upd)) {
+                //
+                $this->db
+                    ->reset_query()
+                    ->set($upd)
+                    ->where('sid', $id)
+                    ->update('users');
+            }
         }
         //
         _e($found, true);
