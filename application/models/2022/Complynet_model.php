@@ -748,7 +748,7 @@ class Complynet_model extends CI_Model
             $ins['lastName'] = $employee['last_name'];
             $ins['userName'] = $email;
             $ins['email'] = $email;
-            $ins['password'] = '';
+            $ins['password'] = 'password';
             $ins['companyId'] = $complyCompanyId;
             $ins['locationId'] = $complyLocationId;
             $ins['departmentId'] = $complyDepartmentId;

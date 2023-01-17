@@ -454,7 +454,7 @@ class Complynet extends Admin_Controller
                     $ins['lastName'] = $employee['last_name'];
                     $ins['userName'] = $email;
                     $ins['email'] = $email;
-                    $ins['password'] = '';
+                    $ins['password'] = 'password';
                     $ins['companyId'] = $this->complyCompanyId;
                     $ins['locationId'] = $this->complyLocationId;
                     $ins['departmentId'] = $complyDepartmentId;
