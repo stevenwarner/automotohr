@@ -73,13 +73,13 @@
                 <tbody>
                     <?php foreach ($departments as $department) {
                     ?>
-                        <tr>
-                            <td><?= $department['department_sid']; ?></td>
-                            <td><?= $department['department_name']; ?></td>
-                            <td><?= $department['complynet_department_sid']; ?></td>
-                            <td><?= $department['complynet_department_name']; ?></td>
-                            <td><?= formatDateToDB($department['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></td>
-                        </tr>
+                    <tr>
+                        <td><?= $department['department_sid']; ?></td>
+                        <td><?= $department['department_name']; ?></td>
+                        <td><?= $department['complynet_department_sid']; ?></td>
+                        <td><?= $department['complynet_department_name']; ?></td>
+                        <td><?= formatDateToDB($department['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></td>
+                    </tr>
                     <?php
                     } ?>
                 </tbody>
@@ -118,31 +118,34 @@
                         <tbody>
                             <?php if (empty($employees)) {
                             ?>
-                                <tr>
-                                    <td colspan="4">
-                                        <p class="alert alert-info text-center">
-                                            No employees on complynet yet.
-                                        </p>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <p class="alert alert-info text-center">
+                                        No employees on complynet yet.
+                                    </p>
+                                </td>
+                            </tr>
                             <?php
                             } else { ?>
 
-                                <?php foreach ($employees as $employee) {
+                            <?php foreach ($employees as $employee) {
                                 ?>
-                                    <tr>
-                                        <td>
-                                            <?php
+                            <tr>
+                                <td>
+                                    <?php
                                             $empData = json_decode($employee['complynet_json']);
-                                            echo '<strong>'.$empData[0]->FirstName . ' ' . $empData[0]->LastName . '</strong><br>';
+                                            echo '<strong>' . $empData[0]->FirstName . ' ' . $empData[0]->LastName . '</strong><br>';
                                             echo $employee['email'];
                                             ?>
-                                        </td>
-                                        <td><?= $employee['complynet_employee_sid']; ?></td>
-                                        <td><?= formatDateToDB($employee['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?></td>
-                                        <td><a class='showdetail btn btn-success' data-details='<?php echo $employee['complynet_json']; ?>' href='#'><b>Detail</b></a></td>
-                                    </tr>
-                                <?php
+                                </td>
+                                <td><?= $employee['complynet_employee_sid']; ?></td>
+                                <td><?= formatDateToDB($employee['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
+                                </td>
+                                <td><a class='showdetail btn btn-success'
+                                        data-details='<?php echo $employee['complynet_json']; ?>'
+                                        href='#'><b>Detail</b></a></td>
+                            </tr>
+                            <?php
                                 } ?>
                             <?php }
                             ?>
@@ -191,26 +194,27 @@
                                     $errorArray[] = '<strong class="text-danger">Department is missing</strong>';
                                 }
                             ?>
-                                <tr>
-                                    <td>
-                                        <?php
+                            <tr>
+                                <td>
+                                    <?php
                                         echo '<strong>' . remakeEmployeeName($emp) . '</strong><br />';
                                         echo $emp['email'];
                                         ?>
-                                    </td>
-                                    <td>
-                                        <?php if ($errorArray) {
+                                </td>
+                                <td>
+                                    <?php if ($errorArray) {
                                             echo implode('<br />', $errorArray);
                                         } else {
                                             echo '-';
                                         } ?>
-                                    </td>
-                                    <td>
-                                        <?php if (!$errorArray) { ?>
-                                            <button class="btn btn-success jsSyncSingleEmployee" data-id="<?= $emp['sid']; ?>">Sync Employee</button>
-                                        <?php } ?>
-                                    </td>
-                                </tr>
+                                </td>
+                                <td>
+                                    <?php if (!$errorArray) { ?>
+                                    <button class="btn btn-success jsSyncSingleEmployee"
+                                        data-id="<?= $emp['sid']; ?>">Sync Employee</button>
+                                    <?php } ?>
+                                </td>
+                            </tr>
                             <?php
                             } ?>
                         </tbody>
@@ -222,81 +226,81 @@
 </div>
 
 <script>
-    $(function() {
-        // Company
-        loadHourGraph('jsCompanyCanvas', {
-            data: {
-                labels: ['On ComplyNet', 'Off ComplyNet'],
-                datasets: [{
-                    label: 'Dataset 1',
-                    data: [
-                        <?= count($departments) + count($employees); ?>,
-                        <?= $allDepartmentCount + count($offComplyNetEmployees); ?>,
-                    ],
-                    backgroundColor: [
-                        '#fd7a2a',
-                        '#3554dc',
-                    ],
-                }]
-            },
-            textToShow: "Company"
-        });
-        // Department
-        loadHourGraph('jsDepartmentCanvas', {
-            data: {
-                labels: ['On ComplyNet', 'Off ComplyNet'],
-                datasets: [{
-                    label: 'Dataset 1',
-                    data: [
-                        <?= count($departments); ?>,
-                        <?= $allDepartmentCount; ?>,
-                    ],
-                    backgroundColor: [
-                        '#fd7a2a',
-                        '#3554dc',
-                    ],
-                }]
-            },
-            textToShow: "Employees"
-        });
-        // Employees
-        loadHourGraph('jsEmployeeCanvas', {
-            data: {
-                labels: ['On ComplyNet', 'Off ComplyNet'],
-                datasets: [{
-                    label: 'Dataset 1',
-                    data: [
-                        <?= count($employees); ?>,
-                        <?= count($offComplyNetEmployees); ?>,
-                    ],
-                    backgroundColor: [
-                        '#fd7a2a',
-                        '#3554dc',
-                    ],
-                }]
-            },
-            textToShow: "Employees"
-        });
-        //
-        function loadHourGraph(ref, options) {
+$(function() {
+    // Company
+    loadHourGraph('jsCompanyCanvas', {
+        data: {
+            labels: ['On ComplyNet', 'Off ComplyNet'],
+            datasets: [{
+                label: 'Dataset 1',
+                data: [
+                    <?= count($departments) + count($employees); ?>,
+                    <?= ($allDepartmentCount - count($departments)) + count($offComplyNetEmployees); ?>,
+                ],
+                backgroundColor: [
+                    '#fd7a2a',
+                    '#3554dc',
+                ],
+            }]
+        },
+        textToShow: "Company"
+    });
+    // Department
+    loadHourGraph('jsDepartmentCanvas', {
+        data: {
+            labels: ['On ComplyNet', 'Off ComplyNet'],
+            datasets: [{
+                label: 'Dataset 1',
+                data: [
+                    <?= count($departments); ?>,
+                    <?= $allDepartmentCount - count($departments); ?>,
+                ],
+                backgroundColor: [
+                    '#fd7a2a',
+                    '#3554dc',
+                ],
+            }]
+        },
+        textToShow: "Employees"
+    });
+    // Employees
+    loadHourGraph('jsEmployeeCanvas', {
+        data: {
+            labels: ['On ComplyNet', 'Off ComplyNet'],
+            datasets: [{
+                label: 'Dataset 1',
+                data: [
+                    <?= count($employees); ?>,
+                    <?= count($offComplyNetEmployees); ?>,
+                ],
+                backgroundColor: [
+                    '#fd7a2a',
+                    '#3554dc',
+                ],
+            }]
+        },
+        textToShow: "Employees"
+    });
+    //
+    function loadHourGraph(ref, options) {
 
-            const config = {
-                type: 'pie',
-                data: options.data,
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: options.textToShow
-                        }
+        const config = {
+            type: 'pie',
+            data: options.data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: options.textToShow
                     }
-                },
-            };
-            new Chart(document.getElementById(ref), config);
-        }
-    })
+                }
+            },
+        };
+        new Chart(document.getElementById(ref), config);
+    }
+})
 </script>
