@@ -3178,7 +3178,58 @@ class Hr_documents_management_model extends CI_Model
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
 
+        //
+        if ($records_arr) {
+            //
+            $documentIds = array_column($records_arr, 'sid');
+            //
+            $skipIdObj = $this->getDocumentCategoryIds($documentIds);
+            //
+            if ($skipIdObj) {
+                //
+                foreach ($records_arr as $index => $value) {
+                    //
+                    if (isset($skipIdObj[$value['sid']])) {
+                        unset($records_arr[$index]);
+                    }
+                }
+                //
+                $records_arr = array_values($records_arr);
+            }
+        }
+
         return $records_arr;
+    }
+
+    /**
+     * Get company documents category ids
+     *
+     * @param array $ids
+     * @param string $type optional
+     * @return array
+     */
+    public function getDocumentCategoryIds(array $ids, string $type = 'documents_management')
+    {
+        $records =
+        $this->db->select('DISTINCT(document_sid)')
+        ->where_in([
+            'document_sid' => $ids,
+            'document_type' => $type
+        ])
+        ->get('documents_2_category')
+        ->result_array();
+        //
+        if (!$records) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            $tmp[$record['document_sid']] = true;
+        }
+        //
+        return $tmp;
     }
 
     function get_access_level_manual_doc($company_sid, $employer_sid, $employer_type, $pp_flag = 0)
