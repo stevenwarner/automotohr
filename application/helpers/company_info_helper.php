@@ -2698,14 +2698,54 @@ if (!function_exists('CheckLogin')) {
 
 
 if (!function_exists('getnotifications_emails_configuration')) {
-    function getnotifications_emails_configuration($companySid,$slug) {
-         //
+    function getnotifications_emails_configuration($companySid, $slug)
+    {
+        //
         $CI = &get_instance();
         //
-         return $CI->db
+        return $CI->db
             ->where('company_sid', $companySid)
             ->where($slug, 1)
             ->count_all_results('notifications_emails_configuration');
     }
-       
+}
+
+
+if (!function_exists('getComplyNetLink')) {
+    /**
+     * Get the employee hash
+     * 
+     * @param int $companyId
+     * @param int $employeeId
+     * @return string
+     */
+    function getComplyNetLink(
+        int $companyId,
+        int $employeeId
+    ) {
+        // Get CI instance
+        $CI = &get_instance();
+        // Check if company is onboard
+        if (!$CI->db->where([
+            'company_sid'
+        ])->count_all_results('complynet_companies')) {
+            return '';
+        }
+        // Get email
+        $record =
+            $CI->db->select('email')->where([
+                'parent_sid' => $companyId,
+                'sid' => $employeeId
+            ])
+            ->get('users')
+            ->row_array();
+        //
+        if (empty($record)) {
+            return '';
+        }
+        // Load ComplyNet library
+        $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
+        // Get the hash
+        return $CI->complynet_lib->getUserHash($record['email']);
+    }
 }

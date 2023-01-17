@@ -179,6 +179,24 @@ class Complynet_lib
         );
     }
 
+     /**
+     * Get user hash
+     *
+     * @param string $email
+     * @return array
+     */
+    public function getUserHash(
+        string $email
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'aUser?username=' . (strtolower($email)),
+            'GET'
+        );
+    }
+
 
     /**
      * Check and set the access token
