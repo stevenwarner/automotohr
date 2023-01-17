@@ -473,7 +473,7 @@ class Cron_common extends CI_Controller
      */
     public function employeeStatusFixer()
     {
-        // $this->employeeStatusRehiredFixer();
+        $this->employeeStatusRehiredFixer();
         $this->employeeStatusTerminatedFixer();
     }
 
@@ -578,7 +578,6 @@ class Cron_common extends CI_Controller
         if (empty($employees)) {
             return;
         }
-        _E($employees, true, true);
 
         //
         $ids = array_column($employees, 'sid');
