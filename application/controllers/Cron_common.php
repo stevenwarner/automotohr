@@ -555,8 +555,8 @@ class Cron_common extends CI_Controller
                 ->update('users');
         }
         //
-        _e($found, true);
-        _e($notFound, true);
+        _e($found."\n\n");
+        _e($notFound."\n\n");
     }
 
     /**
@@ -639,8 +639,8 @@ class Cron_common extends CI_Controller
             }
         }
         //
-        _e($found, true);
-        _e($notFound, true, true);
+        _e($found."\n\n");
+        _e($notFound."\n\n");
     }
 
     /**
