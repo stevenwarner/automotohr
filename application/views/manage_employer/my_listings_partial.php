@@ -69,7 +69,13 @@
                                 <td class="text-center">
                                     <p>
                                         <strong><?=$listing['deactive_by_name'];?></strong> <br>
-                                        <?=formatDate($listing['deactivation_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME);?>
+                                        <?php
+                                        if($listing['deactivation_date']!=null || $listing['deactivation_date']!='' ){
+                                             echo formatDate($listing['deactivation_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                                        }else{
+                                             echo "Expiration Date: ".formatDate($listing['expiration_date'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                                        } 
+                                        ?>
                                     </p>
                                 </td>
                             <?php } ?>
