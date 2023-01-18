@@ -1291,9 +1291,10 @@ class Application_tracking_system_model extends CI_Model {
                 //
                 $testKeywords = preg_replace('/[^0-9]/i', '', $keywords);
                 //
-                if (!empty($testKeywords) && is_numeric($testKeywords)){
-                    $keywords = $testKeywords;
-                }
+                // if (!empty($testKeywords) && is_numeric($testKeywords)){
+                //     $keywords = $testKeywords;
+                // }
+                // _e($keywords, true);
                 //
                 $this->db->group_start();
                 $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ','',$keywords));
