@@ -1289,6 +1289,12 @@ class Application_tracking_system_model extends CI_Model {
 
             if ($position === false) { // not an email
                 //
+                $testKeywords = preg_replace('/[^0-9]/i', '', $keywords);
+                //
+                if (!empty($testKeywords) && is_numeric($testKeywords)){
+                    $keywords = $testKeywords;
+                }
+                //
                 $this->db->group_start();
                 $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ','',$keywords));
                 $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$keywords.'" ', null);
