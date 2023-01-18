@@ -251,7 +251,7 @@
                                             <div class="row">
                                                 <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
                                                     <div class="hr-select-dropdown no-aarow">
-                                                        <input type="text" placeholder="Search applicants by Name or Email" name="keyword" id="keyword" value="<?php echo isset($keyword) ? $keyword : ''; ?>" class="invoice-fields search-candidate">
+                                                        <input type="text" placeholder="Search applicants by Name, Email and Phone Number" name="keyword" id="keyword" value="<?php echo isset($keyword) ? $keyword : ''; ?>" class="invoice-fields search-candidate">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 custom-col">

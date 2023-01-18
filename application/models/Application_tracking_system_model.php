@@ -1291,11 +1291,14 @@ class Application_tracking_system_model extends CI_Model {
                 //
                 $this->db->group_start();
                 $this->db->like('REPLACE(CONCAT(portal_job_applications.first_name,"", portal_job_applications.last_name), "" ,"")', str_replace(' ','',$keywords));
+                $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$keywords.'" ', null);
+                $this->db->or_where('portal_job_applications.phone_number', $keywords);
                 $this->db->group_end();
                
             } else {   // this is an email
                 $this->db->group_start();
-                $this->db->like('portal_job_applications.email', trim($keywords));
+                $this->db->like('portal_job_applications.email', trim($keywords));                
+                $this->db->or_where('portal_job_applications.extra_info REGEXP "'.$keywords.'" ', null);
                 $this->db->group_end();
             }
         }
@@ -1395,7 +1398,6 @@ class Application_tracking_system_model extends CI_Model {
             $this->db->where('form_full_employment_application.status', 'signed');
             $this->db->join('form_full_employment_application', 'form_full_employment_application.user_sid = portal_job_applications.sid', 'left');
         }
-
         $this->filtration($keywords);
 
         if ($limit > 0) {
