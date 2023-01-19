@@ -2019,8 +2019,9 @@ class Hr_documents_management_model extends CI_Model
             $this->db->where('parent_sid', $company_sid);
             $this->db->where('terminated_status', 0);
             $this->db->where('active', 1);
+            if(!empty($ignore)){
             $this->db->where_not_in('sid', $ignore);
-
+            }
             $record_obj = $this->db->get('users');
             $other_employees = [];
             
