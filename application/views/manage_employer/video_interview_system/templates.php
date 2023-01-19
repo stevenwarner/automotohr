@@ -14,7 +14,6 @@
                                 Back
                             </a>
                             <?php echo $title; ?>
-                            <span class="beta-label">beta</span>
                         </span>
                     </div>
                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

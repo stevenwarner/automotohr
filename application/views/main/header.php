@@ -1119,7 +1119,7 @@
                                                                     echo 'class="active_header_nav"';
                                                                 } ?> href="<?php echo base_url('video_interview_system') ?>">
                                                                 <figure><i class="fa fa-file-text-o"></i></figure>
-                                                                Video Interview System<span class="beta-label">beta</span>
+                                                                Video Interview System
                                                             </a>
                                                         </li>
                                                     <?php } ?>

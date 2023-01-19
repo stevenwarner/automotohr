@@ -12518,6 +12518,10 @@ class Hr_documents_management extends Public_Controller
             //
             $dt = ROOTPATH . 'temp_files/employee_export/' . $download_file;
             //
+            if (is_file($dt)) {
+                unlink($dt);
+            }
+            //
             shell_exec("cd $dir; zip -r $dt *");
             //
             //
@@ -12550,6 +12554,7 @@ class Hr_documents_management extends Public_Controller
     ) {
         // When their is no session
         if (!$this->session->userdata('logged_in')) exit(0);
+        ini_set('memory_limit', -1);
         $data['session'] = $this->session->userdata('logged_in');
         $security_sid = $data['session']['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);

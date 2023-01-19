@@ -464,7 +464,6 @@ class Users_model extends CI_Model {
         // Get Employees
         $result = $this->db
         ->select('
-            concat(users.first_name," ",users.last_name) as user_name,
             users.applicant_sid as applicant_sid,
             users.job_title as last_job_title,
             users.email as user_email,
@@ -474,6 +473,14 @@ class Users_model extends CI_Model {
             users.active as is_active,
             users.archived as is_archived,
             users.terminated_status as is_terminated,
+            users.first_name,
+            users.last_name,
+            users.middle_name,
+            users.timezone,
+            users.access_level,
+            users.access_level_plus,
+            users.pay_plan_flag,
+            users.is_executive_admin,
             "employee" as user_type,
             "0" as job_count
         ')
@@ -484,7 +491,7 @@ class Users_model extends CI_Model {
         ->or_like('users.email', $query)
         ->group_end()
         ->limit( $offset, $inset)
-        ->order_by('user_name', 'ASC')
+        ->order_by('first_name', 'ASC')
         ->where_in('users.parent_sid', $executiveCompanyIds, false)
         ->get();
         //
@@ -540,6 +547,12 @@ class Users_model extends CI_Model {
 
                 $applicants[$k0]['jobs'] = $jobs;
                 $applicants[$k0]['job_count'] = sizeof($jobs);
+            }
+        }
+        //
+        if(!empty($employees)){
+            foreach($employees as $index => $value){
+                $employees[$index]['user_name'] = remakeEmployeeName($value);
             }
         }
         //

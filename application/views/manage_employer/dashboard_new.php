@@ -552,7 +552,6 @@
                                                         <a href="<?php echo base_url('attendance'); ?>" class="site-btn">Manage</a>
                                                     </div>
                                                 </div>
-                                                <span class="beta-label">beta</span>
                                             </div>
                                         </div>
                                     <?php } ?>
@@ -688,31 +687,31 @@
                                 <?php } ?>
 
                                 <!-- Employee Information Change -->
-                                <?php  if ($access_level_plus == 1 || $pay_plan_flag == 1) { ?>
-                                <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
-                                    <div class="dash-box">
-                                        <div class="dashboard-widget-box">
-                                            <figure>
-                                                <i class="fa fa-users <?=$employeeInformationChange['daily'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
-                                            </figure>
-                                            <h2 class="post-title" style="margin: 2px 0;">
-                                                <a href="<?php echo base_url('employee/information/report'); ?>">
-                                                    Employee Information Change
-                                                </a>
-                                            </h2>
-                                            <div class="count-box" style="font-size: 12px">
-                                                <span class="green">Today <?= $employeeInformationChange['daily']; ?> changed information</span><br>
-                                                <small style="font-size: 12px">This week <?= $employeeInformationChange['week']; ?> changed information</small><br>
-                                                <small style="font-size: 12px">This month <?= $employeeInformationChange['month']; ?> changed information</small><br>
-                                            </div>
-                                            <div class="button-panel">
-                                                <a href="<?php echo base_url('employee/information/report'); ?>" class="site-btn">Show Changes</a>
+                                <?php if ($access_level_plus == 1 || $pay_plan_flag == 1) { ?>
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure>
+                                                    <i class="fa fa-users <?= $employeeInformationChange['daily'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                </figure>
+                                                <h2 class="post-title" style="margin: 2px 0;">
+                                                    <a href="<?php echo base_url('employee/information/report'); ?>">
+                                                        Employee Information Change
+                                                    </a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <span class="green">Today <?= $employeeInformationChange['daily']; ?> changed information</span><br>
+                                                    <small style="font-size: 12px">This week <?= $employeeInformationChange['week']; ?> changed information</small><br>
+                                                    <small style="font-size: 12px">This month <?= $employeeInformationChange['month']; ?> changed information</small><br>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <a href="<?php echo base_url('employee/information/report'); ?>" class="site-btn">Show Changes</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                                 <?php } ?>
-                                
+
                                 <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
                                     <!-- Documents Library -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
@@ -742,6 +741,7 @@
                                 ?>
 
                                 <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_comply_status) { ?>
+                                    <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
@@ -753,18 +753,31 @@
                                                 </h2>
                                                 <div class="button-panel col-lg-12">
                                                     <div class="row">
-                                                        <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                <a href="<?php echo base_url('complynet/dashboard'); ?>" class="btn btn-success btn-block">Dashboard</a>
-                                                            </div>
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
-                                                            </div>
-                                                        <?php } else { ?>
+                                                        <?php
+                                                        if ($complyNetLink) {
+                                                        ?>
                                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
+                                                                <a href="<?=$complyNetLink;?>" target="_blank" class="btn btn-success btn-block">Dashboard</a>
                                                             </div>
-                                                        <?php } ?>
+                                                        <?php
+                                                        } else {
+                                                        ?>
+                                                            <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                    <a href="<?php echo base_url('complynet/dashboard'); ?>" class="btn btn-success btn-block">Dashboard</a>
+                                                                </div>
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                    <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
+                                                                </div>
+                                                            <?php } else { ?>
+                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                    <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
+                                                                </div>
+                                                            <?php } ?>
+                                                        <?php
+                                                        }
+                                                        ?>
+
                                                     </div>
                                                 </div>
                                             </div>

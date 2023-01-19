@@ -363,4 +363,129 @@ class Users_model extends CI_Model {
         }
 
     }
+
+
+    /**
+     * Check the onboarding address
+     */
+    public function checkCompanyOnboardAddress(
+        int $companyId
+    ) {
+        //
+        return
+            $this->db
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->count_all_results('onboarding_office_locations');
+    }
+
+    /**
+     * Get company primary address
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyAddress(
+        int $companyId
+    ) {
+        //
+        return
+            $this->db
+            ->select([
+                'users.Location_Address',
+                'users.Location_City',
+                'users.Location_ZipCode',
+                'users.PhoneNumber',
+                'states.state_name',
+                'countries.country_name'
+            ])
+            ->join('states', 'states.sid = users.Location_State', 'left')
+            ->join('countries', 'countries.sid = users.Location_Country', 'left')
+            ->where([
+                'users.sid' => $companyId
+            ])
+            ->get('users')
+            ->row_array();
+    }
+
+    /**
+     * Get company address location
+     *
+     * @param int $companyId
+     * @return array
+     */
+    public function getCompanyAddressLocation(
+        int $companyId
+    ) {
+        //
+        return
+            $this->db
+            ->select([
+                'address'
+            ])
+            ->where([
+                'company_sid' => $companyId
+            ])
+            ->get('company_addresses_locations')
+            ->row_array();
+    }
+
+    /**
+     * Copy the company default address as onboarding address
+     *
+     * @param int $companyId
+     * @param int $fromScript
+     * @return int
+     */
+    public function fixOnboardingAddress(
+        int $companyId,
+        int $fomScript = 1
+    ) {
+        // Check the onboarding address
+        $onboardAddress = $this->checkCompanyOnboardAddress($companyId);
+        //
+        if ($onboardAddress != 0) {
+            return 0;
+        }
+        // Get company default address
+        $companyAddress = $this->getCompanyAddress($companyId);
+        //
+        if (!empty($companyAddress)) {
+            //
+            $address = '';
+            $address .= !empty($companyAddress['Location_Address']) ? $companyAddress['Location_Address'] . ', ' : '';
+            $address .= !empty($companyAddress['Location_City']) ? $companyAddress['Location_City'] . ', ' : '';
+            $address .= !empty($companyAddress['Location_ZipCode']) ? $companyAddress['Location_ZipCode'] . ', ' : '';
+            $address .= !empty($companyAddress['state_name']) ? $companyAddress['state_name'] . ', ' : '';
+            $address .= !empty($companyAddress['country_name']) ? $companyAddress['country_name'] : '';
+            //
+            $address = trim(ltrim(rtrim($address, ', '), ', '));
+        } else {
+            //
+            $companyAddress = $this->getCompanyAddressLocation($companyId);
+            //
+            if (empty($companyAddress)) {
+                return 0;
+            }
+            //
+            $address = $companyAddress['address'];
+            $companyAddress['PhoneNumber'] = '';
+        }
+        //
+        $ins = [];
+        $ins['company_sid'] = $companyId;
+        $ins['location_title'] = 'Primary Location';
+        $ins['location_address'] = $address;
+        $ins['location_telephone'] = $companyAddress['PhoneNumber'];
+        $ins['location_fax'] = '';
+        $ins['location_status'] = 1;
+        $ins['date_created'] = date('Y-m-d H:i:s', strtotime('now'));
+        $ins['is_primary'] = 1;
+        $ins['by_script'] = $fomScript;
+        //
+        $this->db->insert('onboarding_office_locations', $ins);
+        //
+        return $this->db->insert_id();
+    }
 }

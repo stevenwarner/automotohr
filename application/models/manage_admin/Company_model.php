@@ -1255,6 +1255,7 @@ class Company_model extends CI_Model
                     'email' => $data['email'],
                     'active' => $data['active'],
                     'timezone' => $data['timezone'],
+                    'access_level' => $data['access_level'],
                     'PhoneNumber' => $data['direct_business_number'],
                     'job_title' => $data['job_title']
                 );

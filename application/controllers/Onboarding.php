@@ -1200,6 +1200,9 @@ class Onboarding extends CI_Controller
                 $data['company_eeoc_form_status'] = $company_eeo_status; //$this->onboarding_model->check_company_eeoc_form_status($company_info['sid']);
                 $data['onboarding_progress'] = $onboarding_progress;
 
+                //
+                $data['companyDefaultAddress'] = $this->onboarding_model->getPrimaryAddress($company_sid);
+
                 $this->load->view('onboarding/applicant_boarding_header', $data);
                 $this->load->view('onboarding/getting_started_applicant');
                 $this->load->view('onboarding/on_boarding_footer');
@@ -10901,6 +10904,31 @@ class Onboarding extends CI_Controller
                 return $resp;
             }    
         }
+    }
+
+
+    public function officeLocation() {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $this->db
+        ->where('company_sid', $post['companyId'])
+        ->update(
+            'onboarding_office_locations',
+            [
+                'is_primary' => 0
+            ]
+        );
+        //
+        $this->db
+        ->where('company_sid', $post['companyId'])
+        ->where('sid', $post['rowId'])
+        ->update(
+            'onboarding_office_locations',
+            [
+                'is_primary' => 1
+            ]
+        );
     }
 
     

@@ -162,6 +162,20 @@
                                        } ?>">
                                 <?php echo form_error('referred_by_email'); ?>
                             </li>
+                            <li></li>
+                            <!--  -->
+                            <li class="jsContactPreference <?=$sms_module_status == 1 ?  '' : 'hidden';?>">
+                                <label for="contact_preferred">Contact Preference</label>
+                                <p class="text-danger" style="font-size: 12px;"><strong>You must enter a valid US phone number to enable sms.<strong></p>
+                                <label class="control control--radio">
+                                    <input type="radio" class="contactPreference" name="contactPreference" value="email" checked /> Email
+                                    <div class="control__indicator"></div>
+                                </label>
+                                <label class="control control--radio">
+                                    <input type="radio" class="contactPreference" name="contactPreference" value="sms" /> SMS
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </li>
                             <li class="questionare-section" id="show_questionnaire"></li>
                             <?php if($eeo_form_status == 1) { ?>
                             <li class="employment-opertinity-form">
@@ -439,6 +453,8 @@
         googleCaptchaToken = don;
     }
 
+    var sm_enable = <?=$sms_module_status == 1 ? 1 : 0?>;
+    var sm_regex = sm_enable == 1 ? /(\d{10})|(\d{11})$/ : /^[0-9\-]+$/;
     function validate_form() {
         youtube_check();
         $("#register-form").validate({
@@ -510,6 +526,7 @@
                 gender: "Please Select Your Gender."
             },
             submitHandler: function (form) {
+
 
                 if(googleCaptchaToken === null){
                     

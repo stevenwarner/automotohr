@@ -438,7 +438,17 @@ if ($user_type == 'applicant') {
                                         <hr />
                                         <div class="row grid-columns" id="custom_office_location_section">
                                             <?php if (!empty($office_locations)) { ?>
-                                                <?php foreach ($office_locations as $key => $location) { ?>
+                                                <?php foreach ($office_locations as $key => $location) { 
+                                                    //
+                                                    $shouldBeChecked = false;
+                                                    //
+                                                    $shouldBeChecked = in_array($location['sid'], $locations) ?? $shouldBeChecked;
+                                                    //
+                                                    if (empty($locations)) {
+                                                        $shouldBeChecked = $location['is_primary'] == 1 ? true : $shouldBeChecked;
+                                                    }
+
+                                                    ?>
                                                     <div class="col-xs-12 col-md-4 col-sm-6 col-lg-3">
                                                         <label class="package_label" for="location_<?php echo $location['sid']; ?>">
                                                             <div class="img-thumbnail text-center package-info-box">
@@ -451,7 +461,7 @@ if ($user_type == 'applicant') {
                                                                         <button onclick="show_office_details('<?php echo $location['location_title']; ?>','<?php echo $location['location_address']; ?>','<?php echo $location['location_telephone']; ?>','<?php echo $location['location_fax']; ?>');" type="button" class="btn btn-default btn-sm btn-block">View Detail</button>
                                                                     </div>
                                                                 </div>
-                                                                <input <?php echo set_checkbox('location[]', $location['sid'], in_array($location['sid'], $locations)); ?> class="select-package" data-type="location" id="location_<?php echo $location['sid']; ?>" name="locations[]" type="checkbox" value="<?php echo $location['sid']; ?>" />
+                                                                <input <?php echo set_checkbox('location[]', $location['sid'], $shouldBeChecked ); ?> class="select-package" data-type="location" id="location_<?php echo $location['sid']; ?>" name="locations[]" type="checkbox" value="<?php echo $location['sid']; ?>" />
 
                                                             </div>
                                                         </label>
@@ -584,10 +594,12 @@ if ($user_type == 'applicant') {
                                                             <div class="img-thumbnail text-center package-info-box">
                                                                 <figure>
                                                                     <?php if (!empty($person['profile_picture'])) { ?>
-                                                                        <!--<div class="" style="width: 100%; height: 250px; background-repeat: no-repeat; background-size: 100%; background-image: url('<?php //echo AWS_S3_BUCKET_URL . $person['profile_picture']; ?>'); background-position: center center;"></div>-->
+                                                                        <!--<div class="" style="width: 100%; height: 250px; background-repeat: no-repeat; background-size: 100%; background-image: url('<?php //echo AWS_S3_BUCKET_URL . $person['profile_picture']; 
+                                                                                                                                                                                                            ?>'); background-position: center center;"></div>-->
                                                                         <img class="img-responsive img-thumbnail" src="<?php echo AWS_S3_BUCKET_URL . $person['profile_picture']; ?>" alt="Profile Picture" />
                                                                     <?php } else { ?>
-                                                                        <!--<div class="" style="width: 100%; height: 250px; background-repeat: no-repeat; background-size: 100%; background-image: url('<?php //echo base_url('assets/images/default_pic.jpg'); ?>'); background-position: center center;"></div>-->
+                                                                        <!--<div class="" style="width: 100%; height: 250px; background-repeat: no-repeat; background-size: 100%; background-image: url('<?php //echo base_url('assets/images/default_pic.jpg'); 
+                                                                                                                                                                                                            ?>'); background-position: center center;"></div>-->
                                                                         <img class="img-responsive img-thumbnail" src="<?php echo base_url('assets/images/default_pic.jpg'); ?>" alt="Profile Picture" />
                                                                     <?php } ?>
                                                                 </figure>
@@ -834,13 +846,13 @@ if ($user_type == 'applicant') {
                                                                                 <label class="control control--checkbox">
                                                                                     <!-- <input <?php //echo set_checkbox('links[]', $link['sid'], in_array($link['sid'], $links)); 
                                                                                                 ?> data-type="link" id="link_<?php //echo $link['sid']; 
-                                                                                                                                                                                                                    ?>" name="links[]" type="checkbox" value="<?php //echo $link['sid']; 
-                                                                                                                                                                                                                                                                                        ?>" /> -->
+                                                                                                                                ?>" name="links[]" type="checkbox" value="<?php //echo $link['sid']; 
+                                                                                                                                                                                                                                                                ?>" /> -->
                                                                                     <input data-type="link" id="link_<?php echo $link['sid']; ?>" name="links[]" type="checkbox" value="<?php echo $link['sid']; ?>" <?php if (!empty($links)) {
                                                                                                                                                                                                                             foreach ($links as $key => $value) {
                                                                                                                                                                                                                                 if ($value['link_sid'] == $link['sid']) { ?>checked="checked" <?php }
-                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                    } ?> />
+                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                    } ?> />
 
                                                                                     <div class="control__indicator"></div>
                                                                                 </label>
@@ -968,12 +980,12 @@ if ($user_type == 'applicant') {
                                                     <span id="body_error" class="text-danger"></span>
                                                 </div>
                                             </div>
-                                          
+
                                             <br>
                                             <?php $this->load->view('hr_documents_management/partials/approvers_section'); ?>
                                             <br>
 
-                                           
+
                                             <?php $this->load->view('hr_documents_management/partials/settings', [
                                                 'is_confidential' =>  $document_info['is_confidential']
                                             ]); ?>
@@ -2285,23 +2297,23 @@ if ($user_type == 'applicant') {
             $('#selected_letter_type').val(l.letter_type);
 
             $('[name="setting_is_confidential"]').prop('checked', l.is_confidential == 1 ? true : false);
-            
-  
-           	 // Approval flow 
-                if(l.has_approval_flow == 1){
-           
-           $('.jsEmployeesadditionalBox').html('');
-		   $('#js-popup [name="has_approval_flow"]').prop('checked', l.has_approval_flow == 1 ? true : false);
-           $('.jsApproverFlowContainer').show();
-		   $('#js-popup [name="assigner_note"]').val(l.document_approval_note);
-		   DocumentApproverPrefill(l.document_approval_employees, 0);
-		   
-		   }else{
-			$('#js-popup [name="has_approval_flow"]').prop('checked',false);
-            $('.jsApproverFlowContainer').hide();
-		    $('#js-popup [name="assigner_note"]').val();
-          
-		   }
+
+
+            // Approval flow 
+            if (l.has_approval_flow == 1) {
+
+                $('.jsEmployeesadditionalBox').html('');
+                $('#js-popup [name="has_approval_flow"]').prop('checked', l.has_approval_flow == 1 ? true : false);
+                $('.jsApproverFlowContainer').show();
+                $('#js-popup [name="assigner_note"]').val(l.document_approval_note);
+                DocumentApproverPrefill(l.document_approval_employees, 0);
+
+            } else {
+                $('#js-popup [name="has_approval_flow"]').prop('checked', false);
+                $('.jsApproverFlowContainer').hide();
+                $('#js-popup [name="assigner_note"]').val();
+
+            }
 
 
 
@@ -2732,18 +2744,18 @@ if ($user_type == 'applicant') {
     });
 
     $(document).on('click', '#reassign-offer-letter', function() {
- 
+
 
         var letter_sid = $('#offer_letter_select').val();
         var letter_type = $('#selected_letter_type').val();
         var setting_is_confidential = $('[name="setting_is_confidential"]').prop('checked') ? 'on' : 'off';
         var letter_body = CKEDITOR.instances.letter_body.getData();
 
-         var  has_approval_flow = $('[name="has_approval_flow"]').prop('checked') ? 'on' : 'off';
-	     var  document_approval_employees = $('[name="assigner]').val();
-	     var  document_approval_note = $('[name="assigner_note"]').val();
-        
-                
+        var has_approval_flow = $('[name="has_approval_flow"]').prop('checked') ? 'on' : 'off';
+        var document_approval_employees = $('[name="assigner]').val();
+        var document_approval_note = $('[name="assigner_note"]').val();
+
+
 
         alertify.confirm(
             'Are you sure?',
@@ -3833,7 +3845,7 @@ if ($user_type == 'applicant') {
     });
 
     $('#confidentialSelectedEmployees').select2();
-   
+
     $(document).on('click', '[name="setting_is_confidential"]', function() {
         //
         if (!$(this).prop('checked')) {

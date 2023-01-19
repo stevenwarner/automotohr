@@ -95,3 +95,31 @@ if(!function_exists('GetScripts')){
         return $html;
     }
 }
+
+if(!function_exists('GetCss')){
+    /**
+     * Generates the style tags
+     * @param array  $tabs
+     * [
+     *  'assets/js/script'
+     * ]
+     *
+     * @return
+     */
+    function GetCss ($scripts)
+    {
+        //
+        $html = '';
+        //
+        foreach ($scripts as $script) {
+            //
+            if (is_array($script)) {
+                $html .= '<link  rel="stylesheet" type="text/css"  href="'.(base_url('assets/'._m($script[1], 'css', $script[0]))).'"></script>';
+            } else {
+                $html .= '<link  rel="stylesheet" type="text/css"  href="'.(base_url('assets/'._m($script, 'css'))).'"></script>';
+            }
+        }
+        //
+        return $html;
+    }
+}

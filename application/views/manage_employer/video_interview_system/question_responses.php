@@ -34,7 +34,6 @@
                                 </div>
                                 <div class="col-xs-4"></div>
                             </div>
-                            <span class="beta-label">beta</span>
                         </span>
                     </div>
 

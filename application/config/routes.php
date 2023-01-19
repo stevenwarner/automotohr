@@ -1628,3 +1628,21 @@ $route['employee/information/report']['get'] = '2022/Employee/employeeProfileRep
 $route['timeoff/import/historic']['get'] = 'Time_off/importHistoricTimeOff';
 $route['timeoff/import/historic/verify']['post'] = 'Time_off/verifyEmployeeAndPolicies';
 $route['timeoff/import/historic/upload']['post'] = 'Time_off/importHistoricProcess';
+
+//
+$route['onboarding/office_location']['post'] = "Onboarding/officeLocation";
+
+/**
+ * ComplyNet Routes
+ */
+$route['cn/dashboard']['get'] = "2022/Complynet/dashboard";
+$route['cn/check_company_status/(:num)']['get'] = "2022/Complynet/checkCompanyIntegration/$1";
+$route['cn/getting_started/(:num)']['get'] = "2022/Complynet/gettingStarted/$1";
+$route['cn/locations/(:any)']['get'] = "2022/Complynet/getComplyNetLocations/$1";
+$route['cn/integrate']['post'] = "2022/Complynet/integrate";
+$route['cn/integrate/view/(:num)']['get'] = "2022/Complynet/integrateView/$1";
+$route['cn/sync']['post'] = "2022/Complynet/syncCompany";
+$route['cn/comply/departments/(:num)']['get'] = "2022/Complynet/getComplyCompanyDepartments/$1";
+$route['cn/comply/job_roles/(:num)']['get'] = "2022/Complynet/getComplyCompanyJobRoles/$1";
+
+$route['cn/(:num)/employee/sync']['post'] = "2022/Complynet/syncSingleEmployee/$1";

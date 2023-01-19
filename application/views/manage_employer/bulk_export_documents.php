@@ -34,13 +34,13 @@
                                     <div role="tabpanel" id="js-main-page">
                                         <!-- Nav tabs -->
                                         <ul class="nav nav-tabs cs-tab js-tab" role="tablist">
-                                            <li role="presentation"  <?=$type == 'employee' ? 'class="active"' : '';?> >
+                                            <li role="presentation" <?= $type == 'employee' ? 'class="active"' : ''; ?>>
                                                 <a href="#employee-box" aria-controls="tab" role="tab" data-toggle="tab">Employee(s)</a>
                                             </li>
-                                            <li role="presentation"  <?=$type == 'applicant' ? 'class="active"' : '';?>>
+                                            <li role="presentation" <?= $type == 'applicant' ? 'class="active"' : ''; ?>>
                                                 <a href="#applicant-box" aria-controls="home" role="tab" data-toggle="tab">Applicant(s)</a>
                                             </li>
-                                            <li role="presentation"  <?=$type == 'documents' ? 'class="active"' : '';?>>
+                                            <li role="presentation" <?= $type == 'documents' ? 'class="active"' : ''; ?>>
                                                 <a href="#documents-box" aria-controls="home" role="tab" data-toggle="tab">Document(s)</a>
                                             </li>
                                         </ul>
@@ -51,10 +51,10 @@
                                                 <!-- Tab panes -->
                                                 <div class="tab-content">
                                                     <!-- Employee Box -->
-                                                    <div role="tabpanel" class="tab-pane <?=$type == 'employee' ? 'active' : '';?>" id="employee-box">
-                                                        <?php if($downloadDocumentData && count($downloadDocumentData) && $downloadDocumentData['user_type'] == 'employee' && $downloadDocumentData['download_type'] == 'bulk_download' && file_exists(APPPATH.'../temp_files/employee_export/'.$downloadDocumentData['folder_name'])){ ?>
+                                                    <div role="tabpanel" class="tab-pane <?= $type == 'employee' ? 'active' : ''; ?>" id="employee-box">
+                                                        <?php if ($downloadDocumentData && count($downloadDocumentData) && $downloadDocumentData['user_type'] == 'employee' && $downloadDocumentData['download_type'] == 'bulk_download' && file_exists(APPPATH . '../temp_files/employee_export/' . $downloadDocumentData['folder_name'])) { ?>
                                                             <br />
-                                                            <div class="alert alert-success">Last export was generated at <?=DateTime::createFromFormat('Y-m-d H:i:s', $downloadDocumentData['created_at'])->format('m/d/Y H:i');?>. <a class="btn btn-success" href="<?=base_url('hr_documents_management/generate_zip/'.($downloadDocumentData['folder_name']).'');?>">Download</a></div>
+                                                            <div class="alert alert-success">Last export was generated at <?= DateTime::createFromFormat('Y-m-d H:i:s', $downloadDocumentData['created_at'])->format('m/d/Y H:i'); ?>. <a class="btn btn-success" href="<?= base_url('hr_documents_management/generate_zip/' . ($downloadDocumentData['folder_name']) . ''); ?>">Download</a></div>
                                                         <?php } ?>
                                                         <div class="form-group">
                                                             <h4>Select status <span class="cs-required">*</span></h4>
@@ -74,13 +74,13 @@
                                                                 <?php echo reset_datetime(array('datetime' => $download_document_create_date, '_this' => $this)); ?>
                                                                 <a href="javascript:;" target="_blank" class="btn btn-success pull-right">Download ZIP</a>
                                                             </span>
-                                                        <?php } ?> 
+                                                        <?php } ?>
                                                     </div>
                                                     <!-- Applicant Box -->
-                                                    <div role="tabpanel" class="tab-pane  <?=$type == 'applicant' ? 'active' : '';?> cs-applicant-box" id="applicant-box">
-                                                        <?php if($downloadDocumentData && count($downloadDocumentData) && $downloadDocumentData['user_type'] == 'applicant'){ ?>
+                                                    <div role="tabpanel" class="tab-pane  <?= $type == 'applicant' ? 'active' : ''; ?> cs-applicant-box" id="applicant-box">
+                                                        <?php if ($downloadDocumentData && count($downloadDocumentData) && $downloadDocumentData['user_type'] == 'applicant') { ?>
                                                             <br />
-                                                            <div class="alert alert-success">Last export was generated at <?=DateTime::createFromFormat('Y-m-d H:i:s', $downloadDocumentData['created_at'])->format('m/d/Y H:i');?>. <a class="btn btn-success" href="<?=base_url('hr_documents_management/generate_zip/'.($downloadDocumentData['folder_name']).'');?>">Download</a></div>
+                                                            <div class="alert alert-success">Last export was generated at <?= DateTime::createFromFormat('Y-m-d H:i:s', $downloadDocumentData['created_at'])->format('m/d/Y H:i'); ?>. <a class="btn btn-success" href="<?= base_url('hr_documents_management/generate_zip/' . ($downloadDocumentData['folder_name']) . ''); ?>">Download</a></div>
                                                         <?php } ?>
                                                         <div class="form-group">
                                                             <h4>Select applicant(s) <span class="cs-required">*</span></h4>
@@ -94,7 +94,7 @@
                                                         <?php } ?>
                                                     </div>
                                                     <!-- Document Box -->
-                                                    <div role="tabpanel" class="tab-pane  <?=$type == 'documents' ? 'active' : '';?> cs-documents-box" id="documents-box">
+                                                    <div role="tabpanel" class="tab-pane  <?= $type == 'documents' ? 'active' : ''; ?> cs-documents-box" id="documents-box">
                                                         <!-- Filter -->
                                                         <br>
                                                         <div class="panel panel-success">
@@ -102,12 +102,12 @@
                                                                 <div class="row">
                                                                     <div class="col-sm-10">
                                                                         <select id="jsDocumentSearch" multiple>
-                                                                        <?php 
-                                                                            if(!empty($documents)) {
-                                                                                foreach($documents as $document){
-                                                                                    ?>
-                                                                                    <option value="<?=$document['id'];?>"><?=$document['title'];?></option>
-                                                                                    <?php
+                                                                            <?php
+                                                                            if (!empty($documents)) {
+                                                                                foreach ($documents as $document) {
+                                                                            ?>
+                                                                                    <option value="<?= $document['id']; ?>"><?= $document['title']; ?></option>
+                                                                            <?php
                                                                                 }
                                                                             }
                                                                             ?>
@@ -121,50 +121,50 @@
                                                         </div>
                                                         <!--  -->
                                                         <?php
-                                                            if(empty($documents)){
-                                                                ?>
-                                                                <br />
-                                                                <div class="panel panel-success">
-                                                                    <div class="panel-body">
-                                                                        <p class="alert alert-info text-center">No completed documents found</p>
-                                                                    </div>
+                                                        if (empty($documents)) {
+                                                        ?>
+                                                            <br />
+                                                            <div class="panel panel-success">
+                                                                <div class="panel-body">
+                                                                    <p class="alert alert-info text-center">No completed documents found</p>
                                                                 </div>
-                                                                <?php
-                                                            } else{
-                                                                foreach($documents as $document){
-                                                                ?>
+                                                            </div>
+                                                            <?php
+                                                        } else {
+                                                            foreach ($documents as $document) {
+                                                            ?>
                                                                 <br />
-                                                                <div class="panel panel-success jsDocumentPanel" data-id="<?=$document['id'];?>">
+                                                                <div class="panel panel-success jsDocumentPanel" data-id="<?= $document['id']; ?>">
                                                                     <div class="panel-heading">
                                                                         <label class="control control--checkbox">
-                                                                            <input type="checkbox" class="jsSelectAllDocuments" name="jsSelectAllDocuments<?=$document['id'];?>" />
+                                                                            <input type="checkbox" class="jsSelectAllDocuments" name="jsSelectAllDocuments<?= $document['id']; ?>" />
                                                                             <div class="control__indicator" style="top: -10px;"></div>
                                                                         </label>
-                                                                        &nbsp;&nbsp; <strong class="csW csF16"><?=$document['title']?></strong>
+                                                                        &nbsp;&nbsp; <strong class="csW csF16"><?= $document['title'] ?></strong>
                                                                     </div>
                                                                     <div class="panel-body">
                                                                         <div class="row">
-                                                                            <?php foreach($document['employees'] as $emp){ ?>
-                                                                            <div class="col-sm-6">
-                                                                                <label class="control control--checkbox">
-                                                                                    <input type="checkbox" class="jsSelectSingleDocument" name="jsSelectSingleDocument<?=$document['id'];?>" data-id="<?=$emp['sid'];?>" data-aid="<?=$emp['a_sid'];?>" /> <?=$emp['name'];?>
-                                                                                    <div class="control__indicator"></div>
-                                                                                </label>
-                                                                            </div>
+                                                                            <?php foreach ($document['employees'] as $emp) { ?>
+                                                                                <div class="col-sm-6">
+                                                                                    <label class="control control--checkbox">
+                                                                                        <input type="checkbox" class="jsSelectSingleDocument" name="jsSelectSingleDocument<?= $document['id']; ?>" data-id="<?= $emp['sid']; ?>" data-aid="<?= $emp['a_sid']; ?>" /> <?= $emp['name']; ?>
+                                                                                        <div class="control__indicator"></div>
+                                                                                    </label>
+                                                                                </div>
                                                                             <?php } ?>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <?php
-                                                                }
+                                                        <?php
                                                             }
+                                                        }
                                                         ?>
                                                     </div>
                                                 </div>
 
                                             </div>
                                         </div>
-                                        
+
                                         <br />
                                         <!-- Upload BTN  -->
                                         <div class="row">
@@ -194,8 +194,8 @@ padding: 16px;
 font-size: 16px,
 word-break: break-all;
 ">
-<div class="A4">
-</div>
+    <div class="A4">
+    </div>
 </div>
 
 <div id="my_loader" class="text-center my_loader js-body-loader">
@@ -210,44 +210,106 @@ word-break: break-all;
 
 <style>
     /* */
-    .cs-tab li > a{ color: #000000; }
-    .cs-tab li.active > a{ background-color: #81b431 !important; color: #ffffff !important; }
-    .cs-applicant-box i{ position: absolute; top: 50%; right: 30px; font-size: 20px; margin-top: -16px; color: #81b431; }
-    .cs-custom-input{ margin-bottom: 10px; }
-    .cs-custom-input input{ height: 40px;}
-    .cs-custom-input .input-group-addon{ background: 0; padding: 0; border: none; }
-    .cs-custom-input .input-group-addon > input{ margin: 0; border-radius: 0; }
-    .cs-error, .cs-required{ font-weight: bolder; color: #cc0000; }
-    .cs-dropzone{ position: relative; display: inline-block; width: 100%; }
-    .cs-drag-overlay{ position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; background-color:  rgba(255,255,255,.7); z-index: 10; display: none; }
-    .cs-drag-overlay p{ line-height: 40px; font-size: 18px; }
-    .select2-container--default .select2-selection--single{ border: 1px solid #aaaaaa !important;  padding: 3px 5px !important; }
-    .loader-text{ background-color: #fff !important; color: #000 !important; }
+    .cs-tab li>a {
+        color: #000000;
+    }
+
+    .cs-tab li.active>a {
+        background-color: #81b431 !important;
+        color: #ffffff !important;
+    }
+
+    .cs-applicant-box i {
+        position: absolute;
+        top: 50%;
+        right: 30px;
+        font-size: 20px;
+        margin-top: -16px;
+        color: #81b431;
+    }
+
+    .cs-custom-input {
+        margin-bottom: 10px;
+    }
+
+    .cs-custom-input input {
+        height: 40px;
+    }
+
+    .cs-custom-input .input-group-addon {
+        background: 0;
+        padding: 0;
+        border: none;
+    }
+
+    .cs-custom-input .input-group-addon>input {
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .cs-error,
+    .cs-required {
+        font-weight: bolder;
+        color: #cc0000;
+    }
+
+    .cs-dropzone {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .cs-drag-overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background-color: rgba(255, 255, 255, .7);
+        z-index: 10;
+        display: none;
+    }
+
+    .cs-drag-overlay p {
+        line-height: 40px;
+        font-size: 18px;
+    }
+
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #aaaaaa !important;
+        padding: 3px 5px !important;
+    }
+
+    .loader-text {
+        background-color: #fff !important;
+        color: #000 !important;
+    }
 </style>
 
-        <script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
 
 <script>
-    $(function(){
+    $(function() {
         var megaOBJ = {
-            type: '<?=$type;?>',
-            ids: []
-        },
-        baseURI = "<?=base_url("assign-bulk-documents");?>/",
-        xhr = {
-            applicantXHR : null
-        },
-        loaders = {
-            applicant: $('.js-applicant-loader'),
-            body: $('.js-body-loader')
-        },
-        employeeList = [],
-        applicantList = [],
-        employeeListWI = {},
-        applicantListWI = {},
-        sendList = [],
-        employees = [],
-        token;
+                type: '<?= $type; ?>',
+                ids: []
+            },
+            baseURI = "<?= base_url("assign-bulk-documents"); ?>/",
+            xhr = {
+                applicantXHR: null
+            },
+            loaders = {
+                applicant: $('.js-applicant-loader'),
+                body: $('.js-body-loader')
+            },
+            employeeList = [],
+            applicantList = [],
+            employeeListWI = {},
+            applicantListWI = {},
+            sendList = [],
+            employees = [],
+            token;
         //
         let selectedEmployeeList = [];
         let employeesListWithStatus = [];
@@ -267,7 +329,7 @@ word-break: break-all;
         //
         $('#js-employee-status').select2();
         //
-        $('#js-employee-status').change(function(e){
+        $('#js-employee-status').change(function(e) {
             //
             $('#js-employee-select').html(
                 getEmployeeRows($(this).val())
@@ -278,7 +340,7 @@ word-break: break-all;
             $('#js-employee-select').closest('div').show();
         });
 
-        $('#js-employee-select').change(function(e){
+        $('#js-employee-select').change(function(e) {
             //
             selectedEmployeeList = $(this).val();
         });
@@ -297,18 +359,18 @@ word-break: break-all;
             //
             megaOBJ.ids = $(`#js-${megaOBJ.type}-select`).val();
             //
-            if(megaOBJ.type == 'employee'){
-                if($('#js-employee-status').val() === null){
+            if (megaOBJ.type == 'employee') {
+                if ($('#js-employee-status').val() === null) {
                     alertify.alert(
                         'WARNING!',
                         `Please select the status first to load employees`,
                         () => {}
                     );
-                    return;    
+                    return;
                 }
             }
             //
-            if(megaOBJ.ids === null){
+            if (megaOBJ.ids === null) {
                 alertify.alert(
                     'WARNING!',
                     `Please select at least one ${megaOBJ.type}`,
@@ -317,13 +379,13 @@ word-break: break-all;
                 return;
             }
             //
-            if(megaOBJ.type === 'employee'){
+            if (megaOBJ.type === 'employee') {
                 sendList = megaOBJ.ids.indexOf('-1') !== -1 ? employeesListWithStatus : megaOBJ.ids;
                 startEmployeeProcess();
                 return;
             }
 
-            if(megaOBJ.type === 'applicant'){
+            if (megaOBJ.type === 'applicant') {
                 sendList = megaOBJ.ids.indexOf('-1') !== -1 ? applicantList : megaOBJ.ids;
                 startApplicantProcess();
                 return;
@@ -331,11 +393,11 @@ word-break: break-all;
             //
 
             //
-            if(megaOBJ.type === 'document'){
+            if (megaOBJ.type === 'document') {
                 //
                 sendList = Object.keys(selectedDocuments);
                 //
-                if(sendList.length === 0){
+                if (sendList.length === 0) {
                     alertify.alert('Please select at least one employee.');
                     return;
                 }
@@ -344,12 +406,12 @@ word-break: break-all;
             }
         });
 
-        function startEmployeeProcess(){
+        function startEmployeeProcess() {
             //
             let s = sendList[sc];
             acc = 0;
             //
-            if(s === undefined){
+            if (s === undefined) {
                 // Call main exporter
                 finalExport();
                 return;
@@ -367,14 +429,14 @@ word-break: break-all;
             //
             fetchEmployeeDocument();
         }
-       
-       
-        function startApplicantProcess(){
+
+
+        function startApplicantProcess() {
             //
             let s = sendList[sc];
             acc = 0;
             //
-            if(s === undefined){
+            if (s === undefined) {
                 // Call main exporter
                 finalExport();
                 return;
@@ -394,11 +456,11 @@ word-break: break-all;
         }
 
         //
-        function fetchEmployeeDocument(){
+        function fetchEmployeeDocument() {
             //
             var documentIds = selectedDocuments[currentEmployee.id] !== undefined ? Object.keys(selectedDocuments[currentEmployee.id]['documents']).join(':') : '';
             //
-            $.get(`<?=base_url('hr_documents_management/getDocuments');?>/${currentEmployee.id}/employee/${documentIds}`, (resp) => {
+            $.get(`<?= base_url('hr_documents_management/getDocuments'); ?>/${currentEmployee.id}/employee/${documentIds}`, (resp) => {
                 cd = $.parseJSON(resp);
                 exportType = 'employee';
                 startExport();
@@ -407,11 +469,11 @@ word-break: break-all;
                     startEmployeeProcess();
                 }, 1000);
             });
-        }     
-      
+        }
+
         //
-        function fetchApplicantDocument(){
-            $.get(`<?=base_url('hr_documents_management/getDocuments');?>/${currentApplicant.id}/applicant`, (resp) => {
+        function fetchApplicantDocument() {
+            $.get(`<?= base_url('hr_documents_management/getDocuments'); ?>/${currentApplicant.id}/applicant`, (resp) => {
                 cd = $.parseJSON(resp);
                 exportType = 'applicant';
                 startExport();
@@ -420,26 +482,26 @@ word-break: break-all;
                     startApplicantProcess();
                 }, 1000);
             });
-        }     
+        }
 
         //
-        function startExport(type){
+        function startExport(type) {
             //
             totalAssigned = cd.Assigned.length + (cd.I9.sid !== undefined ? 1 : 0) + (cd.W9.sid !== undefined ? 1 : 0) + (cd.W4.sid !== undefined ? 1 : 0);
-            totalAssigned = 
-            parseInt(totalAssigned) 
-            + (cd.direct_deposit != '' ? 1 : 0)
-            + (cd.dependents != '' ? 1 : 0)
-            + (cd.emergency_contacts != '' ? 1 : 0)
-            + (cd.drivers_license != '' ? 1 : 0)
-            + (cd.occupational_license != '' ? 1 : 0);
+            totalAssigned =
+                parseInt(totalAssigned) +
+                (cd.direct_deposit != '' ? 1 : 0) +
+                (cd.dependents != '' ? 1 : 0) +
+                (cd.emergency_contacts != '' ? 1 : 0) +
+                (cd.drivers_license != '' ? 1 : 0) +
+                (cd.occupational_license != '' ? 1 : 0);
             //
             tat += totalAssigned;
             currentAssigned = 1;
             //
-            if(tat === 0){
+            if (tat === 0) {
                 sc++;
-                if(exportType == 'employee') startEmployeeProcess();
+                if (exportType == 'employee') startEmployeeProcess();
                 else startApplicantProcess();
                 return;
             }
@@ -447,7 +509,7 @@ word-break: break-all;
             let n = exportType == 'employee' ? `${currentEmployee.first_name} ${currentEmployee.last_name}` : currentApplicant.value;
             //
             loader(
-                'show', 
+                'show',
                 `
                     <p>Exporting documents for <strong>${n}</strong>.</p>
                     <p><strong class="js-cd">0</strong> of <strong>${totalAssigned}</strong></p>
@@ -461,9 +523,9 @@ word-break: break-all;
         }
 
         //
-        function exportI9(){
+        function exportI9() {
             //
-            if(cd.I9.sid === undefined){
+            if (cd.I9.sid === undefined) {
                 exportW9();
                 return;
             }
@@ -471,11 +533,11 @@ word-break: break-all;
             $('#js-export-area div').html(cd.TI9);
             generatePDF($('#js-export-area'), 'I9');
         }
-        
+
         //
-        function exportW9(){
+        function exportW9() {
             //
-            if(cd.W9.sid === undefined){
+            if (cd.W9.sid === undefined) {
                 exportW4();
                 return;
             }
@@ -487,9 +549,9 @@ word-break: break-all;
         }
 
         //
-        function exportW4(){
+        function exportW4() {
             //
-            if(cd.W4.sid === undefined){
+            if (cd.W4.sid === undefined) {
                 getGIDocument('direct_deposit');
                 return;
             }
@@ -499,31 +561,31 @@ word-break: break-all;
             $('#js-export-area div').html(cd.TW4);
             generatePDF($('#js-export-area'), 'W4');
         }
-        
+
         //
-        function getGIDocument(s){
+        function getGIDocument(s) {
             //
-            if(s == 'direct_deposit' && cd[s] == ''){
+            if (s == 'direct_deposit' && cd[s] == '') {
                 getGIDocument('dependents');
                 return;
             }
             //
-            if(s == 'dependents' && cd[s] == ''){
+            if (s == 'dependents' && cd[s] == '') {
                 getGIDocument('emergency_contacts');
                 return;
             }
             //
-            if(s == 'emergency_contacts' && cd[s] == ''){
+            if (s == 'emergency_contacts' && cd[s] == '') {
                 getGIDocument('drivers_license');
                 return;
             }
             //
-            if(s == 'drivers_license' && cd[s] == ''){
+            if (s == 'drivers_license' && cd[s] == '') {
                 getGIDocument('occupational_license');
                 return;
             }
             //
-            if(s == 'occupational_license' && cd[s] == ''){
+            if (s == 'occupational_license' && cd[s] == '') {
                 exportDocuments();
                 return;
             }
@@ -533,16 +595,16 @@ word-break: break-all;
             $('#js-export-area div').html(cd[s]);
             generatePDF($('#js-export-area div'), s);
         }
-       
+
         //
-        function exportDocuments(){
+        function exportDocuments() {
             //
             let dct = cd.Assigned[acc];
             //
-            if(cd.Assigned[acc] === undefined){
+            if (cd.Assigned[acc] === undefined) {
                 sc++;
-                if(exportType == 'employee') startEmployeeProcess();
-                else  startApplicantProcess();
+                if (exportType == 'employee') startEmployeeProcess();
+                else startApplicantProcess();
                 return;
             }
             //
@@ -558,7 +620,7 @@ word-break: break-all;
                     s3_filename: selectedDocuments[currentEmployee.id] != undefined ? dct.uploaded_file : dct.document_s3_name
                 };
                 //
-                if(dct.uploaded_file){
+                if (dct.uploaded_file) {
                     obj.s3_filename = dct.uploaded_file;
                 }
                 //
@@ -571,70 +633,87 @@ word-break: break-all;
             ) {
                 getSubmittedDocument(dct);
             } else {
-                getSubmittedDocument(dct);
+                //
+                if (dct.document_sid == '0') {
+                    obj = {
+                        title: dct.document_title,
+                        orig_filename: dct.document_original_name,
+                        s3_filename: selectedDocuments[currentEmployee.id] != undefined ? dct.uploaded_file : dct.document_s3_name
+                    };
+                    //
+                    if (dct.uploaded_file) {
+                        obj.s3_filename = dct.uploaded_file;
+                    }
+                    //
+                    uploadPDF(obj, 'document');
+                    //
+                    acc++;
+                } else {
+                    getSubmittedDocument(dct);
+                }
             }
         }
 
-        function getSubmittedDocument(dct){
+        function getSubmittedDocument(dct) {
             //
             $('#js-export-area div').css('padding', '20px');
             //
-            $.get(`<?=base_url('hr_documents_management/getSubmittedDocument');?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`, (resp) => {
+            $.get(`<?= base_url('hr_documents_management/getSubmittedDocument'); ?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`, (resp) => {
 
                 //
-                if(resp.match(/data:app/) !== null){
+                if (resp.match(/data:app/) !== null) {
                     uploadPDF({
                         title: dct.document_title,
-                        content: resp.replace(/data:application\/pdf;base64,/,'')
+                        content: resp.replace(/data:application\/pdf;base64,/, '')
                     }, dct.document_title);
-                } else{
+                } else {
 
                     var obj = jQuery.parseJSON(resp);
                     var html = obj.html;
                     var form_input_data = obj.input_data;
-    
+
                     let o = {
                         title: dct.document_title,
                         content: html
                     };
                     // $('#js-export-area div').html(o.content);
-                    if(dct.document_type == 'hybrid_document') o.file = dct.document_s3_name;
+                    if (dct.document_type == 'hybrid_document') o.file = dct.document_s3_name;
                     // Check for existing base64
-                    if(o.content.indexOf('data:application/pdf;base64,') !== -1 ){
+                    if (o.content.indexOf('data:application/pdf;base64,') !== -1) {
                         o.content = o.content.replace(/data:application\/pdf;base64,/, '');
                         uploadPDF(o, o.title);
-                    } else{
+                    } else {
                         $('#js-export-area div').html(html);
                         //
-                        if($('#jsContentArea').find('select').length >= 0){
-                            $('#jsContentArea').find('select').map(function(i){
+                        if ($('#jsContentArea').find('select').length >= 0) {
+                            $('#jsContentArea').find('select').map(function(i) {
                                 //
                                 $(this).addClass('js_select_document');
-                                $(this).prop('name', 'selectDD'+i);
+                                $(this).prop('name', 'selectDD' + i);
                             });
                         }
                         //
-                        if(form_input_data != null && form_input_data != ''){
+                        if (form_input_data != null && form_input_data != '') {
                             //
                             form_input_data = Object.entries(form_input_data);
                             //
-                            
-                            $.each(form_input_data, function(key ,input_value) { 
-                                if(input_value[0].match(/select/) !== -1){
-                                    if(input_value[1] != null){
-                                        let cc = get_select_box_value(input_value[0],input_value[1]);
-                                        $(`select.js_select_document[name="${input_value[0]}"]`).html('');  
-                                        $(`select.js_select_document[name="${input_value[0]}"]`).hide(0);    
+
+                            $.each(form_input_data, function(key, input_value) {
+                                if (input_value[0].match(/select/) !== -1) {
+                                    if (input_value[1] != null) {
+                                        let cc = get_select_box_value(input_value[0], input_value[1]);
+                                        $(`select.js_select_document[name="${input_value[0]}"]`).html('');
+                                        $(`select.js_select_document[name="${input_value[0]}"]`).hide(0);
                                         $(`select.js_select_document[name="${input_value[0]}"]`).after(`<strong style="font-size: 20px;">${cc}</strong>`);
                                     }
-                                }    
-                            }); 
+                                }
+                            });
                         }
                         //
                         generatePDF($('#js-export-area div'), o);
                     }
                 }
-               
+
                 acc++;
             });
         }
@@ -643,16 +722,16 @@ word-break: break-all;
             var data = select_box_val;
             let cc = '';
 
-            if (select_box_val.indexOf(',') > -1) { 
-                data = select_box_val.split(','); 
+            if (select_box_val.indexOf(',') > -1) {
+                data = select_box_val.split(',');
             }
-            
 
-            if($.isArray(data)) {
+
+            if ($.isArray(data)) {
                 let modify_string = '';
-                $.each(data, function(key ,value) { 
+                $.each(data, function(key, value) {
                     if (modify_string == '') {
-                        modify_string = ' '+$(`select.js_select_document[name="${select_box_name}"] option[value="${value}"]`).text();
+                        modify_string = ' ' + $(`select.js_select_document[name="${select_box_name}"] option[value="${value}"]`).text();
                     } else {
                         modify_string = modify_string + ', ' + $(`select.js_select_document[name="${select_box_name}"] option[value="${value}"]`).text();
                     }
@@ -661,15 +740,15 @@ word-break: break-all;
             } else {
                 cc = $(`select.js_select_document[name="${select_box_name}"] option[value="${select_box_val}"]`).text();
             }
-            
+
             return cc;
         }
 
 
         //
-        function finalExport(){
+        function finalExport() {
             loader('hide');
-            if(tat === 0){
+            if (tat === 0) {
                 alertify.alert(
                     'WARNING!',
                     'No documents found against the selected applicants',
@@ -688,18 +767,18 @@ word-break: break-all;
             acc = 0;
             currentF = null;
             tat = null;
-            
+
             var user_type;
-            var company_sid = "<?=$company_sid;?>";
-            if(megaOBJ.type === 'employee'){
+            var company_sid = "<?= $company_sid; ?>";
+            if (megaOBJ.type === 'employee') {
                 user_type = 'employee';
-            } else if(megaOBJ.type === 'document'){
+            } else if (megaOBJ.type === 'document') {
                 user_type = 'documents';
             } else {
                 user_type = 'applicant';
             }
 
-            window.location.href = "<?=base_url('hr_documents_management/generate_zip');?>/"+token+"/0/bulk/"+user_type+"/"+company_sid;
+            window.location.href = "<?= base_url('hr_documents_management/generate_zip'); ?>/" + token + "/0/bulk/" + user_type + "/" + company_sid;
             // setTimeout(() => {
             //     window.location.reload();
             // }, 3000);
@@ -709,35 +788,40 @@ word-break: break-all;
         function generatePDF(
             target,
             o
-        ){
+        ) {
             let b = {};
-            if(typeof o === 'object'){
+            if (typeof o === 'object') {
                 b = o;
             } else b.title = o;
             //
             let draw = kendo.drawing;
             draw.drawDOM(target, {
-                avoidLinks: false,
-                paperSize: "A4",
-                multiPage: true,
-                height: 500,
-                // forcePageBreak: '.js-break',
-                margin: { bottom: "1cm", top: ".3cm", left: "1cm", right: "1cm" },
-                scale: 0.8
-            })
-            .then(function(root) {
-                currentF = b.title;
-                return draw.exportPDF(root);
-            })
-            .done(function(data) {
-                b.content = data.replace(/data:application\/pdf;base64,/,'');
-                uploadPDF(b, b.title);
-            });
+                    avoidLinks: false,
+                    paperSize: "A4",
+                    multiPage: true,
+                    height: 500,
+                    // forcePageBreak: '.js-break',
+                    margin: {
+                        bottom: "1cm",
+                        top: ".3cm",
+                        left: "1cm",
+                        right: "1cm"
+                    },
+                    scale: 0.8
+                })
+                .then(function(root) {
+                    currentF = b.title;
+                    return draw.exportPDF(root);
+                })
+                .done(function(data) {
+                    b.content = data.replace(/data:application\/pdf;base64,/, '');
+                    uploadPDF(b, b.title);
+                });
         }
 
 
-        function uploadPDF(data, typo){
-            $.post("<?=base_url('hr_documents_management/upload');?>", {
+        function uploadPDF(data, typo) {
+            $.post("<?= base_url('hr_documents_management/upload'); ?>", {
                 data: data,
                 token: token,
                 employeeSid: exportType == 'employee' ? currentEmployee.id : currentApplicant.id,
@@ -748,29 +832,29 @@ word-break: break-all;
                 //
                 $('.js-progress-bar').attr('aria-valuemin', (100 / totalAssigned) * currentAssigned);
                 $('.js-progress-bar').attr('aria-valuemnow', (100 / totalAssigned) * currentAssigned);
-                $('.js-progress-bar').css('width', (100 / totalAssigned) * currentAssigned+'%');
+                $('.js-progress-bar').css('width', (100 / totalAssigned) * currentAssigned + '%');
                 // $('.js-progress-bar').text(Math.ceil((100 / totalAssigned) * currentAssigned)+'%');
                 //
                 currentAssigned++;
                 //
                 $('.js-cd').text(currentAssigned);
                 //
-                if(typo === 'I9') exportW9();
-                else if(typo === 'W9') exportW4();
-                else if(typo === 'direct_deposit') getGIDocument('dependents');
-                else if(typo === 'dependents') getGIDocument('emergency_contacts');
-                else if(typo === 'emergency_contacts') getGIDocument('drivers_license');
-                else if(typo === 'drivers_license') getGIDocument('occupational_license');
+                if (typo === 'I9') exportW9();
+                else if (typo === 'W9') exportW4();
+                else if (typo === 'direct_deposit') getGIDocument('dependents');
+                else if (typo === 'dependents') getGIDocument('emergency_contacts');
+                else if (typo === 'emergency_contacts') getGIDocument('drivers_license');
+                else if (typo === 'drivers_license') getGIDocument('occupational_license');
                 else exportDocuments();
             }).fail(() => {
-                if(typo == 'I9') exportI9();
-                else if(typo == 'W9') exportW9();
-                else if(typo == 'W4') exportW4();
-                else if(typo === 'direct_deposit') getGIDocument('direct_deposit');
-                else if(typo === 'dependents') getGIDocument('dependents');
-                else if(typo === 'emergency_contacts') getGIDocument('emergency_contacts');
-                else if(typo === 'drivers_license') getGIDocument('drivers_license');
-                else if(typo === 'occupational_license') getGIDocument('occupational_license');
+                if (typo == 'I9') exportI9();
+                else if (typo == 'W9') exportW9();
+                else if (typo == 'W4') exportW4();
+                else if (typo === 'direct_deposit') getGIDocument('direct_deposit');
+                else if (typo === 'dependents') getGIDocument('dependents');
+                else if (typo === 'emergency_contacts') getGIDocument('emergency_contacts');
+                else if (typo === 'drivers_license') getGIDocument('drivers_license');
+                else if (typo === 'occupational_license') getGIDocument('occupational_license');
                 else {
                     acc--;
                     exportDocuments();
@@ -788,10 +872,10 @@ word-break: break-all;
         fetchApplicants();
 
         // Fetch employee data
-        function fetchEmployees(){
-            $.get('<?=base_url('hr_documents_management/fetchEmployees');?>', function(resp){
+        function fetchEmployees() {
+            $.get('<?= base_url('hr_documents_management/fetchEmployees'); ?>', function(resp) {
                 //
-                if(resp.Status === false){
+                if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
                     return;
                 }
@@ -799,9 +883,9 @@ word-break: break-all;
                 employees = resp.Data;
                 // var rows = '<option value="-1">All</option>';
                 // //
-                $.each(resp.Data, function(i, v){ 
-                    employeeListWI[v.id] = v; 
-                    employeeList.push(v.id); 
+                $.each(resp.Data, function(i, v) {
+                    employeeListWI[v.id] = v;
+                    employeeList.push(v.id);
                     // rows += '<option value="'+( v.id )+'">'+( remakeEmployeeName(v) )+'</option>'; 
                 });
                 // //
@@ -811,19 +895,23 @@ word-break: break-all;
                 loader('hide');
             });
         }
-        
+
         // Fetch applicants data
-        function fetchApplicants(){
-            $.get("<?=base_url('assign_bulk_documents/fetch_applicants_all');?>", function(resp){
+        function fetchApplicants() {
+            $.get("<?= base_url('assign_bulk_documents/fetch_applicants_all'); ?>", function(resp) {
                 //
-                if(resp.Status === false){
+                if (resp.Status === false) {
                     alertify.alert('ERROR!', resp.Response);
                     return;
                 }
                 //
                 var rows = '<option value="-1">All</option>';
                 //
-                $.each(resp.Data, function(i, v){ applicantListWI[v.id] = v; applicantList.push(v.id); rows += '<option value="'+( v.id )+'">'+( v.value )+'</option>'; });
+                $.each(resp.Data, function(i, v) {
+                    applicantListWI[v.id] = v;
+                    applicantList.push(v.id);
+                    rows += '<option value="' + (v.id) + '">' + (v.value) + '</option>';
+                });
                 //
                 $('#js-applicant-select').html(rows).select2({
                     closeOnSelect: false
@@ -836,23 +924,23 @@ word-break: break-all;
         function remakeEmployeeName(
             o,
             d
-        ){
+        ) {
             //
             var r = '';
             //
-            if(d === undefined) r += o.first_name+' '+o.last_name;
+            if (d === undefined) r += o.first_name + ' ' + o.last_name;
             //
             r = r.ucwords();
             //
-            if(o.job_title != '' && o.job_title != null) r += ' ('+( o.job_title )+')';
+            if (o.job_title != '' && o.job_title != null) r += ' (' + (o.job_title) + ')';
             //
             r += ' [';
             //
-            if(typeof(o['is_executive_admin']) !== undefined && o['is_executive_admin'] != 0) r += 'Executive ';
+            if (o.hasOwnProperty('is_executive_admin') && o['is_executive_admin'] != 0) r += 'Executive ';
             //
-            if(o['access_level_plus'] == 1 && o['pay_plan_flag'] == 1)  r += o['access_level']+' Plus / Payroll';
-            else if(o['access_level_plus'] == 1) r += o['access_level']+' Plus';
-            else if(o['pay_plan_flag'] == 1) r += o['access_level']+' Payroll';
+            if (o['access_level_plus'] == 1 && o['pay_plan_flag'] == 1) r += o['access_level'] + ' Plus / Payroll';
+            else if (o['access_level_plus'] == 1) r += o['access_level'] + ' Plus';
+            else if (o['pay_plan_flag'] == 1) r += o['access_level'] + ' Payroll';
             else r += o['access_level'];
             //
             r += ']';
@@ -861,7 +949,7 @@ word-break: break-all;
         }
 
         //
-        function getEmployeeRows(s){
+        function getEmployeeRows(s) {
             //
             let rows = '<option value="-1">All</option>';
             let iCount = 0;
@@ -871,32 +959,32 @@ word-break: break-all;
                 //
                 let alreadyAdded = false;
                 // Check for null
-                if(s === null) return;
+                if (s === null) return;
                 // Check for all
-                if($.inArray('all', s) !== -1){
+                if ($.inArray('all', s) !== -1) {
                     iCount++;
                     alreadyAdded = true;
                     employeesListWithStatus.push(v.id);
-                    rows += '<option value="'+( v.id )+'">'+( remakeEmployeeName(v) )+' ('+( v.terminated_status == 1 ? 'Terminated' : (v.active == 1 ? 'Active' : 'In-Active') )+')</option>'; 
+                    rows += '<option value="' + (v.id) + '">' + (remakeEmployeeName(v)) + ' (' + (v.terminated_status == 1 ? 'Terminated' : (v.active == 1 ? 'Active' : 'In-Active')) + ')</option>';
                 }
                 // Check for terminated
-                if($.inArray('terminated', s) !== -1 && alreadyAdded === false && v.terminated_status == 1){
+                if ($.inArray('terminated', s) !== -1 && alreadyAdded === false && v.terminated_status == 1) {
                     alreadyAdded = true;
                     iCount++;
                     employeesListWithStatus.push(v.id);
-                    rows += '<option value="'+( v.id )+'">'+( remakeEmployeeName(v) )+' (Terminated)</option>'; 
+                    rows += '<option value="' + (v.id) + '">' + (remakeEmployeeName(v)) + ' (Terminated)</option>';
                 }
                 // Check for active
-                if($.inArray('active', s) !== -1 && alreadyAdded === false && v.active == 1){
+                if ($.inArray('active', s) !== -1 && alreadyAdded === false && v.active == 1) {
                     iCount++;
                     employeesListWithStatus.push(v.id);
-                    rows += '<option value="'+( v.id )+'">'+( remakeEmployeeName(v) )+' (Active)</option>'; 
+                    rows += '<option value="' + (v.id) + '">' + (remakeEmployeeName(v)) + ' (Active)</option>';
                 }
                 // Check for inactive
-                if($.inArray('inactive', s) !== -1 && alreadyAdded === false && v.active == 0){
+                if ($.inArray('inactive', s) !== -1 && alreadyAdded === false && v.active == 0) {
                     iCount++;
                     employeesListWithStatus.push(v.id);
-                    rows += '<option value="'+( v.id )+'">'+( remakeEmployeeName(v) )+'  (InActive)</option>'; 
+                    rows += '<option value="' + (v.id) + '">' + (remakeEmployeeName(v)) + '  (InActive)</option>';
                 }
             });
             //
@@ -907,16 +995,18 @@ word-break: break-all;
         //
         String.prototype.ucwords = function() {
             str = this.toLowerCase();
-            return str.replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g, function(s){ return s.toUpperCase(); });
+            return str.replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g, function(s) {
+                return s.toUpperCase();
+            });
         };
 
         // loader
-        function loader(show_it, msg){
+        function loader(show_it, msg) {
             show_it = show_it === undefined || show_it == true || show_it === 'show' ? 'show' : show_it;
-            if(show_it === 'show') $('.js-body-loader').fadeIn(150);
+            if (show_it === 'show') $('.js-body-loader').fadeIn(150);
             else $('.js-body-loader').fadeOut(300);
             //
-            msg = msg === undefined ? '<p> Please wait while we are generating a preview...</p>': msg;
+            msg = msg === undefined ? '<p> Please wait while we are generating a preview...</p>' : msg;
             //
             $('.js-body-loader-text').html(msg);
         }
@@ -924,27 +1014,27 @@ word-break: break-all;
         //
         $('#jsDocumentSearch').select2();
         //
-        $('#jsDocumentSearchBTN').click(function(e){
+        $('#jsDocumentSearchBTN').click(function(e) {
             //
             e.preventDefault();
             //
             var v = $('#jsDocumentSearch').val() || null;
             //
-            if(!v){
+            if (!v) {
                 $('.jsDocumentPanel').show(0);
-            } else{
+            } else {
                 //
                 $('.jsDocumentPanel').hide(0);
                 //
-                v.map(function(id){
-                    $('.jsDocumentPanel[data-id="'+(id)+'"]').show(0);
+                v.map(function(id) {
+                    $('.jsDocumentPanel[data-id="' + (id) + '"]').show(0);
                 });
             }
         });
         //
         var selectedDocuments = {};
         //
-        $('.jsSelectAllDocuments').click(function(){
+        $('.jsSelectAllDocuments').click(function() {
             //
             var documentId = $(this).closest('.jsDocumentPanel').data('id');
             //
@@ -952,46 +1042,50 @@ word-break: break-all;
             //
             $(this).closest('.jsDocumentPanel').find('.jsSelectSingleDocument').prop('checked', $(this).prop('checked'));
             //
-            $('.jsDocumentPanel[data-id="'+(documentId)+'"] .jsSelectSingleDocument').map(function(){
+            $('.jsDocumentPanel[data-id="' + (documentId) + '"] .jsSelectSingleDocument').map(function() {
                 //
-                if(selectedDocuments[$(this).data('id')] === undefined){
+                if (selectedDocuments[$(this).data('id')] === undefined) {
                     //
-                    selectedDocuments[$(this).data('id')] = { 'documents': {}};
+                    selectedDocuments[$(this).data('id')] = {
+                        'documents': {}
+                    };
                 }
                 //
-                if(isChecked){
+                if (isChecked) {
                     //
                     selectedDocuments[$(this).data('id')]['documents'][$(this).data('aid')] = true;
-                } else{
+                } else {
                     delete selectedDocuments[$(this).data('id')]['documents'][$(this).data('aid')];
                 }
                 //
-                if(Object.keys(selectedDocuments[$(this).data('id')]['documents']).length === 0){
+                if (Object.keys(selectedDocuments[$(this).data('id')]['documents']).length === 0) {
                     delete selectedDocuments[$(this).data('id')];
                 }
             });
         });
 
         //
-        $('.jsSelectSingleDocument').click(function(){
+        $('.jsSelectSingleDocument').click(function() {
             //
             var isChecked = $(this).prop('checked');
             //
-            if(selectedDocuments[$(this).data('id')] === undefined){
+            if (selectedDocuments[$(this).data('id')] === undefined) {
                 //
-                selectedDocuments[$(this).data('id')] = { 'documents': {}};
+                selectedDocuments[$(this).data('id')] = {
+                    'documents': {}
+                };
             }
             //
-            if(isChecked){
+            if (isChecked) {
                 //
                 selectedDocuments[$(this).data('id')]['documents'][$(this).data('aid')] = true;
-            } else{
+            } else {
                 delete selectedDocuments[$(this).data('id')]['documents'][$(this).data('aid')];
             }
             //
-            if(Object.keys(selectedDocuments[$(this).data('id')]['documents']).length === 0){
-                    delete selectedDocuments[$(this).data('id')];
-                }
+            if (Object.keys(selectedDocuments[$(this).data('id')]['documents']).length === 0) {
+                delete selectedDocuments[$(this).data('id')];
+            }
         });
 
         window.dd = selectedDocuments

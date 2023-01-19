@@ -14,8 +14,10 @@
         $this->db->where('is_executive_admin', 0);
         if ($keyword != null) {
             $tK = preg_replace('/\s+/', '|', strtolower($keyword));
-            $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+          //  $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
             // $this->db->where("(first_name LIKE '%" . $keyword . "%' or last_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
+            $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or lower(extra_info) regexp '".( $keyword )."' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+
         }
 
         $this->db->where('sid != ' . $sid);
@@ -25,6 +27,7 @@
         }
         $this->db->order_by($order_by, $order);
         $all_employees = $this->db->get('users')->result_array();
+
         $all_employees = $this->verify_executive_admin_status($all_employees);
         return $all_employees;
     }
@@ -38,8 +41,11 @@
         $this->db->where('is_executive_admin', 0);
         $this->db->where('archived', $archive);
         if ($keyword != null) {
-            $this->db->where("(lower(concat(first_name,'',last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($keyword)))."%' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
+           // $this->db->where("(lower(concat(first_name,'',last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($keyword)))."%' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
             // $this->db->where("(first_name LIKE '%" . $keyword . "%' or last_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
+           // $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or lower(extra_info) regexp '".( $keyword )."' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+            $this->db->where("(lower(concat(first_name,'',last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($keyword)))."%' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword ."' or lower(extra_info) regexp '(" . $keyword . ")')  ");
+
         }
         $this->db->where('sid != ' . $sid);
         //
@@ -47,7 +53,9 @@
             $this->db->where_in('sid', $ids);
         }
         $this->db->order_by($order_by, $order);
+        
         $all_employees = $this->db->get('users')->result_array();
+      
         $all_employees = $this->verify_executive_admin_status($all_employees);
         return $all_employees;
     }
@@ -59,7 +67,8 @@
         $this->db->where('users.terminated_status', 1);
         $this->db->where('users.is_executive_admin', 0);
         if ($keyword != null) {
-            $this->db->where("(lower(concat(first_name,'',last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($keyword)))."%' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
+         //   $this->db->where("(lower(concat(first_name,'',last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($keyword)))."%' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ");
+            $this->db->where("(lower(concat(first_name,'',last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($keyword)))."%' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword ."' or lower(extra_info) regexp '(" . $keyword . ")')  ");
         }
         $this->db->where('users.sid != ' . $sid);
         //
@@ -139,7 +148,9 @@
         $this->db->where('users.parent_sid', $parent_sid);
         if ($keyword != null) {
             $tK = preg_replace('/\s+/', '|', strtolower(trim($keyword)));
-            $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+//            $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+              $this->db->where("(lower(first_name) regexp '".($tK)."' or lower(last_name) regexp '".( $tK )."' or lower(extra_info) regexp '".( $keyword )."' or nick_name LIKE '%" . $keyword . "%'  or username LIKE '%" . $keyword ."%'  or PhoneNumber LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+
         }
 
         $this->db->where('users.sid != ' . $sid);
