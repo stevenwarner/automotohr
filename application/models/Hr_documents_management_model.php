@@ -2022,8 +2022,13 @@ class Hr_documents_management_model extends CI_Model
             $this->db->where_not_in('sid', $ignore);
 
             $record_obj = $this->db->get('users');
-            $other_employees = $record_obj->result_array();
-            $record_obj->free_result();
+            $other_employees = [];
+            
+            if($record_obj !== FALSE && $record_obj->num_rows() > 0){
+                $other_employees = $record_obj->result_array();
+                $record_obj->free_result();
+            }
+            
 
             if (!empty($other_employees)) {
                 foreach ($other_employees as $other_key => $other_employee) {
