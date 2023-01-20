@@ -12,6 +12,8 @@
                             <div class="page-header-area">
                                 <span class="page-heading down-arrow">
                                     <a class="dashboard-link-btn" href="<?php echo base_url('interview_questionnaire'); ?>"><i class="fa fa-chevron-left"></i>Interview Questionnaires</a>
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                                     <?php echo $title; ?>
                                 </span>
                             </div>

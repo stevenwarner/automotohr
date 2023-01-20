@@ -11,6 +11,8 @@
                             <div class="page-header-area">
                                 <span class="page-heading down-arrow">
                                     <a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management/documents_group_management'); ?>"><i class="fa fa-chevron-left"></i>Group Management Listing</a>
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                                     <?php echo $title; ?>
                                 </span>
                             </div>

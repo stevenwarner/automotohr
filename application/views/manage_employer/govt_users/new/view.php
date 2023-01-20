@@ -17,7 +17,10 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">Government Agents</span>
+                            <span class="page-heading down-arrow">
+                            <?php $this->load->view('manage_employer/company_logo_name'); ?>
+    
+                            Government Agents</span>
                             <a href="<?= base_url('govt_user/add') ?>" class="dashboard-link-btn">Create Agent</a>
                         </div>
                     </div>

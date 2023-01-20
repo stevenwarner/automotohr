@@ -15,6 +15,8 @@
                         <a href="<?php echo base_url('department_management'); ?>" class="dashboard-link-btn">
                             <i class="fa fa-chevron-left"></i>Department Management
                         </a>
+                        <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                         <?php echo $department_name; ?>
                     </span>
                 </div>

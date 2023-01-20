@@ -10,7 +10,8 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
                                 <span class="page-heading down-arrow">
-                                    <a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management'); ?>"><i class="fa fa-chevron-left"></i>Document Management</a>
+                                <?php $this->load->view('manage_employer/company_logo_name'); ?>
+                                <a class="dashboard-link-btn" href="<?php echo base_url('hr_documents_management'); ?>"><i class="fa fa-chevron-left"></i>Document Management</a>
                                     <?php echo 'Add HR Document'; ?>
                                 </span>
                             </div>

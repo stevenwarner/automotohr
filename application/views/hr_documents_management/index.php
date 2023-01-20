@@ -17,6 +17,8 @@
                                     <a href="<?php echo base_url('manage_ems'); ?>" class="dashboard-link-btn">
                                         <i class="fa fa-chevron-left"></i>Employee Management System
                                     </a>
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                                     <?php echo $title; ?>
                                 </span>
                             </div>

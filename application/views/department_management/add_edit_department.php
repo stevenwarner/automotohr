@@ -27,6 +27,8 @@
                             <div class="page-header-area">
                                 <span class="page-heading down-arrow">
                                     <a class="dashboard-link-btn" href="<?php echo base_url('department_management'); ?>"><i class="fa fa-chevron-left"></i>Department Management</a>
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                                     <?php echo !isset($department) ? 'Add Department' : 'Edit Department'; ?>
                                 </span>
                             </div>

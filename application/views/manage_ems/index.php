@@ -13,6 +13,7 @@
                                     <a href="<?php echo base_url('dashboard'); ?>" class="dashboard-link-btn">
                                         <i class="fa fa-chevron-left"></i>Dashboard
                                     </a>
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     Employee Management System
                                 </span>
                             </div>

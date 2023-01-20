@@ -8,7 +8,7 @@ class Reference_network extends Public_Controller {
         $this->load->library('pagination');
     }
 
-    public function index() { 
+    public function index() {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $employer_detail = $data['session']['employer_detail'];

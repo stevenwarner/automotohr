@@ -16,7 +16,9 @@
             </div>
             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                 <div class="page-header">
-                    <h2 class="section-ttile"><?php echo $title; ?></h2>
+                    <h2 class="section-ttile">
+                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+                    <?php echo $title; ?></h2>
                 </div>
                 <div class="job-title-text">                
                     <p>Fields marked with an asterisk (<span>*</span>) are mandatory.</p>

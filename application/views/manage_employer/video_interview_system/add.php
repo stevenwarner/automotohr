@@ -13,6 +13,8 @@
                                 <i class="fa fa-chevron-left"></i>
                                 Back
                             </a>
+                            <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                             <?php echo $title; ?>
                         </span>
                     </div>

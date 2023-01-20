@@ -11,6 +11,8 @@
                         <a href="<?php echo base_url('hr_documents_management'); ?>" class="dashboard-link-btn">
                             <i class="fa fa-chevron-left"></i>Document Management
                         </a>
+                        <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                         <?php echo $title; ?>
                     </span>
                 </div>
