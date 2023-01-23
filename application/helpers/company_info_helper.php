@@ -2482,12 +2482,19 @@ if (!function_exists('checkAndUpdateDD')) {
             $b['sid'] = $CI->db->insert_id();
         }
         //
+        $actionTakerId = $userSid;
+        // //
+        if ($CI->session->userdata('logged_in')['employer_detail']['sid'] ){
+            $actionTakerId = $CI->session->userdata('logged_in')['employer_detail']['sid'];
+            $userType = 'employee';
+        }
+        //
         $CI->db
             ->insert(
                 'documents_assigned_general_assigners',
                 [
                     'documents_assigned_general_sid' => $b['sid'],
-                    'user_sid' => $CI->session->userdata('logged_in')['employer_detail']['sid'],
+                    'user_sid' => $actionTakerId,
                     'user_type' => $userType,
                     'action' => 'completed'
                 ]
