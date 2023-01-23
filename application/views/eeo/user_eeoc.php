@@ -10,6 +10,8 @@
 
                             <div class="page-header-area margin-top">
                                 <span class="page-heading down-arrow">
+                                <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                                     <?php if($user_type == 'applicant'){ ?>
                                         <a class="dashboard-link-btn" href="<?php echo base_url('applicant_profile/'.$user_sid.'/'.$job_list_sid); ?>"><i aria-hidden="true" class="fa fa-chevron-left"></i>Applicant Profile</a>
                                     <?php } else { ?>

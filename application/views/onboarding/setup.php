@@ -110,7 +110,8 @@ if ($user_type == 'applicant') {
                                     </span>
                                 <?php } else if ($user_type == 'employee') { ?>
                                     <span class="page-heading down-arrow">
-                                        <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile/' . $user_info['sid']); ?>">
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+                                    <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile/' . $user_info['sid']); ?>">
                                             <i class="fa fa-chevron-left"></i>Employee Profile</a>
                                         Setup Employee Panel
                                     </span>

@@ -55,12 +55,16 @@
                             <div class="page-header-area margin-top">
                                 <?php if ($user_type == 'applicant') { ?>
                                     <span class="page-heading down-arrow">
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                                         <a class="dashboard-link-btn" href="<?php echo base_url('applicant_profile/' . $user_info['sid']); ?>">
                                             <i class="fa fa-chevron-left"></i>Applicant Profile</a>
                                         View Offer Letter / Pay Plan
                                     </span>
                                 <?php } else if ($user_type == 'employee') { ?>
                                     <span class="page-heading down-arrow">
+                                    <?php $this->load->view('manage_employer/company_logo_name'); ?>
+
                                         <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile/' . $user_info['sid']); ?>">
                                             <i class="fa fa-chevron-left"></i>Employee Profile</a>
                                         View Offer Letter / Pay Plan
