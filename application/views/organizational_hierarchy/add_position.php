@@ -6,7 +6,7 @@
             </div>
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                 <div class="page-header-area">
-                    <span class="page-heading down-arrow">
+                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                         <a href="<?php echo base_url('organizational_hierarchy/positions'); ?>" class="dashboard-link-btn">
                             <i class="fa fa-chevron-left"></i>Back
                         </a>

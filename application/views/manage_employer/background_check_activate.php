@@ -8,7 +8,7 @@
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow">Background Check Activation</span>
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Background Check Activation</span>
                         <span class="desc_p">This form allows Accurate Background to verify your company information. Please completely fill in this form and acknowledge the End User Agreement. </span>
                         <span class="desc_p">You will only be asked one time for each company account to complete the Accurate Background company verification form.</span>
                     </div>

@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="page-header-area">
                     <div class="col-lg-2 col-md-2 col-xs-12 col-sm-6">
-                          <span class="page-heading down-arrow">Add Manual Candidate</span>
+                          <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Add Manual Candidate</span>
                     </div>
                     <div class="col-lg-10 col-md-10 col-xs-12 col-sm-6">
                         <div class="page-heading no-bg">

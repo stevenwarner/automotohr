@@ -24,7 +24,7 @@
                     <br />
                     <div>
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                 <a href="<?=base_url('employee_profile/'.( $sid ).'');?>" class="dashboard-link-btn">
                                     <i class="fa fa-chevron-left"></i>Employee Profile
                                 </a>

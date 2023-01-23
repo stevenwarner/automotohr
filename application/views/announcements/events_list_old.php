@@ -13,7 +13,7 @@
 <!--                            --><?php //$this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
 
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url() . 'my_settings'; ?>"><i class="fa fa-chevron-left"></i>Back</a>
                                     <?php echo 'hod'.$title; ?></span>
                             </div>

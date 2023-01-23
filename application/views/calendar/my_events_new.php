@@ -9,7 +9,7 @@
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">Calender / Events</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Calender / Events</span>
                         </div><?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                         <div class="job-feature-main m_job">
                             <div class="portalmid">

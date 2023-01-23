@@ -29,7 +29,7 @@ if ($this->session->userdata('logged_in')) {
                             </div>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <div class="page-header-area">
-                                    <span class="page-heading down-arrow">
+                                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                         <a class="dashboard-link-btn" href="<?php echo base_url('documents_management/documents_assignment/' . $document['user_type'] . '/' . $document['user_sid']); ?>"><i class="fa fa-chevron-left"></i>Document Assignment</a>
                                         Sign Document
                                     </span>

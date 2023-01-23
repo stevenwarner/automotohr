@@ -13,7 +13,7 @@ ul.select2-selection__rendered li{
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><a class="dashboard-link-btn" href="<?php echo base_url('appearance') ?>"><i class="fa fa-chevron-left"></i>Back To Themes</a>Customize Your Theme</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><a class="dashboard-link-btn" href="<?php echo base_url('appearance') ?>"><i class="fa fa-chevron-left"></i>Back To Themes</a>Customize Your Theme</span>
                         </div>
                         <div id="carousel">
                             <div class="carousel">

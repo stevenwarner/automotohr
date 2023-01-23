@@ -32,7 +32,7 @@
                                     <div class="top-logo text-center">
                                         <img src="<?php echo base_url('assets/images/form-logo.jpg') ?>">
                                     </div>
-                                    <span class="page-heading down-arrow"><?php echo $page_title; ?></span>
+                                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $page_title; ?></span>
                                     <div class="hr-box">
                                         <div class="col-lg-12">
                                             <div class="recurring-payment-text-area">

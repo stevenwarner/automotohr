@@ -8,7 +8,7 @@
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">Select Your Theme</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Select Your Theme</span>
                         </div>
                         <div class="carousel">
                             <div class="mask">
