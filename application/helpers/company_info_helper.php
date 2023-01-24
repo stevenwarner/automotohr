@@ -2484,7 +2484,7 @@ if (!function_exists('checkAndUpdateDD')) {
         //
         $actionTakerId = $userSid;
         // //
-        if ($CI->session->userdata('logged_in')['employer_detail']['sid'] ){
+        if ($CI->session->userdata('logged_in')['employer_detail']['sid']) {
             $actionTakerId = $CI->session->userdata('logged_in')['employer_detail']['sid'];
             $userType = 'employee';
         }
@@ -2499,8 +2499,6 @@ if (!function_exists('checkAndUpdateDD')) {
                     'action' => 'completed'
                 ]
             );
-
-         
     }
 }
 
@@ -2756,5 +2754,47 @@ if (!function_exists('getComplyNetLink')) {
         $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
         // Get the hash
         return $CI->complynet_lib->getUserHash($record['email']);
+    }
+}
+
+
+if (!function_exists('convertDateTimeToTimeZone')) {
+    /**
+     * Convert the timezones
+     *
+     * Only converts timezone from server's timezone
+     * to employee timezone
+     *
+     * @method reset_datetime
+     *
+     * @param string $dateTime String containg the date time "Y-m-d H:i:s"
+     * @param string $fromFormat Optional String containing the provided datetime format
+     * @param string $toFormat Optional String containing the output datetime format
+     * @return string
+     */
+    function convertDateTimeToTimeZone(
+        string $dateTime,
+        string $fromFormat = DB_DATE_WITH_TIME,
+        string $toFormat = DB_DATE_WITH_TIME
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $timeZone = null;
+        // Check if the session is in place
+        $timeZone = $CI->session->userdata('logged_in')['employer_detail']['timezone'] ?? $CI->session->userdata('logged_in')['company_detail']['timezone'];
+        //
+        if (!$timeZone) {
+            $timeZone = STORE_DEFAULT_TIMEZONE_ABBR;
+        }
+        //
+        return reset_datetime([
+            'datetime' => $dateTime, // sets the datetime string
+            'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR, // sets the from timezone
+            'new_zone' => $timeZone, // set the to timezone
+            'from_format' => $fromFormat, // set the from datetime format
+            'format' => $toFormat, // set the to datetime format
+            '_this' => $CI // set the instance of CI
+        ]);
     }
 }

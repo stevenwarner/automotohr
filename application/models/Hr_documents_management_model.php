@@ -6106,7 +6106,7 @@ class Hr_documents_management_model extends CI_Model
             if ($v['user_type'] == 'applicant') {
                 $a =
                     $this->db->select('
-                    first_name, 
+                    first_name,
                     last_name
                 ')
                     ->where('sid', $v['user_sid'])
@@ -6117,6 +6117,10 @@ class Hr_documents_management_model extends CI_Model
             } else {
                 $c[$k]['name'] = remakeEmployeeName($v);
             }
+            // Set the datetime
+            $c[$k]['created_at'] = convertDateTimeToTimeZone(
+                $c[$k]['created_at']
+            );
         }
         return $c;
     }

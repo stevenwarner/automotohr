@@ -9724,9 +9724,9 @@ if (!function_exists('parse_timezone')) {
         else if ($find == 'time') return $timezone[0];
         else if ($find == 'continent') return $timezone[1];
         else if ($find == 'abbr') return $timezone[3];
-        else if ($find == 'name') return timezone_name_from_abbr($timezone[3]);
+        else if ($find == 'name') return getTimeZoneFromAbbr($timezone[3]);
         else if ($find == 'time_in_seconds') {
-            $tmp = new DateTime('now', new DateTimeZone(timezone_name_from_abbr($timezone[3])));
+            $tmp = new DateTime('now', new DateTimeZone(getTimeZoneFromAbbr($timezone[3])));
             return $tmp->getOffset();
         } else return $timezone[2];
         //
@@ -9770,22 +9770,22 @@ if (!function_exists('reset_timezone')) {
         // _e($from_zone, true);
         // _e(timezone_name_from_abbr($from_zone), true);
         // Let's create date
-        $date_obj = DateTime::createFromFormat($from_format, $datetime, new DateTimeZone(timezone_name_from_abbr($from_zone)));
+        $date_obj = DateTime::createFromFormat($from_format, $datetime, new DateTimeZone(getTimeZoneFromAbbr($from_zone)));
         if ($date_obj) {
             if ($from_zone != 'UTC') {
                 // Convert it to utc
-                $utc = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr('UTC')));
+                $utc = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr('UTC')));
                 // Get utc date
                 $return_array['UTC'] = parse_datetime($utc->format($to_format));
             }
             //
             if (isset($from_zone)) {
-                $fromzone = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr($from_zone)));
+                $fromzone = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($from_zone)));
                 $return_array[$from_zone] = parse_datetime($fromzone->format($to_format));
             }
             //
-            if ($from_zone != 'UTC') $tozone = $utc->setTimezone(new DateTimeZone(timezone_name_from_abbr($new_zone)));
-            else $tozone = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr($new_zone)));
+            if ($from_zone != 'UTC') $tozone = $utc->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
+            else $tozone = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
             $return_array[$new_zone] = parse_datetime($tozone->format($to_format));
             $return_array['date_time_string'] = $tozone->format($format);
         } else {
@@ -10018,7 +10018,7 @@ if (!function_exists('get_current_datetime')) {
         }
 
         // Get the current selected timezone
-        $date = new DateTime(date('Y-m-d'), new DateTimeZone(timezone_name_from_abbr($timezone)));
+        $date = new DateTime(date('Y-m-d'), new DateTimeZone(getTimeZoneFromAbbr($timezone)));
         return $date->format($to_format) . (isset($extra) ? $extra : '');
     }
 }
@@ -16030,5 +16030,40 @@ if (!function_exists('getSystemDate')) {
     function getSystemDate(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now')
     {
         return date($format, strtotime($timestamp));
+    }
+}
+
+
+if (!function_exists('getTimeZoneFromAbbr')) {
+    /**
+     * Get the timezone from abbr
+     *
+     * If the invalid abbr is pass then the
+     * system defaults to server's timezone
+     *
+     * @param string $abbr
+     * @return string
+     */
+    function getTimeZoneFromAbbr (string $abbr)
+    {
+        //
+        $abbr = strtoupper(trim($abbr));
+        // set the abbr array
+        $timeZoneArray = [
+            'SAMT' => 'GST',
+            'TRT' => 'EAT',
+            'FET' => 'EAT',
+            'KUYT' => 'GST'
+        ];
+        //
+        $abbr = isset($timeZoneArray[$abbr]) ? $timeZoneArray[$abbr] : $abbr;
+        //
+        $timeZone = timezone_name_from_abbr($abbr);
+        //
+        if (!$timeZone) {
+            $timeZone = timezone_name_from_abbr(STORE_DEFAULT_TIMEZONE_ABBR);
+        }
+        //
+        return $timeZone;
     }
 }
