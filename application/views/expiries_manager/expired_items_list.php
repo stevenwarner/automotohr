@@ -1,5 +1,5 @@
 <div class="page-header-area expired-title">
-    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Expired</span>
+    <span class="page-heading down-arrow">Expired</span>
 </div>
 <div class="table-responsive table-outer">
 
