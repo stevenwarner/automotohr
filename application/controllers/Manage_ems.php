@@ -11,8 +11,8 @@ class Manage_ems extends Public_Controller {
 
     public function index() {
         if ($this->session->userdata('logged_in')) {
-            if($this->session->userdata('logged_in')['company_detail']['ems_status']) {
                 $data['session'] = $this->session->userdata('logged_in');
+                getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
                 $employer_detail = $data['session']['employer_detail'];
                 $security_sid = $employer_detail['sid'];
                 $security_details = db_get_access_level_details($security_sid);
@@ -27,9 +27,6 @@ class Manage_ems extends Public_Controller {
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_ems/index');
                 $this->load->view('main/footer');
-            } else {
-                redirect(base_url('dashboard'), "refresh");
-            }
         } else {
             redirect(base_url('login'), "refresh");
         }
@@ -38,8 +35,10 @@ class Manage_ems extends Public_Controller {
 
     public function ems_notification(){
         if ($this->session->userdata('logged_in')) {
+            getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
             $data['session'] = $this->session->userdata('logged_in');
             $employer_detail = $data['session']['employer_detail'];
+            
             $security_sid = $employer_detail['sid'];
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
@@ -169,6 +168,7 @@ class Manage_ems extends Public_Controller {
     }
 
     public function edit_ems_notification($sid) {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         $data['session'] = $this->session->userdata('logged_in');
         $security_sid = $data['session']['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);
