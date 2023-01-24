@@ -54,6 +54,9 @@ class Dashboard extends Public_Controller
             $jobs_approval_module_status                                        = $company_detail['has_job_approval_rights']; //get_job_approval_module_status($company_id);
             $applicant_approval_module_status                                   = $company_detail['has_applicant_approval_rights']; //get_applicant_approval_module_status($company_id);
 
+            $data['EmsStatus'] = getCompanyEmsStatusBySid($company_id, false);
+
+
             if (check_blue_panel_status() && strtolower($loggedin_access_level) == 'employee') { //New Panel configuration
 
                 // $configuration  = $this->onboarding_model->get_onboarding_configuration('employee', $employer_id);

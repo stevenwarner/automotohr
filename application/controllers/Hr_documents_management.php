@@ -18,7 +18,7 @@ class Hr_documents_management extends Public_Controller
     }
 
     public function index()
-    {
+    {getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
 
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
@@ -353,6 +353,7 @@ class Hr_documents_management extends Public_Controller
 
     public function archived_documents()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -483,6 +484,7 @@ class Hr_documents_management extends Public_Controller
 
     public function upload_new_document()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -761,6 +763,7 @@ class Hr_documents_management extends Public_Controller
 
     public function generate_new_document()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1115,6 +1118,7 @@ class Hr_documents_management extends Public_Controller
 
     public function generate_new_offer_letter()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -4671,6 +4675,7 @@ class Hr_documents_management extends Public_Controller
 
     public function authorized_document_listing()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
 
             $data['session']                                                    = $this->session->userdata('logged_in');
@@ -4684,6 +4689,8 @@ class Hr_documents_management extends Public_Controller
             $security_details                                                   = db_get_access_level_details($employer_sid);
             $data['security_details']                                           = $security_details;
             // Get inactive employee and applicants
+            getCompanyEmsStatusBySid($company_sid, true);
+
             $inactiveEmployees = $this->hr_documents_management_model->getAllCompanyInactiveEmployee($company_sid);
             $inactiveApplicants = $this->hr_documents_management_model->getAllCompanyInactiveApplicant($company_sid);
             $total_documents                                                    = $this->hr_documents_management_model->get_all_assigned_auth_documents(
@@ -6373,6 +6380,7 @@ class Hr_documents_management extends Public_Controller
         $documents = 'all',
         $type = FALSE
     ) {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -6480,6 +6488,7 @@ class Hr_documents_management extends Public_Controller
         $documents = 'all',
         $type = FALSE
     ) {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -7587,6 +7596,7 @@ class Hr_documents_management extends Public_Controller
 
     public function documents_group_management()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -8572,6 +8582,7 @@ class Hr_documents_management extends Public_Controller
 
     public function documents_category_management()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -13316,6 +13327,7 @@ class Hr_documents_management extends Public_Controller
 
     public function scheduled_documents()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $data['security_details'] = $security_details = db_get_access_level_details($data['session']['employer_detail']['sid']);
@@ -13543,6 +13555,7 @@ class Hr_documents_management extends Public_Controller
         $company_sid = $session['company_detail']['sid'];
         $security_sid = $session['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);
+        getCompanyEmsStatusBySid($company_sid);
         // For verification documents
         $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($session['company_detail']['sid']);
         $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($session['company_detail']['sid']);
@@ -13659,6 +13672,7 @@ class Hr_documents_management extends Public_Controller
         $documents = 'all',
         $type = FALSE
     ) {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -13870,6 +13884,7 @@ class Hr_documents_management extends Public_Controller
 
     public function library_document_listing()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         //
         if (!$this->session->userdata('logged_in')) {
             return redirect(base_url('login'), "refresh");
@@ -14056,6 +14071,9 @@ class Hr_documents_management extends Public_Controller
         $company_detail = $data['session']['company_detail'];
         $employer_sid = $data["session"]["employer_detail"]["sid"];
         $security_sid = $employer_detail['sid'];
+        getCompanyEmsStatusBySid($company_detail['sid']);
+        
+
         $security_details = db_get_access_level_details($security_sid);
         $data['security_details'] = $security_details;
         check_access_permissions($security_details, 'dashboard', 'private_messages');
@@ -14376,6 +14394,7 @@ class Hr_documents_management extends Public_Controller
             $company_detail = $data['session']['company_detail'];
             $employer_sid = $data["session"]["employer_detail"]["sid"];
             $security_sid = $employer_detail['sid'];
+            getCompanyEmsStatusBySid($company_detail['sid']);
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
             check_access_permissions($security_details, 'dashboard', 'private_messages');
