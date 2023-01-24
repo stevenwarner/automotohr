@@ -27,6 +27,7 @@
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
                             <div class="page-heading down-arrow js-fix-btn">
+                            <?php $this->load->view('manage_employer/company_logo_name'); ?>
                                 <a href="<?=base_url('dashboard');?>" class="dashboard-link-btn"><i class="fa fa-long-arrow-left"></i>&nbsp;Dashboard</a>
                                 <p style="margin-top: 5px;">Calendar / Events</p>
                             </div>
