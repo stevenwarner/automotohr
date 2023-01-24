@@ -26,6 +26,10 @@ class Employee extends CI_Controller
         //
         $data['session'] = $this->session->userdata('logged_in');
         //
+        $company_sid = $data['session']['company_detail']['sid'];
+
+        getCompanyEmsStatusBySid($company_sid, true);
+
         $employeeId = $data['session']['employer_detail']['sid'];
         //
         $data['security_details'] = db_get_access_level_details($employeeId);

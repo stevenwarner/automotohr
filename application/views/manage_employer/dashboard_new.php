@@ -557,6 +557,8 @@
                                     <?php } ?>
                                 <?php } ?>
                                 <!--16-->
+
+                                <?php if($EmsStatus==1){?>
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box">
                                         <div class="dashboard-widget-box">
@@ -573,7 +575,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                            <?php } ?>
                                 <?php //if(check_access_permissions_for_view($security_details, 'attendance_management')) { 
                                 ?>
                                 <?php $data['session'] = $this->session->userdata('logged_in'); ?>
@@ -646,6 +648,7 @@
                                 ?>
                                 <!--17-->
 
+                            <?php if($EmsStatus==1){?>
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box">
                                         <div class="dashboard-widget-box">
@@ -664,7 +667,9 @@
                                         </div>
                                     </div>
                                 </div>
+                            <?php }?>
 
+                            <?php if($EmsStatus==1){?>
                                 <?php if ($session['employer_detail']['access_level'] == 'Admin' || $session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
@@ -685,8 +690,10 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+                                <?php }?>
 
                                 <!-- Employee Information Change -->
+                                <?php if($EmsStatus==1){?>
                                 <?php if ($access_level_plus == 1 || $pay_plan_flag == 1) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
@@ -711,8 +718,9 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+                                <?php  }?>
 
-                                <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
+                                <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status'] && checkIfAppIsEnabled('documentlibrary')) { ?>
                                     <!-- Documents Library -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
@@ -901,6 +909,7 @@
                                 <?php } ?>
 
                                 <!-- Account Activity -->
+                                <?php if($EmsStatus==1){?>
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box activity-box-wrp">
                                         <div class="activity-box">
@@ -940,7 +949,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <?php } ?>
 
                             </div>
                         </div>

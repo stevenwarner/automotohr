@@ -16032,3 +16032,20 @@ if (!function_exists('getSystemDate')) {
         return date($format, strtotime($timestamp));
     }
 }
+
+//
+if (!function_exists('getCompanyEmsStatusBySid')) {
+    function getCompanyEmsStatusBySid($company_sid, $doRedirect = true)
+    {
+        $CI = &get_instance();
+        //
+        $CI->db->where('sid', $company_sid);
+        $CI->db->where('ems_status', 1);
+        //
+        $response = $CI->db->count_all_results('users');
+        if ($response <= 0 && $doRedirect){
+            return redirect('/dashboard');
+        }
+        return $response;
+    }
+}
