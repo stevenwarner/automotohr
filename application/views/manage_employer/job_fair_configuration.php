@@ -11,7 +11,7 @@
                         <div class="col-lg-12">
                             <div class="page-header-area">
                                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a href="<?php echo base_url('my_settings'); ?>" class="dashboard-link-btn"><i class="fa fa-chevron-left"></i>Back to Settings</a>
                                     <?php echo $title; ?>
                                 </span>

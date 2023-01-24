@@ -13,7 +13,7 @@
                         <?php $function_names = array('my_profile', 'login_password', 'my_referral_network', 'order_history', 'list_packages_addons_invoices', 'cc_management', 'job_products_report'); ?>
                         <?php if (check_access_permissions_for_view($security_details, $function_names)) { ?>
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">Personal Settings</span>
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Personal Settings</span>
                             </div>
                         <?php } ?>
                         <div class="setting-grid">

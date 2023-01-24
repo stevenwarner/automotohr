@@ -10,7 +10,7 @@
                     <div class="card_div">
                         <div class="dashboard-conetnt-wrp">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('notification_emails'); ?>"><i class="fa fa-chevron-left"></i>Notification Email Management</a>
                                     <?php echo $title; ?>
                                 </span>

@@ -9,7 +9,7 @@
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
-                            <span class="page-heading down-arrow">Add Manual Candidate</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Add Manual Candidate</span>
                         </div>
                         <div class="manual-candidate-text">
                             <h2 class="manual-candidate-heading">What is "Add Manual Candidate"?</h2>

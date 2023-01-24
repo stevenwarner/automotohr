@@ -14,7 +14,7 @@
 <body>
 <div class="hr-box candidate-interview-evaluation">
     <div class="page-header-area">
-        <span class="page-heading down-arrow"><?php echo $title; ?></span>
+        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
     </div>
     <div class="info-text">Please select the sections you want to print and press <b>Print Interview Questionnaire</b></div>
     <div class="row custom-btns">

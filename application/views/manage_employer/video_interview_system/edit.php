@@ -8,7 +8,7 @@
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow">
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                             <a class="dashboard-link-btn" href="<?php 
                             if(isset($template_sid)){
                                 echo base_url('video_interview_system/manage_template') . '/' . $template_sid; 

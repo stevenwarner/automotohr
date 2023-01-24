@@ -7,7 +7,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('employee_profile' . '/' . $employer['sid']) ?>"><i class="fa fa-chevron-left"></i>Employee Profile</a>
                                     <?php echo $title; ?>
                                     <a class="dashboard-link-btn-right" href="<?php echo base_url('change_status/' . $employer['sid']); ?>">Change Employee Status</a>

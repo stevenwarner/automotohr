@@ -25,7 +25,7 @@
                     <div class="top-logo text-center">
                         <img src="<?php echo base_url('assets/images/form-logo.jpg') ?>">
                     </div>
-                    <span class="page-heading down-arrow">RECURRING PAYMENT AUTHORIZATION FORM</span>
+                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>RECURRING PAYMENT AUTHORIZATION FORM</span>
                     <div class="end-user-agreement-wrp recurring-payment-authorization">
                         <div class="recurring-payment-text-area">
                             <p>Schedule your payment to be automatically deducted from your bank account, or charged to your Visa, MasterCard, American Express or Discover Card. Just complete and sign this form to get started! </p>
