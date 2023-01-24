@@ -759,4 +759,38 @@ class Cron_common extends CI_Controller
             mail('mubashar@automotohr.com', "/tmp memory exceeded to $values", $result);
         }
     }
+
+    /**
+     * Fixes the terminated issue
+     */
+    public function fixDateFormats()
+    {
+        // Get all records
+        $records =
+        $this->db
+        ->select('sid, termination_date, status_change_date')
+        ->where('termination_date REGEXP "0022"', '', false)
+        ->or_where('status_change_date REGEXP "0022"', '', false)
+        ->get('terminated_employees')
+        ->result_array();
+        //
+        if (empty($records)) {
+            exit(0);
+        }
+        //
+        foreach ($records as $record) {
+            //
+            $upd = [];
+            //
+            $upd['termination_date'] = str_replace('0022-', '2022-', $record['termination_date']);
+            $upd['status_change_date'] = str_replace('0022-', '2022-', $record['status_change_date']);
+            //
+            $this->db
+            ->where('sid', $record['sid'])
+            ->update('terminated_employees', $upd);
+        }
+        _e(count($records), true);
+        //
+        exit(0);
+    }
 }
