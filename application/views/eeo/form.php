@@ -338,6 +338,15 @@
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </div>
+
+                                                            <div class="checkbox-radio-row">
+                                                                <label class="control control--radio">
+                                                                    <?php $default_checked = $temp == 'Other' ? true : false ;?>
+                                                                    Other
+                                                                    <input <?php echo set_radio($field_id, 'Other', $default_checked); ?> name="gender" id="other" type="radio" value="Other">
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                     </div>
 

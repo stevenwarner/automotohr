@@ -292,6 +292,11 @@
                                                         <input type="checkbox" name="" onclick="return false;" <?php echo !empty($eeo_form_info['gender']) && $eeo_form_info['gender'] == 'Female' ? 'checked="checked"' : ''; ?>> Female
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <td>
+                                                        <input type="checkbox" name="" onclick="return false;" <?php echo !empty($eeo_form_info['gender']) && $eeo_form_info['gender'] == 'Other' ? 'checked="checked"' : ''; ?>> Other
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </section>

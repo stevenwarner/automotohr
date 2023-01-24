@@ -253,6 +253,11 @@
                                         <input type="radio" <?php echo $is_readonly; ?> name="gender" value="Female" <?php echo !empty($eeo_form_info['gender']) && $eeo_form_info['gender'] == 'Female' ? 'checked="checked"' : ''; ?>> Female
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        <input type="radio" <?php echo $is_readonly; ?> name="gender" value="Other" <?php echo !empty($eeo_form_info['gender']) && $eeo_form_info['gender'] == 'Other' ? 'checked="checked"' : ''; ?>> Other
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <?php if ($eeo_form_info['is_expired'] == 0) { ?>

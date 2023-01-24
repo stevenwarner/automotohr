@@ -363,6 +363,47 @@
                             </div>
                         </div>
                         <?php endif; ?>
+
+
+
+
+                        <?php if(checkIfAppIsEnabled('documentlibrary')): ?>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <h3>EEOC Questionnaire <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
+                                <p>Make the following selected options available for employee EEO form.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                VETERAN <small class="help_text">Make the VETERAN available on employee EEO form.</small>
+                                    <input class="" type="checkbox" id="dl_vet" name="dl_vet" <?php echo (isset($portal['dl_vet']) && $portal['dl_vet'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                VOLUNTARY <small class="help_text">Make the voluntary self-identification of disability available on employee EEO form.</small>
+                                    <input class="" type="checkbox" id="dl_vol" name="dl_vol" <?php echo (isset($portal['dl_vol']) && $portal['dl_vol'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                GENDER  <small class="help_text">Make the gender available on employee EEO form.</small>
+                                    <input class="" type="checkbox" id="dl_gen" name="dl_gen" <?php echo (isset($portal['dl_gen']) && $portal['dl_gen'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-timezone-row">
                                 <div class="form-group autoheight">
