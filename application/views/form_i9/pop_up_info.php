@@ -1,22 +1,22 @@
 <!-- Modal -->
 <div id="myPopupModal" class="modal fade" role="dialog">
-  <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title" id="popup-modal-title">Modal Header</h4>
-      </div>
-      <div class="modal-body" id="feed_me_a_text">
-        
-      </div>
-      <div class="modal-footer" id="popup-modal-footer">
-        <button type="button" class="btn blue-button close" data-dismiss="modal" id="close-popup-modal">Close</button>
-      </div>
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="popup-modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body" id="feed_me_a_text">
+
+            </div>
+            <div class="modal-footer" id="popup-modal-footer">
+                <button type="button" class="btn blue-button close" data-dismiss="modal" id="close-popup-modal">Close</button>
+            </div>
+        </div>
+
     </div>
-
-  </div>
 </div>
 
 <!-- section 1 -->
@@ -75,8 +75,8 @@
     <p>Providing your 9-digit Social Security number is voluntary on Form I-9 unless your employer participates in E-Verify.</p>
     <p>If your employer participates in E-Verify and:</p>
     <ol>
-    	<li style="margin-left: 26px;">You have been issued a Social Security number, you must provide it in this field: or</li>
-    	<li style="margin-left: 26px;">You have applied for, but have not yet received a Social Security number, leave this field blank until you receive a Social Security number.</li>
+        <li style="margin-left: 26px;">You have been issued a Social Security number, you must provide it in this field: or</li>
+        <li style="margin-left: 26px;">You have applied for, but have not yet received a Social Security number, leave this field blank until you receive a Social Security number.</li>
     </ol>
 </div>
 <div class="modal-text hidden" id="section_1_employees_email_address">
@@ -101,8 +101,8 @@
     <p>An individual born in American Samoa, certain former citizens of the former Trust Territory of the Pacific Islands. and certain children of noncitizen nationals born abroad.</p>
 </div>
 <div class="modal-text hidden" id="section_2_lawful_permanent_resident">
-	<h1>A lawful permanent resident</h1>
-	<p>Select this status if its applies to you. If you select this box, the rest of the fields in this area will contain N/A.</p>
+    <h1>A lawful permanent resident</h1>
+    <p>Select this status if its applies to you. If you select this box, the rest of the fields in this area will contain N/A.</p>
     <p>A lawful permanent resident An individual who is not a U.S. citizen and who resides in the United States under legally recognized and lawfully recorded permanent residence as an immigrant. This term includes conditional residents.</p>
     <p>If you select this box, you must enter either your <b>Alien Registration Number or USCIS Number</b> in the field provided. At this time, the USCIS Number is the same as the A-number without "A" prefix.</p>
     <p>Asylees and refugees should not select this status, but should instead select "An Alien authorized to work" below.</p>
@@ -119,12 +119,12 @@
 </div>
 <div class="modal-text hidden" id="section_21_alien_number">
     <h1>Alien Registration Number/USCIS Number</h1>
-    <p>Alien Registration Number/USCIS Number: Enter your 7-digit to 9-digit Alien Registration Number (A-Number)/USCIS Number, if any, in this field. To do so, enter the number in the space provided, then select either Alien Registration Number or USCIS Number from the drop-down. If you select Alien Registration Number from the drop-down, an "A" will appear before the number you entered. Currently, the USCIS Number is the same as the  Alien Number Without the "A" prefix. If you do not provide an Alien Registration Number/USCIS Number, enter either a Form I-94 Admission Number, or Foreign Passport Number in the fields provided. This field will then be populated with N/A.</p>
+    <p>Alien Registration Number/USCIS Number: Enter your 7-digit to 9-digit Alien Registration Number (A-Number)/USCIS Number, if any, in this field. To do so, enter the number in the space provided, then select either Alien Registration Number or USCIS Number from the drop-down. If you select Alien Registration Number from the drop-down, an "A" will appear before the number you entered. Currently, the USCIS Number is the same as the Alien Number Without the "A" prefix. If you do not provide an Alien Registration Number/USCIS Number, enter either a Form I-94 Admission Number, or Foreign Passport Number in the fields provided. This field will then be populated with N/A.</p>
     <p>Aliens authorized to work must enter one of the following to complete Section l:</p>
     <ol>
-    	<li style="margin-left: 26px;">Alien Registration Number (A-Number)/USCIS Number or</li>
-    	<li style="margin-left: 26px;">Form I-94 Admission Number or</li>
-    	<li style="margin-left: 26px;">Foreign Passport Number and the Country of Issuance</li>
+        <li style="margin-left: 26px;">Alien Registration Number (A-Number)/USCIS Number or</li>
+        <li style="margin-left: 26px;">Form I-94 Admission Number or</li>
+        <li style="margin-left: 26px;">Foreign Passport Number and the Country of Issuance</li>
     </ol>
 </div>
 <div class="modal-text hidden" id="section_2_expiration_date">
@@ -137,9 +137,9 @@
     <p>Enter your 11-digit I-94 admission number in this field. If you do not provide an I-94 admission number, enter either an Alien Registration Number/USCIS Number or a Foreign Passport Number in the fields provided. This field will then be populated with N/A.</p>
     <p>Aliens authorized to work must enter one of the following to complete Section l:</p>
     <ol>
-    	<li style="margin-left: 26px;">Alien Registration Number (A-Number)/USCIS Number or</li>
-    	<li style="margin-left: 26px;">Form I-94 Admission Number or</li>
-    	<li style="margin-left: 26px;">Foreign Passport Number and the Country of Issuance</li>
+        <li style="margin-left: 26px;">Alien Registration Number (A-Number)/USCIS Number or</li>
+        <li style="margin-left: 26px;">Form I-94 Admission Number or</li>
+        <li style="margin-left: 26px;">Foreign Passport Number and the Country of Issuance</li>
     </ol>
 </div>
 <div class="modal-text hidden" id="section_2_passport_number">
@@ -147,9 +147,9 @@
     <p>Enter your Foreign Passport Number in this field. If you do not provide a Foreign Passport Number, enter either an Alien Registration Number/USCIS Number or your I-94 Admission Number in the fields provided. This field will then be populated with N/A.</p>
     <p>Aliens authorized to work must enter one of the following to complete Section l:</p>
     <ol>
-    	<li style="margin-left: 26px;">Alien Registration Number (A-Number)/USCIS Number or</li>
-    	<li style="margin-left: 26px;">Form I-94 Admission Number or</li>
-    	<li style="margin-left: 26px;">Foreign Passport Number and the Country of Issuance</li>
+        <li style="margin-left: 26px;">Alien Registration Number (A-Number)/USCIS Number or</li>
+        <li style="margin-left: 26px;">Form I-94 Admission Number or</li>
+        <li style="margin-left: 26px;">Foreign Passport Number and the Country of Issuance</li>
     </ol>
 </div>
 <div class="modal-text hidden" id="section_2_country_of_issuance">
@@ -208,6 +208,12 @@
     <h1>Citizenship/Immigration Status</h1>
     <p>This field may already contain a number that correlates to the citizenship or immigration status box the employee selected in Section 1. If not, select from the drop-down list provided the number of the citizenship or immigration status box the employee selected in Section 1.</p>
     <p>If you have difficulty selecting the document(s) the employee presents from the drop-downs below, ensure that you selected the right number correlating to the immigration or citizenship status box the employee checked in Section 1. If this area was automatically populated, have the employee review the information he or she entered on the printed and signed copy of Section 1, make any required corrections in Section 1, then initial and date those corrections. You may then enter the employee's corrected information in this area.</p>
+    <strong>
+        <p class="text-danger">1- A citizen of the United States<br />
+            2- A noncitizen of the United States <br />
+            3- A lawful permanent resident <br />
+            4- An alien authorized to work </p>
+    </strong>
 </div>
 <div class="modal-text hidden" id="section_41_signature_of_preparer">
     <h1>Signature of Preparer or Translator</h1>
@@ -277,9 +283,9 @@
     <p>Enter the expiration date, if any, of the document or receipt you entered in the first Document Title field. A document is not acceptable if it has already expired. An unexpired document includes a document where the expiration date shown on the face of a document has been automatically extended, such as for individuals with Temporary Protected Status.</p>
     <p>If the document uses text rather than a date to indicate when it expires, enter the text shown on the document, such as ‘D/S” (which means, “duration of status"). If the document does not contain an expiration date, leave this field empty. If the employee presented a combination of documents, use the second and third Expiration Date fields as necessary. For a receipt, enter the expiration date of the receipt validity period.</p>
     <ol>
-    	<li style="margin-left: 26px;">For a receipt showing that the employee has applied to replace a document that was lost, stolen or damaged, enter the date that is 90 days from the first day of work for pay.</li>
-    	<li style="margin-left: 26px;">For a receipt that is the arrival portion of Form I-94/I-94A containing a temporary I-551 stamp and a photograph of the individual, enter the expiration date of the stamp or, if there is no expiration date, within one year from the date of admission.</li>
-    	<li style="margin-left: 26px;">For a receipt that is the departure portion of Form I-94/I-94A with a refugee admission stamp, enter a date that is 90 days from the first day of work for pay.</li>
+        <li style="margin-left: 26px;">For a receipt showing that the employee has applied to replace a document that was lost, stolen or damaged, enter the date that is 90 days from the first day of work for pay.</li>
+        <li style="margin-left: 26px;">For a receipt that is the arrival portion of Form I-94/I-94A containing a temporary I-551 stamp and a photograph of the individual, enter the expiration date of the stamp or, if there is no expiration date, within one year from the date of admission.</li>
+        <li style="margin-left: 26px;">For a receipt that is the departure portion of Form I-94/I-94A with a refugee admission stamp, enter a date that is 90 days from the first day of work for pay.</li>
     </ol>
 </div>
 <div class="modal-text hidden" id="section_51_document_title">
@@ -329,12 +335,12 @@
     <h1>Additional Information</h1>
     <p>Use this space to notate any additional information required for Form I-9, such as:</p>
     <ul>
-    	<li style="margin-left: 26px;">Employment authorization extensions for Temporary Protected Status beneficiaries, F-1 OPT STEM students, CAP-GAP, H-1 B and H-2A employees continuing employment with the same employer or changing employers, and other nonimmigrant categories that may receive extensions of stay</li>
-    	<li style="margin-left: 26px;">Additional document(s) that certain nonimmigrant employees may present that cannot be entered in the drop-downs provided</li>
-    	<li style="margin-left: 26px;">Discrepancies that E-Verify employers must notate when participating in the IMAGE program</li>
-    	<li style="margin-left: 26px;">Employee termination dates and form retention dates</li>
-    	<li style="margin-left: 26px;">E-Verity case number, which may also be entered in the margin or attached as a separate sheet per E-Verify requirements and your chosen business process</li>
-    	<li>Any other comments or notations necessary for the employer's business process</li>
+        <li style="margin-left: 26px;">Employment authorization extensions for Temporary Protected Status beneficiaries, F-1 OPT STEM students, CAP-GAP, H-1 B and H-2A employees continuing employment with the same employer or changing employers, and other nonimmigrant categories that may receive extensions of stay</li>
+        <li style="margin-left: 26px;">Additional document(s) that certain nonimmigrant employees may present that cannot be entered in the drop-downs provided</li>
+        <li style="margin-left: 26px;">Discrepancies that E-Verify employers must notate when participating in the IMAGE program</li>
+        <li style="margin-left: 26px;">Employee termination dates and form retention dates</li>
+        <li style="margin-left: 26px;">E-Verity case number, which may also be entered in the margin or attached as a separate sheet per E-Verify requirements and your chosen business process</li>
+        <li>Any other comments or notations necessary for the employer's business process</li>
     </ul>
     <p>You may leave this field blank if the employee's circumstances do not require additional notations.</p>
 </div>
@@ -342,7 +348,7 @@
     <h1>Document Title List B</h1>
     <p>If the employee presented an acceptable document or an acceptable receipt for a List B document, select the document or receipt presented from the dropdown list provided. All documents must be unexpired. If you make an entry in this column, you must also make an entry in the List C column.</p>
     <p>If an employer participates in E-Verify and the employee presents a List B document, the List B document must include a photograph.</p>
-    <p>If a parent or legal guardian attested either to the identity of an employee who is a minor (individual under age 18) who cannot present an identity document or to the identity of certain  in Section 1, select either ‘minor under age 18" (for a minor) or "special placement" (for an employee with disabilities) from the drop—down provided. Refer to the instructions and the Handbook for Employers: Guidance for Completing Form I-9 (M-274) for more guidance on minors and certain person with disabilities.</p>
+    <p>If a parent or legal guardian attested either to the identity of an employee who is a minor (individual under age 18) who cannot present an identity document or to the identity of certain in Section 1, select either ‘minor under age 18" (for a minor) or "special placement" (for an employee with disabilities) from the drop—down provided. Refer to the instructions and the Handbook for Employers: Guidance for Completing Form I-9 (M-274) for more guidance on minors and certain person with disabilities.</p>
     <p>The documents below the dotted line in the drop-down are unacceptable for the citizenship or immigration status the employee selected in Section 1. If you receive an error message after selecting one of these documents, ensure that you selected the correct number in the Citizenship/lmmigration Status area that correlates to the citizenship or immigration status box the employee selected in Section 1. If this area was automatically populated, have the employee review the information he or she entered on the printed and signed copy of Section 1, make any required corrections in Section 1, then initial and date those corrections. You may then correct the number in the Employee Info field, which should provide the correct list of acceptable documents.</p>
     <p>An entry in this column allows all fields in the List A column to contain N/A. If you did this in error, select a document in the List A dropdown. This field column and the List C column will then contain N/A You may then complete the List A column.</p>
 </div>
@@ -390,18 +396,18 @@
     <p>For instance, if a conditional resident presents an expired Form I-551 in combination with a Form I-797 extending his or her conditional resident status with the employee's expired Form I-551, enter the future expiration date as indicated on the Form I-797.</p>
     <p>For a receipt enter the expiration date of the receipt validity period.</p>
     <ol>
-    	<li style="margin-left: 26px;">For a receipt showing that the employee has applied to replace a document that was lost stolen or damaged, enter the date that is 90 days from the first day of work for pay.</li>
-    	<li style="margin-left: 26px;">For a receipt that is the arrival portion of Form I-94/I-94A containing a temporary I-551 stamp and a photograph of the individual, enter the expiration date of the stamp or, if there is no expiration date, within one year from the date of admission.</li>
-    	<li style="margin-left: 26px;">For a receipt that is the departure portion of Form I-94/I-94A with a refugee admission stamp, enter a date that is 90 days from the first day of work for pay.</li>
+        <li style="margin-left: 26px;">For a receipt showing that the employee has applied to replace a document that was lost stolen or damaged, enter the date that is 90 days from the first day of work for pay.</li>
+        <li style="margin-left: 26px;">For a receipt that is the arrival portion of Form I-94/I-94A containing a temporary I-551 stamp and a photograph of the individual, enter the expiration date of the stamp or, if there is no expiration date, within one year from the date of admission.</li>
+        <li style="margin-left: 26px;">For a receipt that is the departure portion of Form I-94/I-94A with a refugee admission stamp, enter a date that is 90 days from the first day of work for pay.</li>
     </ol>
 </div>
 
 <!-- section 6 -->
 <div class="modal-text hidden" id="section_6_employee_1st_day_of_employment">
-<h1>Employee's First Day of Employment</h1>
-<p>Enter the employee's first day of employment as a 2-digit month, 2-digit day and 4-digit year (mm/dd/yyyy).</p>
-<p>Recruiters and recruiters for a fee do not enter the employee's first day of employment.</p>
-</div>    
+    <h1>Employee's First Day of Employment</h1>
+    <p>Enter the employee's first day of employment as a 2-digit month, 2-digit day and 4-digit year (mm/dd/yyyy).</p>
+    <p>Recruiters and recruiters for a fee do not enter the employee's first day of employment.</p>
+</div>
 <div class="modal-text hidden" id="section_6_signature">
     <h1>Signature of Employer or Authorized Representative</h1>
     <p>The person who completes Section 3 must sign in this field. If you used a form obtained from the USCIS website, you must print Section 3 of the form to sign your name in this field.</p>
@@ -471,8 +477,8 @@
     <h1>New Name (if applicable)</h1>
     <p>Complete Block A if.</p>
     <ol>
-    	<li style="margin-left: 26px;">You are reverifying employment authorization and the employee's name has changed since the previous verification.</li>
-    	<li style="margin-left: 26px;">You are rehiring an employee whose name has changed since last completing Form I-9.</li>
+        <li style="margin-left: 26px;">You are reverifying employment authorization and the employee's name has changed since the previous verification.</li>
+        <li style="margin-left: 26px;">You are rehiring an employee whose name has changed since last completing Form I-9.</li>
     </ol>
 </div>
 <div class="modal-text hidden" id="section_8_first_name">
@@ -501,8 +507,8 @@
     <p>Complete this block if you are reverifying expiring or expired employment authorization from Section 1 or employment authorization documentation that is subject to reverification of a current or rehired employee. Enter the information from the List A or List C document(s) (or receipt) that the employee presented to reverify his or her employment authorization. All documents must be unexpired. An unexpired document includes a document where the expiration date shown on the face of a document has been extended, such as for individuals with Temporary Protected Status.</p>
     <p>Reverification in Section 3 must be completed prior to the earlier of:</p>
     <ul>
-    	<li style="margin-left: 26px;">The expiration date, if any, of the employment authorization stated in Section 1, or</li>
-    	<li style="margin-left: 26px;">The expiration date, if any, of the list A or List C employment authorization document recorded in Section 2 (with some exceptions listed below.)</li>
+        <li style="margin-left: 26px;">The expiration date, if any, of the employment authorization stated in Section 1, or</li>
+        <li style="margin-left: 26px;">The expiration date, if any, of the list A or List C employment authorization document recorded in Section 2 (with some exceptions listed below.)</li>
     </ul>
     <p>Some employees may have entered N/A in the expiration date field in Section 1 if they are aliens whose employment authorization does not expire, e.g., asylees, refugees, certain citizens of the Federated States of Micronesia, the Republic of the Marshall islands, or Palau. Reverification applies to such employees if they chose to present evidence of employment authorization in Section 2 that contains an expiration date, such as Form I-766, Employment Authorization Document.</p>
     <p>You should not reverify U.S. citizens and noncitizen nationals, or lawful permanent residents (including conditional residents) who presented a permanent Resident Card (Form I-551).</p>
@@ -518,9 +524,9 @@
     <p>Enter the expiration date, if any, of the document or receipt you entered in the Document Title field of this block as a 2-digit month, 2-digit day and 4-digit year (mm/dd/yyyy).</p>
     <p>For a receipt, enter the expiration date of the receipt validity period.</p>
     <ol>
-    	<li style="margin-left: 26px;">For a receipt showing that the employee has applied to replace a document that was lost, stolen or damaged, enter the date that is 90 days from the first day of work for pay.</li>
-    	<li style="margin-left: 26px;">For a receipt that is the arrival portion of Form I-94/I-94A containing a temporary I-551 stamp and a photograph of the individual, enter the expiration date of the stamp or, if there is no expiration date, within one year from the date of admission.</li>
-    	<li style="margin-left: 26px;">For a receipt that is the departure portion of Form I-94/I-94A with a refugee admission stamp, enter a date that is 90 days from the first day of work for pay.</li>
+        <li style="margin-left: 26px;">For a receipt showing that the employee has applied to replace a document that was lost, stolen or damaged, enter the date that is 90 days from the first day of work for pay.</li>
+        <li style="margin-left: 26px;">For a receipt that is the arrival portion of Form I-94/I-94A containing a temporary I-551 stamp and a photograph of the individual, enter the expiration date of the stamp or, if there is no expiration date, within one year from the date of admission.</li>
+        <li style="margin-left: 26px;">For a receipt that is the departure portion of Form I-94/I-94A with a refugee admission stamp, enter a date that is 90 days from the first day of work for pay.</li>
     </ol>
     <p>If the document does not contain an expiration date, leave this field empty</p>
 </div>

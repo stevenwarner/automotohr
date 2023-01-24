@@ -1,4 +1,3 @@
-
 <?php
 $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
 $user_role = $session['employer_detail']['access_level'];
@@ -118,7 +117,9 @@ $assignIdObj = $confidential_sids;
                                                                                 </form>
                                                                                 <button onclick="func_remove_w4();" class="btn btn-danger">Revoke</button>
                                                                                 <?php echo '<button class="btn btn-success jsManageW4" title="Manage W4">Manage W4</button>'; ?>
-                                                                               <!-- <a class="btn <?php //echo $w4_SD > 0 ? 'btn-success' : 'blue-button'; ?>" href="<? //= base_url() . "hr_documents_management/required_documents/employee/" . $user_sid . "/" . $w4_form['sid'] . "/w4_assigned" ?>">Upload Supporting Docs</a> -->
+                                                                                <!-- <a class="btn <?php //echo $w4_SD > 0 ? 'btn-success' : 'blue-button'; 
+                                                                                                    ?>" href="<? //= base_url() . "hr_documents_management/required_documents/employee/" . $user_sid . "/" . $w4_form['sid'] . "/w4_assigned" 
+                                                                                                                                                                        ?>">Upload Supporting Docs</a> -->
                                                                                 <?php if (!empty($w4_form['uploaded_file']) && $w4_form['uploaded_file'] != NULL) { ?>
                                                                                     <a class="btn btn-success" data-toggle="modal" href="javascript:;" data-document-type="w4" onclick="preview_eev_document_model(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $w4_form['uploaded_file']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $w4_form['uploaded_file']; ?>" data-file-name="<?php echo $w4_form['uploaded_file']; ?>" data-document-title="<?php echo $w4_form['uploaded_file']; ?>">
                                                                                         View hand signed W4
@@ -305,7 +306,7 @@ $assignIdObj = $confidential_sids;
                                                                                     } ?>
 
                                                                                     <a class="btn btn-success" data-form-type="i9" href="<?php echo $user_type == 'applicant' ? base_url('form_i9/applicant') . '/' . $applicant_info['sid'] . "/" . $job_list_sid : base_url('form_i9/employee') . '/' . $employer['sid']; ?>">View I9 </a>
-                                                                                  
+
 
                                                                                 <?php } ?>
 
@@ -2567,11 +2568,19 @@ if ($user_type == 'employee') {
                                                 }
                                                 ?>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                    <div class="form-group">
+                                                    <div class="form-group" style="margin-bottom: 0 !important;">
                                                         <label>Citizenship/Immigration Status <span class="staric">*</span> <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_4_citizenship"></i></label>
                                                         <input type="text" name="section2_citizenship" value="<?php echo $citizen ?>" class="form-control" <?php if (!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']) {
                                                                                                                                                                 echo 'readonly';
                                                                                                                                                             } ?> />
+                                                    </div>
+                                                    <div>
+                                                        <strong>
+                                                            <p class="text-danger">1- A citizen of the United States<br />
+                                                                2- A noncitizen of the United States <br />
+                                                                3- A lawful permanent resident <br />
+                                                                4- An alien authorized to work </p>
+                                                        </strong>
                                                     </div>
                                                 </div>
                                             </div>
@@ -2638,8 +2647,7 @@ if ($user_type == 'employee') {
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <label>Expiration Date <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_5_expiration_date"></i></label>
-                                                        <input type="text"
-                                                        readonly name="section2_lista_part1_expiration_date" id="section2_lista_part1_expiration_date" value="<?= isset($pre_form['section2_lista_part1_expiration_date']) && !empty($pre_form['section2_lista_part1_expiration_date']) && $pre_form['section2_lista_part1_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_lista_part1_expiration_date'])) : ""; ?>" class="form-control date_picker2">
+                                                        <input type="text" readonly name="section2_lista_part1_expiration_date" id="section2_lista_part1_expiration_date" value="<?= isset($pre_form['section2_lista_part1_expiration_date']) && !empty($pre_form['section2_lista_part1_expiration_date']) && $pre_form['section2_lista_part1_expiration_date'] != null ? date('m-d-Y', strtotime($pre_form['section2_lista_part1_expiration_date'])) : ""; ?>" class="form-control date_picker2">
                                                     </div>
                                                 </div>
                                             </div>
@@ -3030,7 +3038,7 @@ if ($user_type == 'employee') {
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Date (mm/dd/yyyy) <i aria-hidden="true" class="fa fa-question-circle-o modalShow" src="section_8_date"></i></label>
-                                                        <input type="text" class="form-control date_picker2" value="<?= isset($pre_form['section3_rehire_date']) && !empty($pre_form['section3_rehire_date']) ? date('m-d-Y', strtotime($pre_form['section3_rehire_date'])) : ""; ?>"  readonly name="section3_rehire_date" value="N/A" autocomplete="off">
+                                                        <input type="text" class="form-control date_picker2" value="<?= isset($pre_form['section3_rehire_date']) && !empty($pre_form['section3_rehire_date']) ? date('m-d-Y', strtotime($pre_form['section3_rehire_date'])) : ""; ?>" readonly name="section3_rehire_date" value="N/A" autocomplete="off">
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12">
@@ -4089,7 +4097,8 @@ if ($user_type == 'employee') {
         changeMonth: true,
         changeYear: true,
         yearRange: "-100:+100"
-        //yearRange: "<?php //echo STARTING_DATE_LIMIT; ?>"
+        //yearRange: "<?php //echo STARTING_DATE_LIMIT; 
+                        ?>"
     });
 
     <?php if (sizeof($pre_form) > 0) { ?>
@@ -5713,7 +5722,7 @@ if ($user_type == 'employee') {
                     w4_btn = '',
                     i9_btn = '',
                     db = '';
-                   
+
                 //
                 if (dn.trim() == 'EEOC FORM') {
                     if (<?= $eeo_form_info['status']; ?> != 1) {
@@ -5736,7 +5745,7 @@ if ($user_type == 'employee') {
 
                 if ($(this).find('td:nth-child(4)').find('a[data-form-type="w4_edit_btn"]').length !== 0) {
                     w4_btn = $(this).find('td:nth-child(4)').find('a[data-form-type="w4_edit_btn"]').clone();
-                
+
                     //w4_btn = w4_btn + '<a class="btn btn-success"  href="#">Send Document I9</a>';
                 }
 
@@ -5784,16 +5793,16 @@ if ($user_type == 'employee') {
                 var user_type = '<?php echo $user_type; ?>';
                 //
                 if (dn.trim() == "W4 Fillable" && user_type == "applicant") {
-                        $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block js-send-document-notification" data-toggle="popover" data-placement="left" data-content="Send document by email to complete without going through OnBoarding process." data-original-title="Send Document By Email" data-type="w4">Send Document</a>');
-                    }
+                    $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block js-send-document-notification" data-toggle="popover" data-placement="left" data-content="Send document by email to complete without going through OnBoarding process." data-original-title="Send Document By Email" data-type="w4">Send Document</a>');
+                }
 
                 $('.clv-' + (i) + '').append(i9_btn);
-               // console.log(dn.trim())
-                    if (dn.trim() == "I9 Fillable" && user_type == "applicant") {
-                        $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block js-send-document-notification" data-toggle="popover" data-placement="left" data-content="Send document by email to complete without going through OnBoarding process." data-original-title="Send Document By Email" data-type="I9">Send Document</a>');
-                    }
+                // console.log(dn.trim())
+                if (dn.trim() == "I9 Fillable" && user_type == "applicant") {
+                    $('.clv-' + (i) + '').append('<a class="btn btn-success btn-sm btn-block js-send-document-notification" data-toggle="popover" data-placement="left" data-content="Send document by email to complete without going through OnBoarding process." data-original-title="Send Document By Email" data-type="I9">Send Document</a>');
+                }
 
-                    
+
                 //
             }
         });
@@ -6307,22 +6316,20 @@ $this->load->view('hr_documents_management/scripts/index', [
 </div>
 
 <script>
-
-
-function sendFederalFillableDocumentReminder(
+    function sendFederalFillableDocumentReminder(
         fillable_type
-    ){
+    ) {
         $.post('<?= base_url('hr_documents_management/send_email_notification_pending_document') ?>', {
             document_type: fillable_type,
-            user_sid: '<?php echo $user_sid;?>',
-            user_type: '<?php echo $user_type;?>'
+            user_sid: '<?php echo $user_sid; ?>',
+            user_type: '<?php echo $user_type; ?>'
         }, (resp) => {
             //
             $('#my_loader').hide(0);
             $('#my_loader .loader-text').html('Please wait while we are sending email notification ...');
             $('body').css('overflow-y', 'auto');
             //
-            if(resp.Status === false){
+            if (resp.Status === false) {
                 alertify.alert('WARNING!', resp.Response, () => {});
                 return;
             }
@@ -6335,11 +6342,11 @@ function sendFederalFillableDocumentReminder(
 
     $(document).on('click', '.js-send-document-notification', function() {
         //
-       let type = $(this).data('type');
+        let type = $(this).data('type');
         //
         alertify.confirm(
-            'Confirm!', 
-            'Do you really want to send this document by email?', 
+            'Confirm!',
+            'Do you really want to send this document by email?',
             () => {
                 $('body').css('overflow-y', 'hidden');
                 $('#my_loader .loader-text').html('Please wait while we are sending this document....');
@@ -6353,7 +6360,6 @@ function sendFederalFillableDocumentReminder(
             cancel: 'NO'
         });
     });
-
 </script>
 
 
