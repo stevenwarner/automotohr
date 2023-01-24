@@ -45,6 +45,7 @@ class Users_model extends CI_Model {
         $this->db->join('users as t2', 't2.sid = t1.company_sid', 'left');
         $this->db->join('portal_employer as t3', 't3.user_sid = t1.company_sid', 'left');
         $this->db->where('t1.executive_admin_sid', $executive_admin_sid);
+        $this->db->where('t2.users.active', 1);
         
         if($keyword != NULL || $keyword != ''){
             $this->db->like('t2.CompanyName', $keyword);
