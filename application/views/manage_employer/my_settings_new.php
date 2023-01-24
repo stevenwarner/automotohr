@@ -71,7 +71,7 @@
                         </div>
                         <div class="address-panel">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>How to Contact Us at <?php echo STORE_NAME; ?></span>
+                                <span class="page-heading down-arrow">How to Contact Us at <?php echo STORE_NAME; ?></span>
                             </div>
                             <h4>Contact one of our Talent Network Partners at</h4>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -121,7 +121,7 @@
                             ); ?>
                             <?php if (check_access_permissions_for_view($security_details, $function_names)) { ?>
                                 <div class="page-header-area">
-                                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Advanced Configurations</span>
+                                    <span class="page-heading down-arrow">Advanced Configurations</span>
                                 </div>
                             <?php } ?>
                             <?php

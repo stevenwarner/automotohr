@@ -8,7 +8,7 @@
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
+                        <span class="page-heading down-arrow">
                             <?php if(check_access_permissions_for_view($security_details, 'add_listing')) { ?>
                                 <a href="<?= base_url('add_listing') ?>" class="dashboard-link-btn">Create A New Job</a>
                             <?php } ?>

@@ -7,7 +7,7 @@
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-12">
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
+                        <span class="page-heading down-arrow">
                             <?php if(!empty($session['company_detail']['Logo'])) { ?>
                                 <img src="<?php echo 'https://automotohrattachments.s3.amazonaws.com/'.$session['company_detail']['Logo'] ?>" style="width: 75px; height: 75px;" class="img-rounded"><br>
                             <?php } ?>
