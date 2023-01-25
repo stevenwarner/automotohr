@@ -586,6 +586,7 @@ class Complynet_model extends CI_Model
             pay_plan_flag
         ')
             ->where('parent_sid', $companySid)
+            ->where('is_executive_admin', 0)
             ->order_by('first_name', 'ASC');
         //
         if (!empty($employeesArray)) {
