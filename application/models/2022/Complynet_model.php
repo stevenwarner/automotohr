@@ -279,7 +279,7 @@ class Complynet_model extends CI_Model
         //
         $records =
             $this->db
-            ->select('sid, email, first_name, last_name, PhoneNumber, job_title')
+            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username')
             ->where([
                 'parent_sid' => $companyId,
                 'email != ' => ''
@@ -576,6 +576,10 @@ class Complynet_model extends CI_Model
             first_name,
             last_name,
             email,
+            username,
+            PhoneNumber,
+            department_sid,
+            team_sid,
             job_title,
             access_level,
             access_level_plus,
@@ -614,7 +618,7 @@ class Complynet_model extends CI_Model
         //
         $record =
             $this->db
-            ->select('sid, email, first_name, last_name, PhoneNumber, job_title')
+            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username, department_sid, team_sid')
             ->where([
                 'parent_sid' => $companyId,
                 'sid' => $employeeId
@@ -694,6 +698,10 @@ class Complynet_model extends CI_Model
             return SendResponse(200, ['errors' => $errorArray]);
         }
         //
+        if (checkEmployeeMissingData($employee)) {
+            return SendResponse(200, ['errors' => checkEmployeeMissingData($employee)]);
+        }
+        //
         $complyDepartmentId = $this->getEmployeeDepartmentId(
             $employee['sid']
         );
@@ -739,6 +747,12 @@ class Complynet_model extends CI_Model
                 'complynet_employees',
                 $ins
             );
+            //
+            $this->db
+                ->where('sid', $employee['sid'])
+                ->update('users', [
+                    'complynet_onboard' => 1
+                ]);
 
             //
             return SendResponse(200, ['success' => true]);
@@ -746,7 +760,7 @@ class Complynet_model extends CI_Model
             $ins = [];
             $ins['firstName'] = $employee['first_name'];
             $ins['lastName'] = $employee['last_name'];
-            $ins['userName'] = $email;
+            $ins['userName'] = $employee['username'];
             $ins['email'] = $email;
             $ins['password'] = 'password';
             $ins['companyId'] = $complyCompanyId;
@@ -780,6 +794,12 @@ class Complynet_model extends CI_Model
                         $ins
                     );
                     //
+                    $this->db
+                        ->where('sid', $employee['sid'])
+                        ->update('users', [
+                            'complynet_onboard' => 1
+                        ]);
+                    //
                     return SendResponse(200, ['success' => true]);
                 }
             }
@@ -789,5 +809,17 @@ class Complynet_model extends CI_Model
         return SendResponse(200, ['errors' => [
             'System failed to link employee with ComplyNet.'
         ]]);
+    }
+
+
+    public function getEmployeeDetailById(
+        int $id
+    ) {
+        //
+        return $this->db
+            ->where([
+                'sid' => $id,
+            ])
+            ->get('complynet_employees')->row_array();
     }
 }

@@ -119,7 +119,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <form action="" class="jsSubmitEmployeeForm" method="GET">
                                             <div class="row">
                                                 <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
-                                                
+
                                                     <input type="text" placeholder="Search Employee by Name, Email or Phone number" name="keyword" class="invoice-fields search-job" value="<?php echo $keyword; ?>">
                                                 </div>
                                                 <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 custom-col">
@@ -284,6 +284,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                 <?php
                                                                 echo '<br />' . $employee['email'];
                                                                 echo '<br> <b> Employee Status:</b> ' . (GetEmployeeStatus($employee['last_status_text'], $employee['active']));
+                                                                echo $employee['is_executive_admin'] == 0 ? '<br> <b> ComplyNet Status:</b> ' . (getComplyNetEmployeeCheck($employee)) : '';
                                                                 ?>
                                                                 <br>
                                                                 <?php
@@ -441,7 +442,15 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     <button class="btn btn-success jsEmployeeQuickProfile" title="Employee Profile Quick View" placement="top" data-id="<?= $employee['sid']; ?>">
                                                                         <i class="fa fa-eye" aria-hidden="true"></i>
                                                                     </button>
-                                                                <?php } ?>
+                                                                    <?php if ($employee['complynet_onboard'] == 0) {
+                                                                    ?>
+                                                                        <!--Add Employee To ComplyNet -->
+                                                                        <button class="btn csBG2 jsAddEmployeeToComplyNet" title="Add Employee To ComplyNet" placement="top" data-cid="<?= $employee['parent_sid']; ?>" data-id="<?= $employee['sid']; ?>">
+                                                                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                                        </button>
+                                                                    <?php } ?>
+                                                                <?php
+                                                                } ?>
                                                                 <?php //} 
                                                                 ?>
                                                             </td>

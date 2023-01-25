@@ -1646,3 +1646,4 @@ $route['cn/comply/departments/(:num)']['get'] = "2022/Complynet/getComplyCompany
 $route['cn/comply/job_roles/(:num)']['get'] = "2022/Complynet/getComplyCompanyJobRoles/$1";
 
 $route['cn/(:num)/employee/sync']['post'] = "2022/Complynet/syncSingleEmployee/$1";
+$route['cn/employee/details/(:num)']['get'] = "2022/Complynet/getEmployeeDetail/$1";

@@ -1,5 +1,5 @@
 <div class="form-title-section">
-    <h2>Personal Information</h2>
+    <h2>Personal Information <?=getComplyNetEmployeeCheck($employer, $this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'], $this->session->userdata('logged_in')['employer_detail']['access_level_plus']);?></h2>
     <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']){  ?>
     <div class="form-btns">
         <?php if (!empty($MergeData)) { ?>

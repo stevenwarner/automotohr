@@ -2798,3 +2798,63 @@ if (!function_exists('convertDateTimeToTimeZone')) {
         ]);
     }
 }
+
+
+if (!function_exists('getComplyNetEmployeeCheck')) {
+    function getComplyNetEmployeeCheck(
+        array $employee,
+        int $payPlanPlus,
+        int $accessLevelPlus
+    ) {
+        //
+        if ($employee['complynet_onboard'] == 1) {
+            return '<button class="btn btn-xs csBG2" title="Employee is on ComplyNet"><i class="fa fa-shield _csM0"></i></button>';
+        }
+        //
+        $row = '';
+        //
+        if ($payPlanPlus || $accessLevelPlus) {
+            $row = '<button class="btn csBG2 jsAddEmployeeToComplyNet" title="Add Employee To ComplyNet" placement="top" data-cid="' . ($employee['parent_sid']) . '" data-id="' . ($employee['sid']) . '">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                    </button>';
+        }
+        return $row;
+    }
+}
+
+
+if (!function_exists('checkEmployeeMissingData')) {
+    function checkEmployeeMissingData(
+        array $employee
+    ) {
+        //
+        $errors = [];
+        //
+        if (!$employee['first_name']) {
+            $errors[] = 'First name is missing.';
+        }
+        if (!$employee['last_name']) {
+            $errors[] = 'Last name is missing.';
+        }
+        if (!$employee['username']) {
+            $errors[] = 'Username is missing.';
+        }
+        if (!$employee['email']) {
+            $errors[] = 'Email is missing.';
+        }
+        if (!$employee['PhoneNumber']) {
+            $errors[] = 'Phone number is missing.';
+        }
+        if (!$employee['job_title']) {
+            $errors[] = 'Job title is missing.';
+        }
+        if (!$employee['department_sid']) {
+            $errors[] = 'Department is missing.';
+        }
+        if (!$employee['team_sid']) {
+            $errors[] = 'Team is missing.';
+        }
+
+        return $errors;
+    }
+}

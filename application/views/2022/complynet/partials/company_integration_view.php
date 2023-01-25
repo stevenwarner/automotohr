@@ -121,7 +121,7 @@
                             <tr>
                                 <td colspan="4">
                                     <p class="alert alert-info text-center">
-                                        No employees on complynet yet.
+                                        No employees on complyNet yet.
                                     </p>
                                 </td>
                             </tr>
@@ -130,7 +130,7 @@
 
                             <?php foreach ($employees as $employee) {
                                 ?>
-                            <tr>
+                            <tr data-id="<?=$employee['sid']?>">
                                 <td>
                                     <?php
                                             $empData = json_decode($employee['complynet_json']);
@@ -141,9 +141,14 @@
                                 <td><?= $employee['complynet_employee_sid']; ?></td>
                                 <td><?= formatDateToDB($employee['created_at'], DB_DATE_WITH_TIME, DATE_WITH_TIME); ?>
                                 </td>
-                                <td><a class='showdetail btn btn-success'
-                                        data-details='<?php echo $employee['complynet_json']; ?>'
-                                        href='#'><b>Detail</b></a></td>
+                                <td>
+                                    <?php if ($employee['status'] == 1) {?>
+                                    <!-- <button class='btn btn-warning jsDeactivateEmployee' title="Deactivate complyNet"><i class="fa fa-ban" aria-hidden="true"></i></button> -->
+                                    <?php } else { ?>
+                                        <!-- <button class='btn btn-success jsActivateEmployee' title="Activate complyNet"><i class="fa fa-shield" aria-hidden="true"></i></button> -->
+                                    <?php } ?>
+                                    <button class='btn btn-success jsShowComplyNetEmployeeDetails'><b>Detail</b></button>
+                                </td>
                             </tr>
                             <?php
                                 } ?>
@@ -190,8 +195,20 @@
                                     $errorArray[] = '<strong class="text-danger">Job title is missing</strong>';
                                 }
                                 //
+                                if (empty($emp['username'])) {
+                                    $errorArray[] = '<strong class="text-danger">Username is missing</strong>';
+                                }
+                                //
+                                if (empty($emp['PhoneNumber'])) {
+                                    $errorArray[] = '<strong class="text-danger">Phone number is missing</strong>';
+                                }
+                                //
                                 if ($emp['department_sid'] == 0) {
                                     $errorArray[] = '<strong class="text-danger">Department is missing</strong>';
+                                }
+                                //
+                                if ($emp['team_sid'] == 0) {
+                                    $errorArray[] = '<strong class="text-danger">Team is missing</strong>';
                                 }
                             ?>
                             <tr>

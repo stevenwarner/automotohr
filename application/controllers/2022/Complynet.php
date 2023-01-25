@@ -448,11 +448,17 @@ class Complynet extends Admin_Controller
                         'complynet_employees',
                         $ins
                     );
+                    //
+                    $this->db
+                        ->where('sid', $employee['sid'])
+                        ->update('users', [
+                            'complynet_onboard' => 1
+                        ]);
                 } else {
                     $ins = [];
                     $ins['firstName'] = $employee['first_name'];
                     $ins['lastName'] = $employee['last_name'];
-                    $ins['userName'] = $email;
+                    $ins['userName'] = $employee['username'];
                     $ins['email'] = $email;
                     $ins['password'] = 'password';
                     $ins['companyId'] = $this->complyCompanyId;
@@ -485,6 +491,12 @@ class Complynet extends Admin_Controller
                                 'complynet_employees',
                                 $ins
                             );
+                            //
+                            $this->db
+                                ->where('sid', $employee['sid'])
+                                ->update('users', [
+                                    'complynet_onboard' => 1
+                                ]);
                         }
                     }
                 }
@@ -556,6 +568,23 @@ class Complynet extends Admin_Controller
             200,
             [
                 'view' => $this->load->view('2022/complynet/partials/show_table_jobs', $data, true)
+            ]
+        );
+    }
+
+    public function getEmployeeDetail(
+        int $rowId
+    ) {
+        //
+        $data['data'] = $this->complynet_model->getEmployeeDetailById(
+            $rowId
+        );
+
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('2022/complynet/partials/employee_details', $data, true)
             ]
         );
     }
