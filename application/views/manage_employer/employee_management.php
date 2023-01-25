@@ -284,7 +284,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                 <?php
                                                                 echo '<br />' . $employee['email'];
                                                                 echo '<br> <b> Employee Status:</b> ' . (GetEmployeeStatus($employee['last_status_text'], $employee['active']));
-                                                                echo $employee['is_executive_admin'] == 0 ? '<br> <b> ComplyNet Status:</b> ' . (getComplyNetEmployeeCheck($employee)) : '';
                                                                 ?>
                                                                 <br>
                                                                 <?php
@@ -300,6 +299,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                 ?>
 
                                                                 <?php echo $doNotHireWarning['message']; ?>
+                                                                <?php
+                                                                echo $employee['is_executive_admin'] == 0 ? '<br> <b> ComplyNet Status:</b> ' . (getComplyNetEmployeeCheck($employee, $session['employer_detail']['pay_plan_flag'] , $session['employer_detail']['access_level_plus'], false )) : '';
+                                                                ?>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -442,7 +444,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     <button class="btn btn-success jsEmployeeQuickProfile" title="Employee Profile Quick View" placement="top" data-id="<?= $employee['sid']; ?>">
                                                                         <i class="fa fa-eye" aria-hidden="true"></i>
                                                                     </button>
-                                                                    <?php if ($employee['complynet_onboard'] == 0) {
+                                                                    <?php if (isCompanyOnComplyNet($employee['parent_sid']) && $employee['complynet_onboard'] == 0) {
                                                                     ?>
                                                                         <!--Add Employee To ComplyNet -->
                                                                         <button class="btn csBG2 jsAddEmployeeToComplyNet" title="Add Employee To ComplyNet" placement="top" data-cid="<?= $employee['parent_sid']; ?>" data-id="<?= $employee['sid']; ?>">
@@ -451,8 +453,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     <?php } ?>
                                                                 <?php
                                                                 } ?>
-                                                                <?php //} 
-                                                                ?>
                                                             </td>
                                                         <?php } ?>
                                                         <td class="text-center <?php echo $doNotHireWarning['row']; ?>">

@@ -2801,11 +2801,24 @@ if (!function_exists('convertDateTimeToTimeZone')) {
 
 
 if (!function_exists('getComplyNetEmployeeCheck')) {
+    /**
+     * Check the ComplyNet status of employee
+     *
+     * @param array $employee
+     * @param int $payPlanPlus
+     * @param int $accessLevelPlus
+     * @param bool $showButton Optional
+     * @return string
+     */
     function getComplyNetEmployeeCheck(
         array $employee,
         int $payPlanPlus,
-        int $accessLevelPlus
+        int $accessLevelPlus,
+        bool $showButton = true
     ) {
+        if (!isCompanyOnComplyNet($employee['parent_sid'])) {
+            return '';
+        }
         //
         if ($employee['complynet_onboard'] == 1) {
             return '<button class="btn btn-xs csBG2" title="Employee is on ComplyNet"><i class="fa fa-shield _csM0"></i></button>';
@@ -2813,10 +2826,14 @@ if (!function_exists('getComplyNetEmployeeCheck')) {
         //
         $row = '';
         //
-        if ($payPlanPlus || $accessLevelPlus) {
+        if (($payPlanPlus || $accessLevelPlus) && $showButton) {
             $row = '<button class="btn csBG2 jsAddEmployeeToComplyNet" title="Add Employee To ComplyNet" placement="top" data-cid="' . ($employee['parent_sid']) . '" data-id="' . ($employee['sid']) . '">
                         <i class="fa fa-plus-circle" aria-hidden="true"></i>
                     </button>';
+        }
+        //
+        if (!$showButton) {
+            $row = 'Not on ComplyNet';
         }
         return $row;
     }
@@ -2824,6 +2841,12 @@ if (!function_exists('getComplyNetEmployeeCheck')) {
 
 
 if (!function_exists('checkEmployeeMissingData')) {
+    /**
+     * Check the employee for missing data
+     *
+     * @param array $employee
+     * @return array
+     */
     function checkEmployeeMissingData(
         array $employee
     ) {
@@ -2856,5 +2879,25 @@ if (!function_exists('checkEmployeeMissingData')) {
         }
 
         return $errors;
+    }
+}
+
+
+if (!function_exists('isCompanyOnComplyNet')) {
+    /**
+     * Check the company onboard on ComplyNet
+     *
+     * @param int $companyId
+     * @return int
+     */
+    function isCompanyOnComplyNet(
+        int $companyId
+    ) {
+        //
+        $CI = &get_instance();
+        //
+        return $CI->db
+            ->where('company_sid', $companyId)
+            ->count_all_results('complynet_companies');
     }
 }
