@@ -8,6 +8,8 @@
         $is_readonly = 'onclick="return false;"';
     }
 
+   $eeocFormOptions = get_eeoc_options_status($company_sid);
+
 ?>
 <body>
     <div class="container">
@@ -122,6 +124,8 @@
                                 </tr>
                             </tbody>
                         </table>
+
+                        <?php if($eeocFormOptions['dl_vet']==1){?>
                         <table class="i9-table">
                             <thead>
                                 <tr class="bg-gray">
@@ -158,6 +162,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <?php }?>
+
+                        <?php if($eeocFormOptions['dl_vol']==1){?>
                         <table class="i9-table">
                             <thead>
                                 <tr class="bg-gray">
@@ -235,6 +242,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <?php }?>
+
+                        <?php if($eeocFormOptions['dl_gen']==1){?>
                         <table class="i9-table">
                             <thead>
                                 <tr class="bg-gray">
@@ -260,6 +270,8 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <?php }?>
+
                         <?php if ($eeo_form_info['is_expired'] == 0) { ?>
                         <!--  -->
                         <hr />
@@ -305,22 +317,29 @@
                 }
                 
                 //
+                <?php if($eeocFormOptions['dl_vet']==1){?>
                 if(obj.veteran === undefined){
                     alertify.alert('Please, select veteran.');
                     return;
                 }
+
+                <?php }?>
                 
                 //
+                <?php if($eeocFormOptions['dl_vot']==1){?>
                 if(obj.disability === undefined){
                     alertify.alert('Please, select disability.');
                     return;
                 }
+                <?php }?>
                 
                 //
+                <?php if($eeocFormOptions['dl_gen']==1){?>
                 if(obj.gender === undefined){
                     alertify.alert('Please, select gender.');
                     return;
                 }
+                <?php }?>
 
                 $.post(
                     "<?=base_url("eeoc_form_submit");?>",

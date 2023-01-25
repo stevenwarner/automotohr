@@ -16084,3 +16084,15 @@ if (!function_exists('getCompanyEmsStatusBySid')) {
         return $response;
     }
 }
+
+
+//
+if (!function_exists('get_eeoc_options_status')) {
+    function get_eeoc_options_status($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('dl_vol,dl_vet,dl_gen');
+        $CI->db->where('user_sid', $company_sid);
+        return $CI->db->get('portal_employer')->row_array();
+    }
+}

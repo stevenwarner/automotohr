@@ -50,7 +50,11 @@ if (isset($applicant)) {
     $first_name = $employee['first_name'];
     $last_name = $employee['last_name'];
     $email = $employee['email'];
-} ?>
+} 
+
+$eeocFormOptions = get_eeoc_options_status($company_sid);
+
+?>
 <div class="main">
     <div class="container">
         
@@ -231,6 +235,7 @@ if (isset($applicant)) {
                                         </div>
                                     </div>
 
+                                    <?php if($eeocFormOptions['dl_vet']==1){?>
                                     <div class="hr-box">
                                         <div class="hr-box-header" style="background-color: #3598dc; color: #ffffff;">
                                             2. VETERAN
@@ -280,7 +285,9 @@ if (isset($applicant)) {
                                             </div>
                                         </div>
                                     </div>
+                                    <?php }?>
 
+                                    <?php if($eeocFormOptions['dl_vol']==1){?>
                                     <div class="hr-box">
                                         <div class="hr-box-header" style="background-color: #3598dc; color: #ffffff;">
                                             3. VOLUNTARY SELF-IDENTIFICATION OF DISABILITY
@@ -377,7 +384,9 @@ if (isset($applicant)) {
                                             </div>
                                         </div>
                                     </div>
+                                    <?php }?>
 
+                                    <?php if($eeocFormOptions['dl_gen']==1){?>
                                     <div class="hr-box">
                                         <div class="hr-box-header" style="background-color: #3598dc; color: #ffffff;">
                                             4. GENDER (PLEASE CHECK ONE)
@@ -411,6 +420,8 @@ if (isset($applicant)) {
                                             </div>
                                         </div>
                                     </div>
+                                    <?php }?>
+
                                 </div>
                             </div>
                             
@@ -465,21 +476,26 @@ if (isset($applicant)) {
                     alertify.error('Please select group status');
                     error_flag++;
                 }
-                
+                <?php if($eeocFormOptions['dl_vet']==1){?>
                 if($('input[name="veteran"]:checked').length == 0){
                     alertify.error('Please select veteran');
                     error_flag++;
                 }
+                <?php }?>
                 
+                <?php if($eeocFormOptions['dl_vol']==1){?>
                 if($('input[name="disability"]:checked').length == 0){
                     alertify.error('Please select voluntary self-identification of disability');
                     error_flag++;
                 }
+                <?php }?>
                 
+                <?php if($eeocFormOptions['dl_gen']==1){?>
                 if($('input[name="gender"]:checked').length == 0){
                     alertify.error('Please select gender');
                     error_flag++;
                 }
+                <?php }?>
                 
                 if(error_flag>0) {
                     return false;
