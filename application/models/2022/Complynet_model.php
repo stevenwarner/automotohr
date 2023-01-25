@@ -874,7 +874,12 @@ class Complynet_model extends CI_Model
     }
 
     /**
-     * 
+     *  Sync the employee to ComplyNet
+     *
+     * @param int $companyId
+     * @param int $employeeId
+     * @param array $oldData
+     * @return bool|string
      */
     public function updateEmployeeOnComplyNet(
         int $companyId,
@@ -889,8 +894,6 @@ class Complynet_model extends CI_Model
                 $employeeId,
                 true
             );
-            _e($response, true);
-            die;
             //
             if ($response) {
                 return false;
