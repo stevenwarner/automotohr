@@ -447,6 +447,6 @@ $(function ComplyNet() {
      */
     function CB() { }
 
-    $("#jsCompany").select2("val", 18451);
-    $(".jsStartProcess").click();
+    // $("#jsCompany").select2("val", 18451);
+    // $(".jsStartProcess").click();
 });
