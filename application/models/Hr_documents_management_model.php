@@ -1141,6 +1141,7 @@ class Hr_documents_management_model extends CI_Model
 
     public function fetch_form_history($form_name, $user_type, $user_sid)
     {
+        $records_arr = [];
         $this->db->select('*');
 
         if ($form_name == 'w4') {
@@ -1161,7 +1162,7 @@ class Hr_documents_management_model extends CI_Model
             $records_obj = $this->db->get();
             $records_arr = $records_obj->result_array();
             $records_obj->free_result();
-        } else {
+        } elseif ($form_name == 'i9') {
             $this->db->where('user_type', $user_type);
             $this->db->where('user_sid', $user_sid);
             $this->db->from('applicant_i9form_history');
