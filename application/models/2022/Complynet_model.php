@@ -978,6 +978,33 @@ class Complynet_model extends CI_Model
             if (gettype($response) == 'string') {
                 return "Unable to update details on ComplyNet.";
             }
+            //
+            $employeeObj = $this->clib->getEmployeeByEmail($employeeDetails['email']);
+            // Find the right person
+            $employeeObj = findTheRightEmployee($employeeObj, $upd['companyId'], $upd['locationId']);
+            //
+            if ($employeeObj) {
+                // Insert to history
+                //
+                $ins = [];
+                $ins['company_sid'] = $companyId;
+                $ins['employee_sid'] = $employeeId;
+                $ins['complynet_json'] = json_encode($employeeObj);
+                $ins['created_at'] = getSystemDate();
+                //
+                $this->db->insert(
+                    'complynet_employees_history',
+                    $ins
+                );
+
+                // Update the json
+                $this->db->where('update', [
+                    'complynet_department_sid' => $upd['departmentId'],
+                    'complynet_job_role_sid' => $upd['jobRoleId'],
+                    'complynet_json' => json_encode($employeeObj),
+                    'updated_at' => getSystemDate()
+                ]);
+            }
 
             return true;
         }
