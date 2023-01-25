@@ -179,6 +179,25 @@ class Complynet_lib
         );
     }
 
+    /**
+     * Update user
+     *
+     * @param array $upd
+     * @return array
+     */
+    public function updateUser(
+        array $upd
+    ) {
+        // Check and set token
+        $this->checkAndSetAccessToken();
+        //
+        return $this->execute(
+            'User',
+            'PUT',
+            $upd
+        );
+    }
+
      /**
      * Get user hash
      *
@@ -282,14 +301,16 @@ class Complynet_lib
             ),
         ];
         //
-        if ($method == 'POST') {
+        if ($method == 'POST' || $method == 'PUT') {
             $lists[CURLOPT_POSTFIELDS] = json_encode($postFields);
             $lists[CURLOPT_HTTPHEADER][] = 'Content-Type: application/json';
         }
         //
         curl_setopt_array($curl, $lists);
         //
-        $response = json_decode(curl_exec($curl), true);
+        $response = curl_exec($curl);
+        //
+        $response = json_decode($response, true);
         //
         curl_close($curl);
         //

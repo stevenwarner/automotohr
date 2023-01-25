@@ -431,6 +431,12 @@ class Complynet extends Admin_Controller
                 $employeeObj = $this->clib->getEmployeeByEmail($email);
                 //
                 if (isset($employeeObj[0]['Id'])) {
+                    // Find the right person
+                    $employeeObj[0] = findTheRightEmployee($employeeObj, $this->complyCompanyId, $this->complyLocationId);
+                    //
+                    if (!$employeeObj[0]) {
+                        continue;
+                    }
                     // Just link it
                     $ins = [];
                     $ins['company_sid'] = $this->companyId;
@@ -458,7 +464,7 @@ class Complynet extends Admin_Controller
                     $ins = [];
                     $ins['firstName'] = $employee['first_name'];
                     $ins['lastName'] = $employee['last_name'];
-                    $ins['userName'] = $employee['username'];
+                    $ins['userName'] = $email;
                     $ins['email'] = $email;
                     $ins['password'] = 'password';
                     $ins['companyId'] = $this->complyCompanyId;
@@ -475,6 +481,12 @@ class Complynet extends Admin_Controller
                         $employeeObj = $this->clib->getEmployeeByEmail($email);
                         //
                         if (isset($employeeObj[0]['Id'])) {
+                            // Find the right person
+                            $employeeObj[0] = findTheRightEmployee($employeeObj, $this->complyCompanyId, $this->complyLocationId);
+                            //
+                            if (!$employeeObj[0]) {
+                                continue;
+                            }
                             $ins = [];
                             $ins['company_sid'] = $this->companyId;
                             $ins['complynet_employee_sid'] = $employeeObj[0]['Id'];

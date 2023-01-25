@@ -1934,7 +1934,7 @@ if (checkIfAppIsEnabled('timeoff')) {
 
         setTimeout(function() {
             var team_id = $('#team_sid').html();
-            var team_sids = '<?php echo json_encode($team_sids); ?>';
+            var team_sids = <?php echo json_encode($team_sids ? $team_sids : []); ?>;
             if (team_id != 0) {
                 var html = '';
                 var department_sid = $('#department').val();

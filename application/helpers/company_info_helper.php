@@ -2901,3 +2901,26 @@ if (!function_exists('isCompanyOnComplyNet')) {
             ->count_all_results('complynet_companies');
     }
 }
+
+
+if (!function_exists('findTheRightEmployee')) {
+    function findTheRightEmployee(
+        array $records,
+        string $companyId,
+        string $locationId
+    )
+    {
+        //
+        $found = [];
+        //
+        foreach ($records as $record) {
+            //
+            if ($record['CompanyId'] == $companyId && $record['LocationId'] == $locationId) {
+                $found = $record;
+                break;
+            }
+        }
+        //
+        return $found;
+    }
+}

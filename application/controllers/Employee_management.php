@@ -17,7 +17,7 @@ class Employee_management extends Public_Controller
     }
 
     public function archived_employee()
-    {   
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1525,6 +1525,7 @@ class Employee_management extends Public_Controller
                         'ssn' => $this->input->post('SSN'),
                         'employee_number' => $this->input->post('employee_number'),
                         'department_sid' => $this->input->post('department'),
+                        'team_sid' => implode(',', $this->input->post('teams')),
                         'gender' => $gender,
                         'marital_status' => $this->input->post('marital_status')
                     );
@@ -1695,9 +1696,27 @@ class Employee_management extends Public_Controller
                         $sid,
                         $data_to_insert
                     );
+                    //
+                    $complynetResponse = false;
+
+                    // ComplyNet interjection
+                    if (isCompanyOnComplyNet($company_id)) {
+                        //
+                        $this->load->model('2022/complynet_model', 'complynet_model');
+                        //
+                        $complynetResponse = $this->complynet_model->updateEmployeeOnComplyNet($company_id, $sid, [
+                            'first_name' => $employee_detail['first_name'],
+                            'last_name' => $employee_detail['last_name'],
+                            'email' => $employee_detail['email'],
+                            'PhoneNumber' => $employee_detail['PhoneNumber']
+                        ]);
+                    }
 
                     //
-                    $this->session->set_flashdata('message', '<b>Success:</b> Employee / Team Member Profile is updated successfully');
+                    $this->session->set_flashdata('message', '<b>Success:</b> Employee / Team Member Profile is updated successfully.');
+                    if (gettype($complynetResponse) == 'string') {
+                        $this->session->set_flashdata('comply_message', '<b>Error:</b> ' . ($complynetResponse) . '');
+                    }
                     redirect("employee_profile/" . $sid, "location");
                 }
             } else {
@@ -3551,8 +3570,7 @@ class Employee_management extends Public_Controller
         $employeeDetail,
         $employeeId,
         $dataToInsert
-    )
-    {
+    ) {
         //
         $newCompareData = [];
         $newCompareData['first_name'] = $dataToInsert['first_name'];
