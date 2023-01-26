@@ -178,5 +178,12 @@
     </div>
 </div>
 <?php else:?>
-<div class="csTopNavOut"></div>
+<div class="csTopNavOut" style=" min-height: 120px;">
+    <div class="page-header-area">
+        <span class="page-heading ">
+         <?php $this->load->view('manage_employer/company_logo_name'); ?>
+        </span>
+    </div>
+</div>
+
 <?php endif;?>
