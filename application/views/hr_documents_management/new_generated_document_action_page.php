@@ -317,6 +317,11 @@ input[type='checkbox'].user_checkbox:checked:after {
                 
                 function download_document () {
                     var document_type = '<?php echo $is_hybrid; ?>';
+                    //
+                    if(request_type == 'assigned') {
+                        $('br').replaceWith('<div></div>');
+                    }
+                    //
                     var draw = kendo.drawing;
                     draw.drawDOM($("#download_generated_document"), {
                         avoidLinks: false,

@@ -5814,6 +5814,7 @@ class Hr_documents_management extends Public_Controller
 
                     $document_content = replace_tags_for_document($company_sid, $employer_sid, 'employee', $document['document_description'], $document['document_sid']);
                     $document['document_description'] = $document_content;
+                    $requested_content = preg_replace('#(<br */?>\s*)+#i', '<br />', $requested_content);
                 } else {
                     $this->session->set_flashdata('message', '<strong>Error</strong> Document Not found!');
                     redirect('hr_documents_management/my_documents', 'refresh');

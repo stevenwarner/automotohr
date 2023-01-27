@@ -1,5 +1,6 @@
 <?php $company_name = ucwords($session['company_detail']['CompanyName']); ?>
 <?php $pdBtn = getPDBTN($document, 'btn-info'); ?>
+
 <div class="main" style="background: #fff;">
     <div class="container">
         <div class="row">
@@ -388,6 +389,7 @@
 <script src="<?php echo base_url('assets/employee_panel/js/kendoUI.min.js'); ?>"></script>
 <script>
     $(document).ready(function() {
+        //
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
@@ -832,14 +834,14 @@
                     function() {
                         $('.js-hybrid-iframe').remove();
                         var draw = kendo.drawing;
+                        $('br').replaceWith('<div></div>');
 
                         draw.drawDOM($("#jstopdf"), {
-                                avoidLinks: true,
+                                avoidLinks: false,
                                 paperSize: "A4",
-                                margin: {
-                                    bottom: "1cm"
-                                },
-                                scale: 0.6
+                                multiPage: true,
+                                margin: { bottom: "2cm" },
+                                scale: 0.8
                             })
                             .then(function(root) {
                                 return draw.exportPDF(root);
