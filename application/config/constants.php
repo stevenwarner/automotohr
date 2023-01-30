@@ -631,7 +631,7 @@ define('VIDEO_INTERVIEW', 'The selected contacts will be notified by email when 
 define('APPROVAL_RIGHTS', 'The selected contacts will be notified by email when a job is accepted/rejected.');
 define('FULL_EMPLOYMENT', 'The selected contacts will be notified by email when a Full Employment Application is completed.');
 define('EXPIRATION_MANAGER', 'The selected contacts will be notified by email when the employees\' license is expiring within 30 days.');
-define('ONBOARDING_REQUEST', 'The selected contacts will be notified by email when an applicant sends to onboarding.');
+define('ONBOARDING_REQUEST', 'The selected contacts= will be notified by email when an applicant sends to onboarding.');
 define('OFFER_LETTER', 'The selected contacts will be notified by email when an offer letter/pay plan is assigned to the employees/applicants.');
 define('DOCUMENT_ASSIGN', 'The selected contacts will be notified by email when a document is assigned to the employees/applicants.');
 define('GENERAL_DOCUMENT', 'The selected contacts will be notified by email when a general information document is assigned to the employees/applicants.');
@@ -649,8 +649,8 @@ define('PRIVATE_MESSAGE', 'The recipient will be notified by email when any empl
 
 
 define('I9_EXPIRES', '10/31/2022');
-define('W4_YEAR', '2022');
-define('W4_EXEMPTION_FROM_WITHHOLDING', 'You may claim exemption from withholding for 2022 if you meet both of the following conditions: you had no federal income tax liability in 2021 and you expect to have no federal income tax liability in 2022. You had no federal income tax liability in 2021 if (1) your total tax on line 24 on your 2021 Form 1040 or 1040-SR is zero (or less than the sum of lines 27a, 28, 29, and 30), or (2) you were not required to file a return because your income was below the filing threshold for your correct filing status. If you claim exemption, you will have no income tax withheld from your paycheck and may owe taxes and penalties when you file your 2022 tax return. To claim exemption from withholding, certify that you meet both of the conditions above by writing “Exempt” on Form W-4 in the space below Step 4(c). Then, complete Steps 1(a), 1(b), and 5. Do not complete any other steps. You will need to submit a new Form W-4 by February 15, 2023.');
+define('W4_YEAR', '2023');
+define('W4_EXEMPTION_FROM_WITHHOLDING', 'You may claim exemption from withholding for 2022 if you meet both of the following conditions: you had no federal income tax liability in 2021 and you expect to have no federal income tax liability in 2022. You had no federal income tax liability in 2021 if (1) your total tax on line 24 on your 2021 Form 1040 or 1040-SR is zero (or less than the sum of lines 27a, 28, 29, and 30), or (2) you were not required to file a return because your income was below the filing threshold for your correct filing status. If you claim exemption, you will have no income tax withheld from your paycheck and may owe taxes and penalties when you file your 2022 tax return. To claim exemption from withholding, certify that you meet both of the conditions above by writing “Exempt” on Form W-4 in the space below Step 4(c). Then, complete Steps 1(a), 1(b), and 5. Do not complete any other steps. You will need to submit a new Form W-4 by February 15, 2024.');
 //
 define('FEED_STRIP_TAGS', '<b><h1><h2><h3><h4><h5><h6><p><br><ul><ol><li></li><strong><em><table><tbody><th><tr><td>');
 //
