@@ -5047,6 +5047,8 @@ class Onboarding extends CI_Controller
                             $w4_data_to_update['init_signature_bas64_image']            = NULL;
                             $w4_data_to_update['ip_address']                            = NULL;
                             $w4_data_to_update['user_agent']                            = NULL;
+                            $w4_data_to_update['uploaded_file']                         = NULL;
+                            $w4_data_to_update['uploaded_by_sid']                       = 0;
                             $w4_data_to_update['user_consent']                          = 0;
                             //
                             $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
@@ -5100,6 +5102,7 @@ class Onboarding extends CI_Controller
                             $data_to_update["section1_preparer_signature_ip_address"] = NULL;
                             $data_to_update["section1_preparer_signature_user_agent"] = NULL;
                             $data_to_update["user_consent"] = NULL;
+                            $data_to_update["s3_filename"] = NULL;
                             //
                             $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                         }
@@ -5153,7 +5156,8 @@ class Onboarding extends CI_Controller
                             $already_assigned_w9['signature_user_agent'] = NULL;
                             $already_assigned_w9['sent_date'] = date('Y-m-d H:i:s');
                             $already_assigned_w9['status'] = 1;
-                            $already_assigned_w9['user_consent'] = NULL;
+                            $already_assigned_w9['uploaded_file'] = NULL;
+                            $already_assigned_w9['uploaded_by_sid'] = 0;
                             //
                             $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $already_assigned_w9);
                         }

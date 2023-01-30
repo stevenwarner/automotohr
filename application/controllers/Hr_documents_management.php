@@ -2190,18 +2190,20 @@ class Hr_documents_management extends Public_Controller
                                 $w4_data_to_insert['status'] = 1;
                                 $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
                             } else {
-                                $w4_data_to_insert                                          = array();
-                                $w4_data_to_insert['sent_date']                             = date('Y-m-d H:i:s');
-                                $w4_data_to_insert['status']                                = 1;
-                                $w4_data_to_insert['signature_timestamp']                   = NULL;
-                                $w4_data_to_insert['signature_email_address']               = NULL;
-                                $w4_data_to_insert['signature_bas64_image']                 = NULL;
-                                $w4_data_to_insert['init_signature_bas64_image']            = NULL;
-                                $w4_data_to_insert['ip_address']                            = NULL;
-                                $w4_data_to_insert['user_agent']                            = NULL;
-                                $w4_data_to_insert['user_consent']                          = 0;
+                                $w4_data_to_update                                          = array();
+                                $w4_data_to_update['sent_date']                             = date('Y-m-d H:i:s');
+                                $w4_data_to_update['status']                                = 1;
+                                $w4_data_to_update['signature_timestamp']                   = NULL;
+                                $w4_data_to_update['signature_email_address']               = NULL;
+                                $w4_data_to_update['signature_bas64_image']                 = NULL;
+                                $w4_data_to_update['init_signature_bas64_image']            = NULL;
+                                $w4_data_to_update['ip_address']                            = NULL;
+                                $w4_data_to_update['user_agent']                            = NULL;
+                                $w4_data_to_update['uploaded_file']                         = NULL;
+                                $w4_data_to_update['uploaded_by_sid']                       = 0;
+                                $w4_data_to_update['user_consent']                          = 0;
 
-                                $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_insert);
+                                $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
                             }
                             //
                             if ($user_type == 'employee') {
@@ -2340,7 +2342,8 @@ class Hr_documents_management extends Public_Controller
                                 $already_assigned_w9['signature_user_agent'] = NULL;
                                 $already_assigned_w9['sent_date'] = date('Y-m-d H:i:s');
                                 $already_assigned_w9['status'] = 1;
-                                $already_assigned_w9['user_consent'] = NULL;
+                                $already_assigned_w9['uploaded_file'] = NULL;
+                                $already_assigned_w9['uploaded_by_sid'] = 0;
                                 //
                                 $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $already_assigned_w9);
                             }
@@ -2461,6 +2464,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update["section3_emp_sign"] = NULL;
                                 $data_to_update["employer_flag"] = NULL;
                                 $data_to_update["user_consent"] = NULL;
+                                $data_to_update["s3_filename"] = NULL;
                                 //
                                 $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                             }
