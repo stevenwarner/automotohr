@@ -3194,7 +3194,7 @@ class Hr_documents_management_model extends CI_Model
                 //
                 foreach ($records_arr as $index => $value) {
                     //
-                    if (isset($skipIdObj[$value['sid']])) {
+                    if (isset($skipIdObj[$value['sid']]) && $value['archive'] == 0) {
                         unset($records_arr[$index]);
                     }
                 }
