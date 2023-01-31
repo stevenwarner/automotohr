@@ -1,4 +1,6 @@
-<?php if (!$load_view) { ?>
+<?php if (!$load_view) {
+    $eeocFormOptions = get_eeoc_options_status($company_sid);
+    ?>
 <div class="main-content">
     <div class="dashboard-wrp">
         <div class="container-fluid">
@@ -167,6 +169,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <?php if($eeocFormOptions['dl_vet']==1){?>
 
                                                     <div class="hr-box">
                                                         <div class="hr-box-header" style="background-color: #81b431; color: #ffffff;">
@@ -217,7 +220,10 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                   <?php }?>
 
+
+                                                   <?php if($eeocFormOptions['dl_vol']==1){?>
                                                     <div class="hr-box">
                                                         <div class="hr-box-header" style="background-color: #81b431; color: #ffffff;">
                                                             <strong>3. VOLUNTARY SELF-IDENTIFICATION OF DISABILITY</strong>
@@ -314,7 +320,9 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <?php }?>
 
+                                                    <?php if($eeocFormOptions['dl_gen']==1){?>
                                                     <div class="hr-box">
                                                         <div class="hr-box-header" style="background-color: #81b431; color: #ffffff;">
                                                             <strong>4. GENDER (PLEASE CHECK ONE)</strong>
@@ -338,9 +346,18 @@
                                                                     <div class="control__indicator"></div>
                                                                 </label>
                                                             </div>
+
+                                                            <div class="checkbox-radio-row">
+                                                                <label class="control control--radio">
+                                                                    <?php $default_checked = $temp == 'Other' ? true : false ;?>
+                                                                    Other
+                                                                    <input <?php echo set_radio($field_id, 'Other', $default_checked); ?> name="gender" id="other" type="radio" value="Other">
+                                                                    <div class="control__indicator"></div>
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                     </div>
-
+                                                    <?php }?>
                                                     <div class="row">
                                                         <div class="col-xs-12 col-sm-8 col-md-10 col-lg-10"></div>
                                                         <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2">
@@ -383,20 +400,27 @@
                     error_flag++;
                 }
 
+                <?php if($eeocFormOptions['dl_vet']==1){?>
+
                 if($('input[name="veteran"]:checked').length == 0){
                     alertify.error('Please select veteran');
                     error_flag++;
                 }
+                <?php }?>
 
+                <?php if($eeocFormOptions['dl_vol']==1){?>
                 if($('input[name="disability"]:checked').length == 0){
                     alertify.error('Please select voluntary self-identification of disability');
                     error_flag++;
                 }
+                <?php }?>
 
+                <?php if($eeocFormOptions['dl_gen']==1){?>
                 if($('input[name="gender"]:checked').length == 0){
                     alertify.error('Please select gender');
                     error_flag++;
                 }
+                <?php }?>
 
                 if(error_flag>0) {
                     return false;

@@ -759,14 +759,15 @@ class Eeo extends Public_Controller
                     case 'update_eeo_data':
                         $eeoc_form_status = $this->input->post('eeoc_form_status');
 
+
                         $users_type = $this->input->post('users_type');
                         $users_sid = $this->input->post('users_sid');
                         $us_citizen = $this->input->post('us_citizen');
                         $visa_status = $this->input->post('visa_status');
                         $group_status = $this->input->post('group_status');
-                        $veteran = $this->input->post('veteran');
-                        $disability = $this->input->post('disability');
-                        $gender = $this->input->post('gender');
+                        $veteran = $this->input->post('veteran')?$this->input->post('veteran'):'';
+                        $disability = $this->input->post('disability')?$this->input->post('disability'):'';
+                        $gender = $this->input->post('gender')?$this->input->post('gender'):'';
 
                         $data_to_update = array();
                         $data_to_update['eeo_form'] = $eeoc_form_status;
@@ -1009,6 +1010,8 @@ class Eeo extends Public_Controller
                 $html .= '              <strong class="text-success">Assigned</strong>';
             } else if ($track['action'] == "completed") {
                 $html .= '              <strong class="text-info">Completed</strong>';
+            } elseif ($track['action'] == "updated") {
+                $html .= '              <strong class="text-warning">Updated</strong>';
             }
             $html .= '    </td>';
             $html .= '</tr>';

@@ -13,7 +13,11 @@
                 </div>
             </div>
         <?php } else { ?>
-            <?php if ($eeo_form_info['is_expired'] == 0) { ?>
+            <?php if ($eeo_form_info['is_expired'] == 0) { 
+                
+                $eeocFormOptions = get_eeoc_options_status($company_sid);
+                
+                ?>
                 <div>
                     <section class="sheet padding-10mm">
                         <article class="sheet-header">
@@ -95,6 +99,8 @@
                                 </tr>
                             </tbody>
                         </table>
+                        
+                        <?php if($eeocFormOptions['dl_vet']==1){?>
                         <table class="i9-table">
                             <thead>
                                 <tr class="bg-gray">
@@ -131,6 +137,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <?php }?>
+
+                        <?php if($eeocFormOptions['dl_vol']==1){?>
                         <table class="i9-table">
                             <thead>
                                 <tr class="bg-gray">
@@ -208,6 +217,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <?php }?>
+
+                        <?php if($eeocFormOptions['dl_gen']==1){?>
                         <table class="i9-table">
                             <thead>
                                 <tr class="bg-gray">
@@ -226,9 +238,15 @@
                                         <input type="radio" name="gender" value="Female" <?php echo !empty($eeo_form_info['gender']) && $eeo_form_info['gender'] == 'Female' ? 'checked="checked"' : ''; ?>> Female
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        <input type="radio" name="gender" value="Other" <?php echo !empty($eeo_form_info['gender']) && $eeo_form_info['gender'] == 'Other' ? 'checked="checked"' : ''; ?>> Other
+                                    </td>
+                                </tr>
+
                             </tbody>
                         </table>
-
+                        <?php } ?>
                         <!--  -->
                         <hr />
                         <div class="row">
@@ -280,22 +298,28 @@
                 }
                 
                 //
+                <?php if($eeocFormOptions['dl_vet']==1){?>
                 if(obj.veteran === undefined){
                     alertify.alert('Please, select veteran.');
                     return;
                 }
+                <?php }?>
                 
                 //
+                <?php if($eeocFormOptions['dl_vol']==1){?>
                 if(obj.disability === undefined){
                     alertify.alert('Please, select disability.');
                     return;
                 }
+                <?php }?>
                 
                 //
+                <?php if($eeocFormOptions['dl_gen']==1){?>
                 if(obj.gender === undefined){
                     alertify.alert('Please, select gender.');
                     return;
                 }
+                <?php }?>
 
                 $.post(
                     "<?=base_url("eeoc_form_submit");?>",

@@ -495,6 +495,12 @@ class Settings extends Public_Controller
                     $data['complynet_dashboard_link'] = $complynet_link;
                 }
 
+                // EEOC Questionnaire
+                    $portal_data['dl_vet'] = $this->input->post('dl_vet', true) == 'on' ? 1 : 0;
+                    $portal_data['dl_vol'] = $this->input->post('dl_vol', true) == 'on' ? 1 : 0;
+                    $portal_data['dl_gen'] = $this->input->post('dl_gen', true) == 'on' ? 1 : 0;
+                 
+
                 //
                 $data['ssn'] = $this->input->post('ssn', true);
 
