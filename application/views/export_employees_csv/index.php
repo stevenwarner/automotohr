@@ -241,28 +241,36 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                 <label>Status:</label>
                                                 <div class="hr-select-dropdown autoheight">
                                                     <select data-rule-required="true" class="invoice-fields" name="status" id="employee_status">
-                                                        <option value="active">Active Employees</option>
-                                                        <option value="archived">Archived Employees</option>
-                                                        <option value="new_hires">New Hires</option>
-                                                        <option value="terminated">Terminated Employees</option>
-                                                        <option value="manual_employee">Manual Added Employees</option>
-                                                        <option value="both">Both Active & Archived</option>
+                                                        
+                                                        <option value="all">All</option>
+                                                        <option value="active">Active</option>
+                                                        <option value="leave">Leave</option>
+                                                        <option value="suspended">Suspended</option>
+                                                        <option value="retired">Retired</option>
+                                                        <option value="rehired">Rehired</option>
+                                                        <option value="deceased">Deceased</option>
+                                                        <option value="terminated">Terminated</option>
+                                                        <option value="inactive">Inactive</option>
+
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row" style="margin-top: 12px;">    
+                                        <div class="row" style="margin-top: 12px;">  
+                                        
+                                          <!--  -->
+                                           <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
+                                                <label>From:</label>
+                                                <input type="text" name="from_date" value="" class="invoice-fields" id="display_end_date">
+                                           </div>
+                                           
                                             <!--  -->
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                 <label>To:</label>
                                                 <input type="text" name="to_date" value="" class="invoice-fields" id="display_start_date">
                                             </div>
-                                            <!--  -->
-                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
-                                                <label>From:</label>
-                                                <input type="text" name="from_date" value="" class="invoice-fields" id="display_end_date">
-                                            </div>
-                                            <!--  -->
+                                             <!--  -->
+                                          
                                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4">
                                                 <label>&nbsp;</label>
                                                 <button type="submit" class="btn btn-block btn-success">Export</button>

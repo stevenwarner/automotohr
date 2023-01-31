@@ -59,7 +59,7 @@ class Export_csv_model extends CI_Model {
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
 
-        if($access_level != 'all' && $access_level != 'executive_admin') {
+        if($access_level != 'all' && $access_level != 'executive_admin' && $access_level != null) {
             $this->db->where('access_level', $access_level);
         }
         
@@ -67,6 +67,8 @@ class Export_csv_model extends CI_Model {
             $this->db->where('is_executive_admin', 1);
         }
         
+
+        /*
         if($status == 'active'){
              $this->db->where('active', 1);
         }
@@ -83,6 +85,12 @@ class Export_csv_model extends CI_Model {
         if($status == 'manual_employee'){
             $this->db->where('applicant_sid', NULL);
         }
+*/
+
+            if($status!='all'){
+                $this->db->where('LCASE(general_status) ', $status);
+            }
+
 
         if(!empty($start) && !empty($end)){
             $this->db->where('created_at BETWEEN "' . date('Y-m-d 00:00:00', strtotime($start)) . '" and "' . date('Y-m-d 23:59:59', strtotime($end)) . '"');
@@ -91,6 +99,10 @@ class Export_csv_model extends CI_Model {
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
+
+        // $sql = $this->db->last_query();
+        //echo $sql;
+        //die();
 
         if(!empty($records_arr)){
             return $records_arr;
