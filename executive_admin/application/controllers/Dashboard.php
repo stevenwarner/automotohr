@@ -116,6 +116,10 @@ class Dashboard extends CI_Controller {
                 $data['admin_invoices'] = $this->Users_model->get_admin_invoices($company_id);
                 $data['marketplace_invoices'] = $this->Users_model->get_admin_marketplace_invoices($company_id);
                 $employee_details = $this->Users_model->get_company_employees($company_id);
+
+               // print_r($employee_details);
+                //die();
+
                 $company_details = $this->Users_model->get_company_details($company_id);
                 if(empty($company_details)){
                     $this->session->set_flashdata('message', 'Company not found');
@@ -128,6 +132,7 @@ class Dashboard extends CI_Controller {
                 $data['career_website'] = STORE_PROTOCOL . db_get_sub_domain($company_id);
                 $data['company'] = $company_details;
                 $data['employees'] = $employee_details;
+                 
                 $this->load->view('main/header', $data);
                 $this->load->view('dashboard/manage_company');
                 $this->load->view('main/footer');
@@ -487,6 +492,11 @@ class Dashboard extends CI_Controller {
             $this->resp['Response'] = 'No records found.';
             $this->response();
         }
+
+        foreach($users as $index => $value){
+            $users[$index]['newstatus'] = GetEmployeeStatus($value['last_status_text'], $value['is_active']);
+        }
+
         //
         $this->resp['Status'] = true;
         $this->resp['Response'] = 'Proceed';

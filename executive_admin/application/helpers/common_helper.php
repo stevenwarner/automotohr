@@ -1077,3 +1077,43 @@ if (!function_exists('remakeEmployeeName')) {
         return $r;
     }
 }
+
+//
+if (!function_exists('GetEmployeeStatusText')) {
+    function GetEmployeeStatusText($index)
+    {
+        //
+        $arr = [];
+        $arr[1] = 'Terminated';
+        $arr[2] = 'Retired';
+        $arr[3] = 'Deceased';
+        $arr[4] = 'Suspended';
+        $arr[5] = 'Active';
+        $arr[6] = 'Inactive';
+        $arr[7] = 'Leave';
+        $arr[8] = 'Rehired';
+        //
+        return $arr[$index];
+    }
+}
+
+//
+
+if (!function_exists('GetEmployeeStatus')) {
+    /**
+     * Get employee last status
+     * 
+     * @param string $lastStatusText
+     * @param number $active
+     * @return
+     */
+    function GetEmployeeStatus($lastStatusText, $active)
+    {
+        //
+        if (strtolower($lastStatusText) === 'rehired') {
+            return 'Active';
+        }
+        //
+        return ucwords($lastStatusText ? $lastStatusText : ($active ? 'Active' : 'De-activated'));
+    }
+}

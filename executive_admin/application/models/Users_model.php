@@ -180,8 +180,71 @@ class Users_model extends CI_Model {
         $this->db->where('parent_sid', $company_id);
         $employees = $this->db->get();
 
-        return $employees->result_array();
+        $all_employees =  $employees->result_array();
+
+        $this->GetEmployeeStatus($all_employees, 1);
+        return $all_employees;
+
     }
+
+
+    private function GetEmployeeStatus(&$employees, $status = 1){
+        //
+        if(empty($employees)){
+            return false;
+        }
+        //
+        $employeeIds = array_column($employees, 'sid');
+        //
+        $statuses = $this->db
+        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire,termination_reason')
+        ->where_in('employee_sid', $employeeIds)
+        ->where('employee_status', $status)
+        ->get('terminated_employees')
+        ->result_array();
+        //
+        $last_statuses = $this->db
+        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status,termination_reason')
+        ->where_in('employee_sid', $employeeIds)
+        ->order_by('terminated_employees.sid', 'DESC')
+        ->get('terminated_employees')
+        ->result_array();
+        //
+        if(!empty($statuses)){
+            //
+            $tmp = [];
+            //
+            foreach($statuses as $stat){
+                //
+                $tmp[$stat['employee_sid']] = $stat;
+            }
+            //
+            $statuses = $tmp;
+            //
+            $tmp = [];
+            //
+            foreach($last_statuses as $stat){
+                //
+                if(!isset($tmp[$stat['employee_sid']])){
+                    $tmp[$stat['employee_sid']] = $stat;
+                }
+            }
+            //
+            $last_statuses = $tmp;
+            //
+            unset($tmp);
+        }
+        //
+        foreach($employees as $index => $employee){
+            //
+            $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
+            $employees[$index]['last_status_2'] = isset($last_statuses[$employee['sid']]) ? $last_statuses[$employee['sid']] : [];
+            $employees[$index]['last_status_text'] = isset($last_statuses[$employee['sid']]) ? GetEmployeeStatusText($last_statuses[$employee['sid']]['employee_status']) : '';
+        }
+        //
+        return true;
+    }
+
 
     function get_admin_invoices($company_sid = null, $invoice_status = 'active') {
         $this->db->select('*');
@@ -465,6 +528,7 @@ class Users_model extends CI_Model {
         // Get Employees
         $result = $this->db
         ->select('
+            users.sid,
             users.applicant_sid as applicant_sid,
             users.job_title as last_job_title,
             users.email as user_email,
@@ -502,6 +566,7 @@ class Users_model extends CI_Model {
         // Get Applicants
         $result = $this->db
         ->select('
+            "0" as sid,
             concat(portal_job_applications.first_name," ",portal_job_applications.last_name) as user_name,
             portal_job_applications.email as user_email,
             "" as last_job_title,
@@ -557,6 +622,9 @@ class Users_model extends CI_Model {
             }
         }
         //
-        return array_merge_recursive($applicants, $employees);
+        $all_employees=array_merge_recursive($applicants, $employees);
+        $this->GetEmployeeStatus($all_employees, 1);
+        return $all_employees;
+        //return array_merge_recursive($applicants, $employees);
     }
 }
