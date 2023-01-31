@@ -1887,7 +1887,9 @@ $assignIdObj = $confidential_sids;
                         </div>
                     </div>
                 </div>
-                <?php $this->load->view($left_navigation); ?>
+                <?php 
+               // die($left_navigation);
+                $this->load->view($left_navigation); ?>
             </div>
         </div>
     </div>

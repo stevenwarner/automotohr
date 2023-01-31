@@ -117,7 +117,8 @@ if (!function_exists('get_form_view')) {
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
 
             if ($assign_on >= $compare_date) {
-                $view = $CI->load->view('form_w4/form_w4_2020_pdf', $form_values, TRUE);
+              //  $view = $CI->load->view('form_w4/form_w4_2020_pdf', $form_values, TRUE);
+                $view = $CI->load->view('form_w4/form_w4_2023_pdf', $form_values, TRUE);
             } else {
                 $view = $CI->load->view('form_w4/test_form_w4', $form_values, TRUE);
             }
@@ -135,6 +136,7 @@ if (!function_exists('get_form_view')) {
         } else if ($form == 'pw4') {
             $form_values['pre_form'] = $form_data;
             $view = $CI->load->view('form_w4/pending_form_w4', $form_values, TRUE);
+
         } else if ($form == 'pw9') {
             $form_values['pre_form'] = $form_data;
             $form_values['pre_form']['dated'] = !empty($form_data['signature_timestamp']) ? DateTime::createFromFormat('Y-m-d H:i:s', $form_data['signature_timestamp'])->format('M d Y') : '';
