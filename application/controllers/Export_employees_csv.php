@@ -43,7 +43,6 @@ class Export_employees_csv extends Public_Controller
 
                 switch ($perform_action) {
                     case 'export_employees':
-                       
                         $access_level_plus = $data['session']['employer_detail']['access_level_plus'];
                         $pay_plan_flag = $data['session']['employer_detail']['pay_plan_flag'];
                         if (($access_level_plus || $pay_plan_flag == 1)) {
@@ -56,7 +55,6 @@ class Export_employees_csv extends Public_Controller
                         $status = $this->input->post('status');
                         $to_date = $this->input->post('to_date');
                         $from_date = $this->input->post('from_date');
-                      
                       
                         $start_time = '';
                         $end_time = '';
@@ -76,6 +74,10 @@ class Export_employees_csv extends Public_Controller
                             $end_time = date('Y-m-t 23:59:59');
                         }
                         
+                       //echo $start_time.'#'.$end_time;
+
+
+
                         //
                         // $employees = $this->export_csv_model->get_all_employees($company_sid, $access_level, $status);
                         $employees = $this->export_csv_model->get_all_employees_from_DB($company_sid, $access_level, $status, $start_time, $end_time);
@@ -325,7 +327,6 @@ class Export_employees_csv extends Public_Controller
                         }else{
                         $data_to_insert['selected_columns'] = $this->input->post('test');
                         }
-                        
                         $sender_list = $this->input->post('assignAdnSendSelectedEmployees');
                         if($sender_list[0]=='-1'){
                             $data_to_insert['sender_list'] ='all';
