@@ -1010,6 +1010,8 @@ class Eeo extends Public_Controller
                 $html .= '              <strong class="text-success">Assigned</strong>';
             } else if ($track['action'] == "completed") {
                 $html .= '              <strong class="text-info">Completed</strong>';
+            } elseif ($track['action'] == "updated") {
+                $html .= '              <strong class="text-warning">Updated</strong>';
             }
             $html .= '    </td>';
             $html .= '</tr>';
