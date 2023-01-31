@@ -74,6 +74,10 @@ class Export_employees_csv extends Public_Controller
                             $end_time = date('Y-m-t 23:59:59');
                         }
                         
+                       //echo $start_time.'#'.$end_time;
+
+
+
                         //
                         // $employees = $this->export_csv_model->get_all_employees($company_sid, $access_level, $status);
                         $employees = $this->export_csv_model->get_all_employees_from_DB($company_sid, $access_level, $status, $start_time, $end_time);

@@ -1,117 +1,135 @@
 <?php
 
-class Export_csv_model extends CI_Model {
+class Export_csv_model extends CI_Model
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
 
-    function get_all_employees($company_sid, $access_level, $status) {
-//        $this->db->select('email');
-//        $this->db->select('Location_Country');
-//        $this->db->select('Location_State');
-//        $this->db->select('Location_City');
-//        $this->db->select('Location_Address');
-//        $this->db->select('Location_ZipCode');
-//        $this->db->select('PhoneNumber');
-//        $this->db->select('profile_picture');
-//        $this->db->select('first_name');
-//        $this->db->select('last_name');
-//        $this->db->select('access_level');
-//        $this->db->select('job_title');
+    function get_all_employees($company_sid, $access_level, $status)
+    {
+        //        $this->db->select('email');
+        //        $this->db->select('Location_Country');
+        //        $this->db->select('Location_State');
+        //        $this->db->select('Location_City');
+        //        $this->db->select('Location_Address');
+        //        $this->db->select('Location_ZipCode');
+        //        $this->db->select('PhoneNumber');
+        //        $this->db->select('profile_picture');
+        //        $this->db->select('first_name');
+        //        $this->db->select('last_name');
+        //        $this->db->select('access_level');
+        //        $this->db->select('job_title');
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
 
-        if($access_level != 'all' && $access_level != 'executive_admin') {
+        if ($access_level != 'all' && $access_level != 'executive_admin') {
             $this->db->where('access_level', $access_level);
         }
-        
-        if($access_level == 'executive_admin') {
+
+        if ($access_level == 'executive_admin') {
             $this->db->where('is_executive_admin', 1);
         }
-        
-        if($status == 'active'){
-             $this->db->where('active', 1);
+
+        if ($status == 'active') {
+            $this->db->where('active', 1);
         }
-        
-        if($status == 'active'){
-             $this->db->where('active', 1);
+
+        if ($status == 'active') {
+            $this->db->where('active', 1);
         }
-        
-        if($status == 'archived'){
-             $this->db->where('active', 0);
+
+        if ($status == 'archived') {
+            $this->db->where('active', 0);
         }
-        
+
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
 
-        if(!empty($records_arr)){
+        if (!empty($records_arr)) {
             return $records_arr;
         } else {
             return array();
         }
     }
 
-    function get_all_employees_from_DB($company_sid, $access_level, $status, $start, $end) {
+    function get_all_employees_from_DB($company_sid, $access_level, $status, $start, $end)
+    {
         //
         $this->db->select('*');
         $this->db->where('parent_sid', $company_sid);
 
-        if($access_level != 'all' && $access_level != 'executive_admin' && $access_level != null) {
+        if ($access_level != 'all' && $access_level != 'executive_admin' && $access_level != null) {
             $this->db->where('access_level', $access_level);
         }
-        
-        if($access_level == 'executive_admin') {
+
+        if ($access_level == 'executive_admin') {
             $this->db->where('is_executive_admin', 1);
         }
-        
 
-        /*
-        if($status == 'active'){
-             $this->db->where('active', 1);
-        }
-        
-        if($status == 'archived'){
-             $this->db->where('active', 0);
+        if ($status == 'active') {
+            $this->db->where('active', 1);
+            $this->db->where('terminated_status', 0);
         }
 
-        if($status == 'terminated'){
-            $this->db->where('terminated_status ', 1);
-            $this->db->where('general_status ', "terminated");
+        if ($status == 'terminated') {
+            $this->db->where('terminated_status', 1);
         }
 
-        if($status == 'manual_employee'){
-            $this->db->where('applicant_sid', NULL);
+
+        if ($status != 'all' && $status != 'active' && $status != 'terminated' ) {
+            $this->db->where('LCASE(general_status) ', $status);
         }
-*/
-
-            if($status!='all'){
-                $this->db->where('LCASE(general_status) ', $status);
-            }
 
 
-        if(!empty($start) && !empty($end)){
-            $this->db->where('created_at BETWEEN "' . date('Y-m-d 00:00:00', strtotime($start)) . '" and "' . date('Y-m-d 23:59:59', strtotime($end)) . '"');
-        } 
-        
+        if (!empty($start) && !empty($end)) {
+
+            //$startDate = str_replace(' 00:00:00', '', $start);
+          //  $endDate = str_replace(' 23:59:59', '', $end);
+
+            
+            $startDate = str_replace(' 23:59:59', '', $end);
+            $endDate = str_replace(' 00:00:00', '', $start);
+
+            //
+            $this->db->group_start();
+            $this->db->group_start();
+            $this->db->where('joined_at >= ', $startDate);
+            $this->db->where('joined_at <= ', $endDate);
+            $this->db->group_end();
+
+            $this->db->or_group_start();
+            $this->db->where('rehire_date>=', $startDate);
+            $this->db->where('rehire_date<=', $endDate);
+            $this->db->group_end();
+
+            $this->db->or_group_start();
+            $this->db->where('registration_date>=', $end);
+            $this->db->where('registration_date<=', $start);
+            $this->db->group_end();
+            $this->db->group_end();
+        }
+
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
 
-        // $sql = $this->db->last_query();
-        //echo $sql;
-        //die();
+      //  $sql = $this->db->last_query();
+      //_e($sql, true);
+      //  die();
 
-        if(!empty($records_arr)){
+        if (!empty($records_arr)) {
             return $records_arr;
         } else {
             return array();
         }
     }
 
-     // Fetch all active employees
+    // Fetch all active employees
     function getAllActiveEmployees(
         $companySid,
         $withExec = true
@@ -143,7 +161,8 @@ class Export_csv_model extends CI_Model {
         return $b;
     }
 
-    function get_all_applicants($company_sid, $applicant_type){
+    function get_all_applicants($company_sid, $applicant_type)
+    {
         $this->db->select('portal_job_applications.sid as applicant_sid');
         $this->db->select('portal_job_applications.first_name');
         $this->db->select('portal_job_applications.last_name');
@@ -164,7 +183,7 @@ class Export_csv_model extends CI_Model {
         $this->db->select('portal_applicant_jobs_list.archived');
         $this->db->where('portal_job_applications.employer_sid', $company_sid);
 
-        switch ($applicant_type){
+        switch ($applicant_type) {
             case 'active':
                 $this->db->where('portal_applicant_jobs_list.archived', 0);
                 break;
@@ -179,8 +198,9 @@ class Export_csv_model extends CI_Model {
         $applicants_obj->free_result();
         return $applicants_arr;
     }
-    
-    function get_csv_applicants($company_sid, $applicant_type,$keyword,$job_sid,$applicant_status,$start_date,$end_date){
+
+    function get_csv_applicants($company_sid, $applicant_type, $keyword, $job_sid, $applicant_status, $start_date, $end_date)
+    {
         // $this->db->select('portal_applicant_jobs_list.sid');
         $this->db->select('portal_applicant_jobs_list.date_applied');
         $this->db->select('portal_applicant_jobs_list.applicant_type');
@@ -206,14 +226,14 @@ class Export_csv_model extends CI_Model {
         $this->db->select('portal_job_listings.Title');
         $this->db->where('portal_applicant_jobs_list.company_sid', $company_sid);
 
-//        switch ($applicant_type){
-//            case 'active':
-//                $this->db->where('portal_applicant_jobs_list.archived', 0);
-//                break;
-//            case 'archived':
-//                $this->db->where('portal_applicant_jobs_list.archived', 1);
-//                break;
-//        }
+        //        switch ($applicant_type){
+        //            case 'active':
+        //                $this->db->where('portal_applicant_jobs_list.archived', 0);
+        //                break;
+        //            case 'archived':
+        //                $this->db->where('portal_applicant_jobs_list.archived', 1);
+        //                break;
+        //        }
 
         if (!empty($keyword) && $keyword != 'all') {
             $multiple_keywords = explode(' ', $keyword);
@@ -237,7 +257,7 @@ class Export_csv_model extends CI_Model {
             }
         }
 
-//        $check_jobs_exists = explode(',', $job_sid);
+        //        $check_jobs_exists = explode(',', $job_sid);
 
         if (!in_array('all', $job_sid)) {
             if (is_array($job_sid)) {
@@ -264,7 +284,7 @@ class Export_csv_model extends CI_Model {
         } else if ((empty($start_date) || is_null($start_date)) && (!empty($end_date) || !is_null($end_date))) {
             $this->db->where('portal_applicant_jobs_list.date_applied <=', $end_date);
         }
-        
+
         $this->db->join('portal_job_applications', 'portal_applicant_jobs_list.portal_job_applications_sid = portal_job_applications.sid', 'INNER');
         $this->db->join('portal_job_listings', 'portal_applicant_jobs_list.job_sid = portal_job_listings.sid', 'left');
         $this->db->order_by('portal_applicant_jobs_list.date_applied', 'DESC'); // check it over 
@@ -463,13 +483,14 @@ class Export_csv_model extends CI_Model {
         }
     }
 
-    function get_department_name ($department_sid) {
+    function get_department_name($department_sid)
+    {
         $this->db->select('name');
         $this->db->where('sid', $department_sid);
         $record_obj = $this->db->get('departments_management');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0]['name'];
         } else {
@@ -477,13 +498,14 @@ class Export_csv_model extends CI_Model {
         }
     }
 
-    function get_team_name ($team_sid) {
+    function get_team_name($team_sid)
+    {
         $this->db->select('name');
         $this->db->where('sid', $team_sid);
         $record_obj = $this->db->get('departments_team_management');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr[0]['name'];
         } else {
@@ -491,13 +513,14 @@ class Export_csv_model extends CI_Model {
         }
     }
 
-    function get_applicant_notes($applicant_sid){
+    function get_applicant_notes($applicant_sid)
+    {
         $this->db->select('notes');
-        $this->db->where('applicant_job_sid',$applicant_sid);
+        $this->db->where('applicant_job_sid', $applicant_sid);
         $record_obj = $this->db->get('portal_misc_notes');
         $record_arr = $record_obj->result_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr;
         } else {
@@ -505,15 +528,16 @@ class Export_csv_model extends CI_Model {
         }
     }
 
-    function get_status_info($employee_sid, $status){
+    function get_status_info($employee_sid, $status)
+    {
         $this->db->select('termination_reason , termination_date');
-        $this->db->where('employee_status',$status);
-        $this->db->where('employee_sid ',$employee_sid);
+        $this->db->where('employee_status', $status);
+        $this->db->where('employee_sid ', $employee_sid);
         $this->db->order_by('sid', 'DESC');
         $record_obj = $this->db->get('terminated_employees');
         $record_arr = $record_obj->row_array();
         $record_obj->free_result();
-        
+
         if (!empty($record_arr)) {
             return $record_arr;
         } else {
@@ -524,37 +548,36 @@ class Export_csv_model extends CI_Model {
 
     function save_employee_csv_report_settings($data_to_insert)
     {
-         $this->db->insert('employee_csv_report_settings', $data_to_insert);
-      
+        $this->db->insert('employee_csv_report_settings', $data_to_insert);
     }
 
 
-    function get_employee_csv_report_settings(){
+    function get_employee_csv_report_settings()
+    {
 
         $records_obj = $this->db->get('employee_csv_report_settings');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
 
         return $records_arr;
-
     }
 
-    function get_employee_csv_report_settings_bycompany($company_sid){
-        $this->db->where('company_sid',$company_sid);
-        $this->db->where('status',1);
-        $this->db->order_by('sid','Desc');
+    function get_employee_csv_report_settings_bycompany($company_sid)
+    {
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('status', 1);
+        $this->db->order_by('sid', 'Desc');
         $records_obj = $this->db->get('employee_csv_report_settings');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
 
         return $records_arr;
-
     }
 
 
-    function csv_report_settings_delete($sid,$data ) {
+    function csv_report_settings_delete($sid, $data)
+    {
         $this->db->where('sid', $sid);
         $this->db->update('employee_csv_report_settings', $data);
     }
-
 }

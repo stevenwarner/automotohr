@@ -301,9 +301,9 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
         changeMonth: true,
         changeYear: true,
         yearRange: "<?php echo DOB_LIMIT; ?>",
-        onSelect: function (value) {
-            $('#display_end_date').datepicker('option', 'minDate', value);
-        }
+       // onSelect: function (value) {
+      //      $('#display_end_date').datepicker('option', 'minDate', value);
+      //  }
     }).datepicker('option', 'minDate', $('#display_end_date').val());
 
     $('#display_end_date').datepicker({
@@ -311,9 +311,9 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
         changeMonth: true,
         changeYear: true,
         yearRange: "<?php echo DOB_LIMIT; ?>",
-        onSelect: function (value) {
-            $('#display_start_date').datepicker('option', 'maxDate', value);
-        }
+      //  onSelect: function (value) {
+      //      $('#display_start_date').datepicker('option', 'maxDate', value);
+      //  }
     }).datepicker('option', 'minDate', $('#display_start_date').val());
 
     $("#check_all").click(function(){
