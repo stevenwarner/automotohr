@@ -81,17 +81,13 @@ class Export_csv_model extends CI_Model
         }
 
 
-        if ($status != 'all' && $status != 'active' && $status != 'terminated' ) {
+        if ($status != 'all' && $status != 'active' && $status != 'terminated') {
             $this->db->where('LCASE(general_status) ', $status);
         }
 
 
         if (!empty($start) && !empty($end)) {
 
-            //$startDate = str_replace(' 00:00:00', '', $start);
-          //  $endDate = str_replace(' 23:59:59', '', $end);
-
-            
             $startDate = str_replace(' 23:59:59', '', $end);
             $endDate = str_replace(' 00:00:00', '', $start);
 
@@ -117,10 +113,6 @@ class Export_csv_model extends CI_Model
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-
-      //  $sql = $this->db->last_query();
-      //_e($sql, true);
-      //  die();
 
         if (!empty($records_arr)) {
             return $records_arr;
