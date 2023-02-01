@@ -4703,7 +4703,7 @@ if (!function_exists('common_indeed_acknowledgement_email')) {
             $body = str_replace('{{company_name}}', $applicationData['company_name'], $body);
             $email = $template[0];
             $from = REPLY_TO;
-            $subject = $email['subject'];
+            $subject = str_replace('{{company_name}}', $applicationData['company_name'], $email['subject']);
             $from_name = $email['from_name'];
             $message_data = array();
             $message_data['to_id'] = $applicationData['email'];
