@@ -17,6 +17,7 @@ $title = '';
     $company_sid = $employee['parent_sid'];
     $users_type = $employee['access_level'];
     $users_sid = $employee['sid'];
+    $is_readony = $employee['access_level_plus'] == 1 ? '' : 'jsReadonly';
 
     $back_url = $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system');
 
@@ -315,7 +316,7 @@ $title = '';
                                     <?php $field_id = 'employee_number'; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
                                     <?php echo form_label('Employee Number:', $field_id); ?>
-                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '"'); ?>
+                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control '.$is_readony.'" id="' . $field_id . '"'); ?>
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
@@ -413,7 +414,7 @@ $title = '';
                                     <?php $field_id = 'job_title'; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
                                     <?php echo form_label('Job Title:', $field_id); ?>
-                                    <input type="text" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" value="<?php echo set_value($field_id, $temp); ?>" class="form-control" />
+                                    <input type="text" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" value="<?php echo set_value($field_id, $temp); ?>" class="form-control <?php echo $is_readony; ?>" />
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
@@ -422,7 +423,7 @@ $title = '';
                                     <?php $field_id = 'division'; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
                                     <?php echo form_label('Division:', $field_id); ?>
-                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '"'); ?>
+                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control '.$is_readony.'" id="' . $field_id . '"'); ?>
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
@@ -434,7 +435,7 @@ $title = '';
                                     <?php $field_id = 'department'; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
                                     <?php echo form_label('Department:', $field_id); ?>
-                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '"'); ?>
+                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control '.$is_readony.'" id="' . $field_id . '"'); ?>
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
@@ -443,7 +444,7 @@ $title = '';
                                     <?php $field_id = 'office_location'; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
                                     <?php echo form_label('Office Location:', $field_id); ?>
-                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '"'); ?>
+                                    <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control '.$is_readony.'" id="' . $field_id . '"'); ?>
                                     <?php echo form_error($field_id); ?>
                                 </div>
                             </div>
@@ -640,6 +641,7 @@ $title = '';
 <script type="text/javascript">
 
    $(document).ready(function(){
+        $(".jsReadonly").prop('disabled', true);
 //       $('form').validate();
        CKEDITOR.replace('short_bio');
        CKEDITOR.replace('interests');
