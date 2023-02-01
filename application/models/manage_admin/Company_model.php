@@ -203,6 +203,10 @@ class Company_model extends CI_Model
         $this->db->select('table_one.system_user_date');
         $this->db->select('table_one.general_status');
         $this->db->select('table_two.CompanyName as company_name');
+        $this->db->select('table_one.complynet_onboard');
+        $this->db->select('table_one.parent_sid');
+        
+        
         $this->db->where('table_one.is_executive_admin <', 1);
         $this->db->where('table_one.parent_sid > ', 0);
 
@@ -253,10 +257,76 @@ class Company_model extends CI_Model
             $records_obj->free_result();
             //
             $this->GetEmployeeStatus($records_arr);
+
+            $this->GetEmployeeDepartmentsTeams($records_arr);
             //
             return $records_arr;
         }
     }
+
+    //
+    private function GetEmployeeDepartmentsTeams(&$employees)
+    {
+        //
+        if (empty($employees)) {
+            return false;
+        }
+        //
+        $employeeIds = array_column($employees, 'sid');
+        //
+        $employeeDepartmentTeams =
+        $this->db->select("
+            departments_management.name as department_name,
+            departments_team_management.name,
+            departments_employee_2_team.employee_sid
+        ")
+        ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
+        ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
+        ->where('departments_management.is_deleted', 0)
+        ->where('departments_team_management.is_deleted', 0)
+        ->where_in('departments_employee_2_team.employee_sid', $employeeIds)
+        ->get('departments_employee_2_team')
+        ->result_array();
+        //
+        if (!empty($employeeDepartmentTeams)) {
+            //
+            $tmp = [];
+            //
+            foreach ($employeeDepartmentTeams as $stat) {
+                //
+                if (!isset($tmp[$stat['employee_sid']])) {
+                    $tmp[$stat['employee_sid']] = [
+                        'departments' => [],
+                        'teams' => []
+                    ];
+                }
+                //
+                $tmp[$stat['employee_sid']]['departments'][] = $stat['department_name'];
+                $tmp[$stat['employee_sid']]['teams'][] = $stat['name'];
+            }
+            //
+            $employeeDepartmentTeams = $tmp;
+            //
+            $tmp = [];
+              //
+            unset($tmp);
+        }
+
+        //
+        foreach ($employees as $index => $employee) {
+            //
+            if(isset($employeeDepartmentTeams[$employee['sid']])) {
+
+                $employees[$index] = array_merge($employee, $employeeDepartmentTeams[$employee['sid']]);
+            } else{
+                $employees[$index]['departments'] = [];
+                $employees[$index]['teams'] = [];
+            }
+        }
+        //
+        return true;  
+    }
+
 
     private function GetEmployeeStatus(&$employees, $status = 1)
     {

@@ -84,6 +84,7 @@
                                                                 <th>Email</th>
                                                                 <th>Contact Name</th>
                                                                 <th>Dates</th>
+                                                                <th>Departments/Teams</th>
                                                                 <th>Company Name</th>
                                                                 <?php $function_names = array('show_employer_multiple_actions', 'employerLogin', 'edit_employers'); ?>
                                                                 <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
@@ -130,6 +131,8 @@
                                                                             }
                                                                             ?>
                                                                             <?php echo $doNotHireWarning['message']; ?>
+                                                                           <?php echo  '<br> <b> ComplyNet Status:</b> ' . (getComplyNetEmployeeCheck($value, 0 , 0, false )) ; ?>
+
                                                                         </td>
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                                             <?php echo $value['email'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
@@ -186,6 +189,12 @@
                                                                             }
                                                                             ?>
                                                                         </td>
+                                                                      <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                        <?php if(!empty($value['departments'])){?>     <b>Depatements:<br> </b> <?php echo implode(", ",array_unique($value['departments'])); }?>
+                                                                        <?php if(!empty($value['departments'])){?>      <br><br><b>Teams:</b><br> <?php echo implode(", ",$value['teams']); }?>   
+                                                                    </td>
+
+
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>"><?php echo ucwords($value['company_name']); ?>
                                                                             <?php if ($value['password'] == '' || is_null($value['password'])) { ?>
                                                                                 <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
