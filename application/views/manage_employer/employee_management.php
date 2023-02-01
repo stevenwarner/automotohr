@@ -178,15 +178,18 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <?php if ($canEMSPermission) { ?>
 
 
-                                            <div class="col-xs-3">
+                                            <div class="col-xs-2 text-left" style="padding-right: 0px;">
                                                 <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Email</a>
 
                                             </div>
+                                            <div class="col-xs-3" style="padding-right: 0px; padding-left: 5px">
+                                                <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email_login"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Login Email</a>
 
-                                            <div class="col-xs-4">
+                                            </div>
+                                            <div class="col-xs-3" style="padding-right: 0px; padding-left: 5px">
                                                 <a class="btn btn-success btn-block" href="<?php echo base_url(); ?>invite_colleagues">+ Add Employee / Team Members</a>
                                             </div>
-                                            <div class="col-xs-3">
+                                            <div class="col-xs-2 text-left" style="padding-right: 5px; padding-left: 5px">
                                                 <?php if ($offline) { ?>
                                                     <a class="btn btn-success btn-block" href="javascript:;" id="ej_controll_activate">Activate Selected</a>
                                                 <?php } else { ?>
@@ -230,7 +233,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                     </thead>
                                     <tbody>
                                         <form method="POST" name="ej_form" id="ej_form">
-                                            <?php $sizeof = sizeof($employee_array); ?>
+                                            <?php $sizeof = sizeof($employee_array); 
+                                            $bulkloginEmailIds = array();
+                                            ?>
                                             <?php foreach ($employee_array as $employee) {
 
                                                 $doNotHireWarning = doNotHireWarning($employee['sid'], $doNotHireRecords, 14);
@@ -316,7 +321,11 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                     </td>
                                                     <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                         <?php if (check_access_permissions_for_view($security_details, 'send_login_email')) { ?>
-                                                            <?php if (($employee['password'] == '' || is_null($employee['password'])) && ($employee['is_executive_admin'] != 1)) { ?>
+                                                            <?php if (($employee['password'] == '' || is_null($employee['password'])) && ($employee['is_executive_admin'] != 1)) { 
+                                                                
+                                                                array_push($bulkloginEmailIds,$employee['sid']);
+                                                              //  print_r($bulkloginEmailIds);
+                                                                ?>
                                                                 <img src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
                                                                 <?php echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="' . $employee['sid'] . '">Send Login Email</a>'; ?>
                                                             <?php   } else { ?>
@@ -1079,4 +1088,37 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
             }
         });
     }
+
+
+    $(document).on('click', '#send_bulk_email_login', function(e) {
+      
+        var sid = "<?php echo implode(',',$bulkloginEmailIds);?> ";
+        var url = "<?= base_url('employee_management/send_login_credentials_bulk') ?>";
+     
+        alertify.confirm('Confirmation', "Are you sure you want to send login credentials?",
+            function() {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        action: 'sendemail',
+                        sid: sid
+                    },
+                    success: function(data) {
+                        if (data == 'success') {
+                            alertify.success('Email with Login credentials is sent.');
+                        } else {
+                            alerty.error('there was error, please try again!');
+                        }
+                    },
+                    error: function() {
+
+                    }
+                });
+            },
+            function() {
+                alertify.error('Canceled');
+            });
+    });
+
 </script>

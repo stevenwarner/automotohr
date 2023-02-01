@@ -3670,4 +3670,62 @@ class Employee_management extends Public_Controller
             $this->session->userdata('logged_in')['employer_detail']['sid']
         );
     }
+
+
+    function send_login_credentials_bulk()
+    {
+        $action = $this->input->post('action');
+        $sids = $this->input->post('sid');
+        $message = '';
+    if(!empty($sids)){
+        $sids = explode(',',$sids);
+        foreach($sids as $sid){
+        $employee_details = $this->employee_model->get_employee_details($sid);
+        if (!empty($employee_details)) {
+            $first_name = $employee_details[0]['first_name'];
+            $last_name = $employee_details[0]['last_name'];
+            $username = $employee_details[0]['username'];
+            $access_level = $employee_details[0]['access_level'];
+            $email = $employee_details[0]['email'];
+            $salt = $employee_details[0]['salt'];
+
+            if ($salt == NULL || $salt == '') {
+                $salt = generateRandomString(48);
+
+                $data = array('salt' => $salt);
+                $this->employee_model->update_users($sid, $data);
+            }
+
+            if ($action == 'sendemail') {
+                $replacement_array = array();
+                $replacement_array['employer_name'] = ucwords($first_name . ' ' . $last_name);
+                $replacement_array['access_level'] = ucwords($access_level);
+                $replacement_array['company_name'] = $employee_details[1]['CompanyName'];
+                $replacement_array['username'] = $username;
+                $replacement_array['login_page'] = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="https://www.automotohr.com/login" target="_blank">Login page</a>';
+                $replacement_array['firstname'] = $first_name;
+                $replacement_array['lastname'] = $last_name;
+                $replacement_array['first_name'] = $first_name;
+                $replacement_array['last_name'] = $last_name;
+                $replacement_array['email'] = $email;
+                $replacement_array['create_password_link']  = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url() . "employee_management/generate_password/" . $salt . '">Create Your Password</a>';
+                log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array);
+            }
+
+            $message = 'success';
+        } else {
+            $message = 'error';
+        }
+
+     }
+     echo $message;
+    }
+
+}
+
+
+
+
+
+
 }
