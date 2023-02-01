@@ -377,8 +377,8 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                VETERAN <small class="help_text">If enabled then the "VETERAN" section willbe visible to employee/applicant on EEOC.</small>
-                                    <input class="" type="checkbox" id="dl_vet" name="dl_vet" <?php echo (isset($portal['dl_vet']) && $portal['dl_vet'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                VETERAN <small class="help_text">If enabled then the "VETERAN" section will be visible to employee/applicant on EEOC.</small>
+                                <input class="" type="checkbox" id="dl_vet" name="dl_vet" <?php echo (isset($portal['dl_vet']) && $portal['dl_vet'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
                             </div>
@@ -386,7 +386,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                VOLUNTARY <small class="help_text">If enabled then the "voluntary self-identification of disability" section willbe visible to employee/applicant on EEOC.</small>
+                                DISABILITY<small class="help_text">If enabled then the "voluntary self-identification of disability" section will be visible to employee/applicant on EEOC.</small>
                                     <input class="" type="checkbox" id="dl_vol" name="dl_vol" <?php echo (isset($portal['dl_vol']) && $portal['dl_vol'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
@@ -395,7 +395,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                GENDER  <small class="help_text">If enabled then the "GENDER" section willbe visible to employee/applicant on EEOC.</small>
+                                GENDER  <small class="help_text">If enabled then the "GENDER" section will be visible to employee/applicant on EEOC.</small>
                                     <input class="" type="checkbox" id="dl_gen" name="dl_gen" <?php echo (isset($portal['dl_gen']) && $portal['dl_gen'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
