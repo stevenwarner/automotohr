@@ -338,7 +338,7 @@ class Complynet_model extends CI_Model
             ->select('complynet_department_sid')
             ->where([
                 'department_sid' => $departmentId,
-                'complynet_department_sid <> ', 'A'
+                'complynet_department_sid !=  ' => 'A'
             ])
             ->get('complynet_departments')
             ->row_array();
