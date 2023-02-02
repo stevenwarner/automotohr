@@ -50,8 +50,9 @@ class Merge_company_employee_model extends CI_Model
         //
         $this->db->insert('employee_merge_history', $merge_history);
         // Delete secondary Employee
-        $this->db->where('sid', $secondary_employee_sid);
-        $this->db->delete('users');
+        // Code comment on 02/02/2023 
+        // $this->db->where('sid', $secondary_employee_sid);
+        // $this->db->delete('users');
     }
 
     function update_employee_emergency_contacts($primary_employee_sid, $secondary_employee_sid)
