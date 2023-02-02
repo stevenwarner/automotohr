@@ -2898,6 +2898,10 @@ if (!function_exists('isCompanyOnComplyNet')) {
         //
         $CI = &get_instance();
         //
+        if (!$CI->db->where(['sid' => $companyId, 'complynet_status' => 1])->count_all_result('users')) {
+            return 0;
+        }
+        //
         return $CI->db
             ->where('company_sid', $companyId)
             ->count_all_results('complynet_companies');
