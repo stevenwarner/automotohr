@@ -336,7 +336,7 @@ class Complynet_lib
         //
         $this->CI->db->insert('complynet_access_token', $ins);
         //
-        return $ins['token'];
+        return $ins['access_token'];
     }
 
     /**
