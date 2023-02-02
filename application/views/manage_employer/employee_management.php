@@ -305,7 +305,11 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
                                                                 <?php echo $doNotHireWarning['message']; ?>
                                                                 <?php
-                                                                echo $employee['is_executive_admin'] == 0 ? '<br> <b> ComplyNet Status:</b> ' . (getComplyNetEmployeeCheck($employee, $session['employer_detail']['pay_plan_flag'] , $session['employer_detail']['access_level_plus'], false )) : '';
+                                                                    $onComplyNet = getComplyNetEmployeeCheck($employee, $session['employer_detail']['pay_plan_flag'] , $session['employer_detail']['access_level_plus'], false );
+                                                                    if ($onComplyNet) {
+
+                                                                        echo $employee['is_executive_admin'] == 0 ? '<br> <b> ComplyNet Status:</b> ' . ($onComplyNet) : '';
+                                                                    }
                                                                 ?>
                                                             </div>
                                                         </div>
