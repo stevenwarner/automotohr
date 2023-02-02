@@ -83,7 +83,7 @@
                                                                 <th>Username</th>
                                                                 <th>Email</th>
                                                                 <th>Contact Name</th>
-                                                                <th>Dates</th>
+                                                                <th>Additional<br>Information</th>
                                                                 <th>Company Name</th>
                                                                 <?php $function_names = array('show_employer_multiple_actions', 'employerLogin', 'edit_employers'); ?>
                                                                 <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
@@ -130,15 +130,13 @@
                                                                             }
                                                                             ?>
                                                                             <?php echo $doNotHireWarning['message']; ?>
+
                                                                         </td>
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                                             <?php echo $value['email'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
                                                                             <br />
                                                                             <b>System Date: </b><?php echo date_with_time($value['system_user_date']); ?>
                                                                         </td>
-                                                                        <!--<td>--><?php //echo ucwords($value['access_level']); 
-                                                                                    ?>
-                                                                        <!--</td>-->
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">
                                                                             <?php
                                                                             $middle_initial = !empty($value['middle_name']) ? ' ' . $value['middle_name'] : '';
@@ -185,7 +183,21 @@
                                                                                 echo formatDateToDB($value['last_status']["termination_date"], DB_DATE, DATE);
                                                                             }
                                                                             ?>
+                                                                            <br>
+                                                                            <?php if (!empty($value['departments'])) { ?> <b>Departments:<br> </b> <?php echo implode(", ", array_unique($value['departments']));
+                                                                                                                                            } ?>
+                                                                            <?php if (!empty($value['departments'])) { ?><br><b>Teams:</b><br> <?php echo implode(", ", $value['teams']);
+                                                                                                                                                } ?>
+                                                                            <?php
+                                                                                $isOnComplyNet = getComplyNetEmployeeCheck($value, 0, 0, false);
+                                                                                //
+                                                                                if(!empty($isOnComplyNet)) {
+                                                                                    echo '<b>ComplyNet Status: </b>'.$isOnComplyNet;
+                                                                                }
+                                                                            ?>
                                                                         </td>
+
+
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>"><?php echo ucwords($value['company_name']); ?>
                                                                             <?php if ($value['password'] == '' || is_null($value['password'])) { ?>
                                                                                 <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
@@ -473,5 +485,8 @@
             });
     }
 
-    $('[data-placement="top"]').popover({placement: 'top', trigger: 'hover'});
+    $('[data-placement="top"]').popover({
+        placement: 'top',
+        trigger: 'hover'
+    });
 </script>

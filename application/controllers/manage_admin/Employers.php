@@ -68,6 +68,9 @@ class employers extends Admin_Controller
         $this->pagination->initialize($config);
         $this->data['links'] = $this->pagination->create_links();
         //        $total_employers = $this->company_model->count_all_employers();
+
+       // print_r($employers);
+       // die();
         $this->data['employers'] = $employers;
         $this->data['total_employers'] = $employers_count;
         $this->data['total_rows'] = $employers_count;
