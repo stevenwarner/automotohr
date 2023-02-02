@@ -1,3 +1,4 @@
+
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
@@ -113,7 +114,7 @@
                                                                             </div>
                                                                             <b><?php echo $value['sid']; ?></b>
                                                                         </td>
-                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?> boldusername">
                                                                             <?php
                                                                             if (empty($value['username'])) {
                                                                                 echo 'Employee Onboarding';
@@ -144,6 +145,7 @@
                                                                             $middle_initial = !empty($value['middle_name']) ? ' ' . $value['middle_name'] : '';
                                                                             echo ucwords($value['first_name'] . $middle_initial . ' ' . $value['last_name']);
                                                                             ?>
+                                                                            
                                                                             <br />
                                                                             <b>Nick Name: </b>
                                                                             <?php

@@ -3684,3 +3684,8 @@ textarea.invoice-fields{
     border-radius: 5px;
 }
 /*-------Loader---------*/
+
+.boldusername{
+    font-weight: bold;
+    font-size: 15px;
+}

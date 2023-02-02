@@ -251,7 +251,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                         <?php } ?>
                                                     </td>
                                                     <td width="30%" class="<?php echo $doNotHireWarning['row']; ?>">
-                                                        <div class="employee-profile-info">
+                                                        <div class="employee-profile-info boldusername">
                                                             <figure>
                                                                 <?php if (check_access_permissions_for_view($security_details, 'employee_profile')) { ?>
                                                                     <a href="<?php echo ($session['employer_detail']['access_level_plus'] && $employer_id != $employee['sid']) || $session['employer_detail']['pay_plan_flag'] ? base_url('employee_profile') . '/' . $employee['sid'] : 'javascript:;'; ?>" title="<?php echo $employee['first_name'] . ' ' . $employee['last_name']; ?>">
