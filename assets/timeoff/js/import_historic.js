@@ -28,6 +28,13 @@ $(function importHistoricalTimeOffs() {
     let tableData = [];
 
     /**
+     * The preview
+     * 
+     * @type array
+     */
+    let tableHeader = [];
+
+    /**
      * Set records
      * 
      * @type array
@@ -89,6 +96,9 @@ $(function importHistoricalTimeOffs() {
         statusDate = ['approveddeclineddate', 'statusdate', 'approvedate', 'declinedate'],
         employeeComment = ['employeecomment', 'employeecomments', 'comment'],
         statusComment = ['managercomment', 'managercomments'];
+        email = ['email', 'emailaddress', 'personalemail', 'e-mail'];
+        ssn = ['socialsecurity','socialsecuritynumber','socialsecurity#','ssn','ss','ss#'];
+        phone = ['phonenumber','contactnumber', 'contact', 'employeetelephonenumber', 'telephonenumber'];
 
     /**
      * Initialize the file uploading
@@ -198,6 +208,7 @@ $(function importHistoricalTimeOffs() {
         indexes = indexes.map(function (v) {
             // Check indexes
             let index = checkIndex(v.toLowerCase().replace(/[^a-z]/g, '').trim());
+            //
             return index === -1 ? 'extra' : index;
         });
         // Remove columns
@@ -243,10 +254,14 @@ $(function importHistoricalTimeOffs() {
      */
     function checkIfEmployeeExists() {
         //
+        let employeeArray = {};
         let employeeNameArray = {};
         let policyNameArray = {};
+        let emailArray = {};
+        let ssnNumberArray = {};
+        let phoneNumberArray = {};
         //
-        tableData.map(function (record) {
+        tableData.map(function (record,i) {
             //
             let fullName = record.data.employee_first_name + ' ' + record.data.employee_last_name;
             let fullNameSlug = fullName.toLowerCase().trim().replace(/[^a-z]/ig, '');
@@ -256,10 +271,33 @@ $(function importHistoricalTimeOffs() {
             //
             let policy = record.data.policy;
             let policySlug = policy.toLowerCase().trim().replace(/[^a-z]/ig, '');
+            //
+            let email = record.data.email;
+            let ssn = record.data.ssn.replace(/\r/g, '');
+            let phone = record.data.phone.replace(/\r/g, '');
             //timeoff_policy
             employeeNameArray[fullNameSlug] = fullName;
             employeeNameArray[approverFullNameSlug] = approverFullName;
             policyNameArray[policySlug] = policy;
+            //
+            if (ssn.length > 0) {
+                ssnNumberArray[i] = ssn;
+                employeeArray['ssn'+i] = ssn;
+            }
+            //
+            if (email.length > 0) {
+                emailArray[i] = email;
+                employeeArray['email'+i] = email;
+            }
+            //
+            if (phone.length > 0) {
+                phoneNumberArray[i] = phone;
+                employeeArray['phonr'+i] = phone;
+            }
+            //
+            if (fullName.length > 0) {
+                employeeArray['name'+i] = fullName;
+            }
         });
         //
         $(loader).show();
@@ -267,42 +305,158 @@ $(function importHistoricalTimeOffs() {
         //
         fileDataVerificationObj.employees = employeeNameArray;
         fileDataVerificationObj.policies = policyNameArray;
+        fileDataVerificationObj.email = emailArray;
+        fileDataVerificationObj.ssn = ssnNumberArray;
+        fileDataVerificationObj.phone = phoneNumberArray;
+        fileDataVerificationObj.requester = employeeArray;
         //
         verifyData(
             Object.keys(fileDataVerificationObj.employees),
-            Object.keys(fileDataVerificationObj.policies)
+            Object.keys(fileDataVerificationObj.policies),
+            Object.values(fileDataVerificationObj.email),
+            Object.values(fileDataVerificationObj.ssn),
+            Object.values(fileDataVerificationObj.phone)
         );
     }
 
     /**
      * Verify employees and policies
      * @param {*} employeeList 
-     * @param {*} policyList 
+     * @param {*} policyList
+     * @param {*} emailList
+     * @param {*} ssnlist
+     * @param {*} phoneliQst
      */
     function verifyData(
         employeeList,
-        policyList
+        policyList,
+        emailList,
+        ssnlist,
+        phonelist
     ) {
         //
         $.post(baseURI + 'timeoff/import/historic/verify', {
             employees: employeeList,
-            policies: policyList
+            policies: policyList,
+            email: emailList,
+            ssn: ssnlist,
+            phone: phonelist
         }).success(function (resp) {
             $(loader).hide();
             //
-            let missingEmployees = [];
             let me = '';
+            let missingEmployees = [];
+            tableHeader.push("Varification Status");
             //
-            for (let index in resp.employees) {
-                if (resp.employees[index] === 0) {
-                    me += '<tr class="bg-danger">';
-                    me += ' <td>' + (fileDataVerificationObj.employees[index]) + '</td>';
-                    me += '</tr>';
-                    missingEmployees.push(fileDataVerificationObj.employees[index]);
+            tableData.map(function (record,i) {
+                let fullName = record.data.employee_first_name + ' ' + record.data.employee_last_name;
+                let fullNameSlug = fullName.toLowerCase().trim().replace(/[^a-z]/ig, '');
+                //
+                let approverFullName = record.data.approver_full_name;
+                let approverFullNameSlug = approverFullName.toLowerCase().trim().replace(/[^a-z]/ig, '');
+                //
+                let policy = record.data.policy;
+                let policySlug = policy.toLowerCase().trim().replace(/[^a-z]/ig, '');
+                //
+                let email = record.data.email;
+                let ssn = record.data.ssn.replace(/\r/g, '');
+                let phone = record.data.phone.replace(/\r/g, '');
+                //
+                console.log(fullName)
+                // console.log(fullNameSlug)
+                // console.log(approverFullName)
+                // console.log(approverFullNameSlug)
+                // console.log(policy)
+                // console.log(policySlug)
+                // console.log(email)
+                // console.log(ssn)
+                // console.log(phone)
+                console.log(resp.ssn[ssn])
+                console.log(resp.emails[email])
+                console.log(resp.phones[phone])
+                console.log(resp.employees[fullNameSlug])
+
+                let vFlag = 1;
+                let eFlag = 0;
+                let aFlag = 0;
+                //
+                if (
+                    (typeof resp.ssn[ssn] === 'undefined' || resp.ssn[ssn] === 0) &&
+                    (typeof resp.emails[email] === 'undefined' || resp.emails[email] === 0) &&
+                    (typeof resp.phones[phone] === 'undefined' || resp.phones[phone] === 0) &&
+                    (typeof resp.employees[fullNameSlug] === 'undefined' || resp.employees[fullNameSlug] === 0) 
+                    // (typeof resp.employees[fullNameSlug] === 'undefined' || resp.employees[fullNameSlug] === 0) 
+
+                ) {
+                    vFlag = 0;
+                    eFlag = 1;
+                    //
+                    missingEmployees.push(fileDataVerificationObj.employees[fullNameSlug]); 
+                } else if (resp.employees[approverFullNameSlug] === 'undefined' || resp.employees[approverFullNameSlug] === 0) { 
+                    vFlag = 0;
+                    aFlag = 1;  
+                    //
+                    missingEmployees.push(fileDataVerificationObj.employees[approverFullNameSlug]);    
                 } else {
-                    missingEmployeesObj[index] = resp.employees[index];
+                    missingEmployeesObj[fullNameSlug] = resp.employees[fullNameSlug];
                 }
-            }
+                //
+                if (vFlag == 0) {
+                    console.log(tableHeader)
+                    me += '<tr class="bg-danger">';
+                    tableHeader.map(function (column) {
+                        if (column == "Approver Name") {
+                            me += ' <td>' + (approverFullName) + '</td>';
+                        }
+                        //
+                        if (column == "Employee Name") {
+                            me += ' <td>' + (fullName) + '</td>';
+                        }
+                        //
+                        if (column == "Email") {
+                            me += ' <td>' + (email) + '</td>';
+                        }
+                        //
+                        if (column == "SSN") {
+                            me += ' <td>' + (ssn) + '</td>';
+                        }
+                        //
+                        if (column == "Phone") {
+                            me += ' <td>' + (phone) + '</td>';
+                        }
+                        //
+                        if (column == "Varification Status") {
+                            let result = '';
+                            //
+                            if (eFlag == 1 && aFlag ==1) {
+                                result = 'Employee & Approver not found';
+                            } else if (eFlag == 1) {
+                                result = 'Employee not found';
+                            } else if (aFlag == 1) {
+                                result = 'Approver not found';
+                            }
+                            me += ' <td>' + (result) + '</td>';
+                        }
+                    });
+                    
+                    me += '</tr>';
+                }
+            })
+            console.log(me)
+            //
+            
+            // let me = '';
+            //
+            // for (let index in resp.employees) {
+            //     if (resp.employees[index] === 0) {
+            //         me += '<tr class="bg-danger">';
+            //         me += ' <td>' + (fileDataVerificationObj.employees[index]) + '</td>';
+            //         me += '</tr>';
+            //         missingEmployees.push(fileDataVerificationObj.employees[index]);
+            //     } else {
+            //         missingEmployeesObj[index] = resp.employees[index];
+            //     }
+            // }
             //
             let missingPolicies = [];
             let me2 = '';
@@ -323,9 +477,8 @@ $(function importHistoricalTimeOffs() {
             if (missingEmployees.length) {
                 t1 = getTable(
                     'jsEmployeeTable',
-                    'The following employees are missing.', [
-                    'Employee Name'
-                ]
+                    'The following employees are missing.',
+                    tableHeader
                 )
                 //
                 t1 = t1.replace(/{{TABLE_ROWS}}/i, me);
@@ -533,6 +686,10 @@ $(function importHistoricalTimeOffs() {
         array = firstName;
         for (i; i < len; i++) {
             if (index == array[i]) {
+                if (!tableHeader.includes("Employee Name")) {
+                    tableHeader.push("Employee Name")
+                }
+                
                 return 'employee_first_name';
             }
         }
@@ -542,6 +699,9 @@ $(function importHistoricalTimeOffs() {
         array = LastName;
         for (i; i < len; i++) {
             if (index == array[i]) {
+                if (!tableHeader.includes("Employee Name")) {
+                    tableHeader.push("Employee Name")
+                }
                 return 'employee_last_name';
             }
         }
@@ -551,6 +711,9 @@ $(function importHistoricalTimeOffs() {
         array = approvedBy;
         for (i; i < len; i++) {
             if (index == array[i]) {
+                if (!tableHeader.includes("Approver Name")) {
+                    tableHeader.push("Approver Name")
+                }
                 return 'approver_full_name';
             }
         }
@@ -633,6 +796,42 @@ $(function importHistoricalTimeOffs() {
         for (i; i < len; i++) {
             if (index == array[i]) {
                 return 'status_comment';
+            }
+        }
+        // Reset start and length
+        i = 0;
+        len = email.length;
+        array = email;
+        for (i; i < len; i++) {
+            if (index == array[i]) {
+                if (!tableHeader.includes("Email")) {
+                    tableHeader.push("Email")
+                }
+                return 'email';
+            }
+        }
+        // Reset start and length
+        i = 0;
+        len = ssn.length;
+        array = ssn;
+        for (i; i < len; i++) {
+            if (index == array[i]) {
+                if (!tableHeader.includes("SSN")) {
+                    tableHeader.push("SSN")
+                }
+                return 'ssn';
+            }
+        }
+        // Reset start and length
+        i = 0;
+        len = phone.length;
+        array = phone;
+        for (i; i < len; i++) {
+            if (index == array[i]) {
+                if (!tableHeader.includes("Phone")) {
+                    tableHeader.push("Phone")
+                }
+                return 'phone';
             }
         }
 

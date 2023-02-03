@@ -5499,6 +5499,86 @@ class Timeoff_model extends CI_Model
         return $tmp;
     }
 
+    public function getEmployeesByEmail($emails, $companyId)
+    {
+        //
+        $records =
+            $this->db
+            ->select('sid, email')
+            ->where('parent_sid', $companyId)
+            ->where('is_executive_admin', 0)
+            ->group_start()
+            ->where_in('email', $emails)
+            ->or_where_in('alternative_email', $emails)
+            ->group_end()
+            ->get('users')
+            ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            //
+            $tmp[$record['email']] = $record['sid'];
+        }
+        //
+        return $tmp;
+    }
+
+    public function getEmployeesBySSN($ssn, $companyId)
+    {
+        //
+        $records =
+            $this->db
+            ->select('sid, ssn')
+            ->where('parent_sid', $companyId)
+            ->where('is_executive_admin', 0)
+            ->where_in('ssn', $ssn)
+            ->get('users')
+            ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }    
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            //
+            $tmp[$record['ssn']] = $record['sid'];
+        }
+        //
+        return $tmp;
+    }
+
+    public function getEmployeesByPhone($phones, $companyId)
+    {
+        //
+        $records =
+            $this->db
+            ->select('sid, PhoneNumber')
+            ->where('parent_sid', $companyId)
+            ->where('is_executive_admin', 0)
+            ->where_in('PhoneNumber', $phones)
+            ->get('users')
+            ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            //
+            $tmp[$record['PhoneNumber']] = $record['sid'];
+        }
+        //
+        return $tmp;
+    }
 
     public function getCompanyPolicies($policies, $companyId)
     {

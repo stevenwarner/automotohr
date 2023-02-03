@@ -714,14 +714,50 @@ class Time_off extends Public_Controller
             $data['session']['company_detail']['sid']
         );
         //
+        // Check email
+        $emails = $this->timeoff_model->getEmployeesByEmail(
+            $post['email'],
+            $data['session']['company_detail']['sid']
+        );
+        //
+        // Check ssn
+        $ssn = $this->timeoff_model->getEmployeesBySSN(
+            $post['ssn'],
+            $data['session']['company_detail']['sid']
+        );
+        //
+        // Check Phone
+        $Phone = $this->timeoff_model->getEmployeesByPhone(
+            $post['phone'],
+            $data['session']['company_detail']['sid']
+        );
+        //
         $response = [
             'employees' => [],
-            'policies' => []
+            'policies' => [],
+            'emails' => [],
+            'ssn' => [],
+            'phones' => []
         ];
         //
         foreach ($post['employees'] as $employee) {
             //
             $response['employees'][$employee] = $employees[$employee] ?? 0;
+        }
+        //
+        foreach ($post['email'] as $email) {
+            //
+            $response['emails'][$email] = $emails[$email] ?? 0;
+        }
+        //
+        foreach ($post['ssn'] as $ss_no) {
+            //
+            $response['ssn'][$ss_no] = $ssn[$ss_no] ?? 0;
+        }
+        //
+        foreach ($post['phone'] as $phoneNumber) {
+            //
+            $response['phones'][$phoneNumber] = $Phone[$phoneNumber] ?? 0;
         }
         // Check policies
         $policies = $this->timeoff_model->getCompanyPolicies(
