@@ -5503,12 +5503,18 @@ class Timeoff_model extends CI_Model
     public function getCompanyPolicies($policies, $companyId)
     {
         //
+        $tmp = [];
+        //
+        foreach ($policies as $policy) {
+            $tmp[preg_replace('/[^a-zA-Z]/', '', strtolower(trim($policy)))] = 1;
+        }
+        $policies = $tmp;
+        //
         $records =
             $this->db
             ->select('sid, title')
             ->from('timeoff_policies')
             ->where('timeoff_policies.company_sid', $companyId)
-            ->where_in('LOWER(REPLACE(title, "", ""))', $policies)
             ->get()
             ->result_array();
         //
@@ -5520,7 +5526,11 @@ class Timeoff_model extends CI_Model
         //
         foreach ($records as $record) {
             //
+            //
             $slug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($record['title'])));
+            if (!isset($policies[$slug])) {
+                continue;
+            }
             //
             $tmp[$slug] = $record['sid'];
         }
