@@ -151,6 +151,12 @@ if ($user_type == 'applicant') {
                                     <?php if ($user_type == 'applicant') { ?>
                                         <li><a href="#send_email_to_applicant">Send On-Boarding E-Mail</a></li>
                                     <?php } ?>
+
+                                    <?php if ($user_type == 'applicant') { ?>
+                                        <li><a href="#department_teams">Department/Team</a></li>
+                                    <?php } ?>
+
+
                                 </ul>
                                 <div>
 
@@ -406,6 +412,7 @@ if ($user_type == 'applicant') {
                                                     <div class="form-group">
                                                         <label>On-boarding Instructions</label>
                                                         <textarea id="onboarding_instructions" name="onboarding_instructions" class="ckeditor"><?php echo html_entity_decode($onboarding_instructions); ?></textarea>
+                                                                                                        
                                                     </div>
                                                 </div>
                                             </div>
@@ -420,6 +427,40 @@ if ($user_type == 'applicant') {
                                                 </div>
                                             </div>
                                     </div>
+
+
+                                    <div id="department_teams" style="display: none;">
+                                           <div class="row">
+                                               <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+                                               <div class="universal-form-style-v2" style=" margin-left: 30px; margin-bottom: 20px;">
+                                                       <ul>
+                                                          <li class="form-col-80-left autoheight edit_filter">
+                                                   <?php $department = get_company_departments_teams($company_sid);  ?>
+                                                   <label>Department/Team:</label>
+                                                   <select name="department" id="department" class="invoice-fields">
+                                                       <option value="">Please Select Team</option>
+
+                                                       <?php foreach ($department as $departmenRow) { ?>
+                                                           <?php if (!empty($departmenRow['Departments']['DepartmentName'])) { ?>
+                                                               <optgroup label="<?php echo $departmenRow['Departments']['DepartmentName'] ?>" style="background-color: #81b431; color:#FFFFFF">
+                                                               <?php } ?>
+                                                               <?php if (!empty($departmenRow['DepartmentTeams'])) {
+                                                                   foreach ($departmenRow['DepartmentTeams'] as $teamsRow) {
+                                                               ?>
+                                                                       <option value="<?php echo $teamsRow['department_sid'] ?>#<?php echo $teamsRow['sid'] ?>" <?php if($departmentSid.'#'.$teamSid == $teamsRow['department_sid'].'#'.$teamsRow['sid']){ echo "selected";}?>><?php echo $teamsRow['name'] ?></option>
+                                                               <?php }
+                                                               } ?>
+                                                               </optgroup>
+
+                                                           <?php } ?>
+                                                        </select>
+                                                       </li>
+                                                     </ul>
+                                                    </div>                                              
+                                           </div>
+                                           </div>
+                                    </div>
+
 
                                     <div id="office_locations" class="office-locations">
                                         <div class="row">
@@ -1812,6 +1853,8 @@ if ($user_type == 'applicant') {
                                                 </div>
                                             </div>
                                         </div>
+
+                                      
                                     <?php } ?>
                                     <!-- <div id="summary" class="step-summary">
                                             <div class="row">
@@ -2370,7 +2413,7 @@ if ($user_type == 'applicant') {
 
         <?php if ($user_type == 'applicant') { ?>
 
-            $('.js-finish-btn').click(function() {
+            $('.js-finish-btn').click(function() { 
                 var user_exists = '<?php echo $user_exists ? 'true' : 'false'; ?>';
                 if (user_exists == 'true') {
                     alertify.error('User with same email already exists in your company!');

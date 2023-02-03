@@ -4545,12 +4545,10 @@ class Onboarding extends CI_Controller
 
                      break;
                 case 'applicant':
-
                     $ats_params = $this->session->userdata('ats_params');
                     $data = applicant_right_nav($user_sid, $job_list_sid, $ats_params);
                     $data['job_list_sid'] = $job_list_sid;
                     $user_info = $this->hr_documents_management_model->get_applicant_information($company_sid, $user_sid);
-
                     if (empty($user_info)) {
                         $this->session->set_flashdata('message', '<strong>Error: </strong> Applicant not found!');
                         redirect('application_tracking_system/active/all/all/all/all', 'refresh');
@@ -4575,7 +4573,6 @@ class Onboarding extends CI_Controller
                     $sessions = $this->learning_center_model->get_all_training_sessions_new($company_sid); // Training Session
                     $data['sessions'] = $sessions;
                     $sessions = $this->learning_center_model->get_assigned_online_videos('applicant', $user_sid); // Assigned Video Session
-
                     // disclosure
                     $onboarding_disclosure_data = $this->onboarding_model->get_company_disclosure($company_sid, 0, $user_sid);
 
@@ -4858,6 +4855,11 @@ class Onboarding extends CI_Controller
                 $people = empty($people_data) ? array() : unserialize($people_data['items']);
                 $items = $this->convert_array_to_1d($items_data);
                 $credentials = empty($credentials_data) ? array() : unserialize($credentials_data['items']);
+               
+                //
+                $data['departmentSid'] = $onboarding_applicant_info['department_sid'];
+                $data['teamSid'] = $onboarding_applicant_info['team_sid'];
+
 
                 if (!isset($credentials['instructions'])) {
                     $credentials['instructions'] = '<p>Please create your login credentials to access your employee panel</p><p><strong>Suggestion for User Name:</strong><br />You can use your first name and last name all one word all lower case. Example: johnsmith<br />if the username is already taken than you can add any number with it Example: johnsmith123</p><p><strong>Suggestion for Password:</strong><br />Please create secure password with Alpha Numeric and special combination and do not share your password with anyone.</p>';
@@ -5395,6 +5397,7 @@ class Onboarding extends CI_Controller
                 }
 
                 if ($user_type == 'applicant') {
+
                     $employee_status = $this->input->post('employee-status');
                     $employee_type = $this->input->post('employee-type');
                     $onboarding_data = array();
@@ -5406,6 +5409,20 @@ class Onboarding extends CI_Controller
                     $onboarding_data['onboarding_status'] = 'in_process';
                     $onboarding_data['job_list_sid'] = $job_list_sid;
                     $onboarding_data['job_sid'] = isset($job_list_info['job_sid']) ? $job_list_info['job_sid'] : 0;
+                  
+                    //
+                    $departments = $this->input->post('department');
+                    if (!empty($departments)) {
+                     $departmentsinfo = explode('#', $departments);
+                     $departmenId = $departmentsinfo[0];
+                     $teamsId = $departmentsinfo[1];
+                    }
+                    //
+                    if ($departmenId != '' && $teamsId != '') {
+                        $onboarding_data['department_sid'] = $departmenId;
+                        $onboarding_data['team_sid'] = $teamsId;
+                      }
+                  
                     $this->onboarding_model->mark_applicant_for_onboarding($user_sid);
                     $this->onboarding_model->update_applicant_status_type($user_sid, array('employee_status' => $employee_status, 'employee_type' => $employee_type));
                     $this->onboarding_model->save_onboarding_applicant($company_sid, $user_sid, $onboarding_data);
