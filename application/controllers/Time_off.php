@@ -671,9 +671,9 @@ class Time_off extends Public_Controller
         // Check for login session
         $this->check_login($data);
         // Only plus are allowed
-        if ($data['is_super_admin'] == 0 && $data['session']['employer_detail']['pay_plan_flag'] == 0) {
-            return redirect('dashboard', 'refresh');
-        }
+        // if ($data['is_super_admin'] == 0 && $data['session']['employer_detail']['pay_plan_flag'] == 0) {
+        //     return redirect('dashboard', 'refresh');
+        // }
         // Set the page title
         $data['page'] = 'Import Historical Time Off';
         // Set the page title
