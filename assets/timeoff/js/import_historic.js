@@ -358,7 +358,9 @@ $(function importHistoricalTimeOffs() {
             //
             let me = '';
             let missingEmployees = [];
-            tableHeader.push("Varification Status");
+            if (tableHeader.includes("Varification Status")) {
+                tableHeader.push("Varification Status");
+            }
             //
             tableData.map(function (record,i) {
                 let fullName = record.data.employee_first_name + ' ' + record.data.employee_last_name;
