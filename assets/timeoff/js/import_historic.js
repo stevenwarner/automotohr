@@ -272,9 +272,21 @@ $(function importHistoricalTimeOffs() {
             let policy = record.data.policy;
             let policySlug = policy.toLowerCase().trim().replace(/[^a-z]/ig, '');
             //
-            let email = record.data.email;
-            let ssn = record.data.ssn.replace(/\r/g, '');
-            let phone = record.data.phone.replace(/\r/g, '');
+            let email = '';
+            let ssn = '';
+            let phone = '';
+            //
+            if (tableHeader.includes("Email")) {
+                email = record.data.email;
+            }
+            //
+            if (tableHeader.includes("SSN")) {
+                ssn = record.data.ssn.replace(/\r/g, '');
+            }
+            //
+            if (tableHeader.includes("Phone")) {
+                phone = record.data.phone.replace(/\r/g, '');
+            }
             //timeoff_policy
             employeeNameArray[fullNameSlug] = fullName;
             employeeNameArray[approverFullNameSlug] = approverFullName;
@@ -358,9 +370,20 @@ $(function importHistoricalTimeOffs() {
                 let policy = record.data.policy;
                 let policySlug = policy.toLowerCase().trim().replace(/[^a-z]/ig, '');
                 //
-                let email = record.data.email;
-                let ssn = record.data.ssn.replace(/\r/g, '');
-                let phone = record.data.phone.replace(/\r/g, '');
+                let email = '';
+                let ssn = '';
+                let phone = '';
+                if (tableHeader.includes("Email")) {
+                    email = record.data.email;
+                }
+                //
+                if (tableHeader.includes("SSN")) {
+                    ssn = record.data.ssn.replace(/\r/g, '');
+                }
+                //
+                if (tableHeader.includes("Phone")) {
+                    phone = record.data.phone.replace(/\r/g, '');
+                }
                 //
                 console.log(fullName)
                 // console.log(fullNameSlug)
@@ -390,6 +413,10 @@ $(function importHistoricalTimeOffs() {
                 ) {
                     vFlag = 0;
                     eFlag = 1;
+                    //
+                    if (resp.employees[approverFullNameSlug] === 'undefined' || resp.employees[approverFullNameSlug] === 0) { 
+                        aFlag = 1;    
+                    }
                     //
                     missingEmployees.push(fileDataVerificationObj.employees[fullNameSlug]); 
                 } else if (resp.employees[approverFullNameSlug] === 'undefined' || resp.employees[approverFullNameSlug] === 0) { 
