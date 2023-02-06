@@ -27,6 +27,10 @@ class Testing extends CI_Controller
         }
         
     }
+
+    public function fix_merge () {
+        $this->tm->get_merge_employee();
+    }
    
 
 
