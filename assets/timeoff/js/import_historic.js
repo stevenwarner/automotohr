@@ -387,20 +387,6 @@ $(function importHistoricalTimeOffs() {
                     phone = record.data.phone.replace(/\r/g, '');
                 }
                 //
-                console.log(fullName)
-                // console.log(fullNameSlug)
-                // console.log(approverFullName)
-                // console.log(approverFullNameSlug)
-                // console.log(policy)
-                // console.log(policySlug)
-                // console.log(email)
-                // console.log(ssn)
-                // console.log(phone)
-                console.log(resp.ssn[ssn])
-                console.log(resp.emails[email])
-                console.log(resp.phones[phone])
-                console.log(resp.employees[fullNameSlug])
-
                 let vFlag = 1;
                 let eFlag = 0;
                 let aFlag = 0;
@@ -410,8 +396,6 @@ $(function importHistoricalTimeOffs() {
                     (typeof resp.emails[email] === 'undefined' || resp.emails[email] === 0) &&
                     (typeof resp.phones[phone] === 'undefined' || resp.phones[phone] === 0) &&
                     (typeof resp.employees[fullNameSlug] === 'undefined' || resp.employees[fullNameSlug] === 0) 
-                    // (typeof resp.employees[fullNameSlug] === 'undefined' || resp.employees[fullNameSlug] === 0) 
-
                 ) {
                     vFlag = 0;
                     eFlag = 1;
@@ -470,11 +454,7 @@ $(function importHistoricalTimeOffs() {
                     
                     me += '</tr>';
                 }
-            })
-            console.log(me)
-            //
-            
-            // let me = '';
+            });
             //
             // for (let index in resp.employees) {
             //     if (resp.employees[index] === 0) {
