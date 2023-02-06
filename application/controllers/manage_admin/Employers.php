@@ -707,6 +707,7 @@ class employers extends Admin_Controller
 
     public function change_status()
     {
+
         $action = $this->input->post('action');
         $employer_id = $this->input->post('sid');
 
@@ -720,15 +721,15 @@ class employers extends Admin_Controller
         if ($action == 'deactive') {
             $data_to_insert['employee_status'] = 6;
             $this->company_model->terminate_user($employer_id, $data_to_insert);
-
             $data = array('active' => 0, 'general_status' => 'inactive');
             $this->company_model->update_user_status($employer_id, $data);
+       
         } elseif ($action == 'active') {
             $data_to_insert['employee_status'] = 5;
             $this->company_model->terminate_user($employer_id, $data_to_insert);
-
             $data = array('active' => 1, 'general_status' => 'active');
             $this->company_model->update_user_status($employer_id, $data);
+
         }
     }
 

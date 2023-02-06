@@ -82,6 +82,19 @@ class Hire_onboarding_applicant_model extends CI_Model
     {
         $this->db->insert('users', $employer_data);
         $user_id = $this->db->insert_id(); // check if insert was successful
+
+        //
+        if($employer_data['department_sid']!=0 && $employer_data['team_sid']!=0 ){
+            $team_information['department_sid'] = $employer_data['department_sid'];
+            $team_information['team_sid'] = $employer_data['team_sid'];
+            $team_information['employee_sid'] = $user_id;
+            $team_information['created_at'] = date('Y-m-d H:i:s');
+            $this->db->insert('departments_employee_2_team', $team_information);
+        }
+        
+       
+
+
         if ($this->db->affected_rows() == '1') { // now update applications table
             $this->db->where('sid', $sid);
             $data_applicant = array(
@@ -1474,6 +1487,16 @@ class Hire_onboarding_applicant_model extends CI_Model
         //        if($update_flag){
         $this->db->where('sid', $employee_sid);
         $this->db->update('users', $employer_data);
+
+      //
+        if($employer_data['department_sid']!=0 && $employer_data['team_sid']!=0 ){
+            $team_information['department_sid'] = $employer_data['department_sid'];
+            $team_information['team_sid'] = $employer_data['team_sid'];
+            $team_information['employee_sid'] = $employee_sid;
+            $team_information['created_at'] = date('Y-m-d H:i:s');
+            $this->db->insert('departments_employee_2_team', $team_information);
+        }
+
         //        }
     }
 
@@ -1587,4 +1610,20 @@ class Hire_onboarding_applicant_model extends CI_Model
             return 0;
         }
     }
+
+
+
+//
+    function get_applicant_department_team($company_sid, $applicant_sid)
+    {
+        $this->db->select('department_sid,team_sid');
+        $this->db->where('company_sid', $company_sid);
+        $this->db->where('applicant_sid', $applicant_sid);
+        $result = $this->db->get('onboarding_applicants')->row_array();
+        return $result;
+      
+    }
+
+
+
 }
