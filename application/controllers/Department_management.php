@@ -136,7 +136,7 @@ class Department_management extends Public_Controller {
                             foreach ($approvers as $approver) {
                                 $this->department_management_model->check_employee_already_exist($company_sid, $new_department_sid, $approver, $employer_sid, 1);
                             } 
-                            $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers, 1);
+                            $this->department_management_model->archive_all_removed_approvers($company_sid, $new_department_sid, $approvers, 1);
                         }    
 
                         // Check and add to complynet
@@ -277,7 +277,7 @@ class Department_management extends Public_Controller {
                 $this->load->view('main/header', $data);
                 $this->load->view('department_management/add_edit_department_team');
                 $this->load->view('main/footer');
-            } else {
+            } else { 
                 $perform_action = $this->input->post('perform_action');
                 //
                 $isTA = checkIfAppIsEnabled('timeoff');
@@ -314,13 +314,13 @@ class Department_management extends Public_Controller {
                         $data_to_insert['company_sid'] = $company_sid;
                         $data_to_insert['department_sid'] = $department_sid;
                         $data_to_insert['created_by_sid'] = $employer_sid;
-                        $this->department_management_model->insert_team($data_to_insert);
+                        $teamId = $this->department_management_model->insert_team($data_to_insert);
                         if ($isTA) {
                             foreach ($approvers as $approver) {
-                                $this->department_management_model->check_employee_already_exist($company_sid, $department_sid, $approver, $employer_sid, 0);
+                                $this->department_management_model->check_employee_already_exist($company_sid, $teamId, $approver, $employer_sid, 0);
                             }
                             
-                            $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers, 0);
+                            $this->department_management_model->archive_all_removed_approvers($company_sid, $teamId, $approvers, 0);
                         }    
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Team Created Successfully!');
                         redirect('department_management/manage_department/'.$department_sid, 'refresh');
@@ -356,10 +356,10 @@ class Department_management extends Public_Controller {
                         $this->department_management_model->update_team($team_sid, $data_to_update);
                         if ($isTA) {
                             foreach ($approvers as $approver) {
-                                $this->department_management_model->check_employee_already_exist($company_sid, $department_sid, $approver, $employer_sid, 0);
+                                $this->department_management_model->check_employee_already_exist($company_sid, $team_sid, $approver, $employer_sid, 0);
                             }
                             
-                            $this->department_management_model->archive_all_removed_approvers($company_sid, $department_sid, $approvers, 0);
+                            $this->department_management_model->archive_all_removed_approvers($company_sid, $team_sid, $approvers, 0);
                         }    
                         $this->session->set_flashdata('message', '<strong>Success:</strong> Team Updated Successfully!');
                         redirect('department_management/manage_department/'.$department_sid, 'refresh');

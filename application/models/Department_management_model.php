@@ -117,6 +117,7 @@ class Department_management_model extends CI_Model {
 
     function insert_team($data_to_insert) {
         $this->db->insert('departments_team_management', $data_to_insert);
+        return $this->db->insert_id();
     }
 
     function update_team($team_sid, $data_to_update) {
@@ -232,13 +233,14 @@ class Department_management_model extends CI_Model {
 
     function check_employee_already_exist ($company_sid, $department_sid, $approver, $employer_sid, $is_department = 1) {
         //
-        if(empty($department_sid) || $department_sid == null) { return []; }
+     
+if(empty($department_sid) || $department_sid == null) { return []; }
         $this->db->where('company_sid', $company_sid);
         $this->db->where('employee_sid', $approver);
         $this->db->where('is_department', $is_department);
-        $this->db->where("FIND_IN_SET({$department_sid}, department_sid) > 0", NULL, NULL);
-        
-        if (!$this->db->count_all_results('timeoff_approvers')) {
+        $record_obj = $this->db->get('timeoff_approvers');
+        $record_arr = $record_obj->row_array();
+        if(empty($record_arr)){
             $data_to_insert = array();
             $data_to_insert['company_sid'] = $company_sid;
             $data_to_insert['employee_sid'] = $approver;
@@ -251,7 +253,23 @@ class Department_management_model extends CI_Model {
             $data_to_insert['sort_order'] = 1;
 
             $this->db->insert('timeoff_approvers', $data_to_insert);
+
+        }else{
+
+        $departmentSids = array();
+        $departmentSids = explode(',',$record_arr['department_sid']);
+        if(!in_array($department_sid,$departmentSids)){
+
+            array_push($departmentSids,$department_sid);
+            $departmentSids = implode(',',$departmentSids);
+            $data_to_update['department_sid'] = $departmentSids;
+            $this->db->where('company_sid',$company_sid);
+            $this->db->where('employee_sid',$approver);
+            $this->db->update('timeoff_approvers', $data_to_update);
         }
+
+      }
+
     }
     
     

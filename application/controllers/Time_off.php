@@ -377,6 +377,7 @@ class Time_off extends Public_Controller
         $data['timeOffDays'] = $this->timeoff_model->getTimeOffDays($data['session']['company_detail']['sid']);
         $data['holidayDates'] = $this->timeoff_model->getDistinctHolidayDates(array('companySid' => $data['session']['company_detail']['sid']));
         $data['theme'] = $this->theme;
+
         //
         $this->load->view('main/header', $data);
 

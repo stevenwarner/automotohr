@@ -1197,6 +1197,7 @@ class Timeoff_model extends CI_Model
         // Set start
         $start = $page == 1 ? 0 : (($page * $limit) - $limit);
         //
+
         $this->db
             ->select('
                 timeoff_approvers.sid as approver_id,
