@@ -72,7 +72,7 @@ class Copy_employees_model extends CI_Model {
         $this->db->select('sid, email, first_name, last_name, active, job_title, access_level, access_level_plus, pay_plan_flag, terminated_status');
         $this->db->where('parent_sid', $sid);
         $this->db->where('is_executive_admin', 0);
-        $this->db->order_by('first_name', 'ASC');
+        // $this->db->order_by('first_name', 'ASC');
 
         if ($type == 2) {
             $this->db->where('active', 1);
