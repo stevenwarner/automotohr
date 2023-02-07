@@ -184,6 +184,14 @@
                                                                             }
                                                                             ?>
                                                                             <br>
+                                                                            <?php 
+                                                                                if (isset($value["trensfer_date"]) && !empty($value["trensfer_date"])) {
+                                                                                    echo "<b>Transfer Date: </b>".$value['trensfer_date'];
+                                                                                } else {
+                                                                                    echo "<b>Transfer Date: </b>N/A";
+                                                                                }
+                                                                            ?>
+                                                                            <br>
                                                                             <?php if (!empty($value['departments'])) { ?> <b>Departments:<br> </b> <?php echo implode(", ", array_unique($value['departments']));
                                                                                                                                             } ?>
                                                                             <?php if (!empty($value['departments'])) { ?><br><b>Teams:</b><br> <?php echo implode(", ", $value['teams']);

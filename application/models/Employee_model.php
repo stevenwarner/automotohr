@@ -34,8 +34,22 @@
         return $all_employees;
     }
 
-    function get_inactive_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = [])
-    {
+    public function getAllTransferEmployeeSids($company_sid) {
+        $this->db->select('new_employee_sid');
+        $this->db->where('to_company_sid', $company_sid);
+        $record_obj = $this->db->get('employees_transfer_log');
+        //
+        if (!empty($record_obj)) {
+            $transferRecords = $record_obj->result_array();
+            $record_obj->free_result();
+            return array_column($transferRecords, 'new_employee_sid');
+        } else {
+            return array();
+        }
+    }
+
+    function get_inactive_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = []) {
+
         $keyword = trim(str_replace("'", '', $keyword));
         $this->db->select('*');
         $this->db->where('parent_sid', $parent_sid);
