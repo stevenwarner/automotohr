@@ -276,7 +276,6 @@ class Employee_management extends Public_Controller
 
             $data['portal_email_templates'] = $portal_email_templates;
 
-
             $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
             $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
             $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
@@ -318,6 +317,8 @@ class Employee_management extends Public_Controller
             if ($data['session']['employer_detail']['access_level_plus'] != 1 && $data['session']['employer_detail']['pay_plan_flag'] != 1) {
                 $data['teamMemberIds'] = $this->timeoff_model->getEmployeeTeamMemberIds($data['session']['employer_detail']['sid']);
             }
+            //
+            $data["transferIds"] = $this->employee_model->getAllTransferEmployeeSids($company_id);
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/employee_management');

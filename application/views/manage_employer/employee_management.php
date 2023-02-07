@@ -227,6 +227,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             <?php if ($all === true || $terminated === true) { ?>
                                                 <th class="text-center">Termination Date</th>
                                             <?php } ?>
+                                            <th class="text-center">Transfer Date</th>
                                             <th colspan="3" class="text-center">Actions</th>
                                         </tr>
                                     </thead>
@@ -419,6 +420,15 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                             ?>
                                                         </td>
                                                     <?php } ?>
+                                                    <td>
+                                                        <?php 
+                                                            if (in_array($employee['sid'], $transferIds)) {
+                                                                echo get_employee_transfer_date($employee['sid']);
+                                                            } else {
+                                                                echo "N/A";
+                                                            }
+                                                        ?>
+                                                    </td>
                                                     <?php if ($employer_id != $employee['sid']) { ?>
                                                         <?php if (
                                                             check_access_permissions_for_view($security_details, 'employee_send_documents') ||

@@ -334,6 +334,12 @@ class Company_model extends CI_Model
         if (empty($employees)) {
             return false;
         }
+        $transferRecords = $this->db
+            ->select('new_employee_sid')
+            ->get('employees_transfer_log')
+            ->result_array();
+        //
+        $transferIds = array_column($transferRecords, 'new_employee_sid');
         //
         $employeeIds = array_column($employees, 'sid');
         //
@@ -377,6 +383,11 @@ class Company_model extends CI_Model
         }
         //
         foreach ($employees as $index => $employee) {
+            //
+            if (in_array($employee['sid'], $transferIds)) {
+                $transferDate = get_employee_transfer_date($employee['sid']);
+                $employees[$index]['trensfer_date'] = $transferDate;
+            }
             //
             $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
             $employees[$index]['last_status_2'] = isset($last_statuses[$employee['sid']]) ? $last_statuses[$employee['sid']] : [];

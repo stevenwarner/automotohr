@@ -16096,3 +16096,22 @@ if (!function_exists('get_eeoc_options_status')) {
         return $CI->db->get('portal_employer')->row_array();
     }
 }
+
+//
+if (!function_exists('get_employee_transfer_date')) {
+    function get_employee_transfer_date($employee_sid)
+    {
+        //
+
+        $CI = &get_instance();
+        $CI->db->select('employee_copy_date');
+        $CI->db->where('new_employee_sid', $employee_sid);
+        $record_obj = $CI->db->get('employees_transfer_log');
+        //
+        if (!empty($record_obj)) {
+            $data = $record_obj->row_array();
+            $record_obj->free_result();
+            return formatDateToDB($data['employee_copy_date'], DB_DATE_WITH_TIME, DATE);
+        }
+    }
+}
