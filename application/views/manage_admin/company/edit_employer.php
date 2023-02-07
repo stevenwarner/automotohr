@@ -25,7 +25,8 @@
                                         //
                                         $doNotHireWarning = doNotHireWarning($data['sid'], $doNotHireRecords, 14);
                                         //
-                                        echo $doNotHireWarning['message']; ?> <div class="edit-template-from-main">
+                                        echo $doNotHireWarning['message']; ?>
+                                        <div class="edit-template-from-main">
                                             <?php echo form_open_multipart('', array('class' => 'form-horizontal', 'id' => 'js-update-employee-form')); ?>
                                             <ul>
                                                 <li>
@@ -404,6 +405,16 @@
                                                     </div>
                                                 </li>
                                                 <li>
+
+                                                    <label>Team:</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <?= get_company_departments_teams($data['parent_sid'], 'teamId', $data['team_sid']); ?>
+                                                    </div>
+                                                    <script>
+                                                        $('.jsSelect2').select2();
+                                                    </script>
+                                                </li>
+                                                <li>
                                                     <?php echo form_label('', ''); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="col-md-6 col-lg-6 col-xl-6" style="padding-left:0px">
@@ -415,6 +426,7 @@
                                                         </div>
                                                     </div>
                                                 </li>
+
                                                 <li>
                                                     <?php echo form_label('', ''); ?>
                                                     <div class="hr-fields-wrap">
