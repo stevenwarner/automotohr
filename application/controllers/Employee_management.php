@@ -405,17 +405,12 @@ class Employee_management extends Public_Controller
                 $timezone = $this->input->post('timezone');
 
                 //
-                $departments = $this->input->post('department');
+                $teamId = $this->input->post('teamId');
                 $departmenId = '';
-                $teamsId = '';
-
-                if (!empty($departments)) {
-
-                    $departmentsinfo = explode('#', $departments);
-                    $departmenId = $departmentsinfo[0];
-                    $teamsId = $departmentsinfo[1];
-                }
                 //
+                if ($teamId && $teamId != 0) {
+                    $departmenId = getDepartmentColumnByTeamId($teamId, 'department_sid');
+                }
 
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
@@ -447,9 +442,9 @@ class Employee_management extends Public_Controller
                 $user_information['employee_type'] = $employment_type;
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
-                if ($departmenId != '' && $teamsId != '') {
+                if ($departmenId != '' && $teamId != '') {
                     $user_information['department_sid'] = $departmenId;
-                    $user_information['team_sid'] = $teamsId;
+                    $user_information['team_sid'] = $teamId;
                 }
 
                 if (!empty($pictures) && $pictures != 'error') {
@@ -461,12 +456,12 @@ class Employee_management extends Public_Controller
                     $employee_sid = $this->employee_model->add_employee($user_information);
 
                     //
-                    if ($departmenId != '' && $teamsId != '') {
+                    if ($departmenId != '' && $teamId != '') {
                         $team_information['department_sid'] = $departmenId;
-                        $team_information['team_sid'] = $teamsId;
+                        $team_information['team_sid'] = $teamId;
                         $team_information['employee_sid'] = $employee_sid;
                         $team_information['created_at'] = date('Y-m-d H:i:s');
-                        $employee_sid = $this->employee_model->add_employee_to_team($team_information);
+                        $this->employee_model->add_employee_to_team($team_information);
                      }
 
 
@@ -482,6 +477,15 @@ class Employee_management extends Public_Controller
                 } else {
                     $link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('employee_registration') . '/' . $verification_key . '">' . 'Update Login Credentials' . '</a>';
                     $employee_sid = $this->employee_model->add_employee($user_information);
+
+                    //
+                    if ($departmenId != '' && $teamId != '') {
+                        $team_information['department_sid'] = $departmenId;
+                        $team_information['team_sid'] = $teamId;
+                        $team_information['employee_sid'] = $employee_sid;
+                        $team_information['created_at'] = date('Y-m-d H:i:s');
+                        $this->employee_model->add_employee_to_team($team_information);
+                     }
 
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;

@@ -436,6 +436,10 @@ class employers extends Admin_Controller
 
             $this->company_model->update_user($sid, $data, 'Employer');
 
+            //
+            $teamId = $this->input->post('teamId');
+            handleEmployeeDepartmentAndTeam($sid, $teamId);
+
             if ($action == 'Save') {
                 redirect('manage_admin/employers/', 'refresh');
             } else {
@@ -491,15 +495,7 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone');
                 $salt = generateRandomString(48);
 
-                //
-                $departments = $this->input->post('department');
-                $departmenId = '';
-                $teamsId = '';
-                if (!empty($departments)) {
-                    $departmentsinfo = explode('#', $departments);
-                    $departmenId = $departmentsinfo[0];
-                    $teamsId = $departmentsinfo[1];
-                }
+
 
 
                 if ($registration_date != NULL) {
@@ -530,23 +526,12 @@ class employers extends Admin_Controller
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
 
-
-                if ($departmenId != '' && $teamsId != '') {
-                    $insert_data['department_sid'] = $departmenId;
-                    $insert_data['team_sid'] = $teamsId;
-                }
-
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');
-
                 //
-                if ($departmenId != '' && $teamsId != '') {
-                    $team_information['department_sid'] = $departmenId;
-                    $team_information['team_sid'] = $teamsId;
-                    $team_information['employee_sid'] = $sid;
-                    $team_information['created_at'] = date('Y-m-d H:i:s');
-                    $this->company_model->add_new_employer_to_team($team_information);
-                }
+                //
+                $teamId = $this->input->post('teamId');
+                handleEmployeeDepartmentAndTeam($sid, $teamId);
 
                 if ($profile_picture != 'error') {
                     $pictures = array('profile_picture' => $profile_picture);
@@ -723,13 +708,11 @@ class employers extends Admin_Controller
             $this->company_model->terminate_user($employer_id, $data_to_insert);
             $data = array('active' => 0, 'general_status' => 'inactive');
             $this->company_model->update_user_status($employer_id, $data);
-       
         } elseif ($action == 'active') {
             $data_to_insert['employee_status'] = 5;
             $this->company_model->terminate_user($employer_id, $data_to_insert);
             $data = array('active' => 1, 'general_status' => 'active');
             $this->company_model->update_user_status($employer_id, $data);
-
         }
     }
 

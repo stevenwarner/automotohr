@@ -120,28 +120,13 @@
 
 
                                                 <li class="form-col-100 autoheight">
-                                                    <?php $department = get_company_departments_teams($company_id);  ?>
-                                                    <label>Department/Team:</label>
-                                                    <select name="department" id="department" class="invoice-fields">
-                                                        <option value="">Please Select Team</option>
-
-                                                        <?php foreach ($department as $departmenRow) { ?>
-                                                            <?php if (!empty($departmenRow['Departments']['DepartmentName'])) { ?>
-                                                                <optgroup label="<?php echo $departmenRow['Departments']['DepartmentName'] ?>" style="background-color: #81b431; color:#FFFFFF">
-                                                                <?php } ?>
-                                                                <?php if (!empty($departmenRow['DepartmentTeams'])) {
-                                                                    foreach ($departmenRow['DepartmentTeams'] as $teamsRow) {
-                                                                ?>
-                                                                        <option value="<?php echo $teamsRow['department_sid'] ?>#<?php echo $teamsRow['sid'] ?>"><?php echo $teamsRow['name'] ?></option>
-                                                                <?php }
-                                                                } ?>
-                                                                </optgroup>
-
-                                                            <?php } ?>
-                                                    </select>
+                                                    <label>Team:</label>
+                                                    <?= get_company_departments_teams(
+                                                        $company_id,
+                                                        'teamId'
+                                                    ); ?>
 
                                                 </li>
-
 
 
                                                 <li class="form-col-100 autoheight">
@@ -416,4 +401,6 @@
         changeYear: true,
         yearRange: "<?php echo DOB_LIMIT; ?>"
     }).val();
+
+    $('.jsSelect2').select2();
 </script>
