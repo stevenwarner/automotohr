@@ -161,11 +161,18 @@
         </div>
     </div>
 </nav>
+<br>
+<div class="row">
+    <div class="col-sm-12 text-center">
+        <img src="<?php echo 'https://automotohrattachments.s3.amazonaws.com/' . $session['company_detail']['Logo']; ?>" style="width: 75px; height: 75px;" class="img-rounded"><br>
+        <?php echo $session['company_detail']['CompanyName']; ?>
+    </div>
+</div>
 
 <!-- Whois is on off -->
 <?php if($this->agent->is_mobile()): ?>
-<br>
-<div class="container">
+    <br>
+    <div class="container">
     <div class="row">
         <div class="col-sm-12">
             <h3><strong>Who is off today?</strong></h3>
