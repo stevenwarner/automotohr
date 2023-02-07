@@ -104,7 +104,7 @@ $route['timeoff/get_employee_status/(:any)'] = 'Time_off/get_employee_status/$1'
 $route['timeoff/get_time_with_format/(:any)/(:any)/(:any)'] = 'Time_off/get_time_with_format/$1/$2/$3';
 $route['timeoff/handler/requests_status/(:any)/(:any)/(:any)'] = 'Time_off/requests_status/$1/$2/$3';
 // Green panel routes
-$route['timeoff/import'] = 'Time_off/import';
+$route['timeoff/import'] = 'Time_off/importHistoricTimeOff';
 $route['timeoff/action/(:any)'] = 'Time_off/action/$1';
 $route['timeoff/request-report'] = 'Time_off/request_report';
 $route['timeoff/create_employee/(:num)'] = 'Time_off/create_employee/$1';
