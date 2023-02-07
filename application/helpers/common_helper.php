@@ -16044,7 +16044,7 @@ if (!function_exists('getTimeZoneFromAbbr')) {
      * @param string $abbr
      * @return string
      */
-    function getTimeZoneFromAbbr (string $abbr)
+    function getTimeZoneFromAbbr(string $abbr)
     {
         //
         $abbr = strtoupper(trim($abbr));
@@ -16078,7 +16078,7 @@ if (!function_exists('getCompanyEmsStatusBySid')) {
         $CI->db->where('ems_status', 1);
         //
         $response = $CI->db->count_all_results('users');
-        if ($response <= 0 && $doRedirect){
+        if ($response <= 0 && $doRedirect) {
             return redirect('/dashboard');
         }
         return $response;
@@ -16113,5 +16113,144 @@ if (!function_exists('get_employee_transfer_date')) {
             $record_obj->free_result();
             return formatDateToDB($data['employee_copy_date'], DB_DATE_WITH_TIME, DATE);
         }
+    }
+}
+
+//
+if (!function_exists('get_company_departments_teams')) {
+    /**
+     * Get company department and teams
+     *
+     * @param int $companyId
+     * @param string $id Optional
+     * @param int $teamId Optional
+     * @return array|string
+     */
+    function get_company_departments_teams(int $companyId, string $id = '', int $teamId = 0)
+    {
+        //
+        $select = '<select name="' . ($id) . '" id="' . ($id) . '" class="jsSelect2" style="width: 100%;">';
+        $select .= '<option value="0">Please select a team</option>';
+        $select .= '{{options}}';
+        $select .= '</select>';
+        //
+        $CI = &get_instance();
+        $CI->db->select('name,sid');
+        $CI->db->where('company_sid', $companyId);
+        $CI->db->where('is_deleted', 0);
+        $departments = $CI->db->get('departments_management')->result_array();
+        //
+        if (!$departments) {
+            return $id ? $select : [];
+        }
+        //
+        $departmentIds = array_column($departments, 'sid');
+        //
+        $tmp = [];
+        //
+        foreach ($departments as $department) {
+            $tmp[$department['sid']] = [
+                'id' => $department['sid'],
+                'name' => $department['name'],
+                'teams' => []
+            ];
+        }
+        //
+        $departments = $tmp;
+        // Get teams by department ids
+        $CI->db->select('name,sid,department_sid');
+        $CI->db->where_in('department_sid', $departmentIds);
+        $CI->db->where('is_deleted', 0);
+        $CI->db->where('status', 1);
+        //
+        $teams = $CI->db->get('departments_team_management')->result_array();
+        //
+        if ($teams) {
+            //
+            foreach ($teams as $team) {
+                $departments[$team['department_sid']]['teams'][] = [
+                    'sid' => $team['sid'],
+                    'name' => $team['name']
+                ];
+            }
+        }
+        //
+        if (!empty($id)) {
+            //
+            $options = '';
+            //
+            foreach ($departments as $department) {
+                $options .= '<optgroup label="' . ($department['name']) . '">';
+                if ($department['teams']) {
+                    foreach ($department['teams'] as $team) {
+                        $options .= '<option value="' . ($team['sid']) . '" ' . ($teamId == $team['sid'] ? "selected" : "") . '>' . ($team['name']) . '</option>';
+                    }
+                }
+                $options .= '</optgroup>';
+            }
+            //
+            $select = str_replace('{{options}}', $options, $select);
+        }
+
+        //
+        return $id ? $select : $departments;
+    }
+}
+
+if (!function_exists('getDepartmentColumnByTeamId')) {
+    function getDepartmentColumnByTeamId(
+        int $teamId,
+        string $column
+    ) {
+        //
+        $CI = &get_instance();
+        //
+        return $CI->db->select($column)
+            ->where('sid', $teamId)
+            ->get('departments_team_management')
+            ->row_array()[$column];
+    }
+}
+
+if (!function_exists('handleEmployeeDepartmentAndTeam')) {
+    function handleEmployeeDepartmentAndTeam(
+        int $employeeId,
+        int $teamId
+    ) {
+        //
+        if (!$employeeId || !$teamId || $employeeId == 0 || $teamId == 0) {
+            return false;
+        }
+        // Get department id
+        $departmentId = getDepartmentColumnByTeamId($teamId, 'department_sid');
+        //
+        if (!$departmentId) {
+            return false;
+        }
+        //
+        $CI = &get_instance();
+        // Update users
+        $CI->db
+            ->where('sid', $employeeId)
+            ->update(
+                'users',
+                [
+                    'department_sid' => $departmentId,
+                    'team_sid' => $teamId
+                ]
+            );
+        // Make entry in teams table
+        $CI->db
+            ->insert(
+                'departments_employee_2_team',
+                [
+                    'department_sid' => $departmentId,
+                    'team_sid' => $teamId,
+                    'employee_sid' => $employeeId,
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+        //
+        return true;
     }
 }

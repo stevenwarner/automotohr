@@ -1952,8 +1952,8 @@ if (checkIfAppIsEnabled('timeoff')) {
                                 var id = allteams[i].sid;
                                 var name = allteams[i].name;
                                 // if (team_id == id) {
+                                    
                                 if (jQuery.inArray(id, team_sids) !== -1) {
-
                                     html += '<option value="' + id + '" selected="selected">' +
                                         name + '</option>';
                                 } else {

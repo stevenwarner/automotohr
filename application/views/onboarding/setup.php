@@ -145,12 +145,18 @@ if ($user_type == 'applicant') {
                                     <li><a href="#documents">Documents</a></li>
                                     <li><a href="#learning">Learning Center</a></li>
                                     <?php if ($user_type == 'applicant') { ?>
+                                        <li><a href="#department_teams">Department/Team</a></li>
+                                    <?php } ?>
+                                    <?php if ($user_type == 'applicant') { ?>
                                         <li><a href="#credentials_configuration">Credentials Configuration</a></li>
                                     <?php } ?>
                                     <!--<li><a href="#summary">Summary</a></li>-->
                                     <?php if ($user_type == 'applicant') { ?>
                                         <li><a href="#send_email_to_applicant">Send On-Boarding E-Mail</a></li>
                                     <?php } ?>
+
+
+
                                 </ul>
                                 <div>
 
@@ -406,6 +412,7 @@ if ($user_type == 'applicant') {
                                                     <div class="form-group">
                                                         <label>On-boarding Instructions</label>
                                                         <textarea id="onboarding_instructions" name="onboarding_instructions" class="ckeditor"><?php echo html_entity_decode($onboarding_instructions); ?></textarea>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -420,6 +427,22 @@ if ($user_type == 'applicant') {
                                                 </div>
                                             </div>
                                     </div>
+
+
+                                    <div id="department_teams" style="display: none;">
+                                        <div class="row">
+                                            <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+                                                <div class="universal-form-style-v2" style=" margin-left: 30px; margin-bottom: 20px;">
+                                                    <label>Select Team</label>
+                                                    <?= get_company_departments_teams($company_sid, 'teamId', $teamSid ?? 0); ?>
+                                                    <script>
+                                                        $('.jsSelect2').select2();
+                                                    </script>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
 
                                     <div id="office_locations" class="office-locations">
                                         <div class="row">
@@ -1824,6 +1847,8 @@ if ($user_type == 'applicant') {
                                                 </div>
                                             </div>
                                         </div>
+
+
                                     <?php } ?>
                                     <!-- <div id="summary" class="step-summary">
                                             <div class="row">
