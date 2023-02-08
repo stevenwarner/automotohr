@@ -578,6 +578,8 @@ class Dashboard extends Public_Controller
                 'month' => $this->em->getEmployeeInformationChange($company_id, 'month')
             ];
             //
+            $data["total_active_courses"] = 0;
+            //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
             $this->load->view('main/footer');
