@@ -620,7 +620,7 @@ class Complynet_model extends CI_Model
         //
         $record =
             $this->db
-            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username, department_sid, team_sid')
+            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username, department_sid, team_sid , complynet_job_title')
             ->where([
                 'parent_sid' => $companyId,
                 'sid' => $employeeId
@@ -730,7 +730,7 @@ class Complynet_model extends CI_Model
         //
         $complyJobRoleId = $this->getAndSetJobRoleId(
             $complyDepartmentId,
-            $employee['job_title']
+            $employee['complynet_job_title']
         );
         //
         if ($complyJobRoleId === 0) {
