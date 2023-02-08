@@ -778,19 +778,23 @@ class Time_off extends Public_Controller
             $policySlug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($timeoff['policy'])));
             //
             if (
-                isset($foundEmployees[$approverSlug])
-                && isset($foundEmployees[$employeeSlug])
+                isset($foundEmployees[$employeeSlug])
                 && isset($foundPolicies[$policySlug])
                 && $timeoff['leave_from']
                 && $timeoff['leave_to']
                 && $timeoff['status']
             ) {
-                // Convert dates
+                //
+                $approverId = !isset($foundEmployees[$approverSlug]) ? getCompanyAdminSid($companyId) : $foundEmployees[$approverSlug];
+                //
+                if(!$approverId) {
+                    continue;
+                }
+                //
                 $startDate = formatDateToDB($timeoff['leave_from'], SITE_DATE, DB_DATE);
                 $endDate = formatDateToDB($timeoff['leave_to'], SITE_DATE, DB_DATE);
                 $submittedDate = formatDateToDB($timeoff['submitted_date'], SITE_DATE, DB_DATE) . ' 00:00:00';
                 // Set ids
-                $approverId = $foundEmployees[$approverSlug];
                 $employeeId = $foundEmployees[$employeeSlug];
                 $policyId = $foundPolicies[$policySlug];
                 // Check if the policy already exists
