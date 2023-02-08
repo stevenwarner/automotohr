@@ -5479,7 +5479,7 @@ class Timeoff_model extends CI_Model
             ->select('sid, first_name, last_name')
             ->where('parent_sid', $companyId)
             ->where('is_executive_admin', 0)
-            ->where_in('LOWER(REPLACE(CONCAT(first_name,"",last_name), "", ""))', $names)
+            ->where_in('LOWER(REGEXP_REPLACE(CONCAT(first_name,"",last_name), "[^a-zA-Z]", ""))', $names)
             ->get('users')
             ->result_array();
         //
