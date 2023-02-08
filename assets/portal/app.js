@@ -438,11 +438,6 @@ $(function () {
         //
         let employeeId = $(this).data("id");
         let complyId = $(this).data("cid");
-        //
-        let complynetJobTitle = $(this).data("complynetjobtitle");
-        if(complynetJobTitle == 'null'|| complynetJobTitle == '' ){
-            return alertify.alert('ComplyNet Job Title Is Empty');
-        }
         
         //
         return alertify.confirm(

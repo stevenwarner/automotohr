@@ -191,7 +191,7 @@
                                     $errorArray[] = '<strong class="text-danger">Email address is missing</strong>';
                                 }
                                 //
-                                if (empty($emp['job_title'])) {
+                                if (empty($emp['complynet_job_title'])) {
                                     $errorArray[] = '<strong class="text-danger">Job title is missing</strong>';
                                 }
                                 //

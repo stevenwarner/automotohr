@@ -2869,7 +2869,10 @@ if (!function_exists('checkEmployeeMissingData')) {
         if (!$employee['PhoneNumber']) {
             $errors[] = 'Phone number is missing.';
         }
-        if (!$employee['job_title']) {
+        // if (!$employee['job_title']) {
+        //     $errors[] = 'Job title is missing.';
+        // }
+        if (!$employee['complynet_job_title']) {
             $errors[] = 'Job title is missing.';
         }
         if (!$employee['department_sid']) {

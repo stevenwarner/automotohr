@@ -279,14 +279,14 @@ class Complynet_model extends CI_Model
         //
         $records =
             $this->db
-            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username')
+            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username ,complynet_job_title')
             ->where([
                 'parent_sid' => $companyId,
                 'email != ' => ''
             ])
             ->group_start()
-            ->where('job_title != ', null)
-            ->where('job_title != ', '')
+            ->where('complynet_job_title != ', null)
+            ->where('complynet_job_title != ', '')
             ->group_end()
             ->get('users')
             ->result_array();
@@ -316,6 +316,7 @@ class Complynet_model extends CI_Model
             ->get()
             ->row_array();
         //
+      
         if ($record) {
             return $this->getComplyNetLinkedDepartmentById($record['sid']);
         }
@@ -582,6 +583,7 @@ class Complynet_model extends CI_Model
             department_sid,
             team_sid,
             job_title,
+            complynet_job_title,
             access_level,
             access_level_plus,
             pay_plan_flag
@@ -911,6 +913,7 @@ class Complynet_model extends CI_Model
                 users.email,
                 users.username,
                 users.job_title,
+                users.complynet_job_title,
                 users.PhoneNumber,
                 users.department_sid,
                 users.team_sid,
@@ -968,7 +971,7 @@ class Complynet_model extends CI_Model
             //
             $complyJobRoleId = $this->getAndSetJobRoleId(
                 $upd['departmentId'],
-                $employeeDetails['job_title']
+                $employeeDetails['complynet_job_title']
             );
             $upd['jobRoleId'] = $complyJobRoleId == 0 || empty($complyJobRoleId) ? $employeeDetails['complynet_job_role_sid'] : $complyJobRoleId;
 

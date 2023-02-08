@@ -416,7 +416,7 @@ class Complynet extends Admin_Controller
                 //
                 $complyJobRoleId = $this->complynet_model->getAndSetJobRoleId(
                     $complyDepartmentId,
-                    $employee['job_title']
+                    $employee['complynet_job_title']
                 );
                 //
                 if ($complyJobRoleId === 0) {
