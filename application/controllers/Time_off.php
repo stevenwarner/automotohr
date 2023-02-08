@@ -685,7 +685,7 @@ class Time_off extends Public_Controller
             'lodash/loadash.min',
             'alertifyjs/alertify.min',
             'mFileUploader/index',
-            '1.0.0' => 'timeoff/js/import_historic'
+            '1.0.1' => 'timeoff/js/import_historic'
         ];
         // Load the views
         $this->load->view('main/header', $data)

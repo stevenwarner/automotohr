@@ -251,15 +251,19 @@ $(function importHistoricalTimeOffs() {
             //
             let fullName = record.data.employee_first_name + ' ' + record.data.employee_last_name;
             let fullNameSlug = fullName.toLowerCase().trim().replace(/[^a-z]/ig, '');
-            //
-            let approverFullName = record.data.approver_full_name;
-            let approverFullNameSlug = approverFullName.toLowerCase().trim().replace(/[^a-z]/ig, '');
+
+            if (record.data.approver_full_name) {
+                //
+                let approverFullName = record.data.approver_full_name;
+                let approverFullNameSlug = approverFullName.toLowerCase().trim().replace(/[^a-z]/ig, '');
+
+                employeeNameArray[approverFullNameSlug] = approverFullName;
+            }
             //
             let policy = record.data.policy;
             let policySlug = policy.toLowerCase().trim().replace(/[^a-z]/ig, '');
             //timeoff_policy
             employeeNameArray[fullNameSlug] = fullName;
-            employeeNameArray[approverFullNameSlug] = approverFullName;
             policyNameArray[policySlug] = policy;
         });
         //
