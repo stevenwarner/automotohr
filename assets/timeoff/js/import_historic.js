@@ -232,6 +232,7 @@ $(function importHistoricalTimeOffs() {
             //
             records.push(record);
         });
+        console.log(tableData)
         //
         if (hasFalse === 1) {
             generateTableForMissingData();
