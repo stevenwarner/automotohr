@@ -408,7 +408,7 @@
 
                                                     <label>Team:</label>
                                                     <div class="hr-fields-wrap">
-                                                        <?= get_company_departments_teams($data['parent_sid'], 'teamId', $data['team_sid']); ?>
+                                                        <?= get_company_departments_teams($data['parent_sid'], 'teamId', $data['team_sid'] ?? 0); ?>
                                                     </div>
                                                     <script>
                                                         $('.jsSelect2').select2();
