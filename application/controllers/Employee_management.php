@@ -1124,7 +1124,7 @@ class Employee_management extends Public_Controller
                     $fullEmploymentForm = unserialize($data['employer']['full_employment_application']);
                     // Check for DOB
                     if (!empty($fullEmploymentForm['TextBoxDOB']) && empty($data['employer']['dob'])) {
-                        $data['employer']['dob'] = $updateArray['dob'] = DateTime::createfromformat(checkDateFormate($fullEmploymentForm['TextBoxDOB']) 'M d Y, D', $fullEmploymentForm['TextBoxDOB'])->format('Y-m-d');
+                        $data['employer']['dob'] = $updateArray['dob'] = DateTime::createfromformat(checkDateFormate($fullEmploymentForm['TextBoxDOB']) ? 'm-d-Y' : 'M d Y, D', $fullEmploymentForm['TextBoxDOB'])->format('Y-m-d');
                     }
                     // Check for SSN
                     if (!empty($fullEmploymentForm['TextBoxSSN']) && empty($data['employer']['ssn'])) {

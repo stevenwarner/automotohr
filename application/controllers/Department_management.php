@@ -498,6 +498,8 @@ class Department_management extends Public_Controller
             } else if ($type == 'team') {
                 $this->department_management_model->update_team($sid, $data_to_update);
             }
+            //
+            $this->handleApproverArchiveLogic($sid, $type);
         } else {
             redirect('login', 'refresh');
         }
@@ -726,6 +728,84 @@ class Department_management extends Public_Controller
             $this->db
                 ->where('sid', $record['sid'])
                 ->update('timeoff_approvers', $upd);
+        }
+        return true;
+    }
+
+    /**
+     * Handles approver archive logic
+     *
+     * @param int $actionId
+     * @param string $actionType
+     */
+    private function handleApproverArchiveLogic(
+        int $actionId,
+        string $actionType
+    ) {
+        //
+        $departmentIds = [];
+        //
+        if ($actionType == 'department') {
+            //
+            $departmentIds[] = ['id' => $actionId, 'type' => 1];
+            // Lets fetch all teams
+            $records =
+            $this->db->select('sid')
+            ->where('department_sid', $actionId)
+            ->get('departments_team_management')
+            ->result_array();
+            //
+            if ($records) {
+                foreach ($records as $record) {
+                    $departmentIds[] = ['id' => $record['sid'], 'type' => 0];
+                }
+            }
+        } else {
+            $departmentIds[] = ['id' => $actionId, 'type' => 0];
+        }
+
+        //
+        foreach ($departmentIds as $dep) {
+            // Remove other approvers
+            $records =
+                $this->db
+                ->select('sid, department_sid')
+                ->where([
+                    'status' => 1,
+                    'is_archived' => 0,
+                    'is_department' => $dep['type']
+                ])
+                ->where('FIND_IN_SET(' . ($dep['id']) . ', department_sid)', NULL, NULL)
+                ->get('timeoff_approvers')
+                ->result_array();
+            //
+            if (!$records) {
+                continue;
+            }
+            //
+            foreach ($records as $record) {
+                //
+                $upd = [];
+                //
+                if (strpos($record['department_sid'], ',') !== false) {
+                    $departmentIds = explode(',', $record['department_sid']);
+                    $departmentIds = array_flip($departmentIds);
+                    unset($departmentIds[$actionId]);
+                    $departmentIds = array_flip($departmentIds);
+                    //
+                    $upd['department_sid'] = implode(',', $departmentIds);
+                    //
+                } else {
+                    $upd['is_archived'] = 1;
+                    $upd['status'] = 0;
+                }
+                //
+                $upd['updated_at'] = getSystemDate();
+                //
+                $this->db
+                    ->where('sid', $record['sid'])
+                    ->update('timeoff_approvers', $upd);
+            }
         }
         return true;
     }
