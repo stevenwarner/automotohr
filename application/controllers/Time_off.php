@@ -785,7 +785,7 @@ class Time_off extends Public_Controller
                 && $timeoff['status']
             ) {
                 //
-                $approverId = !isset($foundEmployees[$approverSlug]) ? getCompanyAdminSid($companyId) : $foundEmployees[$approverSlug];
+                $approverId = !isset($foundEmployees[$approverSlug]) ? $this->session->userdata('logged_in')['employer_detail']['sid'] : $foundEmployees[$approverSlug];
                 //
                 if(!$approverId) {
                     $holder['failed']++;
