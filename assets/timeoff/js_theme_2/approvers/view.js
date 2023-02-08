@@ -445,7 +445,7 @@ $(function() {
                                     v.team_name == null ? 'All Teams' : ucwords(v.team_name)
                                 )
                             }</strong></p>
-                            <p>Departments / Teams</p>
+                            <p>${v.is_department == 1 ? 'Departments' : 'Teams'}</p>
                         </div>
                         <div class="clearfix"></div>
                     </div>
