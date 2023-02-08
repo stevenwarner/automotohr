@@ -788,8 +788,15 @@ class Time_off extends Public_Controller
                 $approverId = !isset($foundEmployees[$approverSlug]) ? getCompanyAdminSid($companyId) : $foundEmployees[$approverSlug];
                 //
                 if(!$approverId) {
+                    $holder['failed']++;
                     continue;
                 }
+                //
+                if(!in_array(strtolower($timeoff['status']), ['pending', 'approved', 'rejected', 'cancelled'])) {
+                    $holder['failed']++;
+                    continue;
+                }
+                //
                 //
                 $startDate = formatDateToDB($timeoff['leave_from'], SITE_DATE, DB_DATE);
                 $endDate = formatDateToDB($timeoff['leave_to'], SITE_DATE, DB_DATE);
@@ -839,7 +846,7 @@ class Time_off extends Public_Controller
                         // Insert the time off timeline
                         $ins = [];
                         $ins['request_sid'] = $insertId;
-                        $ins['employee_sid'] = $employeeId;
+                        $ins['employee_sid'] = $approverId;
                         $ins['action'] = 'update';
                         $ins['note'] = json_encode([
                             'status' => strtolower($timeoff['status']),
