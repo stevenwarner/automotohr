@@ -710,6 +710,7 @@ class Complynet_model extends CI_Model
             }
             return SendResponse(200, ['errors' => $errorArray]);
         }
+        $employee['complynet_job_title'] = $this->complynet_model->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
         //
         if (checkEmployeeMissingData($employee)) {
             if ($doReturn) {
@@ -933,6 +934,7 @@ class Complynet_model extends CI_Model
             if (empty($employeeDetails)) {
                 return false;
             }
+            $employeeDetails['complynet_job_title'] = $this->complynet_model->checkJobRoleForComplyNet($employeeDetails['job_title'], $employeeDetails['complynet_job_title']);
             //
             if (checkEmployeeMissingData($employeeDetails)) {
                 return false;
@@ -1027,33 +1029,57 @@ class Complynet_model extends CI_Model
             ->row_array();
     }
 
-    public function getSystemJobRoles(){
+    public function getSystemJobRoles()
+    {
         return $this->db
-        ->select('distinct(job_title) as job_title')
-        ->where('job_title IS NOT NULL', null)
-        ->where('job_title != ""', null)
-        ->order_by('job_title', 'ASC')
-        ->get('users')
-        ->result_array();
+            ->select('distinct(job_title) as job_title')
+            ->where('job_title IS NOT NULL', null)
+            ->where('job_title != ""', null)
+            ->order_by('job_title', 'ASC')
+            ->get('users')
+            ->result_array();
     }
 
     public function getLinkedRoles()
     {
         return $this->db
-        ->select('job_title')
-        ->get('complynet_job_roles_jobs')
-        ->result_array();
+            ->select('job_title')
+            ->get('complynet_job_roles_jobs')
+            ->result_array();
     }
 
     public function getLinkedJobRoles(
         int $id
-    )
-    {
+    ) {
         return $this->db
-        ->select('job_title, created_at, sid')
-        ->where('complynet_job_tile_sid', $id)
-        ->order_by('job_title', 'ASC')
-        ->get('complynet_job_roles_jobs')
-        ->result_array();
+            ->select('job_title, created_at, sid')
+            ->where('complynet_job_tile_sid', $id)
+            ->order_by('job_title', 'ASC')
+            ->get('complynet_job_roles_jobs')
+            ->result_array();
+    }
+
+    public function checkJobRoleForComplyNet(
+        $jobTitle,
+        $complyJobTitle
+    ) {
+        //
+        if (!empty($complyJobTitle) && $complyJobTitle != null) {
+            return $complyJobTitle;
+        }
+        //
+        $record =
+            $this->db
+            ->select('complynet_job_roles.job_title')
+            ->where('complynet_job_roles_jobs.job_title', preg_replace('/[^a-z\s]/i', '', trim($jobTitle)))
+            ->join('complynet_job_roles', 'complynet_job_roles.sid = complynet_job_roles_jobs.complynet_job_tile_sid', 'inner')
+            ->get('complynet_job_roles_jobs')
+            ->row_array();
+        //
+        if (!$record) {
+            return $complyJobTitle;
+        }
+        //
+        return $record['job_title'];
     }
 }

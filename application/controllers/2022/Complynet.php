@@ -429,6 +429,8 @@ class Complynet extends Admin_Controller
                     continue;
                 }
                 //
+                $employee['complynet_job_title'] = $this->complynet_model->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
+                //
                 if (empty($employee['complynet_job_title'])) {
                     continue;
                 }
