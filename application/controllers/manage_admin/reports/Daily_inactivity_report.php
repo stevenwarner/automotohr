@@ -119,6 +119,36 @@ class Daily_inactivity_report extends Admin_Controller {
                     $my_data['companies'] = $companies;
                     $this->load->view('manage_admin/reports/inactivity_report_partial', $my_data);
                     break;
+
+                case 'get_all_active_companies':
+                    //
+                    $report_date = $this->input->post('report_date');
+                    //
+                    $companies = $this->employer_login_duration_model->get_all_companies("sid, CompanyName");
+                    $data['companies'] = $companies;
+                    $data['report_date'] = $report_date;
+                    //
+                    $this->load->view('manage_admin/reports/inactivity_report_partial_new', $data);
+                    break;
+
+                case 'get_company_employee_report':
+                    //
+                    $report_date = $this->input->post('report_date');
+                    $company_sid = $this->input->post('company_sid');
+                    //
+                    $my_date = new DateTime($report_date);
+                    //
+                    $start_date = $my_date->format('Y-m-d');
+                    $start_date = $start_date . ' 00:00:00';
+                    //
+                    $end_date = $my_date->format('Y-m-d');
+                    $end_date = $end_date . ' 23:59:59';
+                    //
+                    $column = ["job_title", "access_level", "first_name", "last_name", "email", "PhoneNumber"];
+                    $report_data = $this->employer_login_duration_model->get_all_inactive_employees($company_sid, $start_date, $end_date, $column);
+                    res(['data'=>array_values($report_data)]);
+                    //  
+                    break;  
                 default:
                     //do nothing
                     break;

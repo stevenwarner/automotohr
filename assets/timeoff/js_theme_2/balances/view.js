@@ -192,8 +192,15 @@ $(function() {
         //
         if (xhr != null) return;
         //
-        $('#js-filter-employee').select2('val', getParams('id'));
-        $('#js-filter-policies').select2('val', getParams('pid'));
+        if ($("#js-filter-employee > option").length) {
+            $('#js-filter-employee').select2('val', getParams('id'));
+        }
+        //
+        if ($("#js-filter-policies > option").length) {
+            $('#js-filter-policies').select2('val', getParams('pid'));
+        }
+        // $('#js-filter-employee').select2('val', getParams('id'));
+        // $('#js-filter-policies').select2('val', getParams('pid'));
         //
         ml(true, "balance");
         //
@@ -214,7 +221,8 @@ $(function() {
                 return;
             }
             //
-            if (resp.Data.Balances.length == 0) {
+            if (resp.Data.Balances == undefined || resp.Data.Balances.length == 0) {
+                console.log("pop")
                 ml(false, "balance");
                 return;
             }
@@ -260,25 +268,28 @@ $(function() {
         //
         $.each(resp.Data.Balances, function(i, v) {
             //
-            let userRow = getUserById(v.total.UserId, resp.Data.Employees, "userId");
-            //
-            if (Object.keys(userRow).length == 0) return;
-            //
-            rows += getBalanceBox(v, userRow);
-            //
-            balancePolicyOBJ[v.total.UserId] = { allowed: [], pending: [] };
-            //
-            $.each(v, (index, poli) => {
-                if (index == "total") return "";
-                balancePolicyOBJ[v.total.UserId]['allowed'].push({
-                    policy: index,
-                    time: poli.AllowedTime.text
+            if(v.total !== undefined){
+                //
+                let userRow = getUserById(v.total.UserId, resp.Data.Employees, "userId");
+                //
+                if (Object.keys(userRow).length == 0) return;
+                //
+                rows += getBalanceBox(v, userRow);
+                //
+                balancePolicyOBJ[v.total.UserId] = { allowed: [], pending: [] };
+                //
+                $.each(v, (index, poli) => {
+                    if (index == "total") return "";
+                    balancePolicyOBJ[v.total.UserId]['allowed'].push({
+                        policy: index,
+                        time: poli.AllowedTime.text
+                    });
+                    balancePolicyOBJ[v.total.UserId]['pending'].push({
+                        policy: index,
+                        time: poli.RemainingTime.text
+                    });
                 });
-                balancePolicyOBJ[v.total.UserId]['pending'].push({
-                    policy: index,
-                    time: poli.RemainingTime.text
-                });
-            });
+            }
         });
         //
         if (typo === undefined) $(".csBalanceBoxInner").html(rows);

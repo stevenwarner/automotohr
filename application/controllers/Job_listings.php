@@ -773,6 +773,7 @@ class Job_listings extends Public_Controller
                         //
                         foreach ($job_listings as $index => $job) {
                             $job_listings[$index]['deactive_by_name'] = $jobLastStates[$job['sid']]['deactive_by_name'];
+                            $job_listings[$index]['deactivation_date'] = $jobLastStates[$job['sid']]['deactive_date'];
                         }
                     }
                 }

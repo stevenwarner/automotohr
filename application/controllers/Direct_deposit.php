@@ -302,7 +302,7 @@ class Direct_deposit extends Public_Controller
             $session['company_detail']['CompanyName'] = $company_name;
         }
         //
-        if($session) { 
+        if($session) {
 
             $updated_by                 = $session["employer_detail"]["sid"];
             $record_sid                 = $_POST['record_sid'];
@@ -328,6 +328,19 @@ class Direct_deposit extends Public_Controller
             if (!empty($_FILES) && isset($_FILES['upload_img']) && $_FILES['upload_img']['size'] > 0) {
                 $update_incident_img = upload_file_to_aws('upload_img', $company_sid, 'upload_img', '', AWS_S3_BUCKET_NAME);
                 $cheque_img             = $update_incident_img;
+            }
+            //
+            if ($this->input->post('user_type', true) == 'employee') {
+                //
+                $this->load->model('2022/User_model', 'em');
+                //
+                $this->em->handleGeneralDocumentChange(
+                    'directDeposit',
+                    $this->input->post(null, true),
+                    $cheque_img,
+                    $this->input->post('user_sid', true),
+                    $this->session->userdata('logged_in')['employer_detail']['sid']
+                );
             }
 
             $this->direct_deposit_model->set_user_extra_info($user_type, $user_sid, $company_sid, $employee_number);

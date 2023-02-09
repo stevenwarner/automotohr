@@ -28,11 +28,16 @@ class Notifications extends Public_Controller {
         $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($ses['company_detail']['sid']);
         $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($ses['company_detail']['sid']);
         //
+        
+        $EmsStatus = getCompanyEmsStatusBySid($ses['company_detail']['sid'], false);
+
+
         $data = $this->notification_model->getNotifications(
             $ses,
             strtolower($ses['employer_detail']['access_level']) != 'employee' ? false : true,
             $companyEmployeesForVerification,
-            $companyApplicantsForVerification
+            $companyApplicantsForVerification,
+            $EmsStatus
         );
         //
         if (checkIfAppIsEnabled('performance_management')) {
@@ -68,7 +73,7 @@ class Notifications extends Public_Controller {
             }
         }
         //
-        if($ses['employer_detail']['access_level_plus'] || $ses['employer_detail']['pay_plan_plus']){
+        if($EmsStatus==1 && ($ses['employer_detail']['access_level_plus'] || $ses['employer_detail']['pay_plan_plus'])){
             //
             $total = 0;
             $total += $this->varification_document_model->get_all_users_pending_w4($ses['company_detail']['sid'], 'employee', TRUE, $companyEmployeesForVerification);
@@ -106,15 +111,19 @@ class Notifications extends Public_Controller {
             }
         }
         //
-        $total_document_approval = count($this->notification_model->getMyApprovalDocuments($ses['employer_detail']['sid']));
-        //
-        if($total_document_approval){
-            $data[] = [
-                'count' => $total_document_approval,
-                'link' => base_url('hr_documents_management/approval_documents'),
-                'title' => 'Pending Approval Documents'
-            ];
+        
+        if($EmsStatus==1){
+            $total_document_approval = count($this->notification_model->getMyApprovalDocuments($ses['employer_detail']['sid']));
+            //
+            if($total_document_approval){
+                $data[] = [
+                    'count' => $total_document_approval,
+                    'link' => base_url('hr_documents_management/approval_documents'),
+                    'title' => 'Pending Approval Documents'
+                ];
+            }
         }
+
         //
         if(!sizeof($data)){
             $this->res['Response'] = 'No notifications found.';

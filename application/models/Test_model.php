@@ -1,133 +1,52 @@
-<?php 
-define('PJL', 'portal_job_listings') ;
-define('PJA', 'portal_job_applications') ;
-define('PAJL', 'portal_applicant_jobs_list') ;
+<?php
+define('PJL', 'portal_job_listings');
+define('PJA', 'portal_job_applications');
+define('PAJL', 'portal_applicant_jobs_list');
 
-class Test_model extends CI_Model {
+class Test_model extends CI_Model
+{
     //
     //
-    function __construct() {
+    function __construct()
+    {
         //
         parent::__construct();
+    }
+
+
+    public function get_merge_employee()
+    {
+
+        $this->db->select('secondary_employee_sid');
+        $records_obj = $this->db->get('employee_merge_history');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
         //
-        // $this->db = $this->load->database('ac', true);
-        $this->db2 = $this->load->database('ahr', true);
+        if (!empty($records_arr)) {
+            foreach ($records_arr as $row) {
+                $this->checkProfileExist($row["secondary_employee_sid"]);
+            }
+        }
+        //
+        return $return_data;
+    }
+
+    private function checkProfileExist ($employee_sid) {
+        $this->db->select('secondary_employee_sid');
+        $this->db->where('sid', $employee_sid);
+        $this->db->from('users');
+        $record_count = $this->db->count_all_results();
+
+        if ($record_count > 0) {
+            // $this->db->where('sid', $employee_sid);
+            // $this->db->delete('users');
+            echo "Wants to delete this employee with sid = ".$employee_sid." <br>";
+        } else {
+            echo "Already deleted this employee with sid = ".$employee_sid." <br>";
+        }
     }
 
 
-    //
-    // function jobIds(){
-    //     $ids = $this->db
-    //     ->select('sid')
-    //     ->get(PJL)
-    //     ->result_array();
-    //     //
-    //     return !empty($ids) ? array_column($ids, 'sid') : [];
-    // }
-   
-    // //
-    // function getJobs(){
-    //     $ids = $this->db2
-    //     ->order_by('sid', 'desc')
-    //     ->get(PJL)
-    //     ->result_array();
-    //     //
-    //     return $ids;
-    // }
-
-    // //
-    // function updateJob($sid, $data){
-    //     $this->db
-    //     ->where('sid', $sid)
-    //     ->update(PJL, $data);
-    // }
     
-    // //
-    // function insertJob($data){
-    //     $this->db
-    //     ->insert(PJL, $data);
-    // }
-
-
-    // //
-    // function applicantIds(){
-    //     $ids = $this->db
-    //     ->select('sid')
-    //     ->get(PJA)
-    //     ->result_array();
-    //     //
-    //     return !empty($ids) ? array_column($ids, 'sid') : [];
-    // }
-
-    // //
-    // function getApplicants(){
-    //     $ids = $this->db2
-    //     ->order_by('sid', 'desc')
-    //     ->get(PJA)
-    //     ->result_array();
-    //     //
-    //     return $ids;
-    // }
-
-    // //
-    // function updateApplicant($sid, $data){
-    //     $this->db
-    //     ->where('sid', $sid)
-    //     ->update(PJA, $data);
-    // }
-    
-    // //
-    // function insertApplicant($data){
-    //     $this->db
-    //     ->insert(PJA, $data);
-    // }
-
-
-    // //
-    // function applicantJobIds(){
-    //     $ids = $this->db
-    //     ->select('sid')
-    //     ->get(PAJL)
-    //     ->result_array();
-    //     //
-    //     return !empty($ids) ? array_column($ids, 'sid') : [];
-    // }
-
-    // //
-    // function getApplicantsJob(){
-    //     $ids = $this->db2
-    //     ->order_by('sid', 'desc')
-    //     ->get(PAJL)
-    //     ->result_array();
-    //     //
-    //     return $ids;
-    // }
-
-    // //
-    // function updateApplicantJob($sid, $data){
-    //     $this->db
-    //     ->where('sid', $sid)
-    //     ->update(PAJL, $data);
-    // }
-    
-    // //
-    // function insertApplicantJob($data){
-    //     $this->db
-    //     ->insert(PAJL, $data);
-    // }
-
-    function getEEOCRecords(){
-        $this->db2->select('sid,last_sent_at,assigned_at');
-        $this->db2->from('portal_eeo_form');
-        $result = $this->db2->get()->result_array();
-
-        return $result;
-    }
-
-    function updateEEOCTime($sid, $datetime){
-        $data_to_update = array();
-        $data_to_update['assigned_at'] = $datetime;
-        $this->db->where('sid', $sid);
-        $this->db->update('portal_eeo_form', $data_to_update);
-    }
 }

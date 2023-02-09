@@ -68,6 +68,9 @@
         googleCaptchaToken = don;
     }  
 
+    var sm_enable = <?=$sms_module_status == 1 ? 1 : 0?>;
+    var sm_regex = sm_enable == 1 ? /(\d{10})|(\d{11})$/ : ;
+
     function validate_form() {
         youtube_check()
         $("#register-form").validate({

@@ -9,7 +9,9 @@ class Employer_login_duration_model extends CI_Model {
         $excluded_companies = $this->get_excluded_company_sids();
         $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
         $this->db->where('parent_sid', 0);
-        $this->db->where('sid NOT IN ( ' . implode(',', $excluded_companies) . ' )');
+        if (!empty($excluded_companies)) {
+            $this->db->where('sid NOT IN ( ' . implode(',', $excluded_companies) . ' )');
+        }
         $this->db->order_by('CompanyName', 'ASC');
         $this->db->where('career_page_type', 'standard_career_site');
         $this->db->where('active', 1);
@@ -39,7 +41,8 @@ class Employer_login_duration_model extends CI_Model {
             $this->db->select('sid');
             $this->db->where('company_sid', $company_sid);
             $this->db->where('employer_sid', $employer_sid);
-            $this->db->where("action_timestamp BETWEEN '" . $date_start . "' AND '" . $date_end . "'");
+            $this->db->where("action_timestamp >=", $date_start);
+            $this->db->where("action_timestamp <=", $date_end);
             return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $date_start))->result_array();
         }
     }
@@ -48,7 +51,8 @@ class Employer_login_duration_model extends CI_Model {
         $this->db->distinct();
         $this->db->select('employer_sid');
         $this->db->where('company_sid', $company_sid);
-        $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+        $this->db->where("action_timestamp >=", $start_date);
+        $this->db->where("action_timestamp <=", $end_date);
         return $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
     }
 
@@ -60,7 +64,8 @@ class Employer_login_duration_model extends CI_Model {
 
         foreach ($active_employers as $key => $active_employer) {
             $this->db->select('*');
-            $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+            $this->db->where("action_timestamp >=", $start_date);
+            $this->db->where("action_timestamp <=", $end_date);
             $this->db->where('company_sid', $company_sid);
             $this->db->where('employer_sid', $active_employer['employer_sid']);
             $this->db->order_by('employer_ip', 'DESC');
@@ -85,7 +90,8 @@ class Employer_login_duration_model extends CI_Model {
 
         foreach ($active_employers as $key => $active_employer) {
             $this->db->select('*');
-            $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+            $this->db->where("action_timestamp >=", $start_date);
+            $this->db->where("action_timestamp <=", $end_date);
             $this->db->where('company_sid', $company_sid);
             $this->db->where('employer_sid', $active_employer['employer_sid']);
             $this->db->order_by('action_timestamp', 'ASC');
@@ -181,7 +187,7 @@ class Employer_login_duration_model extends CI_Model {
         return $active_employers;
     }
 
-    public function get_all_inactive_employees($company_sid, $start_date, $end_date) {
+    public function get_all_inactive_employees($company_sid, $start_date, $end_date, $columns = '*') {
         $active_employers = $this->get_active_employers($company_sid, $start_date, $end_date);
         $active_employers_sids = array();
         
@@ -189,7 +195,7 @@ class Employer_login_duration_model extends CI_Model {
             $active_employers_sids[] = $active_employer['employer_sid'];
         }
 
-        $this->db->select('*');
+        $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
         $this->db->where('parent_sid', $company_sid);
         $this->db->where('is_executive_admin', 0);
 
@@ -210,7 +216,8 @@ class Employer_login_duration_model extends CI_Model {
             $this->db->distinct();
             $this->db->select('employer_sid');
             $this->db->where('company_sid', $company_sid);
-            $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+            $this->db->where("action_timestamp >=", $start_date);
+            $this->db->where("action_timestamp <=", $end_date);
             $active_employers = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
             $active_employers_sids = array();
             
@@ -311,7 +318,8 @@ class Employer_login_duration_model extends CI_Model {
         ->from(checkAndGetArchiveTable('logged_in_activitiy_tracker', $startDate))
         ->where('company_sid', $companyId)
         ->where('employer_sid', $employerId)
-        ->where("DATE_FORMAT(action_timestamp, '%Y-%m-%d') BETWEEN '" . $startDate . "' AND '" . $endDate . "'")
+        ->where("action_timestamp >=", $startDate)
+        ->where("action_timestamp <=", $endDate)
         ->order_by('sid', 'ASC')
         ->get();
         //
@@ -323,7 +331,8 @@ class Employer_login_duration_model extends CI_Model {
     //
     function GetTrackerCE($start_date, $end_date){
         $this->db->select('company_sid, company_name')->distinct();
-        $this->db->where("action_timestamp BETWEEN '" . $start_date . "' AND '" . $end_date . "'");
+        $this->db->where("action_timestamp >=", $start_date);
+        $this->db->where("action_timestamp <=", $end_date);
         $query = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date));
         //
         $result = $query->result_array();
@@ -413,4 +422,209 @@ class Employer_login_duration_model extends CI_Model {
         //
         return array_values($mainEmployeeArray);
     }
+
+    /**
+     * Get active companies
+     * Created on: 03-10-2022
+     *
+     * 
+     * @param $start_date  String    (YYYY-MM-DD)
+     * @param $end_date    String    (YYYY-MM-DD)
+     *
+     * @return  Array
+     */
+    function GetTrackerCompanies($start_date, $end_date){
+        $this->db->select('company_sid, company_name')->distinct();
+        $this->db->where("action_timestamp >=", $start_date);
+        $this->db->where("action_timestamp <=", $end_date);
+        $this->db->order_by('company_name', 'ASC');
+        $query = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date));
+        //
+        $result = $query->result_array();
+        //
+        $query->free_result();
+        //
+        if(empty($result)){
+            return [];
+        }
+        //
+        return $result;
+    }
+
+    /**
+     * Get user active timeframe new
+     * Created on: 03-10-2022
+     *
+     * @param $company_sid Integer
+     * @param $start_date  String    (YYYY-MM-DD)
+     * @param $end_date    String    (YYYY-MM-DD)
+     *
+     * @return  Array
+     */
+    public function generate_company_employes_activity_log_detail($company_sid, $start_date, $end_date) {
+        //
+        $this->db->select('*');
+        $this->db->where("action_timestamp >=", $start_date);
+        $this->db->where("action_timestamp <=", $end_date);
+        $this->db->where('company_sid', $company_sid);
+        $company_logs = $this->db->get(checkAndGetArchiveTable('logged_in_activitiy_tracker', $start_date))->result_array();
+        //
+        $logs_to_return = array();
+        //
+        if (!empty($company_logs)) {
+            //
+            foreach ($company_logs as $log) {
+                $employee_sid = $log["employer_sid"];
+                $current_employee_ip = $log["employer_ip"];
+                //
+                // Push employee into an array if not exist in it
+                if (!array_key_exists($employee_sid, $logs_to_return)) {
+                    $logs_to_return[$employee_sid]["employee_name"] = $log["employer_name"];
+                    $logs_to_return[$employee_sid]["total_time_spent_in_minutes"] = 0;
+                    //
+                    $activity_log = array();
+                    $activity_log['last_action_timestamp'] =  $log["action_timestamp"];
+                    $activity_log['user_agent'] =  $log["user_agent"];
+                    $activity_log['minutes'] =  0;
+                    //
+                    $logs_to_return[$employee_sid]["ips"][$current_employee_ip] =  $activity_log;
+                }
+                //
+                //Push new IP into ips array if not exist in employee ips
+                if (!array_key_exists($current_employee_ip, $logs_to_return[$employee_sid]["ips"])) {
+                    //
+                    $activity_log = array();
+                    $activity_log['last_action_timestamp'] =  $log["action_timestamp"];
+                    $activity_log['user_agent'] =  $log["user_agent"];
+                    $activity_log['minutes'] =  0;
+                    //
+                    $logs_to_return[$employee_sid]["ips"][$current_employee_ip] =  $activity_log;
+                }
+                //
+                // Calculate time between two timestamps start   
+                $previous_hours = $logs_to_return[$employee_sid]["ips"][$current_employee_ip]['hours'];
+                $previous_minutes = $logs_to_return[$employee_sid]["ips"][$current_employee_ip]['minutes'];
+                //
+                $previous_timestamp = new DateTime($logs_to_return[$employee_sid]["ips"][$current_employee_ip]['last_action_timestamp']);
+                $current_timestamp = new DateTime($log["action_timestamp"]);
+                //
+                if ($previous_timestamp < $current_timestamp) {
+                    //
+                    $logs_to_return[$employee_sid]["ips"][$current_employee_ip]['last_action_timestamp'] =  $log["action_timestamp"];
+                    //
+                    $current_hours = $previous_timestamp->diff($current_timestamp)->h;
+                    $current_minutes = $previous_timestamp->diff($current_timestamp)->i;
+                    //
+                    $logs_to_return[$employee_sid]["ips"][$current_employee_ip]['minutes'] = $previous_minutes + $current_minutes + ($current_hours * 60);
+                    //
+                    $logs_to_return[$employee_sid]["total_time_spent_in_minutes"] += $current_minutes + ($current_hours * 60);
+                    
+                }
+                // Calculate time between two timestamps end
+            }
+        }
+
+        $logs_to_return = $this->fix_zero_iteration($logs_to_return);
+
+        return $logs_to_return;
+    }
+
+    public function get_company_activity_overview_new($company_sid, $start_date, $end_date, $columns = '*') {
+        //
+        $company_active_employees = $this->get_active_employers($company_sid, $start_date, $end_date);
+        //
+        $active_employees_sids = array();
+        //   
+        if (!empty($company_active_employees)) {
+            foreach ($company_active_employees as $active_employee) {
+                array_push($active_employees_sids, $active_employee['employer_sid']);
+            }
+        } 
+        //
+        $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->order_by('is_executive_admin', 'DESC');
+        $this->db->order_by('access_level', 'ASC');
+        $company_employees = $this->db->get('users')->result_array();
+        //
+        $active_employees = array();
+        $inactive_employees = array();
+        //
+        foreach ($company_employees as $key => $employee) {
+            //
+            $employee["access_level"]   = ucwords($employee['access_level']);
+            $employee["employee_name"]  = ucwords($employee['first_name'] . ' ' . $employee['last_name']);
+            $employee["PhoneNumber"]    = $employee['PhoneNumber'] == '' ? 'Not Available' : $employee['PhoneNumber'];
+            $employee["job_title"]      = $employee['job_title'] != '' ? ucwords($employee['job_title']) : 'Not Available';
+            //
+            if (in_array($employee["sid"], $active_employees_sids)) {
+                array_push($active_employees, $employee);
+            } else {
+                array_push($inactive_employees, $employee);
+            }
+        }
+        //
+        $return_obj = array(
+            "active_employees" => $active_employees,
+            "inactive_employees" => $inactive_employees
+        );
+        //
+        return $return_obj;
+    } 
+
+    public function get_company_employees_detail_overview_log($company_sid, $start_date, $end_date, $columns = '*') {
+        //
+        $company_active_employees = $this->generate_company_employes_activity_log_detail($company_sid, $start_date, $end_date);
+        //
+        $this->db->select(is_array($columns) ? implode(',', $columns) : $columns);
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->order_by('is_executive_admin', 'DESC');
+        $this->db->order_by('access_level', 'ASC');
+        $company_employees = $this->db->get('users')->result_array();
+        //
+        $active_employees = array();
+        $inactive_employees = array();
+        //
+        foreach ($company_employees as $key => $employee) {
+            //
+            $employee["access_level"]   = $employee['is_executive_admin'] == 1 ? "Executive Admin" : ucwords($employee['access_level']);
+            $employee["employee_name"]  = ucwords($employee['first_name'] . ' ' . $employee['last_name']);
+            $employee["PhoneNumber"]    = $employee['PhoneNumber'] == '' ? 'Not Available' : $employee['PhoneNumber'];
+            $employee["job_title"]      = $employee['job_title'] != '' ? ucwords($employee['job_title']) : 'Not Available';
+            $employee["total_time"]     = 0;
+            $employee["ips"]            = [];
+            //
+            if (array_key_exists($employee["sid"], $company_active_employees)) {
+                $employee["total_time"]     = $company_active_employees[$employee["sid"]]["total_time_spent_in_minutes"];
+                $employee["ips"]            = $company_active_employees[$employee["sid"]]["ips"];
+                array_push($active_employees, $employee);
+            } else {
+                array_push($inactive_employees, $employee);
+            }
+
+        }
+        //
+        $return_obj = array(
+            "active_employees" => $active_employees,
+            "inactive_employees" => $inactive_employees
+        );
+        //
+        return $return_obj;
+    }  
+
+    public function fix_zero_iteration ($employees) {
+        //
+        foreach ($employees as $e_key => $employee) {
+            if (!empty($employee["ips"])) {
+                foreach ($employee["ips"] as $ip_key => $ip) {
+                    if ($ip["minutes"] == 0) {
+                        $employees[$e_key]["ips"][$ip_key]["minutes"] += 10;
+                        $employees[$e_key]['total_time_spent_in_minutes'] += 10;
+                    }
+                }
+            }
+        }
+        //
+        return $employees;
+    } 
 }

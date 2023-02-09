@@ -206,6 +206,38 @@ class Daily_activity_detailed_overview_report extends Admin_Controller {
                     $this->load->view('manage_admin/reports/activity_detailed_overview_report_partial', $my_data);
 
                     break;
+
+                case 'get_all_active_companies':
+                    //
+                    $report_date = $this->input->post('report_date');
+                    //
+                    $companies = $this->employer_login_duration_model->get_all_companies("sid, CompanyName");
+                    $data['companies'] = $companies;
+                    $data['report_date'] = $report_date;
+                    //
+                    $this->load->view('manage_admin/reports/activity_detailed_overview_report_partial_new', $data);
+                    break;
+
+                case 'get_company_employee_report':
+                    //
+                    $report_date = $this->input->post('report_date');
+                    $company_sid = $this->input->post('company_sid');
+                    //
+                    $my_date = new DateTime($report_date);
+                    //
+                    $start_date = $my_date->format('Y-m-d');
+                    $start_date = $start_date . ' 00:00:00';
+                    //
+                    $end_date = $my_date->format('Y-m-d');
+                    $end_date = $end_date . ' 23:59:59';
+                    //
+                    $column = ["sid", "job_title", "is_executive_admin", "access_level", "first_name", "last_name", "email", "PhoneNumber"];
+                    $report_data = $this->employer_login_duration_model->get_company_employees_detail_overview_log($company_sid, $start_date, $end_date, $column);
+                    //
+                    res(['data'=>$report_data]);
+                    //  
+                    break;
+                        
                 default:
                     //do nothing
                     break;

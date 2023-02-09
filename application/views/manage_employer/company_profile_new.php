@@ -9,7 +9,7 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-8">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                         </div>
                         <div class="job-title-text">
                             <p>Fields marked with an asterisk (<span class="staric">*</span>) are mandatory.</p>
@@ -363,6 +363,47 @@
                             </div>
                         </div>
                         <?php endif; ?>
+
+
+
+
+                        <?php if(checkIfAppIsEnabled('documentlibrary')): ?>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <h3>EEOC <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
+                                <p>Make the following selected options available on EEO for employee/applicant.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                VETERAN <small class="help_text">If enabled then the "VETERAN" section willbe visible to employee/applicant on EEOC.</small>
+                                    <input class="" type="checkbox" id="dl_vet" name="dl_vet" <?php echo (isset($portal['dl_vet']) && $portal['dl_vet'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                VOLUNTARY <small class="help_text">If enabled then the "voluntary self-identification of disability" section willbe visible to employee/applicant on EEOC.</small>
+                                    <input class="" type="checkbox" id="dl_vol" name="dl_vol" <?php echo (isset($portal['dl_vol']) && $portal['dl_vol'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                GENDER  <small class="help_text">If enabled then the "GENDER" section willbe visible to employee/applicant on EEOC.</small>
+                                    <input class="" type="checkbox" id="dl_gen" name="dl_gen" <?php echo (isset($portal['dl_gen']) && $portal['dl_gen'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 js-timezone-row">
                                 <div class="form-group autoheight">

@@ -104,7 +104,7 @@ $route['timeoff/get_employee_status/(:any)'] = 'Time_off/get_employee_status/$1'
 $route['timeoff/get_time_with_format/(:any)/(:any)/(:any)'] = 'Time_off/get_time_with_format/$1/$2/$3';
 $route['timeoff/handler/requests_status/(:any)/(:any)/(:any)'] = 'Time_off/requests_status/$1/$2/$3';
 // Green panel routes
-$route['timeoff/import'] = 'Time_off/import';
+$route['timeoff/import'] = 'Time_off/importHistoricTimeOff';
 $route['timeoff/action/(:any)'] = 'Time_off/action/$1';
 $route['timeoff/request-report'] = 'Time_off/request_report';
 $route['timeoff/create_employee/(:num)'] = 'Time_off/create_employee/$1';
@@ -1583,6 +1583,14 @@ $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4
 $route['eeo/viewchart/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'eeo/viewchart/$1/$2/$3/$4/$5/$6';
 
 
+// CLI Routes
+$route['run_employee_status_fixer']['cli'] = 'Cron_Common/employeeStatusFixer';
+
+/**
+ * Get the employee profile data
+ * 11/30/2022
+ */
+$route['get_employee_profile_history/(:num)']['get'] = '2022/Employee/getProfileHistory/$1';
 /**
  * Employee surveys
  *
@@ -1611,3 +1619,40 @@ $route['employee/surveys/templateselect/(:num)']['get'] = '2022/Employee_surveys
 $route['employee/surveys/assigned_survey']['get'] = '2022/Employee_surveys/surveyAssigned';
 $route['employee/surveys/assigned_survey/(:num)']['get'] = '2022/Employee_surveys/surveyAssigned/$1';
 $route['employee/surveys/overview/([a-z]+)']['get'] = '2022/Employee_surveys/overview/$1';
+
+/**
+ * Show employees profile report
+ * 12/01/2022
+ */
+$route['employee/information/report']['get'] = '2022/Employee/employeeProfileReport';
+
+
+// Historic time off import
+$route['timeoff/import/historic']['get'] = 'Time_off/importHistoricTimeOff';
+$route['timeoff/import/historic/verify']['post'] = 'Time_off/verifyEmployeeAndPolicies';
+$route['timeoff/import/historic/upload']['post'] = 'Time_off/importHistoricProcess';
+
+//
+$route['onboarding/office_location']['post'] = "Onboarding/officeLocation";
+
+/**
+ * ComplyNet Routes
+ */
+$route['cn/dashboard']['get'] = "2022/Complynet/dashboard";
+$route['cn/check_company_status/(:num)']['get'] = "2022/Complynet/checkCompanyIntegration/$1";
+$route['cn/getting_started/(:num)']['get'] = "2022/Complynet/gettingStarted/$1";
+$route['cn/locations/(:any)']['get'] = "2022/Complynet/getComplyNetLocations/$1";
+$route['cn/integrate']['post'] = "2022/Complynet/integrate";
+$route['cn/integrate/view/(:num)']['get'] = "2022/Complynet/integrateView/$1";
+$route['cn/sync']['post'] = "2022/Complynet/syncCompany";
+$route['cn/comply/departments/(:num)']['get'] = "2022/Complynet/getComplyCompanyDepartments/$1";
+$route['cn/comply/job_roles/(:num)']['get'] = "2022/Complynet/getComplyCompanyJobRoles/$1";
+
+$route['cn/(:num)/employee/sync']['post'] = "2022/Complynet/syncSingleEmployee/$1";
+$route['cn/employee/details/(:num)']['get'] = "2022/Complynet/getEmployeeDetail/$1";
+$route['cn/manage/job_roles']['get'] = "2022/Complynet/manageJobRoles";
+$route['cn/job_role_view/(:num)']['get'] = "2022/Complynet/getSystemJobRoles/$1";
+$route['cn/job_role_view_details/(:num)']['get'] = "2022/Complynet/getRoleDetails/$1";
+//
+$route['cn/manage/job_role/(:num)/link']['post'] = "2022/Complynet/linkJobRoles/$1";
+$route['cn/manage/job_role/(:num)']['delete'] = "2022/Complynet/deleteJobRole/$1";

@@ -72,7 +72,7 @@ class Copy_employees_model extends CI_Model {
         $this->db->select('sid, email, first_name, last_name, active, job_title, access_level, access_level_plus, pay_plan_flag, terminated_status');
         $this->db->where('parent_sid', $sid);
         $this->db->where('is_executive_admin', 0);
-        $this->db->order_by('first_name', 'ASC');
+        // $this->db->order_by('first_name', 'ASC');
 
         if ($type == 2) {
             $this->db->where('active', 1);
@@ -576,5 +576,16 @@ class Copy_employees_model extends CI_Model {
 
     function maintain_employee_log_data ($data) {
         $this->db->insert('employees_transfer_log', $data);
+    }
+
+    function get_employee_sid ($email, $company_sid) {
+        $this->db->select('sid');
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->where('email', $email);
+        $this->db->where('is_executive_admin', 0);
+        $this->db->from('users');
+        $records_obj = $this->db->get();
+        $result = $records_obj->row_array();
+        return $result["sid"];
     }
 }

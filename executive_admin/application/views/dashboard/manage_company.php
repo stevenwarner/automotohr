@@ -90,7 +90,8 @@
                                                         'from_timezone' => $executive_user['timezone'], //
                                                         '_this' => $this
                                                     )) ?></td>
-                                                <td class="text-center <?php echo ($employee['active'] == '1') ? 'Active' : 'Inactive'; ?>"><label><?php echo ($employee['active'] == '1') ? 'Active' : 'Inactive'; ?></label></td>
+                                                <td class="text-center <?php echo (GetEmployeeStatus($employee['last_status_text'], $employee['active'])=='Active')?'Active': 'Inactive';?>"> <label><?php echo GetEmployeeStatus($employee['last_status_text'], $employee['active']);?></label></td>
+
                                             </tr>
                                             <?php
                                         }

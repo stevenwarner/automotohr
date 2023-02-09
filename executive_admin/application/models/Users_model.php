@@ -45,6 +45,7 @@ class Users_model extends CI_Model {
         $this->db->join('users as t2', 't2.sid = t1.company_sid', 'left');
         $this->db->join('portal_employer as t3', 't3.user_sid = t1.company_sid', 'left');
         $this->db->where('t1.executive_admin_sid', $executive_admin_sid);
+        $this->db->where('t2.active', 1);
         
         if($keyword != NULL || $keyword != ''){
             $this->db->like('t2.CompanyName', $keyword);
@@ -179,8 +180,71 @@ class Users_model extends CI_Model {
         $this->db->where('parent_sid', $company_id);
         $employees = $this->db->get();
 
-        return $employees->result_array();
+        $all_employees =  $employees->result_array();
+
+        $this->GetEmployeeStatus($all_employees, 1);
+        return $all_employees;
+
     }
+
+
+    private function GetEmployeeStatus(&$employees, $status = 1){
+        //
+        if(empty($employees)){
+            return false;
+        }
+        //
+        $employeeIds = array_column($employees, 'sid');
+        //
+        $statuses = $this->db
+        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire,termination_reason')
+        ->where_in('employee_sid', $employeeIds)
+        ->where('employee_status', $status)
+        ->get('terminated_employees')
+        ->result_array();
+        //
+        $last_statuses = $this->db
+        ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status,termination_reason')
+        ->where_in('employee_sid', $employeeIds)
+        ->order_by('terminated_employees.sid', 'DESC')
+        ->get('terminated_employees')
+        ->result_array();
+        //
+        if(!empty($statuses)){
+            //
+            $tmp = [];
+            //
+            foreach($statuses as $stat){
+                //
+                $tmp[$stat['employee_sid']] = $stat;
+            }
+            //
+            $statuses = $tmp;
+            //
+            $tmp = [];
+            //
+            foreach($last_statuses as $stat){
+                //
+                if(!isset($tmp[$stat['employee_sid']])){
+                    $tmp[$stat['employee_sid']] = $stat;
+                }
+            }
+            //
+            $last_statuses = $tmp;
+            //
+            unset($tmp);
+        }
+        //
+        foreach($employees as $index => $employee){
+            //
+            $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
+            $employees[$index]['last_status_2'] = isset($last_statuses[$employee['sid']]) ? $last_statuses[$employee['sid']] : [];
+            $employees[$index]['last_status_text'] = isset($last_statuses[$employee['sid']]) ? GetEmployeeStatusText($last_statuses[$employee['sid']]['employee_status']) : '';
+        }
+        //
+        return true;
+    }
+
 
     function get_admin_invoices($company_sid = null, $invoice_status = 'active') {
         $this->db->select('*');
@@ -464,7 +528,7 @@ class Users_model extends CI_Model {
         // Get Employees
         $result = $this->db
         ->select('
-            concat(users.first_name," ",users.last_name) as user_name,
+            users.sid,
             users.applicant_sid as applicant_sid,
             users.job_title as last_job_title,
             users.email as user_email,
@@ -474,6 +538,14 @@ class Users_model extends CI_Model {
             users.active as is_active,
             users.archived as is_archived,
             users.terminated_status as is_terminated,
+            users.first_name,
+            users.last_name,
+            users.middle_name,
+            users.timezone,
+            users.access_level,
+            users.access_level_plus,
+            users.pay_plan_flag,
+            users.is_executive_admin,
             "employee" as user_type,
             "0" as job_count
         ')
@@ -484,7 +556,7 @@ class Users_model extends CI_Model {
         ->or_like('users.email', $query)
         ->group_end()
         ->limit( $offset, $inset)
-        ->order_by('user_name', 'ASC')
+        ->order_by('first_name', 'ASC')
         ->where_in('users.parent_sid', $executiveCompanyIds, false)
         ->get();
         //
@@ -494,6 +566,7 @@ class Users_model extends CI_Model {
         // Get Applicants
         $result = $this->db
         ->select('
+            "0" as sid,
             concat(portal_job_applications.first_name," ",portal_job_applications.last_name) as user_name,
             portal_job_applications.email as user_email,
             "" as last_job_title,
@@ -543,6 +616,15 @@ class Users_model extends CI_Model {
             }
         }
         //
-        return array_merge_recursive($applicants, $employees);
+        if(!empty($employees)){
+            foreach($employees as $index => $value){
+                $employees[$index]['user_name'] = remakeEmployeeName($value);
+            }
+        }
+        //
+        $all_employees=array_merge_recursive($applicants, $employees);
+        $this->GetEmployeeStatus($all_employees, 1);
+        return $all_employees;
+        //return array_merge_recursive($applicants, $employees);
     }
 }

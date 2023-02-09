@@ -36,7 +36,7 @@
         <?php } else { ?>
             <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/bootstrap.css">
         <?php } ?>
-        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css?v=1.0">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css?v=1.0.0">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/font-awesome.css">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/responsive.css">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/star-rating.css">
@@ -1119,7 +1119,7 @@
                                                                     echo 'class="active_header_nav"';
                                                                 } ?> href="<?php echo base_url('video_interview_system') ?>">
                                                                 <figure><i class="fa fa-file-text-o"></i></figure>
-                                                                Video Interview System<span class="beta-label">beta</span>
+                                                                Video Interview System
                                                             </a>
                                                         </li>
                                                     <?php } ?>

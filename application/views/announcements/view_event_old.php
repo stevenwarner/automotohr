@@ -12,7 +12,7 @@
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
 
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url() . 'list_announcements'; ?>"><i class="fa fa-chevron-left"></i>Back</a>
                                     <?php echo ucwords($event[0]["type"] . ' Announcement'); ?></span>
                             </div>

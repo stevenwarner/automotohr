@@ -1033,3 +1033,87 @@ if (!function_exists('_e')) {
         if ($die) exit(0);
     }
 }
+
+if (!function_exists('remakeAccessLevel')) {
+    function remakeAccessLevel($obj)
+    {
+        if (isset($obj['is_executive_admin']) && $obj['is_executive_admin'] != 0) {
+            $obj['access_level'] = 'Executive ' . $obj['access_level'];
+        }
+        if ($obj['access_level_plus'] == 1 && $obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' Plus / Payroll';
+        if ($obj['access_level_plus'] == 1) return $obj['access_level'] . ' Plus';
+        if ($obj['pay_plan_flag'] == 1) return $obj['access_level'] . ' Payroll';
+        return $obj['access_level'];
+    }
+}
+
+if (!function_exists('remakeEmployeeName')) {
+    function remakeEmployeeName($o, $i = TRUE, $onlyName = false)
+    {
+        //
+        $first_name = isset($o['first_name']) ? $o['first_name'] : (isset($o['to_first_name']) ? $o['to_first_name'] : '');
+        $middleName = isset($o['middle_name']) ? ' ' . $o['middle_name'] : (isset($o['to_middle_name']) ? ' ' . $o['to_middle_name'] : '');
+        $last_name = isset($o['last_name']) ? $o['last_name'] : (isset($o['to_last_name']) ? $o['to_last_name'] : '');
+        //
+        $r = $i ? $first_name . $middleName . ' ' . $last_name : '';
+        //
+        if ($onlyName) {
+            return $r;
+        }
+        //
+        if (isset($o['job_title']) && $o['job_title'] != '' && $o['job_title'] != null) $r .= ' (' . ($o['job_title']) . ')';
+        //
+        $r .= ' [' . remakeAccessLevel($o) . ']';
+        //
+        if (isset($o['timezone'])) {
+            //
+            $tz = !empty($o['timezone'])
+                ? $o['timezone']
+                : STORE_DEFAULT_TIMEZONE_ABBR;
+            //
+            $r .= ' (' . ($tz) . ')';
+        }
+        //
+        return $r;
+    }
+}
+
+//
+if (!function_exists('GetEmployeeStatusText')) {
+    function GetEmployeeStatusText($index)
+    {
+        //
+        $arr = [];
+        $arr[1] = 'Terminated';
+        $arr[2] = 'Retired';
+        $arr[3] = 'Deceased';
+        $arr[4] = 'Suspended';
+        $arr[5] = 'Active';
+        $arr[6] = 'Inactive';
+        $arr[7] = 'Leave';
+        $arr[8] = 'Rehired';
+        //
+        return $arr[$index];
+    }
+}
+
+//
+
+if (!function_exists('GetEmployeeStatus')) {
+    /**
+     * Get employee last status
+     * 
+     * @param string $lastStatusText
+     * @param number $active
+     * @return
+     */
+    function GetEmployeeStatus($lastStatusText, $active)
+    {
+        //
+        if (strtolower($lastStatusText) === 'rehired') {
+            return 'Active';
+        }
+        //
+        return ucwords($lastStatusText ? $lastStatusText : ($active ? 'Active' : 'De-activated'));
+    }
+}

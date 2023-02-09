@@ -41,11 +41,13 @@ class Home extends CI_Controller
     {
         $server_name = clean_domain($_SERVER['SERVER_NAME']);
         $data = $this->check_domain->check_portal_status($server_name);
-
         $company_sid = $data['company_details']['sid'];
         $data['customize_career_site'] = $this->themes_pages_model->getCustomizeCareerSiteData($company_sid);
         $data['remarket_company_settings'] = $this->themes_pages_model->get_remarket_company_settings();
         company_phone_regex_module_check($company_sid, $data, $this);
+
+        //
+        $data['sms_module_status'] = $data['company_details']['sms_module_status'];
 
         if (!$this->session->userdata('portal_info')) {
             $this->session->set_userdata('portal_info', $data);
@@ -140,7 +142,6 @@ class Home extends CI_Controller
             $ajax_flag                                                          = $this->uri->segment(8);
 
             $companyIds = [$company_sid];
-
             if ($data['customize_career_site']['status'] == 1) {
 
                 if (!empty($segment7) && $segment7 > 1) {
@@ -161,9 +162,8 @@ class Home extends CI_Controller
 
 
                 if (!empty($all_paid_jobs)) {
-                    foreach ($all_paid_jobs as $apj) {
-                        $paid_jobs[]                                    = $apj['jobId'];
-                    }
+                    //
+                    $paid_jobs = array_column($all_paid_jobs, 'jobId');
                 }
             }
 
@@ -236,20 +236,17 @@ class Home extends CI_Controller
                 } else {
                     $list = $this->job_details->fetch_company_jobs_new($data['employer_id']);
                 }
-
-                // $list = $this->job_details->fetch_all_active_jobs($data['employer_id']);
             } else if ($theme_name != 'theme-4') {
                 $list = $this->job_details->fetch_company_jobs_new($data['employer_id']);
-                // $list = $this->job_details->fetch_all_active_jobs($data['employer_id']);
             }
-
+            //            
             if (($theme_name == 'theme-4' && strtoupper($pageName) == 'JOBS') || $theme_name == 'theme-3' || $theme_name == 'theme-2' || $theme_name == 'theme-1') {
                 if ($data['customize_career_site']['status'] == 1) {
                     $all_active_jobs = $this->job_details->filters_of_active_jobs_of_companies($career_site_company_sid);
                 } else {
                     $all_active_jobs = $this->job_details->filters_of_active_jobs($data['employer_id'], $job_approval_module_status);
                 }
-
+                
 
                 if (!empty($all_active_jobs)) { // we need it for search filters as we only need to show filters as per active jobs only
 
@@ -295,6 +292,17 @@ class Home extends CI_Controller
             $country_states_array = $GetStatesWithCountries['CountryWithStates'];
 
             if (!empty($list)) {
+                //
+                $storeIds = array_unique(array_column($list, 'user_sid'));
+                // Get thier subdomains
+                $data['storeData'] = $storeData = $this->job_details->getStoreData($storeIds);
+                //
+                $screeningQuestionaires = array_unique(
+                    array_column($list, 'questionnaire_sid')
+                );
+                //
+                $data['screeningQuestionaires'] = $screeningQuestionaires = $this->job_details->getScreeningQuestionares($screeningQuestionaires);
+                //
                 foreach ($list as $key => $value) {
                     $country_id = $value['Location_Country'];
 
@@ -332,13 +340,12 @@ class Home extends CI_Controller
                     $questionnaire_sid = $value['questionnaire_sid'];
 
                     if ($questionnaire_sid > 0) {
-                        $portal_screening_questionnaires = $this->job_details->get_screening_questionnaire_by_id($questionnaire_sid);
-
-                        if (!empty($portal_screening_questionnaires)) {
-                            $list[$key]['q_name'] = $portal_screening_questionnaires[0]['name'];
-                            $list[$key]['q_passing'] = $portal_screening_questionnaires[0]['passing_score'];
-                            $list[$key]['q_send_pass'] = $portal_screening_questionnaires[0]['auto_reply_pass'];
-                            $list[$key]['q_send_fail'] = $portal_screening_questionnaires[0]['auto_reply_fail'];
+                        //
+                        if (isset($screeningQuestionaires[$questionnaire_sid])) {
+                            $list[$key]['q_name'] = $screeningQuestionaires[$questionnaire_sid][0]['name'];
+                            $list[$key]['q_passing'] = $screeningQuestionaires[$questionnaire_sid][0]['passing_score'];
+                            $list[$key]['q_send_pass'] = $screeningQuestionaires[$questionnaire_sid][0]['auto_reply_pass'];
+                            $list[$key]['q_send_fail'] = $screeningQuestionaires[$questionnaire_sid][0]['auto_reply_fail'];
                             $list[$key]['q_pass_text'] = ''; //$portal_screening_questionnaires[0]['email_text_pass'];
                             $list[$key]['q_fail_text'] = ''; //$portal_screening_questionnaires[0]['email_text_fail'];
                             $list[$key]['my_id'] = 'q_question_' . $questionnaire_sid;
@@ -352,20 +359,24 @@ class Home extends CI_Controller
                             $list[$key]['my_id'] = 'q_question_' . $questionnaire_sid;
                         }
 
-                        $screening_questions_numrows = $this->job_details->get_screenings_count_by_id($questionnaire_sid);
-
-                        if ($screening_questions_numrows > 0) {
-                            $screening_questions = $this->job_details->get_screening_questions_by_id($questionnaire_sid);
+                        if(isset($screeningQuestionaires[$questionnaire_sid]) && $screeningQuestionaires[$questionnaire_sid]['questions_count'] > 0){
+                            //
+                            $screening_questions = $screeningQuestionaires[$questionnaire_sid]['questions'];
+                            $screeningAnswers = [];
+                            //
+                            if ($screening_questions) {
+                                $screeningQuestionIds = array_keys($screening_questions);
+                                $screeningAnswers = $this->job_details->getScreeningAnswers($screeningQuestionIds);
+                            }
 
                             foreach ($screening_questions as $qkey => $qvalue) {
                                 $questions_sid = $qvalue['sid'];
                                 $list[$key]['q_question_' . $questionnaire_sid][] = array('questions_sid' => $questions_sid, 'caption' => $qvalue['caption'], 'is_required' => $qvalue['is_required'], 'question_type' => $qvalue['question_type']);
-                                $screening_answers_numrows = $this->job_details->get_screening_answer_count_by_id($questions_sid);
 
-                                if ($screening_answers_numrows) {
-                                    $screening_answers = $this->job_details->get_screening_answers_by_id($questions_sid);
+                                //
+                                if (isset($screeningAnswers[$questions_sid])) {
 
-                                    foreach ($screening_answers as $akey => $avalue) {
+                                    foreach ($screeningAnswers[$questions_sid] as $akey => $avalue) {
                                         $list[$key]['q_answer_' . $questions_sid][] = array('value' => $avalue['value'], 'score' => $avalue['sid']);
                                     }
                                 }
@@ -379,10 +390,11 @@ class Home extends CI_Controller
                     if ($data['customize_career_site']['status'] == 1) {
                         $list[$key]['Title'] = prepare_job_title($list[$key]['Title'], $list[$key]['Location_City'], $list[$key]['Location_State'], $list[$key]['Location_Country']);
                     } else {
-                        $list[$key]['Title'] = db_get_job_title($company_id, $list[$key]['Title'], $list[$key]['Location_City'], $list[$key]['Location_State'], $list[$key]['Location_Country']);
+                        //
+                        $list[$key]['Title'] = $storeData[$company_id]['job_title_location'] == 1 ? $list[$key]['Title'].' - '.$list[$key]['Location_City'].', '.$list[$key]['Location_State'].', '.$list[$key]['Location_Country'] : $list[$key]['Title'];
                     }
                     //Generate Share Links - start
-                    $company_subdomain_url = STORE_PROTOCOL_SSL . db_get_sub_domain($company_id);
+                    $company_subdomain_url = STORE_PROTOCOL_SSL . $storeData[$company_id]['sub_domain'];
                     $portal_job_url = $company_subdomain_url . '/job_details/' . $list[$key]['sid'];
                     $fb_google_share_url = str_replace(':', '%3A', $portal_job_url);
                     $btn_facebook = '<a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=' . $fb_google_share_url . '" target="_blank"><img alt="" src="' . STORE_PROTOCOL_SSL . $server_name . '/assets/' . $theme_name . '/images/social-2.png"></a>';
@@ -1088,6 +1100,8 @@ class Home extends CI_Controller
         }
         $server_name = clean_domain($_SERVER['SERVER_NAME']);
         $data = $this->check_domain->check_portal_status($server_name);
+        //
+        $data['sms_module_status'] = $data['company_details']['sms_module_status'];
         $theme_name = $data['theme_name'];
 
         $company_sid = $data['company_details']['sid'];
@@ -1624,7 +1638,8 @@ class Home extends CI_Controller
                                                 'cover_letter'          => $cover_letter,
                                                 'country'               => $country,
                                                 'referred_by_name'      => $referred_by_name,
-                                                'referred_by_email'     => $referred_by_email
+                                                'referred_by_email'     => $referred_by_email,
+                                                'notified_by'                       => $this->input->post('contactPreference', true)
                                             );
                                             // echo "<pre>"; print_r($insert_data_primary); exit;
                                             $output                                 = $this->job_details->apply_for_job($insert_data_primary);
@@ -1668,7 +1683,8 @@ class Home extends CI_Controller
                                                 'state'                 => $state,
                                                 'country'               => $country,
                                                 'referred_by_name'      => $referred_by_name,
-                                                'referred_by_email'     => $referred_by_email
+                                                'referred_by_email'     => $referred_by_email,
+                                                'notified_by'                       => $this->input->post('contactPreference', true)
                                             );
 
                                             if ($YouTube_code != '') { // check if youtube link is updated
@@ -1753,7 +1769,7 @@ class Home extends CI_Controller
                                                 'user_type' => 'applicant',
                                                 'requested_job_sid' => $job_sid,
                                                 'requested_job_type' => 'job'
-                                            ]);
+                                            ], false);
                                         }
 
                                         if ($job_added_successfully == 1) { // send confirmation emails to Primary admin

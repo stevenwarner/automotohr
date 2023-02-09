@@ -1391,11 +1391,29 @@ class Learning_center extends Public_Controller {
             if (!$this->form_validation->run()) {
                 $data['video_list'] = $this->learning_center_model->get_video_list($company_sid);
                 $videos = $this->learning_center_model->get_my_all_online_videos($user_type, $employer_sid, $company_sid, $app_id == NULL ? false : true);
+                //
+                $pendingVideo = 0;
+                //
+                foreach ($videos as $video) {
+                    if ($video['video_watched_status'] == 'pending') {
+                        $pendingVideo++;
+                    }
+                }
+                //
+                $data['pendingVideo'] = $pendingVideo;
                 $data['videos'] = $videos;
                 $data['history'] = $this->learning_center_model->get_video_history($user_type, $employer_sid, $company_sid, $app_id == NULL ? false : true);
                 $assigned_sessions = $this->learning_center_model->get_assigned_all_training_sessions($user_type, $employer_sid, $company_sid);
+                $pendingSessions = 0;
+                //
+                foreach ($assigned_sessions as $session) {
+                    if ($session['session_status'] == 'pending') {
+                        $pendingSessions++;
+                    }
+                }
                 $data['load_view'] = $load_view;
                 $data['assigned_sessions'] = $assigned_sessions;
+                $data['pendingSessions'] = $pendingSessions;
                 $this->load->view('main/header', $data);
                 $this->load->view('learning_center/my_learning_center');
                 $this->load->view('main/footer');

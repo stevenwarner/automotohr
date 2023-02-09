@@ -1,9 +1,20 @@
 <div class="form-title-section">
-    <h2>Personal Information</h2>
+    <h2>Personal Information <?=getComplyNetEmployeeCheck($employer, $this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'], $this->session->userdata('logged_in')['employer_detail']['access_level_plus']);?></h2>
     <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']){  ?>
     <div class="form-btns">
         <?php if (!empty($MergeData)) { ?>
         <input type="button" value="Merged Employee Information" id="jsSecondaryButton" style="width: 250px;" />
+        <?php } ?>
+        <?php if ($profileHistory > 0) { ?>
+        <input
+            type="button"
+            class="btn btn-warning"
+            value="Profile History"
+            id="jsProfileHistory"
+            data-id="<?=$employer_id;?>"
+            data-name="<?=remakeEmployeeName($employer);?>"
+            style="width: 150px;"
+        />
         <?php } ?>
         <input type="submit" value="edit" id="<?php echo $employer['is_executive_admin'] ? '' : 'edit_button'; ?>" <?php echo $employer['is_executive_admin'] ? 'class="disabled-btn" disabled' : ''; ?>>
     </div>

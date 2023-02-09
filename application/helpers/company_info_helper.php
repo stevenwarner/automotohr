@@ -117,7 +117,8 @@ if (!function_exists('get_form_view')) {
             $compare_date = date("Y-m-d", strtotime('2020-01-06'));
 
             if ($assign_on >= $compare_date) {
-                $view = $CI->load->view('form_w4/form_w4_2020_pdf', $form_values, TRUE);
+                //  $view = $CI->load->view('form_w4/form_w4_2020_pdf', $form_values, TRUE);
+                $view = $CI->load->view('form_w4/form_w4_2023_pdf', $form_values, TRUE);
             } else {
                 $view = $CI->load->view('form_w4/test_form_w4', $form_values, TRUE);
             }
@@ -2072,6 +2073,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_balance'] = 1;
             $return_access_array['time_off_report'] = 1;
             $return_access_array['import_time_off'] = 1;
+            $return_access_array['import_historical'] = 1;
             $return_access_array['export_time_off'] = 1;
             $return_access_array['time_off_setting'] = 1;
             $return_access_array['time_off_approver'] = 1;
@@ -2091,6 +2093,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_balance'] = 1;
             $return_access_array['time_off_report'] = 1;
             $return_access_array['import_time_off'] = 0;
+            $return_access_array['import_historical'] = 0;
             $return_access_array['export_time_off'] = 0;
             $return_access_array['time_off_setting'] = 0;
             $return_access_array['time_off_approver'] = 0;
@@ -2109,6 +2112,7 @@ if (!function_exists('get_pto_user_access')) {
             $return_access_array['time_off_balance'] = 0;
             $return_access_array['time_off_report'] = 0;
             $return_access_array['import_time_off'] = 0;
+            $return_access_array['import_historical'] = 0;
             $return_access_array['export_time_off'] = 0;
             $return_access_array['time_off_setting'] = 0;
             $return_access_array['time_off_approver'] = 0;
@@ -2479,12 +2483,19 @@ if (!function_exists('checkAndUpdateDD')) {
             $b['sid'] = $CI->db->insert_id();
         }
         //
+        $actionTakerId = $userSid;
+        // //
+        if ($CI->session->userdata('logged_in')['employer_detail']['sid']) {
+            $actionTakerId = $CI->session->userdata('logged_in')['employer_detail']['sid'];
+            $userType = 'employee';
+        }
+        //
         $CI->db
             ->insert(
                 'documents_assigned_general_assigners',
                 [
                     'documents_assigned_general_sid' => $b['sid'],
-                    'user_sid' => $userSid,
+                    'user_sid' => $actionTakerId,
                     'user_type' => $userType,
                     'action' => 'completed'
                 ]
@@ -2695,14 +2706,228 @@ if (!function_exists('CheckLogin')) {
 
 
 if (!function_exists('getnotifications_emails_configuration')) {
-    function getnotifications_emails_configuration($companySid,$slug) {
-         //
+    function getnotifications_emails_configuration($companySid, $slug)
+    {
+        //
         $CI = &get_instance();
         //
-         return $CI->db
+        return $CI->db
             ->where('company_sid', $companySid)
             ->where($slug, 1)
             ->count_all_results('notifications_emails_configuration');
     }
-       
+}
+
+
+if (!function_exists('getComplyNetLink')) {
+    /**
+     * Get the employee hash
+     * 
+     * @param int $companyId
+     * @param int $employeeId
+     * @return string
+     */
+    function getComplyNetLink(
+        int $companyId,
+        int $employeeId
+    ) {
+        // Get CI instance
+        $CI = &get_instance();
+        // Check if company is onboard
+        if (!$CI->db->where([
+            'company_sid'
+        ])->count_all_results('complynet_companies')) {
+            return '';
+        }
+        // Get email
+        $record =
+            $CI->db->select('email')->where([
+                'parent_sid' => $companyId,
+                'sid' => $employeeId
+            ])
+            ->get('users')
+            ->row_array();
+        //
+        if (empty($record)) {
+            return '';
+        }
+        // Load ComplyNet library
+        $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
+        // Get the hash
+        return $CI->complynet_lib->getUserHash($record['email']);
+    }
+}
+
+
+if (!function_exists('convertDateTimeToTimeZone')) {
+    /**
+     * Convert the timezones
+     *
+     * Only converts timezone from server's timezone
+     * to employee timezone
+     *
+     * @method reset_datetime
+     *
+     * @param string $dateTime String containg the date time "Y-m-d H:i:s"
+     * @param string $fromFormat Optional String containing the provided datetime format
+     * @param string $toFormat Optional String containing the output datetime format
+     * @return string
+     */
+    function convertDateTimeToTimeZone(
+        string $dateTime,
+        string $fromFormat = DB_DATE_WITH_TIME,
+        string $toFormat = DB_DATE_WITH_TIME
+    ) {
+        // get CI instance
+        $CI = &get_instance();
+        //
+        $timeZone = null;
+        // Check if the session is in place
+        $timeZone = $CI->session->userdata('logged_in')['employer_detail']['timezone'] ?? $CI->session->userdata('logged_in')['company_detail']['timezone'];
+        //
+        if (!$timeZone) {
+            $timeZone = STORE_DEFAULT_TIMEZONE_ABBR;
+        }
+        //
+        return reset_datetime([
+            'datetime' => $dateTime, // sets the datetime string
+            'from_zone' => STORE_DEFAULT_TIMEZONE_ABBR, // sets the from timezone
+            'new_zone' => $timeZone, // set the to timezone
+            'from_format' => $fromFormat, // set the from datetime format
+            'format' => $toFormat, // set the to datetime format
+            '_this' => $CI // set the instance of CI
+        ]);
+    }
+}
+
+
+if (!function_exists('getComplyNetEmployeeCheck')) {
+    /**
+     * Check the ComplyNet status of employee
+     *
+     * @param array $employee
+     * @param int $payPlanPlus
+     * @param int $accessLevelPlus
+     * @param bool $showButton Optional
+     * @return string
+     */
+    function getComplyNetEmployeeCheck(
+        array $employee,
+        int $payPlanPlus,
+        int $accessLevelPlus,
+        bool $showButton = true
+    ) {
+        if (!isCompanyOnComplyNet($employee['parent_sid'])) {
+            return '';
+        }
+        //
+        if ($employee['complynet_onboard'] == 1) {
+            return '<button class="btn btn-xs csBG2" title="Employee is on ComplyNet"><i class="fa fa-shield _csM0"></i></button>';
+        }
+        //
+        $row = '';
+        //
+        if (($payPlanPlus || $accessLevelPlus) && $showButton) {
+            $row = '<button class="btn csBG2 jsAddEmployeeToComplyNet" title="Add Employee To ComplyNet" placement="top" data-cid="' . ($employee['parent_sid']) . '" data-id="' . ($employee['sid']) . '">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                    </button>';
+        }
+        //
+        if (!$showButton) {
+            $row = 'Not on ComplyNet';
+        }
+        return $row;
+    }
+}
+
+
+if (!function_exists('checkEmployeeMissingData')) {
+    /**
+     * Check the employee for missing data
+     *
+     * @param array $employee
+     * @return array
+     */
+    function checkEmployeeMissingData(
+        array $employee
+    ) {
+        //
+        $errors = [];
+        //
+        if (!$employee['first_name']) {
+            $errors[] = 'First name is missing.';
+        }
+        if (!$employee['last_name']) {
+            $errors[] = 'Last name is missing.';
+        }
+        if (!$employee['username']) {
+            $errors[] = 'Username is missing.';
+        }
+        if (!$employee['email']) {
+            $errors[] = 'Email is missing.';
+        }
+        if (!$employee['PhoneNumber']) {
+            $errors[] = 'Phone number is missing.';
+        }
+        // if (!$employee['job_title']) {
+        //     $errors[] = 'Job title is missing.';
+        // }
+        if (!$employee['complynet_job_title']) {
+            $errors[] = 'Job title is missing.';
+        }
+        if (!$employee['department_sid']) {
+            $errors[] = 'Department is missing.';
+        }
+        if (!$employee['team_sid']) {
+            $errors[] = 'Team is missing.';
+        }
+
+        return $errors;
+    }
+}
+
+
+if (!function_exists('isCompanyOnComplyNet')) {
+    /**
+     * Check the company onboard on ComplyNet
+     *
+     * @param int $companyId
+     * @return int
+     */
+    function isCompanyOnComplyNet(
+        int $companyId
+    ) {
+        //
+        $CI = &get_instance();
+        //
+        if (!$CI->db->where(['sid' => $companyId, 'complynet_status' => 1])->count_all_results('users')) {
+            return 0;
+        }
+        //
+        return $CI->db
+            ->where('company_sid', $companyId)
+            ->count_all_results('complynet_companies');
+    }
+}
+
+
+if (!function_exists('findTheRightEmployee')) {
+    function findTheRightEmployee(
+        array $records,
+        string $companyId,
+        string $locationId
+    ) {
+        //
+        $found = [];
+        //
+        foreach ($records as $record) {
+            //
+            if ($record['CompanyId'] == $companyId && $record['LocationId'] == $locationId) {
+                $found = $record;
+                break;
+            }
+        }
+        //
+        return $found;
+    }
 }

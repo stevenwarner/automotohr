@@ -1,4 +1,4 @@
-<?php $slug = $userInfo['first_name'].' '.$userInfo['last_name']; ?>
+<?php $slug = $userInfo['first_name'] . ' ' . $userInfo['last_name']; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -74,9 +74,9 @@
         String.prototype.ucwords = function() {
             str = this.toLowerCase();
             return str.replace(/(^([a-zA-Z\p{M}]))|([ -][a-zA-Z\p{M}])/g,
-            function(s){
-                return s.toUpperCase();
-            });
+                function(s) {
+                    return s.toUpperCase();
+                });
         };
 
         // fix
@@ -93,17 +93,17 @@
             let dc = 0;
             let gd = 0;
             let token = "<?= $token; ?>";
-            
+
             // General Information Documents
-            if (has['direct_deposit'] != "null")  assignedLength++;
-            if (has['dependents'] != "null")  assignedLength++;
-            if (has['emergency_contacts'] != "null")  assignedLength++;
-            if (has['drivers_license'] != "null")  assignedLength++;
-            if (has['occupational_license'] != "null")  assignedLength++;
+            if (has['direct_deposit'] != "null") assignedLength++;
+            if (has['dependents'] != "null") assignedLength++;
+            if (has['emergency_contacts'] != "null") assignedLength++;
+            if (has['drivers_license'] != "null") assignedLength++;
+            if (has['occupational_license'] != "null") assignedLength++;
             //
-            if (has['I9'] != "null")  assignedLength++;
-            if (has['W9'] != "null")  assignedLength++;
-            if (has['W4'] != "null")  assignedLength++;
+            if (has['I9'] != "null") assignedLength++;
+            if (has['W9'] != "null") assignedLength++;
+            if (has['W4'] != "null") assignedLength++;
             //
             $('#js-dt').text(assignedLength);
 
@@ -117,19 +117,19 @@
             } else if (has['W4'] != "null") {
                 // Check for if
                 checkW4('Adding W4 form to export');
-            } else if(has['direct_deposit'] != "null"){
+            } else if (has['direct_deposit'] != "null") {
                 //
                 exportGDocument('direct_deposit');
-            } else if(has['dependents'] != "null"){
+            } else if (has['dependents'] != "null") {
                 //
                 exportGDocument('dependents');
-            } else if(has['emergency_contacts'] != "null"){
+            } else if (has['emergency_contacts'] != "null") {
                 //
                 exportGDocument('emergency_contacts');
-            } else if(has['drivers_license'] != "null"){
+            } else if (has['drivers_license'] != "null") {
                 //
                 exportGDocument('drivers_license');
-            } else if(has['occupational_license'] != "null"){
+            } else if (has['occupational_license'] != "null") {
                 //
                 exportGDocument('occupational_license');
             } else {
@@ -195,27 +195,27 @@
             //
             function exportGDocument(s) {
                 //
-                if(s == 'direct_deposit' && has['direct_deposit'] == "null"){
+                if (s == 'direct_deposit' && has['direct_deposit'] == "null") {
                     exportGDocument('dependents');
                     return;
                 }
                 //
-                if(s == 'dependents' && has['dependents'] == "null"){
+                if (s == 'dependents' && has['dependents'] == "null") {
                     exportGDocument('emergency_contacts');
                     return;
                 }
                 //
-                if(s == 'emergency_contacts' && has['emergency_contacts'] == "null"){
+                if (s == 'emergency_contacts' && has['emergency_contacts'] == "null") {
                     exportGDocument('drivers_license');
                     return;
                 }
                 //
-                if(s == 'drivers_license' && has['drivers_license'] == "null"){
+                if (s == 'drivers_license' && has['drivers_license'] == "null") {
                     exportGDocument('occupational_license');
                     return;
                 }
                 //
-                if(s == 'occupational_license' && has['occupational_license'] == "null"){
+                if (s == 'occupational_license' && has['occupational_license'] == "null") {
                     //
                     startMoveProcess(getDocument());
                     return;
@@ -229,11 +229,11 @@
             }
 
             //
-            function getGIDocument(s){
+            function getGIDocument(s) {
                 //
-                $.get(`<?=base_url('hr_documents_management/getGeneralDocument');?>/${s}/<?=$user_sid;?>/<?=$user_type;?>`, (resp) => {
+                $.get(`<?= base_url('hr_documents_management/getGeneralDocument'); ?>/${s}/<?= $user_sid; ?>/<?= $user_type; ?>`, (resp) => {
                     //
-                    if(resp == '' || resp.length == 0){
+                    if (resp == '' || resp.length == 0) {
                         nextDocument(s);
                         return;
                     }
@@ -324,13 +324,22 @@
                 ) {
                     getSubmittedDocument(dct);
                 } else {
-                    getSubmittedDocument(dct);
+                    if (dct.document_sid == 0) {
+                        uploadDocument({
+                            title: dct.document_title,
+                            orig_filename: dct.document_original_name,
+                            s3_filename: dct.document_s3_name
+                        });
+                    } else {
+
+                        getSubmittedDocument(dct);
+                    }
                 }
             }
 
-            function getSubmittedDocument(dct){
+            function getSubmittedDocument(dct) {
                 //
-                $.get(`<?=base_url('hr_documents_management/getSubmittedDocument');?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`, (resp) => {
+                $.get(`<?= base_url('hr_documents_management/getSubmittedDocument'); ?>/${dct.sid}/submitted/assigned_document/${dct.document_type}`, (resp) => {
                     var obj = jQuery.parseJSON(resp);
                     $('#js-export-area div').html(obj.html);
                     let o = {
@@ -338,38 +347,38 @@
                         content: obj.html
                     };
                     //
-                    if(dct.document_type == 'hybrid_document') o.file = dct.document_s3_name;
+                    if (dct.document_type == 'hybrid_document') o.file = dct.document_s3_name;
                     // Check for existing base64
-                    if(o.content.indexOf('data:application/pdf;base64,') !== -1 ){
+                    if (o.content.indexOf('data:application/pdf;base64,') !== -1) {
                         o.content = o.content.replace(/data:application\/pdf;base64,/, '');
                         uploadDocument(o, o.title);
-                    } else{
+                    } else {
                         $('#js-export-area div').html(obj.html);
                         //
-                        if($('#jsContentArea').find('select').length >= 0){
-                            $('#jsContentArea').find('select').map(function(i){
+                        if ($('#jsContentArea').find('select').length >= 0) {
+                            $('#jsContentArea').find('select').map(function(i) {
                                 //
                                 $(this).addClass('js_select_document');
-                                $(this).prop('name', 'selectDD'+i);
+                                $(this).prop('name', 'selectDD' + i);
                             });
                         }
                         //
                         var form_input_data = obj.input_data;
                         //
-                        if(form_input_data != null && form_input_data != ''){
+                        if (form_input_data != null && form_input_data != '') {
                             //
                             form_input_data = Object.entries(form_input_data);
                             //
-                            $.each(form_input_data, function(key ,input_value) { 
-                                if(input_value[0].match(/select/) !== -1){
-                                    if(input_value[1] != null){
-                                        let cc =get_select_box_value(input_value[0],input_value[1]);
-                                        $(`select.js_select_document[name="${input_value[0]}"]`).html('');  
-                                        $(`select.js_select_document[name="${input_value[0]}"]`).hide(0);    
+                            $.each(form_input_data, function(key, input_value) {
+                                if (input_value[0].match(/select/) !== -1) {
+                                    if (input_value[1] != null) {
+                                        let cc = get_select_box_value(input_value[0], input_value[1]);
+                                        $(`select.js_select_document[name="${input_value[0]}"]`).html('');
+                                        $(`select.js_select_document[name="${input_value[0]}"]`).hide(0);
                                         $(`select.js_select_document[name="${input_value[0]}"]`).after(`<strong style="font-size: 20px;">${cc}</strong>`);
                                     }
-                                }    
-                            }); 
+                                }
+                            });
                         }
                         //
                         generatePDF($('#js-export-area div'), o);
@@ -381,16 +390,16 @@
                 var data = select_box_val;
                 let cc = '';
 
-                if (select_box_val.indexOf(',') > -1) { 
-                    data = select_box_val.split(','); 
+                if (select_box_val.indexOf(',') > -1) {
+                    data = select_box_val.split(',');
                 }
-                
 
-                if($.isArray(data)) {
+
+                if ($.isArray(data)) {
                     let modify_string = '';
-                    $.each(data, function(key ,value) { 
+                    $.each(data, function(key, value) {
                         if (modify_string == '') {
-                            modify_string = ' '+$(`select.js_select_document[name="${select_box_name}"] option[value="${value}"]`).text();
+                            modify_string = ' ' + $(`select.js_select_document[name="${select_box_name}"] option[value="${value}"]`).text();
                         } else {
                             modify_string = modify_string + ', ' + $(`select.js_select_document[name="${select_box_name}"] option[value="${value}"]`).text();
                         }
@@ -399,7 +408,7 @@
                 } else {
                     cc = $(`select.js_select_document[name="${select_box_name}"] option[value="${select_box_val}"]`).text();
                 }
-                
+
                 return cc;
             }
 
@@ -407,19 +416,19 @@
             //
             function uploadDocument(d) {
                 //
-                if(XHR !== null) {
+                if (XHR !== null) {
                     setTimeout(() => {
                         uploadDocument(d);
                     }, 1000);
                     return;
                 }
                 //
-                XHR = $.post("<?=base_url('hr_documents_management/upload');?>", {
+                XHR = $.post("<?= base_url('hr_documents_management/upload'); ?>", {
                     token: token,
                     data: d,
                     typo: 'document',
-                    employeeSid: "<?=$user_sid;?>",
-                    userFullNameSlug: "<?=$slug;?>"
+                    employeeSid: "<?= $user_sid; ?>",
+                    userFullNameSlug: "<?= $slug; ?>"
                 }, () => {
                     XHR = null;
                     nextDocument(d.title);
@@ -429,37 +438,37 @@
                     }, 1000);
                 });
             }
-            
+
             //
             function generateZip(d) {
-            	var user_sid = "<?=$user_sid;?>";
-            	var user_type = "<?=$user_type;?>";
-            	var company_sid = "<?=$company_sid;?>";
-                window.location.href = "<?=base_url('hr_documents_management/generate_zip');?>/"+token+"/<?=$slug;?>/"+user_sid+"/"+user_type+"/"+company_sid;
+                var user_sid = "<?= $user_sid; ?>";
+                var user_type = "<?= $user_type; ?>";
+                var company_sid = "<?= $company_sid; ?>";
+                window.location.href = "<?= base_url('hr_documents_management/generate_zip'); ?>/" + token + "/<?= $slug; ?>/" + user_sid + "/" + user_type + "/" + company_sid;
                 setTimeout(() => {
                     window.close();
                 }, 10000);
             }
 
             //
-            function nextDocument(lastDocument){
+            function nextDocument(lastDocument) {
                 //
-                if(lastDocument == 'direct_deposit'){
+                if (lastDocument == 'direct_deposit') {
                     exportGDocument('dependents');
                     return;
                 }
                 //
-                if(lastDocument == 'dependents'){
+                if (lastDocument == 'dependents') {
                     exportGDocument('emergency_contacts');
                     return;
                 }
                 //
-                if(lastDocument == 'emergency_contacts'){
+                if (lastDocument == 'emergency_contacts') {
                     exportGDocument('drivers_license');
                     return;
                 }
                 //
-                if(lastDocument == 'drivers_license'){
+                if (lastDocument == 'drivers_license') {
                     exportGDocument('occupational_license');
                     return;
                 }
@@ -473,28 +482,33 @@
             function generatePDF(
                 target,
                 o
-            ){
+            ) {
                 let draw = kendo.drawing;
                 draw.drawDOM(target, {
-                    avoidLinks: false,
-                    paperSize: "A4",
-                    multiPage: true,
-                    height: 500,
-                    forcePageBreak: '.js-break',
-                    margin: { bottom: "1cm", left: "1cm", top: ".3cm", right: "1cm" },
-                    scale: 0.8
-                })
-                .then(function(root) {
-                    return draw.exportPDF(root);
-                })
-                .done(function(data) {
-                    //
-                    o.content  = data;
-                    //
-                    uploadDocument(
-                        o
-                    );
-                });
+                        avoidLinks: false,
+                        paperSize: "A4",
+                        multiPage: true,
+                        height: 500,
+                        forcePageBreak: '.js-break',
+                        margin: {
+                            bottom: "1cm",
+                            left: "1cm",
+                            top: ".3cm",
+                            right: "1cm"
+                        },
+                        scale: 0.8
+                    })
+                    .then(function(root) {
+                        return draw.exportPDF(root);
+                    })
+                    .done(function(data) {
+                        //
+                        o.content = data;
+                        //
+                        uploadDocument(
+                            o
+                        );
+                    });
             }
         })
     </script>
@@ -539,9 +553,9 @@
         ?>
     </div>
 
-    
-<!--  -->
-<div id="js-export-area" style="
+
+    <!--  -->
+    <div id="js-export-area" style="
 position: fixed;
 left: -1000px;
 top: 0;
@@ -551,7 +565,8 @@ padding: 16px;
 font-size: 16px;
 word-break: break-all; 
 ">
-<div class="A4"></div>
-</div>
+        <div class="A4"></div>
+    </div>
 </body>
+
 </html>

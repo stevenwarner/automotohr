@@ -18,7 +18,7 @@ class Hr_documents_management extends Public_Controller
     }
 
     public function index()
-    {
+    {getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
 
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
@@ -353,6 +353,7 @@ class Hr_documents_management extends Public_Controller
 
     public function archived_documents()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -483,6 +484,7 @@ class Hr_documents_management extends Public_Controller
 
     public function upload_new_document()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -761,6 +763,7 @@ class Hr_documents_management extends Public_Controller
 
     public function generate_new_document()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1115,6 +1118,7 @@ class Hr_documents_management extends Public_Controller
 
     public function generate_new_offer_letter()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -2186,18 +2190,20 @@ class Hr_documents_management extends Public_Controller
                                 $w4_data_to_insert['status'] = 1;
                                 $this->hr_documents_management_model->insert_w4_form_record($w4_data_to_insert);
                             } else {
-                                $w4_data_to_insert                                          = array();
-                                $w4_data_to_insert['sent_date']                             = date('Y-m-d H:i:s');
-                                $w4_data_to_insert['status']                                = 1;
-                                $w4_data_to_insert['signature_timestamp']                   = NULL;
-                                $w4_data_to_insert['signature_email_address']               = NULL;
-                                $w4_data_to_insert['signature_bas64_image']                 = NULL;
-                                $w4_data_to_insert['init_signature_bas64_image']            = NULL;
-                                $w4_data_to_insert['ip_address']                            = NULL;
-                                $w4_data_to_insert['user_agent']                            = NULL;
-                                $w4_data_to_insert['user_consent']                          = 0;
+                                $w4_data_to_update                                          = array();
+                                $w4_data_to_update['sent_date']                             = date('Y-m-d H:i:s');
+                                $w4_data_to_update['status']                                = 1;
+                                $w4_data_to_update['signature_timestamp']                   = NULL;
+                                $w4_data_to_update['signature_email_address']               = NULL;
+                                $w4_data_to_update['signature_bas64_image']                 = NULL;
+                                $w4_data_to_update['init_signature_bas64_image']            = NULL;
+                                $w4_data_to_update['ip_address']                            = NULL;
+                                $w4_data_to_update['user_agent']                            = NULL;
+                                $w4_data_to_update['uploaded_file']                         = NULL;
+                                $w4_data_to_update['uploaded_by_sid']                       = 0;
+                                $w4_data_to_update['user_consent']                          = 0;
 
-                                $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_insert);
+                                $this->hr_documents_management_model->activate_w4_forms($user_type, $user_sid, $w4_data_to_update);
                             }
                             //
                             if ($user_type == 'employee') {
@@ -2336,7 +2342,8 @@ class Hr_documents_management extends Public_Controller
                                 $already_assigned_w9['signature_user_agent'] = NULL;
                                 $already_assigned_w9['sent_date'] = date('Y-m-d H:i:s');
                                 $already_assigned_w9['status'] = 1;
-                                $already_assigned_w9['user_consent'] = NULL;
+                                $already_assigned_w9['uploaded_file'] = NULL;
+                                $already_assigned_w9['uploaded_by_sid'] = 0;
                                 //
                                 $this->hr_documents_management_model->activate_w9_forms($user_type, $user_sid, $already_assigned_w9);
                             }
@@ -2457,6 +2464,7 @@ class Hr_documents_management extends Public_Controller
                                 $data_to_update["section3_emp_sign"] = NULL;
                                 $data_to_update["employer_flag"] = NULL;
                                 $data_to_update["user_consent"] = NULL;
+                                $data_to_update["s3_filename"] = NULL;
                                 //
                                 $this->hr_documents_management_model->reassign_i9_forms($user_type, $user_sid, $data_to_update);
                             }
@@ -4671,6 +4679,7 @@ class Hr_documents_management extends Public_Controller
 
     public function authorized_document_listing()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
 
             $data['session']                                                    = $this->session->userdata('logged_in');
@@ -4684,6 +4693,8 @@ class Hr_documents_management extends Public_Controller
             $security_details                                                   = db_get_access_level_details($employer_sid);
             $data['security_details']                                           = $security_details;
             // Get inactive employee and applicants
+            getCompanyEmsStatusBySid($company_sid, true);
+
             $inactiveEmployees = $this->hr_documents_management_model->getAllCompanyInactiveEmployee($company_sid);
             $inactiveApplicants = $this->hr_documents_management_model->getAllCompanyInactiveApplicant($company_sid);
             $total_documents                                                    = $this->hr_documents_management_model->get_all_assigned_auth_documents(
@@ -5807,6 +5818,7 @@ class Hr_documents_management extends Public_Controller
 
                     $document_content = replace_tags_for_document($company_sid, $employer_sid, 'employee', $document['document_description'], $document['document_sid']);
                     $document['document_description'] = $document_content;
+                    $requested_content = preg_replace('#(<br */?>\s*)+#i', '<br />', $requested_content);
                 } else {
                     $this->session->set_flashdata('message', '<strong>Error</strong> Document Not found!');
                     redirect('hr_documents_management/my_documents', 'refresh');
@@ -6373,6 +6385,7 @@ class Hr_documents_management extends Public_Controller
         $documents = 'all',
         $type = FALSE
     ) {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -6480,6 +6493,7 @@ class Hr_documents_management extends Public_Controller
         $documents = 'all',
         $type = FALSE
     ) {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -7587,6 +7601,7 @@ class Hr_documents_management extends Public_Controller
 
     public function documents_group_management()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -8572,6 +8587,7 @@ class Hr_documents_management extends Public_Controller
 
     public function documents_category_management()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -9051,15 +9067,15 @@ class Hr_documents_management extends Public_Controller
             $insert_data['section2_lista_part1_document_title'] = $formpost['lista_part1_doc_select_input'] != 'input' ? $formpost['section2_lista_part1_document_title'] : $formpost['section2_lista_part1_document_title_text_val'];
             $insert_data['section2_lista_part1_issuing_authority'] = isset($formpost['section2_lista_part1_issuing_authority']) && $formpost['lista_part1_issuing_select_input'] != 'input' ? $formpost['section2_lista_part1_issuing_authority'] : $formpost['section2_lista_part1_issuing_authority_text_val'];
             $insert_data['section2_lista_part1_document_number'] = $formpost['section2_lista_part1_document_number'];
-            $insert_data['section2_lista_part1_expiration_date'] = empty($formpost['section2_lista_part1_expiration_date']) || $formpost['section2_lista_part1_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part1_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_lista_part1_expiration_date'] = empty(checkDateFormate($formpost['section2_lista_part1_expiration_date'])) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part1_expiration_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_lista_part2_document_title'] = $formpost['lista_part2_doc_select_input'] != 'input' ? $formpost['section2_lista_part2_document_title'] : $formpost['section2_lista_part2_document_title_text_val'];
             $insert_data['section2_lista_part2_issuing_authority'] = isset($formpost['section2_lista_part2_issuing_authority']) && $formpost['lista_part2_issuing_select_input'] != 'input' ? $formpost['section2_lista_part2_issuing_authority'] : $formpost['section2_lista_part2_issuing_authority_text_val'];
             $insert_data['section2_lista_part2_document_number'] = $formpost['section2_lista_part2_document_number'];
-            $insert_data['section2_lista_part2_expiration_date'] = empty($formpost['section2_lista_part2_expiration_date']) || $formpost['section2_lista_part2_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part2_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_lista_part2_expiration_date'] = empty(checkDateFormate($formpost['section2_lista_part2_expiration_date'])) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part2_expiration_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_lista_part3_document_title'] = $formpost['lista_part3_doc_select_input'] != 'input' ? $formpost['section2_lista_part3_document_title'] : $formpost['section2_lista_part3_document_title_text_val'];
             $insert_data['section2_lista_part3_issuing_authority'] = isset($formpost['section2_lista_part3_issuing_authority']) && $formpost['lista_part3_doc_select_input'] != 'input' ? $formpost['section2_lista_part3_issuing_authority'] : $formpost['section2_lista_part3_issuing_authority_text_val'];
             $insert_data['section2_lista_part3_document_number'] = $formpost['section2_lista_part3_document_number'];
-            $insert_data['section2_lista_part3_expiration_date'] = empty($formpost['section2_lista_part3_expiration_date']) || $formpost['section2_lista_part3_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part3_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_lista_part3_expiration_date'] = empty(checkDateFormate($formpost['section2_lista_part3_expiration_date'])) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_lista_part3_expiration_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_additional_information'] = $formpost['section2_additional_information'];
 
             $insert_data['section2_listb_document_title'] = $formpost['section2_listb_document_title'];
@@ -9073,7 +9089,7 @@ class Hr_documents_management extends Public_Controller
 
             $insert_data['section2_listb_issuing_authority'] = isset($formpost['section2_listb_issuing_authority']) && $formpost['listb-auth-select-input'] != 'input' ? $formpost['section2_listb_issuing_authority'] : $formpost['section2_listb_issuing_authority_text_val'];
             $insert_data['section2_listb_document_number'] = $formpost['section2_listb_document_number'];
-            $insert_data['section2_listb_expiration_date'] = empty($formpost['section2_listb_expiration_date']) || $formpost['section2_listb_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listb_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_listb_expiration_date'] = empty(checkDateFormate($formpost['section2_listb_expiration_date']))  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listb_expiration_date'])->format('Y-m-d H:i:s');
 
             $insert_data['section2_listc_document_title'] = $formpost['section2_listc_document_title'];
             $insert_data['listc_auth_select_input'] = isset($formpost['listc-auth-select-input']) ? $formpost['listc-auth-select-input'] : '';
@@ -9083,12 +9099,12 @@ class Hr_documents_management extends Public_Controller
             // $insert_data['section2_listc_issuing_authority'] = isset($formpost['section2_listc_issuing_authority']) ? $formpost['section2_listc_issuing_authority'] : '';
 
             $insert_data['section2_listc_document_number'] = $formpost['section2_listc_document_number'];
-            $insert_data['section2_listc_expiration_date'] = empty($formpost['section2_listc_expiration_date']) || $formpost['section2_listc_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listc_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_listc_expiration_date'] = empty(checkDateFormate($formpost['section2_listc_expiration_date']))  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_listc_expiration_date'])->format('Y-m-d H:i:s');
 
-            $insert_data['section2_firstday_of_emp_date'] = empty($formpost['section2_firstday_of_emp_date']) || $formpost['section2_firstday_of_emp_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_firstday_of_emp_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_firstday_of_emp_date'] = empty(checkDateFormate($formpost['section2_firstday_of_emp_date'])) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_firstday_of_emp_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_sig_emp_auth_rep'] = $reviewer_signature_base64;
 
-            $insert_data['section2_today_date'] = empty($formpost['section2_today_date']) || $formpost['section2_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_today_date'])->format('Y-m-d H:i:s');
+            $insert_data['section2_today_date'] = empty(checkDateFormate($formpost['section2_today_date']))  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section2_today_date'])->format('Y-m-d H:i:s');
             $insert_data['section2_title_of_emp'] = $formpost['section2_title_of_emp'];
             $insert_data['section2_last_name_of_emp'] = $formpost['section2_last_name_of_emp'];
             $insert_data['section2_first_name_of_emp'] = $formpost['section2_first_name_of_emp'];
@@ -9104,12 +9120,12 @@ class Hr_documents_management extends Public_Controller
             $insert_data['section3_last_name'] = $formpost['section3_last_name'];
             $insert_data['section3_first_name'] = $formpost['section3_first_name'];
             $insert_data['section3_middle_initial'] = $formpost['section3_middle_initial'];
-            $insert_data['section3_rehire_date'] = empty($formpost['section3_rehire_date']) || $formpost['section3_rehire_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_rehire_date'])->format('Y-m-d H:i:s');
+            $insert_data['section3_rehire_date'] = empty(checkDateFormate($formpost['section3_rehire_date'])) || checkDateFormate($formpost['section3_rehire_date'])  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_rehire_date'])->format('Y-m-d H:i:s');
             $insert_data['section3_document_title'] = $formpost['section3_document_title'];
             $insert_data['section3_document_number'] = $formpost['section3_document_number'];
-            $insert_data['section3_expiration_date'] = empty($formpost['section3_expiration_date']) || $formpost['section3_expiration_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_expiration_date'])->format('Y-m-d H:i:s');
+            $insert_data['section3_expiration_date'] = empty(checkDateFormate($formpost['section3_expiration_date'])) || checkDateFormate($formpost['section3_expiration_date'])  ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_expiration_date'])->format('Y-m-d H:i:s');
             $insert_data['section3_emp_sign'] = $reviewer_signature_base64;
-            $insert_data['section3_today_date'] = empty($formpost['section3_today_date']) || $formpost['section3_today_date'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_today_date'])->format('Y-m-d H:i:s');
+            $insert_data['section3_today_date'] = empty(checkDateFormate($formpost['section3_today_date'])) || checkDateFormate($formpost['section3_today_date']) ? null : DateTime::createFromFormat('m-d-Y', $formpost['section3_today_date'])->format('Y-m-d H:i:s');
             $insert_data['section3_name_of_emp'] = $formpost['section3_name_of_emp'];
 
             $insert_data['emp_app_sid'] = $employer_sid;
@@ -9243,8 +9259,8 @@ class Hr_documents_management extends Public_Controller
                 $document_path = $request_from == "company_document" ? $document["uploaded_document_s3_name"] : $document["document_s3_name"];
             }
             //
-            
-            $data['document_path'] = base_url("hr_documents_management/download_upload_document").'/'.$document_path;
+
+            $data['document_path'] = base_url("hr_documents_management/download_upload_document") . '/' . $document_path;
             $data['perform_action'] = "download";
             $data['is_hybrid'] = "yes";
         }
@@ -12518,6 +12534,10 @@ class Hr_documents_management extends Public_Controller
             //
             $dt = ROOTPATH . 'temp_files/employee_export/' . $download_file;
             //
+            if (is_file($dt)) {
+                unlink($dt);
+            }
+            //
             shell_exec("cd $dir; zip -r $dt *");
             //
             //
@@ -12550,6 +12570,7 @@ class Hr_documents_management extends Public_Controller
     ) {
         // When their is no session
         if (!$this->session->userdata('logged_in')) exit(0);
+        ini_set('memory_limit', -1);
         $data['session'] = $this->session->userdata('logged_in');
         $security_sid = $data['session']['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);
@@ -13311,6 +13332,7 @@ class Hr_documents_management extends Public_Controller
 
     public function scheduled_documents()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $data['security_details'] = $security_details = db_get_access_level_details($data['session']['employer_detail']['sid']);
@@ -13538,6 +13560,7 @@ class Hr_documents_management extends Public_Controller
         $company_sid = $session['company_detail']['sid'];
         $security_sid = $session['employer_detail']['sid'];
         $security_details = db_get_access_level_details($security_sid);
+        getCompanyEmsStatusBySid($company_sid);
         // For verification documents
         $companyEmployeesForVerification = $this->varification_document_model->getAllCompanyInactiveEmployee($session['company_detail']['sid']);
         $companyApplicantsForVerification = $this->varification_document_model->getAllCompanyInactiveApplicant($session['company_detail']['sid']);
@@ -13654,6 +13677,7 @@ class Hr_documents_management extends Public_Controller
         $documents = 'all',
         $type = FALSE
     ) {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -13865,6 +13889,7 @@ class Hr_documents_management extends Public_Controller
 
     public function library_document_listing()
     {
+        getCompanyEmsStatusBySid($this->session->userdata('logged_in')['company_detail']['sid']);
         //
         if (!$this->session->userdata('logged_in')) {
             return redirect(base_url('login'), "refresh");
@@ -14051,6 +14076,9 @@ class Hr_documents_management extends Public_Controller
         $company_detail = $data['session']['company_detail'];
         $employer_sid = $data["session"]["employer_detail"]["sid"];
         $security_sid = $employer_detail['sid'];
+        getCompanyEmsStatusBySid($company_detail['sid']);
+        
+
         $security_details = db_get_access_level_details($security_sid);
         $data['security_details'] = $security_details;
         check_access_permissions($security_details, 'dashboard', 'private_messages');
@@ -14371,6 +14399,7 @@ class Hr_documents_management extends Public_Controller
             $company_detail = $data['session']['company_detail'];
             $employer_sid = $data["session"]["employer_detail"]["sid"];
             $security_sid = $employer_detail['sid'];
+            getCompanyEmsStatusBySid($company_detail['sid']);
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
             check_access_permissions($security_details, 'dashboard', 'private_messages');
@@ -15435,7 +15464,7 @@ class Hr_documents_management extends Public_Controller
         //
         $time = strtotime('+10 days');
         //
-        $encryptedKey = $this->encrypt->encode( $fillable_type  . '/' . $user_sid . '/' . $time);
+        $encryptedKey = $this->encrypt->encode($fillable_type  . '/' . $user_sid . '/' . $time);
         $encryptedKey = str_replace(['/', '+'], ['$eb$eb$1', '$eb$eb$2'], $encryptedKey);
         //
         $user_info = $this->hr_documents_management_model->getUserData(
@@ -15469,11 +15498,11 @@ class Hr_documents_management extends Public_Controller
         );
         //
         $this->hr_documents_management_model
-           ->updateAssignedFederalFillableDocumentLinkTime(
-               $time,
-               $user_sid,
-               $fillable_type
-           );
+            ->updateAssignedFederalFillableDocumentLinkTime(
+                $time,
+                $user_sid,
+                $fillable_type
+            );
         //
         $resp['Status'] = TRUE;
         $resp['Response'] = 'The document has been sent successfully.';

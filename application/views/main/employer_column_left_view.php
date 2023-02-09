@@ -115,7 +115,6 @@
                     <a <?php if (strpos(base_url(uri_string()), site_url('video_interview_system')) !== false) { echo 'class="active"'; } ?>
                         href="<?php echo base_url('video_interview_system') ?>">
                         <figure><i class="fa fa-video-camera"></i></figure>Video Interview System
-                        <span class="beta-label">beta</span>
                     </a>                    
                 </li>
         <?php } ?>

@@ -105,7 +105,7 @@
                                     <?php if ($employerData['is_executive_admin'] == 1) { ?>
                                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                             <span>You have Full Access</span>
-                                            <?php if($employee['is_executive_admin'] == 0) { ?>  
+                                            <?php if ($employee['is_executive_admin'] == 0) { ?>
                                                 <div class="button-panel">
                                                     <a class="site-btn auto-width" href="<?php echo base_url('my_profile') ?>">View your Profile</a>
                                                 </div>
@@ -338,8 +338,8 @@
                                     </div>
                                 <?php } ?>
                                 <!--6-->
-                                <?php 
-                                    $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
+                                <?php
+                                $canAccessDocument = hasDocumentsAssigned($session['employer_detail']);
                                 ?>
                                 <?php if (check_access_permissions_for_view($security_details, 'employee_management') || $canAccessDocument) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
@@ -552,16 +552,17 @@
                                                         <a href="<?php echo base_url('attendance'); ?>" class="site-btn">Manage</a>
                                                     </div>
                                                 </div>
-                                                <span class="beta-label">beta</span>
                                             </div>
                                         </div>
                                     <?php } ?>
                                 <?php } ?>
                                 <!--16-->
+
+                                <?php if($EmsStatus==1){?>
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box">
                                         <div class="dashboard-widget-box">
-                                            <figure><i class="fa fa-file-text-o <?=$all_documents_approval ? 'start_animation' : '';?>"></i></figure>
+                                            <figure><i class="fa fa-file-text-o <?= $all_documents_approval ? 'start_animation' : ''; ?>"></i></figure>
                                             <h2 class="post-title" style="margin: 2px 0;">
                                                 <a href="<?php echo base_url('hr_documents_management/approval_documents') ?>">Approval Documents</a>
                                             </h2>
@@ -574,7 +575,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+                            <?php } ?>
                                 <?php //if(check_access_permissions_for_view($security_details, 'attendance_management')) { 
                                 ?>
                                 <?php $data['session'] = $this->session->userdata('logged_in'); ?>
@@ -647,6 +648,7 @@
                                 ?>
                                 <!--17-->
 
+                            <?php if($EmsStatus==1){?>
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box">
                                         <div class="dashboard-widget-box">
@@ -665,8 +667,10 @@
                                         </div>
                                     </div>
                                 </div>
+                            <?php }?>
 
-                                <?php if($session['employer_detail']['access_level'] == 'Admin' || $session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1){ ?>
+                            <?php if($EmsStatus==1){?>
+                                <?php if ($session['employer_detail']['access_level'] == 'Admin' || $session['employer_detail']['access_level_plus'] == 1 || $session['employer_detail']['pay_plan_flag'] == 1) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
@@ -675,9 +679,9 @@
                                                     <a href="<?php echo base_url('hr_documents_management/company_varification_document'); ?>">Pending Employer Section</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
-                                                    <span class="green"><?=$PendingEmployerSection['Total'];?> Total</span><br>
-                                                    <small style="font-size: 12px"><?=$PendingEmployerSection['Employee'];?> Employee(s)</small><br>
-                                                    <small style="font-size: 12px"><?=$PendingEmployerSection['Applicant'];?> Applicant(s)</small>
+                                                    <span class="green"><?= $PendingEmployerSection['Total']; ?> Total</span><br>
+                                                    <small style="font-size: 12px"><?= $PendingEmployerSection['Employee']; ?> Employee(s)</small><br>
+                                                    <small style="font-size: 12px"><?= $PendingEmployerSection['Applicant']; ?> Applicant(s)</small>
                                                 </div>
                                                 <div class="button-panel">
                                                     <a href="<?php echo base_url('hr_documents_management/company_varification_document'); ?>" class="site-btn">Show Documents</a>
@@ -686,8 +690,37 @@
                                         </div>
                                     </div>
                                 <?php } ?>
+                                <?php }?>
 
-                                <?php if (checkIfAppIsEnabled('documentlibrary')) { ?>
+                                <!-- Employee Information Change -->
+                                <?php if($EmsStatus==1){?>
+                                <?php if ($access_level_plus == 1 || $pay_plan_flag == 1) { ?>
+                                    <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
+                                        <div class="dash-box">
+                                            <div class="dashboard-widget-box">
+                                                <figure>
+                                                    <i class="fa fa-users <?= $employeeInformationChange['daily'] > 0 ? 'start_animation' : ''; ?>" aria-hidden="true"></i>
+                                                </figure>
+                                                <h2 class="post-title" style="margin: 2px 0;">
+                                                    <a href="<?php echo base_url('employee/information/report'); ?>">
+                                                        Employee Information Change
+                                                    </a>
+                                                </h2>
+                                                <div class="count-box" style="font-size: 12px">
+                                                    <span class="green">Today <?= $employeeInformationChange['daily']; ?> changed information</span><br>
+                                                    <small style="font-size: 12px">This week <?= $employeeInformationChange['week']; ?> changed information</small><br>
+                                                    <small style="font-size: 12px">This month <?= $employeeInformationChange['month']; ?> changed information</small><br>
+                                                </div>
+                                                <div class="button-panel">
+                                                    <a href="<?php echo base_url('employee/information/report'); ?>" class="site-btn">Show Changes</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                                <?php  }?>
+
+                                <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status'] && checkIfAppIsEnabled('documentlibrary')) { ?>
                                     <!-- Documents Library -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
@@ -707,7 +740,7 @@
                                     </div>
                                 <?php } ?>
 
-                                
+
 
                                 <?php $comply_status = $data["session"]["company_detail"]["complynet_status"];
                                 $employee_comply_status = $data["session"]["employer_detail"]["complynet_status"];
@@ -716,6 +749,7 @@
                                 ?>
 
                                 <?php if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $employee_comply_status) { ?>
+                                    <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
@@ -727,18 +761,31 @@
                                                 </h2>
                                                 <div class="button-panel col-lg-12">
                                                     <div class="row">
-                                                        <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                <a href="<?php echo base_url('complynet/dashboard'); ?>" class="btn btn-success btn-block">Dashboard</a>
-                                                            </div>
-                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
-                                                                <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
-                                                            </div>
-                                                        <?php } else { ?>
+                                                        <?php
+                                                        if ($complyNetLink) {
+                                                        ?>
                                                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-                                                                <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
+                                                                <a href="<?=$complyNetLink;?>" target="_blank" class="btn btn-success btn-block">Dashboard</a>
                                                             </div>
-                                                        <?php } ?>
+                                                        <?php
+                                                        } else {
+                                                        ?>
+                                                            <?php if (!empty($complynet_dashboard_link) && $complynet_dashboard_link != NULL && $access_level != 'Employee') { ?>
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                    <a href="<?php echo base_url('complynet/dashboard'); ?>" class="btn btn-success btn-block">Dashboard</a>
+                                                                </div>
+                                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
+                                                                    <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
+                                                                </div>
+                                                            <?php } else { ?>
+                                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                                                    <a href="<?php echo base_url('complynet/login'); ?>" class="btn btn-success btn-block">Login</a>
+                                                                </div>
+                                                            <?php } ?>
+                                                        <?php
+                                                        }
+                                                        ?>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -752,7 +799,7 @@
 
                                 <!-- Performance Review -->
 
-                                <?php if (checkIfAppIsEnabled('performance_management') ) { ?>
+                                <?php if (checkIfAppIsEnabled('performance_management')) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
@@ -791,32 +838,28 @@
                                         </div>
                                     </div>
                                 <?php } ?>
-                                
+
                                 <?php if (checkIfAppIsEnabled('timeoff')) { ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">
                                                 <figure><i class="fa fa-calendar-check-o" aria-hidden="true"></i></figure>
                                                 <h2 class="post-title">
-                                                    <a href="<?=base_url('timeoff/lms');?>">My Time Off</a>
+                                                    <a href="<?= base_url('timeoff/lms'); ?>">My Time Off</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
                                                     <span class="green" id="jsRemainingTime">0 hour(s)</span>
                                                     <span class="green">remaining</span><br>
                                                     <small id="jsConsumedTime" style="font-size: 12px">0 hour(s)</small>
-                                                    <small style="font-size: 12px">consumed</small> <br/>
+                                                    <small style="font-size: 12px">consumed</small> <br />
                                                     <small id="jsTotalTimeoffs" style="font-size: 12px">0 Time-offs approved</small>
                                                 </div>
                                                 <div class="button-panel">
                                                     <div class="col-lg-6 col-xs-12">
-                                                        <a href="#" data-id="<?=$employee_sid;?>"
-                                                        class="btn btn-success form-control jsBreakdownRequest"
-                                                        >View Details</a>
+                                                        <a href="#" data-id="<?= $employee_sid; ?>" class="btn btn-success form-control jsBreakdownRequest">View Details</a>
                                                     </div>
                                                     <div class="col-lg-6 col-xs-12 pl0">
-                                                        <a href="#" data-id="<?=$employee_sid;?>"
-                                                        class="btn btn-success form-control jsCreateRequest"
-                                                        >Create Request</a>
+                                                        <a href="#" data-id="<?= $employee_sid; ?>" class="btn btn-success form-control jsCreateRequest">Create Request</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -830,13 +873,13 @@
                                             <div class="dashboard-widget-box">
                                                 <figure><i class="fa fa-money" aria-hidden="true"></i></figure>
                                                 <h2 class="post-title">
-                                                    <a href="<?=base_url('payroll/run');?>">Payroll</a>
+                                                    <a href="<?= base_url('payroll/run'); ?>">Payroll</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
                                                     <small style="font-size: 12px"></small>
                                                 </div>
                                                 <div class="button-panel">
-                                                    <a href="<?=base_url('payroll/employees/normal');?>" class="site-btn">Payroll Dashboard</a>
+                                                    <a href="<?= base_url('payroll/employees/normal'); ?>" class="site-btn">Payroll Dashboard</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -852,13 +895,13 @@
                                             <div class="dashboard-widget-box">
                                                 <figure><i class="fa fa-pie-chart" aria-hidden="true"></i></figure>
                                                 <h2 class="post-title">
-                                                    <a href="<?=base_url('employee/surveys/overview');?>">Employee Surveys</a>
+                                                    <a href="<?= base_url('employee/surveys/overview'); ?>">Employee Surveys</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
                                                     <small style="font-size: 12px"></small>
                                                 </div>
                                                 <div class="button-panel">
-                                                    <a href="<?=base_url('employee/surveys/overview');?>" class="site-btn">Overview</a>
+                                                    <a href="<?= base_url('employee/surveys/overview'); ?>" class="site-btn">Overview</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -866,6 +909,7 @@
                                 <?php } ?>
 
                                 <!-- Account Activity -->
+                                <?php if($EmsStatus==1){?>
                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                     <div class="dash-box activity-box-wrp">
                                         <div class="activity-box">
@@ -905,8 +949,8 @@
                                         </div>
                                     </div>
                                 </div>
+                                <?php } ?>
 
-                               
                             </div>
                         </div>
                     </div>

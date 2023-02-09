@@ -9,7 +9,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">XML Jobs Feed</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>XML Jobs Feed</span>
                         </div>
                         <?php if ($count > 0) { ?>
                             <form action="<?= base_url() ?>xml_export/export_all_jobs" method="POST" id="xml_form">

@@ -8,7 +8,7 @@
                 <div class="dashboard-conetnt-wrp">
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                     </div>
                     <?php   $employee_array = $employees; ?> 
                     <div class="table-responsive table-outer">

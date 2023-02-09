@@ -858,20 +858,35 @@ if(!function_exists('generateCaptcha')){
 if(!function_exists('job_title_uri')){
     function job_title_uri($job, $is_title = false, $onlyTitle = false){
         //
-        $companyName = strtolower(trim($job['CompanyName']));
+        $companyName = '';
         //
-        $title = ucwords(trim(preg_replace('/'.($companyName).'/', '', explode('-',preg_replace('/\s+/i', ' ', trim(strtolower(str_replace(',', '-',$job['Title'])))))[0]))).'';
+        if (isset($job['CompanyName']) && !empty($job['CompanyName'])) {
+            $companyName = strtolower(trim($job['CompanyName']));
+        }
         //
-        if($onlyTitle){
+        $title = '';
+        //
+        $jt = str_replace(',', '-', $job['Title']);
+        $jt = preg_replace('/\s+/', ' ', $jt);
+        //
+        $jt = explode('-', $jt)[0];
+        //
+        if (!empty($companyName)) {
+            $jt = preg_replace('/'.($companyName).'/', '', $jt);
+        }
+        //
+        $title = ucwords($jt);
+        //
+        if ($onlyTitle) {
             return $title;
         }
         //
         $postfix = ' Job in';
         //
-        if(!empty($job['Location_City'])){
+        if (!empty($job['Location_City'])) {
             $postfix .= ' '.$job['Location_City'].',';
-        } 
-        if(!empty($job['Location_State'])){
+        }
+        if (!empty($job['Location_State'])) {
             $postfix .= ' '.$job['Location_State'].' at';
         } else {
             $postfix .= ' '.$job['Location_Country'].' at ';
@@ -881,9 +896,9 @@ if(!function_exists('job_title_uri')){
         //
         $title .= ''.$postfix;
         //
-        if($is_title){
+        if ($is_title) {
             return $title;
-        }else{
+        } else {
             $title = preg_replace("/[^A-Za-z0-9 ]/", '', $title);
             $title = str_replace(" ","-",$title);
             $title = strtolower($title);
@@ -1454,12 +1469,19 @@ if (!function_exists('replace_tags_for_document')) {
             $user_info = $_this->resume_model->get_applicant_information($user_sid);
 
             if (empty($user_info)) {
-                $resp = array();
-                $resp['Status'] = FALSE;
-                $resp['Response'] = '<strong>Success: </strong> Applicant not found!';
-                header('Content-Type: application/json');
-                echo @json_encode($resp);
-                exit(0);
+
+                if($ec){
+
+                    $resp = array();
+                    $resp['Status'] = FALSE;
+                    $resp['Response'] = '<strong>Success: </strong> Applicant not found!';
+                    header('Content-Type: application/json');
+                    echo @json_encode($resp);
+                    exit(0);
+                }
+                else {
+                    return false;
+                }
             }
 
             $verification_key = '';

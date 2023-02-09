@@ -5,7 +5,7 @@
                 <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area margin-top">
-                        <span class="page-heading down-arrow">
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                             <a class="dashboard-link-btn" href="<?php echo base_url('applicant_profile') . '/' . $applicant_sid ; ?>">
                                 <i class="fa fa-chevron-left"></i>
                                 Applicant Profile

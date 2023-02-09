@@ -203,6 +203,10 @@ class Company_model extends CI_Model
         $this->db->select('table_one.system_user_date');
         $this->db->select('table_one.general_status');
         $this->db->select('table_two.CompanyName as company_name');
+        $this->db->select('table_one.complynet_onboard');
+        $this->db->select('table_one.parent_sid');
+        
+        
         $this->db->where('table_one.is_executive_admin <', 1);
         $this->db->where('table_one.parent_sid > ', 0);
 
@@ -233,24 +237,14 @@ class Company_model extends CI_Model
             $this->db->group_end();
         }
 
-        if ($contact_name != null && $contact_name != 'all') {
-            $name_parts = explode(' ', trim($contact_name));
 
-            $this->db->group_start();
-            if (count($name_parts) == 1) {
-                $this->db->like('table_one.first_name', $name_parts[0]);
-                $this->db->or_like('table_one.last_name', $name_parts[0]);
-            } else {
-                $this->db->like('table_one.first_name', $name_parts[0]);
-
-                for ($i = 1; $i < count($name_parts); $i++) {
-                    $this->db->or_like('table_one.last_name', $name_parts[$i]);
-                }
+            if ($contact_name != null && $contact_name != 'all') {
+                $this->db->group_start();
+                $this->db->where("(lower(concat(table_one.first_name,'',table_one.last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($contact_name)))."%' or table_one.nick_name LIKE '%" .(preg_replace('/\s+/', '', strtolower($contact_name) )). "%')  ");
+                $this->db->group_end();    
             }
-            $this->db->or_like('table_one.nick_name', $contact_name);
-            $this->db->group_end();
-        }
 
+      
         $this->db->join('users as table_two', 'table_one.parent_sid = table_two.sid', 'left');
         $this->db->from('users as table_one');
 
@@ -263,10 +257,76 @@ class Company_model extends CI_Model
             $records_obj->free_result();
             //
             $this->GetEmployeeStatus($records_arr);
+
+            $this->GetEmployeeDepartmentsTeams($records_arr);
             //
             return $records_arr;
         }
     }
+
+    //
+    private function GetEmployeeDepartmentsTeams(&$employees)
+    {
+        //
+        if (empty($employees)) {
+            return false;
+        }
+        //
+        $employeeIds = array_column($employees, 'sid');
+        //
+        $employeeDepartmentTeams =
+        $this->db->select("
+            departments_management.name as department_name,
+            departments_team_management.name,
+            departments_employee_2_team.employee_sid
+        ")
+        ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
+        ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
+        ->where('departments_management.is_deleted', 0)
+        ->where('departments_team_management.is_deleted', 0)
+        ->where_in('departments_employee_2_team.employee_sid', $employeeIds)
+        ->get('departments_employee_2_team')
+        ->result_array();
+        //
+        if (!empty($employeeDepartmentTeams)) {
+            //
+            $tmp = [];
+            //
+            foreach ($employeeDepartmentTeams as $stat) {
+                //
+                if (!isset($tmp[$stat['employee_sid']])) {
+                    $tmp[$stat['employee_sid']] = [
+                        'departments' => [],
+                        'teams' => []
+                    ];
+                }
+                //
+                $tmp[$stat['employee_sid']]['departments'][] = $stat['department_name'];
+                $tmp[$stat['employee_sid']]['teams'][] = $stat['name'];
+            }
+            //
+            $employeeDepartmentTeams = $tmp;
+            //
+            $tmp = [];
+              //
+            unset($tmp);
+        }
+
+        //
+        foreach ($employees as $index => $employee) {
+            //
+            if(isset($employeeDepartmentTeams[$employee['sid']])) {
+
+                $employees[$index] = array_merge($employee, $employeeDepartmentTeams[$employee['sid']]);
+            } else{
+                $employees[$index]['departments'] = [];
+                $employees[$index]['teams'] = [];
+            }
+        }
+        //
+        return true;  
+    }
+
 
     private function GetEmployeeStatus(&$employees, $status = 1)
     {
@@ -274,6 +334,12 @@ class Company_model extends CI_Model
         if (empty($employees)) {
             return false;
         }
+        $transferRecords = $this->db
+            ->select('new_employee_sid')
+            ->get('employees_transfer_log')
+            ->result_array();
+        //
+        $transferIds = array_column($transferRecords, 'new_employee_sid');
         //
         $employeeIds = array_column($employees, 'sid');
         //
@@ -317,6 +383,11 @@ class Company_model extends CI_Model
         }
         //
         foreach ($employees as $index => $employee) {
+            //
+            if (in_array($employee['sid'], $transferIds)) {
+                $transferDate = get_employee_transfer_date($employee['sid']);
+                $employees[$index]['trensfer_date'] = $transferDate;
+            }
             //
             $employees[$index]['last_status'] = isset($statuses[$employee['sid']]) ? $statuses[$employee['sid']] : [];
             $employees[$index]['last_status_2'] = isset($last_statuses[$employee['sid']]) ? $last_statuses[$employee['sid']] : [];
@@ -1255,6 +1326,7 @@ class Company_model extends CI_Model
                     'email' => $data['email'],
                     'active' => $data['active'],
                     'timezone' => $data['timezone'],
+                    'access_level' => $data['access_level'],
                     'PhoneNumber' => $data['direct_business_number'],
                     'job_title' => $data['job_title']
                 );
@@ -2828,6 +2900,16 @@ class Company_model extends CI_Model
             }
         }
         return true;
+    }
+
+
+
+//
+    function add_new_employer_to_team($data_to_insert)
+    {
+ 
+        $this->db->insert('departments_employee_2_team', $data_to_insert);
+        return $this->db->insert_id();
     }
 
 }

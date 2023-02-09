@@ -8,7 +8,7 @@
                     <div class="top-logo text-center">
                         <img src="<?php echo base_url('assets/images/form-logo.jpg') ?>">
                     </div>
-                    <span class="page-heading down-arrow">Company Agreements</span>
+                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Company Agreements</span>
                     <div class="end-user-agreement-wrp recurring-payment-authorization">
                         <div class="row">
                             <div class="col-xs-12">

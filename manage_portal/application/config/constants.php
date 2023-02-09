@@ -162,7 +162,7 @@ if($_SERVER['SERVER_NAME'] == 'www.applybuz.com'){
     define('PARENT_ASSETS_PATH', '/ahr/assets');
 }
 
-define('PAGINATION_RECORDS_PER_PAGE', 250);
+define('PAGINATION_RECORDS_PER_PAGE', 50);
 define('STAGING_SERVER_URL', 'http://localhost/ahr/');
 define('SIGNATURE_MAX_HEIGHT', '75px'); // Signature consent submit button text
 define('SEND_RESUME_REQUEST', 379);

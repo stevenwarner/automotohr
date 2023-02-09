@@ -344,4 +344,9 @@ class Import_csv_model extends CI_Model {
         $this->db->where('sid', $employeeId);
         $this->db->update('users', $data_to_update);
     }
+
+    function updateUserInfo($data_to_update, $employeeId){
+        $this->db->where('sid', $employeeId);
+        $this->db->update('users', $data_to_update);
+    }
 }

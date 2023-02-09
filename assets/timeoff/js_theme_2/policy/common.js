@@ -188,6 +188,13 @@ function fetchCategories() {
         //
         if (resp.Status === false) {
             console.log('No categories found.');
+            return alertify.alert(
+                "Warning!",
+                "No policy types found. Please, add a type before creating policies.",
+                function(){
+                    $('.jsIPLoader[data-page="policy"]').hide(0);
+                }
+            );
             return;
         }
         //

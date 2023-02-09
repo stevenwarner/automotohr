@@ -420,9 +420,11 @@ class Job_screening_questionnaire extends CI_Controller {
             $body = $template[0]['message_body'];
             $body = str_replace('{{applicant_name}}', $applicationData['first_name'] . ' ' . $applicationData['last_name'], $body);
             $body = str_replace('{{job_title}}', $title, $body);
+            $body = str_replace('{{company_name}}', $applicationData['company_name'], $body);
             $email = $template[0];
             $from = REPLY_TO;
             $subject = $email['subject'];
+            $subject = str_replace('{{company_name}}', $applicationData['company_name'], $email['subject']);
             $from_name = $email['from_name'];
             $message_data = array();
             $message_data['to_id'] = $applicationData['email'];

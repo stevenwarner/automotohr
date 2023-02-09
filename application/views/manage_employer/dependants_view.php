@@ -20,7 +20,7 @@ $input_group_start = $input_group_end = '';
                             <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top'); ?>
 
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow"> <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?> <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
                                     <?php echo $title; ?></span>
                             </div>
                             <div class="dashboard-conetnt-wrp">

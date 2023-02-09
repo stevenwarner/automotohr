@@ -328,12 +328,19 @@
                 }
                 rows += '   <td>' + (v.user_type.toUpperCase()) + '</td>';
                 rows += '   <td>';
-                rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_archived == 1 ? 'checked="true"' : "") + '/>Archived</label></div>';
+            //    rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_archived == 1 ? 'checked="true"' : "") + '/>Archived</label></div>';
                 if (v.user_type == 'employee') {
-                    rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_active == 1 ? 'checked="true"' : "") + '/>Active</label></div>';
-                    rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_active == 0 ? 'checked="true"' : "") + '/>In-Active</label></div>';
-                    rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_terminated == 1 ? 'checked="true"' : "") + '/>Terminated</label></div>';
+                   // rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_active == 1 ? 'checked="true"' : "") + '/>Active</label></div>';
+                  //  rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_active == 0 ? 'checked="true"' : "") + '/>In-Active</label></div>';
+                  //  rows += '       <div class="checkbox-inline"><label><input type="checkbox" disabled="true" ' + (v.is_terminated == 1 ? 'checked="true"' : "") + '/>Terminated</label></div>';
+                 rows += '       <div class="checkbox-inline"><label>'+v.newstatus+'</label></div>';
+
                 }
+
+                if (v.user_type == 'applicant') {
+                   rows += '       <div class="checkbox-inline"><label>'+v.is_archived == 1? 'Archived':''+'</label></div>';
+                }
+
                 rows += '   </td>';
                 rows += '</tr>';
             });

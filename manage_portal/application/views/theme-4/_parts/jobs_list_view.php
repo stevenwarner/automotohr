@@ -100,9 +100,9 @@
                                 <!-- Job *** START *** -->
                                 <article class="article-list">
                                     <figure>
-                                        <?php 
+                                        <?php
                                             if (empty($job['pictures']) && !empty($company_details['Logo']) && ($job['user_sid']) == $company_details['sid']) { 
-                                                if (get_company_logo_status($job['user_sid']) == 1) {
+                                                if ($storeData[$job['user_sid']]['enable_company_logo'] == 1) {
                                                     $image_com = AWS_S3_BUCKET_URL . $company_details['Logo'];
                                                     echo '<img src="'.$image_com.'" class="img-responsive" alt="Company Logo">';
                                                 }
@@ -110,13 +110,13 @@
                                                 $image_com = AWS_S3_BUCKET_URL . $job['pictures'];
                                                 echo '<img src="'.$image_com.'" class="img-responsive" alt="Company Logo">'; 
                                             } else {
-                                                $company_logo = get_company_logo($job['user_sid']);
+                                                $company_logo = $storeData[$job['user_sid']]['Logo'];
 
                                                 if(empty($company_logo)){
                                                     $image_com = AWS_S3_BUCKET_URL . DEFAULT_JOB_IMAGE;
                                                     echo '<img src="'.$image_com.'" class="img-responsive" alt="Company Logo">';
                                                 } else {
-                                                    if (get_company_logo_status($job['user_sid']) == 1) {
+                                                    if ($storeData[$job['user_sid']]['enable_company_logo'] == 1) {
                                                         $image_com = AWS_S3_BUCKET_URL . $company_logo;
                                                         echo '<img src="'.$image_com.'" class="img-responsive" alt="Company Logo">';
                                                     }
@@ -126,7 +126,7 @@
                                     </figure>
                                     <div class="text">
                                         <div class="title-area">
-                                            <h2 class="post-title"><a id="job_title<?php echo $job['sid']; ?>" href="<?php echo base_url(job_title_uri($job))?>"><?php echo $job['Title'];?></a></h2>
+                                            <h2 class="post-title"><a id="job_title<?php echo $job['sid']; ?>" href="<?php echo $job['url'];?>"><?php echo $job['Title'];?></a></h2>
                                             <div class="post-option">
                                                 <ul>
                                                     <li>
@@ -152,8 +152,8 @@
                                         </div>
                                         <div class="btn-area">
                                             <ul>
-                                                <li><button type="button" class="site-btn bg-color" onclick="show_popup(<?php echo $job['sid'] ?>)">Apply Now</button></li>
-                                                <li><a href="<?php echo base_url(job_title_uri($job));?>" class="site-btn bg-color-v2">View Details</a></li>
+                                                <li><button type="button" class="site-btn bg-color" onclick="show_popup(<?php echo $job['sid'] ?>, <?=$job['sms_module_status'];?>)">Apply Now</button></li>
+                                                <li><a href="<?php echo $job['url'];?>" class="site-btn bg-color-v2">View Details</a></li>
                                                 <a style="display:none;" id="show_hide<?php echo $job['sid'] ?>" data-toggle="modal" data-target="#myModal">&nbsp;</a>
                                             </ul>
                                         </div>
@@ -238,14 +238,7 @@
                         <i style="font-size: 25px; color: #81b431;" class="fa fa-cog fa-spin"></i>
                         <span>Loading...</span>
                     </div>
-                    <?php if(!empty($job_listings)) { ?>
-                        <div class="row">
-                            <div class="col-xs-12" style="text-align: center;">
-                                <a class="site-btn bg-color" href="javascript:;" id="jsloadJobs">Load More Jobs</a>
-                                 
-                            </div>
-                        </div>
-                    <?php } ?>                   
+                   
                 </div>
                 
             </div>            
@@ -668,7 +661,7 @@
                             q_a_div = '<div class="wrap-container"><div class="wrap-inner"><h2 class="post-title">Questionnaire</h2><input type="hidden" name="q_name" value="'+object['q_name']+'"><input type="hidden" name="q_passing" value="'+object['q_passing']+'"><input type="hidden" name="q_send_pass" value="'+q_send_pass+'"><input type="hidden" name="q_pass_text" value="'+q_pass_text+'"><input type="hidden" name="q_send_fail" value="'+q_send_fail+'"><input type="hidden" name="q_fail_text" value="'+q_fail_text+'"><input type="hidde" name="my_id" value="'+my_id+'">'+q_a_div_loop+'</div></div>';
                         }
                         
-                        var append_div = '<article class="article-list"><figure><img class="img-responsive" alt="Logo" src="'+image+'"></figure><div class="text"><div class="title-area"><h2 class="post-title"><a id="job_title'+object['sid']+'" href="'+object['url']+'/">'+object['Title']+'</a></h2><div class="post-option"><ul><li><i class="locations_color fa fa-map-marker"></i><div class="op-text">'+city+state+country+'</div></li><li><i class="locations_color fa fa-suitcase"></i><div class="op-text">'+object['JobCategory']+'</div></li></ul></div></div><div class="btn-area"><ul><li><button type="button" class="site-btn bg-color" onclick="show_popup('+"'"+object['sid']+"'"+')">Apply Now</button></li><li><a href="'+object['url']+'" class="site-btn bg-color-v2">View Details</a></li><a style="display:none;" id="show_hide'+object['sid']+'" data-toggle="modal" data-target="#myModal">&nbsp;</a></ul></div></div></article>';
+                        var append_div = '<article class="article-list"><figure><img class="img-responsive" alt="Logo" src="'+image+'"></figure><div class="text"><div class="title-area"><h2 class="post-title"><a id="job_title'+object['sid']+'" href="'+object['url']+'/">'+object['Title']+'</a></h2><div class="post-option"><ul><li><i class="locations_color fa fa-map-marker"></i><div class="op-text">'+city+state+country+'</div></li><li><i class="locations_color fa fa-suitcase"></i><div class="op-text">'+object['JobCategory']+'</div></li></ul></div></div><div class="btn-area"><ul><li><button type="button" class="site-btn bg-color" onclick="show_popup('+"'"+object['sid']+"'"+', '+(object['sms_module_status'])+')">Apply Now</button></li><li><a href="'+object['url']+'" class="site-btn bg-color-v2">View Details</a></li><a style="display:none;" id="show_hide'+object['sid']+'" data-toggle="modal" data-target="#myModal">&nbsp;</a></ul></div></div></article>';
                         var question_div = '<p id="questionnaire_sid'+object['sid']+'" style="display:none;">'+object['questionnaire_sid']+'</p><div style="display:none" id="questions'+object['sid']+'"><label>Attach Resume (.pdf .docx .doc .jpg .jpe .jpeg .png .gif) Attach Cover (.pdf .docx .doc .jpg .jpe .jpeg .png .gif)</label>'+q_a_div+'</div></p>';
                         $('#lazy_load').append(append_div+question_div);
                     });

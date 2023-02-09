@@ -2302,3 +2302,19 @@ nav.navigation ul li a:hover {
 .cs_checklist li i {
     color: #81b431;
 }
+
+
+.cs-icon-box{
+    background-color: #000;
+    color: #fff;
+    text-align:center;
+    margin: 10px;
+    border-radius: 5px;
+}
+.cs-icon-box img{
+    height: 50px;
+}
+
+.cs-icon-box.active{
+    background-color: #81b431;
+}

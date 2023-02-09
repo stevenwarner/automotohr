@@ -972,7 +972,7 @@ $field_sid = 'employee_sid';
             dateFormat: 'mm/dd/yy',
             changeMonth: true,
             changeYear: true,
-            yearRange: "-100:+50",
+            yearRange: "-100:+100",
             onSelect: function (selectedDate) {
                 $('#oc_license_issue_date').datepicker('option', 'maxDate', selectedDate);
             }
@@ -1002,7 +1002,7 @@ $field_sid = 'employee_sid';
             dateFormat: 'mm/dd/yy',
             changeMonth: true,
             changeYear: true,
-            yearRange: "-100:+50",
+            yearRange: "-100:+100",
             onSelect: function (selectedDate) {
                 $('#dr_license_issue_date').datepicker('option', 'maxDate', selectedDate);
             }

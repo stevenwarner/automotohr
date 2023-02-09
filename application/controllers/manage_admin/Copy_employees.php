@@ -6,6 +6,7 @@ class Copy_employees extends Admin_Controller {
         parent::__construct();
         $this->load->library('ion_auth');
         $this->load->model('manage_admin/copy_employees_model');
+        $this->load->model('manage_admin/merge_employees_model');
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
@@ -80,7 +81,7 @@ class Copy_employees extends Admin_Controller {
             echo json_encode($resp);
         } 
         
-        $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 10);
+        $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 50);
         $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $to_company_sid);
        
         if(empty($company_employees)){
@@ -91,7 +92,7 @@ class Copy_employees extends Admin_Controller {
             $resp['status'] = TRUE;
             $resp['response'] = 'Proceed';
             if($page == 1){
-                $resp['limit'] = 10;
+                $resp['limit'] = 50;
                 $resp['records'] = $company_employees;
                 $resp['totalPages'] = ceil( $employees_count / $resp['limit'] );
                 $resp['totalRecords'] = $employees_count;
@@ -131,7 +132,6 @@ class Copy_employees extends Admin_Controller {
             $employee = $this->copy_employees_model->fetch_employee_by_sid($employee_sid);
             $company_name = $this->copy_employees_model->get_company_name_by_id($to_company);
 
-            // _e($employee, true, true);
 
             $employee_name = $employee['first_name'].' '.$employee['last_name'];
      
@@ -143,8 +143,85 @@ class Copy_employees extends Admin_Controller {
             $date = date('Y-m-d H:i:s', strtotime('now'));
 
             if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) { 
-                $resp['status'] = FALSE;
-                $resp['response'] = 'Employee <b>'.$employee_name.'</b> already exist in company <b>'.$company_name.'</b>';
+                $primary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $to_company);
+                $secondary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $from_company);
+            
+                $secondary_employee_email    = $employee['email'];
+                //
+                //Update Primary Employee Profile
+                $secondary_employee_data = $this->merge_employees_model->update_company_employee($primary_employee_sid, $secondary_employee_sid);
+                
+                // now move all other information
+                
+                // 1) Employee emergency contacts
+                $emergency_contacts = $this->merge_employees_model->update_employee_emergency_contacts($primary_employee_sid, $secondary_employee_sid);
+                
+                // 2) Employee equipment information
+                $equipment_information = $this->merge_employees_model->update_employee_equipment_information($primary_employee_sid, $secondary_employee_sid);
+                
+                // 3) Employee dependant information
+                $dependant_information = $this->merge_employees_model->update_employee_dependant_information($primary_employee_sid, $secondary_employee_sid);
+        
+                // 4) Employee license information
+                $license_information = $this->merge_employees_model->update_employee_license_information($primary_employee_sid, $secondary_employee_sid);
+        
+                // 5) Employee background check
+                $this->merge_employees_model->update_employee_background_check($primary_employee_sid, $secondary_employee_sid);
+        
+                // 6) Employee portal misc notes
+                $this->merge_employees_model->update_employee_misc_notes($primary_employee_sid, $secondary_employee_sid);
+        
+                // 7) Employee private_message
+                $this->merge_employees_model->update_employee_private_message($primary_employee_sid, $secondary_employee_email);
+        
+                // 8) Employee portal rating
+                $this->merge_employees_model->update_employee_rating($primary_employee_sid, $secondary_employee_sid);
+        
+                // 9) Employee calendar events
+                $this->merge_employees_model->update_employee_schedule_event($primary_employee_sid, $secondary_employee_sid);
+        
+                // 10) Employee portal attachments
+                $this->merge_employees_model->update_employee_attachments($primary_employee_sid, $secondary_employee_sid);
+        
+                // 11) Employee reference checks
+                $this->merge_employees_model->update_employee_reference_checks($primary_employee_sid, $secondary_employee_sid);
+        
+                // 12) Employee Onboarding Configuration
+                $this->merge_employees_model->update_onboarding_configuration($primary_employee_sid, $secondary_employee_sid);
+        
+                // 13) Employee Documents
+                $documents = $this->merge_employees_model->update_documents_new($primary_employee_sid, $secondary_employee_sid,$to_company);
+        
+                // 14) Employee Direct Deposit Information
+                $bank_details = $this->merge_employees_model->update_employee_direct_deposit_information($primary_employee_sid, $secondary_employee_sid);
+        
+                // 15) Employee E-Signature Data
+                $e_signature_data = $this->merge_employees_model->update_employee_e_signature($primary_employee_sid, $secondary_employee_sid);
+        
+                // 16) Employee EEOC Form
+                $eeoc = $this->merge_employees_model->update_employee_eeoc_form($primary_employee_sid, $secondary_employee_sid);
+                //
+                $merge_secondary_employee_data = [
+                    'user_profile' => $secondary_employee_data,
+                    'emergency_contacts' => $emergency_contacts,
+                    'equipment_information' => $equipment_information,
+                    'dependant_information' => $dependant_information,
+                    'license_information' => $license_information,
+                    'direct_deposit_information' => $bank_details,
+                    'e_signature' => $e_signature_data,
+                    'eeoc' => $eeoc,
+                    'group' => "",
+                    'documents' => $documents
+                ];
+                //
+                $this->merge_employees_model->save_merge_secondary_employee_info($merge_secondary_employee_data, $primary_employee_sid, $secondary_employee_sid);
+                //
+                $array['status'] = "success";
+                $array['message'] = "Success! Employee is successfully merged!";
+                $this->session->set_flashdata('message', '<b>Success:</b> Employee Merged Successfully!');
+                //
+              //  return print_r(json_encode($array));
+
                 echo json_encode($resp);
             } else {
 

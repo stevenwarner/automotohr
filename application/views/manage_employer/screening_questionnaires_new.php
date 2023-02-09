@@ -8,7 +8,7 @@
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow"><?= $sub_title ?></span>
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?= $sub_title ?></span>
                     </div>
                     <div class="user-profile-wraper">
                         <?php   if (!empty($success_message)) { ?>

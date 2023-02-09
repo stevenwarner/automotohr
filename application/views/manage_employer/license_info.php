@@ -46,7 +46,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('manage_employer/employee_management/employee_profile_ats_view_top');?>
                             <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo $return_title_heading_link; ?>"><i
                                             class="fa fa-chevron-left"></i><?php echo $return_title_heading; ?></a>
 
@@ -175,7 +175,7 @@
                                             <?php }?>
                                             <li class="form-col-50-left">
                                                 <label>Expiration Date</label>
-                                                <input class="invoice-fields startdate" readonly="" type="text"
+                                                <input class="invoice-fields expdate" readonly="" type="text"
                                                     name="license_expiration_date"
                                                     value="<?php if (isset($license_info['license_expiration_date'])) {echo $license_info['license_expiration_date'];}?>">
                                             </li>
@@ -264,6 +264,14 @@ $('.startdate').datepicker({
     changeMonth: true,
     changeYear: true,
     yearRange: "-100:+50",
+}).val();
+
+
+$('.expdate').datepicker({
+    dateFormat: 'mm/dd/yy',
+    changeMonth: true,
+    changeYear: true,
+    yearRange: "-100:+100",
 }).val();
 
 

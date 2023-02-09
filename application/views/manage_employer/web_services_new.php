@@ -9,7 +9,7 @@
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                             </div>
                             <div class="job-title-text">                
                                 <p>To get your Careers Page jobs XML file, please copy the text from the text area and use it as Webservice. You can add/remove attributes from the link.</p>

@@ -17,7 +17,7 @@ class Employee_management extends Public_Controller
     }
 
     public function archived_employee()
-    {   
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -276,7 +276,6 @@ class Employee_management extends Public_Controller
 
             $data['portal_email_templates'] = $portal_email_templates;
 
-
             $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
             $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
             $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
@@ -319,6 +318,8 @@ class Employee_management extends Public_Controller
                 $data['teamMemberIds'] = $this->timeoff_model->getEmployeeTeamMemberIds($data['session']['employer_detail']['sid']);
             }
             //
+            $data["transferIds"] = $this->employee_model->getAllTransferEmployeeSids($company_id);
+            //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/employee_management');
             $this->load->view('main/footer');
@@ -339,6 +340,9 @@ class Employee_management extends Public_Controller
             $employer_id = $data["session"]["employer_detail"]["sid"];
             $data['title'] = "Add Employees / Team Members";
             $data['formpost'] = $_POST;
+
+            $data['company_id'] = $company_id;
+
             //$data["access_levels"] = db_get_enum_values('users', 'access_level');
 
             $data["access_levels"] = $this->dashboard_model->get_security_access_levels();
@@ -400,6 +404,15 @@ class Employee_management extends Public_Controller
                 $employment_status = $this->input->post('employee-status');
                 $gender = $this->input->post('gender');
                 $timezone = $this->input->post('timezone');
+
+                //
+                $teamId = $this->input->post('teamId');
+                $departmenId = '';
+                //
+                if ($teamId && $teamId != 0) {
+                    $departmenId = getDepartmentColumnByTeamId($teamId, 'department_sid');
+                }
+
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 $start_date = reset_datetime(array('datetime' => $registration_date, '_this' => $this, 'from_format' => 'm-d-Y', 'format' => 'Y-m-d H:i:s'));
@@ -430,6 +443,11 @@ class Employee_management extends Public_Controller
                 $user_information['employee_type'] = $employment_type;
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
 
+                if ($departmenId != '' && $teamId != '') {
+                    $user_information['department_sid'] = $departmenId;
+                    $user_information['team_sid'] = $teamId;
+                }
+
                 if (!empty($pictures) && $pictures != 'error') {
                     $user_information['profile_picture'] = $pictures;
                 }
@@ -437,6 +455,18 @@ class Employee_management extends Public_Controller
                 if ($employee_type == 'direct_hiring') {
                     $user_information['username'] = $username;
                     $employee_sid = $this->employee_model->add_employee($user_information);
+
+                    //
+                    if ($departmenId != '' && $teamId != '') {
+                        $team_information['department_sid'] = $departmenId;
+                        $team_information['team_sid'] = $teamId;
+                        $team_information['employee_sid'] = $employee_sid;
+                        $team_information['created_at'] = date('Y-m-d H:i:s');
+                        $this->employee_model->add_employee_to_team($team_information);
+                     }
+
+
+
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;
                     $replacement_array['first_name'] = $first_name;
@@ -448,6 +478,16 @@ class Employee_management extends Public_Controller
                 } else {
                     $link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('employee_registration') . '/' . $verification_key . '">' . 'Update Login Credentials' . '</a>';
                     $employee_sid = $this->employee_model->add_employee($user_information);
+
+                    //
+                    if ($departmenId != '' && $teamId != '') {
+                        $team_information['department_sid'] = $departmenId;
+                        $team_information['team_sid'] = $teamId;
+                        $team_information['employee_sid'] = $employee_sid;
+                        $team_information['created_at'] = date('Y-m-d H:i:s');
+                        $this->employee_model->add_employee_to_team($team_information);
+                     }
+
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;
                     $replacement_array['first_name'] = $first_name;
@@ -1084,7 +1124,7 @@ class Employee_management extends Public_Controller
                     $fullEmploymentForm = unserialize($data['employer']['full_employment_application']);
                     // Check for DOB
                     if (!empty($fullEmploymentForm['TextBoxDOB']) && empty($data['employer']['dob'])) {
-                        $data['employer']['dob'] = $updateArray['dob'] = DateTime::createfromformat('m-d-Y', $fullEmploymentForm['TextBoxDOB'])->format('Y-m-d');
+                        $data['employer']['dob'] = $updateArray['dob'] = DateTime::createfromformat(checkDateFormate($fullEmploymentForm['TextBoxDOB']) ? 'm-d-Y' : 'M d Y, D', $fullEmploymentForm['TextBoxDOB'])->format('Y-m-d');
                     }
                     // Check for SSN
                     if (!empty($fullEmploymentForm['TextBoxSSN']) && empty($data['employer']['ssn'])) {
@@ -1111,7 +1151,6 @@ class Employee_management extends Public_Controller
                     $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);
                     $data['department_name'] = $department_name;
                 }
-
                 if ($data['employer']['team_sid'] > 0) {
                     $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
                     $data['team_name'] = $team_name;
@@ -1399,6 +1438,11 @@ class Employee_management extends Public_Controller
                     //
                     $data['MergeData'] = array_merge($mergedEmployees, $mergedApplicants);
                     //
+                    $data['profileHistory'] = $this->employee_model->getProfileHistory($sid, true);
+                    $data['PageScripts'] = [
+                        ['1.0.2', '2022/js/employee_profile/main']
+                    ];
+                    //
                     $this->load->view('main/header', $data);
                     $this->load->view('manage_employer/employee_management/employee_profile_ats_view');
                     $this->load->view('main/footer');
@@ -1520,6 +1564,7 @@ class Employee_management extends Public_Controller
                         'ssn' => $this->input->post('SSN'),
                         'employee_number' => $this->input->post('employee_number'),
                         'department_sid' => $this->input->post('department'),
+                        'team_sid' => implode(',', $this->input->post('teams')),
                         'gender' => $gender,
                         'marital_status' => $this->input->post('marital_status')
                     );
@@ -1683,8 +1728,34 @@ class Employee_management extends Public_Controller
                             $this->input->post('policies')
                         );
                     }
+                    // Profile save intercept
+                    $this->handleProfileChange(
+                        $this->input->post(null, true),
+                        $employee_detail,
+                        $sid,
+                        $data_to_insert
+                    );
                     //
-                    $this->session->set_flashdata('message', '<b>Success:</b> Employee / Team Member Profile is updated successfully');
+                    $complynetResponse = false;
+
+                    // ComplyNet interjection
+                    if (isCompanyOnComplyNet($company_id)) {
+                        //
+                        $this->load->model('2022/complynet_model', 'complynet_model');
+                        //
+                        $complynetResponse = $this->complynet_model->updateEmployeeOnComplyNet($company_id, $sid, [
+                            'first_name' => $employee_detail['first_name'],
+                            'last_name' => $employee_detail['last_name'],
+                            'email' => $employee_detail['email'],
+                            'PhoneNumber' => $employee_detail['PhoneNumber']
+                        ]);
+                    }
+
+                    //
+                    $this->session->set_flashdata('message', '<b>Success:</b> Employee / Team Member Profile is updated successfully.');
+                    if (gettype($complynetResponse) == 'string') {
+                        $this->session->set_flashdata('comply_message', '<b>Error:</b> ' . ($complynetResponse) . '');
+                    }
                     redirect("employee_profile/" . $sid, "location");
                 }
             } else {
@@ -2283,6 +2354,9 @@ class Employee_management extends Public_Controller
 
                 //
                 if ($difference['profile_changed'] == 1) {
+                    // Lets save the change
+                    $this->employee_model->saveProfileChange($sid, $difference['data']);
+                    //
                     $notification_list = $this->employee_model->get_employee_profile_notification_list($company_id, 'employee_Profile', 'active');
                     //
                     $company_data = get_company_details($company_id);
@@ -3525,4 +3599,172 @@ class Employee_management extends Public_Controller
         }
         return false;
     }
+
+
+    /**
+     * Saves the difference
+     */
+    private function handleProfileChange(
+        $post,
+        $employeeDetail,
+        $employeeId,
+        $dataToInsert
+    ) {
+        //
+        $newCompareData = [];
+        $newCompareData['first_name'] = $dataToInsert['first_name'];
+        if (isset($dataToInsert['middle_name'])) {
+            $newCompareData['middle_name'] = $dataToInsert['middle_name'];
+        }
+        $newCompareData['last_name'] = $dataToInsert['last_name'];
+        $newCompareData['nick_name'] = $dataToInsert['nick_name'];
+        $newCompareData['email'] = $dataToInsert['email'];
+        $newCompareData['PhoneNumber'] = $dataToInsert['PhoneNumber'];
+        $newCompareData['gender'] = $dataToInsert['gender'];
+        $newCompareData['job_title'] = $dataToInsert['job_title'];
+        $newCompareData['Location_Address'] = $dataToInsert['Location_Address'];
+        $newCompareData['Location_City'] = $dataToInsert['Location_City'];
+        $newCompareData['Location_ZipCode'] = $dataToInsert['Location_ZipCode'];
+        $newCompareData['Location_State'] = $dataToInsert['Location_State'];
+        $newCompareData['Location_Country'] = $dataToInsert['Location_Country'];
+        $newCompareData['ssn'] = $dataToInsert['ssn'];
+        $newCompareData['employee_number'] = $dataToInsert['employee_number'];
+        $newCompareData['employee_type'] = $dataToInsert['employee_type'];
+        $newCompareData['timezone'] = $dataToInsert['timezone'];
+        $newCompareData['joined_at'] = $dataToInsert['joined_at'];
+        $newCompareData['dob'] = $dataToInsert['dob'];
+        $newCompareData['rehire_date'] = $dataToInsert['rehire_date'];
+        $newCompareData['linkedin_profile_url'] = $dataToInsert['linkedin_profile_url'];
+        $newCompareData['department_sid'] = $dataToInsert['department_sid'];
+        $newCompareData['marital_status'] = $dataToInsert['marital_status'];
+        $newCompareData['alternative_email'] = $dataToInsert['alternative_email'];
+        $newCompareData['profile_picture'] = $dataToInsert['profile_picture'];
+        $newCompareData['hourly_rate'] = $dataToInsert['hourly_rate'];
+        $newCompareData['hourly_technician'] = $dataToInsert['hourly_technician'];
+        $newCompareData['flat_rate_technician'] = $dataToInsert['flat_rate_technician'];
+        $newCompareData['semi_monthly_salary'] = $dataToInsert['semi_monthly_salary'];
+        $newCompareData['semi_monthly_draw'] = $dataToInsert['semi_monthly_draw'];
+
+        $newCompareData['office_location'] = $post['office_location'];
+        $newCompareData['secondary_email'] = $post['secondary_email'];
+        $newCompareData['secondary_PhoneNumber'] = $post['secondary_PhoneNumber'];
+        $newCompareData['other_email'] = $post['other_email'];
+        $newCompareData['other_PhoneNumber'] = $post['other_PhoneNumber'];
+
+        // Old Data
+        $oldCompareData = [];
+        $oldCompareData['first_name'] = $employeeDetail['first_name'];
+        if (isset($employeeDetail['middle_name'])) {
+            $oldCompareData['middle_name'] = $employeeDetail['middle_name'];
+        }
+        $oldCompareData['last_name'] = $employeeDetail['last_name'];
+        $oldCompareData['nick_name'] = $employeeDetail['nick_name'];
+        $oldCompareData['email'] = $employeeDetail['email'];
+        $oldCompareData['PhoneNumber'] = $employeeDetail['PhoneNumber'];
+        $oldCompareData['gender'] = $employeeDetail['gender'];
+        $oldCompareData['job_title'] = $employeeDetail['job_title'];
+        $oldCompareData['Location_Address'] = $employeeDetail['Location_Address'];
+        $oldCompareData['Location_City'] = $employeeDetail['Location_City'];
+        $oldCompareData['Location_ZipCode'] = $employeeDetail['Location_ZipCode'];
+        $oldCompareData['Location_State'] = $employeeDetail['Location_State'];
+        $oldCompareData['Location_Country'] = $employeeDetail['Location_Country'];
+        $oldCompareData['ssn'] = $employeeDetail['ssn'];
+        $oldCompareData['employee_number'] = $employeeDetail['employee_number'];
+        $oldCompareData['employee_type'] = $employeeDetail['employee_type'];
+        $oldCompareData['timezone'] = $employeeDetail['timezone'];
+        $oldCompareData['joined_at'] = $employeeDetail['joined_at'];
+        $oldCompareData['dob'] = $employeeDetail['dob'];
+        $oldCompareData['rehire_date'] = $employeeDetail['rehire_date'];
+        $oldCompareData['linkedin_profile_url'] = $employeeDetail['linkedin_profile_url'];
+        $oldCompareData['department_sid'] = $employeeDetail['department_sid'];
+        $oldCompareData['marital_status'] = $employeeDetail['marital_status'];
+        $oldCompareData['alternative_email'] = $employeeDetail['alternative_email'];
+        $oldCompareData['profile_picture'] = $employeeDetail['profile_picture'];
+        $oldCompareData['hourly_rate'] = $employeeDetail['hourly_rate'];
+        $oldCompareData['hourly_technician'] = $employeeDetail['hourly_technician'];
+        $oldCompareData['flat_rate_technician'] = $employeeDetail['flat_rate_technician'];
+        $oldCompareData['semi_monthly_salary'] = $employeeDetail['semi_monthly_salary'];
+        $oldCompareData['semi_monthly_draw'] = $employeeDetail['semi_monthly_draw'];
+        //
+        $employeeDetailExtra = unserialize($employeeDetail['extra_info']);
+        //
+        $oldCompareData['office_location'] = $employeeDetailExtra['office_location'];
+        $oldCompareData['secondary_email'] = $employeeDetailExtra['secondary_email'];
+        $oldCompareData['secondary_PhoneNumber'] = $employeeDetailExtra['secondary_PhoneNumber'];
+        $oldCompareData['other_email'] = $employeeDetailExtra['other_email'];
+        $oldCompareData['other_PhoneNumber'] = $employeeDetailExtra['other_PhoneNumber'];
+
+        //
+        $difference = $this->findDifference($oldCompareData, $newCompareData);
+        //
+        if ($difference['profile_changed'] == 0) {
+            return false;
+        }
+        //
+        $this->load->model('Employee_model', 'em');
+        //
+        $this->em->saveProfileChange(
+            $employeeId,
+            $difference['data'],
+            $this->session->userdata('logged_in')['employer_detail']['sid']
+        );
+    }
+
+
+    function send_login_credentials_bulk()
+    {
+        //
+        $sids = $this->input->post('sids');
+        $action = $this->input->post('action');
+        //
+        if(!empty($sids)){
+            //
+            $employee_sids = explode(',', $sids);
+            //
+            foreach ($employee_sids as $employee_id) {
+                //
+                $employee_details = $this->employee_model->get_employee_details($employee_id);
+                //
+                if (!empty($employee_details)) {
+                    //
+                    $first_name = $employee_details[0]['first_name'];
+                    $last_name = $employee_details[0]['last_name'];
+                    $username = $employee_details[0]['username'];
+                    $access_level = $employee_details[0]['access_level'];
+                    $email = $employee_details[0]['email'];
+                    $salt = $employee_details[0]['salt'];
+                    //
+                    if ($salt == NULL || $salt == '') {
+                        $salt = generateRandomString(48);
+
+                        $data = array('salt' => $salt);
+                        $this->employee_model->update_users($employee_id, $data);
+                    }
+                    //
+                    if ($action == 'sendemail') {
+                        $replacement_array = array();
+                        $replacement_array['employer_name'] = ucwords($first_name . ' ' . $last_name);
+                        $replacement_array['access_level'] = ucwords($access_level);
+                        $replacement_array['company_name'] = $employee_details[1]['CompanyName'];
+                        $replacement_array['username'] = $username;
+                        $replacement_array['login_page'] = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" href="https://www.automotohr.com/login" target="_blank">Login page</a>';
+                        $replacement_array['firstname'] = $first_name;
+                        $replacement_array['lastname'] = $last_name;
+                        $replacement_array['first_name'] = $first_name;
+                        $replacement_array['last_name'] = $last_name;
+                        $replacement_array['email'] = $email;
+                        $replacement_array['create_password_link']  = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url() . "employee_management/generate_password/" . $salt . '">Create Your Password</a>';
+                        //
+                        log_and_send_templated_email(NEW_EMPLOYEE_TEAM_MEMBER_NOTIFICATION, $email, $replacement_array);
+                    }
+                } 
+            }
+            //
+            echo "success";
+        } else {
+            //
+            echo "error";
+        }
+    }
+
 }

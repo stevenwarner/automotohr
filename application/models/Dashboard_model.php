@@ -3190,9 +3190,10 @@ class Dashboard_model extends CI_Model
     {
         //
         $a = $this->db
-            ->select('deactive_by_name, portal_job_listings_sid')
+            ->select('deactive_by_name, portal_job_listings_sid, deactive_date')
             ->where_in('portal_job_listings_sid', $jobIds)
-            ->order_by('sid', 'asc')
+            ->where('deactive_date IS NOT NULL', NULL)
+            ->where('active', 0)
             ->get('portal_job_listings_record');
         //
         $b = $a->result_array();

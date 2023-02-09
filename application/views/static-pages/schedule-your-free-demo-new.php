@@ -246,7 +246,7 @@
 <div class="row clearfix"></div>
 <!--    <div class="col-sm-12">
             <div class="page-header-area">
-                <span class="page-heading down-arrow">Contact one of our Talent Network Partners at</span>
+                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Contact one of our Talent Network Partners at</span>
             </div>
             <div class="col-sm-6">
                 <div class="wrapper">

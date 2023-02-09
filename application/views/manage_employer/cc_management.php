@@ -10,7 +10,7 @@
                     <div class="card_div">
                         <div class="dashboard-conetnt-wrp">
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow"><?php echo $title; ?></span>
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; ?></span>
                             </div>
                             <div class="btn-wrp">
                                 <div class="row">
@@ -88,7 +88,7 @@
                             <?php echo form_open_multipart('', array('id' => 'cc_setup_fee')); ?>
                             <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                 <div class="page-header-area">
-                                    <span class="page-heading down-arrow"><?php echo "Add new credit card"; ?></span>
+                                    <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo "Add new credit card"; ?></span>
                                 </div>
                                 <div class="create-job-wrap">
                                     <div class="universal-form-style-v2">

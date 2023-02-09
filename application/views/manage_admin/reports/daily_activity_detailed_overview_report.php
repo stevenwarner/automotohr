@@ -28,7 +28,7 @@
                                             <div class="field-row field-row-autoheight">
                                                 <input type="text" name="report_date"
                                                        value="<?php echo set_value('report_date', date('m/d/Y')); ?>"
-                                                       class="invoice-fields" id="report_date" readonly>
+                                                       class="invoice-fields" id="report_date" readonly autocomplete="off">
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
@@ -99,21 +99,33 @@
         
         $('#report_date').datepicker({
             format: 'mm/dd/yyyy',
+            changeMonth: true,
+            changeYear: true,
             onSelect: function () {
                 $('#hidden_report_date').val($('#report_date').val());
             }
         });
     });
 
+    var my_request = null;
 
     function get_inactivity_report() {
+        //
+        if(my_request !== null){
+            my_request.abort();
+        }
+        //
+        if (typeof stopProcess != "undefined") {
+            stopProcess();
+        }
+        //
         var report_date = $('#report_date').val();
-
+        //
         if (report_date != '' && report_date != null && report_date != undefined)
         {
-            var request_data = { "perform_action" : "get_daily_activity_detailed_overview", "report_date" : report_date};
+            // var request_data = { "perform_action" : "get_daily_activity_detailed_overview", "report_date" : report_date};
+            var request_data = { "perform_action" : "get_all_active_companies", "report_date" : report_date};
 
-            var my_request;
             var my_url = '<?php echo base_url('manage_admin/reports/daily_activity_detailed_overview_report/ajax_responder'); ?>';
 
             $('#main_container_for_ajax_response').html('<div class="cssload-loader"></div>');
@@ -125,9 +137,9 @@
             });
 
             my_request.done(function (response) {
-                 //console.log(response);
-                 $('.bt-panel').show();
-                 $('#main_container_for_ajax_response').html(response);
+                my_request = null;
+                $('.bt-panel').show();
+                $('#main_container_for_ajax_response').html(response);
             });
 
 

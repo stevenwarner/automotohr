@@ -9,7 +9,7 @@
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow"><?php echo ucwords($ticket['subject']); ?></span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo ucwords($ticket['subject']); ?></span>
                         </div>
                     </div>
                     <div class="panel-group ticket-group" id="accordion" role="tablist" aria-multiselectable="false">

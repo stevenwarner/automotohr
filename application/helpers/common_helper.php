@@ -1565,7 +1565,7 @@ if (!function_exists('convert_email_template')) {
 
         $emailTemplateBody = str_replace('{{contact_name}}', $replacement_array['contact_name'], $emailTemplateBody);
         $emailTemplateBody = str_replace('{{from_name}}', $replacement_array['from_name'], $emailTemplateBody);
-       
+
 
 
         return $emailTemplateBody;
@@ -1651,7 +1651,6 @@ if (!function_exists('return_value_if_key_exists')) {
                     return 0;
                 }
             }
-            
         }
     }
 }
@@ -3087,7 +3086,12 @@ if (!function_exists('log_and_sendEmail')) {
             'email' => $to,
             'message' => $body,
             'username' => $senderName,
-            'temp_id' => $temp_id
+            'temp_id' => $temp_id,
+            'temp_data' => json_encode([
+                'SCRIPT_FILENAME' => $_SERVER['SCRIPT_FILENAME'],
+                'REQUEST_URI' => $_SERVER['REQUEST_URI'],
+                'argv' => $_SERVER['argv']
+            ])
         );
         //
         save_email_log_common($emailData);
@@ -4699,7 +4703,7 @@ if (!function_exists('common_indeed_acknowledgement_email')) {
             $body = str_replace('{{company_name}}', $applicationData['company_name'], $body);
             $email = $template[0];
             $from = REPLY_TO;
-            $subject = $email['subject'];
+            $subject = str_replace('{{company_name}}', $applicationData['company_name'], $email['subject']);
             $from_name = $email['from_name'];
             $message_data = array();
             $message_data['to_id'] = $applicationData['email'];
@@ -8396,7 +8400,7 @@ if (!function_exists('sc_remove')) {
             }
             return $input;
         }
-        return preg_replace(SC_REGEX, ' ', utf8_decode($input));
+        return preg_replace(SC_REGEX, '', utf8_decode($input));
     }
 }
 
@@ -9720,9 +9724,9 @@ if (!function_exists('parse_timezone')) {
         else if ($find == 'time') return $timezone[0];
         else if ($find == 'continent') return $timezone[1];
         else if ($find == 'abbr') return $timezone[3];
-        else if ($find == 'name') return timezone_name_from_abbr($timezone[3]);
+        else if ($find == 'name') return getTimeZoneFromAbbr($timezone[3]);
         else if ($find == 'time_in_seconds') {
-            $tmp = new DateTime('now', new DateTimeZone(timezone_name_from_abbr($timezone[3])));
+            $tmp = new DateTime('now', new DateTimeZone(getTimeZoneFromAbbr($timezone[3])));
             return $tmp->getOffset();
         } else return $timezone[2];
         //
@@ -9766,22 +9770,22 @@ if (!function_exists('reset_timezone')) {
         // _e($from_zone, true);
         // _e(timezone_name_from_abbr($from_zone), true);
         // Let's create date
-        $date_obj = DateTime::createFromFormat($from_format, $datetime, new DateTimeZone(timezone_name_from_abbr($from_zone)));
+        $date_obj = DateTime::createFromFormat($from_format, $datetime, new DateTimeZone(getTimeZoneFromAbbr($from_zone)));
         if ($date_obj) {
             if ($from_zone != 'UTC') {
                 // Convert it to utc
-                $utc = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr('UTC')));
+                $utc = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr('UTC')));
                 // Get utc date
                 $return_array['UTC'] = parse_datetime($utc->format($to_format));
             }
             //
             if (isset($from_zone)) {
-                $fromzone = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr($from_zone)));
+                $fromzone = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($from_zone)));
                 $return_array[$from_zone] = parse_datetime($fromzone->format($to_format));
             }
             //
-            if ($from_zone != 'UTC') $tozone = $utc->setTimezone(new DateTimeZone(timezone_name_from_abbr($new_zone)));
-            else $tozone = $date_obj->setTimezone(new DateTimeZone(timezone_name_from_abbr($new_zone)));
+            if ($from_zone != 'UTC') $tozone = $utc->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
+            else $tozone = $date_obj->setTimezone(new DateTimeZone(getTimeZoneFromAbbr($new_zone)));
             $return_array[$new_zone] = parse_datetime($tozone->format($to_format));
             $return_array['date_time_string'] = $tozone->format($format);
         } else {
@@ -10014,7 +10018,7 @@ if (!function_exists('get_current_datetime')) {
         }
 
         // Get the current selected timezone
-        $date = new DateTime(date('Y-m-d'), new DateTimeZone(timezone_name_from_abbr($timezone)));
+        $date = new DateTime(date('Y-m-d'), new DateTimeZone(getTimeZoneFromAbbr($timezone)));
         return $date->format($to_format) . (isset($extra) ? $extra : '');
     }
 }
@@ -11228,12 +11232,12 @@ if (!function_exists('remakeEmployeeName')) {
     {
         //
         $first_name = isset($o['first_name']) ? $o['first_name'] : (isset($o['to_first_name']) ? $o['to_first_name'] : '');
-        $middleName = isset($o['middle_name']) ? ' '.$o['middle_name'] : (isset($o['to_middle_name']) ? ' '.$o['to_middle_name'] : '');
+        $middleName = isset($o['middle_name']) ? ' ' . $o['middle_name'] : (isset($o['to_middle_name']) ? ' ' . $o['to_middle_name'] : '');
         $last_name = isset($o['last_name']) ? $o['last_name'] : (isset($o['to_last_name']) ? $o['to_last_name'] : '');
         //
-        $r = $i ? $first_name . $middleName.' ' . $last_name : '';
+        $r = $i ? $first_name . $middleName . ' ' . $last_name : '';
         //
-        if($onlyName){
+        if ($onlyName) {
             return $r;
         }
         //
@@ -11406,75 +11410,87 @@ if (!function_exists('isDocumentCompleted')) {
             $is_magic_tag_exist = preg_match('/{{(.*?)}}/', $document['document_description']) ? true : false;
             //
             if (!$is_magic_tag_exist) $is_magic_tag_exist = preg_match('/<select(.*?)>/', $document['document_description']);
+            //
             $is_document_completed = 0;
             //
-            if ($document['acknowledgment_required'] || $document['download_required'] || $document['signature_required'] || $is_magic_tag_exist) {
+            $is_magic_tag_exist = 0;
+            //
+            if (str_replace(EFFECT_MAGIC_CODE_LIST, '', $document['document_description']) != $document['document_description']) {
+                $is_magic_tag_exist = 1;
+            }
+            // Check for uploaded manual dcoument
+            if ($document['document_sid'] == 0) {
+                continue;
+            } else {
+                //
+                if ($document['acknowledgment_required'] || $document['download_required'] || $document['signature_required'] || $is_magic_tag_exist) {
 
-                if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1 && $document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1) {
-                    if ($is_magic_tag_exist == 1) {
+                    if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1 && $document['signature_required'] == 1) {
                         if ($document['uploaded'] == 1) {
                             $is_document_completed = 1;
                         } else {
                             $is_document_completed = 0;
                         }
-                    } else if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else if ($document['acknowledged'] == 1 && $document['downloaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
+                    } else if ($document['acknowledgment_required'] == 1 && $document['download_required'] == 1) {
+                        if ($is_magic_tag_exist == 1) {
+                            if ($document['uploaded'] == 1) {
+                                $is_document_completed = 1;
+                            } else {
+                                $is_document_completed = 0;
+                            }
+                        } else if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($document['acknowledged'] == 1 && $document['downloaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['acknowledgment_required'] == 1 && $document['signature_required'] == 1) {
+                        if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['download_required'] == 1 && $document['signature_required'] == 1) {
+                        if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['acknowledgment_required'] == 1) {
+                        if ($document['acknowledged'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['download_required'] == 1) {
+                        if ($document['downloaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($document['signature_required'] == 1) {
+                        if ($document['uploaded'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
+                    } else if ($is_magic_tag_exist == 1) {
+                        if ($document['user_consent'] == 1) {
+                            $is_document_completed = 1;
+                        } else {
+                            $is_document_completed = 0;
+                        }
                     }
-                } else if ($document['acknowledgment_required'] == 1 && $document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['download_required'] == 1 && $document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['acknowledgment_required'] == 1) {
-                    if ($document['acknowledged'] == 1) {
-                        $is_document_completed = 1;
-                    } else if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['download_required'] == 1) {
-                    if ($document['downloaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($document['signature_required'] == 1) {
-                    if ($document['uploaded'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                } else if ($is_magic_tag_exist == 1) {
-                    if ($document['user_consent'] == 1) {
-                        $is_document_completed = 1;
-                    } else {
-                        $is_document_completed = 0;
-                    }
-                }
 
-                if ($is_document_completed == 0) {
-                    unset($documents[$k0]);
-                    continue;
+                    if ($is_document_completed == 0) {
+                        unset($documents[$k0]);
+                        continue;
+                    }
                 }
             }
         }
@@ -12062,7 +12078,8 @@ if (!function_exists('')) {
                 }
             }
             //
-            $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
+            // $printURL = 'https://docs.google.com/gview?url=' . AWS_S3_BUCKET_URL . (!empty($document['document_s3_name']) ? $document['document_s3_name'] : '') . '&embedded=true';
+            $printURL = str_replace(array_keys($replace), $replace, $printURL);
             $downloadURL = str_replace(array_keys($replace), $replace, $downloadURL);
         }
         //_e($document, true);
@@ -12415,7 +12432,13 @@ if (!function_exists('formatDateToDB')) {
         $fromFormat = 'm/d/Y',
         $toFormat = 'Y-m-d'
     ) {
-        if (empty($date)) return $date;
+        //
+        if (empty($date)) {
+            return $date;
+        }
+        //
+        $date = formatDateBeforeProcess($date, $fromFormat);
+        //
         return DateTime::createFromFormat($fromFormat, $date)->format($toFormat);
     }
 }
@@ -12622,7 +12645,8 @@ function getStatusColor($index)
         'placed_important' => 'rgb(77, 160, 0)',
         'not_contacted_important' => 'rgb(82, 82, 82)',
         'future_opportunity_important' => '#00008B',
-        'left_message_important' => '#B2B200'
+        'left_message_important' => '#B2B200',
+        'donothire' => '#a94442'
     ];
     //
     $index = ltrim(trim($index), '.');
@@ -13982,21 +14006,21 @@ if (!function_exists('addDefaultCategoriesIntoCompany')) {
         // Get company industry
         $industryId = $CI->db->select('job_category_industries_sid')->where('sid', $company_sid)->get('users')->row_array()['job_category_industries_sid'];
         //
-        if($industryId != 0){
+        if ($industryId != 0) {
             //
-            $default_categories2 = 
-            $CI->db
-            ->select('
+            $default_categories2 =
+                $CI->db
+                ->select('
                 default_categories.category_name as name,
                 default_categories.description,
                 "1" as status,
                 "1" as sort_order,
                 categories_document_industry.category_sid as sid
             ')
-            ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
-            ->where('categories_document_industry.industry_sid', $industryId)
-            ->get('categories_document_industry')->result_array();
-            
+                ->join('default_categories', 'default_categories.sid = categories_document_industry.category_sid')
+                ->where('categories_document_industry.industry_sid', $industryId)
+                ->get('categories_document_industry')->result_array();
+
             //
             $default_categories = array_merge($default_categories, $default_categories2);
         }
@@ -14580,7 +14604,8 @@ if (!function_exists('_m')) {
      */
     function _m($string, $type = 'js', $version = '1.0.0')
     {
-        return $string . (MINIFIED) . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
+        //
+        return $string . (strpos($string, '.min') === false ? MINIFIED : '') . '.' . $type . '?v=' . (MINIFIED === '.min' ? $version : time());
     }
 }
 
@@ -15686,5 +15711,546 @@ if (!function_exists('addColumnsForDocumentAssigned')) {
         if ($data['confidential_employees']) {
             $dataArray['confidential_employees'] = $data['confidential_employees'];
         }
+    }
+}
+
+
+if (!function_exists('loadFileData')) {
+    function loadFileData($filePath)
+    {
+        //
+        $h = fopen($filePath, 'r');
+        //
+        $contents = fread($h, filesize($filePath));
+        //
+        fclose($h);
+        //
+        return $contents;
+    }
+}
+
+
+if (!function_exists('checkDateFormate')) {
+    /**
+     * Check the date format to 
+     * avoid 500
+     * 
+     * @param string $dateIm
+     * @param string $format
+     * @return string
+     */
+    function checkDateFormate($dateIn, $format = 'm-d-Y')
+    {
+        // Check for empty
+        if (empty($dateIn) || $dateIn == "N/A") {
+            return "";
+        }
+        // Check for valid syntax
+        if (!preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $dateIn)) {
+            return "";
+        }
+        //
+        $dateArray = explode("-", $dateIn);
+        //
+        if ($dateArray[0] > 12) {
+            return "";
+        }
+        //
+        return $dateIn;
+    }
+}
+
+
+if (!function_exists('getAssetTag')) {
+    /**
+     * Set the tage depending on the
+     * devlopment mode
+     *
+     * @param string $tag
+     * @return string
+     */
+    function getAssetTag($tag = '1.0.1')
+    {
+        return MINIFIED === '.min' ? $tag : time();
+    }
+}
+/**
+ * 
+ */
+if (!function_exists('checkDontHireText')) {
+    function checkDontHireText($empIds)
+    {
+        $CI = &get_instance();
+        //
+        $records =
+            $CI->db
+            ->select('
+            terminated_employees.employee_sid,
+            terminated_employees.termination_date,
+            terminated_employees.employee_status,
+            terminated_employees.do_not_hire,
+            ' . (getUserFields()) . '
+        ')
+            ->join('users', 'users.sid = terminated_employees.changed_by')
+            ->where_in('terminated_employees.employee_sid', $empIds)
+            ->order_by('terminated_employees.sid', 'DESC')
+            ->get('terminated_employees')
+            ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            // Check if last record was found
+            if (!isset($tmp[$record['employee_sid']])) {
+                //
+                $tmp[$record['employee_sid']] = [];
+                //
+                if ($record['employee_status'] == 1 && $record['do_not_hire'] == 1) {
+                    //
+                    $tmp[$record['employee_sid']] = [
+                        'full_name' => remakeEmployeeName($record),
+                        'action_date' => formatDateToDB($record['termination_date'], DB_DATE, DATE)
+                    ];
+                }
+            }
+        }
+        //
+        return $tmp;
+    }
+}
+
+if (!function_exists('doNotHireWarning')) {
+    /**
+     * Employee do not hire
+     *
+     * @param int   $employeeId
+     * @param array $list
+     * @param int   $fontSize
+     * @return array
+     */
+    function doNotHireWarning($employeeId, $list, $fontSize = 20)
+    {
+        //
+        $returnArray = [
+            'message' => '',
+            'row' => ''
+        ];
+        //
+        if (empty($list)) {
+            return $returnArray;
+        }
+        // Check if employee exists
+        if (!isset($list[$employeeId]) || empty($list[$employeeId])) {
+            return $returnArray;
+        }
+        //
+        $returnArray['message'] = '<p class="text-danger" style="font-size: ' . $fontSize . 'px;"><strong>DO NOT HIRE this person<strong> <i class="fa fa-info-circle text-danger" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="' . ($list[$employeeId]['full_name']) . ' marked this employee as DO NOT HIRE on the ' . ($list[$employeeId]['action_date']) . '"></i></p>';
+        $returnArray['row'] = 'bg-danger';
+        //
+        return $returnArray;
+    }
+}
+
+
+if (!function_exists('formatDateBeforeProcess')) {
+    /**
+     * Format date to correct
+     *
+     * @param string $date
+     * @param string $format
+     * @return string
+     */
+    function formatDateBeforeProcess(
+        string $date,
+        string $format
+    ) {
+        //
+        if (
+            $format == 'm/d/Y' &&
+            preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/', $date)
+        ) {
+            return DateTime::createFromFormat(
+                'm-d-Y',
+                $date
+            )->format('m/d/Y');
+        }
+        //
+        return $date;
+    }
+}
+
+if (!function_exists('getDatesBetweenDates')) {
+    /**
+     * Get dates array between dates
+     *
+     * @param string $startDate
+     * @param string $endDate
+     * @param int    $requestedHours
+     * @return array
+     */
+    function getDatesBetweenDates(
+        string $startDate,
+        string $endDate,
+        int $requestedHours = 0
+    ) {
+        //
+        $datesArray = [];
+        //
+        $period = new DatePeriod(
+            new DateTime($startDate),
+            new DateInterval('P1D'),
+            new DateTime($endDate)
+        );
+
+        //
+        foreach ($period as $key => $value) {
+            $count++;
+            //
+            $datesArray[] = [
+                'date' => $value->format('Y-m-d'),
+                'time' => 0
+            ];
+        }
+        //
+        $datesArray[] = ['date' => $endDate, 'time' => 0];
+        //
+        $requestedMinutes = $requestedHours * 60;
+        $requestedMinutesChunk = $requestedMinutes / count($datesArray);
+        //
+        foreach ($datesArray as $index => $value) {
+            //
+            if ($requestedMinutes == 0) {
+                $requestedMinutesChunk = 0;
+            }
+            //
+            $datesArray[$index]['time'] = $requestedMinutesChunk;
+            //
+            $requestedMinutes -= $requestedMinutesChunk;
+        }
+        //
+        return $datesArray;
+    }
+}
+
+
+if (!function_exists('getCurrentLoginEmployeeId')) {
+    /**
+     * Get the logged in employee index
+     *
+     * @param string $index
+     * @return string|array
+     */
+    function getCurrentLoginEmployeeDetails($index = '')
+    {
+        //
+        $CI = &get_instance();
+        //
+        return $index != '' ? $CI->session->userdata('logged_in')['employer_detail'][$index] : $CI->session->userdata('logged_in')['employer_detail'];
+    }
+}
+
+if (!function_exists('getCurrentYearHolidaysFromGoogle')) {
+    /**
+     * Get current year holidays
+     *
+     * @return array
+     */
+    function getCurrentYearHolidaysFromGoogle()
+    {
+        //
+        $CI = &get_instance();
+        //
+        $holidays = json_decode(
+            getFileData("https://www.googleapis.com/calendar/v3/calendars/en.usa%23holiday%40group.v.calendar.google.com/events?key=" . (getCreds('AHR')->GoogleAPIKey) . ""),
+            true
+        )['items'];
+        // Extract current year holidays
+        $holidays = array_filter(
+            $holidays,
+            function ($holiday) {
+                $year = date('Y');
+                return preg_match("/$year/", $holiday['start']['date']);
+            }
+        );
+        //
+        $ra = [];
+        //
+        $year = date('Y');
+        // Let's insert to database
+        foreach ($holidays as $holiday) {
+            //
+            $ia = [];
+            $ia['holiday_year'] = $year;
+            $ia['holiday_title'] = trim($holiday['summary']);
+            $ia['from_date'] = trim($holiday['start']['date']);
+            $ia['to_date'] = trim($holiday['end']['date']);
+            $ia['event_link'] = trim($holiday['htmlLink']);
+            $ia['status'] = trim($holiday['status']);
+            $ia['icon'] = NULL;
+            $ia['created_at'] = $ia['updated_at'] = date('Y-m-d H:i:s', strtotime('noe'));
+            //
+            $ra[] = $ia;
+            //
+            if (!$CI->db->where([
+                'holiday_title' => $ia['holiday_title'],
+                'holiday_year' => $year
+            ])->count_all_results('timeoff_holiday_list')) {
+                //
+                $CI->db->insert(
+                    'timeoff_holiday_list',
+                    $ia
+                );
+            }
+        }
+        //
+        return $ra;
+    }
+}
+
+
+if (!function_exists('isDevServer')) {
+    function isDevServer()
+    {
+        return strpos($_SERVER['SERVER_NAME'], '.com') === false ? true : false;
+    }
+}
+
+if (!function_exists('getSystemDate')) {
+    /**
+     * Get the current datetime
+     *
+     * @param string $format
+     * @param string $timestamp
+     * @return string
+     */
+    function getSystemDate(string $format = DB_DATE_WITH_TIME, string $timestamp = 'now')
+    {
+        return date($format, strtotime($timestamp));
+    }
+}
+
+
+if (!function_exists('getTimeZoneFromAbbr')) {
+    /**
+     * Get the timezone from abbr
+     *
+     * If the invalid abbr is pass then the
+     * system defaults to server's timezone
+     *
+     * @param string $abbr
+     * @return string
+     */
+    function getTimeZoneFromAbbr(string $abbr)
+    {
+        //
+        $abbr = strtoupper(trim($abbr));
+        // set the abbr array
+        $timeZoneArray = [
+            'SAMT' => 'GST',
+            'TRT' => 'EAT',
+            'FET' => 'EAT',
+            'KUYT' => 'GST'
+        ];
+        //
+        $abbr = isset($timeZoneArray[$abbr]) ? $timeZoneArray[$abbr] : $abbr;
+        //
+        $timeZone = timezone_name_from_abbr($abbr);
+        //
+        if (!$timeZone) {
+            $timeZone = timezone_name_from_abbr(STORE_DEFAULT_TIMEZONE_ABBR);
+        }
+        //
+        return $timeZone;
+    }
+}
+
+//
+if (!function_exists('getCompanyEmsStatusBySid')) {
+    function getCompanyEmsStatusBySid($company_sid, $doRedirect = true)
+    {
+        $CI = &get_instance();
+        //
+        $CI->db->where('sid', $company_sid);
+        $CI->db->where('ems_status', 1);
+        //
+        $response = $CI->db->count_all_results('users');
+        if ($response <= 0 && $doRedirect) {
+            return redirect('/dashboard');
+        }
+        return $response;
+    }
+}
+
+
+//
+if (!function_exists('get_eeoc_options_status')) {
+    function get_eeoc_options_status($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('dl_vol,dl_vet,dl_gen');
+        $CI->db->where('user_sid', $company_sid);
+        return $CI->db->get('portal_employer')->row_array();
+    }
+}
+
+//
+if (!function_exists('get_employee_transfer_date')) {
+    function get_employee_transfer_date($employee_sid)
+    {
+        //
+
+        $CI = &get_instance();
+        $CI->db->select('employee_copy_date');
+        $CI->db->where('new_employee_sid', $employee_sid);
+        $record_obj = $CI->db->get('employees_transfer_log');
+        //
+        if (!empty($record_obj)) {
+            $data = $record_obj->row_array();
+            $record_obj->free_result();
+            return formatDateToDB($data['employee_copy_date'], DB_DATE_WITH_TIME, DATE);
+        }
+    }
+}
+
+//
+if (!function_exists('get_company_departments_teams')) {
+    /**
+     * Get company department and teams
+     *
+     * @param int $companyId
+     * @param string $id Optional
+     * @param int $teamId Optional
+     * @return array|string
+     */
+    function get_company_departments_teams(int $companyId, string $id = '', int $teamId = 0)
+    {
+        //
+        $select = '<select name="' . ($id) . '" id="' . ($id) . '" class="jsSelect2" style="width: 100%;">';
+        $select .= '<option value="0">Please select a team</option>';
+        $select .= '{{options}}';
+        $select .= '</select>';
+        //
+        $CI = &get_instance();
+        $CI->db->select('name,sid');
+        $CI->db->where('company_sid', $companyId);
+        $CI->db->where('is_deleted', 0);
+        $departments = $CI->db->get('departments_management')->result_array();
+        //
+        if (!$departments) {
+            return $id ? $select : [];
+        }
+        //
+        $departmentIds = array_column($departments, 'sid');
+        //
+        $tmp = [];
+        //
+        foreach ($departments as $department) {
+            $tmp[$department['sid']] = [
+                'id' => $department['sid'],
+                'name' => $department['name'],
+                'teams' => []
+            ];
+        }
+        //
+        $departments = $tmp;
+        // Get teams by department ids
+        $CI->db->select('name,sid,department_sid');
+        $CI->db->where_in('department_sid', $departmentIds);
+        $CI->db->where('is_deleted', 0);
+        $CI->db->where('status', 1);
+        //
+        $teams = $CI->db->get('departments_team_management')->result_array();
+        //
+        if ($teams) {
+            //
+            foreach ($teams as $team) {
+                $departments[$team['department_sid']]['teams'][] = [
+                    'sid' => $team['sid'],
+                    'name' => $team['name']
+                ];
+            }
+        }
+        //
+        if (!empty($id)) {
+            //
+            $options = '';
+            //
+            foreach ($departments as $department) {
+                $options .= '<optgroup label="' . ($department['name']) . '">';
+                if ($department['teams']) {
+                    foreach ($department['teams'] as $team) {
+                        $options .= '<option value="' . ($team['sid']) . '" ' . ($teamId == $team['sid'] ? "selected" : "") . '>' . ($team['name']) . '</option>';
+                    }
+                }
+                $options .= '</optgroup>';
+            }
+            //
+            $select = str_replace('{{options}}', $options, $select);
+        }
+
+        //
+        return $id ? $select : $departments;
+    }
+}
+
+if (!function_exists('getDepartmentColumnByTeamId')) {
+    function getDepartmentColumnByTeamId(
+        int $teamId,
+        string $column
+    ) {
+        //
+        $CI = &get_instance();
+        //
+        return $CI->db->select($column)
+            ->where('sid', $teamId)
+            ->get('departments_team_management')
+            ->row_array()[$column];
+    }
+}
+
+if (!function_exists('handleEmployeeDepartmentAndTeam')) {
+    function handleEmployeeDepartmentAndTeam(
+        int $employeeId,
+        int $teamId
+    ) {
+        //
+        if (!$employeeId || !$teamId || $employeeId == 0 || $teamId == 0) {
+            return false;
+        }
+        // Get department id
+        $departmentId = getDepartmentColumnByTeamId($teamId, 'department_sid');
+        //
+        if (!$departmentId) {
+            return false;
+        }
+        //
+        $CI = &get_instance();
+        // Update users
+        $CI->db
+            ->where('sid', $employeeId)
+            ->update(
+                'users',
+                [
+                    'department_sid' => $departmentId,
+                    'team_sid' => $teamId
+                ]
+            );
+        // Make entry in teams table
+        $CI->db
+            ->insert(
+                'departments_employee_2_team',
+                [
+                    'department_sid' => $departmentId,
+                    'team_sid' => $teamId,
+                    'employee_sid' => $employeeId,
+                    'created_at' => date('Y-m-d H:i:s', strtotime('now'))
+                ]
+            );
+        //
+        return true;
     }
 }

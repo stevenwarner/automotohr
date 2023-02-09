@@ -16,7 +16,7 @@
                 </div>
                 <div class="dashboard-conetnt-wrp">
                     <div class="page-header-area">
-                        <span class="page-heading down-arrow"><?php echo $title; $active = ($this->uri->segment(2)) ? $this->uri->segment(2) : '';?></span>
+                        <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?><?php echo $title; $active = ($this->uri->segment(2)) ? $this->uri->segment(2) : '';?></span>
                     </div>
 
 

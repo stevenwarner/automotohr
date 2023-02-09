@@ -117,6 +117,7 @@ class Department_management_model extends CI_Model {
 
     function insert_team($data_to_insert) {
         $this->db->insert('departments_team_management', $data_to_insert);
+        return $this->db->insert_id();
     }
 
     function update_team($team_sid, $data_to_update) {

@@ -28,7 +28,7 @@
                                                 <input type="hidden" id="start_date" name="start_date" value="" />
                                                 <input type="hidden" id="end_date" name="end_date" value="" />
 
-                                                <input id="week_span" class="week-picker invoice-fields" name="week_span" placeholder="Please Select Date" />
+                                                <input id="week_span" class="week-picker invoice-fields" readonly autocomplete="off" name="week_span" placeholder="Please Select Date" />
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
@@ -129,7 +129,8 @@
         $('.week-picker').datepicker({
             firstDay: 1,
             format:'yyyy/mm/dd',
-
+            changeMonth: true,
+            changeYear: true,
             beforeShow: function () {
                 $('#ui-datepicker-div').addClass('ui-weekpicker');
                 selectCurrentWeek();
@@ -139,6 +140,8 @@
             },
             showOtherMonths: true,
             selectOtherMonths: true,
+            changeYear: true,
+            changeMonth: true,
             onSelect: function (dateText, inst) {
                 setDates(this);
                 selectCurrentWeek();
@@ -162,21 +165,32 @@
 
     });
 
+    var my_request = null;
+
 
     function get_activity_report() {
+        if(my_request !== null){
+            my_request.abort();
+        }
+        //
+        if (typeof stopProcess != "undefined") {
+            stopProcess();
+        }
+        //
         var week_span = $('#week_span').val();
         var start_date = $('#start_date').val();
         var end_date = $('#end_date').val();
+        var perform_action = "get_weekly_active_companies";
 
         if (week_span != '' && week_span != null && week_span != undefined) {
             var request_data = {
-                "perform_action": "get_weekly_activity",
+                "perform_action": perform_action,
                 "start_date": start_date,
                 "end_date": end_date,
                 "week_span": week_span
             };
 
-            var my_request;
+            
             var my_url = '<?php echo base_url('manage_admin/reports/weekly_activity_report/ajax_responder'); ?>';
 
             $('#main_container_for_ajax_response').html('<div class="cssload-loader"></div>');
@@ -188,14 +202,16 @@
             });
 
             my_request.done(function (response) {
-                //console.log(response);
+                //
+                my_request = null;
+                //
                 $('.bt-panel').show();
                 $('#main_container_for_ajax_response').html(response);
             });
 
 
         } else {
-            alertify.error('Please select company and date');
+            alertify.alert('Notice','Please select any date');
         }
 
     }

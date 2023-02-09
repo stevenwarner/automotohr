@@ -57,7 +57,7 @@ $save_post_url = '';
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="page-header-area margin-top">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a class="dashboard-link-btn" href="<?php echo base_url('learning_center/my_learning_center') . $watch_url ; ?>"><i class="fa fa-chevron-left"></i>Back</a>
                                     <?php echo $title; ?>
                                 </span>

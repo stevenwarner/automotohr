@@ -1,14 +1,17 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 ini_set('max_execution_time', 800);
-class Import_applicants_csv extends Public_Controller {
-    public function __construct() {
+class Import_applicants_csv extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->helper('path');
         $this->load->library('parse_csv');
         $this->load->model('import_csv_model');
     }
 
-    public function index() {
+    public function index()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['title'] = 'Import Applicants From CSV File';
             $data['session'] = $this->session->userdata('logged_in');
@@ -24,7 +27,7 @@ class Import_applicants_csv extends Public_Controller {
             $status_sid = $all_status['status_sid'];
             $status = $all_status['status_name'];
             $insertRecord = false;
-            
+
             if (isset($_POST['action']) && $_POST['action'] == 'upload_file') { //Handle File Upload
                 $uploadPath = realpath(APPPATH . '../assets/import_csv/');
                 $csvFile = uploadFile($company_name, $uploadPath, 'userfile', 500000, array('csv'));
@@ -46,7 +49,7 @@ class Import_applicants_csv extends Public_Controller {
                 $country = array('country');
                 $profile_picture = array('profile', 'profile picture', 'profile_picture', 'profile-picture', 'profilepicture', 'profile picture url', 'profile_picture_url', 'profile-picture-url', 'profilepictureurl');
                 $resume = array('resume', 'cv', 'resume url', 'resume_url', 'resume-url', 'resumeurl');
-                $cover_letter = array('cover letter', 'cover_letter', 'coverletterurl', 'cover_letter_url', 'cover-letter-url', 'cover_letter-url');                
+                $cover_letter = array('cover letter', 'cover_letter', 'coverletterurl', 'cover_letter_url', 'cover-letter-url', 'cover_letter-url');
                 $jobTitleTitles = array('job_title', 'jobTitle', 'job-title', 'JobTitle', 'Job Title', 'job title', 'job'); // for Job_title
                 $allowedTitles = array_merge($firstNameTitles, $lastNameTitles, $emailAddressTitles, $phoneNumberTitles, $addressTitles, $cityTitles, $zipCodeTitles, $state, $country, $profile_picture, $resume, $cover_letter, $jobTitleTitles);
                 $correctTitles = array();
@@ -55,19 +58,20 @@ class Import_applicants_csv extends Public_Controller {
                 foreach ($titles as $title) {
                     $lower_title = strtolower($title);
                     $lower_allowedTitles = array_map('strtolower', $allowedTitles);
-                    
+
                     if (in_array($lower_title, $lower_allowedTitles)) {
                         $correctTitles[] = $title;
                         $correctTitleslowercase[] = strtolower($title);
                     }
                 }
-                
-                if (    in_array('email', $correctTitleslowercase) ||
-                        in_array('email_address', $correctTitleslowercase) ||
-                        in_array('emailaddress', $correctTitleslowercase) ||
-                        in_array('email-address', $correctTitleslowercase) ||
-                        in_array('e-mail', $correctTitleslowercase) ||
-                        in_array('e mail', $correctTitleslowercase)
+
+                if (
+                    in_array('email', $correctTitleslowercase) ||
+                    in_array('email_address', $correctTitleslowercase) ||
+                    in_array('emailaddress', $correctTitleslowercase) ||
+                    in_array('email-address', $correctTitleslowercase) ||
+                    in_array('e-mail', $correctTitleslowercase) ||
+                    in_array('e mail', $correctTitleslowercase)
                 ) {
                     $count = 0;
 
@@ -102,57 +106,57 @@ class Import_applicants_csv extends Public_Controller {
                             if (strpos(strtolower($title), 'city') !== false) {
                                 $recordToInsert['city'] = $record[$title];
                             }
-                            
+
                             if ((strpos(strtolower($title), 'zip') !== false) || (strpos(strtolower($title), 'zipcode') !== false)) {
                                 $recordToInsert['zipcode'] = $record[$title];
                             }
-                            
+
                             if (strpos(strtolower($title), 'state') !== false) {
                                 $state = $record[$title];
-                                
-                                if($state != null || $state != '') {
+
+                                if ($state != null || $state != '') {
                                     $state_info = $this->import_csv_model->get_state_and_country_id($state);
                                 }
-                                
-                                if(!empty($state_info)) {
+
+                                if (!empty($state_info)) {
                                     $recordToInsert['state'] = $state_info['sid'];
                                     $recordToInsert['country'] = $state_info['country_sid'];
                                 }
                             }
-                            
-                            
+
+
                             if (strpos(strtolower($title), 'country') !== false) {
                                 $country = $record[$title];
-                                
-                                if(strtolower($country) == 'United States') {
+
+                                if (strtolower($country) == 'United States') {
                                     $recordToInsert['country'] = 227;
                                 }
-                                
-                                if(strtolower($country) == 'Canada') {
+
+                                if (strtolower($country) == 'Canada') {
                                     $recordToInsert['country'] = 38;
                                 }
                             }
 
                             if ((strpos(strtolower($title), 'profile') !== false) || (strpos(strtolower($title), 'picture') !== false)) {
                                 $profile_pic_url = $record[$title];
-                                
-                                if($profile_pic_url != '' || $profile_pic_url != NULL) {
+
+                                if ($profile_pic_url != '' || $profile_pic_url != NULL) {
                                     $recordToInsert['pictures'] = $this->import_csv_model->verify_url_data($profile_pic_url);
                                 }
                             }
 
                             if ((strpos(strtolower($title), 'resume') !== false) || (strpos(strtolower($title), 'cv') !== false)) {
                                 $resume_url = $record[$title];
-                                
-                                if($resume_url != '' || $resume_url != NULL) {
+
+                                if ($resume_url != '' || $resume_url != NULL) {
                                     $recordToInsert['resume'] = $this->import_csv_model->verify_url_data($resume_url);
                                 }
                             }
 
                             if ((strpos(strtolower($title), 'cover') !== false) || (strpos(strtolower($title), 'letter') !== false)) {
                                 $cover_letter = $record[$title];
-                                
-                                if($cover_letter != '' || $cover_letter != NULL) {
+
+                                if ($cover_letter != '' || $cover_letter != NULL) {
                                     $recordToInsert['cover_letter'] = $this->import_csv_model->verify_url_data($cover_letter);
                                 }
                             }
@@ -160,7 +164,6 @@ class Import_applicants_csv extends Public_Controller {
                             if ((strpos(strtolower($title), 'job') !== false) || (strpos(strtolower($title), 'jobTitle') !== false)) {
                                 $applicant_jobs_list_data['desired_job_title'] = $record[$title];
                             }
-
                         }
 
                         $recordToInsert['employer_sid'] = $company_id;
@@ -174,7 +177,7 @@ class Import_applicants_csv extends Public_Controller {
                             $applicant_jobs_list_data['status_sid'] = $status_sid;
                             $applicant_jobs_list_data['applicant_source'] = 'csv imported data';
                             $applicant_jobs_list_data['applicant_type'] = 'Manual Candidate';
-                            $this->import_csv_model->insert_new_applicant_job_record($company_id, $applicant_sid, $applicant_jobs_list_data);//Insert applicant record in Jobs list
+                            $this->import_csv_model->insert_new_applicant_job_record($company_id, $applicant_sid, $applicant_jobs_list_data); //Insert applicant record in Jobs list
                             $count++;
                         }
                     }
@@ -196,7 +199,7 @@ class Import_applicants_csv extends Public_Controller {
         }
     }
 
-     /**
+    /**
      * Handle all ajax requests
      * Created on: 16-08-2019
      *
@@ -206,8 +209,9 @@ class Import_applicants_csv extends Public_Controller {
      *
      * @return JSON
      */
-    function handler(){
-        if(!$this->session->userdata('logged_in')) exit(0);
+    function handler()
+    {
+        if (!$this->session->userdata('logged_in')) exit(0);
         $session = $this->session->userdata('logged_in');
         $companyId = $session['company_detail']['sid'];
         $employerId = $session['employer_detail']['sid'];
@@ -220,7 +224,7 @@ class Import_applicants_csv extends Public_Controller {
         $resp['Status'] = FALSE;
         $resp['Response'] = 'Invalid request made.';
         // Check for a valid AJAX request
-        if(!$this->input->is_ajax_request()) exit(0);
+        if (!$this->input->is_ajax_request()) exit(0);
         //
         $formpost = $this->input->post(NULL, TRUE);
         // _e($formpost, true, true);
@@ -235,13 +239,19 @@ class Import_applicants_csv extends Public_Controller {
                     // Set default insert array
                     $insertArray = array();
                     // If email is not set then skip
-                    if(!isset($v0['email'])) { $failCount++; continue; }
+                    if (!isset($v0['email'])) {
+                        $failCount++;
+                        continue;
+                    }
                     // Clean
                     $to = $insertArray['email'] = isset($v0['email']) ? trim(strtolower($v0['email'])) : NULL;
                     // Check for empty
-                    if($insertArray['email'] === null) { $failCount++; continue; }
+                    if ($insertArray['email'] === null || trim($insertArray['email']) == '') {
+                        $failCount++;
+                        continue;
+                    }
                     // Check for job title
-                    if(isset($v0['desired_job_title']) && ($v0['desired_job_title'] != '' || $v0['desired_job_title'] != null)) $applicant_jobs_list_data['desired_job_title'] = trim($v0['desired_job_title']);
+                    if (isset($v0['desired_job_title']) && ($v0['desired_job_title'] != '' || $v0['desired_job_title'] != null)) $applicant_jobs_list_data['desired_job_title'] = trim($v0['desired_job_title']);
                     //
                     $insertArray['first_name'] = isset($v0['first_name']) ? trim(ucwords(strtolower($v0['first_name']))) : NULL;
                     $insertArray['last_name']  = isset($v0['last_name'])  ? trim(ucwords(strtolower($v0['last_name'])))  : NULL;
@@ -249,12 +259,20 @@ class Import_applicants_csv extends Public_Controller {
                     $insertArray['address'] = trim($v0['address']);
                     $insertArray['city']    = trim($v0['city']);
                     $insertArray['zipcode'] = trim($v0['zipcode']);
+
+                    $insertArray['dob'] = isset($v0['dob']) ? trim(DateTime::createFromFormat('m/d/Y', $v0['dob'])->format('Y-m-d')) : NULL;
+                    $insertArray['ssn'] = isset($v0['ssn']) ? trim($v0['ssn']) : NULL;
+                    $insertArray['marital_status'] = isset($v0['marital_status']) ? trim($v0['marital_status']) : NULL;
+                    $insertArray['gender'] = isset($v0['gender']) ? trim($v0['gender']) : NULL;
+
+
+
                     // Check for state
                     if (isset($v0['state'])) {
-                        if($v0['state'] != null || $v0['state'] != '') {
+                        if ($v0['state'] != null || $v0['state'] != '') {
                             $stateInfo = $this->import_csv_model->get_state_and_country_id(trim($v0['state']));
                             //
-                            if(sizeof($stateInfo)) {
+                            if (sizeof($stateInfo)) {
                                 $insertArray['state'] = $stateInfo['sid'];
                                 $insertArray['country'] = $stateInfo['country_sid'];
                             }
@@ -262,25 +280,25 @@ class Import_applicants_csv extends Public_Controller {
                     }
                     // Check for country
                     if (isset($v0['country'])) {
-                        if(strtolower(trim($v0['country'])) == 'united states') $insertArray['country'] = 227;
-                        else if(strtolower(trim($v0['country'])) == 'canada') $insertArray['country'] = 38;
+                        if (strtolower(trim($v0['country'])) == 'united states') $insertArray['country'] = 227;
+                        else if (strtolower(trim($v0['country'])) == 'canada') $insertArray['country'] = 38;
                     }
                     // Check profile image
                     if (isset($v0['pictures'])) {
                         $v0['pictures'] = trim($v0['pictures']);
-                        if($v0['pictures'] != NULL && $v0['pictures'] != '')
+                        if ($v0['pictures'] != NULL && $v0['pictures'] != '')
                             $insertArray['pictures'] = $this->import_csv_model->verify_url_data($v0['pictures']);
                     }
                     // Check resume
                     if (isset($v0['resume'])) {
                         $v0['resume'] = trim($v0['resume']);
-                        if($v0['resume'] != NULL || $v0['resume'] != '')
+                        if ($v0['resume'] != NULL || $v0['resume'] != '')
                             $insertArray['resume'] = $this->import_csv_model->verify_url_data($v0['resume']);
                     }
                     // Check cover letter
                     if (isset($v0['cover_letter'])) {
                         $v0['cover_letter'] = trim($v0['cover_letter']);
-                        if($v0['cover_letter'] != NULL || $v0['cover_letter'] != '')
+                        if ($v0['cover_letter'] != NULL || $v0['cover_letter'] != '')
                             $insertArray['cover_letter'] = $this->import_csv_model->verify_url_data($v0['cover_letter']);
                     }
                     //
@@ -301,10 +319,10 @@ class Import_applicants_csv extends Public_Controller {
                     //
                     if (isset($v0['desired_job_title'])) {
                         $job_title = trim($v0['desired_job_title']);
-                        if($job_title != NULL || $job_title != '')
+                        if ($job_title != NULL || $job_title != '')
                             $applicant_jobs_list_data['desired_job_title'] = $job_title;
                     }
-                    $this->import_csv_model->insert_new_applicant_job_record($companyId, $applicantId, $applicant_jobs_list_data);//Insert applicant record in Jobs list
+                    $this->import_csv_model->insert_new_applicant_job_record($companyId, $applicantId, $applicant_jobs_list_data); //Insert applicant record in Jobs list
                     $insertCount++;
                 }
                 //
@@ -315,7 +333,7 @@ class Import_applicants_csv extends Public_Controller {
                 $resp['Failed'] = $failCount;
                 //
                 $this->resp($resp);
-            break;
+                break;
         }
         $this->resp($resp);
     }
@@ -327,10 +345,10 @@ class Import_applicants_csv extends Public_Controller {
      *
      * @return JSON
      */
-    function resp($responseArray){
+    function resp($responseArray)
+    {
         header('Content-type: application/json');
-        echo json_encode($responseArray); 
+        echo json_encode($responseArray);
         exit(0);
     }
-
 }

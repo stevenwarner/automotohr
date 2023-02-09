@@ -147,7 +147,7 @@ We will take the time and walk you through the many ways that AutomotoHR can be 
                     </div>
                     <div class="address-panel">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">Contact one of our Talent Network Partners at</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Contact one of our Talent Network Partners at</span>
                         </div>
                         <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                             <h5>Sales executive</h5>

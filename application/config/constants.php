@@ -450,7 +450,7 @@ define('COMPLYNET_URL', 'https://able.complynet.com/Training/Login');
 // define('COMPLYNET_URL', 'https://complynet.learn.taleo.net/login.asp?id=178443&requestedurl=%2fPage%2f596%3fh%3d1%26deepLink%3d1&secure=true');
 
 // Special Character remover regex
-define('SC_REGEX', '/([^a-z0-9\s-_])|([\x00-\x1F\x7F-\xFF])+/i');
+define('SC_REGEX', '/[^(\x20-\x7F)\x0A\x0D]*/i');
 
 // 26-06-2019
 // Default timezone for webapp
@@ -530,10 +530,11 @@ define('FMLA_RIGHTS', 'To be eligible an employee must have worked for an employ
 define('TIMEOFFYEARLYCOMPANY', '58,5635');
 //
 define('ASSIGNEDOCIMPL', TRUE);
-define('DOB_LIMIT', '-100:+1');
-define('JOINING_DATE_LIMIT', '1960:+5');
-define('STARTING_DATE_LIMIT', '1960:+20');
+define('DOB_LIMIT', '1900:+1');
+define('JOINING_DATE_LIMIT', '1900:+5');
+define('STARTING_DATE_LIMIT', '1900:+20');
 define('DATE', 'M d Y, D');
+define('SITE_DATE', 'm/d/Y');
 define('DB_DATE', 'Y-m-d');
 define('DATE_WITH_TIME', 'M d, Y, D H:m:s');
 define('TIME', 'H:i:s');
@@ -630,7 +631,7 @@ define('VIDEO_INTERVIEW', 'The selected contacts will be notified by email when 
 define('APPROVAL_RIGHTS', 'The selected contacts will be notified by email when a job is accepted/rejected.');
 define('FULL_EMPLOYMENT', 'The selected contacts will be notified by email when a Full Employment Application is completed.');
 define('EXPIRATION_MANAGER', 'The selected contacts will be notified by email when the employees\' license is expiring within 30 days.');
-define('ONBOARDING_REQUEST', 'The selected contacts will be notified by email when an applicant sends to onboarding.');
+define('ONBOARDING_REQUEST', 'The selected contacts= will be notified by email when an applicant sends to onboarding.');
 define('OFFER_LETTER', 'The selected contacts will be notified by email when an offer letter/pay plan is assigned to the employees/applicants.');
 define('DOCUMENT_ASSIGN', 'The selected contacts will be notified by email when a document is assigned to the employees/applicants.');
 define('GENERAL_DOCUMENT', 'The selected contacts will be notified by email when a general information document is assigned to the employees/applicants.');
@@ -648,10 +649,10 @@ define('PRIVATE_MESSAGE', 'The recipient will be notified by email when any empl
 
 
 define('I9_EXPIRES', '10/31/2022');
-define('W4_YEAR', '2022');
-define('W4_EXEMPTION_FROM_WITHHOLDING', 'You may claim exemption from withholding for 2022 if you meet both of the following conditions: you had no federal income tax liability in 2021 and you expect to have no federal income tax liability in 2022. You had no federal income tax liability in 2021 if (1) your total tax on line 24 on your 2021 Form 1040 or 1040-SR is zero (or less than the sum of lines 27a, 28, 29, and 30), or (2) you were not required to file a return because your income was below the filing threshold for your correct filing status. If you claim exemption, you will have no income tax withheld from your paycheck and may owe taxes and penalties when you file your 2022 tax return. To claim exemption from withholding, certify that you meet both of the conditions above by writing “Exempt” on Form W-4 in the space below Step 4(c). Then, complete Steps 1(a), 1(b), and 5. Do not complete any other steps. You will need to submit a new Form W-4 by February 15, 2023.');
+define('W4_YEAR', '2023');
+define('W4_EXEMPTION_FROM_WITHHOLDING', 'You may claim exemption from withholding for 2022 if you meet both of the following conditions: you had no federal income tax liability in 2021 and you expect to have no federal income tax liability in 2022. You had no federal income tax liability in 2021 if (1) your total tax on line 24 on your 2021 Form 1040 or 1040-SR is zero (or less than the sum of lines 27a, 28, 29, and 30), or (2) you were not required to file a return because your income was below the filing threshold for your correct filing status. If you claim exemption, you will have no income tax withheld from your paycheck and may owe taxes and penalties when you file your 2022 tax return. To claim exemption from withholding, certify that you meet both of the conditions above by writing “Exempt” on Form W-4 in the space below Step 4(c). Then, complete Steps 1(a), 1(b), and 5. Do not complete any other steps. You will need to submit a new Form W-4 by February 15, 2024.');
 //
-define('FEED_STRIP_TAGS', '<h1><h2><h3><h4><h5><h6><p><br><ul><ol></li>');
+define('FEED_STRIP_TAGS', '<b><h1><h2><h3><h4><h5><h6><p><br><ul><ol><li></li><strong><em><table><tbody><th><tr><td>');
 //
 define('CHARACTER_SHOW', 2);
 define('GUSTO_ACCESS_TOKEN', 'sbPrNJznXEuSc_qCgct3DHn8pkzFYjFHjXGBpDC3jx0');
@@ -662,6 +663,8 @@ define('GUSTO_PAYROLL_TIME', '03:30 pm PDT');
 define("WORK_WEEK_HOURS", 40);
 //
 define('PRIVATE_MESSAGE_NOTIFICATION', 424);
+define('TIMEOFF_THEME_ONE', 1);
+define('TIMEOFF_THEME_TWO', 2);
 
 
 /**
@@ -670,3 +673,7 @@ define('PRIVATE_MESSAGE_NOTIFICATION', 424);
 define('EMPLOYEE_SURVEYS', 'employeesurvey');
 // Added on: 05-01-2023
 define('EMPLOYEE_SURVEY_NOTIFICATION', 425);
+
+
+// Holds the EFFECT MAGIC CODES
+define('EFFECT_MAGIC_CODE_LIST', ['{{signature}}', '{{inital}}']);

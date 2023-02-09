@@ -220,9 +220,45 @@ class Hire_onboarding_applicant extends CI_Controller
         }
         $employer_data['ssn'] = $applicant_profile_info['ssn'];
         $employer_data['dob'] = $applicant_profile_info['dob'];
+
+        if (!empty($applicant_profile_info['marital_status'])) {
+            $employer_data['marital_status'] = $applicant_profile_info['marital_status'];
+        }
+
+        if (!empty($applicant_profile_info['gender'])) {
+            $employer_data['gender'] = $applicant_profile_info['gender'];
+        }
+
+        if (!empty($applicant_profile_info['ip_address'])) {
+            $employer_data['ip_address'] = $applicant_profile_info['ip_address'];
+        }
+        
+        if (!empty($applicant_profile_info['cover_letter'])) {
+            $employer_data['cover_letter'] = $applicant_profile_info['cover_letter'];
+        }
+        
+        if (!empty($applicant_profile_info['video_type'])) {
+            $employer_data['video_type'] = $applicant_profile_info['video_type'];
+        }
+        
+        if (!empty($applicant_profile_info['middle_name'])) {
+            $employer_data['middle_name'] = $applicant_profile_info['middle_name'];
+        }
+
+        if (!empty($applicant_profile_info['nick_name'])) {
+            $employer_data['nick_name'] = $applicant_profile_info['nick_name'];
+        }
+        
         //
+
+       //
+        $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
+        $employer_data['department_sid'] = $departmentsTeams['department_sid'];
+        $employer_data['team_sid'] = $departmentsTeams['team_sid'];
+
         // insert employer data to table and get its ID
         $employee_result = $this->hire_onboarding_applicant_model->insert_company_employee($employer_data, $applicant_sid, $applicant_job_sid);
+
 
         if ($employee_result != 'error' && is_numeric($employee_result) && is_int($employee_result)) { // There was some issue.
             //Update Applicant Data
@@ -385,6 +421,8 @@ class Hire_onboarding_applicant extends CI_Controller
             $joining_date = ucwords($credentials['joining_date']);
         }
 
+
+       
         $result = $this->move_applicant_to_employee($company_sid, $company_info, $applicant_sid, $applicant_email, $applicant_job_sid, $username, $password, $access_level, $employee_status, $joining_date);
         $status = $result['status'];
 
@@ -525,14 +563,18 @@ class Hire_onboarding_applicant extends CI_Controller
         $app_extra_unserial = unserialize($applicant_profile_info['extra_info']);
         if ($app_extra_unserial && sizeof($app_extra_unserial)) {
             foreach ($app_extra_unserial as $key => $info) {
+
                 if (!in_array($key, $emp_extra_keys)) {
                     $emp_extra_unserial[$key] = $info;
                     $update_flag = 1;
                 }
+                
             }
+
             if ($emp_extra_unserial && sizeof($emp_extra_unserial)) {
                 $employer_data['extra_info'] = serialize($emp_extra_unserial);
             }
+
         }
 
         //
@@ -553,6 +595,13 @@ class Hire_onboarding_applicant extends CI_Controller
             $update_flag = 1;
         }
 
+        //
+        $departmentsTeams = $this->hire_onboarding_applicant_model->get_applicant_department_team($company_sid, $applicant_sid);
+        if ($employee_profile_info['department_sid']== 0 && $departmentsTeams['department_sid']!=0 && $employee_profile_info['team_sid']== 0  && $departmentsTeams['team_sid']!=0 ) {
+            $employer_data['department_sid'] = $departmentsTeams['department_sid'];
+            $employer_data['team_sid'] = $departmentsTeams['team_sid'];
+        }
+    
         $this->hire_onboarding_applicant_model->update_company_employee($employer_data, $applicant_sid, $employee_sid, 0);
 
         // now move all other information

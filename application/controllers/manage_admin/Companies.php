@@ -526,7 +526,10 @@ class Companies extends Admin_Controller
 
             $result = $this->users_model->insert($company_data, $employer_data, $employer_portal_data);
 
-            if (!empty($result)) { //making sub domain
+            if (!empty($result)) {
+                // Also pushes the location to onboarding configuration
+                $this->users_model->fixOnboardingAddress($result['company_id'], 0);
+                //making sub domain
                 //Add Company Portal Templates Information - Start
                 $company_sid = $result['company_id'];
                 $company_name = $this->input->post('CompanyName');
@@ -538,25 +541,28 @@ class Companies extends Admin_Controller
                 } else {
                     mail(TO_EMAIL_DEV, 'company id not found', 'company id not found while adding a new company and creating email templates.');
                 }
-                //Add Company Portal Templates Information - End
-                $auth_details = $this->company_model->fetch_details(THEME_AUTH);
-                $auth_user = $auth_details['auth_user'];
-                $auth_pass = $auth_details['auth_pass'];
-                $server = STORE_DOMAIN;
-                $json_client = new xmlapi($server);
-                $json_client->set_output('json');
-                $json_client->set_port(2083);
-                $json_client->password_auth($auth_user, $auth_pass);
-
-                $args = array(
-                    'dir' => 'public_html/manage_portal/',
-                    'rootdomain' => STORE_DOMAIN,
-                    'domain' => $company_username
-                );
-
-                if ($_SERVER['SERVER_NAME'] != 'localhost') {
-                    $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
-                    sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashir.saleemi123@gmail.com', 'New Api Result', $result);
+                //
+                if(!isDevServer()){
+                    //Add Company Portal Templates Information - End
+                    $auth_details = $this->company_model->fetch_details(THEME_AUTH);
+                    $auth_user = $auth_details['auth_user'];
+                    $auth_pass = $auth_details['auth_pass'];
+                    $server = STORE_DOMAIN;
+                    $json_client = new xmlapi($server);
+                    $json_client->set_output('json');
+                    $json_client->set_port(2083);
+                    $json_client->password_auth($auth_user, $auth_pass);
+    
+                    $args = array(
+                        'dir' => 'public_html/manage_portal/',
+                        'rootdomain' => STORE_DOMAIN,
+                        'domain' => $company_username
+                    );
+    
+                    if ($_SERVER['SERVER_NAME'] != 'localhost') {
+                        $result = $json_client->api2_query($auth_user, 'SubDomain', 'addsubdomain', $args);
+                        sendMail(FROM_EMAIL_NOTIFICATIONS, 'mubashir.saleemi123@gmail.com', 'New Api Result', $result);
+                    }
                 }
 
                 if ($action == 'sendemail') {
@@ -776,7 +782,7 @@ class Companies extends Admin_Controller
                             'company_website' => db_get_sub_domain($company_sid)
                         );
                     }
-                    
+
                     $this->company_model->add_company($data, $company_sid);
                     $this->company_model->apply_e_signature($executive_admin_sid);
                     echo 'success';
@@ -2854,6 +2860,11 @@ class Companies extends Admin_Controller
                         ]
                     );
                 }
+            }
+
+            if ($post['Id'] == 1 && $post['Status'] == 0) {
+                $this->load->model('manage_admin/copy_policies_model');
+                $this->copy_policies_model->checkAndAddDefaultPolicies($post['CompanyId']);
             }
         }
         //

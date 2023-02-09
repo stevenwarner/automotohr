@@ -8,7 +8,7 @@
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-8">
                     <div class="dashboard-conetnt-wrp">
                         <div class="page-header-area">
-                            <span class="page-heading down-arrow">Post Jobs To Jobs2Career.com</span>
+                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Post Jobs To Jobs2Career.com</span>
                         </div>
                         <div class="create-job-wrap">
 

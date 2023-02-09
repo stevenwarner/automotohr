@@ -1,7 +1,7 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="main">
     <div class="container-fluid">
-        <div class="row">		
+        <div class="row">
             <div class="inner-content">
                 <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
@@ -25,7 +25,7 @@
                                                     <input type="text" name="keyword" id="keyword" value="<?php echo urldecode($keyword); ?>" class="invoice-fields">
                                                 </div>
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-4 field-row">
-                                                     <?php $contact_name = $this->uri->segment(6) == 'all' ? '' : $this->uri->segment(6); ?>
+                                                    <?php $contact_name = $this->uri->segment(6) == 'all' ? '' : $this->uri->segment(6); ?>
                                                     <label>Contact Name</label>
                                                     <input type="text" name="contact_name" id="contact_name" value="<?php echo urldecode($contact_name); ?>" class="invoice-fields">
                                                 </div>
@@ -45,7 +45,7 @@
                                                         <select class="invoice-fields" name="active" id="active">
                                                             <option <?php echo $status == 2 ? 'selected="selected"' : ''; ?> value="2" selected>All</option>
                                                             <option <?php echo $status == 1 ? 'selected="selected"' : ''; ?> value="1">Active</option>
-                                                            <option <?php echo $status == 0 && $status!=2 ? 'selected="selected"' : ''; ?> value="0">In-Active</option>
+                                                            <option <?php echo $status == 0 && $status != 2 ? 'selected="selected"' : ''; ?> value="0">In-Active</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -65,7 +65,7 @@
                                             <div class="hr-items-count">
                                                 <strong class="employerCount"><?php echo $total_employers; ?></strong> Employers
                                             </div>
-                                            <?php if(check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')){ ?>
+                                            <?php if (check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')) { ?>
                                                 <?php $this->load->view('templates/_parts/admin_manage_multiple_actions'); ?>
                                             <?php } ?>
                                             <?php echo $links; ?>
@@ -75,145 +75,177 @@
                                                 <form name="multiple_actions" id="multiple_actions_employer" method="POST">
                                                     <table class="table table-bordered table-hover table-striped">
                                                         <thead>
-                                                        <tr>
-                                                            <th>
-                                                                <input type="checkbox" id="check_all">
-                                                            </th>
-                                                            <th class="text-center">ID</th>
-                                                            <th>Username</th>
-                                                            <th>Email</th>
-                                                            <th>Contact Name</th>
-                                                            <th>Dates</th>
-                                                            <th>Company Name</th>
-                                                            <?php $function_names = array('show_employer_multiple_actions', 'employerLogin', 'edit_employers'); ?>
-                                                            <?php if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
-                                                                <th class="last-col" width="1%" colspan="5">Actions</th>
-                                                            <?php } ?>
-                                                        </tr>
+                                                            <tr>
+                                                                <th>
+                                                                    <input type="checkbox" id="check_all">
+                                                                </th>
+                                                                <th class="text-center">ID</th>
+                                                                <th>Username</th>
+                                                                <th>Email</th>
+                                                                <th>Contact Name</th>
+                                                                <th>Additional<br>Information</th>
+                                                                <th>Company Name</th>
+                                                                <?php $function_names = array('show_employer_multiple_actions', 'employerLogin', 'edit_employers'); ?>
+                                                                <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
+                                                                    <th class="last-col" width="1%" colspan="5">Actions</th>
+                                                                <?php } ?>
+                                                            </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <?php if(!empty($employers)){?>
-                                                            <?php foreach ($employers as $key => $value) { ?>
-                                                                <tr id="parent_<?= $value['sid'] ?>">
-                                                                    <td><input type="checkbox" name="checkit[]" value="<?php echo $value['sid']; ?>" class="my_checkbox"></td>
-                                                                    <td class="text-center">
-                                                                        <div class="employee-profile-info">
-                                                                            <figure>
-                                                                                <img class="profile-img-responsive" src="<?=getImageURL( $value['profile_picture']);?>" alt="Employee" />
-                                                                            </figure>
-                                                                        </div>
-                                                                        <b><?php echo $value['sid']; ?></b>
-                                                                    </td>
-                                                                    <td>
-                                                                        <?php   
-                                                                            if(empty($value['username'])){
+                                                            <?php if (!empty($employers)) {
+
+                                                                $employeeIds = array_column($employers, 'sid');
+                                                                $doNotHireRecords = checkDontHireText($employeeIds);
+
+                                                            ?>
+                                                                <?php foreach ($employers as $key => $value) {
+
+                                                                    $doNotHireWarning = doNotHireWarning($value['sid'], $doNotHireRecords, 14);
+
+                                                                ?>
+                                                                    <tr id="parent_<?= $value['sid'] ?>">
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>"><input type="checkbox" name="checkit[]" value="<?php echo $value['sid']; ?>" class="my_checkbox"></td>
+                                                                        <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
+                                                                            <div class="employee-profile-info">
+                                                                                <figure>
+                                                                                    <img class="profile-img-responsive" src="<?= getImageURL($value['profile_picture']); ?>" alt="Employee" />
+                                                                                </figure>
+                                                                            </div>
+                                                                            <b><?php echo $value['sid']; ?></b>
+                                                                        </td>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                            <?php
+                                                                            if (empty($value['username'])) {
                                                                                 echo 'Employee Onboarding';
                                                                             } else {
-                                                                                echo $value['username']; 
+                                                                                echo $value['username'];
                                                                             }
                                                                             //
-                                                                            echo '<br> <b> Employee Status:</b> '. (GetEmployeeStatus($value['last_status_text'], $value['active']));
+                                                                            echo '<br> <b> Employee Status:</b> ' . (GetEmployeeStatus($value['last_status_text'], $value['active']));
                                                                             //
-                                                                            echo '<br> <b> Access Level:</b> '. ucwords($value['access_level']);
+                                                                            echo '<br> <b> Access Level:</b> ' . ucwords($value['access_level']);
                                                                             echo ($value['access_level_plus'] && $value['pay_plan_flag']) ? ' Plus / Payroll' : ($value['access_level_plus'] ? ' Plus' : ($value['pay_plan_flag'] ? ' Payroll' : ''));
-                                                                            if(!empty($value['username'])){
-                                                                                echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="'.$value['sid'].'" data-name="'.$value['company_name'].'">Send Login Email</a>';
+                                                                            if (!empty($value['username'])) {
+                                                                                echo '<br><a href="javascript:;" class="btn btn-success btn-sm send_credentials" title="Send Login Credentials" data-attr="' . $value['sid'] . '" data-name="' . $value['company_name'] . '">Send Login Email</a>';
                                                                             }
-                                                                        ?>
-                                                                    </td>
-                                                                    <td>
-                                                                        <?php echo $value['email'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
-                                                                        <br />
-                                                                        <b>System Date: </b><?php echo date_with_time($value['system_user_date']); ?>
-                                                                    </td>
-                                                                    <!--<td>--><?php //echo ucwords($value['access_level']); ?><!--</td>-->
-                                                                    <td>
-                                                                        <?php 
-                                                                            $middle_initial = !empty($value['middle_name']) ? ' '.$value['middle_name'] : '';
-                                                                            echo ucwords($value['first_name'] . $middle_initial . ' ' . $value['last_name']); 
-                                                                        ?>
-                                                                        <br />
-                                                                        <b>Nick Name: </b>
-                                                                        <?php 
-                                                                            if(!empty($value['nick_name'])) {
-                                                                                echo $value['nick_name']; 
-                                                                            } else {
-                                                                                echo "N/A";
-                                                                            } 
-                                                                        ?>
-                                                                    </td>
+                                                                            ?>
+                                                                            <?php echo $doNotHireWarning['message']; ?>
 
-                                                                    <td>
-                                                                        <b>Joining Date: </b><?php 
-                                                                            $joiningDate = get_employee_latest_joined_date($value["registration_date"],$value["joined_at"],"",true);
-                                                                            //
-                                                                            if (!empty($joiningDate)) {
-                                                                                echo $joiningDate;
+                                                                        </td>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                            <?php echo $value['email'] . '<br>' . '<b>Title:</b> ' . ucwords($value['job_title']); ?>
+                                                                            <br />
+                                                                            <b>System Date: </b><?php echo date_with_time($value['system_user_date']); ?>
+                                                                        </td>
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                            <?php
+                                                                            $middle_initial = !empty($value['middle_name']) ? ' ' . $value['middle_name'] : '';
+                                                                            echo ucwords($value['first_name'] . $middle_initial . ' ' . $value['last_name']);
+                                                                            ?>
+                                                                            <br />
+                                                                            <b>Nick Name: </b>
+                                                                            <?php
+                                                                            if (!empty($value['nick_name'])) {
+                                                                                echo $value['nick_name'];
                                                                             } else {
                                                                                 echo "N/A";
                                                                             }
-                                                                        ?>    
-                                                                        <br>
-                                                                        <b>Rehire Date: </b><?php
-                                                                            $rehireDate = get_employee_latest_joined_date("","",$value["rehire_date"],true);
-                                                                            //
-                                                                            if (!empty($rehireDate)) {
-                                                                                echo $rehireDate;
-                                                                            } else {
-                                                                                echo "N/A";
-                                                                            }
-                                                                        ?>
-                                                                        <br>
-                                                                        <b>Termination Date: </b>
-                                                                        <?php 
+                                                                            ?>
+                                                                        </td>
+
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                            <b>Joining Date: </b><?php
+                                                                                                    $joiningDate = get_employee_latest_joined_date($value["registration_date"], $value["joined_at"], "", true);
+                                                                                                    //
+                                                                                                    if (!empty($joiningDate)) {
+                                                                                                        echo $joiningDate;
+                                                                                                    } else {
+                                                                                                        echo "N/A";
+                                                                                                    }
+                                                                                                    ?>
+                                                                            <br>
+                                                                            <b>Rehire Date: </b><?php
+                                                                                                $rehireDate = get_employee_latest_joined_date("", "", $value["rehire_date"], true);
+                                                                                                //
+                                                                                                if (!empty($rehireDate)) {
+                                                                                                    echo $rehireDate;
+                                                                                                } else {
+                                                                                                    echo "N/A";
+                                                                                                }
+                                                                                                ?>
+                                                                            <br>
+                                                                            <b>Termination Date: </b>
+                                                                            <?php
                                                                             // Termination date
-                                                                            if(!$value['last_status']){
+                                                                            if (!$value['last_status']) {
                                                                                 echo "N/A";
-                                                                            } else{
+                                                                            } else {
                                                                                 echo formatDateToDB($value['last_status']["termination_date"], DB_DATE, DATE);
                                                                             }
-                                                                        ?>
-                                                                    </td>
-                                                                    <td><?php echo ucwords($value['company_name']); ?>
-                                                                    <?php   if($value['password'] == '' || is_null($value['password'])) { ?>
-                                                                                <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
-                                                                    <?php   } else { ?>
-                                                                                <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-green.png') ?>">
-                                                                    <?php   } ?>
-                                                                    </td>
-                                                                    <?php   if(check_access_permissions_for_view($security_details, 'edit_employers')){ ?>
-                                                                                <td><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'],  '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
-                                                                    <?php   } ?>
-                                                                                
-                                                                    <?php   if(check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')){ ?>
-                                                                                <td><a href="javascript:;" class="btn btn-danger btn-sm" title="Delete Employer" onclick="deleteEmployer(<?= $value['sid'] ?>)"><i class="fa fa-times"></i></a>
-                                                                                    <!--<input class="hr-delete-btn" type="button" id="<?= $value['sid'] ?>" value="Delete" onclick="return deleteEmployer(this.id)" name="button">-->
-                                                                                </td>
-                                                                    <?php } ?>
-
-                                                                    <?php   if(check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')){ ?>
-                                                                            <td>
-                                                                    <?php       if($value['active']){
-                                                                                    echo '<a href="javascript:;" class="btn btn-warning btn-sm deactive_employee" id="'.$value['sid'].'" title="Disable Employee" data-attr="'.$value['sid'].'"><i class="fa fa-ban"></i></a>';
+                                                                            ?>
+                                                                            <br>
+                                                                            <?php 
+                                                                                if (isset($value["trensfer_date"]) && !empty($value["trensfer_date"])) {
+                                                                                    echo "<b>Transfer Date: </b>".$value['trensfer_date'];
                                                                                 } else {
-                                                                                    echo '<a href="javascript:;" class="btn btn-success btn-sm active_employee" id="'.$value['sid'].'" title="Enable Employee" data-attr="'.$value['sid'].'"><i class="fa fa-shield"></i></a>';
-                                                                                } ?>
-                                                                            <!--                                                                            <input class="hr-delete-btn" type="button" id="<?= $value['sid'] ?>" value="Delete" onclick="return deleteEmployer(this.id)" name="button">-->
+                                                                                    echo "<b>Transfer Date: </b>N/A";
+                                                                                }
+                                                                            ?>
+                                                                            <br>
+                                                                            <?php if (!empty($value['departments'])) { ?> <b>Departments:<br> </b> <?php echo implode(", ", array_unique($value['departments']));
+                                                                                                                                            } ?>
+                                                                            <?php if (!empty($value['departments'])) { ?><br><b>Teams:</b><br> <?php echo implode(", ", $value['teams']);
+                                                                                                                                                } ?>
+                                                                            <?php
+                                                                                $isOnComplyNet = getComplyNetEmployeeCheck($value, 0, 0, false);
+                                                                                //
+                                                                                if(!empty($isOnComplyNet)) {
+                                                                                    echo '<b>ComplyNet Status: </b>'.$isOnComplyNet;
+                                                                                }
+                                                                            ?>
+                                                                        </td>
+
+
+                                                                        <td class="<?php echo $doNotHireWarning['row']; ?>"><?php echo ucwords($value['company_name']); ?>
+                                                                            <?php if ($value['password'] == '' || is_null($value['password'])) { ?>
+                                                                                <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
+                                                                            <?php   } else { ?>
+                                                                                <img class="img-responsive" src="<?= base_url('assets/manage_admin/images/bulb-green.png') ?>">
+                                                                            <?php   } ?>
+                                                                        </td>
+                                                                        <?php if (check_access_permissions_for_view($security_details, 'edit_employers')) { ?>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><?php echo anchor('manage_admin/employers/edit_employer/' . $value['sid'],  '<i class="fa fa-pencil"></i>', 'class="btn btn-success btn-sm" title="Edit Employer"'); ?></td>
+                                                                        <?php   } ?>
+
+                                                                        <?php if (check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')) { ?>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><a href="javascript:;" class="btn btn-danger btn-sm" title="Delete Employer" onclick="deleteEmployer(<?= $value['sid'] ?>)"><i class="fa fa-times"></i></a>
+                                                                                <!--<input class="hr-delete-btn" type="button" id="<?= $value['sid'] ?>" value="Delete" onclick="return deleteEmployer(this.id)" name="button">-->
                                                                             </td>
-                                                                    <?php   } ?>
-                                                                            
-                                                                    <?php   if(check_access_permissions_for_view($security_details, 'employerlogin')){ ?>
-                                                                                <td><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login"></td>
-                                                                    <?php   } ?>
+                                                                        <?php } ?>
+
+                                                                        <?php if (check_access_permissions_for_view($security_details, 'show_employer_multiple_actions')) { ?>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>">
+                                                                                <?php if ($value['active']) {
+                                                                                    echo '<a href="javascript:;" class="btn btn-warning btn-sm deactive_employee" id="' . $value['sid'] . '" title="Disable Employee" data-attr="' . $value['sid'] . '"><i class="fa fa-ban"></i></a>';
+                                                                                } else {
+                                                                                    echo '<a href="javascript:;" class="btn btn-success btn-sm active_employee" id="' . $value['sid'] . '" title="Enable Employee" data-attr="' . $value['sid'] . '"><i class="fa fa-shield"></i></a>';
+                                                                                } ?>
+                                                                                <!--                                                                            <input class="hr-delete-btn" type="button" id="<?= $value['sid'] ?>" value="Delete" onclick="return deleteEmployer(this.id)" name="button">-->
+                                                                            </td>
+                                                                        <?php   } ?>
+
+                                                                        <?php if (check_access_permissions_for_view($security_details, 'employerlogin')) { ?>
+                                                                            <td class="<?php echo $doNotHireWarning['row']; ?>"><input class="btn btn-success btn-sm" type="button" id="<?= $value['sid'] ?>" onclick="return employerLogin(this.id)" value="Login"></td>
+                                                                        <?php   } ?>
+                                                                    </tr>
+                                                                <?php } ?>
+                                                            <?php } else {  ?>
+                                                                <tr>
+                                                                    <td colspan="8" class="text-center">
+                                                                        <span class="no-data">No Employers Found</span>
+                                                                    </td>
                                                                 </tr>
                                                             <?php } ?>
-                                                        <?php } else {  ?>
-                                                            <tr>
-                                                                <td colspan="8" class="text-center">
-                                                                    <span class="no-data">No Employers Found</span>
-                                                                </td>
-                                                            </tr>
-                                                        <?php } ?>
                                                         </tbody>
                                                     </table>
                                                     <input type="hidden" name="execute" value="multiple_action">
@@ -224,7 +256,9 @@
                                         <div class="">
                                             <div class="hr-items-count">
                                                 <strong class="employerCount"><?php echo $total_employers; ?></strong> Employers
-                                                <p><?php if($total_rows != 0) { echo 'Displaying <b>' . $offset . ' - ' . $end_offset . '</b> of ' . $total_rows . ' records'; } ?></p>
+                                                <p><?php if ($total_rows != 0) {
+                                                        echo 'Displaying <b>' . $offset . ' - ' . $end_offset . '</b> of ' . $total_rows . ' records';
+                                                    } ?></p>
                                             </div>
                                             <?php echo $links; ?>
                                         </div>
@@ -240,49 +274,49 @@
 </div>
 <script>
     $(document).keypress(function(e) {
-        if(e.which == 13) { // enter pressed
+        if (e.which == 13) { // enter pressed
             $('#search_btn').click();
         }
     });
-    
-    $(document).on('click','.send_credentials',function(e) {
+
+    $(document).on('click', '.send_credentials', function(e) {
         var sid = $(this).attr('data-attr');
         var name = $(this).attr('data-name');
-        console.log('ID: '+sid);
-        console.log('Name: '+name);
+        console.log('ID: ' + sid);
+        console.log('Name: ' + name);
         var url = "<?= base_url() ?>manage_admin/employers/send_login_credentials";
         alertify.confirm('Confirmation', "Are you sure you want to send Email to Employee?",
-            function () {
+            function() {
                 $.ajax({
-                    url:url,
-                    type:'POST',
-                    data:{
+                    url: url,
+                    type: 'POST',
+                    data: {
                         action: 'sendemail',
                         sid: sid,
                         name: name
                     },
                     success: function(data) {
-                        if(data == 'success') {
+                        if (data == 'success') {
                             alertify.success('Email with generate password link is sent.');
                         } else {
                             alerty.error('there was error');
                         }
                     },
-                    error: function(){
+                    error: function() {
 
                     }
                 });
             },
-            function () {
+            function() {
                 alertify.error('Canceled');
             });
     });
-    
-    $(document).on('click','.deactive_employee',function(e) {
+
+    $(document).on('click', '.deactive_employee', function(e) {
         var id = $(this).attr('data-attr');
         var url = "<?= base_url() ?>manage_admin/employers/change_status";
         alertify.confirm('Confirmation', "Are you sure you want to deactivate this Employee?",
-            function () {
+            function() {
                 $.ajax({
                     url: url,
                     type: 'POST',
@@ -290,61 +324,63 @@
                         action: 'deactive',
                         sid: id
                     },
-                    success: function () {
+                    success: function() {
                         alertify.success('Employee have been De-Activated.');
-                        $('#'+id).removeClass('deactive_employee');
-                        $('#'+id).removeClass('btn-warning');
-                        $('#'+id).addClass('active_employee');
-                        $('#'+id).addClass('btn-success');
-                        $('#'+id).attr('title','Enable Employee');
-                        $('#'+id).find('i').removeClass('fa-ban');
-                        $('#'+id).find('i').addClass('fa-shield');
-//                        window.location.href = '<?php //echo current_url()?>//';
+                        $('#' + id).removeClass('deactive_employee');
+                        $('#' + id).removeClass('btn-warning');
+                        $('#' + id).addClass('active_employee');
+                        $('#' + id).addClass('btn-success');
+                        $('#' + id).attr('title', 'Enable Employee');
+                        $('#' + id).find('i').removeClass('fa-ban');
+                        $('#' + id).find('i').addClass('fa-shield');
+                        //                        window.location.href = '<?php //echo current_url()
+                                                                            ?>//';
                     },
-                    error: function () {
+                    error: function() {
 
                     }
                 });
             },
-            function () {
+            function() {
                 alertify.error('Canceled');
             });
     });
-    
-    $(document).on('click','.active_employee',function(e) {
+
+    $(document).on('click', '.active_employee', function(e) {
         var id = $(this).attr('data-attr');
         var url = "<?= base_url() ?>manage_admin/employers/change_status";
         alertify.confirm('Confirmation', "Are you sure you want to activate this Employee?",
-            function () {
+            function() {
                 $.ajax({
-                    url:url,
-                    type:'POST',
-                    data:{
+                    url: url,
+                    type: 'POST',
+                    data: {
                         action: 'active',
                         sid: id
                     },
-                    success: function(){
+                    success: function() {
                         alertify.success('Employee have been Activated.');
-                        $('#'+id).removeClass('active_employee');
-                        $('#'+id).removeClass('btn-success');
-                        $('#'+id).addClass('deactive_employee');
-                        $('#'+id).addClass('btn-warning');
-                        $('#'+id).attr('title','Disable Employee');
-                        $('#'+id).find('i').removeClass('fa-shield');
-                        $('#'+id).find('i').addClass('fa-ban');
-//                        window.location.href = '<?php //echo current_url()?>//';
+                        $('#' + id).removeClass('active_employee');
+                        $('#' + id).removeClass('btn-success');
+                        $('#' + id).addClass('deactive_employee');
+                        $('#' + id).addClass('btn-warning');
+                        $('#' + id).attr('title', 'Disable Employee');
+                        $('#' + id).find('i').removeClass('fa-shield');
+                        $('#' + id).find('i').addClass('fa-ban');
+                        //                        window.location.href = '<?php //echo current_url()
+                                                                            ?>//';
                     },
-                    error: function(){
+                    error: function() {
 
                     }
                 });
             },
-            function () {
+            function() {
                 alertify.error('Canceled');
             });
     });
-    
-    $(document).ready(function(){
+
+    $(document).ready(function() {
         $('#keyword').on('keyup', update_url);
         $('#keyword').on('blur', update_url);
         $('#contact_name').on('keyup', update_url);
@@ -352,14 +388,14 @@
         $('#company-name').on('keyup', update_url);
         $('#company-name').on('blur', update_url);
         $('#active').on('change', update_url);
-        $('#search_btn').on('click', function(e){
+        $('#search_btn').on('click', function(e) {
             e.preventDefault();
             update_url();
             window.location = $(this).attr('href').toString();
         });
     });
 
-    function update_url(){
+    function update_url() {
         var url = '<?php echo base_url('manage_admin/employers/'); ?>';
         var keyword = $('#keyword').val();
         var company_name = $('#company-name').val();
@@ -374,80 +410,91 @@
     }
 
     function employerLogin(userId) {
-        url_to = "<?=base_url()?>manage_admin/employers/employer_login";
-        $.post(url_to, {action: "login", sid: userId})
-        .done(function(){
-            window.open("<?= base_url('dashboard') ?>", '_blank');
-        });
+        url_to = "<?= base_url() ?>manage_admin/employers/employer_login";
+        $.post(url_to, {
+                action: "login",
+                sid: userId
+            })
+            .done(function() {
+                window.open("<?= base_url('dashboard') ?>", '_blank');
+            });
     }
-       
+
     function deleteEmployer(id) {
         url = "<?= base_url() ?>manage_admin/employers/employer_task";
         alertify.confirm('Confirmation', "Are you sure you want to delete this Employee?",
-        function () {
-            $.post(url, {action: 'delete', sid: id})
-            .done(function (data) {
-                employerCounter = parseInt($(".employerCount").html());
-                employerCounter--;
-                $(".employerCount").html(employerCounter);
-                $("#parent_" + id).remove();
-                alertify.success('Selected employee have been Deleted.');
+            function() {
+                $.post(url, {
+                        action: 'delete',
+                        sid: id
+                    })
+                    .done(function(data) {
+                        employerCounter = parseInt($(".employerCount").html());
+                        employerCounter--;
+                        $(".employerCount").html(employerCounter);
+                        $("#parent_" + id).remove();
+                        alertify.success('Selected employee have been Deleted.');
+                    });
+            },
+            function() {
+                alertify.error('Canceled');
             });
-        },
-        function () {
-            alertify.error('Canceled');
-        });
     }
 
     function deactive_employee(id) {
         var url = "<?= base_url() ?>manage_admin/employers/change_status";
         alertify.confirm('Confirmation', "Are you sure you want to deactivate this Employee?",
-                function () {
-                    $.ajax({
-                        url:url,
-                        type:'POST',
-                        data:{
-                            action: 'deactive',
-                            sid: id
-                        },
-                        success: function(){
-                            alertify.success('Employee have been De-Activated.');
-                            console.log(url);
-                            return false;
-                            window.location.href = '<?php current_url()?>';
-                        },
-                        error: function(){
+            function() {
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        action: 'deactive',
+                        sid: id
+                    },
+                    success: function() {
+                        alertify.success('Employee have been De-Activated.');
+                        console.log(url);
+                        return false;
+                        window.location.href = '<?php current_url() ?>';
+                    },
+                    error: function() {
 
-                        }
-                    });
-                },
-                function () {
-                    alertify.error('Canceled');
+                    }
                 });
+            },
+            function() {
+                alertify.error('Canceled');
+            });
     }
 
     function active_employee(id) {
         var url = "<?= base_url() ?>manage_admin/employers/change_status";
         alertify.confirm('Confirmation', "Are you sure you want to activate this Employee?",
-            function () {
+            function() {
                 $.ajax({
-                    url:url,
-                    type:'POST',
-                    data:{
+                    url: url,
+                    type: 'POST',
+                    data: {
                         action: 'active',
                         sid: id
                     },
-                    success: function(){
+                    success: function() {
                         alertify.success('Employee have been Activated.');
-                        window.location.href = '<?php current_url()?>';
+                        window.location.href = '<?php current_url() ?>';
                     },
-                    error: function(){
+                    error: function() {
 
                     }
                 });
             },
-            function () {
+            function() {
                 alertify.error('Canceled');
             });
     }
+
+    $('[data-placement="top"]').popover({
+        placement: 'top',
+        trigger: 'hover'
+    });
 </script>

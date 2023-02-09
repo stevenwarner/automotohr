@@ -68,6 +68,9 @@ class employers extends Admin_Controller
         $this->pagination->initialize($config);
         $this->data['links'] = $this->pagination->create_links();
         //        $total_employers = $this->company_model->count_all_employers();
+
+        // print_r($employers);
+        // die();
         $this->data['employers'] = $employers;
         $this->data['total_employers'] = $employers_count;
         $this->data['total_rows'] = $employers_count;
@@ -352,6 +355,11 @@ class employers extends Admin_Controller
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
             //
+            if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
+                $data['complynet_job_title'] = $this->input->post('complynet_job_title');
+            }
+
+            //
             if ($data['gender'] != "other") {
                 $updateGender = array();
                 $updateGender['gender'] = ucfirst($data['gender']);
@@ -434,7 +442,12 @@ class employers extends Admin_Controller
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
 
+
             $this->company_model->update_user($sid, $data, 'Employer');
+
+            //
+            $teamId = $this->input->post('teamId');
+            handleEmployeeDepartmentAndTeam($sid, $teamId);
 
             if ($action == 'Save') {
                 redirect('manage_admin/employers/', 'refresh');
@@ -491,6 +504,7 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone');
                 $salt = generateRandomString(48);
 
+
                 if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
                     $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
@@ -518,8 +532,19 @@ class employers extends Admin_Controller
                 $insert_data['timezone'] = $timezone;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
+
+                //
+                if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
+                    $insert_data['complynet_job_title'] = $this->input->post('complynet_job_title');
+                }
+
+
                 $sid = $this->company_model->add_new_employer($company_sid, $insert_data);
                 $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture');
+                //
+                //
+                $teamId = $this->input->post('teamId');
+                handleEmployeeDepartmentAndTeam($sid, $teamId);
 
                 if ($profile_picture != 'error') {
                     $pictures = array('profile_picture' => $profile_picture);
@@ -680,6 +705,7 @@ class employers extends Admin_Controller
 
     public function change_status()
     {
+
         $action = $this->input->post('action');
         $employer_id = $this->input->post('sid');
 
@@ -693,13 +719,11 @@ class employers extends Admin_Controller
         if ($action == 'deactive') {
             $data_to_insert['employee_status'] = 6;
             $this->company_model->terminate_user($employer_id, $data_to_insert);
-
             $data = array('active' => 0, 'general_status' => 'inactive');
             $this->company_model->update_user_status($employer_id, $data);
         } elseif ($action == 'active') {
             $data_to_insert['employee_status'] = 5;
             $this->company_model->terminate_user($employer_id, $data_to_insert);
-
             $data = array('active' => 1, 'general_status' => 'active');
             $this->company_model->update_user_status($employer_id, $data);
         }

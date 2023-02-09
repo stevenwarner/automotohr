@@ -8,10 +8,10 @@ class Notification_model extends CI_Model {
 
 
     //
-    function getNotifications($ses, $isEMS = FALSE, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE){
+    function getNotifications($ses, $isEMS = FALSE, $companyEmployeesForVerification = FALSE, $companyApplicantsForVerification = FALSE, $isEMSEnabled = 0){
         $r = array();
 
-        if(!$isEMS){
+        if(!$isEMS && $isEMSEnabled ==1){
             // Fetch assigned documents
             $this->getAssignedDocuments($ses, $r, $companyEmployeesForVerification, $companyApplicantsForVerification);
         }

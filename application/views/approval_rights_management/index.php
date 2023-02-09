@@ -10,7 +10,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                             <div class="page-header-area">
-                                <span class="page-heading down-arrow">
+                                <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>
                                     <a href="<?php echo base_url('my_settings'); ?>" class="dashboard-link-btn"><i class="fa fa-chevron-left"></i>Back</a>
                                     <?php echo $title; ?></span>
                             </div>
@@ -18,7 +18,7 @@
                                 <div class="row">
                                     <div class="col-xs-6">
                                         <div class="page-header-area">
-                                            <span class="page-heading down-arrow">Jobs Approval Module</span>
+                                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Jobs Approval Module</span>
                                         </div>
                                         <div class="universal-form-style-v2">
                                             <form id="form_job_employees_selection" method="post" enctype="multipart/form-data" action="<?php echo base_url('approval_rights_management'); ?>">
@@ -54,7 +54,7 @@
                                     </div>
                                     <div class="col-xs-6">
                                         <div class="page-header-area">
-                                            <span class="page-heading down-arrow">Applicants Approval Module</span>
+                                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Applicants Approval Module</span>
                                         </div>
                                         <div class="universal-form-style-v2">
                                             <form id="form_applicant_employees_selection" method="post" enctype="multipart/form-data">
@@ -93,7 +93,7 @@
                                 <div class="row">
                                     <div class="col-xs-6">
                                         <div class="page-header-area">
-                                            <span class="page-heading down-arrow">Task Management Module</span>
+                                            <span class="page-heading down-arrow"><?php $this->load->view('manage_employer/company_logo_name'); ?>Task Management Module</span>
                                         </div>
                                         <div class="universal-form-style-v2">
                                             <form method="post" enctype="multipart/form-data" action="<?php echo base_url('approval_rights_management'); ?>">

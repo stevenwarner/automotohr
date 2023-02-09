@@ -1934,7 +1934,7 @@ if (checkIfAppIsEnabled('timeoff')) {
 
         setTimeout(function() {
             var team_id = $('#team_sid').html();
-            var team_sids = '<?php echo json_encode($team_sids); ?>';
+            var team_sids = <?php echo json_encode($team_sids ? $team_sids : []); ?>;
             if (team_id != 0) {
                 var html = '';
                 var department_sid = $('#department').val();
@@ -1952,8 +1952,8 @@ if (checkIfAppIsEnabled('timeoff')) {
                                 var id = allteams[i].sid;
                                 var name = allteams[i].name;
                                 // if (team_id == id) {
+                                    
                                 if (jQuery.inArray(id, team_sids) !== -1) {
-
                                     html += '<option value="' + id + '" selected="selected">' +
                                         name + '</option>';
                                 } else {

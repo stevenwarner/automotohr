@@ -16,7 +16,7 @@
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/alertifyjs/css/themes/default.min.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/jquery.datetimepicker.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/select2.css') ?>" />
-    <link rel="stylesheet" type="text/css" href="<?php echo _m(base_url('assets/2022/css/app'), 'css', time()) ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo _m(base_url('assets/2022/css/app'), 'css', getAssetTag('1.0.3')) ?>">
 
     <link rel="shortcut icon" href="<?= base_url() ?>assets/images/favi-icon.png" type="image/x-icon" />
 </head>
