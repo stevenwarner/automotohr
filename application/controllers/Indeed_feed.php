@@ -395,7 +395,7 @@ private function addLastRead($sid){
                         'user_type' => 'applicant',
                         'requested_job_sid' => $job_sid,
                         'requested_job_type' => 'job'
-                    ]);
+                    ],false);
                 }
 
 
