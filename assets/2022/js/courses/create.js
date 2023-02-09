@@ -39,6 +39,19 @@ $(function () {
                                         allowedTypes: ['zip'], //(Optional)
                                         placeholderImage: s3Name // Default is empty ('') but can be set any image  (Optional)
                                     });
+
+                                    $('#jsUploadScormFile').mFileUploader({
+                                        allowedTypes: ['mp4', 'webm'],
+                                        fileLimit: -1,
+                                        onSuccess: function(o) {
+                                            questionFile = o;
+                                            updatePreview();
+                                        },
+                                        onClear: function(e) {
+                                            questionFile = null;
+                                            updatePreview();
+                                        },
+                                    });
                                 }
                                 //
                                 if (resp.Type == "manual") {
@@ -79,6 +92,17 @@ $(function () {
             $('#jsStartDate').datepicker('option', 'maxDate', value);
         }
     }).datepicker('option', 'minDate', $('#jsStartDate').val());
+
+    $('#jsUploadScormFile').mFileUploader({
+        allowedTypes: ['zip'],
+        fileLimit: -1,
+        onSuccess: function(o) {
+            questionFile = o;
+        },
+        onClear: function(e) {
+            questionFile = null;
+        },
+    });
 
     $(document).on('click', '.jsSaveCourseBasicDetails', function(event) {
         //
