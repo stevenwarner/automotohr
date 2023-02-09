@@ -915,13 +915,13 @@
                                             <div class="dashboard-widget-box">
                                                 <figure><i class="fa fa-book" aria-hidden="true"></i></figure>
                                                 <h2 class="post-title" style="margin: 2px 0;">
-                                                    <a href="<?php echo base_url('lms_courses'); ?>">LMS Courses</a>
+                                                    <a href="<?php echo base_url('lms_courses/overview'); ?>">LMS Courses</a>
                                                 </h2>
                                                 <div class="count-box" style="font-size: 12px">
                                                     <small style="font-size: 12px"><?php echo $total_active_courses; ?> Total Course(s)</small>
                                                 </div>
                                                 <div class="button-panel">
-                                                    <a href="<?php echo base_url('lms_courses'); ?>" class="site-btn">View Courses</a>
+                                                    <a href="<?php echo base_url('lms_courses/overview'); ?>" class="site-btn">View Courses</a>
                                                 </div>
                                             </div>
                                         </div>

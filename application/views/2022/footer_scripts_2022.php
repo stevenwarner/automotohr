@@ -35,9 +35,12 @@
     var apiURI = "<?php echo getCreds("AHR")->API_BROWSER_URL; ?>";
 </script>
 <?php endif; ?>
+<!--  -->
+<?php if (isset($PageCSS)): ?>
+    <?=GetCss($PageCSS);?>
+<?php endif; ?>
+<!--  -->
 <?php if (isset($PageScripts)) {
     echo '<!-- Dynamic Scripts -->';
     echo GetScripts($PageScripts);
 } ?>
-<!--  -->
-<script src="<?php echo _m(base_url('assets/employee_survey/js/create'), 'js', time()) ?>"></script>
