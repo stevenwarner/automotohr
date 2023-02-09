@@ -67,7 +67,7 @@ if (
     $this->uri->segment(2) == 'copy_employees' ||
     $this->uri->segment(1) == 'migrate_company_groups' ||
     $this->uri->segment(2) == 'merge_employees' ||
-    $this->uri->segment(2) == 'cn' ||
+    $this->uri->segment(1) == 'cn' ||
     $this->uri->segment(2) == 'pending_documents' ||
     ($this->uri->segment(2) == 'documents' && $this->uri->segment(3) > 0)
 
@@ -462,7 +462,7 @@ if (
                         <?php } ?>
                         <?php if (check_access_permissions_for_view($security_details, 'complynet')) { ?>
                             <div class="menu-item">
-                                <a <?php if (strpos(base_url(uri_string()), site_url('cn/dashboard')) !== false) {
+                                <a <?php if (strpos(base_url(uri_string()), site_url('cn/dashboard')) !== false || strpos(base_url(uri_string()), site_url('cn/manage/job_roles')) !== false) {
                                         echo 'class="active"';
                                     } ?> href="<?php echo site_url('cn/dashboard'); ?>">ComplyNet</a>
                             </div>

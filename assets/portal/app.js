@@ -438,6 +438,7 @@ $(function () {
         //
         let employeeId = $(this).data("id");
         let complyId = $(this).data("cid");
+        
         //
         return alertify.confirm(
             "Are you sure you want to sync this employee with ComplyNet.<br />In case the employee is not found on ComplyNet, the system will add the employee to ComplyNet.",
@@ -449,6 +450,7 @@ $(function () {
 
     function addEmployeeToComplyNet(companyId, employeeId){
         //
+
         Model(
             {
                 Id: "jsModelEmployeeToComplyNet",

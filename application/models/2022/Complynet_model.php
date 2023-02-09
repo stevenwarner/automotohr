@@ -279,14 +279,14 @@ class Complynet_model extends CI_Model
         //
         $records =
             $this->db
-            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username')
+            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username ,complynet_job_title')
             ->where([
                 'parent_sid' => $companyId,
                 'email != ' => ''
             ])
             ->group_start()
-            ->where('job_title != ', null)
-            ->where('job_title != ', '')
+            ->where('complynet_job_title != ', null)
+            ->where('complynet_job_title != ', '')
             ->group_end()
             ->get('users')
             ->result_array();
@@ -316,6 +316,7 @@ class Complynet_model extends CI_Model
             ->get()
             ->row_array();
         //
+
         if ($record) {
             return $this->getComplyNetLinkedDepartmentById($record['sid']);
         }
@@ -582,6 +583,7 @@ class Complynet_model extends CI_Model
             department_sid,
             team_sid,
             job_title,
+            complynet_job_title,
             access_level,
             access_level_plus,
             pay_plan_flag
@@ -620,7 +622,7 @@ class Complynet_model extends CI_Model
         //
         $record =
             $this->db
-            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username, department_sid, team_sid')
+            ->select('sid, email, first_name, last_name, PhoneNumber, job_title, username, department_sid, team_sid , complynet_job_title')
             ->where([
                 'parent_sid' => $companyId,
                 'sid' => $employeeId
@@ -708,6 +710,7 @@ class Complynet_model extends CI_Model
             }
             return SendResponse(200, ['errors' => $errorArray]);
         }
+        $employee['complynet_job_title'] = $this->complynet_model->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
         //
         if (checkEmployeeMissingData($employee)) {
             if ($doReturn) {
@@ -730,7 +733,7 @@ class Complynet_model extends CI_Model
         //
         $complyJobRoleId = $this->getAndSetJobRoleId(
             $complyDepartmentId,
-            $employee['job_title']
+            $employee['complynet_job_title']
         );
         //
         if ($complyJobRoleId === 0) {
@@ -911,6 +914,7 @@ class Complynet_model extends CI_Model
                 users.email,
                 users.username,
                 users.job_title,
+                users.complynet_job_title,
                 users.PhoneNumber,
                 users.department_sid,
                 users.team_sid,
@@ -930,6 +934,7 @@ class Complynet_model extends CI_Model
             if (empty($employeeDetails)) {
                 return false;
             }
+            $employeeDetails['complynet_job_title'] = $this->complynet_model->checkJobRoleForComplyNet($employeeDetails['job_title'], $employeeDetails['complynet_job_title']);
             //
             if (checkEmployeeMissingData($employeeDetails)) {
                 return false;
@@ -968,7 +973,7 @@ class Complynet_model extends CI_Model
             //
             $complyJobRoleId = $this->getAndSetJobRoleId(
                 $upd['departmentId'],
-                $employeeDetails['job_title']
+                $employeeDetails['complynet_job_title']
             );
             $upd['jobRoleId'] = $complyJobRoleId == 0 || empty($complyJobRoleId) ? $employeeDetails['complynet_job_role_sid'] : $complyJobRoleId;
 
@@ -1010,5 +1015,71 @@ class Complynet_model extends CI_Model
 
             return true;
         }
+    }
+
+
+    public function getComplyJobRole(
+        int $id,
+        string $column = '*'
+    ) {
+        return $this->db
+            ->select($column)
+            ->where('sid', $id)
+            ->get('complynet_job_roles')
+            ->row_array();
+    }
+
+    public function getSystemJobRoles()
+    {
+        return $this->db
+            ->select('distinct(job_title) as job_title')
+            ->where('job_title IS NOT NULL', null)
+            ->where('job_title != ""', null)
+            ->order_by('job_title', 'ASC')
+            ->get('users')
+            ->result_array();
+    }
+
+    public function getLinkedRoles()
+    {
+        return $this->db
+            ->select('job_title')
+            ->get('complynet_job_roles_jobs')
+            ->result_array();
+    }
+
+    public function getLinkedJobRoles(
+        int $id
+    ) {
+        return $this->db
+            ->select('job_title, created_at, sid')
+            ->where('complynet_job_tile_sid', $id)
+            ->order_by('job_title', 'ASC')
+            ->get('complynet_job_roles_jobs')
+            ->result_array();
+    }
+
+    public function checkJobRoleForComplyNet(
+        $jobTitle,
+        $complyJobTitle
+    ) {
+        //
+        if (!empty($complyJobTitle) && $complyJobTitle != null) {
+            return $complyJobTitle;
+        }
+        //
+        $record =
+            $this->db
+            ->select('complynet_job_roles.job_title')
+            ->where('complynet_job_roles_jobs.job_title', preg_replace('/[^a-z\s]/i', '', trim($jobTitle)))
+            ->join('complynet_job_roles', 'complynet_job_roles.sid = complynet_job_roles_jobs.complynet_job_tile_sid', 'inner')
+            ->get('complynet_job_roles_jobs')
+            ->row_array();
+        //
+        if (!$record) {
+            return $complyJobTitle;
+        }
+        //
+        return $record['job_title'];
     }
 }

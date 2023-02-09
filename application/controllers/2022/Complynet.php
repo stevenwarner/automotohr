@@ -69,6 +69,29 @@ class Complynet extends Admin_Controller
     }
 
     /**
+     * Dashboard
+     */
+    public function manageJobRoles()
+    {
+        $this->data['page_title'] = 'Manage Job Roles';
+        $this->data['customSelect2'] = true;
+        $this->data['security_details'] = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
+        $this->data['PageScripts'] = [
+            'js/SystemModal',
+            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js',
+            '1.0' => '2022/js/complynet/manage_job_roles'
+        ];
+        $this->data['PageCSS'] = [
+            'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.css',
+            'css/SystemModel'
+        ];
+        // Get companies
+        $this->data['job_roles'] = $this->complynet_model->getTableData('complynet_job_roles', ['status' => 1]);
+        //
+        $this->render('2022/complynet/manage_job_roles', 'admin_master');
+    }
+
+    /**
      * AJAX CALLS
      */
 
@@ -406,6 +429,12 @@ class Complynet extends Admin_Controller
                     continue;
                 }
                 //
+                $employee['complynet_job_title'] = $this->complynet_model->checkJobRoleForComplyNet($employee['job_title'], $employee['complynet_job_title']);
+                //
+                if (empty($employee['complynet_job_title'])) {
+                    continue;
+                }
+                //
                 $complyDepartmentId = $this->complynet_model->getEmployeeDepartmentId(
                     $employee['sid']
                 );
@@ -416,7 +445,7 @@ class Complynet extends Admin_Controller
                 //
                 $complyJobRoleId = $this->complynet_model->getAndSetJobRoleId(
                     $complyDepartmentId,
-                    $employee['job_title']
+                    $employee['complynet_job_title']
                 );
                 //
                 if ($complyJobRoleId === 0) {
@@ -613,6 +642,167 @@ class Complynet extends Admin_Controller
         $employeeId = $this->input->post('employeeId', true);
         //
         return $this->complynet_model->syncSingleEmployee($companyId, $employeeId);
+    }
+
+
+    public function getSystemJobRoles(
+        int $complyJobRoleId
+    ) {
+        //
+        $data = [];
+        // get comply job role name by id
+        $data['complyJobRoleName'] = $this->complynet_model->getComplyJobRole(
+            $complyJobRoleId,
+            'job_title'
+        )['job_title'];
+        //
+        $data['alreadyLinked'] = array_column($this->complynet_model->getLinkedRoles(), 'job_title');
+        // get system job roles
+        $data['systemJobRoles'] = $this->complynet_model->getSystemJobRoles();
+
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('2022/complynet/partials/add_job_role', $data, true)
+            ]
+        );
+    }
+
+    public function getRoleDetails(
+        int $complyJobRoleId
+    ) {
+        //
+        $data = [];
+        // get comply job role name by id
+        $data['complyJobRoleName'] = $this->complynet_model->getComplyJobRole(
+            $complyJobRoleId,
+            'job_title'
+        )['job_title'];
+        //
+        $data['job_roles'] = $this->complynet_model->getLinkedJobRoles($complyJobRoleId);
+
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('2022/complynet/partials/view_job_roles', $data, true)
+            ]
+        );
+    }
+
+    public function deleteJobRole(int $sid)
+    {
+
+        // get details
+        $record =
+            $this->db
+            ->select('job_title, complynet_job_tile_sid')
+            ->where('sid', $sid)
+            ->get('complynet_job_roles_jobs')
+            ->row_array();
+        //
+        if ($record) {
+            $this->db
+                ->where('complynet_job_title', $record['job_title'])
+                ->update('users', [
+                    'complynet_job_title' => null
+                ]);
+            //
+            $this->db->query("UPDATE complynet_job_roles SET job_title_count = job_title_count -1 WHERE sid = " . ($record['complynet_job_tile_sid']) . ";");
+        }
+        // delete from list
+        $this->db->where('sid', $sid)
+            ->delete('complynet_job_roles_jobs');
+        // unlink from users
+        return SendResponse(200, ['success' => true]);
+    }
+
+
+    public function linkJobRoles(
+        int $complyJobRoleId
+    ) {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $added = 0;
+        // add the job title
+        foreach ($post['job_roles'] as $role) {
+            // check if already linked
+            if (
+                $this->db
+                ->where(['complynet_job_tile_sid' => $complyJobRoleId, 'job_title' => $role])
+                ->count_all_results('complynet_job_roles_jobs')
+            ) {
+                continue;
+            }
+            $added++;
+            //
+            $this->db
+                ->insert('complynet_job_roles_jobs', [
+                    'complynet_job_tile_sid' => $complyJobRoleId,
+                    'job_title' => $role,
+                    'created_at' => getSystemDate()
+                ]);
+        }
+        //
+        if ($added > 0) {
+            //
+            $this->db->query(
+                "UPDATE complynet_job_roles SET job_title_count=job_title_count+{$added} WHERE sid = {$complyJobRoleId}"
+            );
+        }
+        // remove selected job titles from other ids
+        $this->db
+            ->where_in('job_title', $post['job_roles'])
+            ->where('complynet_job_tile_sid != ', $complyJobRoleId)
+            ->delete('complynet_job_roles_jobs');
+        //
+        // get comply job role name by id
+        $complyJobRoleName = $this->complynet_model->getComplyJobRole(
+            $complyJobRoleId,
+            'job_title'
+        )['job_title'];
+        //
+        foreach ($post['job_roles'] as $role) {
+            // update job titles on users
+            $this->db
+                ->where('job_title', $role)
+                ->update('users', [
+                    'complynet_job_title' => $complyJobRoleName
+                ]);
+        }
+        // update job roles on complynet
+        $users =
+            $this->db
+            ->select('
+                sid,
+                parent_sid,
+                first_name,
+                last_name,
+                PhoneNumber,
+                email
+            ')
+            ->where(['complynet_job_title' => $complyJobRoleName, 'complynet_status' => 1, 'complynet_onboard' => 1])
+            ->get('users')
+            ->result_array();
+        //
+        if ($users) {
+            foreach ($users as $user) {
+                $this->complynet_model->updateEmployeeOnComplyNet(
+                    $user['parent_sid'],
+                    $user['sid'],
+                    $user
+                );
+            }
+        }
+        //
+        return SendResponse(
+            200,
+            [
+                'success' => true
+            ]
+        );
     }
 
     /**
