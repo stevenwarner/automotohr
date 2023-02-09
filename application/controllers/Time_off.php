@@ -1568,7 +1568,6 @@ class Time_off extends Public_Controller
         $data['action'] = $args['typeSid'];
         //
         if ($_POST) {
-
             $request_for = $_POST['status'];
             switch ($request_for) {
                 case "view":
@@ -1603,7 +1602,10 @@ class Time_off extends Public_Controller
                     //
                     $this->timeoff_model->insertHistory($in, 'timeoff_request_timeline');
                     // Send email notifications
-                    // $this->sendNotifications($args['requestId'], 'approved');
+                   
+                   //  $this->sendNotifications($args['requestId'], 'approved');
+                     $this->sendNotifications($args['requestSid'], 'approved');
+
                     $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
                     //
                     // $this->load->view('timeoff/partials/thankyou', $data);
@@ -1641,7 +1643,7 @@ class Time_off extends Public_Controller
                     //
                     $this->timeoff_model->insertHistory($in, 'timeoff_request_timeline');
                     // Send email notifications
-                    // $this->sendNotifications($args['requestId'], 'rejected');
+                    $this->sendNotifications($args['requestSid'], 'rejected');
                     $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
                     //
                     // $this->load->view('timeoff/partials/thankyou', $data);
