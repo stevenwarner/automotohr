@@ -69,8 +69,8 @@ class employers extends Admin_Controller
         $this->data['links'] = $this->pagination->create_links();
         //        $total_employers = $this->company_model->count_all_employers();
 
-       // print_r($employers);
-       // die();
+        // print_r($employers);
+        // die();
         $this->data['employers'] = $employers;
         $this->data['total_employers'] = $employers_count;
         $this->data['total_rows'] = $employers_count;
@@ -355,9 +355,9 @@ class employers extends Admin_Controller
             $data['gender'] = $this->input->post('gender');
             $data['marital_status'] = $this->input->post('marital_status');
             //
-             if($this->input->post('complynet_job_title')!='null' && $this->input->post('complynet_job_title',true)){
+            if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
                 $data['complynet_job_title'] = $this->input->post('complynet_job_title');
-               }
+            }
 
             //
             if ($data['gender'] != "other") {
@@ -504,7 +504,7 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone');
                 $salt = generateRandomString(48);
 
-               
+
                 if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');
                     $registration_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
@@ -532,9 +532,9 @@ class employers extends Admin_Controller
                 $insert_data['timezone'] = $timezone;
                 $insert_data['extra_info'] = serialize(['secondary_email' => $this->input->post('alternative_email', true)]);
                 $insert_data['access_level_plus'] = $this->input->post('access_level_plus');
-                 
+
                 //
-                if($this->input->post('complynet_job_title')!='null' && $this->input->post('complynet_job_title',true)){
+                if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
                     $insert_data['complynet_job_title'] = $this->input->post('complynet_job_title');
                 }
 

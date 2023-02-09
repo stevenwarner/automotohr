@@ -1647,3 +1647,9 @@ $route['cn/comply/job_roles/(:num)']['get'] = "2022/Complynet/getComplyCompanyJo
 
 $route['cn/(:num)/employee/sync']['post'] = "2022/Complynet/syncSingleEmployee/$1";
 $route['cn/employee/details/(:num)']['get'] = "2022/Complynet/getEmployeeDetail/$1";
+$route['cn/manage/job_roles']['get'] = "2022/Complynet/manageJobRoles";
+$route['cn/job_role_view/(:num)']['get'] = "2022/Complynet/getSystemJobRoles/$1";
+$route['cn/job_role_view_details/(:num)']['get'] = "2022/Complynet/getRoleDetails/$1";
+//
+$route['cn/manage/job_role/(:num)/link']['post'] = "2022/Complynet/linkJobRoles/$1";
+$route['cn/manage/job_role/(:num)']['delete'] = "2022/Complynet/deleteJobRole/$1";

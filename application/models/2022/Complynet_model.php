@@ -316,7 +316,7 @@ class Complynet_model extends CI_Model
             ->get()
             ->row_array();
         //
-      
+
         if ($record) {
             return $this->getComplyNetLinkedDepartmentById($record['sid']);
         }
@@ -1013,5 +1013,47 @@ class Complynet_model extends CI_Model
 
             return true;
         }
+    }
+
+
+    public function getComplyJobRole(
+        int $id,
+        string $column = '*'
+    ) {
+        return $this->db
+            ->select($column)
+            ->where('sid', $id)
+            ->get('complynet_job_roles')
+            ->row_array();
+    }
+
+    public function getSystemJobRoles(){
+        return $this->db
+        ->select('distinct(job_title) as job_title')
+        ->where('job_title IS NOT NULL', null)
+        ->where('job_title != ""', null)
+        ->order_by('job_title', 'ASC')
+        ->get('users')
+        ->result_array();
+    }
+
+    public function getLinkedRoles()
+    {
+        return $this->db
+        ->select('job_title')
+        ->get('complynet_job_roles_jobs')
+        ->result_array();
+    }
+
+    public function getLinkedJobRoles(
+        int $id
+    )
+    {
+        return $this->db
+        ->select('job_title, created_at, sid')
+        ->where('complynet_job_tile_sid', $id)
+        ->order_by('job_title', 'ASC')
+        ->get('complynet_job_roles_jobs')
+        ->result_array();
     }
 }

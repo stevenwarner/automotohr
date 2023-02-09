@@ -9,12 +9,15 @@
                         <div class="dash-inner-block">
                             <!-- Header -->
                             <div class="row">
-                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
                                         <h1 class="page-title">
                                             <i class="fa fa-users"></i><?php echo $page_title; ?>
                                         </h1>
                                     </div>
+                                </div>
+                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12 text-right">
+                                    <a href="<?=base_url('cn/manage/job_roles');?>" class="btn btn-success">Manage Job Roles</a>
                                 </div>
                             </div>
                             <br />
