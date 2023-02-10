@@ -731,7 +731,7 @@ class Dashboard extends Public_Controller
             $this->load->model('hr_documents_management_model');
             $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_id, 'employee');
 
-            if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+            if ($this->hr_documents_management_model->get_portal_detail($company_id)) {
                 if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
                     $documents_count++;
                 }
