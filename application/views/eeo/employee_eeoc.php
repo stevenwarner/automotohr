@@ -16,9 +16,8 @@
         <?php if ($eeo_form_status == 0) { ?>
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="alert alert-success text-center" style="padding-top: 100px;padding-bottom: 100px;">
-                        <h1>Sorry!</h1>
-                        <h4>The company disable its EEOC module.</h4>
+                    <div class="alert alert-danger text-center" style="padding-top: 100px;padding-bottom: 100px;">
+                        <h4>This EEO module has been disabled.</h4>
                     </div>
                 </div>
             </div>

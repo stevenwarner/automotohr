@@ -5638,7 +5638,7 @@ class Hr_documents_management extends Public_Controller
                 }
             }
             //
-            if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+            if ($this->hr_documents_management_model->get_portal_detail($company_sid)) {
                 $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employer_sid, 'employee');
                 //
                 if (!empty($eeo_form_info) && $eeo_form_info['status'] == 1) {
