@@ -103,7 +103,6 @@ class Export_employees_csv extends Public_Controller
                                     $employee['team_sid'] = '';
                                 }
 
-                                $extra_info = unserialize($employee['extra_info']);
                                 $employee['secondary_email'] = isset($extra_info['secondary_email']) ? $extra_info['secondary_email'] : '';
                                 $employee['secondary_PhoneNumber'] = isset($extra_info['secondary_PhoneNumber']) ? $extra_info['secondary_PhoneNumber'] : '';
                                 $employee['other_email'] = isset($extra_info['other_email']) ? $extra_info['other_email'] : '';
@@ -191,7 +190,8 @@ class Export_employees_csv extends Public_Controller
                                             }
 
                                         } else {
-                                            $export_data[$i][$value] = $employee[$value];
+                                            $export_data[$i][$value] = str_replace(',', ' ', strip_tags(trim(preg_replace('/\s+/', ' ', $employee[$value]))));
+
                                         } 
                                     }
                                     $header = ',' . substr($header, 0, -1);

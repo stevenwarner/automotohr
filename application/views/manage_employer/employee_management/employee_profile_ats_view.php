@@ -423,7 +423,29 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <input class="invoice-fields" value="<?php echo set_value('semi_monthly_draw', isset($employer["semi_monthly_draw"]) ? $employer["semi_monthly_draw"] : ''); ?>" type="number" name="semi_monthly_draw">
                                                 </div>
                                                 <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Workers Compensation Code:</label>
+                                                    <input class="invoice-fields" value="<?php echo set_value('workers_compensation_code', isset($employer["workers_compensation_code"]) ? $employer["workers_compensation_code"] : ''); ?>" type="text" name="workers_compensation_code">
+                                                </div>
+                                                <!--  -->
                                             </div>
+
+
+                                            <div class="row">
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>EEOC Code:</label>
+                                                    <input class="invoice-fields" value="<?php echo set_value('eeoc_code', isset($employer["eeoc_code"]) ? $employer["eeoc_code"] : ''); ?>" type="text" name="eeoc_code">
+                                                </div>
+                                                <!--  -->
+                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
+                                                    <label>Salary Benefits:</label>
+                                                    <textarea autocomplete="nope" class="invoice-fields" name="salary_benefits" id="salary_benefits"><?php echo set_value('salary_benefits', isset($employer["salary_benefits"]) ? $employer["salary_benefits"] : ''); ?></textarea>
+
+                                                </div>
+                                            </div>
+
+                                         
                                             <?php if ($timeOff == 'enable') { ?>
                                                 <div class="row">
                                                     <!--  -->

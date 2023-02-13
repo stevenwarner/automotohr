@@ -489,7 +489,34 @@
                                                         </div>
                                                     </li>
 
+
+
                                                 <?php } ?>
+
+
+                                                <li>
+                                                    <label>Workers Compensation Code</label>
+                                                        <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" name="workers_compensation_code" value="<?php echo $data['workers_compensation_code']; ?>">
+
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                    <label>EEOC Code</label>
+                                                        <div class="hr-fields-wrap">
+                                                        <input type="text" class="hr-form-fileds" name="eeoc_code" value="<?php echo $data['eeoc_code']; ?>">
+
+                                                        </div>
+                                                    </li>
+
+                                                    <li>
+                                                    <label>Salary Benefits</label>
+                                                        <div class="hr-fields-wrap">
+                                                        <textarea autocomplete="nope" class="hr-form-fileds" name="salary_benefits" id="salary_benefits"><?php echo $data['salary_benefits']; ?></textarea>
+                                                        </div>
+                                                    </li>
+
                                                 <?php if (IS_NOTIFICATION_ENABLED == 1) { ?>
                                                     <li>
                                                         <label>Notified By</label>

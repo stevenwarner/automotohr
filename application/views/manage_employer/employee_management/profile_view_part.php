@@ -292,8 +292,35 @@
                 <?=GetVal($employer['semi_monthly_draw']); ?>
             </p>
         </div>
+
+        <div class="col-md-6 col-xs-12"> 
+            <label class="csF16">Workers Compensation Code</label>
+            <p class="dummy-invoice-fields">
+                <?=GetVal($employer['workers_compensation_code']); ?>
+            </p>
+        </div>
+
     </div> 
     <br>
+
+    <div class="row">
+        <div class="col-md-6 col-xs-12"> 
+            <label class="csF16">EEOC Code</label>
+            <p class="dummy-invoice-fields">
+                <?=GetVal($employer['eeoc_code']); ?>
+            </p>
+        </div>
+
+        <div class="col-md-6 col-xs-12"> 
+            <label class="csF16">Salary Benefits</label>
+            <p class="dummy-invoice-fields">
+                <?=GetVal($employer['salary_benefits']); ?>
+            </p>
+        </div>
+
+    </div> 
+    <br>
+
     <?php if($timeOff == 'enable') { ?>
         <div class="row">
             <div class="col-md-6 col-xs-12"> 

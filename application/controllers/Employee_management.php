@@ -413,6 +413,11 @@ class Employee_management extends Public_Controller
                     $departmenId = getDepartmentColumnByTeamId($teamId, 'department_sid');
                 }
 
+                //
+                $workersCompensationCode = $this->input->post('workers_compensation_code');
+                $eeocCode = $this->input->post('eeoc_code');
+                $salaryBenefits = $this->input->post('salary_benefits');
+
                 $password = random_key(9);
                 // $start_date = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d H:i:s');
                 $start_date = reset_datetime(array('datetime' => $registration_date, '_this' => $this, 'from_format' => 'm-d-Y', 'format' => 'Y-m-d H:i:s'));
@@ -442,6 +447,12 @@ class Employee_management extends Public_Controller
                 $user_information['employee_status'] = $employment_status;
                 $user_information['employee_type'] = $employment_type;
                 $user_information['created_by'] = $data['session']['employer_detail']['sid'];
+
+                 //
+                 $user_information['workers_compensation_code'] = $workersCompensationCode;
+                 $user_information['eeoc_code'] = $eeocCode;
+                 $user_information['salary_benefits'] = $salaryBenefits;
+
 
                 if ($departmenId != '' && $teamId != '') {
                     $user_information['department_sid'] = $departmenId;
@@ -1566,7 +1577,10 @@ class Employee_management extends Public_Controller
                         'department_sid' => $this->input->post('department'),
                         'team_sid' => implode(',', $this->input->post('teams')),
                         'gender' => $gender,
-                        'marital_status' => $this->input->post('marital_status')
+                        'marital_status' => $this->input->post('marital_status'),
+                        'workers_compensation_code' => $this->input->post('workers_compensation_code'),
+                        'eeoc_code' => $this->input->post('eeoc_code'),
+                        'salary_benefits' => $this->input->post('salary_benefits')
                     );
                     //
                     if ($gender != "other") {
@@ -2280,7 +2294,12 @@ class Employee_management extends Public_Controller
                     'ssn' => $this->input->post('ssn'),
                     'dob' => $DOB,
                     'marital_status' => $this->input->post('marital_status'),
-                    'gender' => $gender
+                    'gender' => $gender,
+                    'workers_compensation_code' => $this->input->post('workers_compensation_code'),
+                    'eeoc_code' => $this->input->post('eeoc_code'),
+                    'salary_benefits' => $this->input->post('salary_benefits'),
+
+
                 );
                 //
                 if ($gender != "other") {

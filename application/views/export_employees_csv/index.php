@@ -268,6 +268,33 @@ Jack, Brown, jack@example.com, 013212129, your Street, California, 90001, CA, Un
                                                     </label>
                                                 </div>
                                             </div>
+
+                                          
+
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">EEOC Code<input type="checkbox" name="eeoc_code" class="check_it" value="eeoc_code">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-3 col-md-3 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Salary Benefits<input type="checkbox" name="salary_benefits" class="check_it" value="salary_benefits">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6 cs_adjust_margin">
+                                                <div class="checkbox cs_full_width">
+                                                    <label class="control control--checkbox">Workers Compensation Code<input type="checkbox" name="workers_compensation_code" class="check_it" value="workers_compensation_code">
+                                                        <div class="control__indicator"></div>
+                                                    </label>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
