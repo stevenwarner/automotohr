@@ -25,6 +25,8 @@ class Courses extends Public_Controller
     private $pages;
     //
     private $res = array();
+    //
+    private $scorm_versions;
 
     /**
      * 
@@ -48,6 +50,12 @@ class Courses extends Public_Controller
         $this->res['Response'] = 'Invalid request';
         $this->res['Code'] = 'INVALIDREQUEST';
         //
+        $this->scorm_versions = [
+            "20043rd",
+            "20044th",
+            "12"
+        ];
+        //    
         $this->load->model("2022/Course_model", "cm");
     }
 
@@ -174,7 +182,7 @@ class Courses extends Public_Controller
         $this->res['Redirect'] = FALSE;
         //
         switch (strtolower($post['action'])) {
-                // Fetch company all policy types
+            // Fetch company
             case 'add_course':
                 //
                 $data_to_insert = array();
@@ -185,7 +193,6 @@ class Courses extends Public_Controller
                 $data_to_insert['description'] = $post['description'];
                 $data_to_insert['start_date'] = $post['start_date'];
                 $data_to_insert['end_date'] = $post['end_date'];
-
                 //
                 $insert_id = $this->cm->addData('lms_courses', $data_to_insert);
                 //
@@ -196,6 +203,84 @@ class Courses extends Public_Controller
                 $this->res['Status'] = true;
                 $this->resp();
                 break;
+
+            case 'upload_zip':
+                //
+                $random = generateRandomString(5);
+                $company_id = $post['companyId'];
+                $companyName = getCompanyNameBySid($company_id);
+                $target_file_name = basename($_FILES["upload_zip"]["name"]);
+                $file_name = strtolower($random . '_' . $target_file_name);
+                //
+                $target_dir = 'assets/temp_files/scorm/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . $_POST['courseId'] .'/';
+                $target_file = $target_dir . $file_name;
+                $file_info = pathinfo($_FILES["upload_zip"]["name"]);
+                // 
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0777, true);
+                }
+                //
+                if (move_uploaded_file($_FILES["upload_zip"]["tmp_name"], $target_file)) {
+                    $zip = new ZipArchive;
+                    //
+                    $x = $zip->open($target_file);
+                    //
+                    if ($x === true) {
+                        $newName = $random . '_' .$file_info['filename'];
+                        $zip->renameName($_FILES["upload_zip"]["name"],$newName);
+                        $zip->extractTo($target_dir);
+                        $zip->close();
+                    }
+                    //
+                    $unzipFile = $target_dir .$file_info['filename'];
+                    $this->load->library('Scorm/Scorm_lib', '', 'slib');
+                    //
+                    $courseContent = $this->slib->LoadFile($unzipFile."/imsmanifest.xml")->GetIndex();
+                    if (
+                        !empty($courseContent) && 
+                        isset($courseContent["items"]) &&
+                        !empty($courseContent["items"])
+                    ) {
+                        if (
+                            in_array($courseContent['version'], $this->scorm_versions)
+                        ) {
+                            $data_to_insert = array();
+                            $data_to_insert['company_sid'] = $post['companyId'];
+                            $data_to_insert['creator_sid'] = $post['employeeId'];
+                            $data_to_insert['upload_scorm_file'] = $unzipFile;
+                            $data_to_insert['version'] = $courseContent['version'];
+                            //
+                            $insert_id = $this->cm->addData('lms_scorm_courses', $data_to_insert);
+                            //
+                            $this->res['Response'] = '<strong>The file ' . basename($_FILES["upload_zip"]["name"]) . ' has been uploaded.';
+                            $this->res['Code'] = "SUCCESS";
+                            $this->res['Status'] = true;
+                            $this->resp();
+                        } else {
+                            $this->res['Response'] = '<strong>Sorry</strong>, system not support this '. $courseContent['version'] .' version.';
+                            $this->resp();
+                        }
+                    } else {
+                        $this->res['Response'] = '<strong>Sorry</strong>, scorm file is invalide';
+                        $this->resp();
+                    }
+                    
+                } else {
+                    $this->res['Response'] = '<strong>Sorry</strong>, there was an error uploading your file.';
+                    $this->resp();
+                }
+                //
+                
+                break;  
+
+            case "get_employees_list":
+                $this->res['employees']   = $this->cm->getAllActiveEmployees($company_detail['sid']);
+                $this->res['departments'] = $this->cm->getAllDepartments($company_detail['sid']);
+                $this->res['jobTitles']   = $this->cm->getAllJobTitles($company_detail['sid']);
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed.';
+                $this->resp();
+                break;    
         } 
         //
     }           

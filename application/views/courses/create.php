@@ -26,11 +26,11 @@
                     <div id="show_basicInfo_section" style="display: none;">
                         <?php $this->load->view('courses/partials/course_detail'); ?>
                     </div>    
-                    <div id="show_upload_section" >
+                    <div id="show_upload_section" style="display: none;">
                         <?php $this->load->view('courses/partials/upload_section'); ?>
                     </div>
-                    <div id="show_manual_section" style="display: none;">
-                        <?php $this->load->view('es/partials/step_respondants'); ?>
+                    <div id="show_manual_section" >
+                        <?php $this->load->view('courses/partials/course_employees'); ?>
                     </div>
                     <?php $this->load->view('courses/partials/loader'); ?>
                 </div>

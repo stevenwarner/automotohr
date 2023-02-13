@@ -22,10 +22,10 @@
                 <input type="file" name="attachment" id="jsUploadScormFile" class="hidden" />
             </div>
         </div>
-        <div class="row dn" id="jsQuestionAttachmentUploadRow">
+        <div class="row dn">
             <br />
             <div class="col-sm-12">
-                <button class="btn _csB4 _csF2 _csR5  _csF16 pull-right">
+                <button class="btn _csB4 _csF2 _csR5 _csF16 pull-right" id="jsUploadZip">
                     <i class="fa fa-upload" aria-hidden="true"></i>&nbsp;Upload File
                 </button>
             </div>

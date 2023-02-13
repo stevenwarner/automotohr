@@ -77,4 +77,81 @@ class Course_model extends CI_Model {
         return $this->db->insert_id();
     }
 
+    public function getAllActiveEmployees ($companySid) {
+        $this->db->select('
+            sid, 
+            first_name, 
+            middle_name, 
+            last_name, 
+            access_level, 
+            timezone, 
+            access_level_plus, 
+            is_executive_admin, 
+            pay_plan_flag, 
+            department_sid, 
+            profile_picture'
+        );
+        
+        $this->db->where('is_executive_admin', 0);
+        $this->db->where('parent_sid', $companySid);
+        $this->db->where('active', 1);
+        $this->db->where('terminated_status', 0);
+        $records_obj = $this->db->get('users');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->result_array();
+            $records_obj->free_result();
+            return $data;
+        } else {
+            return array();
+        }
+        //
+    }
+
+    public function getAllDepartments ($companySid) {
+        //
+        $this->db->select('
+            sid, 
+            name
+        ');
+        $this->db->where('company_sid', $companySid);
+        $records_obj = $this->db->get('departments_management');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->result_array();
+            $records_obj->free_result();
+            return $data;
+        } else {
+            return array();
+        }        
+    }
+
+    public function getAllJobTitles ($companySid) {
+        //
+        $this->db->select('
+            distinct(job_title)
+        ');
+        $this->db->where('parent_sid', $companySid);
+        $records_obj = $this->db->get('users');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->result_array();
+            $records_obj->free_result();
+            //
+            $result_array = array();
+            //
+            foreach ($data as $row) {
+                if (!empty($row['job_title'])) {
+                    $jobTitle = strtolower($row['job_title']);
+                    $value =  ucwords($jobTitle);
+                    $key = str_replace(" ", "_", $jobTitle);
+                    $result_array[$key] = $value;
+                }
+            }
+            //
+            return $result_array;
+        } else {
+            return array();
+        }        
+    }
 }
