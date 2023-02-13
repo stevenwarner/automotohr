@@ -16,6 +16,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                     </div>
                     <?php
                     //
+                    /*
                     if (isset($employee_type) && $employee_type == 'offline') {
                         $all = false;
                         $active = false;
@@ -41,6 +42,10 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                         $terminated = false;
                         $employee_array = $employees;
                     }
+*/
+
+                    $employee_array = $employees;
+
                     ?>
                     <div class="applicant-filter">
                         <div class="row">
@@ -53,26 +58,17 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                 <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
                                                     <div class="hr-select-dropdown">
                                                         <select name="employee_type" class="invoice-fields">
-                                                            <option value="all" <?php if ($all) {
-                                                                                    echo ' selected="selected"';
-                                                                                } ?>>
-                                                                All Employees
-                                                            </option>
-                                                            <option value="active" <?php if ($active) {
-                                                                                        echo ' selected="selected"';
-                                                                                    } ?>>
-                                                                All Active Employees
-                                                            </option>
-                                                            <option value="terminated" <?php if ($terminated) {
-                                                                                            echo ' selected="selected"';
-                                                                                        } ?>>
-                                                                Terminated Employees
-                                                            </option>
-                                                            <option value="offline" <?php if ($offline) {
-                                                                                        echo ' selected="selected"';
-                                                                                    } ?>>
-                                                                All Onboarding & De-activated Employees
-                                                            </option>
+                                                            
+                                                        <option value="all" <?php echo $employee_type == 'all' ? 'selected="selected"' : ''; ?>>All</option>
+                                                        <option value="active" <?php echo $staemployee_typetus == 'active' ? 'selected="selected"' : ''; ?>>Active</option>
+                                                        <option value="leave" <?php echo $employee_type == 'leave' ? 'selected="selected"' : ''; ?>>Leave</option>
+                                                        <option value="suspended" <?php echo $employee_type == 'suspended' ? 'selected="selected"' : ''; ?>>Suspended</option>
+                                                        <option value="retired" <?php echo $employee_type == 'retired' ? 'selected="selected"' : ''; ?>>Retired</option>
+                                                        <option value="rehired" <?php echo $employee_type == 'rehired' ? 'selected="selected"' : ''; ?>>Rehired</option>
+                                                        <option value="deceased" <?php echo $employee_type == 'deceased' ? 'selected="selected"' : ''; ?>>Deceased</option>
+                                                        <option value="terminated" <?php echo $employee_type == 'terminated' ? 'selected="selected"' : ''; ?>>Terminated</option>
+                                                        <option value="inactive" <?php echo $employee_type == 'inactive' ? 'selected="selected"' : ''; ?>>Inactive</option>
+
                                                         </select>
                                                     </div>
                                                 </div>
