@@ -181,7 +181,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                 <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Email</a>
 
                                             </div>
-                                            <div class="col-xs-3 text-left"  style="padding-right: 0px; padding-left: 5px">
+                                            <div class="col-xs-3 text-left" style="padding-right: 0px; padding-left: 5px">
                                                 <a href="javascript:void(0);" class="btn btn-success btn-block" id="send_bulk_email_login"><i class="fa fa-envelope" aria-hidden="true"></i> Send Bulk Login Email</a>
 
                                             </div>
@@ -233,7 +233,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                     </thead>
                                     <tbody>
                                         <form method="POST" name="ej_form" id="ej_form">
-                                            <?php $sizeof = sizeof($employee_array); 
+                                            <?php $sizeof = sizeof($employee_array);
                                             $bulkloginEmailIds = array();
                                             $bulkloginEmployeeName = array();
                                             ?>
@@ -306,11 +306,11 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
                                                                 <?php echo $doNotHireWarning['message']; ?>
                                                                 <?php
-                                                                    $onComplyNet = getComplyNetEmployeeCheck($employee, $session['employer_detail']['pay_plan_flag'] , $session['employer_detail']['access_level_plus'], false );
-                                                                    if ($onComplyNet) {
+                                                                $onComplyNet = getComplyNetEmployeeCheck($employee, $session['employer_detail']['pay_plan_flag'], $session['employer_detail']['access_level_plus'], false);
+                                                                if ($onComplyNet) {
 
-                                                                        echo $employee['is_executive_admin'] == 0 ? '<br> <b> ComplyNet Status:</b> ' . ($onComplyNet) : '';
-                                                                    }
+                                                                    echo $employee['is_executive_admin'] == 0 ? '<br> <b> ComplyNet Status:</b> ' . ($onComplyNet) : '';
+                                                                }
                                                                 ?>
                                                             </div>
                                                         </div>
@@ -318,27 +318,26 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                     <td width="25%" class="<?php echo $doNotHireWarning['row']; ?>">
                                                         <?php
                                                         if (empty($employee["job_title"])) {
-                                                            echo 'No job designation found!'.'<br>';
+                                                            echo 'No job designation found!' . '<br>';
                                                         } else {
-                                                            echo "<b>Job Title: </b>". $employee['job_title'] ."<br>";
+                                                            echo "<b>Job Title: </b>" . $employee['job_title'] . "<br>";
                                                         }
                                                         ?>
 
                                                         <?php
-                                                           $isOnComplyNet = getComplyNetEmployeeCheck($employee, 0, 0, false);
-                                                          if(!empty($isOnComplyNet) && $isOnComplyNet!='Not on ComplyNet') {?>
-                                                        <br />
-                                                          <b>ComplyNet Job Title:</b> <?php echo $employee['complynet_job_title'];?>
-                                                        <?php }?>
+                                                        if ($session['company_detail']['complynet_status'] == 1) { ?>
+                                                            <br />
+                                                            <b>ComplyNet Job Title:</b> <?php echo $employee['complynet_job_title']; ?>
+                                                        <?php } ?>
                                                     </td>
                                                     <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                         <?php if (check_access_permissions_for_view($security_details, 'send_login_email')) { ?>
-                                                            <?php 
-                                                                if (($employee['password'] == '' || is_null($employee['password'])) && ($employee['is_executive_admin'] != 1)) { 
-                                                                    $employeeStatus = GetEmployeeStatus($employee['last_status_text'], $employee['active']);
-                                                                    if ($employeeStatus == "Active" && !empty($employee['email'])) {
-                                                                    array_push($bulkloginEmailIds,$employee['sid']);
-                                                                    array_push($bulkloginEmployeeName,$name);
+                                                            <?php
+                                                            if (($employee['password'] == '' || is_null($employee['password'])) && ($employee['is_executive_admin'] != 1)) {
+                                                                $employeeStatus = GetEmployeeStatus($employee['last_status_text'], $employee['active']);
+                                                                if ($employeeStatus == "Active" && !empty($employee['email'])) {
+                                                                    array_push($bulkloginEmailIds, $employee['sid']);
+                                                                    array_push($bulkloginEmployeeName, $name);
                                                                 }
                                                             ?>
                                                                 <img src="<?= base_url('assets/manage_admin/images/bulb-red.png') ?>">
@@ -428,12 +427,12 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                         </td>
                                                     <?php } ?>
                                                     <td>
-                                                        <?php 
-                                                            if (in_array($employee['sid'], $transferIds)) {
-                                                                echo get_employee_transfer_date($employee['sid']);
-                                                            } else {
-                                                                echo "N/A";
-                                                            }
+                                                        <?php
+                                                        if (in_array($employee['sid'], $transferIds)) {
+                                                            echo get_employee_transfer_date($employee['sid']);
+                                                        } else {
+                                                            echo "N/A";
+                                                        }
                                                         ?>
                                                     </td>
                                                     <?php if ($employer_id != $employee['sid']) { ?>
@@ -480,7 +479,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     <?php if (isCompanyOnComplyNet($employee['parent_sid']) && $employee['complynet_onboard'] == 0) {
                                                                     ?>
                                                                         <!--Add Employee To ComplyNet -->
-                                                                        <button class="btn csBG2 jsAddEmployeeToComplyNet" title="Add Employee To ComplyNet" placement="top" data-cid="<?= $employee['parent_sid']; ?>" data-id="<?= $employee['sid']; ?>" >
+                                                                        <button class="btn csBG2 jsAddEmployeeToComplyNet" title="Add Employee To ComplyNet" placement="top" data-cid="<?= $employee['parent_sid']; ?>" data-id="<?= $employee['sid']; ?>">
                                                                             <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                                         </button>
                                                                     <?php } ?>
@@ -1116,13 +1115,13 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
     $(document).on('click', '#send_bulk_email_login', function(e) {
         //
-        var employee_sids = "<?php echo implode(',',$bulkloginEmailIds);?> ";
+        var employee_sids = "<?php echo implode(',', $bulkloginEmailIds); ?> ";
         var url = "<?= base_url('employee_management/send_login_credentials_bulk') ?>";
-        var employee_name = "<?php echo implode('<br>',$bulkloginEmployeeName);?>";
+        var employee_name = "<?php echo implode('<br>', $bulkloginEmployeeName); ?>";
         //
         alertify.confirm(
-            'Confirmation', 
-            "Are you sure you want to send login credentials to?<br>"+employee_name,
+            'Confirmation',
+            "Are you sure you want to send login credentials to?<br>" + employee_name,
             function() {
                 $.ajax({
                     url: url,
@@ -1133,9 +1132,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                     },
                     success: function(data) {
                         if (data == 'success') {
-                            alertify.alert('SUCCESS','Email with Login credentials is sent.');
+                            alertify.alert('SUCCESS', 'Email with Login credentials is sent.');
                         } else {
-                            alertify.alert('WARNING','There was error, please try again!');
+                            alertify.alert('WARNING', 'There was error, please try again!');
                         }
                     },
                     error: function() {
@@ -1147,5 +1146,4 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                 alertify.error('Canceled');
             });
     });
-
 </script>
