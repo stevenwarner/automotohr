@@ -58,7 +58,7 @@ $(function () {
         });
     }
 
-    generateCourePreview("manual");
+    // generateCourePreview("manual");
     //
     function generateCourePreview (type) {
         //
@@ -188,7 +188,6 @@ $(function () {
         }
         //
         if (employees.length) {
-            createEmployeeList(employees, assignedSids);
             //
             employees.map(function(employee) {
                 //
@@ -236,6 +235,10 @@ $(function () {
                 closeOnSelect: false
             });         
         //
+        if (employees.length) {
+            createEmployeeList(employees, assignedSids);
+        }    
+        //
         $('.jsLMSLoader').hide();
         //
     }
@@ -264,6 +267,8 @@ $(function () {
     }
 
     async function getFilterCompanyEmployees () {
+        $('.jsLMSLoader').show();
+        //
         var departmentSids = $('#jsDepartments').val() || 'all';
         var includedEmployees = $('#jsEmployees').val() || 'all';
         var excludedEmployees = $('#jsExcludedEmployees').val() || 'no';
@@ -318,6 +323,8 @@ $(function () {
         //
         $("#jsCompanyEmployeesList").html(employeeRow);
         $("#jsAssignedEmployeesCount").html('('+employeeNo+')');
+        //
+        $('.jsLMSLoader').hide();
     }
 
     function getCompanyEmployees(departments, included, excluded, type, title) {
@@ -452,7 +459,7 @@ $(function () {
             },
             success: function(resp) {
                 //
-                alertify.alert('SUCCESS!','Employee survey respondents saved sucessfully.',function () {
+                alertify.alert('SUCCESS!','Employee assigned to course sucessfully.',function () {
                     if (resp.Publish == 1) {
                         publishCompanySurvey(resp);
                     }
@@ -462,7 +469,7 @@ $(function () {
                 $('.jsLMSLoader').hide();
             },
             error: function() {
-                alertify.alert("NOTICE!", "Unable to save employee survey respondents");
+                alertify.alert("NOTICE!", "Unable to save employee");
                 $('.jsLMSLoader').hide();
             }
         });
