@@ -190,7 +190,8 @@ class Employee_management extends Public_Controller
             $keyword = '';
             $order_by = '';
             $order = '';
-            $employee_type = 'active';
+            $employee_type = 'all';
+
 
             if (isset($_GET['keyword'])) {
                 $keyword = $_GET['keyword'];
@@ -203,6 +204,7 @@ class Employee_management extends Public_Controller
             } else {
                 $employee_type = "all";
             }
+
 
             if (isset($_GET['order_by'])) {
                 $order_by = $_GET['order_by'];
@@ -232,7 +234,7 @@ class Employee_management extends Public_Controller
 
             $searchList = [];
 
-            if (isset($_GET['department']) && $_GET['department'] > 0) {
+            if (isset($_GET['department']) && $_GET['department'] > 0) { 
                 $employees_list = array();
                 $department_sid = $_GET['department'];
                 $department_supervisor = $this->employee_model->get_all_department_supervisor($department_sid);
@@ -265,8 +267,10 @@ class Employee_management extends Public_Controller
                 $searchList = $employees_list;
                 $data['department_sid'] = $department_sid;
             }
-            $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+        
+          //  $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
 
+            $data['employees'] = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList,$employee_type);
 
             $portal_email_templates                                             = $this->application_tracking_system_model->get_portal_email_templates($company_id);
 
@@ -276,12 +280,15 @@ class Employee_management extends Public_Controller
 
             $data['portal_email_templates'] = $portal_email_templates;
 
-            $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
-            $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
-            $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+          //  $data['offline_employees'] = $this->employee_model->get_inactive_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+         //   $data['terminated_employees'] = $this->employee_model->get_terminated_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
+         //    $data['all_company_employees'] = $this->employee_model->get_all_company_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
             //
-            $data['executive_admins'] = $this->employee_model->get_all_executive_admins($company_id, $employer_id, $keyword, 0, $order_by, $order);
-            $data['employees'] = array_merge($data['employees'], $data['executive_admins']);
+
+
+        //    $data['executive_admins'] = $this->employee_model->get_all_executive_admins($company_id, $employer_id, $keyword, 0, $order_by, $order);
+           // $data['employees'] = array_merge($data['employees'], $data['executive_admins']);
+            
             $data['all_company_employees'] = array_merge($data['all_company_employees'], $data['executive_admins']);
             //
             $data['title'] = 'Employee / Team Members';
@@ -317,6 +324,7 @@ class Employee_management extends Public_Controller
             if ($data['session']['employer_detail']['access_level_plus'] != 1 && $data['session']['employer_detail']['pay_plan_flag'] != 1) {
                 $data['teamMemberIds'] = $this->timeoff_model->getEmployeeTeamMemberIds($data['session']['employer_detail']['sid']);
             }
+
             //
             $data["transferIds"] = $this->employee_model->getAllTransferEmployeeSids($company_id);
             //

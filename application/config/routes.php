@@ -559,8 +559,17 @@ $route['manage_admin/employers/EditEmployeeStatus/(:num)/(:num)'] = 'manage_admi
 $route['manage_admin/employers/(:num)'] = 'manage_admin/employers/index/$1';
 $route['manage_admin/employers/(:any)/(:num)'] = 'manage_admin/employers/index/$1/$2';
 $route['manage_admin/employers/(:any)/(:num)/(:any)'] = 'manage_admin/employers/index/$1/$2/$3';
+
 $route['manage_admin/employers/(:any)/(:num)/(:any)/(:any)'] = 'manage_admin/employers/index/$1/$2/$3/$4';
+
+$route['manage_admin/employers/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/employers/index/$1/$2/$3/$4';
+
+
 $route['manage_admin/employers/(:any)/(:num)/(:any)/(:any)/(:num)'] = 'manage_admin/employers/index/$1/$2/$3/$4/$5';
+
+$route['manage_admin/employers/(:any)/(:any)/(:any)/(:any)/(:num)'] = 'manage_admin/employers/index/$1/$2/$3/$4/$5';
+
+
 $route['manage_admin/companies/ajax_change_status'] = 'manage_admin/companies/ajax_change_status';
 $route['manage_admin/companies/(:num)'] = 'manage_admin/companies/index/$1';
 $route['manage_admin/companies/search_company/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/companies/index/$1/$2/$3/$4/$5/$6';

@@ -205,14 +205,30 @@ class Company_model extends CI_Model
         $this->db->select('table_two.CompanyName as company_name');
         $this->db->select('table_one.complynet_onboard');
         $this->db->select('table_one.parent_sid');
-        
-        
+      
         $this->db->where('table_one.is_executive_admin <', 1);
         $this->db->where('table_one.parent_sid > ', 0);
 
+        /*
         if ($status != 2) {
             $this->db->where('table_one.active', $status);
         }
+      */
+
+        if ($status == 'active') {
+            $this->db->where('table_one.active', 1);
+            $this->db->where('table_one.terminated_status', 0);
+        }
+
+        if ($status == 'terminated') {
+            $this->db->where('table_one.terminated_status', 1);
+        }
+
+        if ($status != 'all' && $status != 'active' && $status != 'terminated') {
+            $this->db->where('LCASE(table_one.general_status) ', $status);
+        }
+
+
 
         $this->db->order_by('table_one.sid', 'desc');
 

@@ -16,7 +16,7 @@ class employers extends Admin_Controller
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
     }
 
-    public function index($keyword = null, $status = 2, $company = null, $contact_name = null, $page_number = 1)
+    public function index($keyword = null, $status = 'all', $company = null, $contact_name = null, $page_number = 1)
     {
         $redirect_url = 'manage_admin';
         $function_name = 'list_employers';
@@ -35,7 +35,7 @@ class employers extends Admin_Controller
         $keyword = $keyword == null ? 'all' : trim(urldecode($keyword));
         $company = $company == null ? 'all' : trim(urldecode($company));
         $contact_name = $contact_name == null ? 'all' : trim(urldecode($contact_name));
-        $status = $status == null ? 2 : $status;
+        $status = $status == null ? 'all' : $status;
         $employers_count = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, true, $company, $contact_name);
         $employers = $this->company_model->get_all_employers_new($records_per_page, $my_offset, $keyword, $status, false, $company, $contact_name);
         // echo "<pre>"; print_r($employers); die();

@@ -1938,4 +1938,56 @@
         $this->db->insert('departments_employee_2_team', $data);
         return $this->db->insert_id();
     }
+
+
+
+    function get_employees_details_new($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = [] , $status)
+    {
+        $keyword = trim(str_replace("'", '', $keyword));
+        $this->db->select('*');
+        $this->db->where('parent_sid', $parent_sid);
+
+        /*
+        $this->db->where('active', '1');
+        $this->db->where('terminated_status', 0);
+        $this->db->where('archived', $archive);
+        */
+
+        if ($status == 'active') {
+            $this->db->where('active', 1);
+            $this->db->where('terminated_status', 0);
+        }
+
+        if ($status == 'terminated') {
+            $this->db->where('terminated_status', 1);
+        }
+
+        if ($status != 'all' && $status != 'active' && $status != 'terminated' && $status != null ) {
+            $this->db->where('LCASE(general_status) ', $status);
+        }
+        
+        $this->db->where('is_executive_admin', 0);
+        if ($keyword != null) {
+            $tK = preg_replace('/\s+/', '|', strtolower($keyword));
+            $this->db->where("(lower(first_name) regexp '" . ($tK) . "' or lower(last_name) regexp '" . ($tK) . "' or lower(extra_info) regexp '" . ($keyword) . "' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+        }
+
+        $this->db->where('sid != ' . $sid);
+        //
+
+
+        if ($ids) {
+            $this->db->where_in('sid', $ids);
+        }
+        $this->db->order_by($order_by, $order);
+        $all_employees = $this->db->get('users')->result_array();
+
+        $all_employees = $this->verify_executive_admin_status($all_employees);
+        $this->GetEmployeeStatus($all_employees);
+
+        return $all_employees;
+    }
+
+
+
 }

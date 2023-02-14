@@ -39,13 +39,21 @@
                                                     <input type="text" name="company-name" id="company-name" value="<?php echo urldecode($company_name); ?>" class="invoice-fields">
                                                 </div>
                                                 <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3 field-row">
-                                                    <?php $status = $this->uri->segment(4) == '' ? 2 : $this->uri->segment(4); ?>
+                                                    <?php $status = $this->uri->segment(4) == '' ? 'all' : $this->uri->segment(4); ?>
                                                     <label>Status:</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="active" id="active">
-                                                            <option <?php echo $status == 2 ? 'selected="selected"' : ''; ?> value="2" selected>All</option>
-                                                            <option <?php echo $status == 1 ? 'selected="selected"' : ''; ?> value="1">Active</option>
-                                                            <option <?php echo $status == 0 && $status != 2 ? 'selected="selected"' : ''; ?> value="0">In-Active</option>
+                                                       
+                                                        <option value="all" <?php echo $status == 'all' ? 'selected="selected"' : ''; ?>>All</option>
+                                                        <option value="active" <?php echo $status == 'active' ? 'selected="selected"' : ''; ?>>Active</option>
+                                                        <option value="leave" <?php echo $status == 'leave' ? 'selected="selected"' : ''; ?>>Leave</option>
+                                                        <option value="suspended" <?php echo $status == 'suspended' ? 'selected="selected"' : ''; ?>>Suspended</option>
+                                                        <option value="retired" <?php echo $status == 'retired' ? 'selected="selected"' : ''; ?>>Retired</option>
+                                                        <option value="rehired" <?php echo $status == 'rehired' ? 'selected="selected"' : ''; ?>>Rehired</option>
+                                                        <option value="deceased" <?php echo $status == 'deceased' ? 'selected="selected"' : ''; ?>>Deceased</option>
+                                                        <option value="terminated" <?php echo $status == 'terminated' ? 'selected="selected"' : ''; ?>>Terminated</option>
+                                                        <option value="inactive" <?php echo $status == 'inactive' ? 'selected="selected"' : ''; ?>>Inactive</option>
+
                                                         </select>
                                                     </div>
                                                 </div>
