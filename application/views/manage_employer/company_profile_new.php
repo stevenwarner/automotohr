@@ -367,7 +367,6 @@
 
 
 
-                        <?php if(checkIfAppIsEnabled('documentlibrary')): ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <h3>EEOC <i class="fa fa-question-circle-o" aria-hidden="true"></i></h3>
@@ -386,7 +385,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                VOLUNTARY <small class="help_text">If enabled then the "voluntary self-identification of disability" section willbe visible to employee/applicant on EEOC.</small>
+                                DISABILITY <small class="help_text">If enabled then the "voluntary self-identification of disability" section willbe visible to employee/applicant on EEOC.</small>
                                     <input class="" type="checkbox" id="dl_vol" name="dl_vol" <?php echo (isset($portal['dl_vol']) && $portal['dl_vol'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
@@ -401,7 +400,6 @@
                                 </label>
                             </div>
                         </div>
-                        <?php endif; ?>
 
 
                         <?php if (IS_TIMEZONE_ACTIVE) { ?>
