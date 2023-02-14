@@ -60,7 +60,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                         <select name="employee_type" class="invoice-fields">
                                                             
                                                         <option value="all" <?php echo $employee_type == 'all' ? 'selected="selected"' : ''; ?>>All</option>
-                                                        <option value="active" <?php echo $staemployee_typetus == 'active' ? 'selected="selected"' : ''; ?>>Active</option>
+                                                        <option value="active" <?php echo $employee_type == 'active' ? 'selected="selected"' : ''; ?>>Active</option>
                                                         <option value="leave" <?php echo $employee_type == 'leave' ? 'selected="selected"' : ''; ?>>Leave</option>
                                                         <option value="suspended" <?php echo $employee_type == 'suspended' ? 'selected="selected"' : ''; ?>>Suspended</option>
                                                         <option value="retired" <?php echo $employee_type == 'retired' ? 'selected="selected"' : ''; ?>>Retired</option>
