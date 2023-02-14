@@ -12451,7 +12451,7 @@ class Hr_documents_management extends Public_Controller
         //
         $id = urldecode($id);
         //
-        ini_set('memory_limit', '1024M');
+        ini_set('memory_limit', '-1');
         //
         if (preg_match('/.zip/', $token)) {
             //
