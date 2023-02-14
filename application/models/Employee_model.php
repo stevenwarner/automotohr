@@ -1966,7 +1966,7 @@
             $this->db->where('LCASE(general_status) ', $status);
         }
         
-        $this->db->where('is_executive_admin', 0);
+        // $this->db->where('is_executive_admin', 0);
         if ($keyword != null) {
             $tK = preg_replace('/\s+/', '|', strtolower($keyword));
             $this->db->where("(lower(first_name) regexp '" . ($tK) . "' or lower(last_name) regexp '" . ($tK) . "' or lower(extra_info) regexp '" . ($keyword) . "' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
