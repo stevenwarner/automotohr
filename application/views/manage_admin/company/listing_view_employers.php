@@ -188,17 +188,6 @@
                                                                                                     echo "N/A";
                                                                                                 }
                                                                                                 ?>
-                                                                            <br>
-                                                                           
-
-<?php 
-                                                                                if (isset($value["trensfer_date"]) && !empty($value["trensfer_date"])) {
-                                                                                    echo "<b>Transfer Date: </b>".$value['trensfer_date'];
-                                                                                } else {
-                                                                                    echo "<b>Transfer Date: </b>N/A";
-                                                                                }
-                                                                            ?>
-
 
                                                                             <br>
                                                                             <b>Termination Date: </b>
