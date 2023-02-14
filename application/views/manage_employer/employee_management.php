@@ -318,11 +318,18 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                     <td width="25%" class="<?php echo $doNotHireWarning['row']; ?>">
                                                         <?php
                                                         if (empty($employee["job_title"])) {
-                                                            echo 'No job designation found!';
+                                                            echo 'No job designation found!'.'<br>';
                                                         } else {
-                                                            echo $employee['job_title'];
+                                                            echo "<b>Job Title: </b>". $employee['job_title'] ."<br>";
                                                         }
                                                         ?>
+
+                                                        <?php
+                                                           $isOnComplyNet = getComplyNetEmployeeCheck($employee, 0, 0, false);
+                                                          if(!empty($isOnComplyNet) && $isOnComplyNet!='Not on ComplyNet') {?>
+                                                        <br />
+                                                          <b>ComplyNet Job Title:</b> <?php echo $employee['complynet_job_title'];?>
+                                                        <?php }?>
                                                     </td>
                                                     <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                         <?php if (check_access_permissions_for_view($security_details, 'send_login_email')) { ?>

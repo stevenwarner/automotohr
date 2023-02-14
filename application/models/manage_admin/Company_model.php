@@ -205,6 +205,7 @@ class Company_model extends CI_Model
         $this->db->select('table_two.CompanyName as company_name');
         $this->db->select('table_one.complynet_onboard');
         $this->db->select('table_one.parent_sid');
+        $this->db->select('table_one.complynet_job_title');
         
         
         $this->db->where('table_one.is_executive_admin <', 1);
