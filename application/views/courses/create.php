@@ -23,13 +23,16 @@
                         </div>
                     </div>
                     <?php $this->load->view('courses/partials/step_info'); ?>
-                    <div id="show_basicInfo_section" style="display: none;">
+                    <div id="show_basicInfo_section" style="">
                         <?php $this->load->view('courses/partials/course_detail'); ?>
                     </div>    
                     <div id="show_upload_section" style="display: none;">
                         <?php $this->load->view('courses/partials/upload_section'); ?>
                     </div>
-                    <div id="show_manual_section" >
+                    <div id="show_manual_section" style="display: none;">
+                        <?php $this->load->view('courses/partials/manual_course'); ?>
+                    </div>
+                    <div id="show_employees_section" style="display: none;">
                         <?php $this->load->view('courses/partials/course_employees'); ?>
                     </div>
                     <?php $this->load->view('courses/partials/loader'); ?>

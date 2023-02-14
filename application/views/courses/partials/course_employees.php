@@ -1,67 +1,85 @@
 <!--  -->
 <div class="panel panel-default _csMt20 _csPR _csR5 jsQuestionListing">
     <div class="panel-heading">
-        <h3 class="_csF16">Employees <span>(0)</span></h3>
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                <h3 class="_csF16">Assigned Employees <span id="jsAssignedEmployeesCount">(0)</span></h3>
+            </div>
+            <div class="col-md-6 col-sm-12 text-right">
+                 <a href="<?php echo base_url('employee/surveys/create/'.$survey_id.'/questions'); ?>" class="btn _csB1 _csF2 _csR5 _csMt10 _csF16">
+                    <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Question
+                </a>
+            </div>
+        </div>
     </div>
     <div class="panel-body">
         <!--  -->
         <div class="row">
             <!-- Filter -->
             <div class="col-md-3 col-sm-12">
-                <form>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <label>Included</label>
-                        </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label>Included</label>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <label>Employees</label>
-                            <input type="text" class="form-control">
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label>Employees</label>
+                        <select name="employees[]" id="jsEmployees" multiple>
+                        </select>    
                     </div>
-                    <div class="row _csMt10">
-                        <div class="col-sm-12">
-                            <label>Departments</label>
-                            <input type="text" class="form-control">
-                        </div>
+                </div>
+                <div class="row _csMt10">
+                    <div class="col-sm-12">
+                        <label>Departments / Teams</label>
+                        <select name="departments[]" id="jsDepartments" multiple>
+                        </select>    
                     </div>
-                    <div class="row _csMt10">
-                        <div class="col-sm-12">
-                            <label>Roles</label>
-                            <input type="text" class="form-control">
-                        </div>
+                </div>
+                <!-- <div class="row _csMt10">
+                    <div class="col-sm-12">
+                        <label>Role</label>
+                        <input type="text" class="form-control"> 
                     </div>
-                    <div class="row _csMt10">
-                        <div class="col-sm-12">
-                            <label>Job Titles</label>
-                            <input type="text" class="form-control">
-                        </div>
+                </div> -->
+                <div class="row _csMt10">
+                    <div class="col-sm-12">
+                        <label>Job Titles</label>
+                        <select name="jobTitles[]" id="jsJobTitles" multiple>
+                        </select>    
                     </div>
-                    <div class="row _csMt10">
-                        <div class="col-sm-12">
-                            <label>Employment Types</label>
-                            <input type="text" class="form-control">
-                        </div>
+                </div>
+                <div class="row _csMt10">
+                    <div class="col-sm-12">
+                        <label>Employment Types</label>
+                        <select name="employeeType[]" id="jsEemployeeType" multiple>
+                        </select>
                     </div>
-                    <div class="row _csMt10">
-                        <div class="col-sm-12">
-                            <label>Excluded</label>
-                        </div>
+                </div>
+                <div class="row _csMt10">
+                    <div class="col-sm-12">
+                        <label>Excluded</label>
                     </div>
-                    <div class="row _csMt10">
-                        <div class="col-sm-12">
-                            <label>Employees</label>
-                            <input type="text" class="form-control">
-                        </div>
+                </div>
+                <div class="row _csMt10">
+                    <div class="col-sm-12">
+                        <label>Employees</label>
+                        <select name="excludedEmployees[]" id="jsExcludedEmployees" multiple>
+                        </select>
                     </div>
-                    <div class="row _csMt10">
-                        <div class="col-sm-12">
-                            <button class="btn _csF2 _csB4 form-control _csR5">Apply Filter</button>
-                            <button class="btn _csF2 _csB1 form-control _csR5 _csMt10">Clear Filter</button>
-                        </div>
+                </div>
+                <!-- <div class="row _csMt10">
+                    <div class="col-sm-12">
+                        <label>Hire Date</label>
+                        <input type="text" class="form-control">
                     </div>
-                </form>
+                </div> -->
+                <div class="row _csMt10">
+                    <div class="col-sm-12">
+                        <button class="btn _csF2 _csB4 form-control _csR5 jsGetFilterEmployees">Apply Filter</button>
+                        <button class="btn _csF2 _csB1 form-control _csR5 _csMt10 jsClearFilter">Clear Filter</button>
+                    </div>
+                </div>
             </div>
             <!-- Employee Listing -->
             <div class="col-md-9 col-sm-12">
@@ -74,10 +92,9 @@
                                 <th scope="col">Department/Team</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="jsCompanyEmployeesList">
                             <tr>
-                                <th scope="col">Mubashir Ahmed</th>
-                                <td>Development</td>
+                                <td colspan="2" class="text-center">Assigned Employees not found</td>
                             </tr>
                         </tbody>
                     </table>
@@ -89,7 +106,19 @@
         <div class="row">
             <div class="col-sm-12 text-right">
                 <button class="btn _csF2 _csB1 _csR5">Cancel</button>
-                <button class="btn _csF2 _csB4 _csR5">Save</button>
+                <button class="btn _csF2 _csB4 _csR5 jsSaveAssignedEmployees">Save</button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <div class="row">
+            <div class="col-md-6 col-sm-12">
+                
+            </div>
+            <div class="col-md-6 col-sm-12 text-right">
+                <a href="<?php echo base_url('employee/surveys/create/'.$survey_id.'/questions'); ?>" class="btn _csB1 _csF2 _csR5 _csMt10 _csF16" >
+                    <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Question
+                </a>
             </div>
         </div>
     </div>

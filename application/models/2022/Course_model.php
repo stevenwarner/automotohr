@@ -77,7 +77,14 @@ class Course_model extends CI_Model {
         return $this->db->insert_id();
     }
 
-    public function getAllActiveEmployees ($companySid) {
+    public function getAllActiveEmployees (
+        $companySid, 
+        $departmentId, 
+        $includedIds, 
+        $excludedIds, 
+        $employeeType, 
+        $jobTitles 
+    ) {
         $this->db->select('
             sid, 
             first_name, 
@@ -96,6 +103,27 @@ class Course_model extends CI_Model {
         $this->db->where('parent_sid', $companySid);
         $this->db->where('active', 1);
         $this->db->where('terminated_status', 0);
+        //
+        if (!empty($departmentId) && $departmentId !== "all") {
+            $this->db->where_in('department_sid', $departmentId);
+        }
+        //
+        if (!empty($includedIds) && $includedIds !== "all") {
+            $this->db->where_in('sid', $includedIds);
+        }
+        //
+        if (!empty($excludedIds) && $excludedIds !== "all" && $excludedIds !== "no") {
+            $this->db->where_not_in('sid', $excludedIds);
+        }
+        //
+        if (!empty($employeeType) && $employeeType !== "all") {
+            $this->db->where('employee_type', $employeeType);
+        }
+        //
+        if (!empty($jobTitles) && $jobTitles !== "all") {
+            $this->db->where_in('job_title', str_replace(',', '","', $jobTitles));
+        }
+        //
         $records_obj = $this->db->get('users');
         //
         if (!empty($records_obj)) {
@@ -145,7 +173,12 @@ class Course_model extends CI_Model {
                     $jobTitle = strtolower($row['job_title']);
                     $value =  ucwords($jobTitle);
                     $key = str_replace(" ", "_", $jobTitle);
-                    $result_array[$key] = $value;
+                    array_push($result_array, array(
+                        "key" => $key,
+                        "value" => $value
+                    ));
+
+                    // $result_array[$key] = $value;
                 }
             }
             //
@@ -153,5 +186,29 @@ class Course_model extends CI_Model {
         } else {
             return array();
         }        
+    }
+
+    public function getAllAssignedEmployees ($companySid, $courseSid) {
+        $this->db->select('
+            employee_sid
+        ');
+        $this->db->where('company_sid', $companySid);
+        $this->db->where('course_sid', $courseSid);
+        $this->db->where('status', 1);
+        $records_obj = $this->db->get('lms_assigned_employees');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->result_array();
+            $records_obj->free_result();
+            return $data;
+        } else {
+            return array();
+        } 
+    }
+
+    function deleteAssignedEmployees($companySid, $courseSid) {
+        $this->db->where('company_sid', $companySid);
+        $this->db->where('course_sid', $courseSid);
+        $this->db->delete('lms_assigned_employees');
     }
 }

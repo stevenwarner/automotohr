@@ -274,13 +274,76 @@ class Courses extends Public_Controller
                 break;  
 
             case "get_employees_list":
-                $this->res['employees']   = $this->cm->getAllActiveEmployees($company_detail['sid']);
-                $this->res['departments'] = $this->cm->getAllDepartments($company_detail['sid']);
-                $this->res['jobTitles']   = $this->cm->getAllJobTitles($company_detail['sid']);
+                $this->res['employees']   = $this->cm->getAllActiveEmployees($post['companyId']);
+                $this->res['departments'] = $this->cm->getAllDepartments($post['companyId']);
+                $this->res['jobTitles']   = $this->cm->getAllJobTitles($post['companyId']);
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed.';
+                //
+                $this->resp();
+                break; 
+
+            case 'get_employees':  
+                $this->res['Employees'] = $this->cm->getAllActiveEmployees(
+                    $post['companyId'],
+                    $post['department_sids'],
+                    $post['included_sids'],
+                    $post['excluded_sids'],
+                    $post['employee_types'],
+                    $post['job_titles']
+                );
+                $this->res['Status']    = true;
+                $this->res['Response']  = 'Proceed.';
+                //
+                $this->resp();
+                break;
+
+            case 'get_departments': 
+                $this->res['Departments'] = $this->cm->getAllDepartments($post['companyId']);
+                $this->res['Status']    = true;
+                $this->res['Response']  = 'Proceed.';
+                //
                 $this->resp();
                 break;    
+
+            case 'get_job_titles': 
+                $this->res['JobTitles'] = $this->cm->getAllJobTitles($post['companyId']);
+                $this->res['Status']    = true;
+                $this->res['Response']  = 'Proceed.';
+                //
+                $this->resp();
+                break;     
+
+            case 'get_assigned_employees': 
+                $this->res['AssignedEmployees'] = $this->cm->getAllAssignedEmployees($post['companyId'], $post['courseIds']);
+                $this->res['Status']    = true;
+                $this->res['Response']  = 'Proceed.';
+                //
+                $this->resp();
+                break;     
+
+            case 'save_assigned_employees':
+                //
+                $this->cm->deleteAssignedEmployees($post['companyId'], $post['courseId']);
+                //
+                foreach ($post['employees'] as $employeeID) {
+                    //
+                    $data_to_insert = array();
+                    $data_to_insert['company_sid'] = $post['companyId'];
+                    $data_to_insert['creator_sid'] = $post['employeeId'];
+                    $data_to_insert['employee_sid'] = $employeeID;
+                    $data_to_insert['course_sid'] = $post['courseId'];
+                    //
+                    $this->cm->addData('lms_assigned_employees', $data_to_insert);
+                }
+                //
+                $this->res['Status']    = true;
+                $this->res['Response'] = 'You have successfully added an employee to this course.';
+                $this->res['Code'] = "SUCCESS";
+                $this->res['Response']  = 'Proceed.';
+                //
+                $this->resp();
+                break;       
         } 
         //
     }           
