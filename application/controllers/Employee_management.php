@@ -1695,7 +1695,7 @@ class Employee_management extends Public_Controller
                         //
                         $data_to_insert['rehire_date'] = $rehireDate;
                         $data_to_insert['general_status'] = 'rehired';
-                        $data_to_insert['active'] = 0;
+                        $data_to_insert['active'] = 1;
                     }
                     // Added on: 25-06-2019
                     if (IS_TIMEZONE_ACTIVE) {
