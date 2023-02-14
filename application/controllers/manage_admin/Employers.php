@@ -425,7 +425,7 @@ class employers extends Admin_Controller
                 //
                 $data['rehire_date'] = $rehireDate;
                 $data['general_status'] = 'rehired';
-                $data['active'] = 0;
+                $data['active'] = 1;
             }
             //
             $profile_picture = $this->upload_file_to_aws('profile_picture', $sid, 'profile_picture'); // Picture Upload and Update
