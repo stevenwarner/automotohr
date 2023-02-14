@@ -3,6 +3,7 @@ $(function () {
     var uploadFile = null;
     var courseURL = baseURI+'lms_courses/handler';
     var courseID = 0;
+    var chapterID = 1;
     var employees = {};
     var departments = {};
     var respondentSids = {};
@@ -58,7 +59,7 @@ $(function () {
         });
     }
 
-    // generateCourePreview("manual");
+    generateCourePreview("manual");
     //
     function generateCourePreview (type) {
         //
@@ -84,11 +85,26 @@ $(function () {
         //
         if (type == "manual") {
             $("#show_manual_section").show();
+            $("#jsAddNewChapterSection").hide();
+            $('#jsAddQuestionType').select2({
+                closeOnSelect: false
+            });
+            //
+            $('#jsUploadChapterVideoUpload').mFileUploader({
+                allowedTypes: ['mp4', 'webm'],
+                fileLimit: '2mb',
+                onSuccess: function(o) {
+                    uploadFile = o;
+                },
+                onClear: function(e) {
+                    uploadFile = null;
+                },
+            });
         }
     }
 
     //
-    function uploadZip(zip, courseInfo, type = "insert") {
+    function uploadZip(zip, type = "insert") {
         var fd = new FormData();
         fd.append('upload_zip', zip);
         fd.append('action', 'upload_zip');
@@ -130,6 +146,63 @@ $(function () {
                             $("#show_upload_section").hide();
                             $("#show_employees_section").show();
                             setupEmployeesPreview();
+                        }
+                    );
+                    //
+                    $('.jsLMSLoader').hide();
+                    //
+                    return;
+                }
+            },
+            error: function() {
+                alertify.alert("NOTICE!", "Unable to upload zip");
+                $('.jsLMSLoader').hide();
+            }
+        });
+    }
+
+    //
+    function uploadCourseVideo(video, type = "insert") {
+        var fd = new FormData();
+        fd.append('video', video);
+        fd.append('action', 'upload_video');
+        fd.append('employeeId', eToken);
+        fd.append('companyId', cToken);
+        fd.append('courseId', courseID);
+        //
+        $.ajax({
+            type: 'POST',
+            url: courseURL,
+            data: fd,
+            mimeType: "multipart/form-data",
+            contentType: false,
+            cache: false,
+            processData: false,
+            dataType: 'json',
+            beforeSend: function() {
+                $('.jsLMSLoader').show();
+            },
+            success: function(resp) {
+                //
+                if (resp.Status === false) {
+                    alertify.alert(
+                        "WARNING!",
+                        resp.Response
+                    );
+                    //
+                    $('.jsLMSLoader').hide();
+                    //
+                    return;
+                }
+                //
+                if (resp.Status === true) {
+                    alertify.alert(
+                        "WARNING!",
+                        resp.Response,
+                        function () {
+                            $("#jsAddCourseVideo").addClass("dn");
+                            $("#jsPreviewCchapterVideo").removeClass("dn");
+                            $("#jsVideoPreview").attr('src', resp.Video_Path);
                         }
                     );
                     //
@@ -598,6 +671,27 @@ $(function () {
                 return false;
             });
         }
+    });
+
+    $(document).on('click', '#jsAddNewChapterBTN', function(event) {
+        $("#jsChepterListSection").hide();
+        $("#jsAddNewChapterSection").show();
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '#jsUploadCourseVideo', function(event) {
+        //
+        event.preventDefault();
+        //
+        if (uploadFile == null || Object.keys(uploadFile).length === 0 || uploadFile.error) {
+            alertify.alert("WARNING!", "Please upload a course video.");
+            return;
+        }
+        //
+        uploadCourseVideo(uploadFile);
+        
     });
 }); 
 

@@ -135,7 +135,8 @@ class Courses extends Public_Controller
             $data['employee'] = $employee_detail;
             //
             $data['PageCSS'] = [
-                'mFileUploader/index'
+                'mFileUploader/index',
+                'css\theme-2021'
             ];
             //
             $data['PageScripts'] = [
@@ -247,6 +248,7 @@ class Courses extends Public_Controller
                             $data_to_insert = array();
                             $data_to_insert['company_sid'] = $post['companyId'];
                             $data_to_insert['creator_sid'] = $post['employeeId'];
+                            $data_to_insert['course_sid'] = $_POST['courseId'];
                             $data_to_insert['upload_scorm_file'] = $unzipFile;
                             $data_to_insert['version'] = $courseContent['version'];
                             //
@@ -272,6 +274,39 @@ class Courses extends Public_Controller
                 //
                 
                 break;  
+
+            case 'upload_video';
+                $random = generateRandomString(5);
+                $company_id = $post['companyId'];
+                $companyName = getCompanyNameBySid($company_id);
+                $target_file_name = basename($_FILES["video"]["name"]);
+                $file_name = strtolower($random . '_' . $target_file_name);
+                //
+                $target_dir = 'assets/temp_files/courses_videos/' . strtolower(preg_replace('/\s+/', '_', $companyName)) . '/' . $_POST['courseId'] .'/';
+                $target_file = $target_dir . $file_name;
+                $file_info = pathinfo($_FILES["video"]["name"]);
+                // 
+                if (!file_exists($target_dir)) {
+                    mkdir($target_dir, 0777, true);
+                }
+                //
+                if (move_uploaded_file($_FILES["video"]["tmp_name"], $target_file)) {
+                    //
+                    $data_to_insert = array();
+                    $data_to_insert['company_sid'] = $post['companyId'];
+                    $data_to_insert['creator_sid'] = $post['employeeId'];
+                    $data_to_insert['course_sid'] = $_POST['courseId'];
+                    $data_to_insert['chapter_video'] = $target_file;
+                    //
+                    $insert_id = $this->cm->addData('lms_manual_course', $data_to_insert);
+                    //
+                    $this->res['Response'] = '<strong>The video ' . basename($_FILES["video"]["name"]) . ' has been uploaded.';
+                    $this->res['Video_Path'] = base_url($target_file);
+                    $this->res['Code'] = "SUCCESS";
+                    $this->res['Status'] = true;
+                    $this->resp();
+                }
+                break;    
 
             case "get_employees_list":
                 $this->res['employees']   = $this->cm->getAllActiveEmployees($post['companyId']);
