@@ -282,7 +282,7 @@ if ($_ssv) {
                                             <label class="csF16">Social Security Number</label>
                                             <p class="dummy-invoice-fields">
                                                 <?php if (isset($applicant_info["ssn"]) && $applicant_info["ssn"] != '') { ?>
-                                                    <?php echo $applicant_info["ssn"]; ?>
+                                                    <?php echo formatssn($applicant_info["ssn"]); ?>
                                                 <?php } else { ?>
                                                     Not Specified
                                                 <?php } ?>

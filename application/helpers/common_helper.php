@@ -16254,3 +16254,13 @@ if (!function_exists('handleEmployeeDepartmentAndTeam')) {
         return true;
     }
 }
+
+
+//
+if (!function_exists('formatssn')) {
+    function formatssn($ssn) {
+        $text = str_repeat('X', strlen(substr($ssn,0,-4)));
+         return $text.mb_substr($ssn, -4) ;
+       
+    }
+}

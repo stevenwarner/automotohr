@@ -150,11 +150,14 @@
                                                 <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                                     <li>
                                                         <label>Social Security Number <?=$ssn_required == 1 ? '<span class="staric">*</span>' : '';?> </label>
+                                                        
+                                                        <input class="invoice-fields" type="hidden" name="TextBoxSSNhidden" value="<?php echo $employer['ssn'];?>">
+
                                                         <input class="invoice-fields" type="text" name="TextBoxSSN"  <?=$ssn_required == 1 ? 'required="true"' : ''?> value="<?php
                                                         if (isset($formpost['TextBoxSSN'])) {
-                                                            echo $formpost['TextBoxSSN'];
+                                                            echo formatssn($formpost['TextBoxSSN']);
                                                         } else if($employer['ssn'] != ''){
-                                                            echo $employer['ssn'];
+                                                            echo formatssn($employer['ssn']);
                                                         }
                                                         ?>">
                                                                <?php echo form_error('TextBoxSSN'); ?>

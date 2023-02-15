@@ -1146,7 +1146,21 @@ class Form_full_employment_application extends CI_Controller {
                                 $key != 'txt_referencenumber_two' &&
                                 $key != 'txt_referencenumber_three'
                         ) { // exclude these values from array
+                            
+                            //
+                            if($key=='TextBoxSSN'){
+                                if (strpos($value, 'X') !== false) { 
+                                    $full_employment_application[$key] = $formpost['TextBoxSSNhidden'];
+                                }else{
+                                  $full_employment_application[$key] = $value;
+
+                              }
+                            }elseif($key!='TextBoxSSNhidden'){
                             $full_employment_application[$key] = $value;
+                            }
+
+
+
                             if($key == 'TextBoxDriversLicenseNumber'){
                                 $driving_no = $value;
                             }elseif($key == 'TextBoxDriversLicenseExpiration'){
@@ -1229,9 +1243,11 @@ class Form_full_employment_application extends CI_Controller {
                     }
                     //
                     if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
-                        $data['ssn'] = $formpost['TextBoxSSN'];
+                       if (strpos($formpost['TextBoxSSN'], 'X') !== false) { 
+                          }else{
+                            $data['ssn'] = $formpost['TextBoxSSN'];
+                        }
                     }
-                    //
 
                     //
                     if(!$_ssv && !empty($formpost['TextBoxDOB'])) $data['dob'] = DateTime::createFromFormat('m-d-Y', $formpost['TextBoxDOB'])->format('Y-d-m');

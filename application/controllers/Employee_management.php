@@ -2033,6 +2033,7 @@ class Employee_management extends Public_Controller
             $security_sid = $employer_detail['sid'];
             $security_details = db_get_access_level_details($security_sid);
             $data['security_details'] = $security_details;
+
             check_access_permissions($security_details, 'dashboard', 'my_profile'); // Param2: Redirect URL, Param3: Function Name
             $company_id = $company_detail['sid'];
             $employer_id = $employer_detail['sid'];
@@ -2268,6 +2269,7 @@ class Employee_management extends Public_Controller
                     $DOB = '';
                 }
 
+             
                 $data = array(
                     'first_name' => $this->input->post('first_name'),
                     'last_name' => $this->input->post('last_name'),
@@ -2290,7 +2292,12 @@ class Employee_management extends Public_Controller
                     'marital_status' => $this->input->post('marital_status'),
                     'gender' => $gender
                 );
-                //
+
+                  //
+                    if (strpos($this->input->post('ssn'), 'X') !== false) {
+                        unset($data['ssn']);
+                    }
+                  //
                 if ($gender != "other") {
                     $updateGender = array();
                     $updateGender['gender'] = ucfirst($gender);

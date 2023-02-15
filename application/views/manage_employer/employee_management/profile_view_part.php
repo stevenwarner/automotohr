@@ -103,7 +103,7 @@
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Social Security Number</label>
-            <p class="dummy-invoice-fields"><?=GetVal($employer["ssn"]); ?></p>
+            <p class="dummy-invoice-fields"><?=formatssn($employer["ssn"]); ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Employee Number</label>
