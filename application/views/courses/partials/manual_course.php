@@ -3,20 +3,20 @@
     <div class="panel-heading">
         <div class="row">
             <div class="col-md-6 col-sm-12">
-                <h3 class="_csF16">Chapters <span id="jsSurveyQuestionCount">(0)</span></h3>
+                <h3 class="_csF16">Chapters ( <span id="jsSurveyQuestionCount">0</span> )</h3>
             </div>
             <div class="col-md-6 col-sm-12 text-right">
                 <button class="btn _csB4 _csF2 _csR5 _csMt10 _csF16" id="jsAddNewChapterBTN">
                     <i class="fa fa-plus-circle _csF16" aria-hidden="true"></i>&nbsp;Add Chapter
                 </button>
-                 <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/respondents"); ?>" class="btn _csB4 _csF2 _csR5 _csMt10 _csF16 jsAddNewRespondenBTN">
+                 <a href="javascript:;" class="btn _csB4 _csF2 _csR5 _csMt10 _csF16 jsAssignEmployeesToCourseBTN">
                     <i class="fa fa-long-arrow-right _csF16" aria-hidden="true"></i>&nbsp;Save & Next
                 </a>
             </div>
         </div>
     </div>
     <div id="jsCourseChaptersList" class="panel-body _csP0">
-       <p class="text-center"><strong>No chapter created yet.</strong></p>
+       
     </div>
     <div class="panel-footer">
         <div class="row">
@@ -24,10 +24,7 @@
                 
             </div>
             <div class="col-md-6 col-sm-12 text-right">
-                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/details"); ?>" class="btn _csB1 _csF2 _csR5 _csMt10 _csF16">
-                    <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Go back to Detail
-                </a>
-                <a href="<?php echo base_url("employee/surveys/create/".$survey_id."/respondents"); ?>" class="btn _csB4 _csF2 _csR5 _csMt10 _csF16 jsAddNewRespondenBTN" >
+                <a href="javascript:;" class="btn _csB4 _csF2 _csR5 _csMt10 _csF16 jsAssignEmployeesToCourseBTN" >
                     <i class="fa fa-long-arrow-right _csF16" aria-hidden="true"></i>&nbsp;Save & Next
                 </a>
             </div>
@@ -36,19 +33,58 @@
 </div>
 
 <!--  -->
-<div class="panel panel-default _csMt20 _csPR _csR5 dn" id="jsAddNewChapterSection" >
+<div class="panel panel-default _csMt20 _csPR _csR5" id="jsAddNewChapterSection" >
     <div class="panel-heading">
         <div class="row">
             <div class="col-md-12 col-sm-12 text-right">
-                <button class="btn _csB1 _csF2 _csR5 _csMt10 _csF16" id="jsbackToQuestionsListBTN">
+                <button class="btn _csB1 _csF2 _csR5 _csMt10 _csF16" id="jsbackToChapterListBTN">
                     <i class="fa fa-long-arrow-left _csF16" aria-hidden="true"></i>&nbsp;Back To Chapter List
                 </button>
             </div>
         </div>
     </div>
     <div class="panel-body">
+        <!-- Preview -->
+        <div id="jsChapterPreviewSection">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 text-right">
+                    <button class="btn _csB4 _csF2 _csR5 _csF16" id="jsAddQuestionBTN">
+                        <i class="fa fa-plus-circle _csF16" aria-hidden="true"></i>&nbsp;Add Question
+                    </button>
+                </div>
+                <br>
+                <div class="col-md-12 col-xs-12" id="jsVideoPreviewSection">
+                    <video autoplay controls style="width:100%; height:auto;" preload="metadata">
+                        <source id ="jsVideoPreview" src="" type="video/webm">
+                        </source>
+                        <track label="English" kind="captions" srclang="en" default />
+                    </video>
+                </div> 
+                <div class="col-md-12 col-xs-12" id="jsCourseQuestionSection">
+                </div>
+            </div>       
+        </div>
+
         <!-- Video -->
         <div id="jsAddCourseVideo">
+            <div class="row">
+                <div class="col-md-4 col-sm-12">
+                    <label>Title <span class="text-danger">*</span></label>
+                    <p>What the chapter will be called. e.g. "Paper Flow"</p>
+                </div>
+                <div class="col-md-8 col-sm-12">
+                    <input type="text" name="chapter_title" class="form-control" id="jsChapterTitle" required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-12 _csMt10">
+                    <label>Description </label>
+                    <p>What this course is about.</p>
+                </div>
+                <div class="col-md-8 col-sm-12 _csMt10">
+                    <textarea class="form-control" name="chapter_description" row="30" id="jsChapterDescription"></textarea>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-sm-4 col-xs-12">
                     <label class="csF16 csB7">Upload Learning Video<i class="fa fa-question-circle-o jsHintBtn csCP" data-target="video_help" aria-hidden="true"></i></label>
@@ -67,35 +103,17 @@
                 </div>
                 <div class="clearfix"></div>
             </div>
-        </div>  
-        <div id="jsPreviewCchapterVideo">
-            <div class="row">
-                <div class="col-md-12 col-sm-12">
-                    <video controls style="width: 100%">
-                        <source id="jsVideoPreview" width="100%" src="" type="video/mp4">
-                    </video>
-                </div>    
-            </div>
-        </div>    
+        </div>   
+
         <!-- Question -->
         <br>
-        <div id="jsAddCourseQueston" class="dn">
+        <div id="jsAddCourseQueston">
             <div class="row">
                 <div class="col-md-3 col-sm-12">
                     <label>Question <span class="text-danger">*</span></label>
                 </div>
                 <div class="col-md-9 col-sm-12">
-                    <input type="text" class="form-control" id="jsSurveyQuestionAddTitle" required />
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-md-3 col-sm-12 _csMt10">
-                    <label>Description </label>
-                    <p>Explain to the employees what they need to add into the answer.</p>
-                </div>
-                <div class="col-md-9 col-sm-12 _csMt10">
-                    <textarea class="form-control _csHeight100" id="jsSurveyQuestionAddDescription"></textarea>
+                    <input type="text" class="form-control" id="jsQuestionTitle" required />
                 </div>
             </div>
             <br>
@@ -105,111 +123,37 @@
                     <p>Select the type of the question.</p>
                 </div>
                 <div class="col-md-9 col-sm-12 _csMt10">
-                    <select name="" id="jsSurveyAddQuestionType">
+                    <select name="" id="jsQuestionType">
                         <option value="text">Text</option>
-                        <option value="rating">Rating</option>
+                        <option value="boolean">Yes / No</option>
                     </select>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-3 col-sm-12">
+                    <label>Answer <span class="text-danger">*</span></label>
+                    <p>Answer must be Yes / No or any integer value.</p>
+                </div>
+                <div class="col-md-9 col-sm-12">
+                    <input type="text" class="form-control" id="jsQuestionAnswer" required />
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-md-12 text-right col-sm-12 _csMt10">
                     <button class="btn _csB1 _csF2 _csR5" id="jsResetQuestionSectionBTN">Cancel</button>
-                    <button class="btn _csB4 _csF2 _csR5" id="jsServerQuestionSaveBTN">
+                    <button class="btn _csB4 _csF2 _csR5" id="jsChapterQuestionSaveBTN">
                         <i class="fa fa-floppy-o _csF14" aria-hidden="true"></i>
                         Save
                     </button>
-                    <button class="btn _csB4 _csF2 _csR5 dn" id="jsServerQuestionUpdateBTN">
+                    <button class="btn _csB4 _csF2 _csR5" id="jsChapterQuestionUpdateBTN">
                         <i class="fa fa-floppy-o _csF14" aria-hidden="true"></i>
-                        Update
+                        update
                     </button>
                 </div>
             </div>
             <hr>
-            <!-- Preview -->
-            <!-- Question Preview -->
-            <div class="panel panel-theme">
-                
-                <div class="panel-heading _csB4">
-                    <p class="csF16 csB7 csW mb0 _csMZ">Question Preview</p>
-                </div>
-                <div class="panel-body pa0 pb0 pl0 pr0">
-                    <div class="csGB">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <!--  -->
-                                <div class="p10">
-                                    <h5 class="csF14 csB7">
-                                        Q : <span id="jsSurveyQuestionAddPreviewTitle"></span>
-                                    </h5>
-                                    <!-- Description -->
-                                    <div class="row">
-                                        <div class="col-md-8 col-xs-12">
-                                            <p class="csF14" id="jsSurveyQuestionAddPreviewDescription"></p>
-                                        </div>
-                                        <div class="col-md-4 col-xs-12" id="jsSurveyQuestionAddPreviewVideo">
-                                            <div class="jsVideoPreviewBox">
-                                                <video >
-                                                </video>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Multiple Choice -->
-                                    <div class="row dn" id="jsSurveyQuestionAddPreviewMultipleChoiceBox">
-                                        <br />
-                                        <div class="col-xs-12">
-                                            <label class="control control--radio csF14">
-                                                <input type="radio" class="jsSurveyQuestionAddPreviewMultipleChoice"
-                                                    name="jsSurveyQuestionAddPreviewMultipleChoice" value="yes" /> Yes
-                                                <span class="control__indicator"></span>
-                                            </label> <br />
-                                            <label class="control control--radio csF14">
-                                                <input type="radio" class="jsSurveyQuestionAddPreviewMultipleChoice"
-                                                    name="jsSurveyQuestionAddPreviewMultipleChoice" value="no" /> No
-                                                <span class="control__indicator"></span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <!-- Rating -->
-                                    <div class="row dn" id="jsSurveyQuestionAddPreviewRatingBox">
-                                        <br />
-                                        <div class="row _csMt10 _csRatingBox">
-                                            <div class="col-md-2 text-center _csP10 _csRatingItem">
-                                                 <p>1</p>
-                                                 <p>Strongly Disagree</p>
-                                             </div>
-                                             <div class="col-md-2 text-center _csP10 _csRatingItem">
-                                                 <p>2</p>
-                                                 <p>Strongly Disagree</p>
-                                             </div>
-                                             <div class="col-md-2 text-center _csP10 _csRatingItem">
-                                                 <p>3</p>
-                                                 <p>Strongly Disagree</p>
-                                             </div>
-                                             <div class="col-md-2 text-center _csP10 _csRatingItem">
-                                                 <p>4</p>
-                                                 <p>Strongly Disagree</p>
-                                             </div>
-                                             <div class="col-md-2 text-center _csP10 _csRatingItem">
-                                                 <p>5</p>
-                                                 <p>Strongly Disagree</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Text -->
-                                    <div class="row dn" id="jsSurveyQuestionAddPreviewTextBox">
-                                        <br />
-                                        <div class="col-xs-12">
-                                            <p class="csF14 csB7">Feedback (Elaborate)</p>
-                                            <textarea rows="5" class="form-control"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>

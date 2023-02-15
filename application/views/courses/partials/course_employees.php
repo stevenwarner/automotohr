@@ -68,12 +68,6 @@
                         </select>
                     </div>
                 </div>
-                <!-- <div class="row _csMt10">
-                    <div class="col-sm-12">
-                        <label>Hire Date</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div> -->
                 <div class="row _csMt10">
                     <div class="col-sm-12">
                         <button class="btn _csF2 _csB4 form-control _csR5 jsGetFilterEmployees">Apply Filter</button>

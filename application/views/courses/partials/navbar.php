@@ -19,7 +19,7 @@ $navpills[] = [
 //
 $lis = '';
 //
-$baseURL = base_url('employee/surveys/');
+$baseURL = base_url('lms_courses/');
 //
 foreach ($navpills as $tab) {
     //

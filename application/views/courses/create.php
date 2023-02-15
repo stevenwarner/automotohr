@@ -23,7 +23,7 @@
                         </div>
                     </div>
                     <?php $this->load->view('courses/partials/step_info'); ?>
-                    <div id="show_basicInfo_section" style="display: none;">
+                    <div id="show_basicInfo_section" style="">
                         <?php $this->load->view('courses/partials/course_detail'); ?>
                     </div>    
                     <div id="show_upload_section" style="display: none;">

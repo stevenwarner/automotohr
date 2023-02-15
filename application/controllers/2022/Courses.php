@@ -78,12 +78,15 @@ class Courses extends Public_Controller
                 $this->session->set_flashdata('message', '<strong>Warning</strong> Not Allowed!');
                 redirect('dashboard', 'refresh');
             }
-
-
+            //
             $data['load_view'] = 1;
             $data['session'] = $this->session->userdata('logged_in');
             $data['security_details'] = db_get_access_level_details($employee_sid);
             $data['employee'] = $employee_detail;
+            //
+            $data['PageScripts'] = [
+                '2022/js/courses/overview'
+            ];
             //
             $this->load
                 ->view($this->pages['header'], $data)
@@ -97,17 +100,38 @@ class Courses extends Public_Controller
     /**
      *
      */
-    public function surveys()
+    public function courses()
     {
         //
-        $data = [];
-        $data['load_view'] = 1;
-        $data['session'] = $this->session->userdata('logged_in');
-        //
-        $this->load
-            ->view($this->pages['header'], $data)
-            ->view("{$this->mp}es/surveys")
-            ->view($this->pages['footer']);
+        if ($this->session->userdata('logged_in')) {
+            $data = [];
+            $data['session'] = $this->session->userdata('logged_in');
+            $employee_detail = $data['session']['employer_detail'];
+            $company_detail  = $data['session']['company_detail'];
+            $employee_sid  = $employee_detail['sid'];
+            $ems_status = $company_detail['ems_status'];
+
+            if (!$ems_status) {
+                $this->session->set_flashdata('message', '<strong>Warning</strong> Not Allowed!');
+                redirect('dashboard', 'refresh');
+            }
+            //
+            $data['load_view'] = 1;
+            $data['session'] = $this->session->userdata('logged_in');
+            $data['security_details'] = db_get_access_level_details($employee_sid);
+            $data['employee'] = $employee_detail;
+            //
+            $data['PageScripts'] = [
+                '2022/js/courses/coueses'
+            ];
+            //
+            $this->load
+                ->view($this->pages['header'], $data)
+                ->view("{$this->mp}courses/courses")
+                ->view($this->pages['footer']);
+        } else {
+            redirect(base_url('login'), 'refresh');
+        }
     }
 
     /**
@@ -184,6 +208,17 @@ class Courses extends Public_Controller
         //
         switch (strtolower($post['action'])) {
             // Fetch company
+            case 'get_all_courses':
+                //
+                $courses = $this->cm->getAllCourses($post['companyId']);
+                //
+                $this->res['Courses'] = $courses;
+                $this->res['Response'] = 'Proceed.';
+                $this->res['Code'] = "SUCCESS";
+                $this->res['Status'] = true;
+                $this->resp();
+                break;
+                break;
             case 'add_course':
                 //
                 $data_to_insert = array();
@@ -297,16 +332,141 @@ class Courses extends Public_Controller
                     $data_to_insert['creator_sid'] = $post['employeeId'];
                     $data_to_insert['course_sid'] = $_POST['courseId'];
                     $data_to_insert['chapter_video'] = $target_file;
+                    $data_to_insert['chapter_title'] = $_POST['title'];
+                    $data_to_insert['chapter_description'] = $_POST['description'];
                     //
                     $insert_id = $this->cm->addData('lms_manual_course', $data_to_insert);
                     //
                     $this->res['Response'] = '<strong>The video ' . basename($_FILES["video"]["name"]) . ' has been uploaded.';
-                    $this->res['Video_Path'] = base_url($target_file);
+
+                    $this->res['chapterId'] = $insert_id;
                     $this->res['Code'] = "SUCCESS";
                     $this->res['Status'] = true;
                     $this->resp();
                 }
+                //
+                break; 
+
+            case 'get_manual_course_detail':
+                //
+                $this->res['CourseInfo'] = $this->cm->getManualCourseInfo($post['courseId']);
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed.';
+                //
+                $this->resp();
+                break;       
+
+            case 'save_question':
+                //
+                $data_to_insert = array();
+                $data_to_insert['company_sid'] = $post['companyId'];
+                $data_to_insert['creator_sid'] = $post['employeeId'];
+                $data_to_insert['course_sid'] = $_POST['courseId'];
+                $data_to_insert['chapter_sid'] = $_POST['chapterId'];
+                $data_to_insert['question'] = $_POST['question'];
+                $data_to_insert['answer'] = $_POST['answer'];
+                $data_to_insert['type'] = $_POST['type'];
+                $data_to_insert['sort_order'] = $_POST['sort_order'];
+                //
+                $insert_id = $this->cm->addData('lms_manual_course_question', $data_to_insert);
+                $questionCount = $this->cm->countChapterQuestion($_POST['courseId'], $_POST['chapterId']);
+                //
+                $data_to_update = array();
+                $data_to_update['count_question'] = $questionCount;
+                //
+                if ($questionCount > 0) {
+                    $data_to_update['is_question'] = 1;
+                } else if ($questionCount == 0) {
+                    $data_to_update['is_question'] = 0;
+                }
+                //
+                $this->cm->updateChapter($data_to_update, $_POST['chapterId']);
+                //
+                $this->res['QuestionCount'] = $questionCount + 1;
+                $this->res['Response'] = 'Question save successfully';
+                $this->res['Code'] = "SUCCESS";
+                $this->res['Status'] = true;
+                $this->resp();
+            break; 
+
+            case 'update_question':
+                //
+                $data_to_update = array();
+                $data_to_update['question'] = $_POST['question'];
+                $data_to_update['answer'] = $_POST['answer'];
+                $data_to_update['type'] = $_POST['type'];
+                $data_to_update['updated_at'] = date('Y-m-d H:i:s');
+                //
+                $this->cm->updateQuestion($data_to_update, $_POST['questionId']);
+                //
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Question updated successfully';
+                //
+                $this->resp();
+                //
+                break;  
+
+            case 'get_chapter_detail':
+                $this->res['VideoURL']   = $this->cm->getChapterVideo($post['companyId'],$post['courseId'],$post['chapterId']);
+                $this->res['Questions'] = $this->cm->getChapterQuestions($post['companyId'],$post['courseId'],$post['chapterId']);
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed.';
+                //
+                $this->resp();
+                break;  
+
+            case 'update_sort_order':
+                //
+                if (empty($_POST['sortOrder'])) {
+                    $this->res['Response'] = '<strong>Sorry</strong>, Questions not sorted.';
+                    $this->resp();
+                }
+                //
+                foreach ($_POST['sortOrder'] as $key => $questionSid) {
+                    $data_to_update = array();
+                    $data_to_update['sort_order'] = $key;
+                    $data_to_update['updated_at'] = date('Y-m-d H:i:s');
+                    //
+                    $this->cm->updateQuestion($data_to_update, $questionSid);
+                }
+                //
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Sort order updated successfully';
+                //
+                $this->resp();
+                //
+                break; 
+
+            case 'delete_question':
+                $this->cm->deleteCourseQuestion($post['questionId']);
+                $questionCount = $this->cm->countChapterQuestion($_POST['courseId'], $_POST['chapterId']);
+                //
+                $data_to_update = array();
+                $data_to_update['count_question'] = $questionCount;
+                //
+                if ($questionCount > 0) {
+                    $data_to_update['is_question'] = 1;
+                } else if ($questionCount == 0) {
+                    $data_to_update['is_question'] = 0;
+                }
+                //
+                $this->cm->updateChapter($data_to_update, $_POST['chapterId']);
+                //
+                $this->res['QuestionCount'] = $questionCount + 1;
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Question delete successfully.';
+                //
+                $this->resp();
+                break;  
                 break;    
+
+            case 'get_question':
+                $this->res['QuestionInfo'] = $this->cm->getQuestionInfo($post['questionId']);
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed.';
+                //
+                $this->resp();
+                break;       
 
             case "get_employees_list":
                 $this->res['employees']   = $this->cm->getAllActiveEmployees($post['companyId']);
@@ -373,12 +533,28 @@ class Courses extends Public_Controller
                 }
                 //
                 $this->res['Status']    = true;
-                $this->res['Response'] = 'You have successfully added an employee to this course.';
+                $this->res['Response'] = 'Employees are added Successfully.<br>Do you want to complete this course?';
                 $this->res['Code'] = "SUCCESS";
-                $this->res['Response']  = 'Proceed.';
                 //
                 $this->resp();
-                break;       
+                break;   
+
+            case 'finish_course':
+                //
+                $data_to_update = array();
+                $data_to_update['is_draft'] = 0;
+                $data_to_update['is_completed'] = 1;
+                //
+                $this->cm->updateCourse($data_to_update, $_POST['courseId']);
+                //
+                $this->res['RedirectURL'] = base_url('lms_courses/overview');
+                $this->res['Redirect'] = true;
+                $this->res['Status']    = true;
+                $this->res['Response'] = 'Course completed successfully.';
+                $this->res['Code'] = "SUCCESS";
+                //
+                $this->resp();
+                break;        
         } 
         //
     }           

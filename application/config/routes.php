@@ -1652,5 +1652,6 @@ $route['cn/employee/details/(:num)']['get'] = "2022/Complynet/getEmployeeDetail/
  * LMS Courses Routes
  */
 $route['lms_courses/overview']['get'] = "2022/Courses/overview";
+$route['lms_courses/courses']['get'] = "2022/Courses/courses";
 $route['lms_courses/create']['get'] = "2022/Courses/create";
 $route['lms_courses/handler']['post'] = "2022/Courses/handler";
