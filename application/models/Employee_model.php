@@ -1939,7 +1939,18 @@
         return $this->db->insert_id();
     }
 
-
+    function checkExecutiveAdmin ($email) {
+        if (
+            $this->db
+            ->where('email', $email)
+            ->where('active', 1)
+            ->count_all_results('executive_users')
+        ) {
+            return 'yes';
+        } else {
+            return 'no';
+        }
+    }
 
     function get_employees_details_new($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = [] , $status)
     {

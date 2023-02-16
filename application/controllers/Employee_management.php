@@ -272,6 +272,16 @@ class Employee_management extends Public_Controller
 
             $data['employees'] = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList,$employee_type);
 
+            foreach ($data['employees'] as $ekey => $employee) {
+                if ($employee["is_executive_admin"] == 1) {
+                    $is_executive = $this->employee_model->checkExecutiveAdmin($employee["email"]);
+                    //
+                    if ($is_executive == 'no') {
+                        unset($data['employees'][$ekey]);
+                    }
+                }
+            }
+
             $portal_email_templates                                             = $this->application_tracking_system_model->get_portal_email_templates($company_id);
 
             foreach ($portal_email_templates as $key => $template) {

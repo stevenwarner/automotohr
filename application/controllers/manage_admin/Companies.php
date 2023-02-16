@@ -621,6 +621,8 @@ class Companies extends Admin_Controller
         if ($administrator_sid == NULL || $administrator_sid == 0) {
             $result = false;
         } else {
+            $this->company_model->executive_admin_user_delete($administrator_sid);
+            //
             $result = $this->company_model->executive_admin_delete($administrator_sid);
         }
 

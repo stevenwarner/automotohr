@@ -1527,6 +1527,18 @@ class Company_model extends CI_Model
         return $result;
     }
 
+    function executive_admin_user_delete ($administrator_sid) {
+        //
+        $this->db->select('email');
+        $this->db->where('sid', $administrator_sid);
+        $admin_array = $this->db->get('executive_users')->row_array();
+        //
+        $this->db->where('email', $admin_array['email']);
+        $this->db->where('is_executive_admin', '1');
+        $this->db->delete('users');
+
+    }
+
     function executive_admin_delete($administrator_sid)
     {
         $this->db->delete('executive_user_companies', array('executive_admin_sid ' => $administrator_sid));
