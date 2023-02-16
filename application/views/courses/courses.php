@@ -1,7 +1,7 @@
 <!-- Main page -->
 <div class="csPage">
     <!--  -->
-    <?php $this->load->view('es/partials/navbar'); ?>
+    <?php $this->load->view('courses/partials/navbar'); ?>
     <!--  -->
     <div class="_csMt10">
         <div class="container-fluid">
@@ -17,7 +17,7 @@
                     <!--  -->
                     <div class="row">
                         <div class="col-sm-12 text-right">
-                            <a href="<?php echo base_url("employee/surveys/create"); ?>" class="btn _csB4 _csF2 _csR5  _csF16"><i class="fa fa-plus _csF16" aria-hidden="true"></i>&nbsp;Create Survey</a>
+                            <a href="<?php echo base_url("lms_courses/create"); ?>" class="btn _csB4 _csF2 _csR5  _csF16"><i class="fa fa-plus _csF16" aria-hidden="true"></i>&nbsp;Create Course</a>
                         </div>
                     </div>
                     <!-- Running surveys -->
@@ -26,53 +26,40 @@
                             <!-- Nav tabs -->
                             <ul class="_csPageTabs">
                                 <li>
-                                    <a href="#jsActive" class="active" data-toggle="tab">Active (2)</a>
+                                    <a href="javascript:void(0)" data-survey_type="running"  id="jsRunningTab" class="active jsCoursesTab" data-toggle="tab">
+                                        Running <span id="jsRunningTabCount">(0)<span>
+                                    </a>
                                 </li>
                                 <li>
-                                    <a href="#jsDraft" data-toggle="tab">Draft (5)</a>
+                                    <a href="javascript:void(0)" data-survey_type="finished" id="jsFinishedTab" class="jsCoursesTab" data-toggle="tab">
+                                        Finished <span id="jsFinishedTabCount">(0)<span>
+                                    </a>
                                 </li>
                                 <li>
-                                    <a href="#jsFinished" data-toggle="tab">Finished (5)</a>
+                                    <a href="javascript:void(0)" data-survey_type="assigned" id="jsAssignedTab" class="jsCoursesTab" data-toggle="tab">
+                                        Assigned <span id="jsAssignedTabCount">(0)<span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" data-survey_type="draft" id="jsDraftTab" class="jsCoursesTab" data-toggle="tab">
+                                        Draft <span id="jsDraftTabCount">(0)<span>
+                                    </a>
                                 </li>
                             </ul>
 
                         </div>
                         <div class="panel-body">
                             <!-- Tab panes -->
-                            <div class="tab-pane" id="jsActive">
+                            <div class="tab-pane" id="jsCompanyCoursesSection">
                                 <div class="table-responsive">
-
                                     <div class="row">
-                                        <div class="col-md-4 col-xs-12">
-                                            <div class="panel panel-default " data-id="1" data-title="Test Survey">
-                                                <div class="panel-heading  _csB4 _csF2">
-                                                    <b>jghj</b>
-                                                    <span class="pull-right">
-                                                        <a class="btn _csB4 _csF2 _csR5  _csF16 " title="Start the review" placement="top" href="<?= base_url("employee/surveys/surveys/12"); ?>">
-                                                            <i class="fa fa-eye csF16" aria-hidden="true"></i>
-                                                        </a>
-
-                                                    </span>
-                                                    <div class="clearfix"></div>
-                                                </div>
-                                                <div class="panel-body">
-                                                    <p class="_csF14"><b>Title</b></p>
-                                                    <p class="_csF14">Test test</p>
-                                                    <hr />
-                                                    <p class="_csF14"><b>Cycle Period</b></p>
-                                                    <p class="_csF14">12/12/2002 </p>
-                                                    <hr />
-                                                    <p class="_csF14"><b>Reviewer(s) Progress ?</b></p>
-                                                    <p class="_csF14">The percentage of reviewers who have submitted the review. Click to view details.</p>
-                                                    <p class="_csF3"><b>10% Completed</b></p>
-
-                                                </div>
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <?php //$this->load->view('es/partials/manage_survey_period'); ?>
+                        <?php $this->load->view('courses/partials/loader'); ?>
                     </div>
                 </div>
             </div>

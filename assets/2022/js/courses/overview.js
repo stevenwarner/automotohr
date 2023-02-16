@@ -10,7 +10,8 @@ $(function () {
             data: {
             	'action': "get_all_courses",
 	            'employeeId': eToken,
-	            'companyId': cToken
+	            'companyId': cToken,
+                'type': "running"
             },
             beforeSend: function() {
                 $('.jsLMSLoader').show();

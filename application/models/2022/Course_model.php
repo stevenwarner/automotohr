@@ -77,15 +77,46 @@ class Course_model extends CI_Model {
         return $this->db->insert_id();
     }
 
-    public function getAllCourses ($companySid) {
+    public function getAllCourses ($companySid, $type)
+    {
+        //
+        $todayDate = date('Y-m-d');
+        //
         $this->db->select('
             sid, 
             creator_sid,
             title,
             type,
             description,
+            start_date,
+            end_date,
             created_at
         ');
+        //
+        if ($type == 'assigned') {
+            $this->db->where("start_date > ", $todayDate);
+            $this->db->where('is_draft', 0);
+            $this->db->where('is_archived', 0);
+        }
+        //
+        if ($type == 'draft') {
+            $this->db->where('is_draft', 1);
+            $this->db->where('is_archived', 0);
+        }
+        //
+        if ($type == 'finished') {
+            $this->db->where("end_date < ", $todayDate);
+            $this->db->where('is_draft', 0);
+            $this->db->where('is_archived', 0);
+        }
+        //
+        if ($type == 'running') {
+            $this->db->where("start_date <= ", $todayDate);
+            $this->db->where("end_date >= ", $todayDate);
+            $this->db->where('is_draft', 0);
+            $this->db->where('is_archived', 0);
+        }
+        //
         $this->db->where('company_sid', $companySid);
         $records_obj = $this->db->get('lms_courses');
         //
@@ -107,6 +138,8 @@ class Course_model extends CI_Model {
                     "courseID" => $row['sid'],
                     "created_by" => getUserNameBySID($row['creator_sid']),
                     "created_on" => formatDateToDB($row['created_at'], DB_DATE_WITH_TIME, DATE),
+                    "display_start_date" => formatDateToDB($row['start_date'], DB_DATE, DATE),
+                    "display_end_date" => formatDateToDB($row['end_date'], DB_DATE, DATE),
                     "type" => $type,
                     "title" => $row['title'],
                     "description" => $description,
@@ -118,6 +151,44 @@ class Course_model extends CI_Model {
         } else {
             return array();
         } 
+    }
+
+    public function getCoursesCount ($companySid, $type) {
+        //
+        $todayDate = date('Y-m-d');
+        //
+        $this->db->select('
+            sid
+        ');
+        //
+        if ($type == 'assigned') {
+            $this->db->where("start_date > ", $todayDate);
+            $this->db->where('is_draft', 0);
+            $this->db->where('is_archived', 0);
+        }
+        //
+        if ($type == 'draft') {
+            $this->db->where('is_draft', 1);
+            $this->db->where('is_archived', 0);
+        }
+        //
+        if ($type == 'completed') {
+            $this->db->where("end_date < ", $todayDate);
+            $this->db->where('is_draft', 0);
+            $this->db->where('is_archived', 0);
+        }
+        //
+        if ($type == 'running') {
+            $this->db->where("start_date <= ", $todayDate);
+            $this->db->where("end_date >= ", $todayDate);
+            $this->db->where('is_draft', 0);
+            $this->db->where('is_archived', 0);
+        }
+        //
+        $this->db->where('company_sid', $companySid);
+        $records_count = $this->db->count_all_results('lms_courses');
+        //
+        return $records_count;
     }
 
     public function getAllActiveEmployees (

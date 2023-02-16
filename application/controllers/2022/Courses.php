@@ -122,7 +122,7 @@ class Courses extends Public_Controller
             $data['employee'] = $employee_detail;
             //
             $data['PageScripts'] = [
-                '2022/js/courses/coueses'
+                '2022/js/courses/courses'
             ];
             //
             $this->load
@@ -210,15 +210,30 @@ class Courses extends Public_Controller
             // Fetch company
             case 'get_all_courses':
                 //
-                $courses = $this->cm->getAllCourses($post['companyId']);
+                $type = "running";
+                //
+                if (isset($post['type']) && !empty($post['type'])) {
+                    $type = $post['type'];
+                }
+                //
+                $courses = $this->cm->getAllCourses($post['companyId'], $type);
+                $draftCount = $this->cm->getCoursesCount($post['companyId'], 'draft');
+                $completedCount = $this->cm->getCoursesCount($post['companyId'], 'completed');
+                $assignedCount = $this->cm->getCoursesCount($post['companyId'], 'assigned');
+                $runningCount = $this->cm->getCoursesCount($post['companyId'], 'running');
                 //
                 $this->res['Courses'] = $courses;
+                $this->res['draftCount'] = $draftCount;
+                $this->res['completedCount'] = $completedCount;
+                $this->res['assignedCount'] = $assignedCount;
+                $this->res['runningCount'] = $runningCount;
                 $this->res['Response'] = 'Proceed.';
                 $this->res['Code'] = "SUCCESS";
                 $this->res['Status'] = true;
                 $this->resp();
+                
                 break;
-                break;
+
             case 'add_course':
                 //
                 $data_to_insert = array();
