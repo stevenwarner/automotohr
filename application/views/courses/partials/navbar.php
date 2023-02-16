@@ -1,20 +1,30 @@
 <?php
 //
-$navpills[] = [
-    'title' => 'Overview',
-    'url' => 'overview',
-    'slug' => '',
-    'icon' => 'pie-chart',
-    'segment' => 'employee/courses/overview'
-];
+if ($page == "assign_courses") {
+    $navpills[] = [
+        'title' => 'Courses',
+        'url' => 'my_courses',
+        'slug' => '',
+        'icon' => 'book',
+        'segment' => 'employee/courses'
+    ];
+} else {
+    $navpills[] = [
+        'title' => 'Overview',
+        'url' => 'overview',
+        'slug' => '',
+        'icon' => 'pie-chart',
+        'segment' => 'employee/courses/overview'
+    ];
 
-$navpills[] = [
-    'title' => 'Courses',
-    'url' => 'courses',
-    'slug' => '',
-    'icon' => 'book',
-    'segment' => 'employee/courses'
-];
+    $navpills[] = [
+        'title' => 'Courses',
+        'url' => 'courses',
+        'slug' => '',
+        'icon' => 'book',
+        'segment' => 'employee/courses'
+    ];
+}    
 
 //
 $lis = '';

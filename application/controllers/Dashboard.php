@@ -581,7 +581,7 @@ class Dashboard extends Public_Controller
             ];
             //
             // Courses counts
-            $data["my_course_count"] = $this->cm->getMyAssignedPendingCourses($data['session']['employer_detail']['sid']);
+            $data["my_pending_course_count"] = $this->cm->getMyAssignedPendingCourses($data['session']['employer_detail']['sid']);
             $data["incompleteCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'draft');
             $data["completedCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'completed');
             $data["assignedCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'assigned');
@@ -1005,7 +1005,7 @@ class Dashboard extends Public_Controller
             )) + $this->dashboard_model->get_all_library_doc_count($company_id);
             //
             // Courses counts
-            $data["my_course_count"] = $this->cm->getMyAssignedPendingCourses($data['session']['employer_detail']['sid']);
+            $data["my_pending_course_count"] = $this->cm->getMyAssignedPendingCourses($data['session']['employer_detail']['sid']);
             $data["incompleteCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'draft');
             $data["completedCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'completed');
             $data["assignedCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'assigned');

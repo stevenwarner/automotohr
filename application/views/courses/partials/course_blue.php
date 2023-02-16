@@ -6,7 +6,7 @@
                     <h2 class="text-blue">Courses Library</h2>
                     <div><span>&nbsp;</span></div>
                     <div class="current-date">
-                        <span><?php echo $my_course_count; ?><sub>Pending</sub></span>
+                        <span><?php echo $my_pending_course_count; ?><sub>Pending</sub></span>
                     </div>
                     <div class="status-panel">
                         <h3>Company Courses</h3>

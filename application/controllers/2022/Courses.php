@@ -80,6 +80,7 @@ class Courses extends Public_Controller
             }
             //
             $data['load_view'] = 1;
+            $data['page'] = 'courses_overview';
             $data['session'] = $this->session->userdata('logged_in');
             $data['security_details'] = db_get_access_level_details($employee_sid);
             $data['employee'] = $employee_detail;
@@ -117,6 +118,7 @@ class Courses extends Public_Controller
             }
             //
             $data['load_view'] = 1;
+            $data['page'] = 'courses_list';
             $data['course_sid'] = $id;
             $data['session'] = $this->session->userdata('logged_in');
             $data['security_details'] = db_get_access_level_details($employee_sid);
@@ -155,6 +157,7 @@ class Courses extends Public_Controller
             }
             //
             $data['load_view'] = 1;
+            $data['page'] = 'create_courses';
             $data['session'] = $this->session->userdata('logged_in');
             $data['security_details'] = db_get_access_level_details($employee_sid);
             $data['employee'] = $employee_detail;
@@ -198,6 +201,7 @@ class Courses extends Public_Controller
             }
             //
             $data['load_view'] = 1;
+            $data['page'] = 'assign_courses';
             $data['session'] = $this->session->userdata('logged_in');
             $data['security_details'] = db_get_access_level_details($employee_sid);
             $data['employee'] = $employee_detail;
