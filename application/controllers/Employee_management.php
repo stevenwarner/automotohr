@@ -270,17 +270,26 @@ class Employee_management extends Public_Controller
         
           //  $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
 
-            $data['employees'] = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList,$employee_type);
+            $employees = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList,$employee_type);
 
-            foreach ($data['employees'] as $ekey => $employee) {
+            $employeesOnly = array();
+            $executivesOnly = array();
+            //
+            foreach ($employees as $ekey => $employee) {
                 if ($employee["is_executive_admin"] == 1) {
                     $is_executive = $this->employee_model->checkExecutiveAdmin($employee["email"]);
                     //
                     if ($is_executive == 'no') {
-                        unset($data['employees'][$ekey]);
+                        unset($employees[$ekey]);
+                    } else{
+                        array_push($executivesOnly, $employees[$ekey]);
                     }
+                } else {
+                    array_push($employeesOnly, $employees[$ekey]);
                 }
             }
+
+            $data['employees'] = array_merge($employeesOnly, $executivesOnly);
 
             $portal_email_templates                                             = $this->application_tracking_system_model->get_portal_email_templates($company_id);
 

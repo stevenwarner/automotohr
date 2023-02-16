@@ -16,6 +16,18 @@ class Department_management_model extends CI_Model {
         return $result;
     }
 
+    
+    function fetch_all_company_employees_only($company_sid){
+        $this->db->select('sid,first_name, last_name, email, job_title, access_level, access_level_plus, pay_plan_flag, is_executive_admin');
+        $this->db->where('parent_sid', $company_sid);
+        $this->db->where('active', 1);
+        $this->db->where('is_executive_admin', 0);
+        $this->db->where('terminated_status', 0);
+        $this->db->order_by(SORT_COLUMN,SORT_ORDER);
+        $result = $this->db->get('users')->result_array();
+        return $result;
+    }
+
     function get_all_departments($company_sid) {
         $this->db->select('*');
         $this->db->where('company_sid', $company_sid);
