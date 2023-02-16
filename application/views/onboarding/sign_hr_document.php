@@ -735,6 +735,9 @@
                     'Are you Sure?',
                     'Are you sure you want to Consent And Accept Electronic Signature Agreement?',
                     function () {
+                        $('#user_consent_form').submit();
+
+                        /*
                         $('.js-hybrid-preview').remove();
                         $('br').replaceWith('<div></div>');
                         var draw = kendo.drawing;
@@ -754,6 +757,7 @@
                                 $('#save_PDF').val(pdfdata);
                                 $('#user_consent_form').submit();
                             });
+                             */
                     },
                     function () {
                         alertify.error('Cancelled!');

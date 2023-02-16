@@ -832,11 +832,11 @@
                     'Are you Sure?',
                     'Are you sure you want to Consent And Accept Electronic Signature Agreement?',
                     function() {
-                        $('.js-hybrid-iframe').remove();
-                        var draw = kendo.drawing;
-                        $('br').replaceWith('<div></div>');
-
-                        draw.drawDOM($("#jstopdf"), {
+             //      $('.js-hybrid-iframe').remove();
+           //        var draw = kendo.drawing;
+          //         $('br').replaceWith('<div></div>');
+                        $('#user_consent_form').submit();
+                       /* draw.drawDOM($("#jstopdf"), {
                                 avoidLinks: false,
                                 paperSize: "A4",
                                 multiPage: true,
@@ -850,7 +850,7 @@
                                 $('.disabled_consent_btn').prop('disabled', true);
                                 $('#save_PDF').val(pdfdata);
                                 $('#user_consent_form').submit();
-                            });
+                            }); */
                     },
                     function() {
                         alertify.error('Cancelled!');
