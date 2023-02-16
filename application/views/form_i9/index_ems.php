@@ -174,7 +174,7 @@
                                                     class="fa fa-question-circle-o modalShow"
                                                     src="section_1_us_social_security_number"></i></label>
                                             <input autocomplete="nope" type="text"
-                                                value="<?php echo sizeof($pre_form) > 0 ? $pre_form['section1_social_security_number'] : '' ?>"
+                                                value="<?php echo sizeof($pre_form) > 0 ? formatssn($pre_form['section1_social_security_number']) : '' ?>"
                                                 name="section1_social_security_number"
                                                 class="form-control input-grey" />
                                         </div>

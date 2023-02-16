@@ -299,7 +299,7 @@ $company_name = ucwords($session['company_detail']['CompanyName']);
                                                     <div class="form-group autoheight">
                                                         <label>Social security number</label>
                                                         <input type="text" name="w9_social_security_number"
-                                                            value="<?php echo sizeof($pre_form) > 0 ? $pre_form['w9_social_security_number'] : '' ?>"
+                                                            value="<?php echo sizeof($pre_form) > 0 ? formatssn($pre_form['w9_social_security_number']) : '' ?>"
                                                             class="form-control input-grey" />
                                                     </div>
                                                 </div>

@@ -249,7 +249,14 @@ class Form_i9 extends Public_Controller
                     $insert_data['section1_state'] = $formpost['section1_state'];
                     $insert_data['section1_zip_code'] = $formpost['section1_zip_code'];
                     $insert_data['section1_date_of_birth'] = empty($formpost['section1_date_of_birth']) || $formpost['section1_date_of_birth'] == 'N/A' ? null : DateTime::createFromFormat('m-d-Y', $formpost['section1_date_of_birth'])->format('Y-m-d H:i:s');
-                    $insert_data['section1_social_security_number'] = $formpost['section1_social_security_number'];
+                   
+                   
+                    if (strpos($formpost['section1_social_security_number'], 'X') !== false) { 
+                    }else{
+                        $insert_data['section1_social_security_number'] = $formpost['section1_social_security_number'];
+                    }
+
+
                     $insert_data['section1_emp_email_address'] = $formpost['section1_emp_email_address'];
                     $insert_data['section1_emp_telephone_number'] = $formpost['section1_emp_telephone_number'];
                     $insert_data['section1_penalty_of_perjury'] = $formpost['section1_penalty_of_perjury'];

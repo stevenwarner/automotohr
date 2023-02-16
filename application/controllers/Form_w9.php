@@ -212,6 +212,7 @@ class Form_w9 extends Public_Controller
                 $w9_requester_name_address = $this->input->post('w9_requester_name_address');
                 $w9_account_no = $this->input->post('w9_account_no');
                 $w9_social_security_number = $this->input->post('w9_social_security_number');
+                
                 $w9_employer_identification_number = $this->input->post('w9_employer_identification_number');
                 $company_sid = $this->input->post('company_sid');
                 $ip_address = $this->input->post('ip_address');
@@ -247,7 +248,12 @@ class Form_w9 extends Public_Controller
                 $data_to_update['w9_city_state_zip'] = $w9_city_state_zip;
                 $data_to_update['w9_requester_name_address'] = $w9_requester_name_address;
                 $data_to_update['w9_account_no'] = $w9_account_no;
-                $data_to_update['w9_social_security_number'] = $w9_social_security_number;
+
+                if (strpos($w9_social_security_number, 'X') !== false) { 
+                }else{
+                    $data_to_update['w9_social_security_number'] = $w9_social_security_number;
+                }
+
                 $data_to_update['w9_employer_identification_number'] = $w9_employer_identification_number;
                 $data_to_update['company_sid'] = $company_sid;
                 $data_to_update['ip_address'] = $ip_address;

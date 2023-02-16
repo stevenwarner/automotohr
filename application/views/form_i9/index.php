@@ -119,7 +119,7 @@
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
                                                     <div class="form-group">
                                                         <label>U.S. Social Security Number <span class="staric">*</span> <i class="fa fa-question-circle-o modalShow" src="section_1_us_social_security_number"></i></label>
-                                                        <input type="text" value="<?php echo sizeof($pre_form)>0 ? $pre_form['section1_social_security_number']: ''?>"  name="section1_social_security_number" class="form-control" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>/>
+                                                        <input type="text" value="<?php echo sizeof($pre_form)>0 ? formatssn($pre_form['section1_social_security_number']): ''?>"  name="section1_social_security_number" class="form-control" <?php if(!$this->session->userdata('logged_in')['employer_detail']['access_level_plus']){echo 'readonly';}?>/>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">

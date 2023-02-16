@@ -113,7 +113,7 @@
                                     <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 cs-full-width">
                                         <div class="form-group">
                                             <label>Social security number</label>
-                                            <input type="text" value="<?php echo !empty($pre_form) ? $pre_form['ss_number']: ''?>" name="ss_number" class="form-control" />
+                                            <input type="text" value="<?php echo !empty($pre_form) ? formatssn($pre_form['ss_number']): ''?>" name="ss_number" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 cs-full-width">

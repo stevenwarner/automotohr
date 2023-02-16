@@ -190,7 +190,7 @@
                                                             <div class="col-lg-5 col-md-5 col-xs-12 col-sm-5">
                                                                 <div class="form-group autoheight">
                                                                     <label>Social security number</label>
-                                                                    <input type="text" name="w9_social_security_number" value="<?php echo sizeof($pre_form)>0 ? $pre_form['w9_social_security_number']: ''?>" class="form-control" />
+                                                                    <input type="text" name="w9_social_security_number" value="<?php echo sizeof($pre_form)>0 ? formatssn($pre_form['w9_social_security_number']): ''?>" class="form-control" />
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 text-center or-text">

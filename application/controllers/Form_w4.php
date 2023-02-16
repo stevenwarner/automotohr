@@ -308,7 +308,13 @@ class Form_w4 extends Public_Controller
                 $data_to_update['first_name'] = $first_name;
                 $data_to_update['middle_name'] = $middle_name;
                 $data_to_update['last_name'] = $last_name;
-                $data_to_update['ss_number'] = $ss_number;
+                
+                //
+                if (strpos($ss_number, 'X') !== false) { 
+                }else{
+                    $data_to_update['ss_number'] = $ss_number;
+                }
+
                 $data_to_update['home_address'] = $home_address;
                 $data_to_update['city'] = $city;
                 $data_to_update['state'] = $state;
