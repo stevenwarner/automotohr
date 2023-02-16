@@ -2,7 +2,7 @@ $(function () {
     //
     var uploadFile = null;
     var courseURL = baseURI+'lms_courses/handler';
-    var courseID = 0;
+    var courseID = courseToken;
     var chapterID = 0;
     var employees = {};
     var departments = {};

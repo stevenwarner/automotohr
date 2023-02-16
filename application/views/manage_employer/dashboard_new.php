@@ -909,7 +909,7 @@
                                 <?php } ?>
 
                                 <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
-                                    <!-- Documents Library -->
+                                    <!-- Course Library -->
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
                                             <div class="dashboard-widget-box">

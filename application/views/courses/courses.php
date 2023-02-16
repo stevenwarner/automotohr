@@ -58,7 +58,7 @@
                                 </div>
                             </div>
                         </div>
-                        <?php //$this->load->view('es/partials/manage_survey_period'); ?>
+                        <?php $this->load->view('courses/partials/manage_course_period'); ?>
                         <?php $this->load->view('courses/partials/loader'); ?>
                     </div>
                 </div>

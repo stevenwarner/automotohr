@@ -100,7 +100,7 @@ class Courses extends Public_Controller
     /**
      *
      */
-    public function courses()
+    public function courses($id = 0)
     {
         //
         if ($this->session->userdata('logged_in')) {
@@ -117,6 +117,7 @@ class Courses extends Public_Controller
             }
             //
             $data['load_view'] = 1;
+            $data['course_sid'] = $id;
             $data['session'] = $this->session->userdata('logged_in');
             $data['security_details'] = db_get_access_level_details($employee_sid);
             $data['employee'] = $employee_detail;
@@ -177,7 +178,44 @@ class Courses extends Public_Controller
         }
     }
 
-     /**
+    /**
+     *
+     */
+    public function my_courses_list()
+    {
+        //
+        if ($this->session->userdata('logged_in')) {
+            $data = [];
+            $data['session'] = $this->session->userdata('logged_in');
+            $employee_detail = $data['session']['employer_detail'];
+            $company_detail  = $data['session']['company_detail'];
+            $employee_sid  = $employee_detail['sid'];
+            $ems_status = $company_detail['ems_status'];
+            //
+            if (!$ems_status) {
+                $this->session->set_flashdata('message', '<strong>Warning</strong> Not Allowed!');
+                redirect('dashboard', 'refresh');
+            }
+            //
+            $data['load_view'] = 1;
+            $data['session'] = $this->session->userdata('logged_in');
+            $data['security_details'] = db_get_access_level_details($employee_sid);
+            $data['employee'] = $employee_detail;
+            //
+            $data['PageScripts'] = [
+                '2022/js/courses/create',
+            ];
+            //
+            $this->load
+                ->view($this->pages['header'], $data)
+                ->view("{$this->mp}courses/my_courses_list")
+                ->view($this->pages['footer']);
+        } else {
+            redirect(base_url('login'), 'refresh');
+        }
+    }
+
+    /**
      * AJAX request handler
      *
      * @accepts POST
@@ -254,6 +292,20 @@ class Courses extends Public_Controller
                 $this->res['Status'] = true;
                 $this->resp();
                 break;
+
+            case 'update_course':
+                //
+                $data_to_update = array();
+                $data_to_update['start_date'] = $post['startDate'];
+                $data_to_update['end_date'] = $post['endDate'];
+                //
+                $this->cm->updateCourse($data_to_update, $_POST['courseId']);
+                //
+                $this->res['Response'] = 'Update course period successfully';
+                $this->res['Code'] = "SUCCESS";
+                $this->res['Status'] = true;
+                $this->resp();
+                break;    
 
             case 'upload_zip':
                 //
@@ -584,140 +636,5 @@ class Courses extends Public_Controller
         echo json_encode($this->res);
         exit(0);
     }
-
-
-    /**
-     *
-     */
-    public function companysurveys($id)
-    {
-        //
-        $data = [];
-        $data['load_view'] = 1;
-        $data['session'] = $this->session->userdata('logged_in');
-        $data['employee'] = $data['session']['employer_detail'];
-        //
-        $this->load
-            ->view($this->pages['header'], $data)
-            ->view("{$this->mp}es/companysurvey")
-            ->view($this->pages['footer']);
-    }
-
-    /**
-     *
-     */
-    public function surveyfeedback($id, $id2, $id3)
-    {
-        //
-        $data = [];
-        $data['load_view'] = 1;
-        $data['session'] = $this->session->userdata('logged_in');
-        $data['employee'] = $data['session']['employer_detail'];
-        //
-        $this->load
-            ->view($this->pages['header'], $data)
-            ->view("{$this->mp}es/surveyfeedback")
-            ->view($this->pages['footer']);
-    }
-
-
-    /**
-     *
-     */
-    public function settings()
-    {
-        //
-        $data = [];
-        $data['load_view'] = 1;
-        $data['session'] = $this->session->userdata('logged_in');
-        $data['employee'] = $data['session']['employer_detail'];
-        //
-        $this->load
-            ->view($this->pages['header'], $data)
-            ->view("{$this->mp}es/settings")
-            ->view($this->pages['footer']);
-    }
-
-
-
-
-    /**
-     *
-     */
-    public function reports()
-    {
-        //
-        $data = [];
-        $data['load_view'] = 1;
-        $data['session'] = $this->session->userdata('logged_in');
-        $data['employee'] = $data['session']['employer_detail'];
-        //
-        $this->load
-            ->view($this->pages['header'], $data)
-            ->view("{$this->mp}es/reports")
-            ->view($this->pages['footer']);
-    }
-
-
-    /**
-     *
-     */
-    public function faqs()
-    {
-        //
-        $data = [];
-        $data['load_view'] = 1;
-        $data['session'] = $this->session->userdata('logged_in');
-        $data['employee'] = $data['session']['employer_detail'];
-        //
-        $this->load
-            ->view($this->pages['header'], $data)
-            ->view("{$this->mp}es/faqs")
-            ->view($this->pages['footer']);
-    }
-
-
-    /**
-     *
-     */
-    public function surveyTemplateDetail($id)
-    {
-        //
-        $data = [];
-        $data['load_view'] = 1;
-        $data['session'] = $this->session->userdata('logged_in');
-        $data['employee'] = $data['session']['employer_detail'];
-        $data['templateId'] = $id;
-        //
-        $this->load
-            ->view($this->pages['header'], $data)
-            ->view("{$this->mp}es/surveytemplatedetail")
-            ->view($this->pages['footer']);
-    }
-
-
-    /**
-     *
-     */
-    public function surveyTemplateSelect($id)
-    {
-        //
-        $data = [];
-        $data['load_view'] = 1;
-        $data['session'] = $this->session->userdata('logged_in');
-        $data['employee'] = $data['session']['employer_detail'];
-        $data['templateId'] = $id;
-        $data['company_id'] = $data["session"]["company_detail"]["sid"];
-        $data['employer_id'] = $data["session"]["employer_detail"]["sid"];
-
-
-        //
-        $this->load
-            ->view($this->pages['header'], $data)
-            ->view("{$this->mp}es/surveytemplateselect")
-            ->view($this->pages['footer']);
-    }
-
-
 
 }

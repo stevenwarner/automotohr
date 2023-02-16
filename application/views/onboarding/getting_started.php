@@ -905,6 +905,8 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 
                         <?php $this->load->view('attendance/2022/clock_blue'); ?>
 
+                        <?php $this->load->view('courses/partials/course_blue'); ?>
+
                         <?php if (checkIfAppIsEnabled('payroll') && $session['company_detail']['on_payroll']) { ?>
                             <!-- Payroll -->
                             <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">

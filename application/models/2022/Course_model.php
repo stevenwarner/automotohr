@@ -138,6 +138,8 @@ class Course_model extends CI_Model {
                     "courseID" => $row['sid'],
                     "created_by" => getUserNameBySID($row['creator_sid']),
                     "created_on" => formatDateToDB($row['created_at'], DB_DATE_WITH_TIME, DATE),
+                    "start_date" => formatDateToDB($row['start_date'], DB_DATE, "m-d-Y"),
+                    "end_date" => formatDateToDB($row['end_date'], DB_DATE, "m-d-Y"),
                     "display_start_date" => formatDateToDB($row['start_date'], DB_DATE, DATE),
                     "display_end_date" => formatDateToDB($row['end_date'], DB_DATE, DATE),
                     "type" => $type,
@@ -457,5 +459,21 @@ class Course_model extends CI_Model {
     function updateCourse ($data_to_update, $sid) {
         $this->db->where('sid', $sid);
         $this->db->update('lms_courses', $data_to_update);
+    }
+
+    function getMyAssignedPendingCourses ($employeeSid) {
+        //
+        $todayDate = date('Y-m-d');
+        //
+        $this->db->where('lms_courses.start_date <= ', $todayDate);
+        $this->db->where('lms_courses.end_date >= ', $todayDate);
+        $this->db->where('lms_courses.is_draft', 0);
+        $this->db->where('lms_courses.is_archived', 0);
+        $this->db->where('lms_assigned_employees.employee_sid', $employeeSid);
+        $this->db->where('lms_assigned_employees.is_started', 0);
+        $this->db->join('lms_courses', 'lms_assigned_employees.course_sid = lms_courses.sid', 'left');
+        $records_count = $this->db->count_all_results('lms_assigned_employees');
+        //
+        return $records_count;
     }
 }

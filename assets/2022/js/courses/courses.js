@@ -73,13 +73,13 @@ $(function () {
                 courseBox += '            <span class="pull-right">';
                 //
                 if (courseType == "assigned" || courseType == "draft") {
-                    courseBox += '                <a class="btn _csB4 _csF2 _csR5 _csF16 jsManageCoursePeriod" data-toggle="tooltip" data-placement="top" data-sid="'+course.sid+'" data-start_date="'+course.start_date+'" data-end_date="'+course.end_date+'" title="Manage Course Dates" href="javascript:;">';
+                    courseBox += '                <a class="btn _csB4 _csF2 _csR5 _csF16 jsManageCoursePeriod" data-toggle="tooltip" data-placement="top" data-sid="'+course.courseID+'" data-start_date="'+course.start_date+'" data-end_date="'+course.end_date+'" title="Manage Course Dates" href="javascript:;">';
                     courseBox += '                    <i class="fa fa-cogs csF16" aria-hidden="true"></i>';
                     courseBox += '                </a>';
                 }
                 //
                 if (courseType == "draft") {
-                    courseBox += '                <a class="btn _csB4 _csF2 _csR5 _csF16" data-toggle="tooltip" data-placement="top" title="Edit Course" href="'+baseURI+'employee/surveys/create/'+ course.sid +'/details">';
+                    courseBox += '                <a class="btn _csB4 _csF2 _csR5 _csF16" data-toggle="tooltip" data-placement="top" title="Edit Course" href="'+baseURI+'lms_courses/create/'+ course.courseID+'">';
                     courseBox += '                    <i class="fa fa-pencil csF16" aria-hidden="true"></i>';
                     courseBox += '                </a>';
                 }
@@ -142,22 +142,22 @@ $(function () {
     });
 
     $(document).on('click', '.jsManageCoursePeriod', function(event) {
-        var surveyID = $(this).data("sid");
+        var courseID = $(this).data("sid");
         var startDate = $(this).data("start_date");
         var endDate = $(this).data("end_date");
         //
-        $('#jsSurveyManageModal').show();
+        $('#jsCourseManageModal').show();
         $('#jsStartDate').val(startDate);
         $('#jsEndDate').val(endDate);
-        $('#jsSurveyId').val(surveyID);
+        $('#jsCourseId').val(courseID);
     });
 
     $(document).on('click', '.jsCancelManageDate', function(event) {
-        $("#jsSurveyManageModal").hide();
+        $("#jsCourseManageModal").hide();
     });
 
-    $(document).on('click', '.jsSaveSurveyDates', function(event) {
-        var surveyID = $('#jsSurveyId').val();
+    $(document).on('click', '.jsSaveCourseDates', function(event) {
+        var courseID = $('#jsCourseId').val();
         var startDate = $('#jsStartDate').val();
         var endDate = $('#jsEndDate').val();
 
@@ -169,32 +169,52 @@ $(function () {
         }
 
         $.ajax({
-            type: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+            type: 'POST',
+            url: courseURL,
+            data: {
+                'action': "update_course",
+                'employeeId': eToken,
+                'companyId': cToken,
+                'courseId': courseID,
+                'startDate': moment(startDate).format('YYYY-MM-DD'),
+                'endDate': moment(endDate).format('YYYY-MM-DD')
             },
-            url: apiURI+'employee_survey/'+ surveyID +'/manage_survey_dates',
-            data: JSON.stringify({
-                'start_date': moment(startDate).format('YYYY-MM-DD'),
-                'end_date': moment(endDate).format('YYYY-MM-DD'),
-            }),
-            dataType: 'json',
             beforeSend: function() {
-                $('.jsESLoader').show();
+                $('.jsLMSLoader').show();
             },
             success: function(resp) {
                 //
-                alertify.alert('SUCCESS!', "Engagement period is update successfully",function () {
-                    $("#jsSurveyManageModal").hide();
-                    getCompanySurveys();
-                });
+                if (resp.Status === false) {
+                    alertify.alert(
+                        "WARNING!",
+                        resp.Response
+                    );
+                    //
+                    $('.jsLMSLoader').hide();
+                    //
+                    return;
+                }
+                //
+                if (resp.Status === true) {
+                    alertify.alert(
+                        "SUCCESS!",
+                        resp.Response,
+                        function () {
+                            $("#jsCourseManageModal").hide();
+                            getCompanyCourses();
+                        }
+                    );
+                    //
+                    $('.jsLMSLoader').hide();
+                    //
+                    return;
+                }
                 //
                 $('.jsESLoader').hide();
             },
             error: function() {
-                alertify.alert("NOTICE!", "Unable to change survey status");
-                $('.jsESLoader').hide();
+                alertify.alert("NOTICE!", "Unable to update course period");
+                $('.jsLMSLoader').hide();
             }
         });
     });

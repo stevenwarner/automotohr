@@ -14,6 +14,8 @@ class Dashboard extends Public_Controller
         $this->form_validation->set_error_delimiters('<p class="error_message"><i class="fa fa-exclamation-circle"></i>', '</p>');
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library('pagination');
+        //
+        $this->load->model("2022/Course_model", "cm");
     }
 
     public function welcome()
@@ -578,7 +580,12 @@ class Dashboard extends Public_Controller
                 'month' => $this->em->getEmployeeInformationChange($company_id, 'month')
             ];
             //
-            $data["total_active_courses"] = 0;
+            // Courses counts
+            $data["my_course_count"] = $this->cm->getMyAssignedPendingCourses($data['session']['employer_detail']['sid']);
+            $data["incompleteCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'draft');
+            $data["completedCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'completed');
+            $data["assignedCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'assigned');
+            $data["runningCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'running');
             //
             $this->load->view('main/header', $data);
             $this->load->view('manage_employer/dashboard_new');
@@ -996,7 +1003,14 @@ class Dashboard extends Public_Controller
                 $employer_id,
                 'employee'
             )) + $this->dashboard_model->get_all_library_doc_count($company_id);
-
+            //
+            // Courses counts
+            $data["my_course_count"] = $this->cm->getMyAssignedPendingCourses($data['session']['employer_detail']['sid']);
+            $data["incompleteCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'draft');
+            $data["completedCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'completed');
+            $data["assignedCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'assigned');
+            $data["runningCourseCount"] = $this->cm->getCoursesCount($post['companyId'], 'running');
+            //
             $this->load->view('main/header', $data);
             $this->load->view('onboarding/getting_started');
             $this->load->view('main/footer');
