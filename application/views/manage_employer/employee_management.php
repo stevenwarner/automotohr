@@ -16,36 +16,35 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                     </div>
                     <?php
                     //
-                    /*
                     if (isset($employee_type) && $employee_type == 'offline') {
                         $all = false;
                         $active = false;
                         $offline = true;
                         $terminated = false;
-                        $employee_array = $offline_employees;
                     } else if (isset($employee_type) && $employee_type == 'terminated') {
                         $all = false;
                         $active = false;
                         $offline = false;
                         $terminated = true;
-                        $employee_array = $terminated_employees;
                     } else if (isset($employee_type) && $employee_type == 'all') {
                         $all = true;
                         $active = false;
                         $offline = false;
                         $terminated = false;
-                        $employee_array = $all_company_employees;
                     } else if (isset($employee_type) && $employee_type == 'active') {
                         $all = false;
                         $active = true;
                         $offline = false;
                         $terminated = false;
-                        $employee_array = $employees;
+                    } else {
+                        $all = false;
+                        $active = true;
+                        $offline = false;
+                        $terminated = false;
                     }
-*/
-
+                    //
                     $employee_array = $employees;
-
+                    //
                     ?>
                     <div class="applicant-filter">
                         <div class="row">
