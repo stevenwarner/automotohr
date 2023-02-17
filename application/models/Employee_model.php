@@ -1980,14 +1980,14 @@
         if($logincred=='yes'){
             $this->db->group_start();
             $this->db->where('password!=', '');
-            $this->db->where('password!=', null);
+            $this->db->where('password is not  null', null);
             $this->db->group_end();
         }
 
         if($logincred=='no'){
             $this->db->group_start();
             $this->db->where('password', '');
-            $this->db->or_where('password', null);
+            $this->db->or_where('password is null', null);
             $this->db->group_end();
             
             $this->db->group_start();
