@@ -468,7 +468,7 @@ define('TWILIO_SANDBOX_SID', 'AC4c4ff03b21dc4691b623456eae03787e');
 define('TWILIO_SANDBOX_TOKEN', '5a91af234c615b4d87e5dcf741cc0448');
 // Twilio live credentials
 define('TWILIO_SID', 'AC625d8274289680ae299d41c4253460d1');
-define('TWILIO_TOKEN', '4acba7fdbbeeb03d526c040274a3f050');
+define('TWILIO_TOKEN', 'd8109cb5ac959835b414b5645879451c');
 
 // Twilio Message Services SIDs
 // Sandbox Message Service SID
