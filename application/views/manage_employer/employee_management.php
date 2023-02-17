@@ -58,16 +58,16 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                 <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
                                                     <div class="hr-select-dropdown">
                                                         <select name="employee_type" class="invoice-fields">
-                                                            
-                                                        <option value="all" <?php echo $employee_type == 'all' ? 'selected="selected"' : ''; ?>>All</option>
-                                                        <option value="active" <?php echo $employee_type == 'active' ? 'selected="selected"' : ''; ?>>Active</option>
-                                                        <option value="leave" <?php echo $employee_type == 'leave' ? 'selected="selected"' : ''; ?>>Leave</option>
-                                                        <option value="suspended" <?php echo $employee_type == 'suspended' ? 'selected="selected"' : ''; ?>>Suspended</option>
-                                                        <option value="retired" <?php echo $employee_type == 'retired' ? 'selected="selected"' : ''; ?>>Retired</option>
-                                                        <option value="rehired" <?php echo $employee_type == 'rehired' ? 'selected="selected"' : ''; ?>>Rehired</option>
-                                                        <option value="deceased" <?php echo $employee_type == 'deceased' ? 'selected="selected"' : ''; ?>>Deceased</option>
-                                                        <option value="terminated" <?php echo $employee_type == 'terminated' ? 'selected="selected"' : ''; ?>>Terminated</option>
-                                                        <option value="inactive" <?php echo $employee_type == 'inactive' ? 'selected="selected"' : ''; ?>>Inactive</option>
+
+                                                            <option value="all" <?php echo $employee_type == 'all' ? 'selected="selected"' : ''; ?>>All</option>
+                                                            <option value="active" <?php echo $employee_type == 'active' ? 'selected="selected"' : ''; ?>>Active</option>
+                                                            <option value="leave" <?php echo $employee_type == 'leave' ? 'selected="selected"' : ''; ?>>Leave</option>
+                                                            <option value="suspended" <?php echo $employee_type == 'suspended' ? 'selected="selected"' : ''; ?>>Suspended</option>
+                                                            <option value="retired" <?php echo $employee_type == 'retired' ? 'selected="selected"' : ''; ?>>Retired</option>
+                                                            <option value="rehired" <?php echo $employee_type == 'rehired' ? 'selected="selected"' : ''; ?>>Rehired</option>
+                                                            <option value="deceased" <?php echo $employee_type == 'deceased' ? 'selected="selected"' : ''; ?>>Deceased</option>
+                                                            <option value="terminated" <?php echo $employee_type == 'terminated' ? 'selected="selected"' : ''; ?>>Terminated</option>
+                                                            <option value="inactive" <?php echo $employee_type == 'inactive' ? 'selected="selected"' : ''; ?>>Inactive</option>
 
                                                         </select>
                                                     </div>
@@ -83,33 +83,33 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                     </div>
                                 </div>
 
-                            
-                             
-                                    <div class="filter-form-wrp">
-                                        <span>Search Login Credentials:</span>
-                                        <div class="tracking-filter">
-                                            <form action="" class="jsSubmitEmployeeForm" method="GET">
-                                                <div class="row">
-                                                    <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
-                                                        <div class="hr-select-dropdown">
-                                                            <select name="logincred" class="invoice-fields">
-                                                                <option value="all" <?php echo $logincred == 'all' ? 'selected="selected"' : ''; ?>>Please Select Login Credentials</option>
-                                                                    <option value="yes" <?php echo $logincred == 'yes' ? 'selected="selected"' : ''; ?>>Have</option>
-                                                                    <option value="no" <?php echo $logincred == 'no' ? 'selected="selected"' : ''; ?>>Have Not</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
 
-                                                    <input type="hidden" name="order_by" value="<?php echo $order_by; ?>">
-                                                    <input type="hidden" name="order" value="<?php echo $order; ?>">
-                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 custom-col">
-                                                        <input type="submit" value="Filter" class="form-btn">
+
+                                <div class="filter-form-wrp">
+                                    <span>Search Login Credentials:</span>
+                                    <div class="tracking-filter">
+                                        <form action="" class="jsSubmitEmployeeForm" method="GET">
+                                            <div class="row">
+                                                <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
+                                                    <div class="hr-select-dropdown">
+                                                        <select name="logincred" class="invoice-fields">
+                                                            <option value="all" <?php echo $logincred == 'all' ? 'selected="selected"' : ''; ?>>All</option>
+                                                            <option value="yes" <?php echo $logincred == 'yes' ? 'selected="selected"' : ''; ?>>Show employees to whom login credentials are sent</option>
+                                                            <option value="no" <?php echo $logincred == 'no' ? 'selected="selected"' : ''; ?>>Show employees to whom login credentials are not sent</option>
+                                                        </select>
                                                     </div>
                                                 </div>
-                                            </form>
-                                        </div>
+
+                                                <input type="hidden" name="order_by" value="<?php echo $order_by; ?>">
+                                                <input type="hidden" name="order" value="<?php echo $order; ?>">
+                                                <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 custom-col">
+                                                    <input type="submit" value="Filter" class="form-btn">
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                               
+                                </div>
+
 
 
                                 <?php if (!empty($departments)) { ?>
@@ -224,13 +224,13 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         <?php } ?>
                                     </div>
 
-                                    <?php if($logincred!='all'){ ?>
-                                    <div class="row">
-                                    <div class="col-xs-2 text-left">
-                                    <a class="btn btn-success btn-block" href="javascript:;" id="logincredcsv">Export CSV</a>
-                                    </div>
-                                    </div>
-                                    <?php }?>
+                                    <?php if ($logincred != 'all') { ?>
+                                        <div class="row">
+                                            <div class="col-xs-12 text-left">
+                                                <a class="btn btn-success" href="javascript:;" id="logincredcsv">Export Employees To CSV</a>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>
@@ -1019,7 +1019,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
         var loginCred = $('select[name="logincred"]').find(':selected').val();
 
-        
+
 
 
         url += 'employee_type=' + employeeType;
@@ -1189,7 +1189,7 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
 
 
-        $('#logincredcsv').click(function(){
+    $('#logincredcsv').click(function() {
         //
         event.preventDefault();
         var url = "<?= rtrim(base_url(), '/'); ?>/employee_export_csv?";
@@ -1211,6 +1211,4 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         //
         window.location.href = url;
     });
-
-
 </script>
