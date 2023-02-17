@@ -16259,6 +16259,11 @@ if (!function_exists('handleEmployeeDepartmentAndTeam')) {
 if (!function_exists('_secret')) {
     function _secret(string $str, bool $isDate = false, bool $checkPlus = false)
     {
+        //
+        if (empty($str)) {
+            return $str;
+        }
+        //
         if ($checkPlus) {
             //
             $CI = &get_instance();

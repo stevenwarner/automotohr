@@ -93,8 +93,8 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                     <div class="hr-select-dropdown">
                                                         <select name="logincred" class="invoice-fields">
                                                             <option value="all" <?php echo $logincred == 'all' ? 'selected="selected"' : ''; ?>>All</option>
-                                                            <option value="yes" <?php echo $logincred == 'yes' ? 'selected="selected"' : ''; ?>>Show employees to whom login credentials are sent</option>
-                                                            <option value="no" <?php echo $logincred == 'no' ? 'selected="selected"' : ''; ?>>Show employees to whom login credentials are not sent</option>
+                                                            <option value="yes" <?php echo $logincred == 'yes' ? 'selected="selected"' : ''; ?>>Show Employees with ACTIVE Login credentials</option>
+                                                            <option value="no" <?php echo $logincred == 'no' ? 'selected="selected"' : ''; ?>>Show Employees who have not yet Activated their Login credentials</option>
                                                         </select>
                                                     </div>
                                                 </div>
