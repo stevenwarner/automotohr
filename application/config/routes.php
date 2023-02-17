@@ -1662,3 +1662,6 @@ $route['cn/job_role_view_details/(:num)']['get'] = "2022/Complynet/getRoleDetail
 //
 $route['cn/manage/job_role/(:num)/link']['post'] = "2022/Complynet/linkJobRoles/$1";
 $route['cn/manage/job_role/(:num)']['delete'] = "2022/Complynet/deleteJobRole/$1";
+
+//
+$route['employee_export_csv'] = 'employee_management/employee_export_csv';

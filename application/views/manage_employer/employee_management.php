@@ -82,6 +82,36 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                         </form>
                                     </div>
                                 </div>
+
+                            
+                             
+                                    <div class="filter-form-wrp">
+                                        <span>Search Login Credentials:</span>
+                                        <div class="tracking-filter">
+                                            <form action="" class="jsSubmitEmployeeForm" method="GET">
+                                                <div class="row">
+                                                    <div class="col-lg-10 col-md-10 col-xs-12 col-sm-10 custom-col">
+                                                        <div class="hr-select-dropdown">
+                                                            <select name="logincred" class="invoice-fields">
+                                                                <option value="all" <?php echo $logincred == 'all' ? 'selected="selected"' : ''; ?>>Please Select Login Credentials</option>
+                                                                    <option value="yes" <?php echo $logincred == 'yes' ? 'selected="selected"' : ''; ?>>Have</option>
+                                                                    <option value="no" <?php echo $logincred == 'no' ? 'selected="selected"' : ''; ?>>Have Not</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <input type="hidden" name="order_by" value="<?php echo $order_by; ?>">
+                                                    <input type="hidden" name="order" value="<?php echo $order; ?>">
+                                                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-2 custom-col">
+                                                        <input type="submit" value="Filter" class="form-btn">
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                               
+
+
                                 <?php if (!empty($departments)) { ?>
                                     <div class="filter-form-wrp">
                                         <span>Search Department:</span>
@@ -193,6 +223,14 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             </div>
                                         <?php } ?>
                                     </div>
+
+                                    <?php if($logincred!='all'){ ?>
+                                    <div class="row">
+                                    <div class="col-xs-2 text-left">
+                                    <a class="btn btn-success btn-block" href="javascript:;" id="logincredcsv">Export CSV</a>
+                                    </div>
+                                    </div>
+                                    <?php }?>
                                 </div>
                             </div>
                         </div>
@@ -979,11 +1017,17 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
         var employeeType = $('select[name="employee_type"]').find(':selected').val();
         var keyword = $('.search-job').val().trim();
 
+        var loginCred = $('select[name="logincred"]').find(':selected').val();
+
+        
+
+
         url += 'employee_type=' + employeeType;
         url += '&department=' + department;
         url += '&keyword=' + keyword;
         url += '&order_by=' + orderBy;
         url += '&order=' + order;
+        url += '&logincred=' + loginCred;
         //
         window.location.href = url;
     });
@@ -1142,4 +1186,31 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                 alertify.error('Canceled');
             });
     });
+
+
+
+        $('#logincredcsv').click(function(){
+        //
+        event.preventDefault();
+        var url = "<?= rtrim(base_url(), '/'); ?>/employee_export_csv?";
+        //
+        var department = $('select[name="department"]').find(':selected').val();
+        var orderBy = $('select[name="order_by"]').find(':selected').val();
+        var order = $('select[name="order"]').find(':selected').val();
+        var employeeType = $('select[name="employee_type"]').find(':selected').val();
+        var keyword = $('.search-job').val().trim();
+
+        var loginCred = $('select[name="logincred"]').find(':selected').val();
+
+        url += 'employee_type=' + employeeType;
+        url += '&department=' + department;
+        url += '&keyword=' + keyword;
+        url += '&order_by=' + orderBy;
+        url += '&order=' + order;
+        url += '&logincred=' + loginCred;
+        //
+        window.location.href = url;
+    });
+
+
 </script>
