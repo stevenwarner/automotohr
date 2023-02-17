@@ -16254,3 +16254,45 @@ if (!function_exists('handleEmployeeDepartmentAndTeam')) {
         return true;
     }
 }
+
+
+if (!function_exists('_secret')) {
+    function _secret(string $str, bool $isDate = false, bool $checkPlus = false)
+    {
+        if ($checkPlus) {
+            //
+            $CI = &get_instance();
+            //
+            if (
+                $CI->session->userdata('logged_in')['employer_detail']['access_level_plus'] == 1
+                || $CI->session->userdata('logged_in')['employer_detail']['pay_plan_plus'] == 1
+            ) {
+                return $str;
+            }
+        }
+        // Check if it's a date
+        if (strpos($str, ',') !== false && $isDate) {
+            return preg_replace('/[0-9]{4}/', '####', $str);
+        }  
+        //
+        if (
+            (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/i', $str)
+            || preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i', $str)
+            || preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/i', $str)
+            || preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/i', $str)
+            ) && $isDate
+        ) {
+            return preg_replace('/[0-9]{4}/', '####', $str);
+        }
+        //
+        return '###-##-' . substr($str, -4);
+    }
+}
+
+
+if (!function_exists('isSecret')) {
+    function isSecret (string $str) {
+
+        return strpos(strtolower($str), '#') !== false ? true : false;
+    }
+}

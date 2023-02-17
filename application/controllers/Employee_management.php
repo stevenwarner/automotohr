@@ -1560,16 +1560,6 @@ class Employee_management extends Public_Controller
                     $date_of_birth = $this->input->post('DOB');
                     $gender = $this->input->post('gender');
 
-                    if (!empty($date_of_birth)) {
-                        $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
-                    } else {
-                        $DOB = '';
-                    }
-
-                    $notified_by = $this->input->post('notified_by', true);
-                    if ($notified_by == '' || !sizeof($notified_by)) $notified_by = 'email';
-                    else $notified_by = implode(',', $notified_by);
-
                     $data_to_insert = array(
                         'first_name' => $this->input->post('first_name'),
                         'last_name' => $this->input->post('last_name'),
@@ -1588,13 +1578,31 @@ class Employee_management extends Public_Controller
                         'extra_info' => $extra_info,
                         'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                         'email' => $this->input->post('email'),
-                        'ssn' => $this->input->post('SSN'),
                         'employee_number' => $this->input->post('employee_number'),
                         'department_sid' => $this->input->post('department'),
                         'team_sid' => implode(',', $this->input->post('teams')),
                         'gender' => $gender,
                         'marital_status' => $this->input->post('marital_status')
                     );
+
+                    if (!isSecret($date_of_birth)) {
+                        if (!empty($date_of_birth)) {
+                            $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
+                        } else {
+                            $DOB = '';
+                        }
+                        $data_to_insert['dob'] = $DOB;
+                    }
+
+                    if (!isSecret($this->input->post('SSN'))) {
+                        $data_to_insert['ssn'] = $this->input->post('SSN', true);
+                    }
+
+                    $notified_by = $this->input->post('notified_by', true);
+                    if ($notified_by == '' || !sizeof($notified_by)) $notified_by = 'email';
+                    else $notified_by = implode(',', $notified_by);
+
+                    
                     //
                     if ($gender != "other") {
                         $updateGender = array();
@@ -1693,7 +1701,6 @@ class Employee_management extends Public_Controller
                         $this->employee_model->manageEmployeeTeamHistory($maintain_employee_team_history);
                     }
                     //
-                    if ($DOB != '' && !preg_match(XSYM_PREG, $DOB)) $data_to_insert['dob'] = $DOB;
 
                     if (IS_NOTIFICATION_ENABLED == 1 && $this->input->post('notified_by', true) && $data['phone_sid'] != '') $data_to_insert['notified_by'] = $notified_by;
 
@@ -1723,7 +1730,7 @@ class Employee_management extends Public_Controller
                     }
                     //Ful Employment Application Form Update data
                     $full_emp_app = isset($employee_detail['full_employment_application']) && !empty($employee_detail['full_employment_application']) ? unserialize($employee_detail['full_employment_application']) : array();
-                    if (isset($_POST['DOB']) && !empty($_POST['DOB'])) {
+                    if (isset($_POST['DOB']) && !empty($_POST['DOB']) && !isSecret($_POST['DOB'])) {
                         $full_emp_app['TextBoxDOB'] = $this->input->post('DOB');
                     }
                     //
@@ -1736,7 +1743,7 @@ class Employee_management extends Public_Controller
                         $data_to_insert['middle_name'] = $this->input->post('middle_name');
                     }
                     //
-                    if (isset($_POST['SSN']) && !empty($_POST['SSN'])) {
+                    if (isset($_POST['SSN']) && !empty($_POST['SSN']) && !isSecret($_POST['SSN'])) {
                         $full_emp_app['TextBoxSSN'] = $this->input->post('SSN');
                     }
                     //
@@ -2281,12 +2288,6 @@ class Employee_management extends Public_Controller
                 $date_of_birth = $this->input->post('dob');
                 $gender = $this->input->post('gender');
 
-                if (!empty($date_of_birth)) {
-                    $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
-                } else {
-                    $DOB = '';
-                }
-
                 $data = array(
                     'first_name' => $this->input->post('first_name'),
                     'last_name' => $this->input->post('last_name'),
@@ -2304,11 +2305,27 @@ class Employee_management extends Public_Controller
                     'extra_info' => $extra_info,
                     'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                     'employee_number' => $this->input->post('employee_number'),
-                    'ssn' => $this->input->post('ssn'),
-                    'dob' => $DOB,
                     'marital_status' => $this->input->post('marital_status'),
                     'gender' => $gender
                 );
+
+                //
+                if (!isSecret($date_of_birth)) {
+
+                    if (!empty($date_of_birth)) {
+                        $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $date_of_birth)));
+                    } else {
+                        $DOB = '';
+                    }
+                    //
+                    $data['dob'] = $DOB;
+                }
+
+                //
+                if (!isSecret($this->input->post('ssn', true))) {
+                    $data['ssn'] = $this->input->post('ssn', true);
+                }
+                
                 //
                 if ($gender != "other") {
                     $updateGender = array();

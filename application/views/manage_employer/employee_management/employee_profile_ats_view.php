@@ -20,7 +20,9 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
     if ($primary_phone_number_cc === '+1') $primary_phone_number_cc = 'N/A';
 }
 
-if (isset($employer["dob"]) && $employer["dob"] != '' && $employer["dob"] != '0000-00-00') $dob = DateTime::createFromFormat('Y-m-d', $employer['dob'])->format('m-d-Y');
+if (isset($employer["dob"]) && $employer["dob"] != '' && $employer["dob"] != '0000-00-00') {
+    $dob = DateTime::createFromFormat('Y-m-d', $employer['dob'])->format('m-d-Y');
+}
 else $dob = '';
 //
 if ($_ssv) {
@@ -200,7 +202,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Social Security Number: <?= $ssn_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
-                                                    <input class="invoice-fields" type="text" name="SSN" <?= $ssn_required == 1 ? 'required' : ''; ?> value="<?php echo isset($employer["ssn"]) ? $employer["ssn"] : ''; ?>">
+                                                    <input class="invoice-fields" type="text" name="SSN" <?= $ssn_required == 1 ? 'required' : ''; ?> value="<?php echo isset($employer["ssn"]) ? _secret($employer["ssn"], false, true) : ''; ?>">
                                                     <?php echo form_error('SSN'); ?>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
@@ -284,7 +286,14 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Date of Birth:<?= $dob_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
-                                                    <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?= $dob_required == 1 ? 'required' : ''; ?> name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
+                                                    <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?= $dob_required == 1 ? 'required' : ''; ?> name="DOB" value="<?php echo $dob != '' ?  
+                                                    
+                                                    _secret(formatDateToDB(
+                                                        $employer['dob'],
+                                                        checkDateFormate($emploTyer['dob']) ? 'm-d-Y': DB_DATE,
+                                                        'm-d-Y'
+                                                        
+                                                    ), true, true): ''; ?>">
                                                     <?php echo form_error('DOB'); ?>
                                                 </div>
                                                 <!--  -->

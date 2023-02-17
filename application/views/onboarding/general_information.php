@@ -329,6 +329,7 @@ $title = '';
                                     <?php $required_asterisk = $ssn_required ? '<span class="required">*</span>' : ''; ?>
                                     <?php $required_rule = $ssn_required ? 'required="required"' : ''; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
+                                    <?php $temp = _secret($temp); ?>
                                     <?php echo form_label('Social Security Number: '.$required_asterisk, $field_id); ?>
                                     <?php echo form_input($field_id, set_value($field_id, $temp), 'class="form-control" id="' . $field_id . '"'. $required_rule); ?>
                                     <?php echo form_error($field_id); ?>
@@ -340,6 +341,7 @@ $title = '';
                                     <?php $required_asterisk = $dob_required ? '<span class="required">*</span>' : ''; ?>
                                     <?php $required_rule = $dob_required ? 'data-rule-required="true"' : ''; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id]) && $user_information[$field_id] != '0000-00-00') ? date('m-d-Y', strtotime(str_replace('-', '/', $user_information[$field_id]))) : ''); ?>
+                                    <?php $temp = _secret($temp, true); ?>
                                     <label>Date of Birth: <?= $required_asterisk;?></label>
                                     <input class="form-control startdate " readonly="" type="text" <?= $required_rule;?> name="<?php echo $field_id;?>" value="<?php echo $temp; ?>">
                                     <?php echo form_error($field_id); ?>

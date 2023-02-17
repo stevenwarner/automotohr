@@ -1615,8 +1615,33 @@ class Settings extends Public_Controller
                     'extra_info' => serialize($data["employer"]['extra_info']),
                     'full_employment_application' => serialize($full_employment_application)
                 );
+
+                $record =
+                $this->db
+                ->select('full_employment_application')
+                ->where('sid', $id)
+                ->get('users')
+                ->row_array();
                 //
-                if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB'])) {
+                $fef = [];
+
+                //
+                if ($record) {
+                    $fef = unserialize($record['full_employment_application']);
+                }
+
+                //
+                if (isSecret($full_employment_application['TextBoxSSN'])) {
+                    $full_employment_application['TextBoxSSN'] = $fef['TextBoxSSN'];
+                }
+                //
+                if (isSecret($full_employment_application['TextBoxDOB'])) {
+                    $full_employment_application['TextBoxDOB'] = $fef['TextBoxDOB'];
+                }
+                //
+                $data['full_employment_application'] = serialize($full_employment_application);
+                //
+                if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB']) && !isSecret($formpost['TextBoxDOB'])) {
                     $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $formpost['TextBoxDOB'])));
                     $data['dob'] = $DOB;
                 }
@@ -1625,7 +1650,7 @@ class Settings extends Public_Controller
                     $data['middle_name'] = $formpost['TextBoxNameMiddle'];
                 }
                 //
-                if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
+                if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN']) && !isSecret($formpost['TextBoxSSN'])) {
                     $data['ssn'] = $formpost['TextBoxSSN'];
                 }
                 //

@@ -103,7 +103,7 @@
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Social Security Number</label>
-            <p class="dummy-invoice-fields"><?=GetVal($employer["ssn"]); ?></p>
+            <p class="dummy-invoice-fields"><?=_secret(GetVal($employer["ssn"])); ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Employee Number</label>
@@ -157,13 +157,13 @@
             <p class="dummy-invoice-fields">
                 <?php
                     if(strpos($dob, XSYM) !== false){
-                        echo $dob;
+                        echo _secret($dob, true);
                     } else{
                         if(!isset($employer["dob"]) || $employer["dob"] == '' || $employer["dob"] == '0000-00-00') {
                             echo 'Not Specified';
                         }
                         else {
-                            echo $dob;
+                            echo _secret($dob, true);
                         }
                     }
                 
