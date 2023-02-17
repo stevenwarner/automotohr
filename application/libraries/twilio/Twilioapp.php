@@ -403,7 +403,7 @@ class Twilioapp
 			->messages
 			->create($this->receiver_phone, $data);
 
-		_e($return_obj, true);
+		// _e($return_obj, true);
 		return array(
 			'MessageSID' => $return_obj->sid,
 			'DataArray'  => array(
