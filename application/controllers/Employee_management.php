@@ -218,12 +218,19 @@ class Employee_management extends Public_Controller
                 $order = "";
             }
 
+            if (isset($_GET['logincred'])) {
+                $logincred = $_GET['logincred'];
+            } else {
+                $logincred = "all";
+            }
+
             $data['archived'] = 0;
             $data['ems_status'] = $ems_status;
             $data['keyword'] = $keyword;
             $data['employee_type'] = $employee_type;
             $data['order_by'] = $order_by;
             $data['order'] = $order;
+            $data['logincred'] = $logincred;
             //
             if (empty($order_by)) {
                 $order_by = 'sid';
@@ -270,7 +277,7 @@ class Employee_management extends Public_Controller
         
           //  $data['employees'] = $this->employee_model->get_active_employees_detail($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList);
 
-            $employees = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList,$employee_type);
+            $employees = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList,$employee_type, $logincred);
 
             $employeesOnly = array();
             $executivesOnly = array();
@@ -3810,5 +3817,142 @@ class Employee_management extends Public_Controller
             echo "error";
         }
     }
+
+
+
+//
+    public function employee_export_csv()
+    {
+        if ($this->session->userdata('logged_in')) {
+            //
+            $data['session'] = $this->session->userdata('logged_in');
+            $security_sid = $data['session']['employer_detail']['sid'];
+            $security_details = db_get_access_level_details($security_sid);
+            $data['security_details'] = $security_details;
+            check_access_permissions($security_details, 'dashboard', 'employee_management'); // Param2: Redirect URL, Param3: Function Name
+            $company_id = $data['session']['company_detail']['sid'];
+            $data['employer_id'] = $employer_id = $data['session']['employer_detail']['sid'];
+            $ems_status = $data['session']['company_detail']['ems_status'];
+            $keyword = '';
+            $order_by = '';
+            $order = '';
+            $employee_type = 'all';
+
+            if (isset($_GET['keyword'])) {
+                $keyword = $_GET['keyword'];
+            } else {
+                $keyword = "";
+            }
+
+            if (isset($_GET['employee_type'])) {
+                $employee_type = $_GET['employee_type'];
+            } else {
+                $employee_type = "all";
+            }
+
+            if (isset($_GET['order_by'])) {
+                $order_by = $_GET['order_by'];
+            } else {
+                $order_by = "";
+            }
+
+            if (isset($_GET['order'])) {
+                $order = $_GET['order'];
+            } else {
+                $order = "";
+            }
+
+            if (isset($_GET['logincred'])) {
+                $logincred = $_GET['logincred'];
+            } else {
+                $logincred = "all";
+            }
+
+            //
+            if (empty($order_by)) {
+                $order_by = 'sid';
+            }
+            if (empty($order)) {
+                $order = 'desc';
+            }
+
+            $searchList = [];
+
+            if (isset($_GET['department']) && $_GET['department'] > 0) { 
+                $employees_list = array();
+                $department_sid = $_GET['department'];
+                $department_supervisor = $this->employee_model->get_all_department_supervisor($department_sid);
+                if (!empty($department_supervisor)) {
+                    array_push($employees_list, $department_supervisor);
+                }
+
+                $department_teamleads = $this->employee_model->get_all_department_teamleads($company_id, $department_sid);
+                if (!empty($department_teamleads)) {
+                    foreach ($department_teamleads as $teamlead) {
+                        array_push($employees_list, $teamlead['team_lead']);
+                    }
+                }
+
+                $department_employees = $this->employee_model->get_all_employees_from_department($department_sid);
+                if (!empty($department_employees)) {
+                    foreach ($department_employees as $department_employee) {
+                        array_push($employees_list, $department_employee['employee_sid']);
+                    }
+                }
+
+                $employees_list = array_unique($employees_list);
+                //
+                $searchList = $employees_list;
+            }
+        
+            $employees = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList,$employee_type, $logincred);
+
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename=Employees_credentials_' . date('Y-m-d-H-i-s') . '.csv');
+
+            $output = fopen('php://output', 'w');
+
+
+            fputcsv($output, array('Employees', 'Designation', 'Password', 'Joining Date', 'Rehire Date'));
+
+            if (sizeof($employees) > 0) {
+
+                foreach ($employees as $employeeRow){
+
+                    $input = array();
+
+                    $middle_initial = !empty($employeeRow['middle_name']) ? ' ' . $employeeRow['middle_name'] : '';
+                    //
+                    if (!empty($employeeRow['first_name']) || !empty($employeeRow['last_name'])) {
+                        $name = $employeeRow['first_name'] . $middle_initial . ' ' . $employeeRow['last_name'];
+                    }
+
+                    //
+                    $aclevel ='[' . $employeeRow['access_level'];
+                    $aclevel.= ($employeeRow['access_level_plus'] && $employeeRow['pay_plan_flag']) ? ' Plus / Payroll' : ($employeeRow['access_level_plus'] ? ' Plus' : ($employeeRow['pay_plan_flag'] ? ' Payroll' : ''));
+                    $aclevel.= ']';
+                    $name = $name.' '.$aclevel;
+                    //
+                            
+                    $joiningDate = get_employee_latest_joined_date($employeeRow["registration_date"], $employeeRow["joined_at"], "", true);
+                    $rehireDate = get_employee_latest_joined_date("", "", $employeeRow["rehire_date"], true);
+                
+                
+                    $input['Employees'] = $name;
+                    $input['Designation'] = $employeeRow['job_title'];
+                    $input['Password'] = $employeeRow['password'] ? 'Yes' :'NO' ; 
+                    $input['Joining Date'] = $joiningDate ? $joiningDate :'N/A' ;
+                    $input['Rehire Date'] = $rehireDate ? $rehireDate :'N/A' ;
+                    fputcsv($output, $input);
+                }
+            }
+
+            redirect(base_url('employee_management') . '?employee_type=' . $employee_type . '&department=' . $department_sid . '&keyword=' . $keyword . '&order_by=' . $order_by. '&logincred=' . $logincred, "refresh");
+
+        } else {
+            redirect(base_url('login'), 'refresh');
+        }
+    }
+
 
 }

@@ -1952,7 +1952,7 @@
         }
     }
 
-    function get_employees_details_new($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = [] , $status)
+    function get_employees_details_new($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = [] , $status, $logincred)
     {
         $keyword = trim(str_replace("'", '', $keyword));
         $this->db->select('*');
@@ -1977,6 +1977,24 @@
             $this->db->where('LCASE(general_status) ', $status);
         }
         
+        if($logincred=='yes'){
+            $this->db->group_start();
+            $this->db->where('password!=', '');
+            $this->db->where('password!=', null);
+            $this->db->group_end();
+        }
+
+        if($logincred=='no'){
+            $this->db->group_start();
+            $this->db->where('password', '');
+            $this->db->or_where('password', null);
+            $this->db->group_end();
+            
+            $this->db->group_start();
+            $this->db->where('is_executive_admin!=',1);
+            $this->db->group_end();
+        }
+
         // $this->db->where('is_executive_admin', 0);
         if ($keyword != null) {
             $tK = preg_replace('/\s+/', '|', strtolower($keyword));
