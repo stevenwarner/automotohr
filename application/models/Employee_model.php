@@ -1990,9 +1990,9 @@
             $this->db->or_where('password', null);
             $this->db->group_end();
             
-            $this->db->group_start();
+            // $this->db->group_start();
             // $this->db->where('is_executive_admin!=',1);
-            $this->db->group_end();
+            // $this->db->group_end();
         }
 
         // $this->db->where('is_executive_admin', 0);
