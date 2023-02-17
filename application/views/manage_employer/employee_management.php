@@ -318,12 +318,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                             echo "<b>Job Title: </b>" . $employee['job_title'] . "<br>";
                                                         }
                                                         ?>
-
-                                                        <?php
-                                                        if ($session['company_detail']['complynet_status'] == 1) { ?>
-                                                            <br />
-                                                            <b>ComplyNet Job Title:</b> <?php echo $employee['complynet_job_title']; ?>
-                                                        <?php } ?>
                                                     </td>
                                                     <td class="text-center <?php echo $doNotHireWarning['row']; ?>">
                                                         <?php if (check_access_permissions_for_view($security_details, 'send_login_email')) { ?>
