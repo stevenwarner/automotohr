@@ -6769,8 +6769,11 @@ class Hr_documents_management extends Public_Controller
                 $w4_form = $this->hr_documents_management_model->is_w4_form_assign('employee', $employee_id);
                 $w9_form = $this->hr_documents_management_model->is_w9_form_assign('employee', $employee_id);
                 $i9_form = $this->hr_documents_management_model->is_i9_form_assign('employee', $employee_id);
-                $eeoc_form = $this->hr_documents_management_model->is_eeoc_document_assign('employee', $employee_id);
-
+                if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_status']) {
+                    $eeoc_form = $this->hr_documents_management_model->is_eeoc_document_assign('employee', $employee_id);
+                } else {
+                    $eeoc_form = array();
+                }
                 $data['w4_form'] = $w4_form;
                 $data['w9_form'] = $w9_form;
                 $data['i9_form'] = $i9_form;
