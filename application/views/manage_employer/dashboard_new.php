@@ -1,4 +1,4 @@
-<?php if (!$load_view) { ?>
+    <?php if (!$load_view) { ?>
     <div class="main-content">
         <div class="dashboard-wrp">
             <div class="container-fluid">
@@ -752,6 +752,7 @@
                                     <?php $complyNetLink = getComplyNetLink($company_sid, $employee_sid); ?>
                                     <div class="col-lg-4 col-md-4 col-xs-12 col-sm-6">
                                         <div class="dash-box">
+                                            <?php if($complyNetLink) echo '<a href="'.($complyNetLink).'" target="_blank">';?>
                                             <div class="dashboard-widget-box">
                                                 <figure>
                                                     <img src="<?= base_url('assets/images/complynet_logo.png'); ?>" alt="ComplyNet Image">
@@ -789,6 +790,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <?php if($complyNetLink) echo '</a>';?>
                                         </div>
                                     </div>
                                 <?php } ?>
