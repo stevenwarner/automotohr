@@ -3458,26 +3458,28 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
-                        $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
+                    if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_status']) { 
+                        if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
+                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
 
-                        if (empty($is_eeoc_assign)) {
-                            $eeoc_data_to_insert = array();
-                            $eeoc_data_to_insert['application_sid'] = $user_sid;
-                            $eeoc_data_to_insert['users_type'] = $user_type;
-                            $eeoc_data_to_insert['status'] = 1;
-                            $eeoc_data_to_insert['is_expired'] = 0;
-                            $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
-                            $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['last_assigned_by'] = 0;
-                            //
-                            $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
-                            //
-                            $sendGroupEmail = 1;
-                            https: //www.youtube.com/
+                            if (empty($is_eeoc_assign)) {
+                                $eeoc_data_to_insert = array();
+                                $eeoc_data_to_insert['application_sid'] = $user_sid;
+                                $eeoc_data_to_insert['users_type'] = $user_type;
+                                $eeoc_data_to_insert['status'] = 1;
+                                $eeoc_data_to_insert['is_expired'] = 0;
+                                $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
+                                $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                                $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                                $eeoc_data_to_insert['last_assigned_by'] = 0;
+                                //
+                                $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
+                                //
+                                $sendGroupEmail = 1;
+                                https: //www.youtube.com/
+                            }
                         }
-                    }
+                    }    
                 }
             }
 
@@ -5249,25 +5251,27 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
-                        $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, 'employee');
+                    if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_status']) { 
+                        if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
+                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, 'employee');
 
-                        if (empty($is_eeoc_assign)) {
-                            $eeoc_data_to_insert = array();
-                            $eeoc_data_to_insert['application_sid'] = $employer_sid;
-                            $eeoc_data_to_insert['users_type'] = 'employee';
-                            $eeoc_data_to_insert['status'] = 1;
-                            $eeoc_data_to_insert['is_expired'] = 0;
-                            $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
-                            $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['last_assigned_by'] = 0;
-                            //
-                            $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
-                            //
-                            $sendGroupEmail = 1;
+                            if (empty($is_eeoc_assign)) {
+                                $eeoc_data_to_insert = array();
+                                $eeoc_data_to_insert['application_sid'] = $employer_sid;
+                                $eeoc_data_to_insert['users_type'] = 'employee';
+                                $eeoc_data_to_insert['status'] = 1;
+                                $eeoc_data_to_insert['is_expired'] = 0;
+                                $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
+                                $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                                $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                                $eeoc_data_to_insert['last_assigned_by'] = 0;
+                                //
+                                $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
+                                //
+                                $sendGroupEmail = 1;
+                            }
                         }
-                    }
+                    }    
                 }
             }
 
