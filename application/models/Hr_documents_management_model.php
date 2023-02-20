@@ -7363,6 +7363,9 @@ class Hr_documents_management_model extends CI_Model
             $sid = $b['sid'];
             //
             $data_to_update = array();
+            $data_to_update['status'] = 1;
+            $data_to_update['is_latest'] = 1;
+            $data_to_update['last_assigned_by'] = $this->session->userdata('logged_in')['employer_detail']['sid'];
             $data_to_update['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
             $this->db->where('sid', $sid);
             $this->db->update('portal_eeo_form', $data_to_update);

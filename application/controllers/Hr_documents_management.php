@@ -2573,7 +2573,8 @@ class Hr_documents_management extends Public_Controller
 
                             break;
                         case 'assign_EEOC': //EEOC Form Active
-                            $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
+                            // $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
+                            $this->hr_documents_management_model->getEEOCId($user_sid, $user_type, $jobs_listing, 'Document Center');
                             //
                             $eeoc_sid = getVerificationDocumentSid($user_sid, $user_type, 'eeoc');
                             keepTrackVerificationDocument($security_sid, "employee", 'assign', $eeoc_sid, 'eeoc', 'Document Center');

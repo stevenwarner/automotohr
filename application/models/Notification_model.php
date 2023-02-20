@@ -246,7 +246,13 @@ class Notification_model extends CI_Model {
         $w4_form = $this->is_w4_form_assign('employee', $employee_id);
         $w9_form = $this->is_w9_form_assign('employee', $employee_id);
         $i9_form = $this->is_i9_form_assign('employee', $employee_id);
-        $eeoc_form = $this->is_eeoc_form_assign('employee', $employee_id);
+        $eeo_form_status = getCompanyEEOCFormStatus($company_sid);
+        //
+        if ($eeo_form_status == 1) {
+            $eeoc_form = $this->is_eeoc_form_assign('employee', $employee_id);
+        } else {
+            $eeoc_form = 0
+        }   
         // $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + count($generalDocuments);
         $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + $eeoc_form + count($generalDocuments) + $assigned_offer_letter;
         //
