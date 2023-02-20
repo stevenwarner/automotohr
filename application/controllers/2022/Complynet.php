@@ -338,6 +338,10 @@ class Complynet extends Admin_Controller
             foreach ($departmentObj as $index => $value) {
                 //
                 if (isset($complyDepartmentObj[$index])) {
+                    //
+                    if ($complyDepartmentObj[$index]['Id'] == 'A') {
+                        continue;
+                    }
                     // the department is on complynet
                     // let's connect in our system
                     $ins = [];
@@ -359,6 +363,10 @@ class Complynet extends Admin_Controller
                     ]);
                     //
                     if ($response && !empty($response['Id'])) {
+                        //
+                        if ($response['Id'] == 'A') {
+                            continue;
+                        }
                         // Let connect
                         $ins = [];
                         $ins['company_sid'] = $this->companyId;
@@ -403,6 +411,10 @@ class Complynet extends Admin_Controller
                 $ins['department_name'] = $value['Name'];
                 $ins['status'] = 1;
                 $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+                //
+                if ($value['Id'] == 'A') {
+                    continue;
+                }
                 //
                 $this->complynet_model->checkAndInsertDepartmentLink($ins);
             }
@@ -501,7 +513,7 @@ class Complynet extends Admin_Controller
                     $ins['departmentId'] = $complyDepartmentId;
                     $ins['jobRoleId'] = $complyJobRoleId;
                     $ins['PhoneNumber'] = $employee['PhoneNumber'];
-                    $ins['TwoFactor'] = false;
+                    $ins['TwoFactor'] = 'false';
                     //
                     $response = $this->clib->addEmployee($ins);
 
@@ -538,6 +550,55 @@ class Complynet extends Admin_Controller
                                 ->update('users', [
                                     'complynet_onboard' => 1
                                 ]);
+                        }
+                    } elseif (preg_match('/unavailable/i', $response)) {
+                        $ins = [];
+                        $ins['firstName'] = $employee['first_name'];
+                        $ins['lastName'] = $employee['last_name'];
+                        $ins['userName'] = $employee['username'];
+                        $ins['email'] = $email;
+                        $ins['password'] = 'password';
+                        $ins['companyId'] = $this->complyCompanyId;
+                        $ins['locationId'] = $this->complyLocationId;
+                        $ins['departmentId'] = $complyDepartmentId;
+                        $ins['jobRoleId'] = $complyJobRoleId;
+                        $ins['PhoneNumber'] = $employee['PhoneNumber'];
+                        $ins['TwoFactor'] = 'false';
+                        //
+                        $response = $this->clib->addEmployee($ins);
+                        if (preg_match('/created user/i', $response)) {
+                            $employeeObj = $this->clib->getEmployeeByEmail($email);
+                            //
+                            if (isset($employeeObj[0]['Id'])) {
+                                // Find the right person
+                                $employeeObj[0] = findTheRightEmployee($employeeObj, $this->complyCompanyId, $this->complyLocationId);
+                                //
+                                if (!$employeeObj[0]) {
+                                    continue;
+                                }
+                                $ins = [];
+                                $ins['company_sid'] = $this->companyId;
+                                $ins['complynet_employee_sid'] = $employeeObj[0]['Id'];
+                                $ins['complynet_company_sid'] = $this->complyCompanyId;
+                                $ins['complynet_location_sid'] = $this->complyLocationId;
+                                $ins['complynet_department_sid'] = $complyDepartmentId;
+                                $ins['complynet_job_role_sid'] = $complyJobRoleId;
+                                $ins['employee_sid'] = $employee['sid'];
+                                $ins['email'] = $email;
+                                $ins['complynet_json'] = json_encode($employeeObj);
+                                $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+                                //
+                                $this->db->insert(
+                                    'complynet_employees',
+                                    $ins
+                                );
+                                //
+                                $this->db
+                                    ->where('sid', $employee['sid'])
+                                    ->update('users', [
+                                        'complynet_onboard' => 1
+                                    ]);
+                            }
                         }
                     }
                 }
