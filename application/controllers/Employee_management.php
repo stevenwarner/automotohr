@@ -1456,8 +1456,8 @@ class Employee_management extends Public_Controller
                     $data['left_navigation'] = 'manage_employer/employee_management/profile_right_menu_employee_new';
                     $addresses = $this->employee_model->get_company_addresses($company_id);
                     $data['addresses'] = $addresses;
-                    $departments = $this->employee_model->get_all_departments($company_id);
-                    $data['departments'] = $departments;
+                    $data['departmentWithTeams'] =
+                    $this->employee_model->getCompanyDepartmentsWithTeam($company_id);
                     $data['is_new_calendar'] = $this->call_old_event();
                     // Time off policies
                     $this->load->model('timeoff_model');
@@ -1567,6 +1567,14 @@ class Employee_management extends Public_Controller
                     $date_of_birth = $this->input->post('DOB');
                     $gender = $this->input->post('gender');
 
+                    //
+                    $teamId = $this->input->post('department', true);
+                    //
+                    if (!$teamId) {
+                        $teamId = 0;
+                    }
+                    $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
+
                     $data_to_insert = array(
                         'first_name' => $this->input->post('first_name'),
                         'last_name' => $this->input->post('last_name'),
@@ -1586,8 +1594,8 @@ class Employee_management extends Public_Controller
                         'linkedin_profile_url' => $this->input->post('linkedin_profile_url'),
                         'email' => $this->input->post('email'),
                         'employee_number' => $this->input->post('employee_number'),
-                        'department_sid' => $this->input->post('department'),
-                        'team_sid' => implode(',', $this->input->post('teams')),
+                        'department_sid' => $departmentId,
+                        'team_sid' => $teamId,
                         'gender' => $gender,
                         'marital_status' => $this->input->post('marital_status')
                     );

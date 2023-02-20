@@ -2019,4 +2019,48 @@
 
 
 
+    public function getCompanyDepartmentsWithTeam(
+        int $companyId
+    )
+    {
+        $records =
+        $this->db
+        ->select('
+            departments_team_management.sid as teamId,
+            departments_team_management.name as teamName,
+            departments_management.sid,
+            departments_management.name
+        ')
+        ->where([
+            'departments_team_management.is_deleted' => 0,
+            'departments_management.is_deleted' => 0,
+            'departments_team_management.company_sid' => $companyId,
+            'departments_management.company_sid' => $companyId
+        ])
+        ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+        ->get('departments_team_management')
+        ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            //
+            if (!isset($tmp[$record['sid']])) {
+                $tmp[$record['sid']] = [
+                    'id' => $record['sid'],
+                    'name' => $record['name'],
+                    'teams' => []
+                ];
+            }
+            //
+            $tmp[$record['sid']]['teams'][] = ['id' => $record['teamId'], 'name' => $record['teamName']];
+        }
+
+        return $tmp;
+    }
+
 }
