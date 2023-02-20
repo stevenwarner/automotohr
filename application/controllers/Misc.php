@@ -2564,12 +2564,17 @@ class Misc extends CI_Controller {
                 if ($payment_state == 'approved') {
                     $payer = $payment->getPayer();
                     $fi = $payer->getFundingInstruments();
-                    _e($fi);
                     $cc_token = $fi[0]->getCreditCardToken();
-                    _e($cc_token);
-                    $last4 = $cc_token->getLast4();
-                    $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
-                    $cc_type = $cc_token->getType();
+                    //
+                    if (!$cc_token) {
+                        $last4 = $cc_token->getLast4();
+                        $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
+                        $cc_type = $cc_token->getType();
+                    } else {
+                        $last4 = 'XXXXXXXXXXXX'.strpos($cc_number, -4);
+                        $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
+                        $cc_type = strtoupper($cc_type);
+                    }
 
                     $data_to_update = array();
                     $data_to_update['payment_status'] = 'paid';
