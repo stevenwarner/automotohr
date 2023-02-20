@@ -2566,12 +2566,12 @@ class Misc extends CI_Controller {
                     $fi = $payer->getFundingInstruments();
                     $cc_token = $fi[0]->getCreditCardToken();
                     //
-                    if (!$cc_token) {
+                    if (false) {
                         $last4 = $cc_token->getLast4();
                         $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
                         $cc_type = $cc_token->getType();
                     } else {
-                        $last4 = 'XXXXXXXXXXXX'.strpos($cc_number, -4);
+                        $last4 = substr($cc_number, -4);
                         $cc_number = str_pad($last4, '16', 'X', STR_PAD_LEFT);
                         $cc_type = strtoupper($cc_type);
                     }
