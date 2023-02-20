@@ -5,6 +5,7 @@ $(function() {
         title: 0,
         order: 1,
         entitledEmployees: [],
+        isEntitledEmployees: 0,
         offDays: [],
         approver: 0,
         deactivate: 0,
@@ -249,6 +250,9 @@ $(function() {
             policyOBJ.deactivate = $('#js-archive-check-add').prop('checked') === true ? 1 : 0;
             // // Set deactivate check
             policyOBJ.include = $('#js-include-check-add').prop('checked') === true ? 1 : 0;
+
+            //
+            policyOBJ.isEntitledEmployees = $('.jsIsEntitledEmployee:checked').val();
             //
             policyOBJ.employeeTypes = $('#js-employee-type-add').val();
             //
@@ -258,6 +262,8 @@ $(function() {
                 alertify.alert('WARNING!', 'Please, add the employee type.', () => {});
                 return false;
             }
+
+
             //
             saveStep(policyOBJ);
             //

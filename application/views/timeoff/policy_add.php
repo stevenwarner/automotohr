@@ -92,11 +92,31 @@
     <!-- Policy Entitled Employees - Edit -->
     <div class="row mb10">
         <div class="col-sm-6 col-xs-12">
-            <label><?php echo $get_policy_item_info['non_employees_label']; ?>
-                <i class="fa fa-question-circle" data-hint="js-hint" data-target="employees"></i>
-            </label>
-            <div class="js-hint js-hint-employees"><?php echo $get_policy_item_info['entitled_employee_info']; ?></div>
-            <div>
+           
+                    <label class="control control--radio">
+                    <?php echo $get_policy_item_info['non_employees_label']; ?>
+                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="employees"></i>
+
+                    <input type="radio" class="jsIsEntitledEmployee" name="is_entitled_employee" value="0" id="NonEntitledEmployeesadd"  checked="checked">
+                    <div class="control__indicator"></div>
+                    </label>
+                    <br>
+                    <label class="control control--radio">
+                    <?php echo $get_policy_item_info['entitled_employee_label']; ?>
+                    <i class="fa fa-question-circle" data-hint="js-hint" data-target="employees2"></i>
+
+                    <input type="radio" class="jsIsEntitledEmployee" name="is_entitled_employee" value="1" id="EntitledEmployeesadd" />
+                    <div class="control__indicator"></div>
+                    </label>
+                    <br>
+                    <br>
+                    <div class="js-hint js-hint-employees">
+                    <?php echo $get_policy_item_info['entitled_employee_info']; ?>
+                    </div>
+                    <div class="js-hint js-hint-employees2">
+                    <?php echo $get_policy_item_info['entitled_employee_info']; ?>
+                    </div>
+        <div>
                 <select class="invoice-fields" name="template[]" id="js-employee-add" multiple="true">
                 </select>
             </div>

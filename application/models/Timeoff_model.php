@@ -1694,6 +1694,7 @@ class Timeoff_model extends CI_Model
             timeoff_policies.title,
             timeoff_policies.accruals,
             timeoff_policies.assigned_employees,
+            timeoff_policies.is_entitled_employee,
             timeoff_policies.off_days,
             timeoff_policies.is_included,
             timeoff_policies.for_admin,
@@ -1862,6 +1863,7 @@ class Timeoff_model extends CI_Model
         if (!is_array($post['filter']['policies'])) $post['filter']['policies'] = explode(',', $post['filter']['policies']);
         if (!empty($post['filter']['policies']) && !in_array('all', $post['filter']['policies'])) $filterPolicies = $post['filter']['policies'];
         //
+       
         $settings = $this->getSettings($post['companyId']);
         $policies = $this->getCompanyPoliciesWithAccruals($post['companyId'], true, $filterPolicies);
         $balances = $this->getBalances($post['companyId']);
@@ -1975,7 +1977,13 @@ class Timeoff_model extends CI_Model
                 'Reason' => ''
             ];
             //
-            if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            if ($policy['is_entitled_employee'] == 1) {
+
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            } else {
+                // Not-Entitled
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            }
             //
             $accruals = json_decode($policy['accruals'], true);
             //
@@ -2102,8 +2110,13 @@ class Timeoff_model extends CI_Model
                 'Category' => $policy['category_name'],
                 'Reason' => ''
             ];
-            //
-            if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            if ($policy['is_entitled_employee'] == 1) {
+
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            } else {
+                // Not-Entitled
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            }
             //
             $accruals = json_decode($policy['accruals'], true);
             //
@@ -2184,8 +2197,15 @@ class Timeoff_model extends CI_Model
         $returnBalance['total'] = $balance;
         //
         foreach ($policies as $policy) {
+            // Entitled
+            if ($policy['is_entitled_employee'] == 1) {
+
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            } else {
+                // Not-Entitled
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            }
             //
-            if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
             //
             $accruals = json_decode($policy['accruals'], true);
             //
@@ -2698,8 +2718,14 @@ class Timeoff_model extends CI_Model
                 ],
                 'Reason' => ''
             ];
-            //
-            if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            // Entitled
+            if ($policy['is_entitled_employee'] == 1) {
+
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            } else {
+                // Not-Entitled
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            }
             //
             $accruals = json_decode($policy['accruals'], true);
             //
@@ -3856,8 +3882,14 @@ class Timeoff_model extends CI_Model
                 'Implements' => true,
                 'Reason' => ''
             ];
-            //
-            if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) $balance['Implements'] = false;
+            // Entitled
+            if ($policy['is_entitled_employee'] == 1) {
+
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) $balance['Implements'] = false;;
+            } else {
+                // Not-Entitled
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) $balance['Implements'] = false;;
+            }
             //
             $accruals = json_decode($policy['accruals'], true);
             //
@@ -4692,8 +4724,13 @@ class Timeoff_model extends CI_Model
                 'Category' => $policy['category_name'],
                 'Reason' => ''
             ];
-            //
-            if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            if ($policy['is_entitled_employee'] == 1) {
+
+                if ($policy['assigned_employees'] != 'all' && !in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            } else {
+                // Not-Entitled
+                if ($policy['assigned_employees'] == 'all' || in_array($employeeId, explode(',', $policy['assigned_employees']))) continue;
+            }
             //
             $accruals = json_decode($policy['accruals'], true);
             //

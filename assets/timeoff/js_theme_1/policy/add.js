@@ -5,6 +5,7 @@ $(function() {
         title: 0,
         order: 1,
         entitledEmployees: [],
+        isEntitledEmployees: 0,
         approver: 0,
         deactivate: 0,
         include: 1,
@@ -251,6 +252,8 @@ $(function() {
             policyOBJ.include = $('#js-include-check-add').prop('checked') === true ? 1 : 0;
             //
             policyOBJ.employeeTypes = $('#js-employee-type-add').val();
+            //
+            policyOBJ.isEntitledEmployees = $('.jsIsEntitledEmployee:checked').val();
             //
             policyOBJ.offDays = getField('#js-off-days-add');
             // Check policy title

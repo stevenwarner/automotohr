@@ -153,6 +153,9 @@ $('#js-add-policy-btn').click((e) => {
     e.preventDefault();
     //
     loadAddPage();
+    //
+    $('#NonEntitledEmployeesadd').prop('checked', true);
+
 });
 
 //

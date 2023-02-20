@@ -629,6 +629,7 @@ class Time_off extends Public_Controller
         $data['timeOffDays'] = $this->timeoff_model->getTimeOffDays($data['session']['company_detail']['sid']);
         $data['holidayDates'] = $this->timeoff_model->getDistinctHolidayDates(array('companySid' => $data['session']['company_detail']['sid']));
         $data['theme'] = $this->theme;
+        
         //
         $this->load->view('main/header', $data);
 
@@ -2435,6 +2436,9 @@ class Time_off extends Public_Controller
         //
         $this->res['Redirect'] = FALSE;
         //
+
+       // die(strtolower($post['action']));
+
         switch (strtolower($post['action'])) {
                 // Fetch company all policy types
             case 'get_company_types_list':
@@ -2627,6 +2631,8 @@ class Time_off extends Public_Controller
                 $in['policy_start_date'] = $post['applicableDateType'] == 'customHireDate' ? formatDate($post['applicableDate'], 'm-d-Y', 'Y-m-d')  : NULL;
                 $in['reset_policy'] = $in['accruals'];
                 $in['off_days'] = implode(',', $post['offDays']);
+                $in['is_entitled_employee'] = $post['isEntitledEmployees'];
+
                 //
                 $policyId = $this->timeoff_model->insertPolicy($in);
                 //
@@ -2676,6 +2682,7 @@ class Time_off extends Public_Controller
                 if (in_array('all', $entitledEmployees)) $entitledEmployees = 'all';
                 else $entitledEmployees = implode(',', $entitledEmployees);
                 // Set Accruals
+
                 $accruals = [];
                 $accruals['method'] = $post['method'];
                 $accruals['time'] = $post['time'];
@@ -2700,6 +2707,7 @@ class Time_off extends Public_Controller
                 $accruals['newHireRate'] = $post['newHireRate'];
                 $accruals['employeeTypes'] = $post['employeeTypes'];
                 $accruals['plans'] = isset($post['plans']) ? $post['plans'] : [];
+
                 // Set policy insert array
                 $up = [];
                 //
@@ -2714,6 +2722,9 @@ class Time_off extends Public_Controller
                 $up['off_days'] = implode(',', $post['offDays']);
                 $up['accruals'] = json_encode($accruals);
                 $up['policy_start_date'] = $post['applicableDateType'] == 'customHireDate' ? formatDate($post['applicableDate'], 'm-d-Y', 'Y-m-d')  : NULL;
+               
+                $up['is_entitled_employee'] = $post['isEntitledEmployees'];
+
                 //
                 $policyId = $post['policyId'];
                 //

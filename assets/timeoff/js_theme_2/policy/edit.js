@@ -11,6 +11,7 @@ $(function() {
             title: 0,
             order: 1,
             entitledEmployees: [],
+            isEntitledEmployees: 0,
             employeeTypes: [],
             offDays: [],
             approver: 0,
@@ -531,6 +532,7 @@ $(function() {
         policy.plans = accruals.plans;
         //
         originalOBJ = Object.assign({}, policy);
+
         //
         $('#jsPolicyTitleEdit').text(' - ' + policy.title);
         // Set policy types
@@ -591,6 +593,17 @@ $(function() {
         $('#js-custom-reset-date-edit').val(policy.resetDate);
         //
         $('#js-step-bar-edit').show();
+
+        //
+        if(resp.Data.is_entitled_employee==1){
+            $('#EntitledEmployees').prop('checked', true);
+            $('#NonEntitledEmployees').prop('checked', false);
+        }else{
+            $('#NonEntitledEmployees').prop('checked', true);
+            $('#EntitledEmployees').prop('checked', false);
+        }
+
+
         //
         loadAccrualPlans('edit', policy.plans);
         //
@@ -730,6 +743,8 @@ $(function() {
             policyOBJ.order = getField('#js-sort-order-edit');
             // Set entitled employees
             policyOBJ.entitledEmployees = getField('#js-employee-edit');
+            // Set type
+            policyOBJ.isEntitledEmployees = $('.jsIsEntitledEmployee:checked').val();
             //
             policyOBJ.employeeTypes = getField('#js-employee-type-edit');
             //
@@ -869,7 +884,7 @@ $(function() {
         alertify.confirm(
             'This action will effect the employees balance. Are you sure you want to continue?',
             () => {
-                //
+                // 
                 ml(true, 'policy');
                 //
                 let post = Object.assign({}, policy, {
@@ -881,6 +896,7 @@ $(function() {
                     policyId: policyId
                 });
                 //
+
                 $.post(handlerURL, post, (resp) => {
                     //
                     ml(false, 'policy');

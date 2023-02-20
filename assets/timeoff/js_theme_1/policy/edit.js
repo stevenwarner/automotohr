@@ -11,6 +11,7 @@ $(function() {
             title: 0,
             order: 1,
             entitledEmployees: [],
+            isEntitledEmployees: 0,
             employeeTypes: [],
             offDays: [],
             approver: 0,
@@ -593,6 +594,16 @@ $(function() {
         //
         $('#js-step-bar-edit').show();
         //
+
+        if(resp.Data.is_entitled_employee==1){
+            $('#EntitledEmployees').prop('checked', true);
+            $('#NonEntitledEmployees').prop('checked', false);
+        }else{
+            $('#NonEntitledEmployees').prop('checked', true);
+            $('#EntitledEmployees').prop('checked', false);
+        }
+        
+        //
         loadAccrualPlans('edit', policy.plans);
         //
         let resetAccrual = JSON.parse(resp.Data.reset_policy);
@@ -731,6 +742,9 @@ $(function() {
             policyOBJ.order = getField('#js-sort-order-edit');
             // Set entitled employees
             policyOBJ.entitledEmployees = getField('#js-employee-edit');
+            
+            //
+            policyOBJ.isEntitledEmployees = $('.jsIsEntitledEmployee:checked').val();
             //
             policyOBJ.employeeTypes = getField('#js-employee-type-edit');
             //
