@@ -350,7 +350,7 @@ $assignIdObj = $confidential_sids;
                                                                     </td>
                                                                 <?php } ?>
                                                             </tr>
-                                                            <?php if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) { ?>
+                                                            <?php if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_status'] && $this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) { ?>
                                                                 <tr>
                                                                     <td class="col-lg-2">
                                                                         EEOC FORM

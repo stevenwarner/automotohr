@@ -16301,3 +16301,19 @@ if (!function_exists('isSecret')) {
         return strpos(strtolower($str), '#') !== false ? true : false;
     }
 }
+
+if (!function_exists('getCompanyEEOCFormStatus')) {
+    function getCompanyEEOCFormStatus ($company_sid) {
+        $CI = &get_instance();
+        $CI->db->select('eeo_form_status');
+        $CI->db->where('user_sid', $company_sid);
+        $CI->db->from('portal_employer');
+        $portalData = $CI->db->get()->row_array();
+
+        if (!empty($portalData)) {
+            return $portalData['eeo_form_status'];
+        } else {
+            return 0;
+        }
+    }
+}
