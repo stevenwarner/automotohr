@@ -2921,7 +2921,7 @@ class Time_off extends Public_Controller
                 );
                 //
                 if ($doTypeExists[1] > 0) {
-                    $this->res['Response'] = "The type already in use. Please, use a different type title.";
+                    $this->res['Response'] = "The title already in use. Please, use a different type title.";
                     $this->res['Code'] = 'TYPEEXISTS';
                     $this->resp();
                 }
@@ -2939,6 +2939,7 @@ class Time_off extends Public_Controller
                 $in['status'] = 1;
                 $in['is_archived'] = $post['deactivate'];
                 $in['sort_order'] = 1;
+                $in['category_type'] = $post['typeNew'];
                 //
                 $typeId = $this->timeoff_model->insertCategory($in);
                 //
@@ -3070,6 +3071,7 @@ class Time_off extends Public_Controller
                 //
                 $up['timeoff_category_list_sid'] = $categoryId;
                 $up['is_archived'] = $post['deactivate'];
+                $up['category_type'] = $post['typeNew'];
                 //
                 $typeId = $post['typeId'];
                 //

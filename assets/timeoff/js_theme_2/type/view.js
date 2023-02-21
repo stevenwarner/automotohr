@@ -442,6 +442,13 @@ $(function() {
             <div class="csBox csShadow csRadius5 csHShort mt10 jsBox" data-id="${v.type_sid}" data-name="${v.type_title}">
                 <!-- Box Header -->
                 <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">
+
+                <span class="pull-left">
+                <button class="btn btn-orange" style="font-size:14px !important;font-weight: 400 !important; margin-top: -2px !important;;">
+                ${(v.category_type==1)?"Paid":"Unpaid"}
+                </button>
+                </span>
+
                     <span class="pull-right">
                         <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit history" placement="top"><i
                                 class="fa fa-pencil"></i></span>

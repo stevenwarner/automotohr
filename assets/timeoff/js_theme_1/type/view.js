@@ -300,6 +300,13 @@ $(function() {
             rows += `            <p> ${ucwords(v.type_title)}</p>`;
             rows += `        </div>`;
             rows += `    </td>`;
+
+            rows += `    <td>`;
+            rows += `        <div class="text">`;
+            rows += `            <p> ${(v.category_type==1)?"Paid":"Unpaid"}</p>`;
+            rows += `        </div>`;
+            rows += `    </td>`;
+
             rows += `    <td>`;
             rows += `        <div class="text">`;
             rows += `            <p class="js-type-popovers">${v.policies !== null ? v.policies.join(', ') : '-'}</p>`;

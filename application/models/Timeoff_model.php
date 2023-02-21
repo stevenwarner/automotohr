@@ -432,6 +432,7 @@ class Timeoff_model extends CI_Model
             ->select('
             timeoff_category_list.category_name as type_title,
             timeoff_categories.sid as type_sid,
+            timeoff_categories.category_type,
             timeoff_categories.default_type,
             timeoff_categories.created_at,
             ' . (getUserFields()) . '
@@ -538,6 +539,7 @@ class Timeoff_model extends CI_Model
                 [
                     'category_name' => $typeTitle,
                     'status' => 1
+
                 ]
             );
         //
@@ -704,7 +706,9 @@ class Timeoff_model extends CI_Model
             timeoff_categories.sid as type_sid, 
             timeoff_categories.is_archived,
             timeoff_categories.default_type,
+            timeoff_categories.category_type,
             timeoff_category_list.category_name as type
+            
         ')
             ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
             ->where('timeoff_categories.sid', $typeId)
