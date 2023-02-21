@@ -608,7 +608,7 @@ $(function() {
                         newPolicies.push(policy);
                         rows += `
                         <div>
-                        <strong>${policy.Title}</strong>
+                        <strong>${policy.Title}  </strong> ${(policy.categoryType==1)? "(Paid)" : "(Unpaid)"}
                         <br />
                         <span>(${policy.Category})</span>  
                         <br />
@@ -832,7 +832,7 @@ $(function() {
             policyRows += `<optgroup label="${category}">`;
             //
             policies.map((policy) => {
-                policyRows += `<option value="${policy.PolicyId}">${policy.Title}</option>`;
+                policyRows += `<option value="${policy.PolicyId}">${policy.Title}  ${(policy.categoryType==1) ? "(Paid)": "(Unpaid)"}  </option>`;
             });
             policyRows += `</optgroup>`;
         });

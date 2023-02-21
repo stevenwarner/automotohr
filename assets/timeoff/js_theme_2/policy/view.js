@@ -285,7 +285,6 @@ $(function() {
         //
         $.each(resp.Data, function(i, v) {
             oldState[v.policy_id] = i;
-
             rows += getPolicyBox(v);
 
         });
@@ -432,6 +431,7 @@ $(function() {
 
     //
     function getPolicyBox(v) {
+        console.log(v)
         let title = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'Activate Policy' : 'Deactivate Policy',
             icon = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'fa-check-square-o' : 'fa-archive',
             cl = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'js-activate-btn' : 'js-archive-btn';
@@ -444,6 +444,10 @@ $(function() {
         rows += `    <div class="csBox csShadow csRadius5 jsBox" data-id="${v.policy_id}" data-name="${v.policy_title}">`;
         rows += `        <!-- Box Header -->`;
         rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
+
+        rows += `       <span class="pull-left">`;
+        rows += `  <button class="btn btn-orange" style="font-size:14px !important;font-weight: 400 !important; margin-top: -2px !important;">${(v.category_type==1)?"Paid":"Unpaid"} </button> </span>`;
+        
         rows += `            <span class="pull-right">`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit" placement="top"><i class="fa fa-pencil"></i></span>`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistory" title="View history" placement="top"><i class="fa fa-history"></i></span>`;

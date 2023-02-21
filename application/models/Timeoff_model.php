@@ -56,7 +56,8 @@ class Timeoff_model extends CI_Model
             ->select('
                 timeoff_policies.sid as policy_id, 
                 timeoff_policies.title as policy_title,
-                timeoff_category_list.category_name as category
+                timeoff_category_list.category_name as category,
+                timeoff_categories.category_type
             ')
             ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
             ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
@@ -298,9 +299,11 @@ class Timeoff_model extends CI_Model
             timeoff_policies.default_policy,
             timeoff_policies.accruals,
             timeoff_policies.type_sid,
-            timeoff_policies.created_at
+            timeoff_policies.created_at,
+            timeoff_categories.category_type
         ')
             ->from('timeoff_policies')
+            ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
             ->where('timeoff_policies.is_archived', !empty($formpost['filter']) ? $formpost['filter']['archived'] : 0)
             ->where('timeoff_policies.company_sid', $formpost['companyId'])
             ->order_by('timeoff_policies.sort_order', 'ASC')
@@ -1703,7 +1706,7 @@ class Timeoff_model extends CI_Model
             timeoff_policies.is_included,
             timeoff_policies.for_admin,
             timeoff_policies.default_policy,
-            timeoff_category_list.category_name
+            timeoff_categories.category_type
         ')
             ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
             ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
@@ -1964,6 +1967,7 @@ class Timeoff_model extends CI_Model
                 'PolicyId' => $policy['sid'],
                 'UserId' => $employeeId,
                 'Title' => $policy['title'],
+                'CategoryType' => $policy['category_type'],
                 'AllowedTime' => 0,
                 'ConsumedTime' => 0,
                 'CarryOverTime' => 0,
@@ -2003,7 +2007,8 @@ class Timeoff_model extends CI_Model
                 $accruals, // Accruals
                 isset($balances[$employeeId . '-' . $policy['sid']]) ? $balances[$employeeId . '-' . $policy['sid']] : 0, // Employee Balance against this policy
                 '',
-                $slug
+                $slug,
+                $policy['category_type']
             );
             //
             $durationInHours = $durationInMinutes / 60;
@@ -2099,6 +2104,7 @@ class Timeoff_model extends CI_Model
                 'PolicyId' => $policy['sid'],
                 'UserId' => $employeeId,
                 'Title' => $policy['title'],
+                'categoryType' => $policy['category_type'],
                 'AllowedTime' => 0,
                 'ConsumedTime' => 0,
                 'RemainingTime' => 0,
@@ -2136,7 +2142,8 @@ class Timeoff_model extends CI_Model
                 $accruals, // Accruals
                 isset($balances[$employeeId . '-' . $policy['sid']]) ? $balances[$employeeId . '-' . $policy['sid']] : 0, // Employee Balance against this policy
                 '',
-                $slug
+                $slug,
+                $policy['category_type']
             );
             //
             $durationInHours = $durationInMinutes / 60;
@@ -2225,7 +2232,8 @@ class Timeoff_model extends CI_Model
                 $accruals, // Accruals
                 isset($balances[$employeeId . '-' . $policy['sid']]) ? $balances[$employeeId . '-' . $policy['sid']] : 0, // Employee Balance against this policy
                 '',
-                $slug
+                $slug,
+                $policy['category_type']
             );
             //
             if (empty($t['Reason'])) {
@@ -2234,6 +2242,8 @@ class Timeoff_model extends CI_Model
             //
             $returnBalance[$policy['title']] = $balance;
             $durationInHours = $durationInMinutes / 60;
+            $returnBalance[$policy['title']]['title'] = $policy['title'];
+            $returnBalance[$policy['title']]['policy_type'] = $policy['category_type'];
             //
             $returnBalance[$policy['title']]['AllowedTime'] = get_array_from_minutes($t['AllowedTime'], $durationInHours, $slug);
             $returnBalance[$policy['title']]['ConsumedTime'] = get_array_from_minutes($t['ConsumedTime'], $durationInHours, $slug);
@@ -2255,6 +2265,7 @@ class Timeoff_model extends CI_Model
             $returnBalance['total']['EmployeeJoinedAt'] = $t['EmployeeJoinedAt'];
             if ($t['AllowedTime'] != 0) {
                 $returnBalance['total']['ConsumedTime'] += $t['ConsumedTime'];
+                $returnBalance['total']['UnpaidConsumedTime'] += $t['UnpaidConsumedTime'];
                 $returnBalance['total']['RemainingTime'] += $t['RemainingTime'];
                 $returnBalance['total']['MaxNegativeTime'] += $t['MaxNegativeTime'];
                 $returnBalance['total']['RemainingTimeWithNegative'] += $t['RemainingTimeWithNegative'];
@@ -2706,6 +2717,7 @@ class Timeoff_model extends CI_Model
                 'PolicyId' => $policy['sid'],
                 'UserId' => $employeeId,
                 'Title' => $policy['title'],
+                'categoryType' => $policy['category_type'],
                 'AllowedTime' => 0,
                 'ConsumedTime' => 0,
                 'RemainingTime' => 0,
@@ -2745,7 +2757,8 @@ class Timeoff_model extends CI_Model
                 $accruals, // Accruals
                 isset($balances[$employeeId . '-' . $policy['sid']]) ? $balances[$employeeId . '-' . $policy['sid']] : 0, // Employee Balance against this policy
                 $startDate,
-                $slug
+                $slug,
+                $policy['category_type']
             );
             //
             $durationInHours = $durationInMinutes / 60;
@@ -2895,6 +2908,7 @@ class Timeoff_model extends CI_Model
             timeoff_policies.title,
             ' . (getUserFields()) . '
             ')
+            
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
             ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
             ->where('timeoff_policies.is_archived', 0)
@@ -3906,7 +3920,8 @@ class Timeoff_model extends CI_Model
                 $accruals, // Accruals
                 isset($balances[$employeeId . '-' . $policy['sid']]) ? $balances[$employeeId . '-' . $policy['sid']] : 0, // Employee Balance against this policy
                 '',
-                $slug
+                $slug,
+                $policy['category_type']
             );
             //
             $durationInHours = $durationInMinutes / 60;
@@ -4750,7 +4765,8 @@ class Timeoff_model extends CI_Model
                 $accruals, // Accruals
                 isset($balances[$employeeId . '-' . $policy['sid']]) ? $balances[$employeeId . '-' . $policy['sid']] : 0, // Employee Balance against this policy
                 '',
-                $slug
+                $slug,
+                $policy['category_type']
             );
             //
             $durationInHours = $durationInMinutes / 60;

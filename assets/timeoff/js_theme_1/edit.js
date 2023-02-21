@@ -274,7 +274,7 @@ $(function() {
                 policyRows += `<optgroup label="${category}">`;
                 //
                 policies.map((policy) => {
-                    policyRows += `<option value="${policy.PolicyId}">${policy.Title}</option>`;
+                    policyRows += `<option value="${policy.PolicyId}">${policy.Title}  ${(policy.categoryType==1)? "(Paid)" : "(Unpaid)"}</option>`;
                 });
                 policyRows += `</optgroup>`;
             });
@@ -675,7 +675,7 @@ $(function() {
                         newPolicies.push(policy);
                         rows += `
                         <div>
-                        <strong>${policy.Title}</strong>
+                        <strong>${policy.Title}</strong>  ${(policy.categoryType==1)? "(Paid)" : "(Unpaid)"}
                         <br />
                         <span>Remaining Time: ${policy.AllowedTime.M.minutes == 0 && policy.Reason == '' ? 'Unlimited' : policy.RemainingTime.text}</span>
                         <br />

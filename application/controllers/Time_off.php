@@ -2468,7 +2468,6 @@ class Time_off extends Public_Controller
                     $this->res['Response'] = 'We are unable to find policies. Please, add a policy from \"Policies\" section.';
                     $this->resp();
                 }
-                //
                 $this->res['Data'] = $policies;
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed.';
@@ -3591,6 +3590,7 @@ class Time_off extends Public_Controller
                     $post['employeeId']
                 );
                 //
+
                 $this->res['Status'] = true;
                 $this->res['Code'] = 'SUCCESS';
                 $this->res['Response'] = 'Proceed...';
@@ -3661,6 +3661,7 @@ class Time_off extends Public_Controller
             case "get_requests":
                 //
                 $data = $this->timeoff_model->getRequests($post);
+                
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed...';
                 $this->res['Data'] = $data;

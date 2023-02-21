@@ -32,7 +32,7 @@
     async function startBalanceProcess(employeeId, employeeName){
         // Set the employee id
         balanceEmployeeId = employeeId;
-        // Load Modal
+            // Load Modal
         let rows = `
         <!-- Modal -->
         <div class="modal fade" id="jsBalanceModal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
@@ -184,7 +184,7 @@
             //
             policy.map((pi) => {
                 //
-                policyOptions += `<option ${pi.Reason != '' ? `data-reason="${pi.Reason}"` : ''}" value="${pi.PolicyId}">${pi.Title} (${ pi.RemainingTime.text})</option>`;
+                policyOptions += `<option ${pi.Reason != '' ? `data-reason="${pi.Reason}"` : ''}" value="${pi.PolicyId}">${pi.Title}  ${(pi.CategoryType==1)?' (Paid)' : ' (Unpaid) '}   (${ pi.RemainingTime.text})</option>`;
             });
             //
             policyOptions += '</optgroup>';

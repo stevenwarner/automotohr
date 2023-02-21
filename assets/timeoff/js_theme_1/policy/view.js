@@ -295,7 +295,7 @@ $(function() {
             rows += `<tr class="jsDragAble" data-id="${v.policy_id}" data-name="${v.policy_title}">`;
             rows += `    <td>`;
             rows += `        <div class="text">`;
-            rows += `            <p> ${ucwords(v.policy_title)} <br /> (<b>${getTypeNames(v.type_sid)}</b>)</p>`;
+            rows += `            <p> ${ucwords(v.policy_title)}     ${(v.category_type==1)?" (Paid)":"(Unpaid)"}<br /> (<b>${getTypeNames(v.type_sid)}</b>)</p>`;
             rows += `        </div>`;
             rows += `    </td>`;
             rows += `    <td>`;
