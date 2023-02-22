@@ -79,8 +79,7 @@
                                                         <div class="row">
                                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                                                 <select id="js-employee-sort" style="width: 100%;">
-                                                                    <option value="first_name">First Name</option>
-                                                                    <option value="last_name">Last Name</option>
+                                                                    <option value="first_name">Employee Name</option>
                                                                 </select>
                                                             </div>
                                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
@@ -98,7 +97,7 @@
                                                     <div class="hr-fields-wrap">
                                                         <input type="text" placeholder="Search by employee email, name, and nickname" name="keyword" class="invoice-fields search-job" value="" id="keyword">
                                                         <strong class="text-danger">
-                                                            e.g. john.doe@example.com, john smith
+                                                            You can search multiple employees at once. <br />E.G. john.doe@example.com, john smith
                                                         </strong>
                                                     </div>
                                                 </li>
