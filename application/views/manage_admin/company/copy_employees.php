@@ -72,6 +72,36 @@
                                                         </select>
                                                     </div>
                                                 </li>
+
+                                                <li>
+                                                    <label>Sort</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <div class="row">
+                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
+                                                                <select id="js-employee-sort" style="width: 100%;">
+                                                                    <option value="first_name">Employee Name</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
+                                                                <select id="js-employee-sort-order" style="width: 100%;">
+                                                                    <option value="ASC">ASC</option>
+                                                                    <option value="DESC">DESC</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <label>Keywords</label>
+                                                    <div class="hr-fields-wrap">
+                                                        <input type="text" placeholder="Search by employee email, name, and nickname" name="keyword" class="invoice-fields search-job" value="" id="keyword">
+                                                        <strong class="text-danger">
+                                                            You can search multiple employees at once. <br />E.G. john.doe@example.com, john smith
+                                                        </strong>
+                                                    </div>
+                                                </li>
+
                                                 <li>
                                                     <a class="site-btn" id="js-fetch-employees" href="#">Fetch Employees</a>
                                                 </li>
@@ -174,6 +204,9 @@
     $('#js-employee-type').select2();
     $('#js-corporate').select2();
 
+    $('#js-employee-sort').select2();
+    $('#js-employee-sort-order').select2();
+
     $('#js-corporate').on('change', function() {
         var activeCompanies = '';
         var corporate_id = this.value;
@@ -243,6 +276,10 @@
         var from_company_sid    = $("#js-from-company").val( );
         var to_company_sid      = $("#js-to-company").val();
         var employee_type       = $("#js-employee-type").val();
+
+        var employee_sortby       = $("#js-employee-sort").val();
+        var employee_sort_orderby       = $("#js-employee-sort-order").val();
+        var employee_keyword       = $("#keyword").val();
         
         if (from_company_sid == 0 || to_company_sid == 0) {
             alertify.alert('Please select "From & To" company to copy employees');
@@ -258,12 +295,12 @@
             loader();
             $('#js-loader-text').html('Please wait, we are loading employees <br> which may take few minutes!');
 
-            fetch_employee(from_company_sid, employee_type, to_company_sid);
+            fetch_employee(from_company_sid, employee_type, to_company_sid ,employee_sortby,employee_sort_orderby,employee_keyword);
         }  
     });
 
-    function fetch_employee (company_sid, employee_type, to_company_sid) {
-        var myurl = "<?php echo base_url('manage_admin/copy_employees/get_companies_employees') ?>"+"/"+company_sid+"/"+employee_type+"/"+currentPage+"/"+to_company_sid;
+    function fetch_employee (company_sid, employee_type, to_company_sid,employee_sortby,employee_sort_orderby,employee_keyword) {
+        var myurl = "<?php echo base_url('manage_admin/copy_employees/get_companies_employees') ?>"+"/"+company_sid+"/"+employee_type+"/"+currentPage+"/"+to_company_sid+"/"+employee_sortby+"/"+employee_sort_orderby+"/"+employee_keyword;
         $.get(myurl, function(resp) {
             resp = JSON.parse(resp)
                 

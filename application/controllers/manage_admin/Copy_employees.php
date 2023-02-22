@@ -63,7 +63,7 @@ class Copy_employees extends Admin_Controller {
         echo json_encode($corporate_companies);
     }
 
-    public function get_companies_employees ($company_sid, $employee_type, $page, $to_company_sid) {
+    public function get_companies_employees ($company_sid, $employee_type, $page, $to_company_sid,$employee_sortby,$employee_sort_orderby,$employee_keyword='') {
       
         $this->data['security_details'] = $security_details = db_get_admin_access_level_details($this->ion_auth->user()->row()->id);
         check_access_permissions($security_details, 'manage_admin', 'copy_employees');
@@ -81,8 +81,8 @@ class Copy_employees extends Admin_Controller {
             echo json_encode($resp);
         } 
         
-        $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 50);
-        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $to_company_sid);
+        $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 50,$employee_sortby,$employee_sort_orderby,$employee_keyword);
+        $employees_count = $this->copy_employees_model->get_employee_count($company_sid, $employee_type, $to_company_sid,$employee_keyword);
        
         if(empty($company_employees)){
             $company_name = $this->copy_employees_model->get_company_name_by_id($company_sid);
