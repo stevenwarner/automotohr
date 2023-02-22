@@ -178,32 +178,32 @@ let
         <script src="<?=base_url('assets/timeoff/js_theme_2/lms/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0.3';?>"></script>
         <script src="<?=base_url('assets/timeoff/js_theme_2/lms/graph'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0.3';?>"></script>
         <script src="<?=base_url('assets/timeoff/js_theme_2/lms/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=<?= ENVIRONMENT == 'development' ? $GLOBALS['asset_version'] : '1.0.3';?>"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/policies'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/lms/policies'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
     <?php endif; ?>
 
     <?php if(in_array('create_employee', $this->uri->segment_array())): ?>
         <!-- For employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/graph'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/policies'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/common'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/graph'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/view'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/employee/policies'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/edit'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
     <?php endif; ?>
 
     <?php if(in_array('employee_management_system', $this->uri->segment_array())): ?>
         <!-- For ems dashboard -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/dashboard/dashboard'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/breakdown'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/dashboard/dashboard'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/breakdown'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
     <?php endif; ?>
 
     <?php if(in_array('dashboard', $this->uri->segment_array())): ?>
         <!-- For ems employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/dashboard/dashboard'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
-        <script src="<?=base_url('assets/timeoff/js_theme_2/breakdown'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/dashboard/dashboard'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/breakdown'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
     <?php endif; ?>
     <?php if(in_array('report', $this->uri->segment_array())): ?>
         <!-- For ems employee -->
-        <script src="<?=base_url('assets/timeoff/js_theme_2/report'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0"></script>
+        <script src="<?=base_url('assets/timeoff/js_theme_2/report'.( $GLOBALS['minified_version'] ).'.js');?>?v=1.0.3"></script>
     <?php endif; ?>
 <?php } ?>
