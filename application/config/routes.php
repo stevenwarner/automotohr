@@ -1657,3 +1657,4 @@ $route['lms_courses/create/(:any)']['get'] = "2022/Courses/create/$1";
 $route['lms_courses/create']['get'] = "2022/Courses/create";
 $route['lms_courses/handler']['post'] = "2022/Courses/handler";
 $route['lms_courses/my_courses']['get'] = "2022/Courses/my_courses_list";
+$route['lms_courses/my_course/(:any)']['get'] = "2022/Courses/my_course/$1";

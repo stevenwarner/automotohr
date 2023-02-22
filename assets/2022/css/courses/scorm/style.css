@@ -1,0 +1,38 @@
+.tutorial-nav ul {
+    padding-top: 10;
+    margin: 0;
+}
+
+.tutorial-nav ul li {
+    /*display: inline-block;*/
+    position: relative;
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+.btn_scorm {
+    color: #fff;
+    border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
+    -o-border-radius: 5px !important;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 10px;
+    display: block;
+}
+
+/* Backgrounds */
+._csB1{ background: #000 !important; }
+._csB2{ background: #fff !important; }
+._csB3{ background: #3554dc !important; }
+._csB4{ background: #fd7a2a  !important; }
+._csB5{ background: #81b431  !important; }
+._csB6{ background: #eee  !important; }
+
+/* Hovers */
+._csB1:hover{ background: #000 !important; }
+._csB2:hover{ background: #fff !important; }
+._csB3:hover{ background: #3554dc !important; }
+._csB4:hover{ background: #fd7a2a  !important; }
+._csB5:hover{ background: #81b431  !important; }

@@ -28,6 +28,7 @@
     var cToken = <?= $session['company_detail']['sid'] ?? 0 ?>;
     var eToken = <?= $session['employer_detail']['sid'] ?? 0 ?>;
     var courseToken = <?= $course_sid ?? 0 ?>;
+    var chapterToken = <?= $chapter['chapter_sid'] ?? 0 ?>;
     /**
      * Set base url
      * @type {string}

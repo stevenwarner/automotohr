@@ -8,7 +8,7 @@
  * @category   Module
  * @package    LMS Courses
  * @author     AutomotoHR <www.automotohr.com>
- * @author     Mubashir Ahmed
+ * @author     Aleem Shaukat
  * @version    1.0
  * @link       https://www.automotohr.com
  */
@@ -207,12 +207,146 @@ class Courses extends Public_Controller
             $data['employee'] = $employee_detail;
             //
             $data['PageScripts'] = [
-                '2022/js/courses/create',
+                '2022/js/courses/assign',
             ];
             //
             $this->load
                 ->view($this->pages['header'], $data)
                 ->view("{$this->mp}courses/my_courses_list")
+                ->view($this->pages['footer']);
+        } else {
+            redirect(base_url('login'), 'refresh');
+        }
+    }
+
+    /**
+     *
+     */
+    public function my_course($course_sid)
+    {
+        //
+        if ($this->session->userdata('logged_in')) {
+            $data = [];
+            $data['session'] = $this->session->userdata('logged_in');
+            $employee_detail = $data['session']['employer_detail'];
+            $company_detail  = $data['session']['company_detail'];
+            $employee_sid  = $employee_detail['sid'];
+            $ems_status = $company_detail['ems_status'];
+            //
+            if (!$ems_status) {
+                $this->session->set_flashdata('message', '<strong>Warning</strong> Not Allowed!');
+                redirect('dashboard', 'refresh');
+            }
+            //
+            $data['load_view'] = 1;
+            $data['page'] = 'assign_courses';
+            $data['session'] = $this->session->userdata('logged_in');
+            $data['security_details'] = db_get_access_level_details($employee_sid);
+            $data['employee'] = $employee_detail;
+            $data['course_sid'] = $course_sid;
+            //
+            $page = "";
+            //
+            $this->cm->startMyCourse($employee_sid, $course_sid);
+            //
+            $course = $this->cm->getAssignedSpecificCourse($course_sid);
+            $data['course'] = $course;
+            //
+            if ($course['type'] == 'manual') {
+                $chaptersInfo = $this->cm->getManualCourseInfo($course_sid);
+                $chapterFlag = 0;
+
+                $currentChapter = array(
+                    'chapter_sid' => 0,
+                    'status' => 'chapter_completed',
+                    'videoURL' => null,
+                    'quiz' => null,
+                    'title' => '',
+                    'description' => '',
+                    'chaptersCount' => count($chaptersInfo),
+                    'completedCount' => 0
+                );
+                //
+                foreach ($chaptersInfo as $ckey => $chapter) {
+                    //
+                    if ($chapterFlag == 0) {
+                        $checkChapter = $this->cm->checkChapterCompleted($employee_sid, $course_sid, $chapter['chapterID']);
+                        //
+                        if ($checkChapter == 'insert_record') {
+                            $data_to_insert = array();
+                            $data_to_insert['employee_sid'] = $employee_sid;
+                            $data_to_insert['course_sid'] = $course_sid;
+                            $data_to_insert['chapter_sid'] = $chapter['chapterID'];
+                            //
+                            $insert_id = $this->cm->addData('lms_manual_employee_course', $data_to_insert);
+                        }
+                        //
+                        if ($checkChapter != 'chapter_completed') {
+                            //
+                            $chapterFlag = 1;
+                            $currentChapter['chapter_sid'] = $chapter['chapterID'];
+                            $currentChapter['title'] = $chapter['title'];
+                            $currentChapter['description'] = $chapter['description'];
+                            //
+                            if ($checkChapter == 'insert_record' || $checkChapter == 'video_pending') {
+                                $currentChapter['status'] = 'video_pending';
+                                $currentChapter['videoURL'] = $chapter['videoURL'];
+                            } else if ($checkChapter == 'quiz_pending') {
+                                $questions = $this->cm->getChapterQuestions($company_detail['sid'], $course_sid, $chapter['chapterID']);
+                                //
+                                $currentChapter['status'] = 'quiz_pending';
+                                $currentChapter['quiz'] = $questions;
+                            }
+                        } else if ($checkChapter == 'chapter_completed') {
+                            $currentChapter['completedCount']++;
+
+                        }
+                    }
+                }
+                //
+                if ($currentChapter['chaptersCount'] == $currentChapter['completedCount']) {
+                    $currentChapter['title'] = 'Result Card';
+                    $data['courseInfo'] = $this->cm->getChapterCompletedInfo($employee_sid, $course_sid);
+                }
+                //
+                $data['chapter'] = $currentChapter;
+                $page = 'manual';
+                //
+                $data['PageScripts'] = [
+                    '2022/js/courses/assign'
+                ];
+            } else if ($course['type'] == 'upload') {
+                $scormPath = $this->cm->getScromCourseInfo($course_sid);
+                //
+                $this->load->library('Scorm/Scorm_lib', '', 'slib');
+                //
+                $scormInfo = $this->slib->LoadFile($scormPath."/imsmanifest.xml")->GetIndex();
+                //
+                $data['scorm'] = $scormInfo;
+                $data['scorm_path'] = base_url().$scormPath."/shared/launchpage.html?content=";
+                //
+                $page = 'scorm';
+                //
+                if (preg_match('/2004/', $scormInfo["version"])) { 
+                    $versionScript ="2022/js/courses/scorm/scorm-2004";  
+                } else {
+                    $versionScript ="2022/js/courses/scorm/scorm-1.2";
+                }     
+                //
+                $data['PageScripts'] = [
+                    '2022/js/courses/scorm/scorm',
+                    $versionScript,
+                ];
+                //
+                $data['PageCSS'] = [
+                    '2022/css/courses/scorm/style'
+                ];
+            }
+            // _e($data['chapter'],true,true);
+            //
+            $this->load
+                ->view($this->pages['header'], $data)
+                ->view("{$this->mp}courses/{$page}")
                 ->view($this->pages['footer']);
         } else {
             redirect(base_url('login'), 'refresh');
@@ -249,7 +383,7 @@ class Courses extends Public_Controller
         $this->res['Redirect'] = FALSE;
         //
         switch (strtolower($post['action'])) {
-            // Fetch company
+            // 
             case 'get_all_courses':
                 //
                 $type = "running";
@@ -273,7 +407,7 @@ class Courses extends Public_Controller
                 $this->res['Code'] = "SUCCESS";
                 $this->res['Status'] = true;
                 $this->resp();
-                
+                //
                 break;
 
             case 'add_course':
@@ -343,6 +477,7 @@ class Courses extends Public_Controller
                     $this->load->library('Scorm/Scorm_lib', '', 'slib');
                     //
                     $courseContent = $this->slib->LoadFile($unzipFile."/imsmanifest.xml")->GetIndex();
+                    //
                     if (
                         !empty($courseContent) && 
                         isset($courseContent["items"]) &&
@@ -458,7 +593,7 @@ class Courses extends Public_Controller
                 $this->res['Code'] = "SUCCESS";
                 $this->res['Status'] = true;
                 $this->resp();
-            break; 
+                break; 
 
             case 'update_question':
                 //
@@ -626,6 +761,132 @@ class Courses extends Public_Controller
                 //
                 $this->resp();
                 break;        
+
+            case 'get_assigned_courses':
+                //
+                $courses = $this->cm->getAssignedCourses($post['companyId'], $post['employeeId'], $post['type']);
+                $pendingCount = $this->cm->getMyAssignedPendingCourses($post['employeeId']);
+                $completedCount = $this->cm->getMyAssignedCompletedCourses($post['companyId']);
+                //
+                $this->res['Courses'] = $courses;
+                $this->res['pendingCount'] = $pendingCount;
+                $this->res['completedCount'] = $completedCount;
+                $this->res['Response'] = 'Proceed.';
+                $this->res['Code'] = "SUCCESS";
+                $this->res['Status'] = true;
+                $this->resp();
+                break;    
+
+            case 'get_specific_course':
+                $course = $this->cm->getAssignedSpecificCourse($post['courseId']);
+                //
+                if ($course['type'] == 'manual') {
+                    $chaptersInfo = $this->cm->getManualCourseInfo($post['courseId']);
+                    //
+                    foreach ($chaptersInfo as $ckey => $chapter) {
+                        $questions = $this->cm->getChapterQuestions($post['companyId'], $post['courseId'], $chapter['chapterID']);
+                        $chaptersInfo[$ckey]['questions'] = $questions;
+                    }
+                    //
+                    $this->res['Chapters'] = $chaptersInfo;
+                } else if ($course['type'] == 'upload') {
+                    $scormPath = $this->cm->getScromCourseInfo($post['courseId']);
+                    //
+                    $this->load->library('Scorm/Scorm_lib', '', 'slib');
+                    //
+                    $scormInfo = $this->slib->LoadFile($scormPath."/imsmanifest.xml")->GetIndex();
+                    //
+                    $this->res['Scrom'] = $scormInfo;
+                }
+                //
+                $this->res['Course'] = $course;
+                $this->res['Response'] = 'Proceed.';
+                $this->res['Code'] = "SUCCESS";
+                $this->res['Status'] = true;
+                $this->resp();
+                break;    
+                break;    
+
+            case 'video_completed';
+                $data_to_update = array();
+                $data_to_update['watched_video'] = 1;
+                $data_to_update['watched_video_at'] = date('Y-m-d');
+                //
+                $this->cm->updateAssignedChapter($data_to_update, $_POST['employeeId'], $_POST['courseId'], $_POST['chapterId']);
+                //
+                $questions = $this->cm->getChapterQuestions($_POST['companyId'], $_POST['courseId'], $_POST['chapterId']);
+                //
+                if (empty($questions)) {
+                    $data_to_update = array();
+                    $data_to_update['chapter_completed'] = 1;
+                    $data_to_update['chapter_completed_at'] = date('Y-m-d');
+                    $data_to_update['quiz_status'] = 'pass';
+                    $data_to_update['quiz_total_marks'] = 0;
+                    $data_to_update['quiz_obtain_marks'] = 0;
+                    $data_to_update['quiz_completed'] = 1;
+                    $data_to_update['quiz_completed_at'] = date('Y-m-d');
+                    //
+                    $this->cm->updateAssignedChapter($data_to_update, $_POST['employeeId'], $_POST['courseId'], $_POST['chapterId']);
+                    //
+                    $checkChapter = $this->cm->checkRemainingChapter($_POST['employeeId'], $_POST['courseId']);
+                    //
+                    if ($checkChapter == 0) {
+                        $this->cm->finishMyCourse($_POST['employeeId'], $_POST['courseId']);
+                    }
+                }
+                //
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Chapter video mark as completed successfully';
+                //
+                $this->resp();
+                //
+                break;    
+
+            case 'quiz_completed';
+                //
+                $quiz_data = json_decode($_POST['quiz'], true);
+                $questions = $this->cm->getChapterQuestions($_POST['companyId'], $_POST['courseId'], $_POST['chapterId']);
+                $totalMarks = count($questions);
+                $obtainMarks = 0;
+                $quizStatus = 'fail';
+                //
+                foreach ($questions as $question) {
+                    $questionKey = getQuizKey($question['question']);
+                    $answer = $question['answer'];
+                    //
+                    if ($quiz_data[$questionKey] == $answer) {
+                        $obtainMarks++;
+                    }
+                }
+                //
+                if ($obtainMarks == $totalMarks) {
+                    $quizStatus = 'pass';
+                }
+                //
+                $data_to_update = array();
+                $data_to_update['chapter_completed'] = 1;
+                $data_to_update['chapter_completed_at'] = date('Y-m-d');
+                $data_to_update['quiz'] = serialize($_POST['quiz']);
+                $data_to_update['quiz_status'] = $quizStatus;
+                $data_to_update['quiz_total_marks'] = $totalMarks;
+                $data_to_update['quiz_obtain_marks'] = $obtainMarks;
+                $data_to_update['quiz_completed'] = 1;
+                $data_to_update['quiz_completed_at'] = date('Y-m-d');
+                //
+                $this->cm->updateAssignedChapter($data_to_update, $_POST['employeeId'], $_POST['courseId'], $_POST['chapterId']);
+                //
+                $checkChapter = $this->cm->checkRemainingChapter($_POST['employeeId'], $_POST['courseId']);
+                //
+                if ($checkChapter == 0) {
+                    $this->cm->finishMyCourse($_POST['employeeId'], $_POST['courseId']);
+                }
+                //
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Chapter quiz mark as completed successfully';
+                //
+                $this->resp();
+                //
+                break;    
         } 
         //
     }           

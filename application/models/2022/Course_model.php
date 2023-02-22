@@ -355,7 +355,7 @@ class Course_model extends CI_Model {
         $this->db->where('company_sid', $companySid);
         $this->db->where('course_sid', $courseSid);
         $this->db->where('chapter_sid', $chapterSid);
-        $this->db->order_by('sort_order', 'desc');
+        $this->db->order_by('sort_order', 'asc');
         $records_obj = $this->db->get('lms_manual_course_question');
         //
         if (!empty($records_obj)) {
@@ -470,9 +470,302 @@ class Course_model extends CI_Model {
         $this->db->where('lms_courses.is_draft', 0);
         $this->db->where('lms_courses.is_archived', 0);
         $this->db->where('lms_assigned_employees.employee_sid', $employeeSid);
-        $this->db->where('lms_assigned_employees.is_started', 0);
+        $this->db->where('lms_assigned_employees.is_completed', 0);
         $this->db->join('lms_courses', 'lms_assigned_employees.course_sid = lms_courses.sid', 'left');
         $records_count = $this->db->count_all_results('lms_assigned_employees');
+        //
+        return $records_count;
+    }
+
+    function getMyAssignedCompletedCourses ($employeeSid) {
+        //
+        $this->db->where('lms_courses.is_draft', 0);
+        $this->db->where('lms_courses.is_archived', 0);
+        $this->db->where('lms_assigned_employees.employee_sid', $employeeSid);
+        $this->db->where('lms_assigned_employees.is_started', 1);
+        $this->db->where('lms_assigned_employees.is_completed', 1);
+        $this->db->join('lms_courses', 'lms_assigned_employees.course_sid = lms_courses.sid', 'left');
+        $records_count = $this->db->count_all_results('lms_assigned_employees');
+        //
+        return $records_count;
+    }
+
+    public function getAssignedCourses ($companySid,  $employeeSid, $type)
+    {
+        //
+        $todayDate = date('Y-m-d');
+        //
+        $this->db->select('
+            lms_courses.sid, 
+            lms_courses.creator_sid,
+            lms_courses.title,
+            lms_courses.type,
+            lms_courses.description,
+            lms_courses.start_date,
+            lms_courses.end_date,
+            lms_courses.created_at,
+            lms_assigned_employees.is_started,
+            lms_assigned_employees.is_completed
+        ');
+        //
+        if ($type == 'pending') {
+            $this->db->where('lms_courses.start_date <= ', $todayDate);
+            $this->db->where('lms_courses.end_date >= ', $todayDate);
+            $this->db->where('lms_courses.is_draft', 0);
+            $this->db->where('lms_courses.is_archived', 0);
+            // $this->db->where('lms_assigned_employees.is_completed', 0);
+        }
+        //
+        if ($type == 'completed') {
+            $this->db->where('lms_courses.is_draft', 0);
+            $this->db->where('lms_courses.is_archived', 0);
+            $this->db->where('lms_assigned_employees.is_started', 1);
+            $this->db->where('lms_assigned_employees.is_completed', 1);
+        }
+        //
+        $this->db->where('lms_assigned_employees.employee_sid', $employeeSid);
+        $this->db->where('lms_courses.company_sid', $companySid);
+        $this->db->join('lms_courses', 'lms_assigned_employees.course_sid = lms_courses.sid', 'left');
+        $records_obj = $this->db->get('lms_assigned_employees');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->result_array();
+            $records_obj->free_result();
+            //
+            $result_array = array();
+            //
+            foreach ($data as $row) {
+                //
+                $courseInfo = $this->getCourseMoreInfo($row, $employeeSid);
+                $employees = $this->countCourseEmployees($row['sid']);
+                //
+                array_push($result_array, array(
+                    "courseID" => $row['sid'],
+                    "created_by" => getUserNameBySID($row['creator_sid']),
+                    "created_on" => formatDateToDB($row['created_at'], DB_DATE_WITH_TIME, DATE),
+                    "start_date" => formatDateToDB($row['start_date'], DB_DATE, "m-d-Y"),
+                    "end_date" => formatDateToDB($row['end_date'], DB_DATE, "m-d-Y"),
+                    "display_start_date" => formatDateToDB($row['start_date'], DB_DATE, DATE),
+                    "display_end_date" => formatDateToDB($row['end_date'], DB_DATE, DATE),
+                    "type" => $courseInfo['type'],
+                    "title" => $row['title'],
+                    "description" => $courseInfo['description'],
+                    "employees" => $employees,
+                    'status' => $courseInfo['status'],
+                    'progress' => $courseInfo['progress'],
+                ));
+            }
+            //
+            return $result_array;
+        } else {
+            return array();
+        } 
+    }
+
+    private function getCourseMoreInfo ($course, $employeeSid) {
+        $result = array(
+            'status' => '',
+            'progress' => 0,
+            'type' => '',
+            'description' => '',
+        );
+        //
+        if ($course['is_started'] == 0 && $course['is_completed'] == 0) {
+            $result['status'] = 'Course not started yet.';
+        } else if ($course['is_started'] == 1 && $course['is_completed'] == 0) {
+            $result['status'] = 'Course not completed yet.';
+        } else if ($course['is_started'] == 1 && $course['is_completed'] == 1) {
+            $result['status'] = 'Course is completed.';
+        }
+        //
+        $result['description'] = strlen($course['description']) > 100 ? substr($course['description'],0,100)." ..." : $course['description'];
+        //
+        $result['type'] = $course['title'] == "upload" ? "Scorm" : "Manual";
+        //
+        if ($course['is_started'] == 1) {
+            $this->db->select('
+                chapter_completed
+            ');
+            $this->db->where('course_sid', $course['sid']);
+            $this->db->where('employee_sid', $employeeSid);
+            $records_obj = $this->db->get('lms_manual_employee_course');
+            //
+            if (!empty($records_obj)) {
+                $chapters = $records_obj->result_array();
+                $records_obj->free_result();
+                $chapterTotal = count($chapters);
+                $completedChapters = 0;
+                //
+                foreach ($chapters as $chapter) {
+                    if ($chapter['chapter_completed'] == 1) {
+                        $completedChapters++;
+                    }
+                }
+                //
+                if ($completedChapters > 0) {
+                    $result['progress'] = ($completedChapters / $chapterTotal) * 100;
+                }
+                //
+            }
+        }
+
+        return $result;
+        
+    }
+
+    public function startMyCourse ($employeeSid, $courseSid) {
+        //
+        $this->db->where('is_completed', 0);
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->where('course_sid', $courseSid);
+        $count = $this->db->count_all_results('lms_assigned_employees');
+        //
+        if ($count == 1) {
+            $data_to_update = array();
+            $data_to_update['is_started'] = 1;
+            $data_to_update['started_at'] = date('Y-m-d');
+            //        
+            $this->db->where('employee_sid', $employeeSid);
+            $this->db->where('course_sid', $courseSid);
+            $this->db->update('lms_assigned_employees', $data_to_update);
+        }
+    }
+
+    public function finishMyCourse ($employeeSid, $courseSid) {
+        //
+        $this->db->where('is_completed', 0);
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->where('course_sid', $courseSid);
+        $count = $this->db->count_all_results('lms_assigned_employees');
+        //
+        if ($count == 1) {
+            $data_to_update = array();
+            $data_to_update['is_completed'] = 1;
+            $data_to_update['completed_at'] = date('Y-m-d');
+            //        
+            $this->db->where('employee_sid', $employeeSid);
+            $this->db->where('course_sid', $courseSid);
+            $this->db->update('lms_assigned_employees', $data_to_update);
+        }
+    }
+
+    public function getAssignedSpecificCourse ($courseSid) {
+        $this->db->select('
+            title,
+            type,
+            description,
+            start_date,
+            end_date
+        ');
+        //
+        $this->db->where('sid', $courseSid);
+        $records_obj = $this->db->get('lms_courses');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->row_array();
+            $records_obj->free_result();
+            //
+            $data["display_start_date"] = formatDateToDB($data['start_date'], DB_DATE, DATE);
+            $data["display_end_date"] = formatDateToDB($data['end_date'], DB_DATE, DATE);
+            //
+            $from = date_create(date('Y-m-d'));
+            $to = date_create($data['end_date']);
+            $diff = date_diff($from,$to);
+            //
+            $data["daysLeft"] = $diff->format('%a days');
+            //
+            return $data;
+        } else {
+            return array();
+        }    
+    }
+
+    public function getScromCourseInfo ($courseSid) {
+        $this->db->select('
+            upload_scorm_file
+        ');
+        //
+        $this->db->where('course_sid', $courseSid);
+        $records_obj = $this->db->get('lms_scorm_courses');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->row_array();
+            $records_obj->free_result();
+            return $data['upload_scorm_file'];
+        } else {
+            return array();
+        }  
+    }
+
+    public function checkChapterCompleted ($employeeSid, $courseSid, $chapterSid) {
+        $this->db->select('
+            chapter_completed,
+            watched_video,
+            quiz_completed
+        ');
+        //
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->where('course_sid', $courseSid);
+        $this->db->where('chapter_sid', $chapterSid);
+        $records_obj = $this->db->get('lms_manual_employee_course');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->row_array();
+            $records_obj->free_result();
+            //
+            if (empty($data)) {
+                return "insert_record";
+            } else if (!empty($data) && $data['chapter_completed'] == 1) {
+                return "chapter_completed";
+            } else if (!empty($data) && $data['watched_video'] == 0) {
+                return "video_pending";
+            } else if (!empty($data) && $data['watched_video'] == 1 && $data['quiz_completed'] == 0) {
+                return "quiz_pending";
+            }
+        } else {
+            return "insert_record";
+        }  
+    }
+
+    public function getChapterCompletedInfo ($employeeSid, $courseSid) {
+        $this->db->select('
+            lms_manual_employee_course.chapter_completed,
+            lms_manual_employee_course.watched_video,
+            lms_manual_employee_course.quiz_completed,
+            lms_manual_employee_course.quiz_status,
+            lms_manual_employee_course.quiz_total_marks,
+            lms_manual_employee_course.quiz_obtain_marks,
+            lms_manual_course.chapter_title
+        ');
+        //
+        $this->db->where('lms_manual_employee_course.employee_sid', $employeeSid);
+        $this->db->where('lms_manual_employee_course.course_sid', $courseSid);
+        $this->db->join('lms_manual_course', 'lms_manual_employee_course.chapter_sid = lms_manual_course.sid', 'left');
+        $records_obj = $this->db->get('lms_manual_employee_course');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->result_array();
+            $records_obj->free_result();
+            //
+            return $data;
+        } else {
+            return array();
+        }  
+    }
+
+    public function updateAssignedChapter ($data_to_update, $employeeSid, $courseSid, $chapterSid) {
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->where('course_sid', $courseSid);
+        $this->db->where('chapter_sid', $chapterSid);
+        $this->db->update('lms_manual_employee_course', $data_to_update);
+    }
+
+    public function checkRemainingChapter ($employeeSid, $courseSid) {
+        //
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->where('course_sid', $courseSid);
+        $this->db->where('chapter_completed', 1);
+        $records_count = $this->db->count_all_results('lms_manual_employee_course');
         //
         return $records_count;
     }

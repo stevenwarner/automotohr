@@ -16254,3 +16254,12 @@ if (!function_exists('handleEmployeeDepartmentAndTeam')) {
         return true;
     }
 }
+
+if (!function_exists('getQuizKey')) {
+    function getQuizKey(
+        $question
+    ) {
+        //
+        return str_replace(' ', '$$ba$$', $question);
+    }
+}

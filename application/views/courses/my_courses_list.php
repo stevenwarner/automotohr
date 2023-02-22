@@ -34,7 +34,7 @@
                         </div>
                         <div class="panel-body">
                             <!-- Tab panes -->
-                            <div class="tab-pane" id="jsAssignedSurveysSection">
+                            <div class="tab-pane" id="jsAssignedCoursesSection">
                                 <div class="table-responsive">
                                     <div class="row">
                                         
