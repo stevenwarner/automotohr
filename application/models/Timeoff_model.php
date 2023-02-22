@@ -2908,7 +2908,7 @@ class Timeoff_model extends CI_Model
             users.user_shift_hours,
             users.user_shift_minutes,
             timeoff_policies.title,
-            timeoff_policies.policy_category_type as categoryType
+            timeoff_policies.policy_category_type as categoryType,
             ' . (getUserFields()) . '
             ')
             
