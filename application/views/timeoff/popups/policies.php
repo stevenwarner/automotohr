@@ -112,7 +112,7 @@
             policy.map((pi) => {
                 policyOptions += `
                 <tr ${ pi.Reason != '' ? 'class="bg-danger"' : '' }>
-                    <td>${pi.Title}  ${(pi.CategoryType==1)?' (Paid)' : ' (Unpaid) '}  ${ pi.Reason != '' ? ` <i class="fa fa-question-circle jsPopover" title="Why?" data-content="${pi.Reason}"></i>` : '' }</td>
+                    <td>${pi.Title} (<strong class="text-${pi.CategoryType == 1 ? 'success' : 'danger'}">${pi.CategoryType == 1 ? 'Paid' : 'Unpaid'}</strong>) ${ pi.Reason != '' ? ` <i class="fa fa-question-circle jsPopover" title="Why?" data-content="${pi.Reason}"></i>` : '' }</td>
                     <td>${pi.AllowedTime !== undefined && pi.AllowedTime.M.minutes != 0 && pi.Reason == '' && pi.EmploymentStatus != 'probation' ? pi.AllowedTime.text : 'Unlimited'}</td>
                     <td>${pi.Balance !== undefined ? pi.Balance.text : '0'}</td>
                     <td>${pi.CarryOverTime !== undefined ? pi.CarryOverTime.text : '0'}</td>

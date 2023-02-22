@@ -1706,6 +1706,7 @@ class Timeoff_model extends CI_Model
             timeoff_policies.is_included,
             timeoff_policies.for_admin,
             timeoff_policies.default_policy,
+            timeoff_category_list.category_name,
             timeoff_categories.category_type
         ')
             ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
@@ -2965,8 +2966,11 @@ class Timeoff_model extends CI_Model
         } else {
             //
             if ($post['type'] != 'pending') {
+                $this->db->group_start();
                 $this->db->where('timeoff_requests.request_from_date >= "' . (date('Y')) . '-01-01"', null);
                 $this->db->where('timeoff_requests.request_from_date <= "' . (date('Y')) . '-12-31"', null);
+                $this->db->or_where('timeoff_requests.request_to_date >= "' . (date('Y')) . '-01-01"', null);
+                $this->db->group_end();
             }
         }
         //

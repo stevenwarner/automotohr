@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
 
     let
         policy = {},
@@ -60,7 +60,7 @@ $(function() {
     window.timeoff.finalStepCompletedReset = finalStepCompletedReset;
 
     //
-    $('.jsEditResetCheckbox').click(function() {
+    $('.jsEditResetCheckbox').click(function () {
         // 
         // if( $(this).prop('checked') === false){
         //     // Show current
@@ -93,9 +93,23 @@ $(function() {
         }
     });
 
+    $('#js-employee-edit').on('select2:select', function(event){
+        //
+        if (event.params.data.text != 'All') {
+            //
+            let newVals = $(this).val().filter(function(ef) {
+                return ef == 'all' ? false : true;
+            });
+            $('#js-employee-edit').val(newVals);
+        } else {
+            $('#js-employee-edit').val('all');
+        }
+        $('#js-employee-edit').trigger('change.select2');
+    });
+
     // Change events
     // Policy type change
-    $('#js-category-edit').on('change', function() {
+    $('#js-category-edit').on('change', function () {
         var i = $('#js-category-edit option[value="' + ($(this).val()) + '"]').text().toLowerCase().trim();
         //
         if (i.match(/(fmla)/g) !== null) {
@@ -109,7 +123,7 @@ $(function() {
     // Accrual method change
     $('#js-accrual-method-edit').change(setAccrualText);
     // Accrual frequency
-    $('#js-accrual-frequency-edit').on('change', function() {
+    $('#js-accrual-frequency-edit').on('change', function () {
         if ($(this).val() == 'none') {
             if ($(`#js-accrual-time-edit[value="none"]`).text() != 'Jan To Dec') {
                 $(`#js-accrual-time-edit`).html(`
@@ -142,7 +156,7 @@ $(function() {
         setAccrualText();
     });
     // Carryover change
-    $('#js-carryover-cap-check-edit').change(function() {
+    $('#js-carryover-cap-check-edit').change(function () {
         $('.js-carryover-box-edit').find('input').val(0);
         if ($(this).val() === 'no') {
             $('.js-carryover-box-edit').hide();
@@ -151,7 +165,7 @@ $(function() {
         }
     });
     // Negative balance change
-    $('#js-accrual-balance-edit').change(function() {
+    $('#js-accrual-balance-edit').change(function () {
         $('.js-accrual-balance-edit').find('input').val(0);
         if ($(this).val() === 'no') {
             $('.js-negative-box-edit').hide();
@@ -160,7 +174,7 @@ $(function() {
         }
     });
     // Policy applicable change
-    $('.js-hire-date-edit').on('change', function() {
+    $('.js-hire-date-edit').on('change', function () {
         if ($(this).val() == 'hireDate') {
             $('.jsImplementDateBox-edit').hide(0);
             $('#js-custom-date-edit').val('');
@@ -169,7 +183,7 @@ $(function() {
         }
     });
     // Policy reset date
-    $('.js-policy-reset-date-edit').on('change', function() {
+    $('.js-policy-reset-date-edit').on('change', function () {
         if ($(this).val() == 'policyDate') {
             $('.jsResetDateBox-edit').hide(0);
             $('#js-custom-reset-date-edit').val('');
@@ -178,7 +192,7 @@ $(function() {
         }
     });
     //
-    $('.js-plan-btn-edit,.js-plan-btn-reset').click(function(e) {
+    $('.js-plan-btn-edit,.js-plan-btn-reset').click(function (e) {
         //
         e.preventDefault();
         //
@@ -187,7 +201,7 @@ $(function() {
         );
     });
     //
-    $(document).on('click', '.js-plan-remove-btn', function(e) {
+    $(document).on('click', '.js-plan-remove-btn', function (e) {
         //
         e.preventDefault();
         //
@@ -203,14 +217,14 @@ $(function() {
         } else $(this).parent().remove();
     });
     //
-    $('[data-hint="js-hint"]').click(function(e) {
+    $('[data-hint="js-hint"]').click(function (e) {
         e.preventDefault();
         $(`.js-hint-${$(this).data('target')}`).toggle();
     });
     //
-    $(document).on('select2:selecting', '#js-plans-select-edit', function(e) { makePlanRow(e.params.args.data.id, 'edit'); });
-    $(document).on('select2:unselecting', '#js-plans-select-edit', function(e) { removePlan(e.params.args.data.id, 'edit'); });
-    $(document).on('click', '.js-remove-plan-edit', function(e) {
+    $(document).on('select2:selecting', '#js-plans-select-edit', function (e) { makePlanRow(e.params.args.data.id, 'edit'); });
+    $(document).on('select2:unselecting', '#js-plans-select-edit', function (e) { removePlan(e.params.args.data.id, 'edit'); });
+    $(document).on('click', '.js-remove-plan-edit', function (e) {
         removePlan($(this).closest('li').data('id'), 'edit');
         $('#js-plans-select-edit').select2(
             'val',
@@ -218,14 +232,14 @@ $(function() {
         );
     });
     //
-    $('#js-unlimited-policy-check-edit').click(function() {
+    $('#js-unlimited-policy-check-edit').click(function () {
         if ($(this).prop('checked') === true) $('#js-plan-box-edit').hide();
         else $('#js-plan-box-edit').show();
     });
     //
     $('#js-accrual-time-edit').change(setAccrualText);
     $('#js-accrual-rate-type-edit').change(setAccrualText);
-    $('#js-accrual-rate-edit').keyup(function() {
+    $('#js-accrual-rate-edit').keyup(function () {
         //
         if ($(this).val().trim() == '') {
             $('#js-accrual-time-edit').prop('disabled', true);
@@ -257,7 +271,7 @@ $(function() {
         //
         setAccrualText();
     });
-    $('#js-accrual-frequency-val-edit').keyup(function() {
+    $('#js-accrual-frequency-val-edit').keyup(function () {
         //
         if ($(this).val().trim() <= 0) $(this).val(1);
         else if ($(this).val().trim() > 12) $(this).val(12);
@@ -266,7 +280,7 @@ $(function() {
     });
 
     // For Reset
-    $('#js-category-reset').on('change', function() {
+    $('#js-category-reset').on('change', function () {
         var i = $('#js-category-reset option[value="' + ($(this).val()) + '"]').text().toLowerCase().trim();
         //
         if (i.match(/(fmla)/g) !== null) {
@@ -280,7 +294,7 @@ $(function() {
     // Accrual method change
     $('#js-accrual-method-reset').change(setAccrualText);
     // Accrual frequency
-    $('#js-accrual-frequency-reset').on('change', function() {
+    $('#js-accrual-frequency-reset').on('change', function () {
         if ($(this).val() == 'none') {
             if ($(`#js-accrual-time-reset[value="none"]`).text() != 'Jan To Dec') {
                 $(`#js-accrual-time-reset`).html(`
@@ -313,7 +327,7 @@ $(function() {
         setAccrualText();
     });
     // Carryover change
-    $('#js-carryover-cap-check-reset').change(function() {
+    $('#js-carryover-cap-check-reset').change(function () {
         $('.js-carryover-box-reset').find('input').val(0);
         if ($(this).val() === 'no') {
             $('.js-carryover-box-reset').hide();
@@ -322,7 +336,7 @@ $(function() {
         }
     });
     // Negative balance change
-    $('#js-accrual-balance-reset').change(function() {
+    $('#js-accrual-balance-reset').change(function () {
         $('.js-accrual-balance-reset').find('input').val(0);
         if ($(this).val() === 'no') {
             $('.js-negative-box-reset').hide();
@@ -331,7 +345,7 @@ $(function() {
         }
     });
     // Policy applicable change
-    $('.js-hire-date-reset').on('change', function() {
+    $('.js-hire-date-reset').on('change', function () {
         if ($(this).val() == 'hireDate') {
             $('.jsImplementDateBox-reset').hide(0);
             $('#js-custom-date-reset').val('');
@@ -340,7 +354,7 @@ $(function() {
         }
     });
     // Policy reset date
-    $('.js-policy-reset-date-reset').on('change', function() {
+    $('.js-policy-reset-date-reset').on('change', function () {
         if ($(this).val() == 'policyDate') {
             $('.jsResetDateBox-reset').hide(0);
             $('#js-custom-reset-date-reset').val('');
@@ -349,7 +363,7 @@ $(function() {
         }
     });
     //
-    $(document).on('click', '.js-plan-remove-btn', function(e) {
+    $(document).on('click', '.js-plan-remove-btn', function (e) {
         //
         e.preventDefault();
         //
@@ -365,14 +379,14 @@ $(function() {
         } else $(this).parent().remove();
     });
     //
-    $('[data-hint="js-hint"]').click(function(e) {
+    $('[data-hint="js-hint"]').click(function (e) {
         e.preventDefault();
         $(`.js-hint-${$(this).data('target')}`).toggle();
     });
     //
-    $(document).on('select2:selecting', '#js-plans-select-reset', function(e) { makePlanRow(e.params.args.data.id, 'reset'); });
-    $(document).on('select2:unselecting', '#js-plans-select-reset', function(e) { removePlan(e.params.args.data.id, 'reset'); });
-    $(document).on('click', '.js-remove-plan-reset', function(e) {
+    $(document).on('select2:selecting', '#js-plans-select-reset', function (e) { makePlanRow(e.params.args.data.id, 'reset'); });
+    $(document).on('select2:unselecting', '#js-plans-select-reset', function (e) { removePlan(e.params.args.data.id, 'reset'); });
+    $(document).on('click', '.js-remove-plan-reset', function (e) {
         removePlan($(this).closest('li').data('id'), 'reset');
         $('#js-plans-select-reset').select2(
             'val',
@@ -380,14 +394,14 @@ $(function() {
         );
     });
     //
-    $('#js-unlimited-policy-check-reset').click(function() {
+    $('#js-unlimited-policy-check-reset').click(function () {
         if ($(this).prop('checked') === true) $('#js-plan-box-reset').hide();
         else $('#js-plan-box-reset').show();
     });
     //
     $('#js-accrual-time-reset').change(setAccrualText);
     $('#js-accrual-rate-type-reset').change(setAccrualText);
-    $('#js-accrual-rate-reset').keyup(function() {
+    $('#js-accrual-rate-reset').keyup(function () {
         //
         if ($(this).val() <= 0) {
             $(this).val(0);
@@ -408,7 +422,7 @@ $(function() {
         //
         setAccrualText();
     });
-    $('#js-accrual-frequency-val-reset').keyup(function() {
+    $('#js-accrual-frequency-val-reset').keyup(function () {
         //
         if ($(this).val().trim() <= 0) $(this).val(1);
         else if ($(this).val().trim() > 12) $(this).val(12);
@@ -417,7 +431,7 @@ $(function() {
     });
 
     //
-    $(document).on('click', '.js-edit-row-btn', function(e) {
+    $(document).on('click', '.js-edit-row-btn', function (e) {
         e.preventDefault();
         //
         policy = Object.assign(policyOBJ);
@@ -430,7 +444,7 @@ $(function() {
     });
 
     //
-    $('#js-policy-title-edit').keyup(function() {
+    $('#js-policy-title-edit').keyup(function () {
         $('#jsPolicyTitleEdit').text(' - ' + $(this).val());
     });
 
@@ -493,7 +507,7 @@ $(function() {
         }
         // On fail
         if (resp.Status === false) {
-            alertify.alert('WARNING!', resp.Response, () => {});
+            alertify.alert('WARNING!', resp.Response, () => { });
             return;
         }
         //
@@ -538,7 +552,7 @@ $(function() {
         // Set policy types
         $('#js-category-edit').select2('val', policy.type);
         // Set policy title
-        $('#js-policy-title-edit').val(policy.title); 
+        $('#js-policy-title-edit').val(policy.title);
         // Set sort order
         $('#js-sort-order-edit').val(policy.order);
         // Set employees
@@ -595,10 +609,10 @@ $(function() {
         $('#js-step-bar-edit').show();
 
         //
-        if(resp.Data.is_entitled_employee==1){
+        if (resp.Data.is_entitled_employee == 1) {
             $('#EntitledEmployees').prop('checked', true);
             $('#NonEntitledEmployees').prop('checked', false);
-        }else{
+        } else {
             $('#NonEntitledEmployees').prop('checked', true);
             $('#EntitledEmployees').prop('checked', false);
         }
@@ -729,14 +743,14 @@ $(function() {
             policyOBJ.type = getField('#js-category-edit');
             // Check policy type
             if (policyOBJ.type == 0) {
-                alertify.alert('WARNING!', 'Please, select the policy type.', () => {});
+                alertify.alert('WARNING!', 'Please, select the policy type.', () => { });
                 return false;
             }
             // Set policy title
             policyOBJ.title = getField('#js-policy-title-edit');
             // Check policy title
             if (policyOBJ.title == 0) {
-                alertify.alert('WARNING!', 'Please, add the policy title.', () => {});
+                alertify.alert('WARNING!', 'Please, add the policy title.', () => { });
                 return false;
             }
             // Set sort order
@@ -783,7 +797,7 @@ $(function() {
             policyOBJ.plans = getAccrualPlans('edit');
             //
             if (policyOBJ.plans === true) {
-                alertify.alert('WARNING!', 'Please, add the proper plans.', () => {});
+                alertify.alert('WARNING!', 'Please, add the proper plans.', () => { });
                 return false;
             }
             //
@@ -828,7 +842,7 @@ $(function() {
             policyOBJ.applicableDate = getField('#js-custom-date-edit');
             //
             if (policyOBJ.applicableDateType.toLowerCase() != 'hiredate' && policyOBJ.applicableDate == 0) {
-                alertify.alert('WARNING!', 'Please, select a policy applicable date.', () => {});
+                alertify.alert('WARNING!', 'Please, select a policy applicable date.', () => { });
                 return false;
             }
             saveStep(policyOBJ);
@@ -844,7 +858,7 @@ $(function() {
             policyOBJ.resetDate = getField('#js-custom-reset-date-edit');
             //
             if (policyOBJ.resetDateType.toLowerCase() != 'policydate' && policyOBJ.resetDate == 0) {
-                alertify.alert('WARNING!', 'Please, select a policy reset date.', () => {});
+                alertify.alert('WARNING!', 'Please, select a policy reset date.', () => { });
                 return false;
             }
             saveStep(policyOBJ);
@@ -910,7 +924,7 @@ $(function() {
                     }
                     // On fail
                     if (resp.Status === false) {
-                        alertify.alert('WARNING!', resp.Response, () => {});
+                        alertify.alert('WARNING!', resp.Response, () => { });
                         return;
                     }
                     // On success
@@ -954,7 +968,7 @@ $(function() {
             resetPolicy.plans = getAccrualPlans('reset');
             //
             if (resetPolicy.plans === true) {
-                alertify.alert('WARNING!', 'Please, add the proper plans.', () => {});
+                alertify.alert('WARNING!', 'Please, add the proper plans.', () => { });
                 return false;
             }
             //
@@ -999,7 +1013,7 @@ $(function() {
             resetPolicy.applicableDate = getField('#js-custom-date-reset');
             //
             if (resetPolicy.applicableDateType.toLowerCase() != 'hiredate' && resetPolicy.applicableDate == 0) {
-                alertify.alert('WARNING!', 'Please, select a policy applicable date.', () => {});
+                alertify.alert('WARNING!', 'Please, select a policy applicable date.', () => { });
                 return false;
             }
             saveStep(resetPolicy);
@@ -1015,7 +1029,7 @@ $(function() {
             resetPolicy.resetDate = getField('#js-custom-reset-date-reset');
             //
             if (resetPolicy.resetDateType.toLowerCase() != 'policydate' && resetPolicy.resetDate == 0) {
-                alertify.alert('WARNING!', 'Please, select a policy reset date.', () => {});
+                alertify.alert('WARNING!', 'Please, select a policy reset date.', () => { });
                 return false;
             }
             saveStep(resetPolicy);
@@ -1067,7 +1081,7 @@ $(function() {
             }
             // On fail
             if (resp.Status === false) {
-                alertify.alert('WARNING!', resp.Response, () => {});
+                alertify.alert('WARNING!', resp.Response, () => { });
                 return;
             }
             // On success

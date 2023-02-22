@@ -1,48 +1,48 @@
 // TODO
 // Timeline of edit and create policy
-$(function() {
+$(function () {
     //
     let callOBJ = {
-            CompanyPolicies: {
-                Main: {
-                    action: 'get_policies_by_company',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    filter: {
-                        archived: 0,
-                        policy: '',
-                        startDate: '',
-                        endDate: '',
-                        status: ''
-                    },
-                    public: 0,
-                    page: 1,
+        CompanyPolicies: {
+            Main: {
+                action: 'get_policies_by_company',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                filter: {
+                    archived: 0,
+                    policy: '',
+                    startDate: '',
+                    endDate: '',
+                    status: ''
                 },
-                cb: fetchCompanyPolicies,
-                limit: 0,
-                count: 0,
-                pages: 0,
+                public: 0,
+                page: 1,
             },
-            PolicySort: {
-                Main: {
-                    action: "update_sort_order",
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    public: 0
-                }
-            },
-            PolicyHistory: {
-                Main: {
-                    action: "get_policy_history",
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    public: 0
-                }
+            cb: fetchCompanyPolicies,
+            limit: 0,
+            count: 0,
+            pages: 0,
+        },
+        PolicySort: {
+            Main: {
+                action: "update_sort_order",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                public: 0
             }
         },
+        PolicyHistory: {
+            Main: {
+                action: "get_policy_history",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                public: 0
+            }
+        }
+    },
         oldState = {},
         xhr = null;
 
@@ -59,7 +59,7 @@ $(function() {
         dateFormat: 'mm-dd-yy',
         changeYear: true,
         changeMonth: true,
-        onSelect: function(v) { $('#js-filter-to-date').datepicker('option', 'minDate', v); }
+        onSelect: function (v) { $('#js-filter-to-date').datepicker('option', 'minDate', v); }
     });
 
     //
@@ -70,13 +70,13 @@ $(function() {
     }).datepicker('option', 'minDate', $('#js-filter-from-date').val());
 
     //
-    $(".js-tab").click(function() {
+    $(".js-tab").click(function () {
         callOBJ.CompanyPolicies.Main.filter.archived = $(this).data('type') === 'archived' ? 1 : 0;
         fetchCompanyPolicies();
     });
 
     // Trigger for policy history
-    $(document).on('click', '.jsPolicyHistory', function() {
+    $(document).on('click', '.jsPolicyHistory', function () {
         Modal({
             Id: 1,
             Title: `Policy History for ${$(this).closest('.jsBox').data('name')}`,
@@ -95,13 +95,13 @@ $(function() {
     $('.csLisitingArea').on("sortstop", callSort);
 
     //
-    $(document).on('click', '.js-archive-btn', function(e) {
+    $(document).on('click', '.js-archive-btn', function (e) {
         //
         e.preventDefault();
         //
         var _this = $(this);
         //
-        alertify.confirm('Do you really want to deactivate this policy?', function() {
+        alertify.confirm('Do you really want to deactivate this policy?', function () {
             //
             var post = {};
             post.action = 'archive_company_policy';
@@ -113,7 +113,7 @@ $(function() {
             //
             ml(true, 'policy');
             //
-            $.post(handlerURL, post, function(resp) {
+            $.post(handlerURL, post, function (resp) {
                 //
                 ml(false, 'policy');
                 //
@@ -126,11 +126,11 @@ $(function() {
                 }
                 //
                 if (resp.Status === false) {
-                    alertify.alert('WARNING!', resp.Response, function() { return; });
+                    alertify.alert('WARNING!', resp.Response, function () { return; });
                     return;
                 }
                 //
-                alertify.alert('SUCCESS!', resp.Response, function() { loadViewPage(); });
+                alertify.alert('SUCCESS!', resp.Response, function () { loadViewPage(); });
                 return;
             });
         }).set('labels', {
@@ -140,13 +140,13 @@ $(function() {
     });
 
     //
-    $(document).on('click', '.js-activate-btn', function(e) {
+    $(document).on('click', '.js-activate-btn', function (e) {
         //
         e.preventDefault();
         //
         var _this = $(this);
         //
-        alertify.confirm('Do you really want to activate this policy?', function() {
+        alertify.confirm('Do you really want to activate this policy?', function () {
             var post = {};
             post.action = 'activate_company_policy';
             post.companyId = companyId;
@@ -157,7 +157,7 @@ $(function() {
             //
             ml(true, 'policy');
             //
-            $.post(handlerURL, post, function(resp) {
+            $.post(handlerURL, post, function (resp) {
                 //
                 ml(false, 'policy');
                 //
@@ -170,11 +170,11 @@ $(function() {
                 }
                 //
                 if (resp.Status === false) {
-                    alertify.alert('WARNING!', resp.Response, function() { return; });
+                    alertify.alert('WARNING!', resp.Response, function () { return; });
                     return;
                 }
                 //
-                alertify.alert('SUCCESS!', resp.Response, function() { loadViewPage(); });
+                alertify.alert('SUCCESS!', resp.Response, function () { loadViewPage(); });
             });
         }).set('labels', {
             ok: 'YES',
@@ -234,7 +234,7 @@ $(function() {
         //
         ml(true, 'policy');
         //
-        xhr = $.post(handlerURL, callOBJ.CompanyPolicies.Main, function(resp) {
+        xhr = $.post(handlerURL, callOBJ.CompanyPolicies.Main, function (resp) {
             //
             xhr = null;
             //
@@ -283,7 +283,7 @@ $(function() {
         //
         if (resp.Data.length == 0) return;
         //
-        $.each(resp.Data, function(i, v) {
+        $.each(resp.Data, function (i, v) {
             oldState[v.policy_id] = i;
             rows += getPolicyBox(v);
 
@@ -337,9 +337,9 @@ $(function() {
         //
         let o = Object.assign({},
             callOBJ.PolicySort.Main, {
-                sort: s,
-                type: 'policies'
-            }
+            sort: s,
+            type: 'policies'
+        }
         );
         //
         $.post(handlerURL, o, (resp) => {
@@ -392,7 +392,7 @@ $(function() {
             }
             //
             if (resp.Status === false) {
-                alertify.alert('WARNING!', resp.Response, () => {});
+                alertify.alert('WARNING!', resp.Response, () => { });
                 //
                 ml(false, 'jsPolicyHistoryLoader');
                 //
@@ -413,10 +413,10 @@ $(function() {
                 resp.Data.map((v) => {
                     rows += `
                         <tr>
-                            <td>${ remakeEmployeeName(v) }</td>
-                            <td>${ v.action.toUpperCase() }</td>
-                            <td>${ v.action_type.toUpperCase() }</td>
-                            <td>${ moment(v.created_at).format(timeoffDateFormatWithTime) }</td>
+                            <td>${remakeEmployeeName(v)}</td>
+                            <td>${v.action.toUpperCase()}</td>
+                            <td>${v.action_type.toUpperCase()}</td>
+                            <td>${moment(v.created_at).format(timeoffDateFormatWithTime)}</td>
                         </tr>
                     `;
                 });
@@ -431,7 +431,6 @@ $(function() {
 
     //
     function getPolicyBox(v) {
-        console.log(v)
         let title = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'Activate Policy' : 'Deactivate Policy',
             icon = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'fa-check-square-o' : 'fa-archive',
             cl = callOBJ.CompanyPolicies.Main.filter.archived != 0 ? 'js-activate-btn' : 'js-archive-btn';
@@ -445,9 +444,6 @@ $(function() {
         rows += `        <!-- Box Header -->`;
         rows += `        <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">`;
 
-        rows += `       <span class="pull-left">`;
-        rows += `  <button class="btn btn-orange" style="font-size:14px !important;font-weight: 400 !important; margin-top: -2px !important;">${(v.category_type==1)?"Paid":"Unpaid"} </button> </span>`;
-        
         rows += `            <span class="pull-right">`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip js-edit-row-btn" title="Edit" placement="top"><i class="fa fa-pencil"></i></span>`;
         rows += `                <span class="csCircleBtn csRadius50 jsTooltip jsPolicyHistory" title="View history" placement="top"><i class="fa fa-history"></i></span>`;
@@ -459,7 +455,7 @@ $(function() {
         rows += `            <!-- Section 1 -->`;
         rows += `            <div class="csBoxContentDateSection pt10 pb10">`;
         rows += `                <div class="col-sm-12">`;
-        rows += `                    <h3>${ucwords(v.policy_title)}</h3>`;
+        rows += `                    <h3>${ucwords(v.policy_title)} (<span class="text-${v.category_type == 1 ? "" : "danger"}">${v.category_type == 1 ? "Paid" : "Unpaid"}</span>)</h3>`;
         rows += `                    <p>(${getTypeNames(v.type_sid)})</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
@@ -467,7 +463,7 @@ $(function() {
         rows += `            <!-- Section 3 -->`;
         rows += `            <div class="csBoxBalanceSection">`;
         rows += `                <div class="col-sm-12">`;
-        rows += `                    <p><strong>${ accruals.applicableDate === null || accruals.applicableDate == ''  || accruals.applicableDate == 0 ? "Joining Date" : moment(accruals.applicableDate, '').format(timeoffDateFormat) }</strong></p>`;
+        rows += `                    <p><strong>${accruals.applicableDate === null || accruals.applicableDate == '' || accruals.applicableDate == 0 ? "Joining Date" : moment(accruals.applicableDate, '').format(timeoffDateFormat)}</strong></p>`;
         rows += `                    <p>Applicable Date</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;

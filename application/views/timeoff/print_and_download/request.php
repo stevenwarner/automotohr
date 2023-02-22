@@ -238,7 +238,7 @@
                                                             );
                                                         }
                                                     ?></h4>
-                                            <span><?=$request['title'];?></span><br />
+                                            <span><?=$request['title'];?> (<strong class="text-<?=$request['CategoryType'] == 1 ? 'success' : 'danger';?>"><?=$request['CategoryType'] == 1 ? 'Paid' : 'Unpaid';?></strong>)</span><br />
                                             <span><?=$request['breakdown']['text'];?></span>
                                         </div>
                                     </div>

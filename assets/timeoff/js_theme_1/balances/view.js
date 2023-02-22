@@ -213,7 +213,7 @@ $(function () {
                 rows += `        <div class="dn" id="jsBreakdownDivAllowed${v.total.UserId}">`;
                 $.each(v, (index, poli) => {
                     if (index == "total") return "";
-                    rows += `<p><strong>${index}</strong> (${poli.policy_type == 0 ? 'Unpaid' : 'Paid'})<br /> (${poli.AllowedTime.text})</p>`;
+                    rows += `<p><strong>${index}</strong> (<strong class="text-${poli.policy_type == 1 ? 'success' : 'danger'}">${poli.policy_type == 1 ? 'Paid' : 'Unpaid'}</strong>)<br /> (${poli.AllowedTime.text})</p>`;
                 });
                 rows += "        </div>";
                 rows += "        </div>";
@@ -238,7 +238,7 @@ $(function () {
                 rows += `        <div class="dn" id="jsBreakdownDivRemaining${v.total.UserId}">`;
                 $.each(v, (index, poli) => {
                     if (index == "total") return "";
-                    rows += `<p><strong>${index}</strong> (${poli.policy_type == 0 ? 'Unpaid' : 'Paid'})<br /> (${poli.RemainingTime.text})</p>`;
+                    rows += `<p><strong>${index}</strong> (<strong class="text-${poli.policy_type == 1 ? 'success' : 'danger'}">${poli.policy_type == 1 ? 'Paid' : 'Unpaid'}</strong>)<br /> (${poli.RemainingTime.text})</p>`;
                 });
                 rows += "        </div>";
                 rows += "        </div>";

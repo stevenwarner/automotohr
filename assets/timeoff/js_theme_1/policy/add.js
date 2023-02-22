@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     //
     let policyOBJ = {
         type: 0,
@@ -41,7 +41,7 @@ $(function() {
     // Click events
     // Change events
     // Policy type change
-    $('#js-category-add').on('change', function() {
+    $('#js-category-add').on('change', function () {
         var i = $('#js-category-add option[value="' + ($(this).val()) + '"]').text().toLowerCase().trim();
         //
         if (i.match(/(fmla)/g) !== null) {
@@ -52,10 +52,23 @@ $(function() {
             $('.js-fmla-range-add[value="standard_year"]').prop('checked', true);
         }
     });
+    $('#js-employee-add').on('select2:select', function (event) {
+        //
+        if (event.params.data.text != 'All') {
+            //
+            let newVals = $(this).val().filter(function (ef) {
+                return ef == 'all' ? false : true;
+            });
+            $('#js-employee-add').val(newVals);
+        } else {
+            $('#js-employee-add').val('all');
+        }
+        $('#js-employee-add').trigger('change.select2');
+    });
     // Accrual method change
     // $('#js-accrual-method-add').change(setAccrualText);
     // Accrual frequency
-    $('#js-accrual-frequency-add').on('change', function() {
+    $('#js-accrual-frequency-add').on('change', function () {
         //
         if ($(this).val() == 'none') {
             if ($(`#js-accrual-time-add[value="none"]`).text() != 'Jan To Dec') {
@@ -89,7 +102,7 @@ $(function() {
         setAccrualText();
     });
     // Carryover change
-    $('#js-carryover-cap-check-add').change(function() {
+    $('#js-carryover-cap-check-add').change(function () {
         $('.js-carryover-box-add').find('input').val(0);
         if ($(this).val() === 'no') {
             $('.js-carryover-box-add').hide();
@@ -98,7 +111,7 @@ $(function() {
         }
     });
     // Negative balance change
-    $('#js-accrual-balance-add').change(function() {
+    $('#js-accrual-balance-add').change(function () {
         $('.js-accrual-balance-add').find('input').val(0);
         if ($(this).val() === 'no') {
             $('.js-negative-box-add').hide();
@@ -107,7 +120,7 @@ $(function() {
         }
     });
     // Policy applicable change
-    $('.js-hire-date-add').on('change', function() {
+    $('.js-hire-date-add').on('change', function () {
         if ($(this).val() == 'hireDate') {
             $('.jsImplementDateBox-add').hide(0);
             $('#js-custom-date-add').val('');
@@ -116,7 +129,7 @@ $(function() {
         }
     });
     // Policy reset date
-    $('.js-policy-reset-date-add').on('change', function() {
+    $('.js-policy-reset-date-add').on('change', function () {
         if ($(this).val() == 'policyDate') {
             $('.jsResetDateBox-add').hide(0);
             $('#js-custom-reset-date-add').val('');
@@ -125,7 +138,7 @@ $(function() {
         }
     });
     //
-    $('.js-plan-btn-add').click(function(e) {
+    $('.js-plan-btn-add').click(function (e) {
         //
         e.preventDefault();
         //
@@ -134,7 +147,7 @@ $(function() {
         );
     });
     //
-    $(document).on('click', '.js-plan-remove-btn', function(e) {
+    $(document).on('click', '.js-plan-remove-btn', function (e) {
         //
         e.preventDefault();
         //
@@ -150,14 +163,14 @@ $(function() {
         } else $(this).parent().remove();
     });
     //
-    $('[data-hint="js-hint"]').click(function(e) {
+    $('[data-hint="js-hint"]').click(function (e) {
         e.preventDefault();
         $(`.js-hint-${$(this).data('target')}`).toggle();
     });
     //
-    $(document).on('select2:selecting', '#js-plans-select-add', function(e) { makePlanRow(e.params.args.data.id, 'add'); });
-    $(document).on('select2:unselecting', '#js-plans-select-add', function(e) { removePlan(e.params.args.data.id, 'add'); });
-    $(document).on('click', '.js-remove-plan-add', function(e) {
+    $(document).on('select2:selecting', '#js-plans-select-add', function (e) { makePlanRow(e.params.args.data.id, 'add'); });
+    $(document).on('select2:unselecting', '#js-plans-select-add', function (e) { removePlan(e.params.args.data.id, 'add'); });
+    $(document).on('click', '.js-remove-plan-add', function (e) {
         removePlan($(this).closest('li').data('id'), 'add');
         $('#js-plans-select-add').select2(
             'val',
@@ -165,14 +178,14 @@ $(function() {
         );
     });
     //
-    $('#js-unlimited-policy-check-add').click(function() {
+    $('#js-unlimited-policy-check-add').click(function () {
         if ($(this).prop('checked') === true) $('#js-plan-box-add').hide();
         else $('#js-plan-box-add').show();
     });
     //
     $('#js-accrual-time-add').change(setAccrualText);
     $('#js-accrual-rate-type-add').change(setAccrualText);
-    $('#js-accrual-rate-add').keyup(function() {
+    $('#js-accrual-rate-add').keyup(function () {
         //
         if ($(this).val().trim() == '') {
             $('#js-accrual-time-add').prop('disabled', true);
@@ -204,7 +217,7 @@ $(function() {
         //
         setAccrualText();
     });
-    $('#js-accrual-frequency-val-add').keyup(function() {
+    $('#js-accrual-frequency-val-add').keyup(function () {
         //
         if ($(this).val().trim() <= 0) $(this).val(1);
         else if ($(this).val().trim() > 12) $(this).val(12);
@@ -213,7 +226,7 @@ $(function() {
     });
 
     //
-    $('#js-policy-title-add').keyup(function() {
+    $('#js-policy-title-add').keyup(function () {
         $('#jsPolicyTitleAdd').text(' - ' + $(this).val());
     });
 
@@ -230,14 +243,14 @@ $(function() {
             policyOBJ.type = getField('#js-category-add');
             // Check policy type
             if (policyOBJ.type == 0) {
-                alertify.alert('WARNING!', 'Please, select the policy type.', () => {});
+                alertify.alert('WARNING!', 'Please, select the policy type.', () => { });
                 return false;
             }
             // Set policy title
             policyOBJ.title = getField('#js-policy-title-add');
             // Check policy title
             if (policyOBJ.title == 0) {
-                alertify.alert('WARNING!', 'Please, add the policy title.', () => {});
+                alertify.alert('WARNING!', 'Please, add the policy title.', () => { });
                 return false;
             }
             // Set sort order
@@ -258,7 +271,7 @@ $(function() {
             policyOBJ.offDays = getField('#js-off-days-add');
             // Check policy title
             if (policyOBJ.employeeTypes == null) {
-                alertify.alert('WARNING!', 'Please, add the employee type.', () => {});
+                alertify.alert('WARNING!', 'Please, add the employee type.', () => { });
                 return false;
             }
             //
@@ -290,7 +303,7 @@ $(function() {
             policyOBJ.plans = getAccrualPlans('add');
             //
             if (policyOBJ.plans === true) {
-                alertify.alert('WARNING!', 'Please, add the proper plans.', () => {});
+                alertify.alert('WARNING!', 'Please, add the proper plans.', () => { });
                 return false;
             }
             //
@@ -335,7 +348,7 @@ $(function() {
             policyOBJ.applicableDate = getField('#js-custom-date-add');
             //
             if (policyOBJ.applicableDateType.toLowerCase() != 'hiredate' && policyOBJ.applicableDate == 0) {
-                alertify.alert('WARNING!', 'Please, select a policy applicable date.', () => {});
+                alertify.alert('WARNING!', 'Please, select a policy applicable date.', () => { });
                 return false;
             }
             saveStep(policyOBJ);
@@ -351,7 +364,7 @@ $(function() {
             policyOBJ.resetDate = getField('#js-custom-reset-date-add');
             //
             if (policyOBJ.resetDateType.toLowerCase() != 'policydate' && policyOBJ.resetDate == 0) {
-                alertify.alert('WARNING!', 'Please, select a policy reset date.', () => {});
+                alertify.alert('WARNING!', 'Please, select a policy reset date.', () => { });
                 return false;
             }
             saveStep(policyOBJ);
@@ -400,7 +413,7 @@ $(function() {
             }
             // On fail
             if (resp.Status === false) {
-                alertify.alert('WARNING!', resp.Response, () => {});
+                alertify.alert('WARNING!', resp.Response, () => { });
                 return;
             }
             // On success

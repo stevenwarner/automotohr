@@ -144,7 +144,7 @@
                                     <br>
                                     <br>
                                     <div class="js-hint js-hint-employees">
-                                        <?php echo $get_policy_item_info['entitled_employee_info']; ?>
+                                        <?php echo $get_policy_item_info['non_entitled_employee_info']; ?>
                                     </div>
                                     <div class="js-hint js-hint-employees2">
                                         <?php echo $get_policy_item_info['entitled_employee_info']; ?>
