@@ -206,7 +206,7 @@ function fetchCategories() {
         rows += '<option value="0" selected="true">[Please select a policy type]</option>';
         //
         window.timeoff.categories.map(function (v) {
-            rows += `<option value="${v.type_id}">${v.type_name}</option>`;
+            rows += `<option value="${v.type_id}">${v.type_name} (${v.category_type == 1  ? 'Paid' : 'Unpaid'})</option>`;
         });
         //
         $('#js-category-add, #js-category-edit, #js-category-reset').html(rows);

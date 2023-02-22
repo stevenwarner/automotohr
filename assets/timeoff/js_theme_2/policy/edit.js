@@ -93,11 +93,11 @@ $(function () {
         }
     });
 
-    $('#js-employee-edit').on('select2:select', function(event){
+    $('#js-employee-edit').on('select2:select', function (event) {
         //
         if (event.params.data.text != 'All') {
             //
-            let newVals = $(this).val().filter(function(ef) {
+            let newVals = $(this).val().filter(function (ef) {
                 return ef == 'all' ? false : true;
             });
             $('#js-employee-edit').val(newVals);
@@ -544,6 +544,15 @@ $(function () {
         policy.employeeTypes = accruals.employeeTypes;
         policy.offDays = resp.Data.off_days !== null ? resp.Data.off_days.split(',') : null;
         policy.plans = accruals.plans;
+
+        //
+        if (policy.carryOverCheck != 'no' && policy.carryOverCheck != 'yes') {
+            policy.carryOverCheck = 'no';
+        }
+        //
+        if (policy.negativeBalanceCheck != 'no' && policy.negativeBalanceCheck != 'yes') {
+            policy.negativeBalanceCheck = 'no';
+        }
         //
         originalOBJ = Object.assign({}, policy);
 

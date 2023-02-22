@@ -24,6 +24,7 @@ class Timeoff_model extends CI_Model
         $a = $this->db
             ->select('
             timeoff_categories.sid as type_id,
+            timeoff_categories.category_type,
             timeoff_category_list.category_name as type_name
         ')
             ->from('timeoff_categories')
