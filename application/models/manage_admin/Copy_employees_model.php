@@ -67,7 +67,7 @@ class Copy_employees_model extends CI_Model {
         return $return_data;
     }
 
-    function get_company_employee ($sid, $type, $page, $limit) {
+    function get_company_employee ($sid, $type, $page, $limit,$employee_sortby,$employee_sort_orderby,$employee_keyword) {
         $start = $page == 1 ? 0 : ($page * $limit) - $limit;
         $this->db->select('sid, email, first_name, last_name, active, job_title, access_level, access_level_plus, pay_plan_flag, terminated_status');
         $this->db->where('parent_sid', $sid);
@@ -84,7 +84,37 @@ class Copy_employees_model extends CI_Model {
             $this->db->where('terminated_status', 1);  
         }
 
+
+        if (trim($employee_keyword)) {
+            //
+            $keywords = explode(',', trim($employee_keyword));
+            $this->db->group_start();
+            //
+            foreach ($keywords as $keyword) {
+                $this->db->or_group_start();
+                //
+                $keyword = trim(urldecode($keyword));
+                //
+                if (strpos($keyword, '@') !== false) {
+                    $this->db->or_where('email', $keyword);
+                } else {
+                    $this->db->where("first_name regexp '$keyword'", null, null);
+                    $this->db->or_where("last_name regexp '$keyword'", null, null);
+                    $this->db->or_where("nick_name regexp '$keyword'", null, null);
+                    $this->db->or_where("extra_info regexp '$keyword'", null, null);
+                    $this->db->or_where('lower(concat(first_name, last_name)) =', strtolower(preg_replace('/[^a-z0-9]/i', '', $keyword)));
+                }
+                $this->db->group_end();
+            }
+            $this->db->group_end();
+        }
+
+        
+        $this->db->order_by($employee_sortby,$employee_sort_orderby);
+
         $records_obj = $this->db->limit($limit, $start)->get('users');
+
+        // _e($this->db->last_query(), true);
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         $return_data = array();
@@ -96,7 +126,7 @@ class Copy_employees_model extends CI_Model {
         return $return_data;
     }
 
-    function get_employee_count ($sid, $type) {
+    function get_employee_count ($sid, $type,$employee_keyword) {
         $this->db->select('sid');
         $this->db->where('parent_sid', $sid);
         $this->db->where('is_executive_admin', 0);
@@ -109,6 +139,12 @@ class Copy_employees_model extends CI_Model {
             $this->db->where('terminated_status', 0);  
         } else if ($type == 4) {
             $this->db->where('terminated_status', 1);  
+        }
+
+
+        if ($employee_keyword != null && $employee_keyword !='') {
+            $tK = preg_replace('/\s+/', '|', strtolower($employee_keyword));
+            $this->db->where("(lower(first_name) regexp '" . ($tK) . "' or lower(last_name) regexp '" . ($tK) . "' or lower(extra_info) regexp '" . ($employee_keyword) . "' or nick_name LIKE '%" . $employee_keyword . "%' or username LIKE '%" . $employee_keyword . "%' or email LIKE '" . $employee_keyword . "')  ", false, false);
         }
 
         $records_obj = $this->db->get('users');
