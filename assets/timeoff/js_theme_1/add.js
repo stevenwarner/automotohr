@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     let
         selectedEmployeeId = employeeId,
         selectedEmployeeName = employeeName,
@@ -16,7 +16,7 @@ $(function() {
             fromAdmin: 1
         };
     //
-    $(document).on('click', '.jsCreateTimeOffBTN', function(e) {
+    $(document).on('click', '.jsCreateTimeOffBTN', function (e) {
         //
         e.preventDefault();
         //
@@ -29,7 +29,7 @@ $(function() {
             alertify.alert(
                 'WARNING!',
                 'You don\'t have any policies. Please select a different date.',
-                () => {}
+                () => { }
             );
             //
             return;
@@ -49,7 +49,7 @@ $(function() {
             alertify.alert(
                 'WARNING!',
                 'Please select a policy.',
-                () => {}
+                () => { }
             );
             //
             return;
@@ -60,7 +60,7 @@ $(function() {
             alertify.alert(
                 'WARNING!',
                 'Please select the start date.',
-                () => {}
+                () => { }
             );
             //
             return;
@@ -71,7 +71,7 @@ $(function() {
             alertify.alert(
                 'WARNING!',
                 'Please select an end date.',
-                () => {}
+                () => { }
             );
             //
             return;
@@ -84,7 +84,7 @@ $(function() {
                 alertify.alert(
                     'WARNING!',
                     'Please, either select approve or reject.',
-                    () => {}
+                    () => { }
                 );
                 //
                 return;
@@ -101,12 +101,12 @@ $(function() {
         if (selectedPolicy.IsUnlimited == 0) {
             //
             if (selectedPolicy.RemainingTimeWithNegative.M.minutes <= 0) {
-                alertify.alert('WARNING!', `You don't have any time left against this policy.`, () => {});
+                alertify.alert('WARNING!', `You don't have any time left against this policy.`, () => { });
                 return;
             }
             //
             if (cOBJ.dateRows.totalTime > selectedPolicy.RemainingTimeWithNegative.M.minutes) {
-                alertify.alert('WARNING!', `Requested time-off can not be greater than the allowed time i.e. "${selectedPolicy.RemainingTimeWithNegative.text}"`, () => {});
+                alertify.alert('WARNING!', `Requested time-off can not be greater than the allowed time i.e. "${selectedPolicy.RemainingTimeWithNegative.text}"`, () => { });
                 return;
             }
         }
@@ -128,7 +128,7 @@ $(function() {
             (resp) => {
                 if (resp.Status === false) {
                     ml(false, currentLoader);
-                    alertify.alert('WARNING!', resp.Response, () => {});
+                    alertify.alert('WARNING!', resp.Response, () => { });
                     return;
                 }
                 //
@@ -146,7 +146,7 @@ $(function() {
     });
 
     // 
-    $(document).on('click', '.jsCreateRequest', function(e) {
+    $(document).on('click', '.jsCreateRequest', function (e) {
         //
         e.preventDefault();
         //
@@ -185,7 +185,7 @@ $(function() {
             ],
             Loader: 'addModalLoader',
             Ask: false
-        }, async() => {
+        }, async () => {
             loadAddSectionPage('addModalLoader', 'addModal');
         });
     });
@@ -193,7 +193,7 @@ $(function() {
     /**
      * @param {Object} event
      */
-    $(document).on('click', '.jsCreateTimeOffBalance', function(event) {
+    $(document).on('click', '.jsCreateTimeOffBalance', function (event) {
         //
         event.preventDefault();
         //
@@ -214,12 +214,12 @@ $(function() {
         //
         $.post(
             handlerURL, {
-                action: 'get_employee_balance_history',
-                companyId: companyId,
-                employerId: employerId,
-                employeeId: selectedEmployeeId,
-            }
-        ).done(function(resp) {
+            action: 'get_employee_balance_history',
+            companyId: companyId,
+            employerId: employerId,
+            employeeId: selectedEmployeeId,
+        }
+        ).done(function (resp) {
             //
             var rows = '';
             //
@@ -249,7 +249,7 @@ $(function() {
                 }
 
                 //
-                resp.Data.map(function(balance) {
+                resp.Data.map(function (balance) {
                     //
                     var
                         startDate = '',
@@ -346,7 +346,7 @@ $(function() {
     /**
      * @param {Object} event
      */
-    $(document).on('click', '.jsCreateTimeOffBalanceBack', function(event) {
+    $(document).on('click', '.jsCreateTimeOffBalanceBack', function (event) {
         //
         event.preventDefault();
         //
@@ -364,7 +364,7 @@ $(function() {
     /**
      * @param {Object} event
      */
-    $(document).on('click', '.jsCreateTimeOffBalanceAdmin', function(event) {
+    $(document).on('click', '.jsCreateTimeOffBalanceAdmin', function (event) {
         //
         event.preventDefault();
         //
@@ -385,12 +385,12 @@ $(function() {
         //
         $.post(
             handlerURL, {
-                action: 'get_employee_balance_history',
-                companyId: companyId,
-                employerId: employerId,
-                employeeId: selectedEmployeeId,
-            }
-        ).done(function(resp) {
+            action: 'get_employee_balance_history',
+            companyId: companyId,
+            employerId: employerId,
+            employeeId: selectedEmployeeId,
+        }
+        ).done(function (resp) {
             //
             var rows = '';
             //
@@ -419,7 +419,7 @@ $(function() {
                     totalManualTime['minutes'] = 0;
                 }
                 //
-                resp.Data.map(function(balance) {
+                resp.Data.map(function (balance) {
                     //
                     var
                         startDate = '',
@@ -517,7 +517,7 @@ $(function() {
     /**
      * @param {Object} event
      */
-    $(document).on('click', '.jsCreateTimeOffBalanceBackAdmin', function(event) {
+    $(document).on('click', '.jsCreateTimeOffBalanceBackAdmin', function (event) {
         //
         event.preventDefault();
         //
@@ -546,12 +546,12 @@ $(function() {
         return new Promise((res) => {
             $.post(
                 handlerURL, {
-                    action: 'get_modal',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    type: type
-                },
+                action: 'get_modal',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                type: type
+            },
                 (resp) => {
                     res(resp);
                 }
@@ -564,11 +564,11 @@ $(function() {
         return new Promise((res) => {
             $.post(
                 handlerURL, {
-                    action: 'get_employee_policies_with_approvers',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: selectedEmployeeId
-                },
+                action: 'get_employee_policies_with_approvers',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: selectedEmployeeId
+            },
                 (resp) => {
                     res(resp);
                 }
@@ -583,12 +583,12 @@ $(function() {
         //
         $.post(
             handlerURL, {
-                action: 'get_employee_policies_by_date',
-                companyId: companyId,
-                employerId: employerId,
-                employeeId: selectedEmployeeId,
-                fromDate: $('#jsStartDate').val()
-            },
+            action: 'get_employee_policies_by_date',
+            companyId: companyId,
+            employerId: employerId,
+            employeeId: selectedEmployeeId,
+            fromDate: $('#jsStartDate').val()
+        },
             (resp) => {
                 //
                 window.timeoff.cPolicies = resp.Data;
@@ -608,7 +608,7 @@ $(function() {
                         newPolicies.push(policy);
                         rows += `
                         <div>
-                        <strong>${policy.Title}</strong>
+                        <strong>${policy.Title} (<strong class="text-${policy.categoryType == 1 ? "success" : "danger"}">${policy.categoryType == 1 ? "Paid" : "Unpaid"}</strong>)</strong> 
                         <br />
                         <span>(${policy.Category})</span>  
                         <br />
@@ -616,7 +616,7 @@ $(function() {
                         <br />
                         <span>${policy.IsUnlimited ? 'Unlimited' : policy.ConsumedTime.text} scheduled</span>
                         <br />
-                        <span>Employement status: ${ucwords(policy.EmployementStatus)}</span>  
+                        <span>Employment status: ${ucwords(policy.EmployementStatus)}</span>  
                         </div>
                         <hr />
                         `;
@@ -638,7 +638,7 @@ $(function() {
     }
 
     //
-    $(document).on('change', '#jsAddPolicy', function() {
+    $(document).on('change', '#jsAddPolicy', function () {
         //
         if ($(this).val() === null) {
             policyOffDays = undefined;
@@ -694,7 +694,7 @@ $(function() {
         }
         //
         if (resp.Status == false || resp.Data.length == 0) {
-            alertify.alert('WARNING!', 'We are unable to find any active employees.', () => {});
+            alertify.alert('WARNING!', 'We are unable to find any active employees.', () => { });
             return;
         }
         //
@@ -725,7 +725,7 @@ $(function() {
             ],
             Loader: 'addAdminModalLoader',
             Ask: false
-        }, async() => {
+        }, async () => {
             //
             $('#jsAddAdminModalList').select2({
                 templateSelection: (opt) => {
@@ -748,7 +748,7 @@ $(function() {
                     //
                     loadAddSectionPage('addAdminModalLoader', 'addAdminModal');
                     //
-                    return $(`<span><img  style="padding: 5px; margin-left: 5px;" src="${employeeDetail.image == '' || employeeDetail.image == null ? awsURL+'test_file_01.png' : awsURL+employeeDetail.image}" width="60px" /> <span>${opt.text}</span> (<span>${employeeJoinedAt}</span>)</span>`);
+                    return $(`<span><img  style="padding: 5px; margin-left: 5px;" src="${employeeDetail.image == '' || employeeDetail.image == null ? awsURL + 'test_file_01.png' : awsURL + employeeDetail.image}" width="60px" /> <span>${opt.text}</span> (<span>${employeeJoinedAt}</span>)</span>`);
                 }
             });
             //
@@ -762,11 +762,11 @@ $(function() {
         return new Promise((res) => {
             $.post(
                 handlerURL, {
-                    action: 'get_company_employees',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: selectedEmployeeId
-                },
+                action: 'get_company_employees',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: selectedEmployeeId
+            },
                 (resp) => {
                     res(resp);
                 }
@@ -832,7 +832,7 @@ $(function() {
             policyRows += `<optgroup label="${category}">`;
             //
             policies.map((policy) => {
-                policyRows += `<option value="${policy.PolicyId}">${policy.Title}</option>`;
+                policyRows += `<option value="${policy.PolicyId}">${policy.Title}  (<strong class="text-${policy.categoryType == 1 ? "success" : "danger"}">${policy.categoryType == 1 ? "Paid" : "Unpaid"}</strong>) </option>`;
             });
             policyRows += `</optgroup>`;
         });
@@ -958,14 +958,14 @@ $(function() {
             //
             rows += `
                 <div class="csApproverBox" title="Approver" data-content="${msg}">
-                    <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL+'test_file_01.png' : awsURL+approver.profile_picture}" />
+                    <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL + 'test_file_01.png' : awsURL + approver.profile_picture}" />
                 </div>
             `;
             mRows += `
                 <div class="csApproverBox">
                     <div class="employee-info">            
                         <figure>                
-                            <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL+'test_file_01.png' : awsURL+approver.profile_picture}" />          
+                            <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL + 'test_file_01.png' : awsURL + approver.profile_picture}" />          
                         </figure>            
                         <div class="text">                
                             <h4>${msg}</h4>                

@@ -19,11 +19,25 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-sm-6">
-                    <label>Types <span class="cs-required">*</span></label>
+                    <label>Title <span class="cs-required">*</span></label>
                     <input type="text" value="" class="form-control" id="js-type-add" placeholder="Vacation" />
                 </div>
             </div>
         </div>
+
+        <div class="form-group">
+            <div class="row">
+            <hr />
+                <div class="col-sm-6">
+                    <label>Types <span class="cs-required">*</span></label>
+                    <select class="invoice-fields" name="type_new" id="js-type-add-new" >
+                    <option value="1">Paid</option>
+                    <option value="0">Unpaid</option>
+                 </select>
+                </div>
+            </div>
+        </div>
+
 
         <!--  -->
         <div class="form-group">

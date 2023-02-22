@@ -153,6 +153,9 @@ $('#js-add-policy-btn').click((e) => {
     e.preventDefault();
     //
     loadAddPage();
+    //
+    $('#NonEntitledEmployeesadd').prop('checked', true);
+
 });
 
 //
@@ -268,7 +271,7 @@ function fetchPolicies() {
         rows += '<option value="all">All</option>';
         //
         resp.Data.map(function(v) {
-            rows += `<option value="${v.policy_id}">${v.policy_title}</option>`;
+            rows += `<option value="${v.policy_id}">${v.policy_title} (${(v.category_type==1)?"Paid":"Unpaid"}) </option>`;
         });
         //
         $('#js-filter-policies').html(rows);

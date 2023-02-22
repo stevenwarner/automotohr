@@ -1,24 +1,24 @@
-$(function() {
+$(function () {
     //
     let callOBJ = {
-            Balances: {
-                Main: {
-                    action: "get_balances",
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    level: level,
-                    filter: {
-                        employees: getParams('id'),
-                        policies: getParams('pid'),
-                        type: $(".jsEditResetCheckbox:checked").val(),
-                    },
-                    public: 0,
-                    inset: 0,
-                    offset: 10,
+        Balances: {
+            Main: {
+                action: "get_balances",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                level: level,
+                filter: {
+                    employees: getParams('id'),
+                    policies: getParams('pid'),
+                    type: $(".jsEditResetCheckbox:checked").val(),
                 },
+                public: 0,
+                inset: 0,
+                offset: 10,
             },
         },
+    },
         xhr = null;
     //
     window.timeoff.fetchBalances = fetchBalances;
@@ -31,7 +31,7 @@ $(function() {
         dateFormat: "mm-dd-yy",
         changeYear: true,
         changeMonth: true,
-        onSelect: function(v) {
+        onSelect: function (v) {
             $("#js-filter-to-date").datepicker("option", "minDate", v);
         },
     });
@@ -77,8 +77,8 @@ $(function() {
         callOBJ.Balances.Main.filter.employees = $("#js-filter-employee").val();
         callOBJ.Balances.Main.filter.policies =
             $("#js-filter-policies").val() == null ?
-            "all" :
-            $("#js-filter-policies").val();
+                "all" :
+                $("#js-filter-policies").val();
         callOBJ.Balances.Main.filter.type = $(".jsEditResetCheckbox:checked").val();
         //
         //
@@ -112,7 +112,7 @@ $(function() {
         //
         $(".js-error-row").remove();
         //
-        xhr = $.post(handlerURL, callOBJ.Balances.Main, function(resp) {
+        xhr = $.post(handlerURL, callOBJ.Balances.Main, function (resp) {
             //
             xhr = null;
             //
@@ -135,11 +135,9 @@ $(function() {
             if (resp.Status === false && callOBJ.Balances.Main.page == 1) {
                 $(".js-ip-pagination").html("");
                 $("#js-data-area").html(
-                    `<tr class="js-error-row"><td colspan="${
-            $(".js-table-head").find("th").length
-          }"><p class="alert alert-info text-center">${
-            resp.Response
-          }</p></td></tr>`
+                    `<tr class="js-error-row"><td colspan="${$(".js-table-head").find("th").length
+                    }"><p class="alert alert-info text-center">${resp.Response
+                    }</p></td></tr>`
                 );
                 //
                 ml(false, "balance");
@@ -171,8 +169,8 @@ $(function() {
         //
         if (resp.Data.Balances.length == 0) return;
         //
-        $.each(resp.Data.Balances, function(i, v) {
-            if(v.total !== undefined){
+        $.each(resp.Data.Balances, function (i, v) {
+            if (v.total !== undefined) {
 
                 //
                 let userRow = getUserById(v.total.UserId, resp.Data.Employees, "userId");
@@ -184,76 +182,68 @@ $(function() {
                 rows += '        <div class="employee-info">';
                 rows += "            <figure>";
                 rows += `                <img src="${getImageURL(
-            userRow.image
-          )}" class="img-circle emp-image" />`;
+                    userRow.image
+                )}" class="img-circle emp-image" />`;
                 rows += "            </figure>";
                 rows += '            <div class="text">';
                 rows += `                <h4>${userRow.first_name} ${userRow.last_name}</h4>`;
                 rows += `                <p>${remakeEmployeeName(userRow, false)}</p>`;
-                rows += `                <p><a href="${baseURL}employee_profile/${
-            userRow.userId
-          }" target="_blank">Id: ${getEmployeeId(
-            userRow.userId,
-            userRow.employee_number
-          )}</a></p>`;
+                rows += `                <p><a href="${baseURL}employee_profile/${userRow.userId
+                    }" target="_blank">Id: ${getEmployeeId(
+                        userRow.userId,
+                        userRow.employee_number
+                    )}</a></p>`;
                 rows += "            </div>";
                 rows += "        </div>";
                 rows += "    </td>";
                 rows += "    <td>";
                 rows += '        <div class="text">';
                 //
-                rows += `            <p>${
-            userRow.joined_at == "" || userRow.joined_at == null
-              ? "-"
-              : moment(userRow.joined_at).format(timeoffDateFormat)
-          }</p>`;
+                rows += `            <p>${userRow.joined_at == "" || userRow.joined_at == null
+                    ? "-"
+                    : moment(userRow.joined_at).format(timeoffDateFormat)
+                    }</p>`;
                 rows += "        </div>";
                 rows += "    </td>";
                 rows += "    <td>";
                 rows += '        <div class="text">';
-                rows += `            <p>${
-            v.total.AllowedTime.text == "" ? "0 hours" : v.total.AllowedTime.text
-          } <a href="" data-target="jsBreakdownDivAllowed${
-            v.total.UserId
-          }" class="csExpandBalance jsExpandBalance" title="See breakdown" placement="top" class="btn btn-xs"><i class="fa fa-plus-circle"></i></a></p>`;
+                rows += `            <p>${v.total.AllowedTime.text == "" ? "0 hours" : v.total.AllowedTime.text
+                    } <a href="" data-target="jsBreakdownDivAllowed${v.total.UserId
+                    }" class="csExpandBalance jsExpandBalance" title="See breakdown" placement="top" class="btn btn-xs"><i class="fa fa-plus-circle"></i></a></p>`;
                 rows += `        <div class="dn" id="jsBreakdownDivAllowed${v.total.UserId}">`;
                 $.each(v, (index, poli) => {
                     if (index == "total") return "";
-                    rows += `<p><strong>${index}</strong><br /> (${poli.AllowedTime.text})</p>`;
+                    rows += `<p><strong>${index}</strong> (<strong class="text-${poli.policy_type == 1 ? 'success' : 'danger'}">${poli.policy_type == 1 ? 'Paid' : 'Unpaid'}</strong>)<br /> (${poli.AllowedTime.text})</p>`;
                 });
                 rows += "        </div>";
                 rows += "        </div>";
                 rows += "    </td>";
                 rows += '    <td style="vertical-align: middle;">';
                 rows += '        <div class="text">';
-                rows += `            <span><strong>Paid:</strong> ${
-            v.total.ConsumedTime.text == "" ? "0 hours" : v.total.ConsumedTime.text
-          }</span><br />`;
-                rows += `            <span><strong>Unpaid:</strong> ${
-            v.total.UnpaidConsumedTime.text == ""
-              ? "0 hours"
-              : v.total.UnpaidConsumedTime.text
-          }</span>`;
+                rows += `            <span><strong>Paid:</strong> ${v.total.ConsumedTime.text == "" ? "0 hours" : v.total.ConsumedTime.text
+                    }</span><br />`;
+                rows += `            <span><strong>Unpaid:</strong> ${v.total.UnpaidConsumedTime.text == ""
+                    ? "0 hours"
+                    : v.total.UnpaidConsumedTime.text
+                    }</span>`;
                 rows += "        </div>";
                 rows += "    </td>";
                 rows += "    <td>";
                 rows += '        <div class="text">';
-                rows += `            <p>${
-            v.total.RemainingTime.text == ""
-              ? "0 hours"
-              : v.total.RemainingTime.text
-          }<a href="" data-target="jsBreakdownDivRemaining${
-            v.total.UserId
-          }" class="csExpandBalance jsExpandBalance" title="See breakdown" placement="top" class="btn btn-xs"><i class="fa fa-plus-circle"></i></a></p>`;
+                rows += `            <p>${v.total.RemainingTime.text == ""
+                    ? "0 hours"
+                    : v.total.RemainingTime.text
+                    }<a href="" data-target="jsBreakdownDivRemaining${v.total.UserId
+                    }" class="csExpandBalance jsExpandBalance" title="See breakdown" placement="top" class="btn btn-xs"><i class="fa fa-plus-circle"></i></a></p>`;
                 rows += `        <div class="dn" id="jsBreakdownDivRemaining${v.total.UserId}">`;
                 $.each(v, (index, poli) => {
                     if (index == "total") return "";
-                    rows += `<p><strong>${index}</strong><br /> (${poli.RemainingTime.text})</p>`;
+                    rows += `<p><strong>${index}</strong> (<strong class="text-${poli.policy_type == 1 ? 'success' : 'danger'}">${poli.policy_type == 1 ? 'Paid' : 'Unpaid'}</strong>)<br /> (${poli.RemainingTime.text})</p>`;
                 });
                 rows += "        </div>";
                 rows += "        </div>";
                 rows += "    </td>";
-    
+
                 rows += `    <td>`;
                 rows += `    <div class="dropdown" style="margin-top: 10px;">
                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -291,7 +281,7 @@ $(function() {
     }
 
     //
-    $(document).on("click", ".jsViewPolicies", function(e) {
+    $(document).on("click", ".jsViewPolicies", function (e) {
         //
         e.preventDefault();
         //
@@ -302,7 +292,7 @@ $(function() {
     });
 
     //
-    $(document).on("click", ".jsViewBalance", function(e) {
+    $(document).on("click", ".jsViewBalance", function (e) {
         //
         e.preventDefault();
         //
@@ -313,17 +303,17 @@ $(function() {
     });
 
     //
-    $(document).on("click", ".jsViewApprovers", function(e) {
+    $(document).on("click", ".jsViewApprovers", function (e) {
         //
         e.preventDefault();
         //
         Modal({
-                Id: "employeeApproverModal",
-                Title: `Approvers for ${$(this).closest("tr").data("name")}`,
-                Body: "",
-                Loader: "employeeApproverModalLoader",
-            },
-            async() => {
+            Id: "employeeApproverModal",
+            Title: `Approvers for ${$(this).closest("tr").data("name")}`,
+            Body: "",
+            Loader: "employeeApproverModalLoader",
+        },
+            async () => {
                 //
                 const approvers = await fetchEmployeeApprovers(
                     $(this).closest("tr").data("id")
@@ -369,9 +359,8 @@ $(function() {
                 approvers.Data.map((approver) => {
                     rows += `<tr>`;
                     rows += `   <td>${remakeEmployeeName(approver)}</td>`;
-                    rows += `   <td style="font-weight: 900"; class="${
-            approver.approver_percentage == 1 ? "text-success" : "text-danger"
-          }">${approver.approver_percentage == 1 ? "Yes" : "No"}</td>`;
+                    rows += `   <td style="font-weight: 900"; class="${approver.approver_percentage == 1 ? "text-success" : "text-danger"
+                        }">${approver.approver_percentage == 1 ? "Yes" : "No"}</td>`;
                     rows += `</tr>`;
                 });
                 //
@@ -387,12 +376,12 @@ $(function() {
         return new Promise((res) => {
             $.post(
                 handlerURL, {
-                    action: "get_employee_approvers",
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    public: 0,
-                },
+                action: "get_employee_approvers",
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                public: 0,
+            },
                 (resp) => {
                     res(resp);
                 }
@@ -404,7 +393,7 @@ $(function() {
     function loadMoreBalance() {
         //
         callOBJ.Balances.Main.inset += 10;
-        $.post(handlerURL, callOBJ.Balances.Main, function(resp) {
+        $.post(handlerURL, callOBJ.Balances.Main, function (resp) {
             //
             if (resp.Data.Balances.length != 0) loadMoreBalance();
             //
