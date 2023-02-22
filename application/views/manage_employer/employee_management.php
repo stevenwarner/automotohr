@@ -316,9 +316,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                                 } else {
                                                                                     echo "javascript:void(0);";
                                                                                 }
-                                                                                ?>"><?php echo $name; ?></a>
+                                                                                ?>" style="font-size:16px;font-weight: bold;"><?php echo $name; ?></a>
                                                                 <?php } else { ?>
-                                                                    <?php echo $name; ?>
+                                                                    <p style="font-size:16px;font-weight: bold;"><?php echo $name; ?></p>
                                                                 <?php } ?>
                                                                 <?php
                                                                 echo '<br />' . $employee['email'];
