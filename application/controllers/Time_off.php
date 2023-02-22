@@ -2631,6 +2631,7 @@ class Time_off extends Public_Controller
                 $in['reset_policy'] = $in['accruals'];
                 $in['off_days'] = implode(',', $post['offDays']);
                 $in['is_entitled_employee'] = $post['isEntitledEmployees'];
+                $in['policy_category_type'] = $post['policyCategory'];
 
                 //
                 $policyId = $this->timeoff_model->insertPolicy($in);
@@ -2723,6 +2724,7 @@ class Time_off extends Public_Controller
                 $up['policy_start_date'] = $post['applicableDateType'] == 'customHireDate' ? formatDate($post['applicableDate'], 'm-d-Y', 'Y-m-d')  : NULL;
                
                 $up['is_entitled_employee'] = $post['isEntitledEmployees'];
+                $up['policy_category_type'] = $post['policy_category_type'];
 
                 //
                 $policyId = $post['policyId'];

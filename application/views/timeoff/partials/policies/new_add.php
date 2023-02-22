@@ -73,6 +73,25 @@
                         <?php $this->load->view('timeoff/partials/note'); ?>
 
                         <!-- Policy Type - Edit -->
+                        <div class="row mb10 csRow" id="js-policy-type-box-add">
+                            <div class="col-md-6 offset-md-3">
+                                <div class="form-group margin-bottom-custom">
+                                    <label>Policy Category<span
+                                            class="cs-required">*</span> <i class="fa fa-question-circle"
+                                            data-hint="js-hint" data-target="type"></i></label>
+                                    <div class="js-hint js-hint-type">Policy can be paid or unpaid
+                                    </div>
+                                    <div>
+                                        <select id="js-policy-type-add">
+                                            <option value="0">Unpaid</option>
+                                            <option value="1">Paid</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Policy Type - Edit -->
                         <div class="row mb10 csRow" id="js-policy-categories-add">
                             <div class="col-md-6 offset-md-3">
                                 <div class="form-group margin-bottom-custom">

@@ -58,7 +58,7 @@ class Timeoff_model extends CI_Model
                 timeoff_policies.sid as policy_id, 
                 timeoff_policies.title as policy_title,
                 timeoff_category_list.category_name as category,
-                timeoff_categories.category_type
+                timeoff_policies.policy_category_type as category_type
             ')
             ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
             ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
@@ -301,7 +301,7 @@ class Timeoff_model extends CI_Model
             timeoff_policies.accruals,
             timeoff_policies.type_sid,
             timeoff_policies.created_at,
-            timeoff_categories.category_type
+            timeoff_policies.policy_category_type as category_type
         ')
             ->from('timeoff_policies')
             ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
@@ -1708,7 +1708,7 @@ class Timeoff_model extends CI_Model
             timeoff_policies.for_admin,
             timeoff_policies.default_policy,
             timeoff_category_list.category_name,
-            timeoff_categories.category_type
+            timeoff_policies.policy_category_type as category_type
         ')
             ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
             ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')

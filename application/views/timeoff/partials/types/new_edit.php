@@ -26,7 +26,7 @@
         </div>
 
 
-        <div class="form-group">
+        <div class="form-group hidden">
             <div class="row">
                 <div class="col-sm-6">
                 <hr />

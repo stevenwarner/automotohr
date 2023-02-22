@@ -206,7 +206,7 @@ function fetchCategories() {
         rows += '<option value="0" selected="true">[Please select a policy type]</option>';
         //
         window.timeoff.categories.map(function (v) {
-            rows += `<option value="${v.type_id}">${v.type_name} (${v.category_type == 1  ? 'Paid' : 'Unpaid'})</option>`;
+            rows += `<option value="${v.type_id}">${v.type_name}</option>`;
         });
         //
         $('#js-category-add, #js-category-edit, #js-category-reset').html(rows);
@@ -888,6 +888,11 @@ function loadAddPage() {
     // Set policy types
     $('#js-category-add').select2();
     $('#js-category-add').select2('val', 0);
+    //
+    $('#js-policy-type-add').select2({
+        minimumResultsForSearch: -1
+    });
+    $('#js-policy-type-add').select2('val', 1);
     // Set policy title
     $('#js-policy-title-add').val();
     // Set sort order
@@ -1018,6 +1023,11 @@ function loadEditPage() {
     }
 
     // Reset view
+    //
+    $('#js-policy-type-edit').select2({
+        minimumResultsForSearch: -1
+    });
+    $('#js-policy-type-edit').select2('val', 1);
     // Set policy types
     $('#js-category-edit').select2();
     $('#js-category-edit').select2('val', 0);

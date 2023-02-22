@@ -10,6 +10,7 @@ $(function () {
             type: 0,
             title: 0,
             order: 1,
+            policy_category_type: 1,
             entitledEmployees: [],
             isEntitledEmployees: 0,
             employeeTypes: [],
@@ -544,6 +545,7 @@ $(function () {
         policy.employeeTypes = accruals.employeeTypes;
         policy.offDays = resp.Data.off_days !== null ? resp.Data.off_days.split(',') : null;
         policy.plans = accruals.plans;
+        policy.policy_category_type = resp.Data.policy_category_type;
 
         //
         if (policy.carryOverCheck != 'no' && policy.carryOverCheck != 'yes') {
@@ -555,7 +557,9 @@ $(function () {
         }
         //
         originalOBJ = Object.assign({}, policy);
-
+        console.log(policy)
+        //
+        $('#js-policy-type-edit').select2('val', policy.policy_category_type);
         //
         $('#jsPolicyTitleEdit').text(' - ' + policy.title);
         // Set policy types
@@ -748,6 +752,9 @@ $(function () {
     function stepCompletedEdit(step) {
         //
         if (step === 1) {
+            //
+            policyOBJ.policy_category_type = getField('#js-policy-type-edit')
+            console.log(policyOBJ.policy_category_type)
             // Set policy type
             policyOBJ.type = getField('#js-category-edit');
             // Check policy type

@@ -467,14 +467,6 @@ $(function () {
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                    <!-- Section 4 -->
-                    <div class="csBoxBalanceSection">
-                        <div class="col-sm-12">
-                            <p><strong class="text-${v.category_type == 1 ? 'success' : 'danger'}">${v.category_type == 1 ? "Paid" : "Unpaid"}</strong></p>
-                            <p>Type</p>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
                     <!-- Section 2 -->
                     <div class="csBoxBalanceSection">
                         <div class="col-sm-12">

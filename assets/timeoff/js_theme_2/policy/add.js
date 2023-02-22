@@ -4,6 +4,7 @@ $(function () {
         type: 0,
         title: 0,
         order: 1,
+        policyCategory: 1,
         entitledEmployees: [],
         isEntitledEmployees: 0,
         offDays: [],
@@ -52,12 +53,12 @@ $(function () {
             $('.js-fmla-range-add[value="standard_year"]').prop('checked', true);
         }
     });
-    
-    $('#js-employee-add').on('select2:select', function(event){
+
+    $('#js-employee-add').on('select2:select', function (event) {
         //
         if (event.params.data.text != 'All') {
             //
-            let newVals = $(this).val().filter(function(ef) {
+            let newVals = $(this).val().filter(function (ef) {
                 return ef == 'all' ? false : true;
             });
             $('#js-employee-add').val(newVals);
@@ -241,6 +242,8 @@ $(function () {
     function stepCompletedAdd(step) {
         //
         if (step === 1) {
+            //
+            policyOBJ.policyCategory = getField('#js-policy-type-add');
             // Set policy type
             policyOBJ.type = getField('#js-category-add');
             // Check policy type
