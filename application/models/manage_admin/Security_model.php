@@ -116,4 +116,12 @@ class Security_model extends CI_Model {
 
         return $my_return;
     }
+
+
+        // 
+        public function save_security_level($data) {
+            $this->db->insert('security_access_level', $data);
+            return $this->db->insert_id();
+               }
+
 }

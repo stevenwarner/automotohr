@@ -189,5 +189,34 @@ class Security_settings extends Admin_Controller
             redirect('manage_admin/security_settings', 'refresh');
         }
     }
+
+
+    //
+    public function add_level(){
+            $redirect_url = 'manage_admin';
+            $function_name = 'security_settings';
+
+            $admin_id = $this->ion_auth->user()->row()->id;
+            $security_details = db_get_admin_access_level_details($admin_id);
+            $this->data['security_details'] = $security_details;
+           
+            $this->form_validation->set_rules('access_level', 'access_level', 'required|trim|xss_clean');
+
+            if ($this->form_validation->run() == false) {
+                    $this->data['page_title'] = 'Security Settings - Manage Members';
+                    $this->render('manage_admin/security/add_access_level');
+            } else {
+            
+                $data_insert['access_level'] = $this->input->post('access_level');
+                $data_insert['description'] = $this->input->post('description');
+                $data_insert['status'] =1;
+            
+                $this->security_model->save_security_level($data_insert);
+                       
+                $this->session->set_flashdata('message', '<strong>Success: </strong> Security Access Levels Added!');
+                 redirect('manage_admin/security_settings/', 'refresh');
+            }
+        
+    }
 }
 

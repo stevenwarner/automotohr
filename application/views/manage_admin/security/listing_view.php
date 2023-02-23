@@ -57,6 +57,15 @@
                                                                     </td>
                                                                 </tr>
                                                             <?php } ?>
+
+                                                            <tr>
+                                                                    <td class="text-center" colspan="4">
+                                                                        <?php echo anchor('manage_admin/security_settings/add_level', '<span class="btn btn-success btn-sm">Add Access Level</span>'); ?>
+
+                                                                    </td>
+                                                                </tr>
+
+
                                                         </table>
                                                     </div>
                                                 </div>
