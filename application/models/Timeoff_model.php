@@ -1708,7 +1708,8 @@ class Timeoff_model extends CI_Model
             timeoff_policies.for_admin,
             timeoff_policies.default_policy,
             timeoff_category_list.category_name,
-            timeoff_policies.policy_category_type as category_type
+            timeoff_policies.policy_category_type as category_type,
+            timeoff_policies.allowed_approvers
         ')
             ->join('timeoff_categories', 'timeoff_categories.sid = timeoff_policies.type_sid', 'inner')
             ->join('timeoff_category_list', 'timeoff_category_list.sid = timeoff_categories.timeoff_category_list_sid', 'inner')
@@ -1872,7 +1873,7 @@ class Timeoff_model extends CI_Model
         if (!is_array($post['filter']['policies'])) $post['filter']['policies'] = explode(',', $post['filter']['policies']);
         if (!empty($post['filter']['policies']) && !in_array('all', $post['filter']['policies'])) $filterPolicies = $post['filter']['policies'];
         //
-       
+
         $settings = $this->getSettings($post['companyId']);
         $policies = $this->getCompanyPoliciesWithAccruals($post['companyId'], true, $filterPolicies);
         $balances = $this->getBalances($post['companyId']);
@@ -2093,9 +2094,14 @@ class Timeoff_model extends CI_Model
         //
         foreach ($policies as $policy) {
             //
+            $allowedApprovers = explode(',', $policy['allowed_approvers']);
+            //
             if (
                 $policy['for_admin'] == 1
-                && (is_approver(0, getCurrentLoginEmployeeDetails('sid')) == 0
+                && (
+                    (!in_array('all', $allowedApprovers) &&
+                        !in_array(getCurrentLoginEmployeeDetails('sid'), $allowedApprovers)
+                    )
                     && getCurrentLoginEmployeeDetails('access_level_plus') != 1
                 )
             ) {
@@ -2706,9 +2712,14 @@ class Timeoff_model extends CI_Model
         //
         foreach ($policies as $policy) {
             //
+            $allowedApprovers = explode(',', $policy['allowed_approvers']);
+            //
             if (
                 $policy['for_admin'] == 1
-                && (is_approver(0, getCurrentLoginEmployeeDetails('sid')) == 0
+                && (
+                    (!in_array('all', $allowedApprovers) &&
+                        !in_array(getCurrentLoginEmployeeDetails('sid'), $allowedApprovers)
+                    )
                     && getCurrentLoginEmployeeDetails('access_level_plus') != 1
                 )
             ) {
@@ -2911,7 +2922,7 @@ class Timeoff_model extends CI_Model
             timeoff_policies.policy_category_type as categoryType,
             ' . (getUserFields()) . '
             ')
-            
+
             ->join('timeoff_policies', 'timeoff_policies.sid = timeoff_requests.timeoff_policy_sid', 'inner')
             ->join('users', 'users.sid = timeoff_requests.employee_sid', 'inner')
             ->where('timeoff_policies.is_archived', 0)

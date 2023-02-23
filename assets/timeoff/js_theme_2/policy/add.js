@@ -9,6 +9,7 @@ $(function () {
         isEntitledEmployees: 0,
         offDays: [],
         approver: 0,
+        approverList: [],
         deactivate: 0,
         include: 1,
         employeeTypes: [],
@@ -66,6 +67,20 @@ $(function () {
             $('#js-employee-add').val('all');
         }
         $('#js-employee-add').trigger('change.select2');
+    });
+
+    $('#js-approvers-list-add').on('select2:select', function (event) {
+        //
+        if (event.params.data.text != 'All') {
+            //
+            let newVals = $(this).val().filter(function (ef) {
+                return ef == 'all' ? false : true;
+            });
+            $('#js-approvers-list-add').val(newVals);
+        } else {
+            $('#js-approvers-list-add').val('all');
+        }
+        $('#js-approvers-list-add').trigger('change.select2');
     });
 
     // Accrual method change
@@ -264,6 +279,12 @@ $(function () {
             policyOBJ.entitledEmployees = getField('#js-employee-add');
             // Set approver check
             policyOBJ.approver = $('#js-approver-check-add').prop('checked') === true ? 1 : 0;
+            //
+            policyOBJ.approverList = [];
+            //
+            if (policyOBJ.approver == 1) {
+                policyOBJ.approverList = getField('#js-approvers-list-add') || [];
+            }
             // Set deactivate check
             policyOBJ.deactivate = $('#js-archive-check-add').prop('checked') === true ? 1 : 0;
             // // Set deactivate check

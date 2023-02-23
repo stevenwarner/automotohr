@@ -248,6 +248,24 @@ function fetchEmployees() {
             }
         });
         //
+        $('#js-approvers-list-add').html(rows);
+        $('#js-approvers-list-add').select2();
+        $('#js-approvers-list-add').select2MultiCheckboxes({
+            templateSelection: function (selected, total) {
+                total--;
+                return "Selected " + ($.inArray('all', $('#js-approvers-list-add').val()) !== -1 ? total : selected.length) + " of " + total;
+            }
+        });
+        //
+        $('#js-approvers-list-edit').html(rows);
+        $('#js-approvers-list-edit').select2();
+        $('#js-approvers-list-edit').select2MultiCheckboxes({
+            templateSelection: function (selected, total) {
+                total--;
+                return "Selected " + ($.inArray('all', $('#js-approvers-list-edit').val()) !== -1 ? total : selected.length) + " of " + total;
+            }
+        });
+        //
         $('#js-employee-edit').html(rows);
         $('#js-employee-reset').html(rows);
         $('#js-filter-employee').html(rows);
@@ -906,6 +924,14 @@ function loadAddPage() {
             return "Selected " + ($.inArray('all', $('#js-employee-add').val()) !== -1 ? total : selected.length) + " of " + total;
         }
     });
+    $('#js-approvers-list-add').select2();
+    $('#js-approvers-list-add').select2('val', 0);
+    $('#js-approvers-list-add').select2MultiCheckboxes({
+        templateSelection: function (selected, total) {
+            total = total - 1;
+            return "Selected " + ($.inArray('all', $('#js-approvers-list-add').val()) !== -1 ? total : selected.length) + " of " + total;
+        }
+    });
     //
     $('#js-employee-type-add').select2();
     $('#js-employee-type-add').select2('val', 'all');
@@ -1042,6 +1068,15 @@ function loadEditPage() {
         templateSelection: function (selected, total) {
             total = total - 1;
             return "Selected " + ($.inArray('all', $('#js-employee-edit').val()) !== -1 ? total : selected.length) + " of " + total;
+        }
+    });
+    // Set employees
+    $('#js-approvers-list-edit').select2();
+    $('#js-approvers-list-edit').select2('val', 0);
+    $('#js-approvers-list-edit').select2MultiCheckboxes({
+        templateSelection: function (selected, total) {
+            total = total - 1;
+            return "Selected " + ($.inArray('all', $('#js-approvers-list-edit').val()) !== -1 ? total : selected.length) + " of " + total;
         }
     });
     //
