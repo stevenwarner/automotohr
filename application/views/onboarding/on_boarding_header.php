@@ -149,7 +149,7 @@
                                     </ul>
                                 </div>
                                 <div class="btn-link-wrp">
-                                    <a href="<?php echo base_url('onboarding/my_profile/' . $unique_sid); ?>"><i class="fa fa-pencil"></i> my profile</a>
+                                    <a href="<?php echo base_url('onboarding/my_profile/' . $unique_sid); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"><i class="fa fa-pencil"></i> my profile</a>
                                 </div>
                             </div>
                         </div>
@@ -354,10 +354,14 @@
                                 <?php $this->load->view('attendance/2022/clock_header_blue'); ?>
                                 <?php if ($employee['is_executive_admin'] == 0) { ?>
                                     <br>
-                                    <br>
+                                    <br><br>
                                 <div class="btn-link-wrp">
-                                    <a href="<?php echo base_url('my_profile'); ?>"><i class="fa fa-pencil" aria-hidden="true"></i> my profile</a>
+                                <?php if((isset($employerData) && $employerData['access_level'] != 'Employee') || (isset($employee) && $employee['access_level'] != 'Employee')){?>
+                                <a href="<?php echo base_url('dashboard'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"> Management Dashboard </a>
+                               <?php }?>
+                                    <a href="<?php echo base_url('my_profile'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"><i class="fa fa-pencil"></i> my profile</a>
                                 </div>
+
                                 <?php } ?>
                             </div>
                         </div>
