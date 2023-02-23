@@ -31,7 +31,7 @@
         </div>
         <br />
 
-        <div class="row">
+        <div class="row hidden">
             <div class="col-sm-6 col-xs-12">
                 <label>Type</label>
                 <div class="row">

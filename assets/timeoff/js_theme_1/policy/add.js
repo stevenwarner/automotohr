@@ -1,9 +1,11 @@
+
 $(function () {
     //
     let policyOBJ = {
         type: 0,
         title: 0,
         order: 1,
+        policyCategory: 1,
         entitledEmployees: [],
         isEntitledEmployees: 0,
         approver: 0,
@@ -239,6 +241,8 @@ $(function () {
     function stepCompletedAdd(step) {
         //
         if (step === 1) {
+            //
+            policyOBJ.policyCategory = getField('#js-policy-type-add');
             // Set policy type
             policyOBJ.type = getField('#js-category-add');
             // Check policy type

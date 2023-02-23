@@ -88,7 +88,7 @@
                         <thead class="js-table-head">
                             <tr>
                                 <th class="col-sm-4">Title</th>
-                                <th class="col-sm-4">Type</th>
+                                <!-- <th class="col-sm-4">Type</th> -->
                                 <th class="col-sm-4">Policies</th>
                                 <th class="col-sm-3">Created On</th>
                                 <th class="col-sm-1">Action</th>

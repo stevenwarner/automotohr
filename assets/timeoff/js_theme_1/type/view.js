@@ -287,7 +287,7 @@ $(function () {
         //
         if (resp.Data.length == 0) {
             ml(false, 'type');
-            $('#js-data-area').html(`<tr><td colspan="5"><p class="alert alert-info text-center">${resp.Response}</p></td></tr>`);
+            $('#js-data-area').html(`<tr><td colspan="4"><p class="alert alert-info text-center">${resp.Response}</p></td></tr>`);
             return;
         }
         //
@@ -307,11 +307,11 @@ $(function () {
             rows += `            <p class="js-type-popovers">${v.policies !== null ? v.policies.join(', ') : '-'}</p>`;
             rows += `        </div>`;
             rows += `    </td>`;
-            rows += `    <td>`;
-            rows += `        <div class="text-${v.category_type == 1 ? "success" : "danger"}">`;
-            rows += `            <strong> ${v.category_type == 1 ? "Paid" : "Unpaid"}</strong>`;
-            rows += `        </div>`;
-            rows += `    </td>`;
+            // rows += `    <td>`;
+            // rows += `        <div class="text-${v.category_type == 1 ? "success" : "danger"}">`;
+            // rows += `            <strong> ${v.category_type == 1 ? "Paid" : "Unpaid"}</strong>`;
+            // rows += `        </div>`;
+            // rows += `    </td>`;
             rows += `    <td>`;
             rows += `        <div class="text">`;
             rows += `            <p class="js-type-popovers">${v.created_at === null ? "Joining Date" : moment(v.created_at, '').format(timeoffDateFormat)}</p>`;

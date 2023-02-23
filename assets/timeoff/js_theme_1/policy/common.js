@@ -880,6 +880,11 @@ function loadAddPage(){
     //
     $('.js-template-add').prop('checked', false);
     $('.js-template-add[value="0"]').prop('checked', true);
+    //
+    $('#js-policy-type-add').select2({
+        minimumResultsForSearch: -1
+    });
+    $('#js-policy-type-add').select2('val', 1);
     // Set policy types
     $('#js-category-add').select2();
     $('#js-category-add').select2('val', 0);
@@ -1015,6 +1020,12 @@ function loadEditPage(){
         return;
     }
 
+    //
+    $('#js-policy-type-edit').select2({
+        minimumResultsForSearch: -1
+    });
+    $('#js-policy-type-edit').select2('val', 1);
+
     // Reset view
     // Set policy types
     $('#js-category-edit').select2();
@@ -1053,7 +1064,7 @@ function loadEditPage(){
     $('#js-accrual-time-edit').select2({minimumResultsForSearch: -1});
     $('#js-accrual-time-edit').select2('val', 'none');
     $('#js-accrual-time-edit').trigger('change');
-    // Set accrual frquency
+    // Set accrual frquencyjs-policy-type-add 
     $('#js-accrual-frequency-edit').select2({minimumResultsForSearch: -1});
     $('#js-accrual-frequency-edit').select2('val', 'none');
     $('#js-accrual-frequency-edit').trigger('change');

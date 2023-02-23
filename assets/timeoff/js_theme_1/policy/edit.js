@@ -10,6 +10,7 @@ $(function () {
             type: 0,
             title: 0,
             order: 1,
+            policy_category_type: 0,
             entitledEmployees: [],
             isEntitledEmployees: 0,
             employeeTypes: [],
@@ -544,10 +545,13 @@ $(function () {
         policy.employeeTypes = accruals.employeeTypes;
         policy.offDays = resp.Data.off_days !== null ? resp.Data.off_days.split(',') : null;
         policy.plans = accruals.plans;
+        policy.policyCategory = resp.Data.policy_category_type;
         //
         originalOBJ = Object.assign({}, policy);
         //
         $('#jsPolicyTitleEdit').text(' - ' + policy.title);
+        //
+        $('#js-policy-type-edit').select2('val', policy.policyCategory);
         // Set policy types
         $('#js-category-edit').select2('val', policy.type);
         // Set policy title
@@ -738,6 +742,7 @@ $(function () {
     function stepCompletedEdit(step) {
         //
         if (step === 1) {
+            policyOBJ.policy_category_type = getField('#js-policy-type-edit');
             // Set policy type
             policyOBJ.type = getField('#js-category-edit');
             // Check policy type
