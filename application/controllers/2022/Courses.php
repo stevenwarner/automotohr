@@ -766,7 +766,7 @@ class Courses extends Public_Controller
                 //
                 $courses = $this->cm->getAssignedCourses($post['companyId'], $post['employeeId'], $post['type']);
                 $pendingCount = $this->cm->getMyAssignedPendingCourses($post['employeeId']);
-                $completedCount = $this->cm->getMyAssignedCompletedCourses($post['companyId']);
+                $completedCount = $this->cm->getMyAssignedCompletedCourses($post['employeeId']);
                 //
                 $this->res['Courses'] = $courses;
                 $this->res['pendingCount'] = $pendingCount;

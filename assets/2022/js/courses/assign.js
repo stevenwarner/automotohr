@@ -59,7 +59,6 @@ $(function () {
         $("#jsPendingTabCount").html("("+pendingCount+")");
         $("#jsCompletedTabCount").html("("+completedCount+")");
         //
-
         if (courses.length) {
             courses.map(function(course) {
                 courseBox += '<div class="col-md-4 col-xs-12">';
@@ -90,76 +89,16 @@ $(function () {
         } else {
             courseBox += '<p class="_csF14 text-center">No course in '+courseType+' yet!</p>';
         }
-
-        $("#jsAssignedCoursesSection").html(courseBox); 
         //
-         $('.jsLMSLoader').hide();           
-
+        $("#jsAssignedCoursesSection").html(courseBox); 
+        $('.jsLMSLoader').hide();           
     }
 
-    function getSpecificAssignedCourse () {
+    function markVideoAsCompleted (dataObject) {
         $.ajax({
             type: 'POST',
             url: courseURL,
-            data: {
-                'action': "get_specific_course",
-                'employeeId': eToken,
-                'companyId': cToken,
-                'courseId': courseID
-            },
-            beforeSend: function() {
-                $('.jsLMSLoader').show();
-            },
-            success: function(resp) {
-                //
-                $("#jsCourseTitle").html(resp.Course.title);
-                $("#jsCourseDescription").html(resp.Course.description);
-                $("#jsCourseTimePeriod").html(resp.Course.display_start_date+" <b>-</b>"+ resp.Course.display_end_date + "<br /> Due " +resp.Course.daysLeft);
-                //
-                if (resp.Course.type == "manual") {
-                    $("#jsChapterList").show();
-                    $("#jsScormSection").hide();
-                    $("#jsManualSection").show();
-                } else if (resp.Course.type == "upload") {
-                    $("#jsChapterList").hide();
-                    $("#jsManualSection").hide();
-                    $("#jsScormSection").show();
-                    //
-                    $("#jsScromTitle").html(resp.Scrom.title);
-                }
-
-
-                // //
-                // if (resp.is_finished == 1) {
-                //     $("#jsSaveSurveyQuestionAnswer").addClass("dn");
-                //     $(".jsFinisyMySurvey").addClass("dn");
-                // }
-                // //
-                // manageQuestionCount();
-                // createQuestionsLink();
-                //
-                $('.jsLMSLoader').hide();
-            },
-            error: function() {
-                $("#surveysBoxContainer").html('<p class="_csF14">Unable to load course.</p>');
-                $('.jsLMSLoader').hide();
-            }
-        });
-    }
-
-    courseID == 0 ? getAssignedCourses() : getSpecificAssignedCourse();
-
-    $('#jsChapterVideo').on('ended', function() {
-        $.ajax({
-            type: 'POST',
-            url: courseURL,
-            data: {
-                'action': "video_completed",
-                'employeeId': eToken,
-                'companyId': cToken,
-                'courseId': courseID,
-                'chapterId': chapterID
-            },
+            data: dataObject,
             beforeSend: function() {
                 $('.jsLMSLoader').show();
             },
@@ -178,7 +117,7 @@ $(function () {
                 //
                 if (resp.Status === true) {
                     alertify.alert(
-                        "WARNING!",
+                        "SUCCESS!",
                         resp.Response,
                         function () {
                             window.location.reload();
@@ -189,10 +128,64 @@ $(function () {
                 }
             },
             error: function() {
-                $("#surveysBoxContainer").html('<p class="_csF14">Unable to load courses</p>');
+                $("#surveysBoxContainer").html('<p class="_csF14">Unable to mark video.</p>');
                 $('.jsLMSLoader').hide();
             }
         });
+    }
+
+    function saveChapterQuiz (dataObject) {
+        $.ajax({
+            type: 'POST',
+            url: courseURL,
+            data: dataObject,
+            beforeSend: function() {
+                $('.jsLMSLoader').show();
+            },
+            success: function(resp) {
+                //
+                if (resp.Status === false) {
+                    alertify.alert(
+                        "WARNING!",
+                        resp.Response
+                    );
+                    //
+                    $('.jsLMSLoader').hide();
+                    //
+                    return;
+                }
+                //
+                if (resp.Status === true) {
+                    alertify.alert(
+                        "SUCCESS!",
+                        resp.Response,
+                        function () {
+                            window.location.reload();
+                        }
+                    );
+                    //
+                    $('.jsLMSLoader').hide();
+                }
+            },
+            error: function() {
+                $("#surveysBoxContainer").html('<p class="_csF14">Unable to save chapter quiz</p>');
+                $('.jsLMSLoader').hide();
+            }
+        });
+    }
+
+    getAssignedCourses();
+
+    $('#jsChapterVideo').on('ended', function() {
+        var dataObject = {
+            'action': "video_completed",
+            'employeeId': eToken,
+            'companyId': cToken,
+            'courseId': courseID,
+            'chapterId': chapterID
+        }
+        //
+        markVideoAsCompleted(dataObject);
     });
 
     $(document).on('click', '#jsChapterQuestionSaveBTN', function(event) {
@@ -206,49 +199,35 @@ $(function () {
             quiz_obj[this.name] = this.value;
         });
         //
-        $.ajax({
-            type: 'POST',
-            url: courseURL,
-            data: {
-                'action': "quiz_completed",
-                'employeeId': eToken,
-                'companyId': cToken,
-                'courseId': courseID,
-                'chapterId': chapterID,
-                'quiz': JSON.stringify(quiz_obj)
-            },
-            beforeSend: function() {
-                $('.jsLMSLoader').show();
-            },
-            success: function(resp) {
-                //
-                if (resp.Status === false) {
-                    alertify.alert(
-                        "WARNING!",
-                        resp.Response
-                    );
-                    //
-                    $('.jsLMSLoader').hide();
-                    //
-                    return;
-                }
-                //
-                if (resp.Status === true) {
-                    alertify.alert(
-                        "WARNING!",
-                        resp.Response,
-                        function () {
-                            window.location.reload();
-                        }
-                    );
-                    //
-                    $('.jsLMSLoader').hide();
-                }
-            },
-            error: function() {
-                $("#surveysBoxContainer").html('<p class="_csF14">Unable to load courses</p>');
-                $('.jsLMSLoader').hide();
-            }
-        });
-    })
+        var dataObject = {
+            'action': "quiz_completed",
+            'employeeId': eToken,
+            'companyId': cToken,
+            'courseId': courseID,
+            'chapterId': chapterID,
+            'quiz': JSON.stringify(quiz_obj)
+        }
+        //
+        saveChapterQuiz(dataObject);
+    });
+
+    /**
+     * 
+     */
+    $(document).on('click', '.jsCourseTab', function(event) {
+        //
+        courseType = $(this).data("course_type");
+        //
+        if (courseType == "pending") {
+            $("#jsPendingTab").addClass('active');
+            $("#jsCompletedTab").removeClass('active');
+        }
+
+        if (courseType == "completed") {
+            $("#jsPendingTab").removeClass('active');
+            $("#jsCompletedTab").addClass('active');
+        }
+        //
+        getAssignedCourses();
+    });
 });    

@@ -513,7 +513,7 @@ class Course_model extends CI_Model {
             $this->db->where('lms_courses.end_date >= ', $todayDate);
             $this->db->where('lms_courses.is_draft', 0);
             $this->db->where('lms_courses.is_archived', 0);
-            // $this->db->where('lms_assigned_employees.is_completed', 0);
+            $this->db->where('lms_assigned_employees.is_completed', 0);
         }
         //
         if ($type == 'completed') {
@@ -764,7 +764,7 @@ class Course_model extends CI_Model {
         //
         $this->db->where('employee_sid', $employeeSid);
         $this->db->where('course_sid', $courseSid);
-        $this->db->where('chapter_completed', 1);
+        $this->db->where('chapter_completed', 0);
         $records_count = $this->db->count_all_results('lms_manual_employee_course');
         //
         return $records_count;

@@ -20,12 +20,12 @@
                             <!-- Nav tabs -->
                             <ul class="_csPageTabs">
                                 <li>
-                                    <a href="javascript:void(0)" data-survey_type="pending"  id="jsPendingTab" class="active jsSurveyTab" data-toggle="tab">
+                                    <a href="javascript:void(0)" data-course_type="pending"  id="jsPendingTab" class="active jsCourseTab" data-toggle="tab">
                                         Pending <span id="jsPendingTabCount">(0)<span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" data-survey_type="completed" id="jsCompletedTab" class="jsSurveyTab" data-toggle="tab">
+                                    <a href="javascript:void(0)" data-course_type="completed" id="jsCompletedTab" class="jsCourseTab" data-toggle="tab">
                                         Completed <span id="jsCompletedTabCount">(0)<span>
                                     </a>
                                 </li>
