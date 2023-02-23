@@ -31,7 +31,8 @@ $(function () {
         minimumResultsForSearch: -1
     });
     //
-    fetchTimeOffs();
+    // fetchTimeOffs();
+    // $('.jsReportTab[data-key="pending"]').trigger('click');
 
     // Set Filter
     //
@@ -64,11 +65,14 @@ $(function () {
         //
         callOBJ.Requests.Main.type = $(this).data("key");
         //
-        $(".jsReportTab").parent().removeClass("active");
-        $(this).parent().addClass("active");
+        //
+        $(".jsReportTab").parent().removeClass("active").removeClass('csActiveTab');
+        $(this).parent().addClass("active").addClass('csActiveTab');
         //
         fetchTimeOffs();
     });
+
+    $('.jsReportTab[data-key="pending"]').trigger('click');
 
     //
     $(".jsArchiveTab").hide(0);
@@ -1418,7 +1422,7 @@ $(function () {
                 $("#jsEmployeeSid").val(employeeSid);
                 $("#jsNoteSection").val(resp.Comment);
                 //
-                if(window.location.pathname.match(/lms/ig) !== null){
+                if (window.location.pathname.match(/lms/ig) !== null) {
                     $('#document_modal_title').css('color', '#fff')
                 }
                 $("#jsAddNoteModal").modal("show");

@@ -1,27 +1,27 @@
-$(function() {
+$(function () {
     //
     let callOBJ = {
-            Requests: {
-                Main: {
-                    action: 'get_requests',
-                    companyId: companyId,
-                    employerId: employerId,
-                    employeeId: employeeId,
-                    level: level,
-                    isMine: 1,
-                    type: 'pending',
-                    filter: {
-                        employees: 'all',
-                        policies: 'all',
-                        status: 'all',
-                        order: 'upcoming',
-                        startDate: '',
-                        endDate: ''
-                    },
-                    public: 0,
-                }
+        Requests: {
+            Main: {
+                action: 'get_requests',
+                companyId: companyId,
+                employerId: employerId,
+                employeeId: employeeId,
+                level: level,
+                isMine: 1,
+                type: 'pending',
+                filter: {
+                    employees: 'all',
+                    policies: 'all',
+                    status: 'all',
+                    order: 'upcoming',
+                    startDate: '',
+                    endDate: ''
+                },
+                public: 0,
             }
-        },
+        }
+    },
         xhr = null;
     //
     $('#js-filter-status').select2();
@@ -29,7 +29,8 @@ $(function() {
         minimumResultsForSearch: -1
     });
     //
-    fetchTimeOffs();
+    // fetchTimeOffs();
+    
 
     // Set Filter
     //
@@ -37,7 +38,7 @@ $(function() {
         dateFormat: 'mm-dd-yy',
         changeYear: true,
         changeMonth: true,
-        onSelect: function(v) { $('#js-filter-to-date').datepicker('option', 'minDate', v); }
+        onSelect: function (v) { $('#js-filter-to-date').datepicker('option', 'minDate', v); }
     });
 
     //
@@ -53,18 +54,20 @@ $(function() {
     $(document).on('change', '.jsEditResetCheckbox', applyFilter);
     $(document).on('change', '#js-filter-sort', applyFilter);
     //
-    $('.jsReportTab').click(function(e) {
+    $('.jsReportTab').click(function (e) {
         //
         e.preventDefault();
         //
         callOBJ.Requests.Main.type = $(this).data('key');
         //
-        $('.jsReportTab').parent().removeClass('active');
-        $(this).parent().removeClass('active');
+        //
+        $(".jsReportTab").parent().removeClass("active").removeClass('csActiveTab');
+        $(this).parent().addClass("active").addClass('csActiveTab');
         //
         fetchTimeOffs();
     });
     //
+    $('.jsReportTab[data-key="pending"]').trigger('click');
 
     //
     function resetFilter(e) {
@@ -120,7 +123,7 @@ $(function() {
         //
         $('.js-error-row').remove();
         //
-        xhr = $.post(handlerURL, callOBJ.Requests.Main, function(resp) {
+        xhr = $.post(handlerURL, callOBJ.Requests.Main, function (resp) {
             //
             xhr = null;
             //
@@ -164,7 +167,7 @@ $(function() {
             return;
         }
         //
-        $.each(resp.Data, function(i, v) {
+        $.each(resp.Data, function (i, v) {
             //
             let userRow = getUserById(
                 v.employee_sid,
@@ -191,7 +194,7 @@ $(function() {
                                 <img src="${baseURL}assets/images/upcoming-time-off-icon.png" class="emp-image" alt="emp-1">             
                             </div>             
                             <div class="text">                  
-                                <h4>${ v.request_from_date == v.request_to_date ? moment(v.request_from_date).format(timeoffDateFormat) : moment(v.request_from_date).format(timeoffDateFormat)+' - '+ moment(v.request_to_date).format(timeoffDateFormat) }</h4>                  
+                                <h4>${v.request_from_date == v.request_to_date ? moment(v.request_from_date).format(timeoffDateFormat) : moment(v.request_from_date).format(timeoffDateFormat) + ' - ' + moment(v.request_to_date).format(timeoffDateFormat)}</h4>                  
                                 <span>${v.title}</span><br />          
                                 <span>${v.breakdown.text}</span>           
                             </div>       
@@ -211,7 +214,7 @@ $(function() {
                         <p>${v.reason == '' || v.reason == null ? '-' : v.reason}</p>
                     </td>`;
             rows += `<td class="cs-vam">
-                        <p>${ moment(v.created_at).format(timeoffDateFormatWithTime)}</p>
+                        <p>${moment(v.created_at).format(timeoffDateFormatWithTime)}</p>
                     </td>`;
             rows += `    <td>`;
             rows += `    <div class="dropdown" style="margin-top: 10px;">
@@ -253,7 +256,7 @@ $(function() {
     }
 
     //
-    $(document).on('click', '.jsArchiveTimeOff', function(e) {
+    $(document).on('click', '.jsArchiveTimeOff', function (e) {
         //
         e.preventDefault();
         //
@@ -274,11 +277,11 @@ $(function() {
                     window.location.reload();
                 });
             })
-        }, () => {});
+        }, () => { });
     });
 
     //
-    $(document).on('click', '.jsActiveTimeOff', function(e) {
+    $(document).on('click', '.jsActiveTimeOff', function (e) {
         //
         e.preventDefault();
         //
@@ -299,11 +302,11 @@ $(function() {
                     window.location.reload();
                 });
             })
-        }, () => {});
+        }, () => { });
     });
 
     //
-    $(document).on('click', '.jsHistoryTimeOff', function(e) {
+    $(document).on('click', '.jsHistoryTimeOff', function (e) {
         //
         e.preventDefault();
         //
@@ -355,17 +358,17 @@ $(function() {
                     `<div class="row">
                 <div class="col-sm-3">
                     ${$(this)
-                      .closest("tr")
-                      .find(".employee-info")
-                      .parent()
-                      .html()}
+                        .closest("tr")
+                        .find(".employee-info")
+                        .parent()
+                        .html()}
                 </div>
                 <div class="col-sm-4">
                     ${$(this)
-                      .closest("tr")
-                      .find(".upcoming-time-info")
-                      .parent()
-                      .html()}
+                        .closest("tr")
+                        .find(".upcoming-time-info")
+                        .parent()
+                        .html()}
                 </div>
                 <div class="clearfix"></div>
                 <hr />
@@ -374,7 +377,7 @@ $(function() {
                 );
                 //
                 if (resp.Status === false) {
-                    alertify.alert('WARNING!', resp.Response, () => {});
+                    alertify.alert('WARNING!', resp.Response, () => { });
                     //
                     ml(false, 'jsTimeOffHistoryLoader');
                     //
@@ -426,18 +429,17 @@ $(function() {
                         rows += '        <div class="employee-info">';
                         rows += "            <figure>";
                         rows += `                <img src="${getImageURL(
-                    v.image
-                )}" class="img-circle emp-image" />`;
+                            v.image
+                        )}" class="img-circle emp-image" />`;
                         rows += "            </figure>";
                         rows += '            <div class="text">';
                         rows += `                <h4>${v.first_name} ${v.last_name} </h4>`;
                         rows += `                <p>${remakeEmployeeName(v, false)}</p>`;
-                        rows += `                <p><a href="${baseURL}employee_profile/${
-                    v.userId
-                }" target="_blank">Id: ${getEmployeeId(
-                    v.userId,
-                    v.employee_number
-                )}</a></p>`;
+                        rows += `                <p><a href="${baseURL}employee_profile/${v.userId
+                            }" target="_blank">Id: ${getEmployeeId(
+                                v.userId,
+                                v.employee_number
+                            )}</a></p>`;
                         rows += "            </div>";
                         rows += "        </div></td>";
                         rows += `                <td>`;
@@ -448,19 +450,18 @@ $(function() {
                         <img src="${baseURL}assets/images/upcoming-time-off-icon.png" class="emp-image" alt="emp-1">             
                     </div>             
                     <div class="text">                  
-                        <h4>${
-                          note.details.startDate == note.details.endDate
-                            ? moment(note.details.startDate).format(
-                                timeoffDateFormat
-                              )
-                            : moment(note.details.startDate).format(
-                                timeoffDateFormat
-                              ) +
-                              " - " +
-                              moment(note.details.endDate).format(
-                                timeoffDateFormat
-                              )
-                        }</h4>                  
+                        <h4>${note.details.startDate == note.details.endDate
+                                    ? moment(note.details.startDate).format(
+                                        timeoffDateFormat
+                                    )
+                                    : moment(note.details.startDate).format(
+                                        timeoffDateFormat
+                                    ) +
+                                    " - " +
+                                    moment(note.details.endDate).format(
+                                        timeoffDateFormat
+                                    )
+                                }</h4>                  
                         <span>${note.details.policyTitle}</span><br />          
                         <span>${get_array_from_minutes(note.details.time, v.user_shift_hours, 'H:M').text}</span>
                     </div>       
@@ -485,7 +486,7 @@ $(function() {
     });
 
     //
-    $(document).on('click', '.jsViewPolicies', function(e) {
+    $(document).on('click', '.jsViewPolicies', function (e) {
         //
         e.preventDefault();
         //
@@ -496,7 +497,7 @@ $(function() {
     });
 
     //
-    $(document).on('click', '.jsHolidays', function(e) {
+    $(document).on('click', '.jsHolidays', function (e) {
         //
         e.preventDefault();
         //
@@ -536,8 +537,8 @@ $(function() {
                 window.timeoff.holidays.map((v) => {
                     rows += `
                         <tr>
-                            <td>${ v.holiday_title }</td>
-                            <td>${ getHolidayText(v) }</td>
+                            <td>${v.holiday_title}</td>
+                            <td>${getHolidayText(v)}</td>
                         </tr>
                     `;
                 });
@@ -585,7 +586,7 @@ $(function() {
             //
             rows += `
                 <div class="csApproverBox" title="Approver" data-content="${msg}">
-                    <img src="${his.image == null || his.image == '' ? awsURL+'test_file_01.png' : awsURL+his.image}" style="width: 40px; height: 40px;" />
+                    <img src="${his.image == null || his.image == '' ? awsURL + 'test_file_01.png' : awsURL + his.image}" style="width: 40px; height: 40px;" />
                     ${il}
                 </div>
             `;

@@ -28,7 +28,8 @@ $(function () {
 		minimumResultsForSearch: -1
 	});
 	//
-	fetchTimeOffs();
+	// fetchTimeOffs();
+	// $('.jsReportTab[data-key="pending"]').trigger('click');
 
 	// Set Filter
 	//
@@ -61,11 +62,14 @@ $(function () {
 		//
 		callOBJ.Requests.Main.type = $(this).data("key");
 		//
-		$(".jsReportTab").parent().removeClass("active");
-		$(this).parent().addClass("active");
+		//
+		$(".jsReportTab").parent().removeClass("active").removeClass('csActiveTab');
+		$(this).parent().addClass("active").addClass('csActiveTab');
 		//
 		fetchTimeOffs();
 	});
+
+    $('.jsReportTab[data-key="pending"]').trigger('click');
 
 	$("#js-filter-sort").change(function () {
 		callOBJ.Requests.Main.filter.order = $(this).val();
