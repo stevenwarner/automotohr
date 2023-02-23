@@ -143,12 +143,17 @@
             <div class="col-sm-6 col-xs-12">
                 <div class="">
                     <label class="control control--checkbox">
-                        <input type="checkbox" id="js-approver-check-edit" />
+                        <input type="checkbox" id="js-approver-check-edit" data-type="edit" />
                         <?php echo $get_policy_item_info['approvers_can_see_label']; ?>
                         <span class="control__indicator"></span>
                     </label>
                     <i class="fa fa-question-circle" data-hint="js-hint" data-target="approvers"></i>
-                    <div class="js-hint js-hint-approvers"><?php echo $get_policy_item_info['approvers_only']; ?></div>
+                    <div class="js-hint js-hint-approvers">The policy will only visible to selected approvers.</div>
+                </div>
+                <!-- To allow approvers -->
+                <div class="jsMultipleApproverList" data-type="edit">
+                    <br>
+                    <select class="invoice-fields" name="jsMultipleApproversListsEdit[]" id="js-approvers-list-edit" multiple="true"></select>
                 </div>
             </div>
         </div>

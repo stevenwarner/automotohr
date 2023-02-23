@@ -2632,6 +2632,7 @@ class Time_off extends Public_Controller
                 $in['off_days'] = implode(',', $post['offDays']);
                 $in['is_entitled_employee'] = $post['isEntitledEmployees'];
                 $in['policy_category_type'] = $post['policyCategory'];
+                $in['allowed_approvers'] = $post['approver'] == 1 ? implode(',', $post['approverList']) : '';
 
                 //
                 $policyId = $this->timeoff_model->insertPolicy($in);
@@ -2725,6 +2726,7 @@ class Time_off extends Public_Controller
                
                 $up['is_entitled_employee'] = $post['isEntitledEmployees'];
                 $up['policy_category_type'] = $post['policy_category_type'];
+                $up['allowed_approvers'] = $post['approver'] == 1 ? implode(',', $post['approverList']) : '';
 
                 //
                 $policyId = $post['policyId'];

@@ -16,6 +16,7 @@ $(function () {
             employeeTypes: [],
             offDays: [],
             approver: 0,
+            approverList: [],
             deactivate: 0,
             include: 1,
             method: 'yearly',
@@ -106,6 +107,20 @@ $(function () {
             $('#js-employee-edit').val('all');
         }
         $('#js-employee-edit').trigger('change.select2');
+    });
+
+    $('#js-approvers-list-edit').on('select2:select', function (event) {
+        //
+        if (event.params.data.text != 'All') {
+            //
+            let newVals = $(this).val().filter(function (ef) {
+                return ef == 'all' ? false : true;
+            });
+            $('#js-approvers-list-edit').val(newVals);
+        } else {
+            $('#js-approvers-list-edit').val('all');
+        }
+        $('#js-approvers-list-edit').trigger('change.select2');
     });
 
     // Change events
@@ -546,6 +561,12 @@ $(function () {
         policy.offDays = resp.Data.off_days !== null ? resp.Data.off_days.split(',') : null;
         policy.plans = accruals.plans;
         policy.policyCategory = resp.Data.policy_category_type;
+        policy.approverList = resp.Data.allowed_approvers;
+
+        //
+        if (policy.approverList) {
+            policy.approverList = policy.approverList.split(',');
+        }
         //
         originalOBJ = Object.assign({}, policy);
         //
@@ -567,6 +588,8 @@ $(function () {
         $('#js-off-days-edit').select2('val', policy.offDays);
         // Set approver check
         $('#js-approver-check-edit').prop('checked', policy.approver == 1 ? true : false);
+        //
+        $('#js-approvers-list-edit').select2('val', policy.approverList);
         // Set archive check
         $('#js-archive-check-edit').prop('checked', policy.deactivate == 1 ? true : false);
         // Set include check
@@ -770,6 +793,12 @@ $(function () {
             policyOBJ.offDays = getField('#js-off-days-edit');
             // Set approver check
             policyOBJ.approver = $('#js-approver-check-edit').prop('checked') === true ? 1 : 0;
+            //
+            policyOBJ.approverList = [];
+            //
+            if (policyOBJ.approver == 1) {
+                policyOBJ.approverList = getField('#js-approvers-list-edit') || [];
+            }
             // // Set deactivate check
             policyOBJ.deactivate = $('#js-archive-check-edit').prop('checked') === true ? 1 : 0;
             // Set deactivate check
