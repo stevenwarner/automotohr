@@ -235,6 +235,7 @@
                             <div class="logo">
                                 <?php if(isset($session['company_detail']) && $session['portal_detail']['enable_company_logo'] == 1) { ?>
                                         <a href="javascript:;"><img src="<?php echo AWS_S3_BUCKET_URL . $session['company_detail']['Logo']; ?>"></a>
+                                        <p><?=$session['company_detail']['CompanyName'];?></p>
                                 <?php } else { ?>
                                         <!-- <a href="javascript:;"><img src="<?php //echo base_url('assets/employee_panel/images/logo.jpg'); ?>"></a> -->
                                 <?php } ?>

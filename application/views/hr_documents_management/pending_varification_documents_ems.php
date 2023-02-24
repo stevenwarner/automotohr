@@ -13,9 +13,10 @@
     .cs-drag-overlay p{ line-height: 40px; font-size: 18px; }
     .select2-container--default .select2-selection--single{ border: 1px solid #aaaaaa !important;  padding: 3px 5px !important; }
 </style>
+<br />
 <div class="main-content">
     <div class="dashboard-wrp">
-        <div class="container-fluid">
+        <div class="container">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <div class="dashboard-conetnt-wrp">
