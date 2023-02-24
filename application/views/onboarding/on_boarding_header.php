@@ -229,7 +229,7 @@
             </div>
         <?php } else if ( isset($employee)) { ?>
             <header class="header <?=in_array('iframe', $this->uri->segment_array()) ? 'hidden' : '';?>">
-                <div class="container<?=strtolower($this->router->fetch_class()) == 'performance_management' || strtolower($this->router->fetch_class())== 'payroll' ? '-fluid' : '';?>">
+                <div class="container-fluid <?=strtolower($this->router->fetch_class()) == 'performance_management' || strtolower($this->router->fetch_class())== 'payroll' ? '-fluid' : '';?>">
                     <div class="row">
                         <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
                             <div class="logo">
@@ -323,7 +323,7 @@
             <!-- Header End -->
 
             <div class="emp-info-strip <?=in_array('iframe', $this->uri->segment_array()) ? 'hidden' : '';?> <?=isset($hide_employer_section) ? 'hidden' : ''; ?>">
-                <div class="container">
+                <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="emp-info-box">
