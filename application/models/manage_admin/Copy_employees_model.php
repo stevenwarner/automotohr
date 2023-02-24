@@ -624,4 +624,31 @@ class Copy_employees_model extends CI_Model {
         $result = $records_obj->row_array();
         return $result["sid"];
     }
+
+
+     //
+    function update_user_olddata($sid, $data) {
+        $this->db->where('sid', $sid);
+        $this->db->update('users', $data);
+        
+        //
+        $this->db->select('username');
+        $this->db->where('sid', $sid);
+        $this->db->from('users');
+        $records_obj = $this->db->get();
+        $result = $records_obj->row_array();
+        return $result["username"];
+
+    }
+
+    //
+    public function add_terminate_user_table($data)
+    {
+        $this->db->insert('terminated_employees', $data);
+        
+    }
+
+
+
+
 }

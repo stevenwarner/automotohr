@@ -36,6 +36,7 @@
                                                     <option value="3">Deceased</option>
                                                     <option value="1">Terminated</option>
                                                     <option value="6">Inactive</option>
+                                                    <option value="9">Transferred</option>
                                                 </select>
                                                 <?php echo form_error('status'); ?>
                                             </li>

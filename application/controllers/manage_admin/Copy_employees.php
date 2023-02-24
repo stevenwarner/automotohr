@@ -118,7 +118,7 @@ class Copy_employees extends Admin_Controller {
         $resp['response'] = 'Invalid request';
         
         $formpost = $this->input->post(NULL, TRUE);
-        
+       
         if(!isset($formpost['employee_sid']) || !isset($formpost['employee_name']) || !isset($formpost['from_company']) || !isset($formpost['to_company'])){
             $resp['response'] = 'Indexes are missing from request';
             echo json_encode($resp);
@@ -127,11 +127,11 @@ class Copy_employees extends Admin_Controller {
             $to_company = $formpost['to_company'];
             $from_company = $formpost['from_company'];
             $user_type = 'employee';
+            $transferredNote = $formpost['transferred_note'];
 
 
             $employee = $this->copy_employees_model->fetch_employee_by_sid($employee_sid);
             $company_name = $this->copy_employees_model->get_company_name_by_id($to_company);
-
 
             $employee_name = $employee['first_name'].' '.$employee['last_name'];
      
@@ -145,7 +145,7 @@ class Copy_employees extends Admin_Controller {
             if ($this->copy_employees_model->check_employee_exist($employee['email'], $to_company)) { 
                 $primary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $to_company);
                 $secondary_employee_sid = $this->copy_employees_model->get_employee_sid($employee['email'], $from_company);
-            
+                            
                 $secondary_employee_email    = $employee['email'];
                 //
                 //Update Primary Employee Profile
@@ -215,22 +215,47 @@ class Copy_employees extends Admin_Controller {
                 ];
                 //
                 $this->merge_employees_model->save_merge_secondary_employee_info($merge_secondary_employee_data, $primary_employee_sid, $secondary_employee_sid);
+                              
+                //
+               $insert_employee_change_status = array();
+               $insert_employee_change_status['status_change_date'] = date('Y-m-d');
+               $insert_employee_change_status['details'] = $transferredNote;
+               $insert_employee_change_status['employee_status'] = 9;
+               $insert_employee_change_status['employee_sid'] = $primary_employee_sid;
+               $insert_employee_change_status['changed_by'] = 0;
+               $insert_employee_change_status['ip_address'] = getUserIP();
+               $insert_employee_change_status['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+               $insert_employee_change_status['termination_reason'] = 0;
+               $insert_employee_change_status['termination_date'] = NULL;
+
+               $this->copy_employees_model->add_terminate_user_table($insert_employee_change_status);
+               
                 //
                 $array['status'] = "success";
                 $array['message'] = "Success! Employee is successfully merged!";
                 $this->session->set_flashdata('message', '<b>Success:</b> Employee Merged Successfully!');
                 //
               //  return print_r(json_encode($array));
-
+              
                 echo json_encode($resp);
             } else {
 
                 $user_to_insert = array();
 
                 foreach ($employee as $key => $value) {
-                    if ($key == 'username') {echo $key;
+                    if ($key == 'username') {
                         if ($this->copy_employees_model->check_employee_username_exist($employee['username'])) { 
-                            $user_to_insert[$key] = $value.'_'.generateRandomString(5);
+
+                           // update old username
+                           $oldUserUpdateData['username'] = substr($employee['username'].'_'.time(), 0, 254);
+                           $oldUserUpdateData['active'] = 0;
+                          
+                          if($this->copy_employees_model->update_user_olddata($employee['sid'] , $oldUserUpdateData)!=$oldUserUpdateData['username']){
+                            $oldUserUpdateData['username'] = substr($employee['username'].'_'.$employee['parent_sid'].'_'.generateRandomString(5), 0, 254);
+                            $oldUserUpdateData['active'] = 0;
+                          }
+                     
+                            $user_to_insert[$key] = $value;
                         }
                     } else {
                        $user_to_insert[$key] = $value; 
@@ -239,7 +264,7 @@ class Copy_employees extends Admin_Controller {
 
                 $user_to_insert['parent_sid'] = $to_company;
                 unset($user_to_insert['sid']);
-
+               
                 $new_employee_sid = $this->copy_employees_model->copy_user_to_other_company($user_to_insert);
 
                 $e_signature = $this->copy_employees_model->get_employee_e_signature($from_company, $employee_sid, $user_type);
@@ -649,9 +674,23 @@ class Copy_employees extends Admin_Controller {
                 $insert_employee_log['previous_employee_sid'] = $employee_sid;
                 $insert_employee_log['to_company_sid'] = $to_company;
                 $insert_employee_log['new_employee_sid'] = $new_employee_sid;
-
-                $this->copy_employees_model->maintain_employee_log_data($insert_employee_log);
+                $insert_employee_log['employee_copy_date'] = $date;
                 
+                $this->copy_employees_model->maintain_employee_log_data($insert_employee_log);
+              
+                //
+                 $insert_employee_change_status = array();
+                 $insert_employee_change_status['status_change_date'] = date('Y-m-d');
+                 $insert_employee_change_status['details'] = $transferredNote;
+                 $insert_employee_change_status['employee_status'] = 9;
+                 $insert_employee_change_status['employee_sid'] = $new_employee_sid;
+                 $insert_employee_change_status['changed_by'] = 0;
+                 $insert_employee_change_status['ip_address'] = getUserIP();
+                 $insert_employee_change_status['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                 $insert_employee_change_status['termination_reason'] = 0;
+                 $insert_employee_change_status['termination_date'] = NULL;
+
+                 $this->copy_employees_model->add_terminate_user_table($insert_employee_change_status);
 
                 $resp['status'] = TRUE;
                 $resp['response'] = 'Employee <b>'.$employee_name.'</b> successfully copied in company <b>'.$company_name.'</b>';

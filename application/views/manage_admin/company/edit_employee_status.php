@@ -40,6 +40,8 @@
                                                             <option value="3" <?= $status_data['employee_status'] == 3 ? 'selected="selected"' : ''; ?>>Deceased</option>
                                                             <option value="1" <?= $status_data['employee_status'] == 1 ? 'selected="selected"' : ''; ?>>Terminated</option>
                                                             <option value="6" <?= $status_data['employee_status'] == 6 ? 'selected="selected"' : ''; ?>>Inactive</option>
+                                                            <option value="9" <?= $status_data['employee_status'] == 9 ? 'selected="selected"' : ''; ?>>Transferred</option>
+
                                                         </select>
                                                         <?php echo form_error('status'); ?>
                                                     </div>

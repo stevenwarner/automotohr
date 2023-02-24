@@ -127,6 +127,8 @@ class Terminate_employee extends Public_Controller {
                 $data_to_insert['changed_by'] = $employer_sid;
                 $data_to_insert['ip_address'] = getUserIP();
                 $data_to_insert['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+
+
                 $data_to_update = array();
 
                 if ($status == 1) {
@@ -162,9 +164,14 @@ class Terminate_employee extends Public_Controller {
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
-
+                
+               
                 $this->terminate_employee_model->terminate_user($sid, $data_to_insert);
-                $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
+                
+                if ($status != 9) {
+                  $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
+                }
+
                 $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
                 redirect(base_url('employee_status/' . $sid), 'refresh');
             }
@@ -294,7 +301,9 @@ class Terminate_employee extends Public_Controller {
                 //
                 // Check its current status then update in user primary data
                 if($this->terminate_employee_model->check_for_main_status_update($sid, $status_id)){
+                    if($status!=9){
                     $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
+                    }
                 }
                 //
                 $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
