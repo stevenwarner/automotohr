@@ -148,7 +148,7 @@
                         <span class="control__indicator"></span>
                     </label>
                     <i class="fa fa-question-circle" data-hint="js-hint" data-target="approvers"></i>
-                    <div class="js-hint js-hint-approvers">The policy will only visible to selected approvers.</div>
+                    <div class="js-hint js-hint-approvers">The policy will only be visible to selected approvers.</div>
                 </div>
                 <!-- To allow approvers -->
                 <div class="jsMultipleApproverList" data-type="edit">
