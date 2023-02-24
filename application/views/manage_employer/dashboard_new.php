@@ -116,8 +116,7 @@
                                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-12">
                                                 <span>Ready to get Started?</span>
                                                 <div class="button-panel">
-                                                    <a class="site-btn" href="<?php echo base_url('my_profile') ?>">View
-                                                        your Profile</a>
+                                                    <a class="site-btn btn-warning" href="<?php echo base_url('employee_management_system') ?>" style="">My Personal EMS Dashboard</a>
                                                 </div>
                                                 <p>You can manage your profile and login credentials</p>
                                             </div>
