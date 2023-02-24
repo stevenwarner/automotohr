@@ -675,32 +675,34 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
 
 <script type="text/javascript">
     function deactivate_single_employee(id) {
-        alertify.confirm("Please Confirm Deactivate", "Are you sure you want to Deactivate employee?",
-            function() {
-                url = "<?= base_url() ?>employee_management/deactivate_single_employee";
+        window.location.href = "<?= base_url() ?>employee_status/"+id
+        // alertify.confirm("Please Confirm Deactivate", "Are you sure you want to Deactivate employee?",
+        //     function() {
+        //         // url = "<?= base_url() ?>employee_management/deactivate_single_employee";
 
-                $.post(url, {
-                        del_id: id,
-                        action: "deactivate_single_employee"
-                    })
-                    .done(function(data) {
-                        $('#manual_row' + id).hide();
-                        var total_rows = $('#countainer_count').val();
-                        total_rows = total_rows - 1;
-                        $('#countainer_count').val(total_rows);
+        //         // $.post(url, {
+        //         //         del_id: id,
+        //         //         action: "deactivate_single_employee"
+        //         //     })
+        //         //     .done(function(data) {
+        //         //         $('#manual_row' + id).hide();
+        //         //         var total_rows = $('#countainer_count').val();
+        //         //         total_rows = total_rows - 1;
+        //         //         $('#countainer_count').val(total_rows);
 
-                        if (total_rows <= 0) {
-                            show_no_jobs
-                            $('#hide_del_row').hide();
-                            $('#show_no_jobs').html('<span class="applicant-not-found">No Employees found!</span>');
-                        }
+        //         //         if (total_rows <= 0) {
+        //         //             show_no_jobs
+        //         //             $('#hide_del_row').hide();
+        //         //             $('#show_no_jobs').html('<span class="applicant-not-found">No Employees found!</span>');
+        //         //         }
 
-                        alertify.notify(data, 'success');
-                    });
-            },
-            function() {
-                alertify.error('Cancelled');
-            });
+
+        //         //         alertify.notify(data, 'success');
+        //         //     });
+        //     },
+        //     function() {
+        //         alertify.error('Cancelled');
+        //     });
     }
 
     function delete_single_employee(id) {
