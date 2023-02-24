@@ -251,7 +251,7 @@ class Notification_model extends CI_Model {
         if ($eeo_form_status == 1) {
             $eeoc_form = $this->is_eeoc_form_assign('employee', $employee_id);
         } else {
-            $eeoc_form = 0
+            $eeoc_form = 0;
         }   
         // $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + count($generalDocuments);
         $c = count($assigned_documents) + $w4_form + $w9_form + $i9_form + $eeoc_form + count($generalDocuments) + $assigned_offer_letter;

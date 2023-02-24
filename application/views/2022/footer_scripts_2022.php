@@ -3,7 +3,7 @@
 <!-- jQuery UI -->
 <script src="<?php echo _m(base_url('assets/2022/js/jquery-ui.min'), 'js', '1.0') ?>"></script>
 <!-- Bootstrap -->
-<script src="<?php echo _m(base_url('assets/2022/js/bootstrap.min')) ?>"></script>
+<script src="<?php echo _m(base_url('assets/2022/js/bootstrap.min', 'js', '1.0')) ?>"></script>
 <!-- DateTimePicker -->
 <script src="<?php echo _m(base_url('assets/2022/js/jquery.datetimepicker'), 'js', time()) ?>"></script>
 <!-- Alertify -->
@@ -12,8 +12,13 @@
 <script src="<?php echo _m(base_url('assets/2022/js/select2'), 'js', time()) ?>"></script>
 <!-- Moment -->
 <script type="text/javascript" src="<?= _m(base_url('assets/2022/js/moment.min'), 'js', time());?>"></script>
+<script type="text/javascript" src="<?= base_url(_m('assets/js/uri', 'js', '1.0.1')); ?>"></script>
+<script type="text/javascript" src="<?= base_url(_m('assets/js/common', 'js', '1.0.2')); ?>"></script>
+<?php if($this->session->userdata('logged_in')): ?>
+<script type="text/javascript" src="<?= base_url(_m('assets/portal/app', 'js', '1.0.0')); ?>"></script>
+<?php endif; ?>
 <!-- Google translator scrips -->
-<!-- <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> -->
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <!-- App -->
 <script type="text/javascript" src="<?= _m(base_url('assets/2022/js/app'), 'js', time()); ?>"></script>
 <!--  -->
