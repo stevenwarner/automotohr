@@ -323,7 +323,7 @@
             <!-- Header End -->
 
             <div class="emp-info-strip <?=in_array('iframe', $this->uri->segment_array()) ? 'hidden' : '';?> <?=isset($hide_employer_section) ? 'hidden' : ''; ?>">
-                <div class="container-fluid">
+                <div class="container">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="emp-info-box">
