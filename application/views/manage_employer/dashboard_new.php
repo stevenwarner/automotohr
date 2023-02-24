@@ -40,7 +40,7 @@
                                             <?php } else { ?>
                                                 <?php if ($employerData['PhoneNumber'] != NULL) { ?>
                                                     <li>
-                                                        <label>Business Line</label>
+                                                        <label>Telephone</label>
                                                         <span><?php echo $employerData['PhoneNumber'] ?></span>
                                                     </li>
                                                 <?php } ?>
@@ -79,7 +79,7 @@
                                                 </span>
                                             </li>
                                             <li>
-                                                <label>Business Email</label>
+                                                <label>Email</label>
                                                 <span><a><?php echo $employerData['email'] ?></a></span>
                                             </li>
                                         </ul>
