@@ -7241,6 +7241,20 @@ class Time_off extends Public_Controller
                 //
                 if ($timeOffExists) {
                     //
+                    if ($timeOffExists > 1) {
+                        $this->db
+                        ->where([
+                            'company_sid' => $companyId,
+                            'employee_sid' => $employeeId,
+                            'timeoff_policy_sid' => $policyId
+                        ])
+                        ->where('request_from_date = ', $startDate)
+                        ->where('request_to_date = ', $endDate)
+                        ->order_by('sid', 'desc')
+                        ->limit(1)
+                        ->delete('timeoff_requests');
+                    }
+                    //
                     $this->db
                         ->where([
                             'company_sid' => $companyId,
