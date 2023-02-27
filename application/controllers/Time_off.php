@@ -768,7 +768,9 @@ class Time_off extends Public_Controller
         return $this->handleUpdateTimeOff(
             $timeoffs,
             $foundPolicies,
-            $foundEmployees
+            $foundEmployees,
+            $companyId,
+            $employerId
         );
     }
 
@@ -7177,7 +7179,9 @@ class Time_off extends Public_Controller
     function handleUpdateTimeOff(
         $timeoffs,
         $foundPolicies,
-        $foundEmployees
+        $foundEmployees,
+        $companyId,
+        $employerId
     ) {
         //
         $holder = [
