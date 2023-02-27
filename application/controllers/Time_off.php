@@ -820,27 +820,27 @@ class Time_off extends Public_Controller
                         $holder['success']++;
                     } else {
                         //
-                        // $this->db
-                        //     ->where([
-                        //         'company_sid' => $companyId,
-                        //         'employee_sid' => $employeeId,
-                        //         'timeoff_policy_sid' => $policyId
-                        //     ])
-                        //     ->where('request_from_date = ', $startDate)
-                        //     ->where('request_to_date = ', $endDate)
-                        //     ->update('timeoff_requests', [
-                        //         'request_from_date' => formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE),
-                        //         'request_to_date' => formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE),
-                        //         'created_at' => formatDateToDB($timeoff['submitted_date'], 'd/m/Y', DB_DATE) . ' 00:00:00',
-                        //         'timeoff_days' => json_encode([
-                        //             'totalTime' => $timeoff['requested_hours'] * 60,
-                        //             'days' => getDatesBetweenDates(
-                        //                 formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE),
-                        //                 formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE),
-                        //                 $timeoff['requested_hours']
-                        //             )
-                        //         ])
-                        //     ]);
+                        $this->db
+                            ->where([
+                                'company_sid' => $companyId,
+                                'employee_sid' => $employeeId,
+                                'timeoff_policy_sid' => $policyId
+                            ])
+                            ->where('request_from_date = ', $startDate)
+                            ->where('request_to_date = ', $endDate)
+                            ->update('timeoff_requests', [
+                                'request_from_date' => formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE),
+                                'request_to_date' => formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE),
+                                'created_at' => formatDateToDB($timeoff['submitted_date'], 'd/m/Y', DB_DATE) . ' 00:00:00',
+                                'timeoff_days' => json_encode([
+                                    'totalTime' => $timeoff['requested_hours'] * 60,
+                                    'days' => getDatesBetweenDates(
+                                        formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE),
+                                        formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE),
+                                        $timeoff['requested_hours']
+                                    )
+                                ])
+                            ]);
                         $holder['existed']++;
                     }
                 } else {
