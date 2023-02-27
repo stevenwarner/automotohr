@@ -7290,7 +7290,7 @@ class Time_off extends Public_Controller
                     //
                     $this->db
                     ->where('request_sid', $timeoffRequestId)
-                    ->update('timeoff_request_timeline', $ins);
+                    ->update('timeoff_request_timeline', $upd);
                     //
 
                     $holder['existed']++;
