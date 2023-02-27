@@ -7281,6 +7281,10 @@ class Time_off extends Public_Controller
                             ->get('timeoff_requests')
                             ->row_array()['sid'];
 
+                    $this->db
+                        ->where('request_sid', $timeoffRequestId)
+                        ->delete('timeoff_request_timeline');
+
                     // Insert the time off timeline
                     $upd = [];
                     $upd['note'] = json_encode([
