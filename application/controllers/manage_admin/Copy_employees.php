@@ -251,11 +251,16 @@ class Copy_employees extends Admin_Controller
 
                     $this->db->insert('employees_transfer_log', $insert_employee_log);
                 }
+                // Get employee username
+                $secondary_employee_data
 
                 //
                 $this->db
                 ->where('sid', $secondary_employee_sid)
-                ->update('users', ['active' => 0]);
+                ->update('users', [
+                    'active' => 0, 
+                    'username' => $secondary_employee_data['username'].'_'.time()
+                ]);
 
                 //
                 $insert_employee_change_status = array();
