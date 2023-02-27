@@ -7262,7 +7262,8 @@ class Time_off extends Public_Controller
                                 )
                             ]),
                             'status' => strtolower($timeoff['status']),
-                            'level_status' => strtolower($timeoff['status'])
+                            'level_status' => strtolower($timeoff['status']),
+                            'is_imported' => 1
                         ]);
 
                     $startDate = formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE);
