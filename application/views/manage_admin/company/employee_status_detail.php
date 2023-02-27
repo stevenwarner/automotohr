@@ -65,6 +65,8 @@
                                                                                 echo 'Leave';
                                                                             } else if ($employee_status == 8) {
                                                                                 echo 'Rehired';
+                                                                            }else if ($employee_status == 9) {
+                                                                                echo 'Transferred';
                                                                             } else {
                                                                                 echo 'N/A';
                                                                             }

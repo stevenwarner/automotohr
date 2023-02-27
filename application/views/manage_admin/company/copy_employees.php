@@ -99,6 +99,8 @@
                                                         <strong class="text-danger">
                                                             You can search multiple employees at once. <br />E.G. john.doe@example.com, john smith
                                                         </strong>
+                                                        <input type="hidden"  name="transferred_note" value="" id="transferred_note">
+
                                                     </div>
                                                 </li>
 
@@ -401,19 +403,38 @@
 
     function start_copy_process(e){
         e.preventDefault();
-        
+
         selected_employees = get_all_selected_employees();
         
         if(selected_employees.length === 0){
             alertify.alert('ERROR!', 'Please select atleast one employee to start the process.');
             return;
         }
-        copy_employee_count = selected_employees.length;
 
-        loader();
-        $('#js-loader-text').html('Please wait, we are copying employee');
-        console.log(selected_employees.length);
-        copy_employees();
+
+        alertify.prompt( 'Please Enter a Note', '', ''
+               , function(evt, value) {
+ 
+                  if(value.trim()==''){
+                    alertify.alert('ERROR!', 'Please Enter a Note.');
+                    return;
+                  }
+                  
+                  $("#transferred_note").val(value);
+
+                 copy_employee_count = selected_employees.length;
+                 loader();
+                 $('#js-loader-text').html('Please wait, we are copying employee');
+                 copy_employees();
+
+                    }
+               , function() {
+                    alertify.error('Cancel')
+                     }
+                     
+                     );
+
+
     }
 
     function get_all_selected_employees (){
@@ -453,6 +474,7 @@
             
             employee.to_company = $('#js-to-company').val();
             employee.from_company = $('#js-from-company').val();
+            employee.transferred_note = $("#transferred_note").val();
 
             var myurl = "<?php echo base_url('manage_admin/copy_employees/copy_companies_employees') ?>";
             $.post(myurl, employee, function(resp) {

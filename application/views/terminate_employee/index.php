@@ -54,6 +54,8 @@
                                                                 echo 'Leave';
                                                             } else if ($employee_status == 8) {
                                                                 echo 'Rehired';
+                                                            } else if ($employee_status == 9) {
+                                                                echo 'Transferred';
                                                             } else {
                                                                 echo 'N/A';
                                                             }
@@ -107,7 +109,7 @@
                                                     <td class="text-center" style="vertical-align: middle;">
                                                         <?php if (isset($record['termination_date']) && !empty($record['termination_date'])) {
                                                             $termination_date = $record['termination_date'];
-                                                            echo reset_datetime(array('datetime' => $termination_date, '_this' => $this));
+                                                            echo formatDateToDb($termination_date, DB_DATE, DATE);
                                                         } else {
                                                             echo 'N/A';
                                                         } ?>
@@ -135,7 +137,7 @@
                                                     <td class="text-center" style="vertical-align: middle;">
                                                         <?php if (isset($record['status_change_date']) && !empty($record['status_change_date'])) {
                                                             $status_change_date = $record['status_change_date'];
-                                                            echo reset_datetime(array('datetime' => $status_change_date, '_this' => $this));
+                                                            echo formatDateToDb($status_change_date, DB_DATE, DATE);
                                                         } ?>
                                                     </td>
                                                     <td class="text-center" style="vertical-align: middle;">
