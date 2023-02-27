@@ -839,7 +839,9 @@ class Time_off extends Public_Controller
                                         formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE),
                                         $timeoff['requested_hours']
                                     )
-                                ])
+                                ]),
+                                'status' => strtolower($timeoff['status']),
+                                'level_status' => strtolower($timeoff['status'])
                             ]);
                         $holder['existed']++;
                     }
