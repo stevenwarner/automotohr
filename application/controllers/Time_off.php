@@ -629,7 +629,7 @@ class Time_off extends Public_Controller
         $data['timeOffDays'] = $this->timeoff_model->getTimeOffDays($data['session']['company_detail']['sid']);
         $data['holidayDates'] = $this->timeoff_model->getDistinctHolidayDates(array('companySid' => $data['session']['company_detail']['sid']));
         $data['theme'] = $this->theme;
-        
+
         //
         $this->load->view('main/header', $data);
 
@@ -788,12 +788,12 @@ class Time_off extends Public_Controller
                 //
                 $approverId = !isset($foundEmployees[$approverSlug]) ? $this->session->userdata('logged_in')['employer_detail']['sid'] : $foundEmployees[$approverSlug];
                 //
-                if(!$approverId) {
+                if (!$approverId) {
                     $holder['failed']++;
                     continue;
                 }
                 //
-                if(!in_array(strtolower($timeoff['status']), ['pending', 'approved', 'rejected', 'cancelled'])) {
+                if (!in_array(strtolower($timeoff['status']), ['pending', 'approved', 'rejected', 'cancelled'])) {
                     $holder['failed']++;
                     continue;
                 }
@@ -816,7 +816,33 @@ class Time_off extends Public_Controller
                     );
                 //
                 if ($timeOffExists) {
-                    $holder['existed']++;
+                    if ($timeOffExists > 1) {
+                        $holder['success']++;
+                    } else {
+                        //
+                        // $this->db
+                        //     ->where([
+                        //         'company_sid' => $companyId,
+                        //         'employee_sid' => $employeeId,
+                        //         'timeoff_policy_sid' => $policyId
+                        //     ])
+                        //     ->where('request_from_date = ', $startDate)
+                        //     ->where('request_to_date = ', $endDate)
+                        //     ->update('timeoff_requests', [
+                        //         'request_from_date' => formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE),
+                        //         'request_to_date' => formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE),
+                        //         'created_at' => formatDateToDB($timeoff['submitted_date'], 'd/m/Y', DB_DATE) . ' 00:00:00',
+                        //         'timeoff_days' => json_encode([
+                        //             'totalTime' => $timeoff['requested_hours'] * 60,
+                        //             'days' => getDatesBetweenDates(
+                        //                 formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE),
+                        //                 formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE),
+                        //                 $timeoff['requested_hours']
+                        //             )
+                        //         ])
+                        //     ]);
+                        $holder['existed']++;
+                    }
                 } else {
                     // Set the insert array
                     $ins = [];
@@ -1603,9 +1629,9 @@ class Time_off extends Public_Controller
                     //
                     $this->timeoff_model->insertHistory($in, 'timeoff_request_timeline');
                     // Send email notifications
-                   
-                   //  $this->sendNotifications($args['requestId'], 'approved');
-                     $this->sendNotifications($args['requestSid'], 'approved');
+
+                    //  $this->sendNotifications($args['requestId'], 'approved');
+                    $this->sendNotifications($args['requestSid'], 'approved');
 
                     $data['hf'] = message_header_footer_domain($request['company_sid'], ucwords($request['CompanyName']));
                     //
@@ -2437,7 +2463,7 @@ class Time_off extends Public_Controller
         $this->res['Redirect'] = FALSE;
         //
 
-       // die(strtolower($post['action']));
+        // die(strtolower($post['action']));
 
         switch (strtolower($post['action'])) {
                 // Fetch company all policy types
@@ -2723,7 +2749,7 @@ class Time_off extends Public_Controller
                 $up['off_days'] = implode(',', $post['offDays']);
                 $up['accruals'] = json_encode($accruals);
                 $up['policy_start_date'] = $post['applicableDateType'] == 'customHireDate' ? formatDate($post['applicableDate'], 'm-d-Y', 'Y-m-d')  : NULL;
-               
+
                 $up['is_entitled_employee'] = $post['isEntitledEmployees'];
                 $up['policy_category_type'] = $post['policy_category_type'];
                 $up['allowed_approvers'] = $post['approver'] == 1 ? implode(',', $post['approverList']) : '';
@@ -3665,7 +3691,7 @@ class Time_off extends Public_Controller
             case "get_requests":
                 //
                 $data = $this->timeoff_model->getRequests($post);
-                
+
                 $this->res['Status'] = true;
                 $this->res['Response'] = 'Proceed...';
                 $this->res['Data'] = $data;
