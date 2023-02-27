@@ -763,6 +763,11 @@ class Time_off extends Public_Controller
         $timeoffs = $post['chunk'];
         $foundEmployees = $post['data']['employees'];
         $foundPolicies = $post['data']['policies'];
+
+        // 
+        return $this->handleUpdateTimeOff(
+            $timeoffs
+        );
         //
         $holder = [
             'failed' => 0,
@@ -7311,5 +7316,142 @@ class Time_off extends Public_Controller
         //
         echo json_encode($this->timeoff_model->getMyTimeOffs($data['company_sid'], $employeeId));
         exit(0);
+    }
+
+
+    function handleUpdateTimeOff(
+        $timeoffs
+    ) {
+        //
+        $holder = [
+            'failed' => 0,
+            'existed' => 0,
+            'success' => 0
+        ];
+        //
+        $dateTime = date('Y-m-d H:i:s', strtotime('now'));
+        //
+        foreach ($timeoffs as $timeoff) {
+            //
+            $approverSlug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($timeoff['approver_full_name'])));
+            $employeeSlug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($timeoff['employee_first_name'] . $timeoff['employee_last_name'])));
+            $policySlug = preg_replace('/[^a-zA-Z]/', '', strtolower(trim($timeoff['policy'])));
+            //
+            if (
+                isset($foundEmployees[$employeeSlug])
+                && isset($foundPolicies[$policySlug])
+                && $timeoff['leave_from']
+                && $timeoff['leave_to']
+                && $timeoff['status']
+            ) {
+                //
+                $approverId = !isset($foundEmployees[$approverSlug]) ? $this->session->userdata('logged_in')['employer_detail']['sid'] : $foundEmployees[$approverSlug];
+                //
+                if (!$approverId) {
+                    $holder['failed']++;
+                    continue;
+                }
+                //
+                if (!in_array(strtolower($timeoff['status']), ['pending', 'approved', 'rejected', 'cancelled'])) {
+                    $holder['failed']++;
+                    continue;
+                }
+                //
+                //
+                $startDate = formatDateToDB($timeoff['leave_from'], SITE_DATE, DB_DATE);
+                $endDate = formatDateToDB($timeoff['leave_to'], SITE_DATE, DB_DATE);
+                $submittedDate = formatDateToDB($timeoff['submitted_date'], SITE_DATE, DB_DATE) . ' 00:00:00';
+
+
+                $startDate = formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE);
+                $endDate = formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE);
+                // Set ids
+                $employeeId = $foundEmployees[$employeeSlug];
+                $policyId = $foundPolicies[$policySlug];
+                // Check if the policy already exists
+                $timeOffExists = $this->timeoff_model
+                    ->checkTimeOffForSpecificEmployee(
+                        $companyId,
+                        $employeeId,
+                        $policyId,
+                        $startDate,
+                        $endDate
+                    );
+                //
+                if ($timeOffExists) {
+                    //
+                    $this->db
+                        ->where([
+                            'company_sid' => $companyId,
+                            'employee_sid' => $employeeId,
+                            'timeoff_policy_sid' => $policyId
+                        ])
+                        ->where('request_from_date = ', $startDate)
+                        ->where('request_to_date = ', $endDate)
+                        ->update('timeoff_requests', [
+                            'request_from_date' => formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE),
+                            'request_to_date' => formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE),
+                            'created_at' => formatDateToDB($timeoff['submitted_date'], 'd/m/Y', DB_DATE) . ' 00:00:00',
+                            'timeoff_days' => json_encode([
+                                'totalTime' => $timeoff['requested_hours'] * 60,
+                                'days' => getDatesBetweenDates(
+                                    formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE),
+                                    formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE),
+                                    $timeoff['requested_hours']
+                                )
+                            ]),
+                            'status' => strtolower($timeoff['status']),
+                            'level_status' => strtolower($timeoff['status'])
+                        ]);
+
+                    $startDate = formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE);
+                    $endDate = formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE);
+
+                    //
+                    $timeoffRequestId =
+                    $this->db
+                        ->where([
+                            'company_sid' => $companyId,
+                            'employee_sid' => $employeeId,
+                            'timeoff_policy_sid' => $policyId
+                        ])
+                        ->where('request_from_date = ', $startDate)
+                        ->where('request_to_date = ', $endDate)
+                        ->get('timeoff_requests')
+                        ->row_array()['sid'];
+
+                    // Insert the time off timeline
+                    $upd = [];
+                    $upd['note'] = json_encode([
+                        'status' => strtolower($timeoff['status']),
+                        'canApprove' => 1,
+                        'details' => [
+                            'startDate' => $startDate,
+                            'endDate' => $endDate,
+                            'time' => $timeoff['requested_hours'] * 60,
+                            'policyId' => $policyId,
+                            'policyTitle' => $this->timeoff_model->getPolicyNameById($policyId),
+                        ],
+                        'comment' => $timeoff['status_comment']
+                    ]);
+                    //
+                    $this->db
+                    ->where('request_sid', $timeoffRequestId)
+                    ->update('timeoff_request_timeline', $ins);
+                    //
+
+                    $holder['existed']++;
+                
+                //
+                continue;
+            }
+            //
+            $holder['failed']++;
+        }
+        //
+        return SendResponse(
+            200,
+            $holder
+        );
     }
 }
