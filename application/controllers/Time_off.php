@@ -7284,10 +7284,13 @@ class Time_off extends Public_Controller
                     $this->db
                         ->where('request_sid', $timeoffRequestId)
                         ->delete('timeoff_request_timeline');
-
+                    
                     // Insert the time off timeline
-                    $upd = [];
-                    $upd['note'] = json_encode([
+                    $ins = [];
+                    $ins['request_sid'] = $timeoffRequestId;
+                    $ins['employee_sid'] = $approverId;
+                    $ins['action'] = 'update';
+                    $ins['note'] = json_encode([
                         'status' => strtolower($timeoff['status']),
                         'canApprove' => 1,
                         'details' => [
@@ -7299,10 +7302,12 @@ class Time_off extends Public_Controller
                         ],
                         'comment' => $timeoff['status_comment']
                     ]);
+                    $ins['created_at'] = $dateTime;
+                    $ins['updated_at'] = $dateTime;
+                    $ins['is_moved'] = 0;
+                    $ins['comment'] = $timeoff['status_comment'];
                     //
-                    $this->db
-                        ->where('request_sid', $timeoffRequestId)
-                        ->update('timeoff_request_timeline', $upd);
+                    $this->db->insert('timeoff_request_timeline', $ins);
                     //
 
                     $holder['existed']++;
