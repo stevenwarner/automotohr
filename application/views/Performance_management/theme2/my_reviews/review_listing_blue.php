@@ -1,5 +1,5 @@
 <!--  -->
-<div class="col-sm-9 col-xs-12">
+<div class="col-sm-12 col-xs-12">
     <!--  -->
     <div class="panel panel-theme dn">
         <div class="panel-heading pb0">

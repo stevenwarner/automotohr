@@ -4,7 +4,7 @@
     $teams = json_decode($settings['teams'], true);
     $employees = json_decode($settings['employees'], true);
 ?>
-<div class="col-md-9 col-sm-12">
+<div class="col-md-12 col-sm-12">
     <!--  -->
     <div class="csIPLoader jsIPLoader" data-page="settings">
         <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>

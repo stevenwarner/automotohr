@@ -40,7 +40,7 @@
 
 ?>
 
-<div class="col-md-9 col-sm-12">
+<div class="col-md-12 col-sm-12">
 
     <!-- Assigned -->
     <div class="panel panel-theme">
