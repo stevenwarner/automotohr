@@ -766,7 +766,9 @@ class Time_off extends Public_Controller
 
         // 
         return $this->handleUpdateTimeOff(
-            $timeoffs
+            $timeoffs,
+            $foundPolicies,
+            $foundEmployees
         );
     }
 
@@ -7173,7 +7175,9 @@ class Time_off extends Public_Controller
 
 
     function handleUpdateTimeOff(
-        $timeoffs
+        $timeoffs,
+        $foundPolicies,
+        $foundEmployees
     ) {
         //
         $holder = [
@@ -7216,7 +7220,8 @@ class Time_off extends Public_Controller
                 $submittedDate = formatDateToDB($timeoff['submitted_date'], SITE_DATE, DB_DATE) . ' 00:00:00';
 
 
-                
+                $startDate = formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE);
+                $endDate = formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE);
                 // Set ids
                 $employeeId = $foundEmployees[$employeeSlug];
                 $policyId = $foundPolicies[$policySlug];
@@ -7261,16 +7266,16 @@ class Time_off extends Public_Controller
 
                     //
                     $timeoffRequestId =
-                    $this->db
-                        ->where([
-                            'company_sid' => $companyId,
-                            'employee_sid' => $employeeId,
-                            'timeoff_policy_sid' => $policyId
-                        ])
-                        ->where('request_from_date = ', $startDate)
-                        ->where('request_to_date = ', $endDate)
-                        ->get('timeoff_requests')
-                        ->row_array()['sid'];
+                        $this->db
+                            ->where([
+                                'company_sid' => $companyId,
+                                'employee_sid' => $employeeId,
+                                'timeoff_policy_sid' => $policyId
+                            ])
+                            ->where('request_from_date = ', $startDate)
+                            ->where('request_to_date = ', $endDate)
+                            ->get('timeoff_requests')
+                            ->row_array()['sid'];
 
                     // Insert the time off timeline
                     $upd = [];
@@ -7288,8 +7293,8 @@ class Time_off extends Public_Controller
                     ]);
                     //
                     $this->db
-                    ->where('request_sid', $timeoffRequestId)
-                    ->update('timeoff_request_timeline', $upd);
+                        ->where('request_sid', $timeoffRequestId)
+                        ->update('timeoff_request_timeline', $upd);
                     //
 
                     $holder['existed']++;
