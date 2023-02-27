@@ -7280,34 +7280,38 @@ class Time_off extends Public_Controller
                             ->where('request_to_date = ', $endDate)
                             ->get('timeoff_requests')
                             ->row_array()['sid'];
-
-                    $this->db
-                        ->where('request_sid', $timeoffRequestId)
-                        ->delete('timeoff_request_timeline');
-                    
-                    // Insert the time off timeline
-                    $ins = [];
-                    $ins['request_sid'] = $timeoffRequestId;
-                    $ins['employee_sid'] = $approverId;
-                    $ins['action'] = 'update';
-                    $ins['note'] = json_encode([
-                        'status' => strtolower($timeoff['status']),
-                        'canApprove' => 1,
-                        'details' => [
-                            'startDate' => $startDate,
-                            'endDate' => $endDate,
-                            'time' => $timeoff['requested_hours'] * 60,
-                            'policyId' => $policyId,
-                            'policyTitle' => $this->timeoff_model->getPolicyNameById($policyId),
-                        ],
-                        'comment' => $timeoff['status_comment']
-                    ]);
-                    $ins['created_at'] = $dateTime;
-                    $ins['updated_at'] = $dateTime;
-                    $ins['is_moved'] = 0;
-                    $ins['comment'] = $timeoff['status_comment'];
                     //
-                    $this->db->insert('timeoff_request_timeline', $ins);
+                    if ($timeoffRequestId) {
+
+
+                        $this->db
+                            ->where('request_sid', $timeoffRequestId)
+                            ->delete('timeoff_request_timeline');
+
+                        // Insert the time off timeline
+                        $ins = [];
+                        $ins['request_sid'] = $timeoffRequestId;
+                        $ins['employee_sid'] = $approverId;
+                        $ins['action'] = 'update';
+                        $ins['note'] = json_encode([
+                            'status' => strtolower($timeoff['status']),
+                            'canApprove' => 1,
+                            'details' => [
+                                'startDate' => $startDate,
+                                'endDate' => $endDate,
+                                'time' => $timeoff['requested_hours'] * 60,
+                                'policyId' => $policyId,
+                                'policyTitle' => $this->timeoff_model->getPolicyNameById($policyId),
+                            ],
+                            'comment' => $timeoff['status_comment']
+                        ]);
+                        $ins['created_at'] = $dateTime;
+                        $ins['updated_at'] = $dateTime;
+                        $ins['is_moved'] = 0;
+                        $ins['comment'] = $timeoff['status_comment'];
+                        //
+                        $this->db->insert('timeoff_request_timeline', $ins);
+                    }
                     //
 
                     $holder['existed']++;
