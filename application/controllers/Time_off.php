@@ -7216,8 +7216,7 @@ class Time_off extends Public_Controller
                 $submittedDate = formatDateToDB($timeoff['submitted_date'], SITE_DATE, DB_DATE) . ' 00:00:00';
 
 
-                $startDate = formatDateToDB($timeoff['leave_from'], 'd/m/Y', DB_DATE);
-                $endDate = formatDateToDB($timeoff['leave_to'], 'd/m/Y', DB_DATE);
+                
                 // Set ids
                 $employeeId = $foundEmployees[$employeeSlug];
                 $policyId = $foundPolicies[$policySlug];
