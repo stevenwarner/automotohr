@@ -251,8 +251,6 @@ class Copy_employees extends Admin_Controller
 
                     $this->db->insert('employees_transfer_log', $insert_employee_log);
                 }
-                // Get employee username
-                $secondary_employee_data
 
                 //
                 $this->db
