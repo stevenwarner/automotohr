@@ -1,7 +1,9 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Terminate_employee extends Public_Controller {
-    public function __construct() {
+class Terminate_employee extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('dashboard_model');
         $this->load->model('terminate_employee_model');
@@ -13,7 +15,8 @@ class Terminate_employee extends Public_Controller {
      *
      * @return VOID
      */
-    function index($sid) {
+    function index($sid)
+    {
         if (!$this->session->userdata('logged_in')) {
             redirect(base_url('login'), "refresh");
         } else {
@@ -66,7 +69,8 @@ class Terminate_employee extends Public_Controller {
      *
      * @return VOID
      */
-    function change_status($sid) {
+    function change_status($sid)
+    {
         if (!$this->session->userdata('logged_in')) {
             redirect(base_url('login'), "refresh");
         } else {
@@ -118,10 +122,10 @@ class Terminate_employee extends Public_Controller {
                 if ($status == 1) {
                     $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); //date('Y-m-d', strtotime($termination_date));
                 }
-                
+
                 $data_to_insert['involuntary_termination'] = $involuntary;
                 $data_to_insert['do_not_hire'] = $rehire;
-                $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y');// date('Y-m-d', strtotime($status_change_date));
+                $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y'); // date('Y-m-d', strtotime($status_change_date));
                 $data_to_insert['details'] = htmlentities($termination_details);
                 $data_to_insert['employee_sid'] = $sid;
                 $data_to_insert['changed_by'] = $employer_sid;
@@ -132,9 +136,9 @@ class Terminate_employee extends Public_Controller {
                 $data_to_update = array();
 
                 if ($status == 1) {
-                    if($system_access == 1){
+                    if ($system_access == 1) {
                         $data_to_update['active'] = 0;
-                    }elseif(date('m-d-Y') >= $termination_date){
+                    } elseif (date('m-d-Y') >= $termination_date) {
                         $data_to_update['active'] = 0;
                     }
                     $data_to_update['terminated_status'] = 1;
@@ -146,30 +150,35 @@ class Terminate_employee extends Public_Controller {
                     } else if ($status == 6) {
                         $data_to_update['general_status'] = 'inactive';
                         $data_to_update['active'] = 0;
-                    }else if ($status == 7) {
+                    } else if ($status == 7) {
                         $data_to_update['general_status'] = 'leave';
-                    }else if ($status == 4) {
+                    } else if ($status == 4) {
                         $data_to_update['general_status'] = 'suspended';
                         $data_to_update['active'] = 0;
-                    }else if ($status == 3) {
+                    } else if ($status == 3) {
                         $data_to_update['general_status'] = 'deceased';
                         $data_to_update['active'] = 0;
-                    }else if ($status == 2) {
+                    } else if ($status == 2) {
                         $data_to_update['general_status'] = 'retired';
                         $data_to_update['active'] = 0;
-                    }else if ($status == 8) {
+                    } else if ($status == 8) {
                         $data_to_update['active'] = 1;
                         $data_to_update['general_status'] = 'rehired';
                         $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
                     }
                     $data_to_update['terminated_status'] = 0;
                 }
-                
-               
+
+
                 $this->terminate_employee_model->terminate_user($sid, $data_to_insert);
-                
+
+                if ($status == 9) {
+                    $data_transfer_log_update['to_company_sid'] = $employer_parent_sid;
+                    $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
+                    $this->terminate_employee_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+                }
                 if ($status != 9) {
-                  $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
+                    $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
                 }
 
                 $this->session->set_flashdata('message', '<b>Success:</b> Status Updated Successfully!');
@@ -178,7 +187,8 @@ class Terminate_employee extends Public_Controller {
         }
     }
 
-    function edit_status($sid, $status_id) {
+    function edit_status($sid, $status_id)
+    {
         if (!$this->session->userdata('logged_in')) {
             redirect(base_url('login'), "refresh");
         } else {
@@ -199,17 +209,17 @@ class Terminate_employee extends Public_Controller {
             $employer = $this->dashboard_model->get_company_detail($sid);
             $status_data = $this->terminate_employee_model->get_status_by_id($status_id);
             $left_navigation = 'manage_employer/employee_management/profile_right_menu_employee_new';
-            if(!sizeof($status_data)){
+            if (!sizeof($status_data)) {
                 $this->session->set_flashdata('message', '<b>Error:</b> Record Not Found!');
-                redirect('employee_status/'.$sid);
+                redirect('employee_status/' . $sid);
             }
 
-            if($status_data[0]['changed_by'] != 0){
-                if($status_data[0]['changed_by'] != $employer_sid){
+            if ($status_data[0]['changed_by'] != 0) {
+                if ($status_data[0]['changed_by'] != $employer_sid) {
                     $this->session->set_flashdata('message', '<b>Error:</b> Un-Authorized!');
-                    redirect('employee_status/'.$sid);
+                    redirect('employee_status/' . $sid);
                 }
-            }    
+            }
 
             $status_documents = $this->terminate_employee_model->get_status_documents($status_id);
             $data['id'] = $sid;
@@ -222,7 +232,7 @@ class Terminate_employee extends Public_Controller {
             $data['status_documents'] = $status_documents;
             $data['left_navigation'] = $left_navigation;
             $data['security_details'] = $security_details;
-            
+
             $this->form_validation->set_rules('status', 'Status', 'trim|xss_clean|required');
             $this->form_validation->set_rules('termination_details', 'Termination Details', 'trim|xss_clean|required');
 
@@ -246,14 +256,14 @@ class Terminate_employee extends Public_Controller {
                 $data_to_insert['termination_reason'] = empty($termination_reason) ? 0 : $termination_reason;
 
                 if ($status == 1) {
-                    $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y');// date('Y-m-d', strtotime($termination_date));
-                }else{
+                    $data_to_insert['termination_date'] = formatDateToDB($termination_date, 'm-d-Y'); // date('Y-m-d', strtotime($termination_date));
+                } else {
                     $data_to_insert['termination_date'] = NULL;
                 }
 
                 $data_to_insert['involuntary_termination'] = $involuntary;
                 $data_to_insert['do_not_hire'] = $rehire;
-                $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y');// date('Y-m-d', strtotime($status_change_date));
+                $data_to_insert['status_change_date'] = formatDateToDB($status_change_date, 'm-d-Y'); // date('Y-m-d', strtotime($status_change_date));
                 $data_to_insert['details'] = htmlentities($termination_details);
                 $data_to_insert['employee_sid'] = $sid;
                 $data_to_insert['changed_by'] = $employer_sid;
@@ -262,11 +272,11 @@ class Terminate_employee extends Public_Controller {
                 $data_to_update = array();
 
                 if ($status == 1) {
-                    if($system_access == 1){
+                    if ($system_access == 1) {
                         $data_to_update['active'] = 0;
-                    }elseif(date('m-d-Y') >= $termination_date){
+                    } elseif (date('m-d-Y') >= $termination_date) {
                         $data_to_update['active'] = 0;
-                    }else{
+                    } else {
                         $data_to_update['active'] = 1;
                     }
                     $data_to_update['terminated_status'] = 1;
@@ -278,18 +288,18 @@ class Terminate_employee extends Public_Controller {
                     } else if ($status == 6) {
                         $data_to_update['active'] = 0;
                         $data_to_update['general_status'] = 'inactive';
-                    }else if ($status == 7) {
+                    } else if ($status == 7) {
                         $data_to_update['general_status'] = 'leave';
-                    }else if ($status == 4) {
+                    } else if ($status == 4) {
                         $data_to_update['active'] = 0;
                         $data_to_update['general_status'] = 'suspended';
-                    }else if ($status == 3) {
+                    } else if ($status == 3) {
                         $data_to_update['active'] = 0;
                         $data_to_update['general_status'] = 'deceased';
-                    }else if ($status == 2) {
+                    } else if ($status == 2) {
                         $data_to_update['active'] = 0;
                         $data_to_update['general_status'] = 'retired';
-                    }else if ($status == 8) {
+                    } else if ($status == 8) {
                         $data_to_update['active'] = 1;
                         $data_to_update['general_status'] = 'rehired';
                         $data_to_update['rehire_date'] = $data_to_insert['status_change_date'];
@@ -299,10 +309,18 @@ class Terminate_employee extends Public_Controller {
                 //
                 $this->terminate_employee_model->update_terminate_user($status_id, $data_to_insert);
                 //
+
+                if ($status == 9) {
+                    $data_transfer_log_update['from_company_sid'] = 0;
+                    $data_transfer_log_update['previous_employee_sid'] = 0;
+                    $data_transfer_log_update['to_company_sid'] = $employer_parent_sid;
+                    $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
+                    $this->terminate_employee_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+                }
                 // Check its current status then update in user primary data
-                if($this->terminate_employee_model->check_for_main_status_update($sid, $status_id)){
-                    if($status!=9){
-                    $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
+                if ($this->terminate_employee_model->check_for_main_status_update($sid, $status_id)) {
+                    if ($status != 9) {
+                        $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
                     }
                 }
                 //
@@ -312,7 +330,8 @@ class Terminate_employee extends Public_Controller {
         }
     }
 
-    public function ajax_handler() {
+    public function ajax_handler()
+    {
         if ($this->input->is_ajax_request()) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data["session"]["company_detail"]["sid"];
@@ -335,7 +354,7 @@ class Terminate_employee extends Public_Controller {
                     $docs['terminated_user_id'] = $this->input->post('id');
                     $docs['uploaded_date'] = date('Y-m-d H:i:s');
                     $docs['status'] = 0;
-                    if(isset($_POST['record-id']) && !empty($_POST['record-id'])){
+                    if (isset($_POST['record-id']) && !empty($_POST['record-id'])) {
                         $docs['terminated_record_sid'] = $this->input->post('record-id');
                         $docs['status'] = 1;
                     }
@@ -344,7 +363,6 @@ class Terminate_employee extends Public_Controller {
                 } else {
                     echo 'error';
                 }
-                
             } elseif ($action == 'delete_file') {
                 $sid = $this->input->post('id');
                 $this->terminate_employee_model->delete_file($sid);
@@ -354,5 +372,4 @@ class Terminate_employee extends Public_Controller {
             }
         }
     }
-
 }

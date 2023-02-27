@@ -1,7 +1,7 @@
 <?php ?>
 <div class="main">
     <div class="container-fluid">
-        <div class="row">		
+        <div class="row">
             <div class="inner-content">
                 <?php $this->load->view('templates/_parts/admin_column_left_view'); ?>
                 <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9 no-padding">
@@ -11,20 +11,20 @@
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title">
                                         <h1 class="page-title"><i class="fa fa-user"></i><?php echo $page_title; ?></h1>
-                                        <a href="<?php echo base_url('manage_admin/employers/EmployeeStatusDetail')."/".$employee_detail["sid"]; ?>" class="btn black-btn float-right">Back</a>
+                                        <a href="<?php echo base_url('manage_admin/employers/EmployeeStatusDetail') . "/" . $employee_detail["sid"]; ?>" class="btn black-btn float-right">Back</a>
                                     </div>
                                 </div>
-                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12"> 
+                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="heading-title page-title employee_info_section">
                                         <h1 class="page-title">Company Name : <?php echo $companyName; ?></h1>
                                         <br>
                                         <h1 class="page-title">Employee Name : <?php echo $employeeName; ?></h1>
-                                    </div> 
-                                </div> 
+                                    </div>
+                                </div>
                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                                     <div class="edit-email-template">
                                         <p>Fields marked with an asterisk (<span class="hr-required">*</span>) are mandatory</p>
-                                        <div class="edit-template-from-main" >
+                                        <div class="edit-template-from-main">
                                             <?php echo form_open_multipart('', array('class' => 'form-horizontal js-form', 'id' => 'Changestatusform')); ?>
                                             <ul>
                                                 <li>
@@ -57,8 +57,8 @@
                                                                 <option value="2">Fired</option>
                                                                 <option value="3">Tenure Completed</option>
                                                             </optgroup>
-                                                            
-                                                            <optgroup label="Voluntary">    
+
+                                                            <optgroup label="Voluntary">
                                                                 <option value="4">Personal</option>
                                                                 <option value="5">Another Job</option>
                                                                 <option value="6">Problem with Supervisor</option>
@@ -69,8 +69,8 @@
                                                                 <option value="11">Pay</option>
                                                                 <option value="12">Without Notice/Reason</option>
                                                             </optgroup>
-                                                            
-                                                            <optgroup label="Involuntary">    
+
+                                                            <optgroup label="Involuntary">
                                                                 <option value="13">Involuntary</option>
                                                                 <option value="14">Violating Company Policy</option>
                                                                 <option value="15">Attendance Issues</option>
@@ -79,7 +79,7 @@
                                                             </optgroup>
                                                         </select>
                                                         <?php echo form_error('terminated_status'); ?>
-                                                    </div>  
+                                                    </div>
                                                 </li>
                                                 <li id="termination_date_section">
                                                     <label>Termination Date <span class="hr-required">*</span></label>
@@ -94,7 +94,7 @@
                                                             <input id="system_access" name="system_access" type="checkbox" value="1" checked>
                                                             <div class="control__indicator"></div>
                                                         </label>
-                                                    </div>    
+                                                    </div>
                                                 </li>
                                                 <li id="inventary-termination">
                                                     <div class="hr-fields-wrap">
@@ -102,7 +102,7 @@
                                                             <input id="involuntary" name="involuntary" type="checkbox" value="1">
                                                             <div class="control__indicator"></div>
                                                         </label>
-                                                    </div>    
+                                                    </div>
                                                 </li>
                                                 <li id="do-not-hire">
                                                     <div class="hr-fields-wrap">
@@ -117,13 +117,13 @@
                                                     <div class="hr-fields-wrap">
                                                         <?php echo form_input('status_change_date', set_value('status_change_date'), 'class="invoice-fields" id="status_change_date" autocomplete="off" readonly'); ?>
                                                         <?php echo form_error('status_change_date'); ?>
-                                                    </div>    
+                                                    </div>
                                                 </li>
                                                 <li>
                                                     <label>Status Change Details <span class="hr-required">*</span></label>
                                                     <div class="hr-fields-wrap">
                                                         <textarea name="termination_details" rows="10" class="ckeditor" data-rulereuired="true"></textarea>
-                                                    </div>    
+                                                    </div>
                                                 </li>
                                                 <li>
                                                     <label>Upload Related Document:</label>
@@ -163,15 +163,15 @@
                                             <div class="row" style="float: right;">
                                                 <div class="col-xs-12">
                                                     <input type="submit" name="submit" value="Save" class="btn btn-success" onclick="return validate_form()">
-                                                    <a href="<?php echo base_url('manage_admin/employers/EmployeeStatusDetail')."/".$employee_detail["sid"]; ?>" class="btn black-btn">Cancel</a>
+                                                    <a href="<?php echo base_url('manage_admin/employers/EmployeeStatusDetail') . "/" . $employee_detail["sid"]; ?>" class="btn black-btn">Cancel</a>
                                                 </div>
                                             </div>
                                             <?php echo form_close(); ?>
                                         </div>
                                     </div>
-                                </div> 
-                            </div>  
-                        </div>      
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -188,8 +188,6 @@
 <script type="text/javascript" src="<?php echo site_url('assets/ckeditor/ckeditor.js'); ?>"></script>
 <script language="JavaScript" type="text/javascript" src="<?= base_url('assets') ?>/js/jquery.validate.min.js"></script>
 <script type="text/javascript">
-
-    
     $('#status_change_date').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
@@ -204,7 +202,7 @@
         yearRange: "<?php echo DOB_LIMIT; ?>"
     });
     //
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('#termination_reason_section').hide();
         $('#termination_date_section').hide();
         $('#inventary-termination').hide();
@@ -236,8 +234,8 @@
                     required: 'Status Change Date is required'
                 }
             },
-            submitHandler: function (form) {
-                
+            submitHandler: function(form) {
+
                 var instances = $.trim(CKEDITOR.instances.termination_details.getData());
                 var errorFlag = true;
                 if (instances.length === 0) {
@@ -248,12 +246,12 @@
                     $('#terminated_reason').val('');
                     $('#termination_date').val('');
                 } else {
-                    if($('#terminated_reason').val() == '' || $('#terminated_reason').val() == undefined){
-                        alertify.alert('Note','Termination Reason is required');
+                    if ($('#terminated_reason').val() == '' || $('#terminated_reason').val() == undefined) {
+                        alertify.alert('Note', 'Termination Reason is required');
                         errorFlag = false;
                     }
-                    if($('#termination_date').val() == ''){
-                        alertify.alert('Note','Termination Date is required');
+                    if ($('#termination_date').val() == '') {
+                        alertify.alert('Note', 'Termination Date is required');
                         errorFlag = false;
                     }
                     return errorFlag;
@@ -270,7 +268,7 @@
             var ext = fileName.split('.').pop();
             if (ext != "PDF" && ext != "pdf" && ext != "docx" && ext != "xlsx") {
                 $("#" + val).val(null);
-                alertify.alert("Error","Please select a valid document format.");
+                alertify.alert("Error", "Please select a valid document format.");
                 $('#name_' + val).html('<p class="red">Only (PDF, Word, Excel) files are allowed!</p>');
                 return false;
             } else {
@@ -296,11 +294,11 @@
     }
 
     // $('#status')
-    $(document).on('change', '#status', function () {
+    $(document).on('change', '#status', function() {
         //
         var emp_status = $(this).val();
         //
-        if (emp_status != 1) { 
+        if (emp_status != 1) {
             $('#termination_reason_section').hide();
             $('#termination_date_section').hide();
             $('#inventary-termination').hide();
@@ -311,11 +309,11 @@
             $('#rehire').prop('checked', false);
             $('#system_access_div').hide();
             $('#system_access').prop('checked', false);
-            if(emp_status == 6){
+            if (emp_status == 6) {
                 $('#inventary-termination').show();
                 $('#do-not-hire').show();
             }
-        } else { 
+        } else {
             $('#system_access').prop('checked', true);
             $('#system_access_div').show();
             $('#termination_reason_section').show();
@@ -342,7 +340,7 @@
             processData: false,
             type: 'post',
             data: form_data,
-            success: function (data) {
+            success: function(data) {
                 $('#loader').hide();
                 $('#upload').removeClass('disabled-btn');
                 $('#upload').prop('disabled', false);
@@ -354,15 +352,14 @@
                 $('#name_docs').html("No file selected");
 
                 if (data != "error") {
-                    var row = "<tr><td>"+file_data['name']+"</td><td>Uploaded</td></tr>";
+                    var row = "<tr><td>" + file_data['name'] + "</td><td>Uploaded</td></tr>";
                     $('#uploaded-files-row').append(row);
-                    alertify.alert("success",'New document has been uploaded');
+                    alertify.alert("success", 'New document has been uploaded');
                 } else {
-                    alertify.alert('Error','Doc error');
+                    alertify.alert('Error', 'Doc error');
                 }
             },
-            error: function () {
-            }
+            error: function() {}
         });
     }
 </script>
