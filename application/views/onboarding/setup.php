@@ -1347,7 +1347,7 @@ if ($user_type == 'applicant') {
                                                                                         <?php } ?>
                                                                                     </td>
                                                                                 </tr>
-                                                                                <?php if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_status'] && $this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) { ?>
+                                                                                <?php if ($onboarding_eeo_form_status ) { ?>
                                                                                     <tr>
                                                                                         <td class="col-lg-2">
                                                                                             EEOC FORM

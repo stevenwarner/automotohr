@@ -603,6 +603,12 @@ class Settings extends Public_Controller
                     $portal_data['dob_required'] = 1;
                 }
 
+                $post = $this->input->post(null, true);
+
+                //
+                $portal_data['eeo_on_applicant_document_center'] = empty($post['eeo_on_applicant_document_center']) ? 0 : 1;
+                $portal_data['eeo_on_employee_document_center'] = empty($post['eeo_on_employee_document_center']) ? 0 : 1;
+
 
                 if (IS_TIMEZONE_ACTIVE) {
                     // Added on: 25-06-2019

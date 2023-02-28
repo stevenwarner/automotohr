@@ -5643,7 +5643,7 @@ class Hr_documents_management extends Public_Controller
                 }
             }
             //
-            if ($this->hr_documents_management_model->get_portal_detail($company_sid)) {
+            if ($this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_employee_document_center')) {
                 $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employer_sid, 'employee');
                 //
                 if (!empty($eeo_form_info) && $eeo_form_info['status'] == 1) {

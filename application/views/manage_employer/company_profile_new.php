@@ -348,7 +348,7 @@
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                    Enable E.E.O. Form <small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Apply Now Dialog Box</small>
+                                    Enable E.E.O. Form For Applicants<small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Apply Now Dialog Box</small>
                                     <input class="" type="checkbox" id="eeo_form_status" name="eeo_form_status" value="1" <?php echo ($portal['eeo_form_status'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
@@ -364,16 +364,35 @@
                                     </label>
                                 </div>
                             </div>
-                        <?php } ?>    
+                        <?php } ?>
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <label class="control control--checkbox">
-                                    Enable E.E.O. Form For Profile <small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form in Employee Right Bar</small>
+                                    Enable E.E.O. Form On Applicant Document Center<small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Applicant Document Center</small>
+                                    <input class="" type="checkbox" id="eeo_on_applicant_document_center" name="eeo_on_applicant_document_center" value="1" <?php echo ($portal['eeo_on_applicant_document_center'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Enable E.E.O. Form On Employee Right Bar <small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form in Employee Right Bar</small>
                                     <input class="" type="checkbox" id="eeo_form_profile_status" name="eeo_form_profile_status" value="1" <?php echo ($portal['eeo_form_profile_status'] == 1 ? 'checked="checked" ' : ''); ?> />
                                     <div class="control__indicator"></div>
                                 </label>
                             </div>
                         </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Enable E.E.O. Form On Employee Document Center<small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Employee Document Center</small>
+                                    <input class="" type="checkbox" id="eeo_on_employee_document_center" name="eeo_on_employee_document_center" value="1" <?php echo ($portal['eeo_on_employee_document_center'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <hr />
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
                                 <p>

@@ -7636,6 +7636,22 @@ class Hr_documents_management_model extends CI_Model
         }
     }
 
+    public function hasEEOCPermission($company_id, $column)
+    {
+        //
+        $record =
+        $this->db->select($column)
+        ->where('user_sid', $company_id)
+        ->get('portal_employer')
+        ->row_array();
+        //
+        if (empty($record)) {
+            return 0;
+        }
+        //
+        return $record[$column];
+    }
+
     function get_user_eeo_form_info($sid, $type, $checkExpired = true)
     {
         $this->db->select('*');

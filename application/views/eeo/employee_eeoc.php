@@ -13,15 +13,6 @@
 ?>
 <body>
     <div class="container">
-        <?php if ($eeo_form_status == 0) { ?>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="alert alert-danger text-center" style="padding-top: 100px;padding-bottom: 100px;">
-                        <h4>This EEO module has been disabled.</h4>
-                    </div>
-                </div>
-            </div>
-        <?php } else { ?>
             <?php if ($eeo_form_info['status'] == 1) { ?>
                 <div>
                     <div class="row">
@@ -283,7 +274,6 @@
                     </section>
                 </div>
             <?php } ?> 
-        <?php } ?>
     </div>
 </body>
 <!--  -->

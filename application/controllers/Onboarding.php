@@ -1116,6 +1116,8 @@ class Onboarding extends CI_Controller
 
                 if (!is_null($extra_info)) {
                     $extra_info = unserialize($extra_info);
+
+                    _e($extra_info, true);
                     $company_eeo_status = $extra_info['EEO'];
                 }
 
@@ -4921,6 +4923,10 @@ class Onboarding extends CI_Controller
                 //
                 $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
                 $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
+                //
+                $companyExtraInfo = unserialize($this->session->userdata('logged_in')['company_detail']['extra_info']);
+                //
+                $data['onboarding_eeo_form_status'] = isset($companyExtraInfo['EEO']) ? $companyExtraInfo['EEO'] : 0;
                 //
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/setup');
@@ -10434,6 +10440,10 @@ class Onboarding extends CI_Controller
             $company_sid = $company_detail['sid'];
             $company_name = $employee_detail['CompanyName'];
             $user_type = 'employee';
+            
+            if (!$this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_employee_document_center')) {
+                return redirect('hr_documents_management/my_documents');
+            }
             //
             $print_url = base_url('hr_documents_management/print_eeoc_form/print' . '/' . $employee_sid . '/' . $user_type);
             $download_url = base_url('hr_documents_management/print_eeoc_form/download' . '/' . $employee_sid . '/' . $user_type);
