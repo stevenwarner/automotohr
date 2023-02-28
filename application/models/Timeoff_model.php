@@ -1266,22 +1266,34 @@ class Timeoff_model extends CI_Model
                 $a = $this->db
                     ->select('name')
                     ->where_in('sid', explode(',', $approver['department_id']))
+                    ->where('is_deleted', 0)
                     ->order_by('name', 'ASC')
                     ->get('departments_team_management');
                 //
                 $b = $a->result_array();
                 $a = $a->free_result();
                 //
+                if (!$b) {
+                    unset($approver[$k]);
+                    continue;
+                }
+                //
                 $approvers[$k]['team_name'] = implode(', ', array_column($b, 'name'));
             } else if ($approver['is_department'] == 1 && $approver['department_id'] != 'all') {
                 $a = $this->db
                     ->select('name')
                     ->where_in('sid', explode(',', $approver['department_id']))
+                    ->where('is_deleted', 0)
                     ->order_by('name', 'ASC')
                     ->get('departments_management');
                 //
                 $b = $a->result_array();
                 $a = $a->free_result();
+                //
+                if (!$b) {
+                    unset($approver[$k]);
+                    continue;
+                }
                 //
                 $approvers[$k]['department_name'] = implode(', ', array_column($b, 'name'));
             }
