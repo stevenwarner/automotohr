@@ -25,13 +25,13 @@ if($load_view){
         $save_post_url = current_url();
     } ?>
 
-    <div class="main">
-        <div class="container">
+    <div class="main jsmaincontent">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                     <div class="btn-panel">
-                        <a href="<?php echo $back_url; ?>" class="btn btn-info"><i class="fa fa-arrow-left"></i> Dashboard</a>
+                        <a href="<?php echo $back_url; ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"></i> Dashboard</a>
                         <a href="<?php echo $back_url; ?>" class="btn btn-info"><i class="fa fa-arrow-left"></i> My Learning Center</a>
                     </div>
                 </div>

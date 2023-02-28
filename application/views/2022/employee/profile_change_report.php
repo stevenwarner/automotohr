@@ -1,5 +1,5 @@
 <div>
-    <div class="container">
+    <div class="container-fluid jsmaincontent">
         <div class="row">
             <!-- Main Area -->
             <div class="col-sm-12 col-md-12">

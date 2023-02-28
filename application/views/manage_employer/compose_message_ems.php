@@ -7,8 +7,8 @@
 </style>
 <link rel="StyleSheet" type="text/css" href="<?= base_url(); ?>assets/css/chosen.css"/>
 <script language="JavaScript" type="text/javascript" src="<?= base_url(); ?>assets/js/chosen.jquery.js"></script>
-<div class="main">
-    <div class="container">
+<div class="main jsmaincontent">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
