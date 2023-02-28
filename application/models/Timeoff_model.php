@@ -1230,6 +1230,8 @@ class Timeoff_model extends CI_Model
             ->join('users', 'timeoff_approvers.employee_sid = users.sid', 'inner')
             ->where('timeoff_approvers.is_archived', $formpost['filter']['archived'])
             ->where('timeoff_approvers.company_sid', $formpost['companyId'])
+            ->where('users.terminated_status', 0)
+            ->where('users.active', 1)
             ->order_by('users.first_name', 'ASC')
             ->limit($limit, $start);
         // Search Filter
