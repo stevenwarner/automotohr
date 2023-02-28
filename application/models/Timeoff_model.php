@@ -1269,6 +1269,7 @@ class Timeoff_model extends CI_Model
                     ->where_in('departments_team_management.sid', explode(',', $approver['department_id']))
                     ->where('departments_team_management.is_deleted', 0)
                     ->where('departments_management.is_deleted', 0)
+                    ->where('departmnts_management.company_sid', $formpost['companyId'])
                     ->order_by('departments_team_management.name', 'ASC')
                     ->get('departments_team_management');
                 //
@@ -1286,6 +1287,7 @@ class Timeoff_model extends CI_Model
                     ->select('name')
                     ->where_in('sid', explode(',', $approver['department_id']))
                     ->where('is_deleted', 0)
+                    ->where('departmnts_management.company_sid', $formpost['companyId'])
                     ->order_by('name', 'ASC')
                     ->get('departments_management');
                 //
