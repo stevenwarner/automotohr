@@ -176,6 +176,9 @@ class Terminate_employee extends Public_Controller
                     $data_transfer_log_update['to_company_sid'] = $employer_parent_sid;
                     $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
                     $this->terminate_employee_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+
+                    // Update the user table as well
+                    $this->db->where('sid', $sid)->update('users', ['transfer_date' => formatDateToDB($status_change_date, 'm-d-Y', DB_DATE)]);
                 }
                 if ($status != 9) {
                     $this->terminate_employee_model->change_terminate_user_status($sid, $data_to_update);
@@ -316,6 +319,8 @@ class Terminate_employee extends Public_Controller
                     $data_transfer_log_update['to_company_sid'] = $employer_parent_sid;
                     $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
                     $this->terminate_employee_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+                    // Update the user table as well
+                    $this->db->where('sid', $sid)->update('users', ['transfer_date' => formatDateToDB($status_change_date, 'm-d-Y', DB_DATE)]);
                 }
                 // Check its current status then update in user primary data
                 if ($this->terminate_employee_model->check_for_main_status_update($sid, $status_id)) {

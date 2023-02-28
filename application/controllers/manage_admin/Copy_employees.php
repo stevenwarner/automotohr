@@ -252,27 +252,45 @@ class Copy_employees extends Admin_Controller
                     $this->db->insert('employees_transfer_log', $insert_employee_log);
                 }
 
-                //
+                // Deactivate employee and add post fix username
                 $this->db
-                ->where('sid', $secondary_employee_sid)
-                ->update('users', [
-                    'active' => 0, 
-                    'username' => $secondary_employee_data['username'].'_'.time()
-                ]);
+                    ->where('sid', $secondary_employee_sid)
+                    ->update('users', [
+                        'active' => 0,
+                        'username' => $secondary_employee_data['username'] . '_' . time()
+                    ]);
+                // Update the transfer date
+                $transferDate = getSystemDate(DB_DATE);
+                $this->db->where('sid', $primary_employee_sid)->update('users', ['transfer_date' => $transferDate]);
+                $this->db->where('sid', $secondary_employee_sid)->update('users', ['transfer_date' => $transferDate]);
 
-                //
-                $insert_employee_change_status = array();
-                $insert_employee_change_status['status_change_date'] = date('Y-m-d');
-                $insert_employee_change_status['details'] = $transferredNote;
-                $insert_employee_change_status['employee_status'] = 9;
-                $insert_employee_change_status['employee_sid'] = $primary_employee_sid;
-                $insert_employee_change_status['changed_by'] = 0;
-                $insert_employee_change_status['ip_address'] = getUserIP();
-                $insert_employee_change_status['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
-                $insert_employee_change_status['termination_reason'] = 0;
-                $insert_employee_change_status['termination_date'] = NULL;
+                // Add transferred status to moved employee
+                $ins = [];
+                $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
+                $ins['details'] = $transferredNote . '<br/>' . 'Employee is moved from "' . (getUserColumnById($from_company, 'CompanyName')) . '".';
+                $ins['employee_status'] = 9;
+                $ins['employee_sid'] = $primary_employee_sid;
+                $ins['changed_by'] = 0;
+                $ins['ip_address'] = getUserIP();
+                $ins['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $ins['termination_reason'] = 0;
+                $ins['termination_date'] = null;
 
-                $this->copy_employees_model->add_terminate_user_table($insert_employee_change_status);
+                $this->copy_employees_model->add_terminate_user_table($ins);
+
+                // Add transferred status to primary employee
+                $ins = [];
+                $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
+                $ins['details'] = 'Employee is moved to "' . (getUserColumnById($to_company, 'CompanyName')) . '".';
+                $ins['employee_status'] = 9;
+                $ins['employee_sid'] = $secondary_employee_sid;
+                $ins['changed_by'] = 0;
+                $ins['ip_address'] = getUserIP();
+                $ins['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $ins['termination_reason'] = 0;
+                $ins['termination_date'] = null;
+
+                $this->copy_employees_model->add_terminate_user_table($ins);
 
                 //
                 $array['status'] = "success";
@@ -725,7 +743,7 @@ class Copy_employees extends Admin_Controller
                 //
                 $insert_employee_change_status = array();
                 $insert_employee_change_status['status_change_date'] = date('Y-m-d', strtotime('now'));
-                $insert_employee_change_status['details'] = $transferredNote;
+                $insert_employee_change_status['details'] = $transferredNote . '<br/>' . 'Employee is moved from "' . (getUserColumnById($from_company, 'CompanyName')) . '".';;
                 $insert_employee_change_status['employee_status'] = 9;
                 $insert_employee_change_status['employee_sid'] = $new_employee_sid;
                 $insert_employee_change_status['changed_by'] = 0;
@@ -735,6 +753,25 @@ class Copy_employees extends Admin_Controller
                 $insert_employee_change_status['termination_date'] = null;
 
                 $this->copy_employees_model->add_terminate_user_table($insert_employee_change_status);
+
+                // Add transferred status to primary employee
+                $ins = [];
+                $ins['status_change_date'] = date('Y-m-d', strtotime('now'));
+                $ins['details'] = 'Employee is moved to "' . (getUserColumnById($to_company, 'CompanyName')) . '".';
+                $ins['employee_status'] = 9;
+                $ins['employee_sid'] = $employee_sid;
+                $ins['changed_by'] = 0;
+                $ins['ip_address'] = getUserIP();
+                $ins['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+                $ins['termination_reason'] = 0;
+                $ins['termination_date'] = null;
+
+                $this->copy_employees_model->add_terminate_user_table($ins);
+
+                // Update the transfer date
+                $transferDate = getSystemDate(DB_DATE);
+                $this->db->where('sid', $employee_sid)->update('users', ['transfer_date' => $transferDate]);
+                $this->db->where('sid', $new_employee_sid)->update('users', ['transfer_date' => $transferDate]);
 
                 $resp['status'] = TRUE;
                 $resp['response'] = 'Employee <b>' . $employee_name . '</b> successfully copied in company <b>' . $company_name . '</b>';

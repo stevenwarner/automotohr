@@ -455,8 +455,8 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                     <?php } ?>
                                                     <td>
                                                         <?php
-                                                        if (in_array($employee['sid'], $transferIds)) {
-                                                            echo get_employee_transfer_date($employee['sid']);
+                                                        if (!empty($employee['transfer_date'])) {
+                                                            echo formatDateToDB($employee['transfer_date'], DB_DATE, DATE);
                                                         } else {
                                                             echo "N/A";
                                                         }

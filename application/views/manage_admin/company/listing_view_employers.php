@@ -43,16 +43,16 @@
                                                     <label>Status:</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="active" id="active">
-                                                       
-                                                        <option value="all" <?php echo $status == 'all' ? 'selected="selected"' : ''; ?>>All</option>
-                                                        <option value="active" <?php echo $status == 'active' ? 'selected="selected"' : ''; ?>>Active</option>
-                                                        <option value="leave" <?php echo $status == 'leave' ? 'selected="selected"' : ''; ?>>Leave</option>
-                                                        <option value="suspended" <?php echo $status == 'suspended' ? 'selected="selected"' : ''; ?>>Suspended</option>
-                                                        <option value="retired" <?php echo $status == 'retired' ? 'selected="selected"' : ''; ?>>Retired</option>
-                                                        <option value="rehired" <?php echo $status == 'rehired' ? 'selected="selected"' : ''; ?>>Rehired</option>
-                                                        <option value="deceased" <?php echo $status == 'deceased' ? 'selected="selected"' : ''; ?>>Deceased</option>
-                                                        <option value="terminated" <?php echo $status == 'terminated' ? 'selected="selected"' : ''; ?>>Terminated</option>
-                                                        <option value="inactive" <?php echo $status == 'inactive' ? 'selected="selected"' : ''; ?>>Inactive</option>
+
+                                                            <option value="all" <?php echo $status == 'all' ? 'selected="selected"' : ''; ?>>All</option>
+                                                            <option value="active" <?php echo $status == 'active' ? 'selected="selected"' : ''; ?>>Active</option>
+                                                            <option value="leave" <?php echo $status == 'leave' ? 'selected="selected"' : ''; ?>>Leave</option>
+                                                            <option value="suspended" <?php echo $status == 'suspended' ? 'selected="selected"' : ''; ?>>Suspended</option>
+                                                            <option value="retired" <?php echo $status == 'retired' ? 'selected="selected"' : ''; ?>>Retired</option>
+                                                            <option value="rehired" <?php echo $status == 'rehired' ? 'selected="selected"' : ''; ?>>Rehired</option>
+                                                            <option value="deceased" <?php echo $status == 'deceased' ? 'selected="selected"' : ''; ?>>Deceased</option>
+                                                            <option value="terminated" <?php echo $status == 'terminated' ? 'selected="selected"' : ''; ?>>Terminated</option>
+                                                            <option value="inactive" <?php echo $status == 'inactive' ? 'selected="selected"' : ''; ?>>Inactive</option>
 
                                                         </select>
                                                     </div>
@@ -169,54 +169,50 @@
                                                                         </td>
 
                                                                         <td class="<?php echo $doNotHireWarning['row']; ?>">
-                                                                            <b>Joining Date: </b><?php
-                                                                                                    $joiningDate = get_employee_latest_joined_date($value["registration_date"], $value["joined_at"], "", true);
-                                                                                                    //
-                                                                                                    if (!empty($joiningDate)) {
-                                                                                                        echo $joiningDate;
-                                                                                                    } else {
-                                                                                                        echo "N/A";
-                                                                                                    }
-                                                                                                    ?>
-                                                                            <br>
-                                                                            <b>Rehire Date: </b><?php
-                                                                                                $rehireDate = get_employee_latest_joined_date("", "", $value["rehire_date"], true);
-                                                                                                //
-                                                                                                if (!empty($rehireDate)) {
-                                                                                                    echo $rehireDate;
-                                                                                                } else {
-                                                                                                    echo "N/A";
-                                                                                                }
-                                                                                                ?>
+                                                                            <b>Joining Date: </b><br><?php
+                                                                                                        $joiningDate = get_employee_latest_joined_date($value["registration_date"], $value["joined_at"], "", true);
+                                                                                                        //
+                                                                                                        if (!empty($joiningDate)) {
+                                                                                                            echo $joiningDate;
+                                                                                                        } else {
+                                                                                                            echo "N/A";
+                                                                                                        }
+                                                                                                        ?>
+                                                                            <?php
+                                                                            $rehireDate = get_employee_latest_joined_date("", "", $value["rehire_date"], true);
+                                                                            //
+                                                                            if (!empty($rehireDate)) {
+                                                                                echo '<p></p>
+                                                                                                    <b>Rehire Date: </b><br>';
+                                                                                echo $rehireDate;
+                                                                            }
+                                                                            ?>
 
-                                                                            <br>
-                                                                            <b>Termination Date: </b>
                                                                             <?php
                                                                             // Termination date
-                                                                            if (!$value['last_status']) {
-                                                                                echo "N/A";
-                                                                            } else {
+                                                                            if ($value['last_status']) {
+                                                                                echo '<p></p>';
+                                                                                echo '<b>Termination Date: </b><br>';
                                                                                 echo formatDateToDB($value['last_status']["termination_date"], DB_DATE, DATE);
                                                                             }
                                                                             ?>
-                                                                            <br>
+                                                                            <p></p>
                                                                             <?php
-                                                                            if (isset($value["trensfer_date"]) && !empty($value["trensfer_date"])) {
-                                                                                echo "<b>Transfer Date: </b>" . $value['trensfer_date'];
-                                                                            } else {
-                                                                                echo "<b>Transfer Date: </b>N/A";
+                                                                            if (isset($value["transfer_date"]) && !empty($value["transfer_date"])) {
+                                                                                echo "<b>Transfer Date: </b><br />" . (formatDateToDB($value['transfer_date'], DB_DATE, DATE));
                                                                             }
                                                                             ?>
-                                                                            <br>
+                                                                            <p></p>
                                                                             <?php if (!empty($value['departments'])) { ?> <b>Departments:<br> </b> <?php echo implode(", ", array_unique($value['departments']));
                                                                                                                                                 } ?>
-                                                                            <?php if (!empty($value['departments'])) { ?><br><b>Teams:</b><br> <?php echo implode(", ", $value['teams']);
-                                                                                                                                            } ?>
+                                                                            <p></p>
+                                                                            <?php if (!empty($value['departments'])) { ?><b>Teams:</b><br> <?php echo implode(", ", $value['teams']);
+                                                                                                                                        } ?>
                                                                             <?php
                                                                             $isOnComplyNet = getComplyNetEmployeeCheck($value, 1, 1, true);
                                                                             //
                                                                             if (!empty($isOnComplyNet)) {
-                                                                                echo '<b>ComplyNet Status: </b>' . $isOnComplyNet;
+                                                                                echo '<b>ComplyNet Status: </b><br>' . $isOnComplyNet;
                                                                             }
                                                                             ?>
                                                                         </td>
@@ -515,45 +511,43 @@
     });
 </script>
 <!--  -->
-<link rel="stylesheet" href="<?=base_url("assets/css/SystemModel.css");?>">
-<script src="<?=base_url("assets/js/SystemModal.js");?>"></script>
+<link rel="stylesheet" href="<?= base_url("assets/css/SystemModel.css"); ?>">
+<script src="<?= base_url("assets/js/SystemModal.js"); ?>"></script>
 
 <script>
-
     // ComplyNet
-    $(document).on("click", ".jsAddEmployeeToComplyNet", function (event) {
+    $(document).on("click", ".jsAddEmployeeToComplyNet", function(event) {
         //
         event.preventDefault();
         //
         let employeeId = $(this).data("id");
         let companyId = $(this).data("cid");
-        
+
         //
         return alertify.confirm(
             "Are you sure you want to sync this employee with ComplyNet.<br />In case the employee is not found on ComplyNet, the system will add the employee to ComplyNet.",
-            function(){
+            function() {
                 addEmployeeToComplyNet(companyId, employeeId)
             }
         );
     });
 
-    function addEmployeeToComplyNet(companyId, employeeId){
+    function addEmployeeToComplyNet(companyId, employeeId) {
         //
 
-        Modal(
-            {
+        Modal({
                 Id: "jsModelEmployeeToComplyNet",
                 Title: "Add Employee To ComplyNet",
                 Body: '<div class="container"><div id="jsModelEmployeeToComplyNetBody"><p class="alert alert-info text-center">Please wait while we are syncing employee with ComplyNet. It may take a few moments.</p></div></div>',
                 Loader: "jsModelEmployeeToComplyNetLoader",
             },
-            function () {
+            function() {
                 //
                 $.post(window.location.origin + "/cn/" + companyId + "/employee/sync", {
-                    employeeId: employeeId,
-                    companyId: companyId,
-                })
-                    .success(function (resp) {
+                        employeeId: employeeId,
+                        companyId: companyId,
+                    })
+                    .success(function(resp) {
                         //
                         if (resp.hasOwnProperty("errors")) {
                             //
