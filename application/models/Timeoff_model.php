@@ -4918,6 +4918,8 @@ class Timeoff_model extends CI_Model
             if (empty($notIds)) return [];
         }
         //
+        $nowDate = getSystemDate(DB_DATE);
+        //
         $this->db
             ->distinct()
             ->select('
@@ -4931,7 +4933,8 @@ class Timeoff_model extends CI_Model
             ->where('timeoff_requests.company_sid', $post['companyId']);
         //
         $this->db->where('timeoff_requests.archive', 0);
-        $this->db->where('timeoff_requests.request_from_date', 'CURDATE()', false);
+        $this->db->where('timeoff_requests.request_from_date <=', $nowDate);
+        $this->db->where('timeoff_requests.request_to_date >=', $nowDate);
         //
         if (!empty($notIds)) $this->db->where_in('timeoff_requests.employee_sid', $notIds);
         //
