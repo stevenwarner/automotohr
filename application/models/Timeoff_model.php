@@ -1264,17 +1264,19 @@ class Timeoff_model extends CI_Model
             //
             if ($approver['is_department'] == 0 && $approver['department_id'] != 'all') {
                 $a = $this->db
-                    ->select('name')
-                    ->where_in('sid', explode(',', $approver['department_id']))
-                    ->where('is_deleted', 0)
-                    ->order_by('name', 'ASC')
+                    ->select('departments_team_management.name')
+                    ->join('departments_management', 'departments_team_management.department_sid = departments_management.sid', 'inner')
+                    ->where_in('departments_team_management.sid', explode(',', $approver['department_id']))
+                    ->where('departments_team_management.is_deleted', 0)
+                    ->where('departments_management.is_deleted', 0)
+                    ->order_by('departments_team_management.name', 'ASC')
                     ->get('departments_team_management');
                 //
                 $b = $a->result_array();
                 $a = $a->free_result();
                 //
                 if (!$b) {
-                    unset($approver[$k]);
+                    unset($approvers[$k]);
                     continue;
                 }
                 //
@@ -1291,7 +1293,7 @@ class Timeoff_model extends CI_Model
                 $a = $a->free_result();
                 //
                 if (!$b) {
-                    unset($approver[$k]);
+                    unset($approvers[$k]);
                     continue;
                 }
                 //
