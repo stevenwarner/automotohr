@@ -3549,6 +3549,8 @@ class Timeoff_model extends CI_Model
             ->join('users', 'users.sid = timeoff_approvers.employee_sid', 'inner')
             ->where('timeoff_approvers.company_sid', $companyId)
             ->where('timeoff_approvers.status', 1)
+            ->where('users.active', 1)
+            ->where('users.terminated_status', 0)
             ->where('timeoff_approvers.is_archived', 0);
         //
         if (!empty($teamIds)) {
