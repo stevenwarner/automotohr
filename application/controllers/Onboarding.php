@@ -1116,8 +1116,6 @@ class Onboarding extends CI_Controller
 
                 if (!is_null($extra_info)) {
                     $extra_info = unserialize($extra_info);
-
-                    _e($extra_info, true);
                     $company_eeo_status = $extra_info['EEO'];
                 }
 
