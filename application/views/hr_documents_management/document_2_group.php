@@ -62,7 +62,7 @@
                                                                 <div class="control__indicator"></div>    
                                                             </label>
                                                         </div>
-                                                        <?php if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_status']) { ?>
+                                                        <?php if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_document_center']) { ?>
                                                         <div class="col-xs-6">
                                                             <label class="control control--checkbox font-normal">
                                                                 EEOC Fillable

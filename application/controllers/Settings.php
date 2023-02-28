@@ -608,6 +608,7 @@ class Settings extends Public_Controller
                 //
                 $portal_data['eeo_on_applicant_document_center'] = empty($post['eeo_on_applicant_document_center']) ? 0 : 1;
                 $portal_data['eeo_on_employee_document_center'] = empty($post['eeo_on_employee_document_center']) ? 0 : 1;
+                $portal_data['eeo_on_document_center'] = empty($post['eeo_on_document_center']) ? 0 : 1;
 
 
                 if (IS_TIMEZONE_ACTIVE) {

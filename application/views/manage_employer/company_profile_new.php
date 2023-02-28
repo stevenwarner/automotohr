@@ -392,6 +392,15 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                            <div class="form-group autoheight">
+                                <label class="control control--checkbox">
+                                    Enable E.E.O. Form On Document Center<small class="help_text">Enable "EQUAL EMPLOYMENT OPPORTUNITY" form on Document Center</small>
+                                    <input class="" type="checkbox" id="eeo_on_document_center" name="eeo_on_document_center" value="1" <?php echo ($portal['eeo_on_document_center'] == 1 ? 'checked="checked" ' : ''); ?> />
+                                    <div class="control__indicator"></div>
+                                </label>
+                            </div>
+                        </div>
                         <hr />
                         <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                             <div class="form-group autoheight">
