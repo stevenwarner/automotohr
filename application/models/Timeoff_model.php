@@ -4906,7 +4906,7 @@ class Timeoff_model extends CI_Model
     }
 
     //
-    function getTodayOffEmployees($post)
+    function getTodayOffEmployees($post, $count = false)
     {
         //
         $ses = $this->session->userdata('logged_in')['employer_detail'];
@@ -4938,6 +4938,10 @@ class Timeoff_model extends CI_Model
         $this->db->where('timeoff_requests.request_to_date >=', $nowDate);
         //
         if (!empty($notIds)) $this->db->where_in('timeoff_requests.employee_sid', $notIds);
+        //
+        if ($count) {
+            return $this->db->count_all_results('timeoff_requests');
+        }
         //
         return $this->db->get('timeoff_requests')->result_array();
     }

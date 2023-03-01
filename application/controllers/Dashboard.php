@@ -473,6 +473,10 @@ class Dashboard extends Public_Controller
                 );
                 $data['TodaysRequests'] = $requests['TodaysCount'];
                 $data['TotalRequests'] = $requests['TotalCount'];
+                $data['TotalEmployeeOffToday'] = $this->timeoff_model->getTodayOffEmployees([
+                    'employerId' => $data['session']['employer_detail']['sid'],
+                    'companyId' => $data['session']['company_detail']['sid']
+                ], true);
             }
 
             //
