@@ -76,7 +76,7 @@ $show_empty_box = true;
 $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 ?>
 <div class="main jsmaincontent">
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
 
