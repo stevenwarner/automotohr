@@ -1493,7 +1493,8 @@ class Timeoff_model extends CI_Model
     {
         $this->db
             ->from('timeoff_approvers')
-            ->where('employee_sid', $post['employee'][0]);
+            ->where('employee_sid', $post['employee'][0])
+            ->where('is_archived', 0);
         //
         $this->db->group_start();
         //
