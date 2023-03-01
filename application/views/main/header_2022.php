@@ -42,9 +42,7 @@
             <?php $this->load->view("{$pp}styles"); ?>
         <?php }?>
 
-        
-
-    
+            
     <script src="<?php echo base_url('assets/bootstrap-filestyle/js/bootstrap-filestyle.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/js/select2.js') ?>"></script>
 
@@ -55,7 +53,7 @@
 <body>
     <div class="wrapper-outer">
             <header class="header <?=in_array('iframe', $this->uri->segment_array()) ? 'hidden' : '';?>">
-                <div class="container<?=strtolower($this->router->fetch_class()) == 'performance_management' || strtolower($this->router->fetch_class())== 'payroll' ? '-fluid' : '';?>">
+                <div class="container<?=strtolower($this->router->fetch_class())== 'payroll' ? '-fluid' : '';?>">
                     <div class="row">
                         <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
                             <div class="logo">
@@ -183,7 +181,10 @@
                                     <br>
                                     <br>
                                 <div class="btn-link-wrp">
-                                    <a href="<?php echo base_url('my_profile'); ?>"><i class="fa fa-pencil" aria-hidden="true"></i> my profile</a>
+                                <?php if((isset($employerData) && $employerData['access_level'] != 'Employee') || (isset($employee) && $employee['access_level'] != 'Employee')){?>
+                                <a href="<?php echo base_url('dashboard'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"> Management Dashboard </a>
+                               <?php }?>
+                                    <a href="<?php echo base_url('my_profile');?>" class="btn btn-info btn-orange"><i class="fa fa-pencil" aria-hidden="true"></i> my profile</a>
                                 </div>
                                 <?php } ?>
                             </div>

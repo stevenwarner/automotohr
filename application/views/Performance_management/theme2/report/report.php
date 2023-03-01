@@ -64,7 +64,7 @@
 
 
 <!--  -->
-<div class="col-md-9 col-sm-12 col-xs-12">
+<div class="col-md-12 col-sm-12 col-xs-12">
     <!--  -->
     <div class="row dn">
         <div class="col-sm-4 col-xs-12 col-sm-offset-8">

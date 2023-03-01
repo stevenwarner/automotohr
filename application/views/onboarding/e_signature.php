@@ -55,16 +55,17 @@ if (isset($applicant)) {
     </div>
 </div>
 
-<div class="main">
-    <div class="container">
+<div class="main jsmaincontent">
+    <div class="container-fluid">
         
-        <div class="row">
-            <?php if($this->uri->segment(1) != 'e_signature'){ ?>
-            <div class="col-sm-12">
-                <p style="color: #cc0000;"><b><i>We suggest that you only use Google Chrome to access your account
-                            and use its Features. Internet Explorer is not supported and may cause certain feature
-                            glitches and security issues.</i></b></p>
-                            <?=$sideBar;?>
+        <?php if($this->uri->segment(1) != 'e_signature'){ ?>
+            <div class="row">
+                <div class="col-sm-12">
+                    <p style="color: #cc0000;"><b><i>We suggest that you only use Google Chrome to access your account
+                                and use its Features. Internet Explorer is not supported and may cause certain feature
+                                glitches and security issues.</i></b></p>
+                                <?=$sideBar;?>
+                </div>
             </div>
             <?php } ?>
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
@@ -85,7 +86,7 @@ if (isset($applicant)) {
                 <?php } elseif (isset($employee)) { ?>
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
-                            <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn blue-button btn-block mb-2"><i class="fa fa-arrow-left"> </i> Dashboard</a>
+                            <a href="<?php echo $employee['access_level'] == 'Employee' ? base_url('dashboard') : base_url('employee_management_system'); ?>" class="btn blue-button csRadius5"><i class="fa fa-arrow-left"> </i> Dashboard</a>
                         </div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
                         <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3"></div>
@@ -508,7 +509,6 @@ if (isset($applicant)) {
                 </div>
             </div>
         </div>
-    </div>
 <?php if($sideBar != ''){ ?>
 </div>
 <?php } ?>

@@ -20,7 +20,7 @@ $RT = getCompletedPercentage($review['Reviewees'], 'reviewer', true);
 $MT = getCompletedPercentage($review['Reviewees'], 'manager', true);
 
 ?>
-<div class="col-md-9 col-sm-12">
+<div class="col-md-12 col-sm-12">
     <!--  -->
     <div class="row">
         <div class="col-sm-12">

@@ -18,7 +18,7 @@
 <?php $archive_section = 'no'; ?>
 <div class="main-content">
     <div class="dashboard-wrp">
-        <div class="container" style=" min-height: 62vh;">
+        <div class="container-fluid" style=" min-height: 62vh;">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">

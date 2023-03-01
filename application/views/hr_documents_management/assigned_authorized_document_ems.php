@@ -18,10 +18,19 @@
 ?>
 <div class="main-content">
     <div class="dashboard-wrp">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
                     <div class="row">
+                        
+                    <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1">
+                            <br />
+                            <a href="<?=base_url('employee_management_system');?>" class="btn btn-info csRadius5">
+                                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                Dashboard
+                            </a>
+                        </div>
+
                         <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3">
                             <br />
                             <a class="btn btn-info btn-block mb-2 csRadius5" href="<?php echo base_url('authorized_document'); ?>">
