@@ -36,7 +36,7 @@
         <?php } else { ?>
             <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/bootstrap.css">
         <?php } ?>
-        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css?v=1.0.0">
+        <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/style.css?v=1.0.1">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/font-awesome.css">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/responsive.css">
         <link rel="stylesheet" type="text/css" href="<?= base_url() ?>assets/css/star-rating.css">

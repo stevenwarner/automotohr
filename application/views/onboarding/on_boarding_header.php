@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/jquery.datetimepicker.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/select2.css') ?>" />
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/css/theme-2021.css') ?>">
-    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/style.css') ?>">
+    <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/style.css?v=1.0') ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url('assets/employee_panel/css/responsive.css') ?>">
 
     <script src="<?php echo base_url('assets/employee_panel/js/jquery-1.11.3.min.js') ?>"></script>
