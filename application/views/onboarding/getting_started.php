@@ -85,15 +85,10 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                     <div class="widget-box">
                         <h3 class="text-blue">Your Activities</h3>
                         <ul class="activities-links">
-                            <?php if (isset($ems_notification) && !empty($ems_notification)) { ?>
-                                <li class="section_links" id="welcome_video_link">
-                                    <a href="javascript:func_show_section_ems('welcome_video');">Welcome Video</a>
-                                </li>
-                            <?php } ?>
                             <?php $ems_flag = 0;
 
                             if (isset($ems_notification) && !empty($ems_notification)) {
-                                foreach ($ems_notification as $notification) { ?>
+                                foreach ($ems_notification as $key =>  $notification) { ?>
                                     <li class="section_links" id="ems_<?php echo $ems_flag; ?>"><a href="javascript:func_show_section_ems('<?php echo $ems_flag++; ?>');"><?php echo $notification['title']; ?></a>
                                     </li>
                                 <?php                   }
@@ -286,25 +281,6 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 
             </div>
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9">
-                <?php if (!empty($welcome_video) && isset($welcome_video)) { ?>
-                    <div id="welcome_video" class="section welcone-video-box full-width">
-                        <?php if ($welcome_video['video_source'] == 'youtube') { ?>
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <iframe class="embed-responsive-item" src="//www.youtube.com/embed/<?php echo $welcome_video['video_url']; ?>"></iframe>
-                            </div>
-                        <?php } else if ($welcome_video['video_source'] == 'vimeo') { ?>
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <iframe src="https://player.vimeo.com/video/<?php echo $welcome_video['video_url']; ?>" width="640" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            </div>
-                        <?php } else { ?>
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <video controls>
-                                    <source src="<?php echo base_url('assets/uploaded_videos/' . $welcome_video['video_url']); ?>" type='video/mp4'>
-                                </video>
-                            </div>
-                        <?php } ?>
-                    </div>
-                <?php } ?>
                 <?php if (!empty($ems_notification) && isset($ems_notification)) {
                     $ems_flag = 0; ?>
                     <?php foreach ($ems_notification as $section) { ?>
@@ -937,19 +913,9 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 <script>
     $(document).ready(function() {
         <?php if (isset($ems_notification) && sizeof($ems_notification) > 0) { ?>
-            <?php if (isset($welcome_video) && sizeof($welcome_video) > 0) { ?>
-                func_show_section_ems('welcome_video');
-            <?php } else { ?>
                 func_show_section_ems(0);
-            <?php } ?>
-
         <?php } else { ?>
-            <?php if (isset($welcome_video) && sizeof($welcome_video) > 0) { ?>
-                func_show_section_ems('welcome_video');
-            <?php } else { ?>
-                func_show_section(0);
-            <?php } ?>
-
+            func_show_section(0);
         <?php } ?>
     });
 
