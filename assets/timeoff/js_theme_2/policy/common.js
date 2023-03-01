@@ -226,7 +226,8 @@ function fetchEmployees() {
         //
         if (resp.Status === false) {
             console.log('Failed to load employees.');
-            return;
+            resp.Data = [];
+            // return;
         }
         //
         window.timeoff.employees = resp.Data;
