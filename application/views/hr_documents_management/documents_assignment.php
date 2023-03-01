@@ -399,6 +399,9 @@ $assignIdObj = $confidential_sids;
                                                                             <?php } else { ?>
                                                                                 <form id="form_assign_EEOC" enctype="multipart/form-data" method="post" action="<?php echo current_url(); ?>">
                                                                                     <input type="hidden" id="perform_action" name="perform_action" value="assign_EEOC" />
+                                                                                    <input type="hidden" name="company_sid" value="<?=$company_sid;?>">
+                                                                                    <input type="hidden" name="user_sid" value="<?=$user_sid;?>">
+                                                                                    <input type="hidden" name="user_type" value="<?=$user_type;?>">
                                                                                 </form>
                                                                                 <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
                                                                             <?php } ?>
