@@ -99,6 +99,8 @@
                                                                 echo 'Performance';
                                                             } else if ($reason == 17) {
                                                                 echo 'Workforce Reduction';
+                                                            } elseif ($reason == 18) {
+                                                                echo 'Store Closure';
                                                             } else {
                                                                 echo 'N/A';
                                                             }

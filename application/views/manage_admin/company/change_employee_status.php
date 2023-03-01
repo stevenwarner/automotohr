@@ -56,6 +56,7 @@
                                                                 <option value="1">Resignation</option>
                                                                 <option value="2">Fired</option>
                                                                 <option value="3">Tenure Completed</option>
+                                                                <option value="18">Store Closure</option>
                                                             </optgroup>
 
                                                             <optgroup label="Voluntary">
