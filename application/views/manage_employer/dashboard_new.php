@@ -757,7 +757,7 @@
                                                         <img src="<?= base_url('assets/images/complynet_logo.png'); ?>" alt="ComplyNet Image">
                                                     </figure>
                                                     <h2 class="post-title">
-                                                        <a href="<?php echo base_url('complynet'); ?>">Compliance <br /> Management System</a>
+                                                        <a href="<?php echo $complyNetLink ? $complyNetLink : base_url('complynet'); ?>">Compliance <br /> Management System</a>
                                                     </h2>
                                                     <div class="button-panel col-lg-12">
                                                         <div class="row">
