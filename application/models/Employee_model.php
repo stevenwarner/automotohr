@@ -121,6 +121,7 @@
         $last_statuses = $this->db
             ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status,termination_reason')
             ->where_in('employee_sid', $employeeIds)
+            ->where('employee_status <> ', 9)
             ->order_by('terminated_employees.sid', 'DESC')
             ->get('terminated_employees')
             ->result_array();
