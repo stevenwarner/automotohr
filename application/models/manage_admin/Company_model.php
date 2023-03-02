@@ -206,10 +206,10 @@ class Company_model extends CI_Model
         $this->db->select('table_one.complynet_onboard');
         $this->db->select('table_one.parent_sid');
         $this->db->select('table_one.transfer_date');
-      
+
         $this->db->select('table_one.complynet_job_title');
-        
-        
+
+
         $this->db->where('table_one.is_executive_admin <', 1);
         $this->db->where('table_one.parent_sid > ', 0);
 
@@ -258,13 +258,13 @@ class Company_model extends CI_Model
         }
 
 
-            if ($contact_name != null && $contact_name != 'all') {
-                $this->db->group_start();
-                $this->db->where("(lower(concat(table_one.first_name,'',table_one.last_name)) LIKE '%".(preg_replace('/\s+/', '', strtolower($contact_name)))."%' or table_one.nick_name LIKE '%" .(preg_replace('/\s+/', '', strtolower($contact_name) )). "%')  ");
-                $this->db->group_end();    
-            }
+        if ($contact_name != null && $contact_name != 'all') {
+            $this->db->group_start();
+            $this->db->where("(lower(concat(table_one.first_name,'',table_one.last_name)) LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%' or table_one.nick_name LIKE '%" . (preg_replace('/\s+/', '', strtolower($contact_name))) . "%')  ");
+            $this->db->group_end();
+        }
 
-      
+
         $this->db->join('users as table_two', 'table_one.parent_sid = table_two.sid', 'left');
         $this->db->from('users as table_one');
 
@@ -295,18 +295,18 @@ class Company_model extends CI_Model
         $employeeIds = array_column($employees, 'sid');
         //
         $employeeDepartmentTeams =
-        $this->db->select("
+            $this->db->select("
             departments_management.name as department_name,
             departments_team_management.name,
             departments_employee_2_team.employee_sid
         ")
-        ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
-        ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
-        ->where('departments_management.is_deleted', 0)
-        ->where('departments_team_management.is_deleted', 0)
-        ->where_in('departments_employee_2_team.employee_sid', $employeeIds)
-        ->get('departments_employee_2_team')
-        ->result_array();
+            ->join('departments_management', 'departments_management.sid = departments_employee_2_team.department_sid')
+            ->join('departments_team_management', 'departments_team_management.sid = departments_employee_2_team.team_sid')
+            ->where('departments_management.is_deleted', 0)
+            ->where('departments_team_management.is_deleted', 0)
+            ->where_in('departments_employee_2_team.employee_sid', $employeeIds)
+            ->get('departments_employee_2_team')
+            ->result_array();
         //
         if (!empty($employeeDepartmentTeams)) {
             //
@@ -328,23 +328,23 @@ class Company_model extends CI_Model
             $employeeDepartmentTeams = $tmp;
             //
             $tmp = [];
-              //
+            //
             unset($tmp);
         }
 
         //
         foreach ($employees as $index => $employee) {
             //
-            if(isset($employeeDepartmentTeams[$employee['sid']])) {
+            if (isset($employeeDepartmentTeams[$employee['sid']])) {
 
                 $employees[$index] = array_merge($employee, $employeeDepartmentTeams[$employee['sid']]);
-            } else{
+            } else {
                 $employees[$index]['departments'] = [];
                 $employees[$index]['teams'] = [];
             }
         }
         //
-        return true;  
+        return true;
     }
 
 
@@ -1528,7 +1528,8 @@ class Company_model extends CI_Model
         return $result;
     }
 
-    function executive_admin_user_delete ($administrator_sid) {
+    function executive_admin_user_delete($administrator_sid)
+    {
         //
         $this->db->select('email');
         $this->db->where('sid', $administrator_sid);
@@ -1537,7 +1538,6 @@ class Company_model extends CI_Model
         $this->db->where('email', $admin_array['email']);
         $this->db->where('is_executive_admin', '1');
         $this->db->delete('users');
-
     }
 
     function executive_admin_delete($administrator_sid)
@@ -1564,7 +1564,31 @@ class Company_model extends CI_Model
             $result = $this->db->update('executive_users', array('active' => 1));
         }
 
+        $this->manageExecutiveAdminOnAllStores($administrator_sid, $status);
+
         return $result;
+    }
+
+    public function manageExecutiveAdminOnAllStores($executiveAdminId, $status)
+    {
+        //
+        $inStores = $this->db
+            ->select('logged_in_sid')
+            ->where('executive_admin_sid', $executiveAdminId)
+            ->get('executive_user_companies')
+            ->result_array();
+        //
+        if (empty($inStores)) {
+            return false;
+        }
+        //
+        foreach ($inStores as $inStore) {
+            $this->db
+                ->where('sid', $inStore['logged_in_sid'])
+                ->update('users', ['active' => $status == '1' ? 0 : 1]);
+        }
+        //
+        return true;
     }
 
     function get_company_name($company_sid)
@@ -2833,20 +2857,21 @@ class Company_model extends CI_Model
 
 
 
-    function get_company_all_default_categories ($company_sid) {
+    function get_company_all_default_categories($company_sid)
+    {
         $this->db->select('sid, name, status, sort_order, created_date');
         $this->db->where('company_sid', $company_sid);
         $this->db->group_start();
         $this->db->or_where('is_default', 1);
         $this->db->or_where('default_category_sid!=', 0);
         $this->db->group_end();
-        
+
         $records_obj = $this->db->get('documents_category_management');
 
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
-        
-        if(!empty($records_arr)){
+
+        if (!empty($records_arr)) {
             return $records_arr;
         } else {
             return array();
@@ -2883,7 +2908,7 @@ class Company_model extends CI_Model
         if (empty($executive_user_signature)) {
             return false;
         }
-        
+
         $this->db->select('executive_admin_sid,company_sid,logged_in_sid');
         $this->db->where('executive_admin_sid', $executive_user_sid);
         $this->db->from('executive_user_companies');
@@ -2918,10 +2943,10 @@ class Company_model extends CI_Model
                 'user_type' => 'employee'
             ];
             // Check if the e signature is already been assigned
-            if($this->db->where($whereArray)->count_all_results('e_signatures_data')){
+            if ($this->db->where($whereArray)->count_all_results('e_signatures_data')) {
                 //
                 $this->db->where($whereArray)->update('e_signatures_data', $data_to_save);
-            } else{
+            } else {
                 //
                 $data_to_save['company_sid'] = $companies_row['company_sid'];
                 $data_to_save['user_sid'] = $companies_row['logged_in_sid'];
@@ -2934,38 +2959,34 @@ class Company_model extends CI_Model
         return true;
     }
 
-//
+    //
     function add_new_employer_to_team($data_to_insert)
     {
- 
+
         $this->db->insert('departments_employee_2_team', $data_to_insert);
         return $this->db->insert_id();
     }
 
 
-  //
-  public function employees_transfer_log_update ($sid,$data_transfer_log_update) {
-     
-    $this->db->select('new_employee_sid');
-    $this->db->where('new_employee_sid', $sid);
-    $result=$this->db->get('employees_transfer_log')->row_array();
+    //
+    public function employees_transfer_log_update($sid, $data_transfer_log_update)
+    {
 
-    if(!empty($result)){
-        $data_update['employee_copy_date'] = $data_transfer_log_update['employee_copy_date'];
-        $this->db->where('new_employee_sid',$sid);
-        $this->db->update('employees_transfer_log',$data_update);
+        $this->db->select('new_employee_sid');
+        $this->db->where('new_employee_sid', $sid);
+        $result = $this->db->get('employees_transfer_log')->row_array();
 
-    }else{
-        $data_transfer_log_update['from_company_sid'] = 0;
-        $data_transfer_log_update['previous_employee_sid'] = 0;
-        $data_transfer_log_update['employee_copy_date']=$data_transfer_log_update['employee_copy_date'];
-        $data_transfer_log_update['last_update']=date('Y-m-d H:i:s');
-        $data_transfer_log_update['new_employee_sid']=$sid;
-        $this->db->insert('employees_transfer_log', $data_transfer_log_update);
+        if (!empty($result)) {
+            $data_update['employee_copy_date'] = $data_transfer_log_update['employee_copy_date'];
+            $this->db->where('new_employee_sid', $sid);
+            $this->db->update('employees_transfer_log', $data_update);
+        } else {
+            $data_transfer_log_update['from_company_sid'] = 0;
+            $data_transfer_log_update['previous_employee_sid'] = 0;
+            $data_transfer_log_update['employee_copy_date'] = $data_transfer_log_update['employee_copy_date'];
+            $data_transfer_log_update['last_update'] = date('Y-m-d H:i:s');
+            $data_transfer_log_update['new_employee_sid'] = $sid;
+            $this->db->insert('employees_transfer_log', $data_transfer_log_update);
+        }
     }
-
-}
-
-
-
 }
