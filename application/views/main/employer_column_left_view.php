@@ -334,7 +334,7 @@
 </div>
 <div class="dash-box service-contacts hidden-xs">
     <div class="admin-info">
-        <h2>Need help? Contact one of our Talent Network Partners at</h2>
+        <h2>Need help with your AutomotoHR Platform? <br/>Contact one of our Talent Network Partners at</h2>
         <div class="profile-pic-area">
             <div class="form-col-100">
                 <ul class="admin-contact-info">
