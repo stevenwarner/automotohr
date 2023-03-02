@@ -4414,6 +4414,7 @@ class Timeoff_model extends CI_Model
         $this->db->or_where('timeoff_requests.status', 'pending');
         $this->db->group_end();
         $this->db->where('timeoff_requests.company_sid', $company_id);
+        $this->db->where('timeoff_policies.is_archived', 0);
         //
         $a = $this->db->get();
         //
