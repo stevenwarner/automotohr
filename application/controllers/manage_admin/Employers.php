@@ -1239,6 +1239,9 @@ class employers extends Admin_Controller
                 $data_transfer_log_update['employee_copy_date'] = formatDateToDB($status_change_date, 'm-d-Y');
 
                 $this->company_model->employees_transfer_log_update($sid, $data_transfer_log_update);
+
+                //
+                $this->db->where('sid', $sid)->update('users', ['transfer_date' => $data_transfer_log_update['employee_copy_date']]);
             }
 
 
