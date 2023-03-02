@@ -1104,7 +1104,7 @@ class Private_messages extends Public_Controller
         $toemployeeData = db_get_employee_profile_byemail($getCompanyHelpboxInfo[0]['box_support_email'], $getCompanyHelpboxInfo[0]['company_id']);
 
 
-        $message_data['to_id'] = $toemployeeData[0]['sid'];
+        $message_data['to_id'] = $data['toemail'];
         $to = $data['toemail'];
         $name = $toemployeeData[0]['first_name'] . ' ' . $toemployeeData[0]['last_name'];
         $message_data['from_id'] = $employer_id;
