@@ -14623,6 +14623,7 @@ if (!function_exists('GetEmployeeStatusText')) {
         $arr[6] = 'Inactive';
         $arr[7] = 'Leave';
         $arr[8] = 'Rehired';
+        $arr[9] = 'Transferred';
         //
         return $arr[$index];
     }
