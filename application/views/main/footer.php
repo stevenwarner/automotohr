@@ -182,6 +182,7 @@ if ($class != 'dashboard' &&
     $class != 'performance' &&
     $class != 'performance_review' &&
     $class != 'goals' &&
+    $class != 'onboarding_block' &&
     $class != 'terminate_employee' &&
     ($class != 'video_interview_system' && $method != 'resource_page') &&
     $this->uri->segment(2) != 'questionnaires-tutorial ' &&

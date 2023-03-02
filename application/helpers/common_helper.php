@@ -16318,3 +16318,32 @@ if (!function_exists('getCompanyEEOCFormStatus')) {
         }
     }
 }
+
+//
+if (!function_exists('get_company_helpbox_info')) {
+
+function get_company_helpbox_info($company_sid)
+{
+    $CI = &get_instance();
+    $CI->db->where('company_id', $company_sid);
+    $records_obj = $CI->db->get('helpbox_info_for_company');
+    $records_arr = $records_obj->result_array();
+    $records_obj->free_result();
+    return $records_arr;
+}
+
+
+if (!function_exists('db_get_employee_profile_byemail')) {
+    function db_get_employee_profile_byemail($email,$companySid)
+    {
+        $CI = &get_instance();
+        $CI->db->select('sid,first_name,last_name,email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag');
+        $CI->db->where('email', $email);
+        $CI->db->where('parent_sid', $companySid);
+        return $CI->db->get('users')->result_array();
+    }
+}
+
+
+
+}

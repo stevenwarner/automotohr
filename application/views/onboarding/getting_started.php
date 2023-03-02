@@ -279,6 +279,28 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 
                 <?php       } ?>
 
+
+                <?php $getCompanyHelpboxInfo = get_company_helpbox_info($company_sid);
+                if ($getCompanyHelpboxInfo[0]['box_status'] == 1) { ?>
+                    <!-- Company help box -->
+                    <div class="widget-box">
+                        <div style='border: 1px solid #d2d2d2; padding-left :15px;padding-right :15px;padding-top :5px;padding-bottom :5px;'>
+                            <div class="admin-info">
+                                <h4 class="text-blue" style="border-bottom: 1px solid #c4c4c4; margin: 0 0 15px 0; padding: 0 0 10px 0;"><?php echo $getCompanyHelpboxInfo[0]['box_title']; ?></h4>
+                                <div class="profile-pic-area">
+                                    <div class="form-col-100">
+                                        <span class="admin-contact-info">
+                                            <label>Support</label><br>
+                                            <span><i class="fa fa-phone"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_phone_number']; ?></span><br>
+                                            <span><a href="#" class="jsCompanyHelpBoxBtn"><i class="fa fa-envelope-o"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_email']; ?></a></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php $this->load->view('company_help_box_script'); ?>
+                <?php } ?>
             </div>
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9">
                 <?php if (!empty($ems_notification) && isset($ems_notification)) {

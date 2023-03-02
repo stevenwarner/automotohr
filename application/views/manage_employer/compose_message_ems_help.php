@@ -1,0 +1,61 @@
+<?php
+$get_data_user = $this->session->userdata('logged_in');
+$company_id = $get_data_user['company_detail']['sid'];
+
+$getCompanyHelpboxInfo = get_company_helpbox_info($company_id);
+$toemail = $getCompanyHelpboxInfo[0]['box_support_email'];
+?>
+<div class="">
+    <div class="row">
+        <div class="col-sm-12">
+            <strong>Support</strong><br>
+            <p></p>
+            <span><i class="fa fa-phone"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_phone_number']; ?></span><br>
+            <span><i class="fa fa-envelope-o"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_email']; ?></span><br>
+        </div>
+    </div>
+    <hr>
+    <!--  -->
+    <div class="row">
+        <div class="col-sm-12">
+            <p class="text-danger" style="font-size: 16px">
+                <strong>
+                    <em>Note: Please write a described issue. The send email can be found in "Outbox" of "Private Messages".</em>
+                </strong>
+            </p>
+        </div>
+    </div>
+    <br>
+    <!--  -->
+    <div class="row">
+        <div class="col-sm-12">
+            <label><strong>Email To</label>
+            <input type="text" class="form-control" disabled value="<?=$toemail;?>" />
+        </div>
+    </div>
+
+    <!--  -->
+    <div class="row">
+        <br>
+        <div class="col-sm-12">
+            <label><strong>Subject</strong><span class="text-danger"> * </span></label>
+            <input type="text" class="form-control" id="jsSubject" />
+        </div>
+    </div>
+
+    <!--  -->
+    <div class="row">
+        <br>
+        <div class="col-sm-12">
+            <label><strong>Message</strong><span class="text-danger"> * </span></label>
+            <textarea class="ckeditor" id="jsBody"></textarea>
+        </div>
+    </div>
+    <!--  -->
+    <div class="row">
+        <br>
+        <div class="col-sm-12">
+            <button class="btn btn-success jsSubmitCompanyContactBtn">Send Email</button>
+        </div>
+    </div>
+</div>

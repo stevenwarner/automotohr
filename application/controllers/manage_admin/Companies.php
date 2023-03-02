@@ -1923,7 +1923,8 @@ class Companies extends Admin_Controller
         }
     }
 
-    function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME)
+
+   function upload_file_to_aws($file_input_id, $company_sid, $document_name, $suffix = '', $bucket_name = AWS_S3_BUCKET_NAME)
     {
         require_once(APPPATH . 'libraries/aws/aws.php');
 
@@ -3276,4 +3277,52 @@ class Companies extends Admin_Controller
             redirect(base_url('manage_admin/companies/default_document_category_listing/' . $company_sid));
         }
     }
+
+
+
+      //
+  function manage_company_help_box($company_sid = null)
+  {
+      $redirect_url = 'manage_admin/companies';
+      $function_name = 'edit_company';
+      $admin_id = $this->ion_auth->user()->row()->id;
+      $security_details = db_get_admin_access_level_details($admin_id);
+      $this->data['security_details'] = $security_details;
+      check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
+
+      if ($company_sid != null) {
+          $this->data['page_title'] = 'Manage Help Box Info';
+          $this->data['company_sid'] = $company_sid;
+          $contact_info = $this->company_model->get_helpbox_info($company_sid);
+
+          if (sizeof($contact_info) == 0) {
+              $contact_info[0]['box_title'] = '';
+              $contact_info[0]['box_support_email'] = '';
+              $contact_info[0]['box_support_phone_number'] = '';
+              $contact_info[0]['box_status'] = '0';
+          }
+
+          $this->data['contact_info'] = $contact_info;
+          $this->load->library('form_validation');
+          $this->form_validation->set_rules('helpboxtitle', 'Title', 'required|trim|xss_clean');
+          $this->form_validation->set_rules('helpboxemail', 'Email', 'required|trim|valid_email|xss_clean');
+          $this->form_validation->set_rules('helpboxphonenumber', 'Phone Number', 'required|trim|xss_clean');
+          $this->form_validation->set_rules('helpboxstatus', 'Status', 'required|trim|xss_clean');
+
+          if ($this->form_validation->run() === TRUE) {
+              $helpboxTitle = $this->input->post('helpboxtitle');
+              $helpboxEmail = $this->input->post('helpboxemail');
+              $helpboxPhoneNumber = $this->input->post('helpboxphonenumber');
+              $helpboxStatus = $this->input->post('helpboxstatus');
+
+              $this->company_model->add_update_helpbox_info($company_sid, $helpboxTitle, $helpboxEmail, $helpboxPhoneNumber, $helpboxStatus);
+              $this->session->set_flashdata('message', '<strong>Success:</strong> Help box details have been updated.');
+              redirect('manage_admin/companies/manage_company_help_box/' . $company_sid, 'refresh');
+          }
+
+          $this->render('manage_admin/company/manage_company_help_box');
+      } else {
+          redirect('manage_admin/companies', 'refresh');
+      }
+  }
 }
