@@ -93,4 +93,68 @@ class Onboarding_block extends Public_Controller
 
     }
 
+
+
+//
+function manage_company_help_box()
+{
+    
+    if ($this->session->userdata('logged_in')) {
+
+    $data['session'] = $this->session->userdata('logged_in');
+    $security_sid = $data['session']['employer_detail']['sid'];
+    $security_details = db_get_access_level_details($security_sid);
+    $data['security_details'] = $security_details;
+    check_access_permissions($security_details, 'dashboard', 'my_settings'); 
+    $employer_id = $data["session"]["employer_detail"]["sid"];
+    $data['title'] = "Company Help Box";
+    $company_sid = $data['session']['company_detail']['sid'];
+
+    if ($company_sid != null) {
+      
+      $data['page_title'] = 'Manage Help Box Info';
+      $data['company_sid'] = $company_sid;
+      $contact_info = $this->Onboarding_block_model->get_helpbox_info($company_sid);
+
+      if (sizeof($contact_info) == 0) {
+          $contact_info[0]['box_title'] = '';
+          $contact_info[0]['box_support_email'] = '';
+          $contact_info[0]['box_support_phone_number'] = '';
+          $contact_info[0]['box_status'] = '0';
+      }
+
+          $data['contact_info'] = $contact_info;
+          $this->load->view('main/header', $data);
+          $this->load->view('manage_employer/manage_company_help_box');
+          $this->load->view('main/footer');
+
+  } else {
+      redirect('my_settings', 'refresh');
+  }
+
+  }else{
+  redirect('login', 'refresh');
+  }
+
+}
+
+//
+public function manage_company_help_box_update()
+  {
+      $data['session'] = $this->session->userdata('logged_in');
+      $company_sid = $data['session']['company_detail']['sid'];
+      $employer_sid = $data['session']['employer_detail']['sid'];
+      $helpboxTitle = $this->input->post('helpboxtitle');
+      $helpboxEmail = $this->input->post('helpboxemail');
+      $helpboxPhoneNumber = $this->input->post('helpboxphonenumber');
+      $helpboxStatus = $this->input->post('helpboxstatus');
+      $this->Onboarding_block_model->add_update_helpbox_info($company_sid, $helpboxTitle, $helpboxEmail, $helpboxPhoneNumber, $helpboxStatus);
+      // Update
+      echo json_encode(array('msg' => 'Success', 'success' => 'Success: Help box details have been updated.'));
+
+  }
+
+
+
+
 }

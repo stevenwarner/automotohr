@@ -1070,6 +1070,89 @@ class Private_messages extends Public_Controller
             $notification_email,
             $company_name
         );
-       
+    }
+
+    public function get_support_page()
+    {
+        return SendResponse(200, ['view' => $this->load->view('manage_employer/compose_message_ems_help', [], true)]);
+    }
+
+    //  
+    public function compose_message_help()
+    {
+        $formpost = $this->input->post(NULL, TRUE);
+        $this->load->helper('email');
+
+        $data['session'] = $this->session->userdata('logged_in');
+        $employer_detail = $data['session']['employer_detail'];
+        $company_detail = $data['session']['company_detail'];
+        $employer_id = $employer_detail['sid'];
+        $data['title'] = 'Compose Messages';
+        $security_sid = $employer_detail['sid'];
+        $security_details = db_get_access_level_details($security_sid);
+        $data['security_details'] = $security_details;
+        $data['employee'] = $employer_detail;
+
+        $company_id = $company_detail['sid'];
+        $company_name = $company_detail['CompanyName'];
+        $data['employer_sid'] = $employer_id;
+
+        $getCompanyHelpboxInfo = get_company_helpbox_info($company_id);
+        $data['toemail'] = $getCompanyHelpboxInfo[0]['box_support_email'];
+        $data['fromemail'] = $data['employee']['email'];
+
+        $toemployeeData = db_get_employee_profile_byemail($getCompanyHelpboxInfo[0]['box_support_email'], $getCompanyHelpboxInfo[0]['company_id']);
+
+
+        $message_data['to_id'] = $toemployeeData[0]['sid'];
+        $to = $data['toemail'];
+        $name = $toemployeeData[0]['first_name'] . ' ' . $toemployeeData[0]['last_name'];
+        $message_data['from_id'] = $employer_id;
+        $message_data['from_type'] = 'employer';
+        $message_data['to_type'] = 'employer';
+        $message_data['users_type'] = 'employee';
+        $message_date = date('Y-m-d H:i:s');
+        $message_data['date'] = $message_date;
+        $message_data['company_sid'] = $company_id;
+        $message_data['subject'] = $formpost['subject'];
+        $message_data['message'] =  $formpost["message"];
+        $message_data['contact_name'] =  $toemployeeData[0]['first_name'] . ' ' . $toemployeeData[0]['last_name'];
+
+        $from = $data['fromemail'];
+        $message_data['identity_key'] = generateRandomString(48);
+        $secret_key = $message_data['identity_key'] . "__";
+        $employerData = $this->message_model->user_data_by_id($employer_id);
+        $employer_name = $employerData['username'];
+        $message_hf = (message_header_footer($data['session']['company_detail']['sid'], $data['session']['company_detail']['CompanyName']));
+        $subject = $formpost['subject'];
+        $body = $message_hf['header']
+            . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $name . ',</h2>'
+            . '<br><br>'
+            . $employer_name . '</b> has sent you a private message.'
+            . '<br><br><b>'
+            . 'Date:</b> '
+            . $message_date
+            . '<br><br><b>'
+            . 'Subject:</b> '
+            . $formpost["subject"]
+            . '<br><hr>'
+            . $formpost["message"] . '<br><br>'
+            . $message_hf['footer']
+            . '<div style="width:100%; float:left; background-color:#000; color:#000; box-sizing:border-box;">message_id:'
+            . $secret_key . '</div>';
+
+        sendMail($from, $to, $subject, $body, $company_name, $data['fromemail']);
+
+        $this->message_model->save_message($message_data);
+        $resp['Response'] = '200';
+        $this->resp($resp);
+    }
+
+
+    function resp($responseArray)
+    {
+        header('Content-type: application/json');
+        echo json_encode($responseArray);
+        exit(0);
     }
 }
