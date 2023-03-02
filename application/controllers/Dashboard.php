@@ -295,9 +295,7 @@ class Dashboard extends Public_Controller
             $is_w4_assign = $this->dashboard_model->check_w4_form_exist('employee', $employer_id);
             $is_w9_assign = $this->dashboard_model->check_w9_form_exist('employee', $employer_id);
             $is_i9_assign = $this->dashboard_model->check_i9_exist('employee', $employer_id);
-            //
-            $this->load->model('hr_documents_management_model');
-            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_id, 'employee');
+            
             //
             $documents_count = 0;
 
@@ -317,7 +315,10 @@ class Dashboard extends Public_Controller
                 $documents_count++;
             }
 
-            if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+            //
+            $this->load->model('hr_documents_management_model');
+            if ($this->hr_documents_management_model->hasEEOCPermission($company_id, 'eeo_on_employee_document_center')) {
+                $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_id, 'employee');
                 if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
                     $documents_count++;
                 }
@@ -733,9 +734,10 @@ class Dashboard extends Public_Controller
             }
 
             $this->load->model('hr_documents_management_model');
-            $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_id, 'employee');
+            //
+            if ($this->hr_documents_management_model->hasEEOCPermission($company_id, 'eeo_on_employee_document_center')) {
+                $eeoc_form = $this->hr_documents_management_model->get_eeo_form_info($employer_id, 'employee');
 
-            if ($this->hr_documents_management_model->get_portal_detail($company_id)) {
                 if (!empty($eeoc_form) && $eeoc_form['status'] == 1 && $eeoc_form['is_expired'] == 0) {
                     $documents_count++;
                 }

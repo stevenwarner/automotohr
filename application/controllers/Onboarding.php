@@ -10445,7 +10445,7 @@ class Onboarding extends CI_Controller
             //
             $print_url = base_url('hr_documents_management/print_eeoc_form/print' . '/' . $employee_sid . '/' . $user_type);
             $download_url = base_url('hr_documents_management/print_eeoc_form/download' . '/' . $employee_sid . '/' . $user_type);
-            $eeo_form_status = $this->hr_documents_management_model->get_portal_detail($company_sid);
+            $eeo_form_status = 1;
             $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employee_sid, $user_type);
             //
             if ($eeo_form_info['status'] == 0) {

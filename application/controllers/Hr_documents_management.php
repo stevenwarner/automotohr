@@ -3516,10 +3516,10 @@ class Hr_documents_management extends Public_Controller
             $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
             $data['eeo_form_info'] = $eeo_form_info;
             //
-            if (empty($data['eeo_form_info'])) {
-                $data['eeo_form_info']['status'] = 0;
-            }
-            //
+            // if (empty($data['eeo_form_info'])) {
+            //     $data['eeo_form_info']['status'] = 0;
+            // }
+
             $data['assigned_groups'] = $assigned_groups;
 
             $active_documents = $this->hr_documents_management_model->get_all_documents($company_sid, 0);

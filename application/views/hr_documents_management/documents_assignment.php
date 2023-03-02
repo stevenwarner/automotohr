@@ -119,7 +119,7 @@ $assignIdObj = $confidential_sids;
                                                                                 <?php echo '<button class="btn btn-success jsManageW4" title="Manage W4">Manage W4</button>'; ?>
                                                                                 <!-- <a class="btn <?php //echo $w4_SD > 0 ? 'btn-success' : 'blue-button'; 
                                                                                                     ?>" href="<? //= base_url() . "hr_documents_management/required_documents/employee/" . $user_sid . "/" . $w4_form['sid'] . "/w4_assigned" 
-                                                                                                                                                                        ?>">Upload Supporting Docs</a> -->
+                                                                                                                ?>">Upload Supporting Docs</a> -->
                                                                                 <?php if (!empty($w4_form['uploaded_file']) && $w4_form['uploaded_file'] != NULL) { ?>
                                                                                     <a class="btn btn-success" data-toggle="modal" href="javascript:;" data-document-type="w4" onclick="preview_eev_document_model(this);" data-preview-url="<?php echo AWS_S3_BUCKET_URL . $w4_form['uploaded_file']; ?>" data-download-url="<?php echo AWS_S3_BUCKET_URL . $w4_form['uploaded_file']; ?>" data-file-name="<?php echo $w4_form['uploaded_file']; ?>" data-document-title="<?php echo $w4_form['uploaded_file']; ?>">
                                                                                         View hand signed W4
@@ -397,11 +397,8 @@ $assignIdObj = $confidential_sids;
                                                                                     </a>
                                                                                 <?php } ?>
                                                                             <?php } else { ?>
-                                                                                <form id="form_assign_EEOC" enctype="multipart/form-data" method="post" action="<?php echo base_url('onboarding/setup/'.($user_type).'/'.$user_sid); ?>">
+                                                                                <form id="form_assign_EEOC" enctype="multipart/form-data" method="post">
                                                                                     <input type="hidden" id="perform_action" name="perform_action" value="assign_EEOC" />
-                                                                                    <input type="hidden" name="company_sid" value="<?=$company_sid;?>">
-                                                                                    <input type="hidden" name="user_sid" value="<?=$user_sid;?>">
-                                                                                    <input type="hidden" name="user_type" value="<?=$user_type;?>">
                                                                                 </form>
                                                                                 <button onclick="func_assign_EEOC();" class="btn btn-warning">Re-Assign</button>
                                                                             <?php } ?>
@@ -1890,8 +1887,8 @@ $assignIdObj = $confidential_sids;
                         </div>
                     </div>
                 </div>
-                <?php 
-               // die($left_navigation);
+                <?php
+                // die($left_navigation);
                 $this->load->view($left_navigation); ?>
             </div>
         </div>
