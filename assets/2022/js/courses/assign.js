@@ -73,8 +73,8 @@ $(function () {
                 courseBox += '            <div class="clearfix"></div>';
                 courseBox += '        </div>';
                 courseBox += '        <div class="panel-body">';
-                courseBox += '            <p class="_csF14"><b>Title</b></p>';
-                courseBox += '            <p class="_csF14">'+course.title+'</p>';
+                courseBox += '            <p class="_csF14"><b>Description</b></p>';
+                courseBox += '            <p class="_csF14">'+course.description+'</p>';
                 courseBox += '            <hr />';
                 courseBox += '            <p class="_csF14"><b>Cycle Period</b></p>';
                 courseBox += '            <p class="_csF14">'+course.display_start_date+' <b>to</b> '+course.display_end_date+' </p>';

@@ -316,18 +316,75 @@ class Courses extends Public_Controller
                     '2022/js/courses/assign'
                 ];
             } else if ($course['type'] == 'upload') {
-                $scormPath = $this->cm->getScromCourseInfo($course_sid);
                 //
-                $this->load->library('Scorm/Scorm_lib', '', 'slib');
+                $scormData = '';
+                $checkMyScorm = $this->cm->checkEployeeeScromCourse($course_sid, $employee_sid);
                 //
-                $scormInfo = $this->slib->LoadFile($scormPath."/imsmanifest.xml")->GetIndex();
+                if ($checkMyScorm['status'] == 'insert_record') {
+                    //
+                    $scormPath = $this->cm->getScromCourseInfo($course_sid);
+                    //
+                    $this->load->library('Scorm/Scorm_lib', '', 'slib');
+                    //
+                    $scormInfo = $this->slib->LoadFile($scormPath."/imsmanifest.xml")->GetIndex();
+                    $scormInfo['path'] = base_url().$scormPath."/shared/launchpage.html?content=";
+                    //
+                    $data_to_insert = array();
+                    $data_to_insert['employee_sid'] = $employee_sid;
+                    $data_to_insert['course_sid'] = $course_sid;
+                    $data_to_insert['total_chapters'] = count($scormInfo['items']);
+                    $data_to_insert['scorm_data'] = serialize($scormInfo);
+                    //
+                    $this->cm->addData('lms_scorm_employee_course', $data_to_insert);
+                    $scormData = $scormInfo;
+                    //
+                    if ($scormData['storage'] > 0) {
+                        foreach ($scormData['items'] as $ikey => $item) {
+                            if (isset($item['chapter_note'])) {
+                                $scormData['chapters_notes'][$ikey] = $item['chapter_note']; 
+                            } else {
+                                $scormData['chapters_notes'][$ikey] = ""; 
+                            }
+                        }
+                    }
+                }
                 //
-                $data['scorm'] = $scormInfo;
-                $data['scorm_path'] = base_url().$scormPath."/shared/launchpage.html?content=";
+                if ($checkMyScorm['status'] == 'insert_record' || $checkMyScorm['status'] == 'course_pending') {
+                    $data['courseStatus'] = 'course_pending';
+                    //
+                    if ($checkMyScorm['status'] == 'course_pending') {
+                        $scormData = $checkMyScorm['scorm_data'];
+                        //
+                        if ($scormData['storage'] > 0) {
+                            foreach ($scormData['items'] as $ikey => $item) {
+                                if (isset($item['chapter_note'])) {
+                                    $scormData['chapters_notes'][$ikey] = $item['chapter_note']; 
+                                } else {
+                                    $scormData['chapters_notes'][$ikey] = ""; 
+                                }
+                            }
+                        }
+
+                    }
+                    //
+                } else if ($checkMyScorm['status'] == 'course_completed') {
+                    $scormData = $this->cm->getPreviousScormData($employee_sid, $course_sid);
+                    //
+                    if (!empty($scormData['scorm_data'])) {
+                        $scormData = unserialize($scormData['scorm_data']);
+                        $data['scormData'] = $scormData['items']; 
+                        // _e($scormData,true,true);
+                    }
+                    $data['courseStatus'] = 'course_completed';
+                }
+                //
+                $data['scorm'] = $scormData;
+                // _e($checkMyScorm,true);
+                // _e($scormData,true,true);
                 //
                 $page = 'scorm';
                 //
-                if (preg_match('/2004/', $scormInfo["version"])) { 
+                if (preg_match('/2004/', $scormData["version"])) {
                     $versionScript ="2022/js/courses/scorm/scorm-2004";  
                 } else {
                     $versionScript ="2022/js/courses/scorm/scorm-1.2";
@@ -887,8 +944,121 @@ class Courses extends Public_Controller
                 $this->resp();
                 //
                 break;    
+
+            case 'save_scorm_progress':
+                //
+                $scorm_data = array();
+                $scorm_new_data = json_decode($post['scorm'], true);
+                //
+                $previousInfo = $this->cm->getPreviousScormData($_POST['employeeId'], $_POST['courseId']);
+                //
+                if (!empty($previousInfo['scorm_data'])) {
+                    $scorm_old_data = unserialize($previousInfo['scorm_data']);
+                    $scorm_data = $this->manageScromChapterData($scorm_new_data, $scorm_old_data);
+                    // _e($scorm_data,true,true);
+                }
+                //
+                $data_to_update = array();
+                $data_to_update['scorm_data'] = serialize($scorm_data);
+                $data_to_update['updated_at'] = date('Y-m-d H:i:s');
+                //
+                if ($scorm_new_data['completion_status'] == 'completed' && $scorm_new_data['success_status'] != 'unknown') {
+                    //
+                    $data_to_update['completed_chapters'] = $post['chapter'];
+                    //
+                    if ($previousInfo['total_chapters'] == $post['chapter']) {
+                        $data_to_update['chapter_completed_at'] = date('Y-m-d');
+                        $this->cm->finishMyCourse($_POST['employeeId'], $_POST['courseId']);
+                        //
+                        $this->res['Chapter'] = 'completed';
+                    }
+                    
+                }
+                //
+                $this->cm->updateEmployeeScormData($data_to_update, $_POST['employeeId'], $_POST['courseId']);
+                //
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Task completed successfully';
+                //
+                $this->resp();
+                break;    
         } 
         //
+    }
+
+    /**
+     * 
+     */
+    private function manageScromChapterData($newData, $oldData)
+    {
+        $totalSeconds = 0;
+        //
+        $oldData['items'][$newData['level']]['type'] = $newData['type'];
+        //
+        if (isset($oldData['items'][$newData['level']]['spent_seconds'])) {
+            $totalSeconds = $oldData['items'][$newData['level']]['spent_seconds'] + $newData['spent_seconds'];
+        } else {
+            $totalSeconds = $newData['spent_seconds'];
+        }
+        //
+        if ($newData['action'] == 'result') {
+            $oldData['items'][$newData['level']]['completion_status'] = $newData['completion_status'];
+            $oldData['items'][$newData['level']]['success_status'] = $newData['success_status'];
+            $oldData['items'][$newData['level']]['session_time'] = $newData['session_time'];
+            $oldData['items'][$newData['level']]['spent_seconds'] = $totalSeconds;
+            $oldData['items'][$newData['level']]['progress_measure'] = $newData['progress_measure'];
+            $oldData['items'][$newData['level']]['attempted_date'] = $newData['date'];
+            //
+            if ($newData['progress_measure'] == 1 && $newData['success_status']== 'unknown') {
+                $oldData['items'][$newData['level']]['success_status'] = 'passed';
+            }else if ($newData['progress_measure'] == 0 && $newData['success_status']== 'unknown') {
+                $oldData['items'][$newData['level']]['success_status'] = 'failed';
+            }
+            //
+            if ($newData['type'] == 'quiz') {
+                $oldData['items'][$newData['level']]['score_max'] = $newData['score_max'];
+                $oldData['items'][$newData['level']]['score_min'] = $newData['score_min'];
+                $oldData['items'][$newData['level']]['score_raw'] = $newData['score_raw'];
+                $oldData['items'][$newData['level']]['score_scaled'] = $newData['score_scaled'];
+                //
+                $nextChapter = $newData['level'] + 1;
+                $chapterCount = count($oldData['items']);
+                //
+                if ($chapterCount > $nextChapter) {
+                    $oldData['lastChapter'] = $nextChapter;
+                }
+                $oldData['lastLocation'] = 0;
+            }
+        }
+        //
+        if ($newData['action'] == 'note') {
+            if ($oldData['storage'] > 0) {
+                $oldData['items'][$newData['level']]['chapter_note'] = $newData['chapter_note'];
+            } 
+        }
+        //
+        if ($newData['action'] == 'location') {
+            if ($oldData['items'][$newData['level']]['location'] <= $newData['location']) {
+                //
+                $oldData['items'][$newData['level']]['location'] = $newData['location'];
+                //
+                if ($oldData['items'][$newData['level']]['slides'] == ($newData['location'] + 1)) {
+                    $oldData['lastLocation'] = 0;
+                    //
+                    $nextChapter = $newData['level'] + 1;
+                    $chapterCount = count($oldData['items']);
+                    //
+                    if ($chapterCount > $nextChapter) {
+                        $oldData['lastChapter'] = $nextChapter;
+                    }
+                    //
+                } else {
+                    $oldData['lastLocation'] = $newData['location'];
+                }
+            }
+        }
+        //
+        return $oldData;
     }           
 
 

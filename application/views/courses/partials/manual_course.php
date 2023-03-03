@@ -79,7 +79,7 @@
             <div class="row">
                 <div class="col-md-4 col-sm-12 _csMt10">
                     <label>Description </label>
-                    <p>What this course is about.</p>
+                    <p>What this chapter is about.</p>
                 </div>
                 <div class="col-md-8 col-sm-12 _csMt10">
                     <textarea class="form-control" name="chapter_description" row="30" id="jsChapterDescription"></textarea>

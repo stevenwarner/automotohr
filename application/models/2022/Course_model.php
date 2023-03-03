@@ -580,7 +580,7 @@ class Course_model extends CI_Model {
         //
         $result['description'] = strlen($course['description']) > 100 ? substr($course['description'],0,100)." ..." : $course['description'];
         //
-        $result['type'] = $course['title'] == "upload" ? "Scorm" : "Manual";
+        $result['type'] = $course['type'] == "upload" ? "Scorm" : "Manual";
         //
         if ($course['is_started'] == 1) {
             $this->db->select('
@@ -725,6 +725,83 @@ class Course_model extends CI_Model {
         } else {
             return "insert_record";
         }  
+    }
+
+    public function checkEployeeeScromCourse ($courseSid, $employeeSid) {
+        //
+        $response = array(
+            'status' => 'insert_record',
+            'level' => 0,
+            'location' => 0,
+            'scorm_data' => ''
+        );
+        //
+        $this->db->select('
+            total_chapters,
+            completed_chapters,
+            scorm_data
+        ');
+        //
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->where('course_sid', $courseSid);
+        $records_obj = $this->db->get('lms_scorm_employee_course');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->row_array();
+            $records_obj->free_result();
+            //
+            if (!empty($data) && $data['total_chapters'] == $data['completed_chapters']) {
+                $response['status'] = "course_completed";
+            } else if (!empty($data) && $data['total_chapters'] != $data['completed_chapters']) {
+                $response['status'] = "course_pending";
+                //
+                if ($data['completed_chapters'] > 0) {
+                    $response['level'] = $data['completed_chapters'];
+                } 
+                //
+                if (!empty($data['scorm_data'])) {
+                    $scormData = unserialize($data['scorm_data']);
+                    $response['scorm_data'] = $scormData;
+                    $lastChapter = end($scormData);
+                    // _e($lastChapter,true);
+                    //
+                    if ($lastChapter['completion_status'] == 'incomplete') {
+                        $response['location'] = end($scormData)['location'];
+                    }
+                }
+                //
+            }
+        }
+        //
+        // _e($response,true,true);
+        return $response; 
+    }
+
+    public function getPreviousScormData ($employeeSid, $courseSid) {
+        //
+        $this->db->select('
+            scorm_data,
+            total_chapters
+        ');
+        //
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->where('course_sid', $courseSid);
+        $records_obj = $this->db->get('lms_scorm_employee_course');
+        //
+        if (!empty($records_obj)) {
+            $data = $records_obj->row_array();
+            $records_obj->free_result();
+            //
+            return $data;
+        } else {
+            return '';
+        } 
+    }
+
+    public function updateEmployeeScormData ($data_to_update, $employeeSid, $courseSid) {
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->where('course_sid', $courseSid);
+        $this->db->update('lms_scorm_employee_course', $data_to_update);
     }
 
     public function getChapterCompletedInfo ($employeeSid, $courseSid) {

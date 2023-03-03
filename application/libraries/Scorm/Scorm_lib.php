@@ -204,7 +204,9 @@
 	        $this->scorm_array['version'] = $scromBasicInfo[5];
 	        //
 	        // Assign sequencing and objectives
-	        $this->scorm_array['startPoint'] = 0;
+	        $this->scorm_array['lastChapter'] = 0;
+	        $this->scorm_array['lastLocation'] = 0;
+	        $this->scorm_array['path'] = '';
 	        $this->scorm_array['storage'] = 0;
 	        $this->scorm_array['items'] = [];
 	        $this->scorm_array['sequencing'] = [];
@@ -350,9 +352,9 @@
 	    private function processScormItem ($item, $resources) 
 	    {
 	        $result = array(
-	        	"title" => '',
-	        	"parameter" => '',
-	        	"slides" => 1
+	        	'title' => '',
+	        	'parameter' => '',
+	        	'slides' => 1
 	        );
 	        //
 			$result['title'] = isset($item['title']) && !empty($item['title']) ? $item['title'] : '';

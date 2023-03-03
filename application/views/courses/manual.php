@@ -60,23 +60,7 @@
                                         </p>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- Basic -->
-                            <!-- <div class="row">
-                                <br>
-                                <div class="col-md-12 col-xs-12">
-                                    <div>
-                                        <ul class="_csPaginationMenu text-left" id="jsChaptersMenu">
-                                            <li class="active">
-                                                <a href="#" title="Pending" placement="top">1</a>
-                                            </li>
-                                            <li class="">
-                                                <a href="#" title="Pending" placement="top">2</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>  -->     
+                            </div>     
                         </div>
                     </div>
 
@@ -230,3 +214,5 @@
         </div>
     </div>
 </div>
+
+<?php $this->load->view('courses/partials/loader'); ?>
