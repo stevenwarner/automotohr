@@ -6,15 +6,6 @@ $getCompanyHelpboxInfo = get_company_helpbox_info($company_id);
 $toemail = $getCompanyHelpboxInfo[0]['box_support_email'];
 ?>
 <div class="">
-    <div class="row">
-        <div class="col-sm-12">
-            <strong>Support</strong><br>
-            <p></p>
-            <span><i class="fa fa-phone"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_phone_number']; ?></span><br>
-            <span><i class="fa fa-envelope-o"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_email']; ?></span><br>
-        </div>
-    </div>
-    <hr>
     <!--  -->
     <div class="row">
         <div class="col-sm-12">
@@ -26,14 +17,6 @@ $toemail = $getCompanyHelpboxInfo[0]['box_support_email'];
         </div>
     </div>
     <br>
-    <!--  -->
-    <div class="row">
-        <div class="col-sm-12">
-            <label><strong>Email To</label>
-            <input type="text" class="form-control" disabled value="<?=$toemail;?>" />
-        </div>
-    </div>
-
     <!--  -->
     <div class="row">
         <br>
