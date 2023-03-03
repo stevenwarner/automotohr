@@ -94,7 +94,7 @@ if ($company_sid != 'logout') {
         <!-- -->
         <?php $getCompanyHelpboxInfo = get_company_helpbox_info($session['company_detail']['sid']);
         if ($getCompanyHelpboxInfo[0]['box_status'] == 1) { ?>
-            <div class="dash-box service-contacts hidden-xs">
+            <div class="dash-box service-contacts hidden-md">
                 <div class="admin-info">
                     <h2><?php echo $getCompanyHelpboxInfo[0]['box_title']; ?></h2>
                     <div class="profile-pic-area">
