@@ -28,7 +28,19 @@ if (isset($assigned_offer_letter_sid)) {
                                         <img src="<?php echo isset($user_info['pictures']) && $user_info['pictures'] != NULL && $user_info['pictures'] != '' ? AWS_S3_BUCKET_URL . $user_info['pictures'] : base_url('assets/images/default_pic.jpg'); ?>" alt="Profile Picture" />
                                     </figure>
                                     <div class="text">
+                                        <?php
+                                        $userInfoNew = get_user_datescolumns($user_info['sid']);
+                                        ?>
                                         <h2><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></h2>
+                                        <h3 style="margin-top: -10px;margin-bottom: 5px">
+                                            <span>
+                                                <?php
+                                                $userAnniversaryDate = get_user_anniversary_date($userInfoNew[0]['joined_at'], $userInfoNew[0]['registration_date'], '');
+                                                echo $userAnniversaryDate['text'];
+                                                ?>
+                                            </span>
+                                        </h3>
+
                                         <div class="start-rating">
                                             <?php if ($user_type == 'applicant') { ?>
                                                 <input readonly="readonly" id="input-21b" value="<?php echo isset($user_average_rating) ? $user_average_rating : 0; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs" />
@@ -269,15 +281,16 @@ if (isset($assigned_offer_letter_sid)) {
                                                 </div>
                                             </div>
                                             <br>
-                                            <?php //$this->load->view('hr_documents_management/partials/approvers_section'); ?>
+                                            <?php //$this->load->view('hr_documents_management/partials/approvers_section'); 
+                                            ?>
                                             <?php $this->load->view(
-                                                'hr_documents_management/partials/test_approvers_section', 
+                                                'hr_documents_management/partials/test_approvers_section',
                                                 [
-                                                    "appCheckboxIdx" => "jsHasApprovalFlowPage", 
-                                                    "containerIdx" => "jsApproverFlowContainerPage", 
-                                                    "addEmployeeIdx" => "jsAddDocumentApproversPage", 
-                                                    "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxPage", 
-                                                    "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxPage", 
+                                                    "appCheckboxIdx" => "jsHasApprovalFlowPage",
+                                                    "containerIdx" => "jsApproverFlowContainerPage",
+                                                    "addEmployeeIdx" => "jsAddDocumentApproversPage",
+                                                    "intEmployeeBoxIdx" => "jsEmployeesadditionalBoxPage",
+                                                    "extEmployeeBoxIdx" => "jsEmployeesadditionalExternalBoxPage",
                                                     "approverNoteIdx" => "jsApproversNotePage"
                                                 ]
                                             ); ?>
@@ -531,18 +544,18 @@ if (isset($assigned_offer_letter_sid)) {
                 l.uploaded_document_s3_name = l.document_s3_name;
                 l.uploaded_document_original_name = l.document_original_name;
                 approverSection.documentId = l.sid
-            } 
+            }
             //
             if (l.has_approval_flow == 1) {
                 approverPrefill.isChecked = true;
                 approverPrefill.approverNote = l.document_approval_note;
-                approverPrefill.approversList = l.document_approval_employees.split(','); 
+                approverPrefill.approversList = l.document_approval_employees.split(',');
                 //
                 approverSection.prefill = approverPrefill;
             } else {
                 approverPrefill.isChecked = false;
                 approverPrefill.approverNote = "";
-                approverPrefill.approversList = ""; 
+                approverPrefill.approversList = "";
                 //
                 approverSection.prefill = approverPrefill;
             }
@@ -589,7 +602,7 @@ if (isset($assigned_offer_letter_sid)) {
             } else {
                 $('#confidentialSelectedEmployees').select2('val', "");
             }
-            
+
             $('#js-signers').select2({
                 closeOnSelect: false
             });

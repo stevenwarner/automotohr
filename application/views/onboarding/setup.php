@@ -60,7 +60,18 @@ if ($user_type == 'applicant') {
                                         <img src="<?php echo isset($user_info['pictures']) && $user_info['pictures'] != NULL && $user_info['pictures'] != '' ? AWS_S3_BUCKET_URL . $user_info['pictures'] : base_url('assets/images/default_pic.jpg'); ?>" alt="Profile Picture" />
                                     </figure>
                                     <div class="text">
+                                        <?php
+                                        $userInfoNew = get_user_datescolumns($user_info['sid']);
+                                        ?>
                                         <h2><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></h2>
+                                        <h3 style="margin-top: -10px;margin-bottom: 5px">
+                                            <span>
+                                                <?php
+                                                $userAnniversaryDate = get_user_anniversary_date($userInfoNew[0]['joined_at'], $userInfoNew[0]['registration_date'], '');
+                                                echo $userAnniversaryDate['text'];
+                                                ?>
+                                            </span>
+                                        </h3>
                                         <div class="start-rating">
                                             <?php if ($user_type == 'applicant') { ?>
                                                 <input readonly="readonly" id="input-21b" value="<?php echo isset($user_average_rating) ? $user_average_rating : 0; ?>" type="number" name="rating" class="rating" min=0 max=5 step=0.2 data-size="xs" />
@@ -461,7 +472,7 @@ if ($user_type == 'applicant') {
                                         <hr />
                                         <div class="row grid-columns" id="custom_office_location_section">
                                             <?php if (!empty($office_locations)) { ?>
-                                                <?php foreach ($office_locations as $key => $location) { 
+                                                <?php foreach ($office_locations as $key => $location) {
                                                     //
                                                     $shouldBeChecked = false;
                                                     //
@@ -471,7 +482,7 @@ if ($user_type == 'applicant') {
                                                         $shouldBeChecked = $location['is_primary'] == 1 ? true : $shouldBeChecked;
                                                     }
 
-                                                    ?>
+                                                ?>
                                                     <div class="col-xs-12 col-md-4 col-sm-6 col-lg-3">
                                                         <label class="package_label" for="location_<?php echo $location['sid']; ?>">
                                                             <div class="img-thumbnail text-center package-info-box">
@@ -484,7 +495,7 @@ if ($user_type == 'applicant') {
                                                                         <button onclick="show_office_details('<?php echo $location['location_title']; ?>','<?php echo $location['location_address']; ?>','<?php echo $location['location_telephone']; ?>','<?php echo $location['location_fax']; ?>');" type="button" class="btn btn-default btn-sm btn-block">View Detail</button>
                                                                     </div>
                                                                 </div>
-                                                                <input <?php echo set_checkbox('location[]', $location['sid'], $shouldBeChecked ); ?> class="select-package" data-type="location" id="location_<?php echo $location['sid']; ?>" name="locations[]" type="checkbox" value="<?php echo $location['sid']; ?>" />
+                                                                <input <?php echo set_checkbox('location[]', $location['sid'], $shouldBeChecked); ?> class="select-package" data-type="location" id="location_<?php echo $location['sid']; ?>" name="locations[]" type="checkbox" value="<?php echo $location['sid']; ?>" />
 
                                                             </div>
                                                         </label>
@@ -870,7 +881,7 @@ if ($user_type == 'applicant') {
                                                                                     <!-- <input <?php //echo set_checkbox('links[]', $link['sid'], in_array($link['sid'], $links)); 
                                                                                                 ?> data-type="link" id="link_<?php //echo $link['sid']; 
                                                                                                                                 ?>" name="links[]" type="checkbox" value="<?php //echo $link['sid']; 
-                                                                                                                                                                                                                                                                ?>" /> -->
+                                                                                                                                                                            ?>" /> -->
                                                                                     <input data-type="link" id="link_<?php echo $link['sid']; ?>" name="links[]" type="checkbox" value="<?php echo $link['sid']; ?>" <?php if (!empty($links)) {
                                                                                                                                                                                                                             foreach ($links as $key => $value) {
                                                                                                                                                                                                                                 if ($value['link_sid'] == $link['sid']) { ?>checked="checked" <?php }
@@ -1347,7 +1358,7 @@ if ($user_type == 'applicant') {
                                                                                         <?php } ?>
                                                                                     </td>
                                                                                 </tr>
-                                                                                <?php if ($onboarding_eeo_form_status ) { ?>
+                                                                                <?php if ($onboarding_eeo_form_status) { ?>
                                                                                     <tr>
                                                                                         <td class="col-lg-2">
                                                                                             EEOC FORM

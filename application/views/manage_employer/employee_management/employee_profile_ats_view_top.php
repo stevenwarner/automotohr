@@ -19,6 +19,14 @@
                             </span>
                         <?php } ?>
                     </h2>
+                    <h3 style="margin-top: -10px;margin-bottom: 5px">
+                        <span>
+                            <?php
+                            $userAnniversaryDate = get_user_anniversary_date($employer['joined_at'], $employer['registration_date'], '');
+                            echo $userAnniversaryDate['text'];
+                            ?>
+                        </span>
+                    </h3>
 
 
                     <div class="start-rating">
@@ -38,7 +46,6 @@
                         $doNotHireWarning = doNotHireWarning($employer['sid'], $doNotHireRecords, 18);
                         //
                         echo $doNotHireWarning['message'];
-                        
                     } else if (isset($employer['active'])) { ?>
                         <h4>
                             <?php if ($employer['active']) { ?>

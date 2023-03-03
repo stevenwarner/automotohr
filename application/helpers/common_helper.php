@@ -16279,13 +16279,13 @@ if (!function_exists('_secret')) {
         // Check if it's a date
         if (strpos($str, ',') !== false && $isDate) {
             return preg_replace('/[0-9]{4}/', '####', $str);
-        }  
+        }
         //
         if (
             (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/i', $str)
-            || preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i', $str)
-            || preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/i', $str)
-            || preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/i', $str)
+                || preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i', $str)
+                || preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/i', $str)
+                || preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/i', $str)
             ) && $isDate
         ) {
             return preg_replace('/[0-9]{4}/', '####', $str);
@@ -16297,14 +16297,16 @@ if (!function_exists('_secret')) {
 
 
 if (!function_exists('isSecret')) {
-    function isSecret (string $str) {
+    function isSecret(string $str)
+    {
 
         return strpos(strtolower($str), '#') !== false ? true : false;
     }
 }
 
 if (!function_exists('getCompanyEEOCFormStatus')) {
-    function getCompanyEEOCFormStatus ($company_sid) {
+    function getCompanyEEOCFormStatus($company_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('eeo_form_status');
         $CI->db->where('user_sid', $company_sid);
@@ -16318,3 +16320,75 @@ if (!function_exists('getCompanyEEOCFormStatus')) {
         }
     }
 }
+
+
+//
+if (!function_exists('get_user_anniversary_date')) {
+    function get_user_anniversary_date($joinedAt, $registrationDate, $compareDate = '')
+    {
+        //
+        $r = [];
+        $r['joiningDate'] = $r['timeSpentInCompany'] =
+            $r['timeSpentInCompanyAgo'] =
+            $r['text'] = '';
+        //
+        $joiningDate = null;
+        //
+        if ($joinedAt && $joinedAt != '0000-00-00') {
+            $joiningDate = $joinedAt;
+        } elseif ($registrationDate && $registrationDate != '0000-00-00 00:00:00') {
+            $joiningDate = trim(explode(' ', $registrationDate)[0]);
+        } else {
+            return $r;
+        }
+
+        //
+        $timeSpentString = '';
+        $timeSpentString2 = '';
+        $datetime1 = date_create($joiningDate);
+        $datetime2 = date_create($compareDate ?? getSystemDate(DB_DATE));
+
+        $interval = $datetime1->diff($datetime2);
+        //
+        $years = $interval->format('%y');
+        $months = $interval->format('%m');
+        $days = $interval->format('%d');
+
+        if ($years > 0) {
+            $timeSpentString2 = $years . ' ' . ($years > 1 ? 'years' : 'year') . ' ago';
+            $timeSpentString .= $years . ' ' . ($years > 1 ? 'years' : 'year');
+        }
+        if ($months > 0) {
+            if ($timeSpentString2 == '') {
+                //
+                $timeSpentString2 = $months . ' ' . ($months > 1 ? 'months' : 'month') . ' ago';
+            }
+            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') .  $months . ' ' . ($months > 1 ? 'months' : 'month');
+        }
+        if ($days > 0) {
+            if ($timeSpentString2 == '') {
+                //
+                $timeSpentString2 = $days . ' ' . ($days > 1 ? 'days' : 'day') . ' ago';
+            }
+            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') . $days . ' ' . ($days > 1 ? 'days' : 'day');
+        }
+        //
+        $return_date = formatDateToDB($joiningDate, DB_DATE, DATE);
+        $r['joiningDate'] = $return_date;
+        $r['timeSpentInCompany'] = $timeSpentString;
+        $r['timeSpentInCompanyAgo'] = $timeSpentString2;
+        $r['text'] = $return_date . " (" . $timeSpentString2 . ")";
+        return $r;
+    }
+}
+
+    //
+    if (!function_exists('get_user_datescolumns')) {
+        function get_user_datescolumns($emp_id)
+        {
+            $CI = &get_instance();
+            $CI->db->select('joined_at,registration_date');
+            $CI->db->where('sid', $emp_id);
+            return $CI->db->get('users')->result_array();
+        }
+    }
