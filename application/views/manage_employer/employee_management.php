@@ -503,13 +503,6 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     <button class="btn btn-success jsEmployeeQuickProfile" title="Employee Profile Quick View" placement="top" data-id="<?= $employee['sid']; ?>">
                                                                         <i class="fa fa-eye" aria-hidden="true"></i>
                                                                     </button>
-                                                                    <?php if (isCompanyOnComplyNet($employee['parent_sid']) && $employee['complynet_onboard'] == 0) {
-                                                                    ?>
-                                                                        <!--Add Employee To ComplyNet -->
-                                                                        <button class="btn csBG2 jsAddEmployeeToComplyNet" title="Add Employee To ComplyNet" placement="top" data-cid="<?= $employee['parent_sid']; ?>" data-id="<?= $employee['sid']; ?>">
-                                                                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                                                        </button>
-                                                                    <?php } ?>
                                                                 <?php
                                                                 } ?>
                                                             </td>
