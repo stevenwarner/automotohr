@@ -16279,13 +16279,13 @@ if (!function_exists('_secret')) {
         // Check if it's a date
         if (strpos($str, ',') !== false && $isDate) {
             return preg_replace('/[0-9]{4}/', '####', $str);
-        }  
+        }
         //
         if (
             (preg_match('/[0-9]{2}-[0-9]{2}-[0-9]{4}/i', $str)
-            || preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i', $str)
-            || preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/i', $str)
-            || preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/i', $str)
+                || preg_match('/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/i', $str)
+                || preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}/i', $str)
+                || preg_match('/[0-9]{4}\/[0-9]{2}\/[0-9]{2}/i', $str)
             ) && $isDate
         ) {
             return preg_replace('/[0-9]{4}/', '####', $str);
@@ -16297,14 +16297,16 @@ if (!function_exists('_secret')) {
 
 
 if (!function_exists('isSecret')) {
-    function isSecret (string $str) {
+    function isSecret(string $str)
+    {
 
         return strpos(strtolower($str), '#') !== false ? true : false;
     }
 }
 
 if (!function_exists('getCompanyEEOCFormStatus')) {
-    function getCompanyEEOCFormStatus ($company_sid) {
+    function getCompanyEEOCFormStatus($company_sid)
+    {
         $CI = &get_instance();
         $CI->db->select('eeo_form_status');
         $CI->db->where('user_sid', $company_sid);
@@ -16322,19 +16324,19 @@ if (!function_exists('getCompanyEEOCFormStatus')) {
 //
 if (!function_exists('get_company_helpbox_info')) {
 
-function get_company_helpbox_info($company_sid)
-{
-    $CI = &get_instance();
-    $CI->db->where('company_id', $company_sid);
-    $records_obj = $CI->db->get('helpbox_info_for_company');
-    $records_arr = $records_obj->result_array();
-    $records_obj->free_result();
-    return $records_arr;
+    function get_company_helpbox_info($company_sid)
+    {
+        $CI = &get_instance();
+        $CI->db->where('company_id', $company_sid);
+        $records_obj = $CI->db->get('helpbox_info_for_company');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        return $records_arr;
+    }    
 }
 
-
 if (!function_exists('db_get_employee_profile_byemail')) {
-    function db_get_employee_profile_byemail($email,$companySid)
+    function db_get_employee_profile_byemail($email, $companySid)
     {
         $CI = &get_instance();
         $CI->db->select('sid,first_name,last_name,email, access_level, job_title, is_executive_admin, access_level_plus, pay_plan_flag');
@@ -16342,8 +16344,4 @@ if (!function_exists('db_get_employee_profile_byemail')) {
         $CI->db->where('parent_sid', $companySid);
         return $CI->db->get('users')->result_array();
     }
-}
-
-
-
 }

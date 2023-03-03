@@ -35,10 +35,17 @@
                                                     </div>
                                                 </li>
                                                 <li>
-                                                    <?php echo form_label('Phone Number <span class="hr-required">*</span>', 'helpboxphonenumber'); ?>
+                                                    <?php echo form_label('Phone Number', 'helpboxphonenumber'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <?php echo form_input('helpboxphonenumber', set_value('helpboxphonenumber', $contact_info[0]['box_support_phone_number'] != '' ? $contact_info[0]['box_support_phone_number'] : ''), 'class="hr-form-fileds"');
                                                         echo form_error('helpboxphonenumber'); ?>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <?php echo form_label('Button Text', 'helpButtonText'); ?>
+                                                    <div class="hr-fields-wrap">
+                                                        <?php echo form_input('helpButtonText', set_value('helpButtonText', $contact_info[0]['button_text'] != '' ? $contact_info[0]['button_text'] : 'Contact Support'), 'class="hr-form-fileds"');
+                                                        echo form_error('helpButtonText'); ?>
                                                     </div>
                                                 </li>
                                                 <li>

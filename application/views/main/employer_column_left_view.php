@@ -334,7 +334,7 @@
 </div>
 <div class="dash-box service-contacts hidden-xs">
     <div class="admin-info">
-        <h2>Need help with your AutomotoHR Platform? <br/>Contact one of our Talent Network Partners at</h2>
+        <h2>Need help with your AutomotoHR Platform? <br />Contact one of our Talent Network Partners at</h2>
         <div class="profile-pic-area">
             <div class="form-col-100">
                 <ul class="admin-contact-info">
@@ -371,8 +371,14 @@ if ($getCompanyHelpboxInfo[0]['box_status'] == 1) {
                     <ul class="admin-contact-info">
                         <li>
                             <label>Support</label>
-                            <span><i class="fa fa-phone"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_phone_number']; ?></span>
-                            <span><a href="#" class="jsCompanyHelpBoxBtn"><i class="fa fa-envelope-o"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_email']; ?></a></span>
+                            <?php if ($getCompanyHelpboxInfo[0]['box_support_phone_number']) { ?>
+                                <span><i class="fa fa-phone"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_phone_number']; ?></span><br>
+                            <?php } ?>
+                            <span>
+                                <button class="btn btn-orange jsCompanyHelpBoxBtn">
+                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;<?= $getCompanyHelpboxInfo[0]['button_text']; ?>
+                                </button>
+                            </span>
                         </li>
                     </ul>
                 </div>

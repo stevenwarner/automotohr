@@ -17,7 +17,7 @@
             _model({
                 Id: 'jsCompanyHelpBoxModal',
                 Loader: 'jsCompanyHelpBoxModalLoader',
-                Title: '<?php echo $getCompanyHelpboxInfo[0]['box_title'];?>',
+                Title: '<?php echo addslashes($getCompanyHelpboxInfo[0]['box_title']);?>',
                 Buttons: ['<button class="btn btn-success jsSubmitCompanyContactBtn">Send Email</button>'],
                 Body: '<div class="container-fluid"><div id="jsCompanyHelpBoxModalBody"></div></div>'
             }, function() {

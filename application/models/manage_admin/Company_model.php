@@ -3001,9 +3001,7 @@ class Company_model extends CI_Model
         return $records_arr;
     }
 
-    //   
-
-    function add_update_helpbox_info($company_sid, $helpboxTitle, $helpboxEmail, $helpboxPhoneNumber, $helpboxStatus)
+    function add_update_helpbox_info($company_sid, $helpboxTitle, $helpboxEmail, $helpboxPhoneNumber, $helpboxStatus, $helpButtonText)
     {
         $dataToInsert = array();
         $dataToInsert['company_id'] = $company_sid;
@@ -3011,10 +3009,14 @@ class Company_model extends CI_Model
         $dataToInsert['box_support_email'] = $helpboxEmail;
         $dataToInsert['box_support_phone_number'] = $helpboxPhoneNumber;
         $dataToInsert['box_status'] = $helpboxStatus;
-        $this->db->where('company_id', $company_sid);
-        $result = $this->db->get('helpbox_info_for_company')->num_rows();
-
-        if ($result > 0) {
+        $dataToInsert['box_status'] = $helpboxStatus;
+        $dataToInsert['button_text'] = $helpButtonText;
+        //
+        if (
+            $this->db
+            ->where('company_id', $company_sid)
+            ->count_all_results('helpbox_info_for_company')
+        ) {
             $this->db->where('company_id', $company_sid);
             $this->db->update('helpbox_info_for_company', $dataToInsert);
         } else {

@@ -291,8 +291,14 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                                     <div class="form-col-100">
                                         <span class="admin-contact-info">
                                             <label>Support</label><br>
-                                            <span><i class="fa fa-phone"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_phone_number']; ?></span><br>
-                                            <span><a href="#" class="jsCompanyHelpBoxBtn"><i class="fa fa-envelope-o"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_email']; ?></a></span>
+                                            <?php if ($getCompanyHelpboxInfo[0]['box_support_phone_number']) { ?>
+                                                <span><i class="fa fa-phone"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_phone_number']; ?></span><br>
+                                            <?php } ?>
+                                            <span>
+                                                <button class="btn btn-orange jsCompanyHelpBoxBtn">
+                                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;<?=$getCompanyHelpboxInfo[0]['button_text'];?>
+                                                </button>
+                                            </span>
                                         </span>
                                     </div>
                                 </div>
@@ -935,7 +941,7 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 <script>
     $(document).ready(function() {
         <?php if (isset($ems_notification) && sizeof($ems_notification) > 0) { ?>
-                func_show_section_ems(0);
+            func_show_section_ems(0);
         <?php } else { ?>
             func_show_section(0);
         <?php } ?>
