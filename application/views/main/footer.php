@@ -92,7 +92,7 @@ if ($company_sid != 'logout') {
         </div>
 
         <!-- -->
-        <?php $getCompanyHelpboxInfo = get_company_helpbox_info($this->session->userdata('logged_in')['company_detail']['sid']);
+        <?php $getCompanyHelpboxInfo = get_company_helpbox_info($session['company_detail']['sid']);
         if ($getCompanyHelpboxInfo[0]['box_status'] == 1) { ?>
             <div class="dash-box service-contacts hidden-xs">
                 <div class="admin-info">
