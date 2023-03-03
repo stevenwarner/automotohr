@@ -325,6 +325,10 @@ class Dashboard extends Public_Controller
             }
 
             foreach ($assigned_documents as $key => $assigned_document) {
+                //
+                if ($assigned_document['archive'] == 1) {
+                    unset($assigned_documents[$key]);
+                }
                 $is_magic_tag_exist = 0;
                 $is_document_completed = 0;
 
