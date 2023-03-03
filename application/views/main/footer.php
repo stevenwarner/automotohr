@@ -92,10 +92,8 @@ if ($company_sid != 'logout') {
         </div>
 
         <!-- -->
-        <?php
-        $getCompanyHelpboxInfo = get_company_helpbox_info($thiis->session->userdata('logged_in')['company_detail']['sid']);
-        if ($getCompanyHelpboxInfo[0]['box_status'] == 1) {
-        ?>
+        <?php $getCompanyHelpboxInfo = get_company_helpbox_info($thiis->session->userdata('logged_in')['company_detail']['sid']);
+        if ($getCompanyHelpboxInfo[0]['box_status'] == 1) { ?>
             <div class="dash-box service-contacts hidden-xs">
                 <div class="admin-info">
                     <h2><?php echo $getCompanyHelpboxInfo[0]['box_title']; ?></h2>
@@ -119,7 +117,6 @@ if ($company_sid != 'logout') {
                 </div>
             </div>
             <?php $this->load->view('company_help_box_script'); ?>
-
         <?php } ?>
     <?php } ?>
 
