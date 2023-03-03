@@ -93,7 +93,7 @@ if ($company_sid != 'logout') {
 
         <!-- -->
         <?php
-        $getCompanyHelpboxInfo = get_company_helpbox_info($company_sid);
+        $getCompanyHelpboxInfo = get_company_helpbox_info($thiis->session->userdata('logged_in')['company_detail']['sid']);
         if ($getCompanyHelpboxInfo[0]['box_status'] == 1) {
         ?>
             <div class="dash-box service-contacts hidden-xs">
