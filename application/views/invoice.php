@@ -49,7 +49,7 @@ $hd = message_header_footer($invoice['company_sid'], $invoice['company_name']);
 
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                <form action="<?php echo base_url('misc/process_payment_admin_invoice/' . $invoice['sid']) ?>" method="post" id="form_credit_card_details">
+                                <form action="<?php echo base_url('invoice_new/process_payment_admin_invoice/' . $invoice['sid']) ?>" method="post" id="form_credit_card_details">
                                     <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $invoice['company_sid']; ?>" />
                                     <input type="hidden" id="invoice_sid" name="invoice_sid" value="<?php echo $invoice['sid']; ?>" />
                                     <input type="hidden" id="perform_action" name="perform_action" value="process_credit_card_payment" />
@@ -186,8 +186,7 @@ $hd = message_header_footer($invoice['company_sid'], $invoice['company_name']);
                     'Are You Sure?',
                     'Are you sure want to Process Payment against this invoice?',
                     function() {
-                        return;
-                        // $('#form_credit_card_details').submit();
+                         $('#form_credit_card_details').submit();
                     },
                     function() {}
                 )
