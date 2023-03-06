@@ -1948,7 +1948,7 @@ class Hr_documents_management_model extends CI_Model
             $pending_w4         = $this->is_employee_w4_document_pending('employee', $employee_sid);
             $pending_w9         = $this->is_employee_w9_document_pending('employee', $employee_sid);
             $pending_i9         = $this->is_employee_i9_document_pending('employee', $employee_sid);
-            if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_status']) { 
+            if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) { 
                 $pending_eeoc       = $this->is_eeoc_form_assign('employee', $employee_sid);
             } else {
                 $pending_eeoc       = 0;

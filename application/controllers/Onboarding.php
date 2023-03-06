@@ -130,7 +130,7 @@ class Onboarding extends CI_Controller
                             }
                         }
 
-                        if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_status']) { 
+                        if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_applicant_document_center']) { 
                             if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
                                 $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($applicant_sid, 'applicant');
 
