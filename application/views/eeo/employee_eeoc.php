@@ -31,7 +31,7 @@ $eeocFormOptions = get_eeoc_options_status($company_sid);
                     </div>
                 </div>
                 <hr>
-                <?php $this->load->view('eeo/eeoc_new_form_ems'); ?>
+                <?php $this->load->view('eeo/eeoc_new_form_ems', ['eeocFormOptions' => $eeocFormOptions]); ?>
             </div>
         <?php } ?>
     </div>
