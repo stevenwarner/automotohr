@@ -11,7 +11,7 @@ $toemail = $getCompanyHelpboxInfo[0]['box_support_email'];
         <div class="col-sm-12">
             <p class="text-danger" style="font-size: 16px">
                 <strong>
-                    <em>Note: Please write a described issue. The send email can be found in "Outbox" of "Private Messages".</em>
+                    <em>Note: Please briefly describe any issues or Questions you have. Your sent email can be found in your "Outbox" of "Private Messages" on your Employee dashboard.</em>
                 </strong>
             </p>
         </div>
