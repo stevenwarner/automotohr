@@ -40,8 +40,16 @@
                     <td><?= $company['complynet_company_sid']; ?></td>
                 </tr>
                 <tr>
+                    <th scope="col" class="col-sm-3">ComplyNet Company Name</th>
+                    <td><?= $company['complynet_company_name']; ?></td>
+                </tr>
+                <tr>
                     <th scope="col" class="col-sm-3">ComplyNet Location Id</th>
                     <td><?= $company['complynet_location_sid']; ?></td>
+                </tr>
+                <tr>
+                    <th scope="col" class="col-sm-3">ComplyNet Location Name</th>
+                    <td><?= $company['complynet_location_name']; ?></td>
                 </tr>
                 <tr>
                     <th scope="col" class="col-sm-3">Integrated At</th>
