@@ -1698,6 +1698,12 @@ class Hr_documents_management_model extends CI_Model
             //
             if ($sid == 0) {
                 $sid = $form['sid'];
+                //
+                $form['eeo_form_sid'] = $form['sid'];
+                //
+                unset($form['sid']);
+                //
+                $this->db->insert('portal_eeo_form_history', $form);
                 continue;
             }
             //
