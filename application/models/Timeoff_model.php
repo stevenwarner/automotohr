@@ -4439,11 +4439,13 @@ class Timeoff_model extends CI_Model
         $timeoff_requests = array();
         $asApprover = $employer_detail['access_level_plus'] == 1 || $employer_detail['pay_plan_flag'] == 1 ? 1 : 0;
         //
+        $teamMembers = $this->getEmployeeTeamMemberIds($employer_id);
         foreach ($b as $k => $v) {
             //
             if ($employer_detail['access_level_plus'] == 0 && $employer_detail['pay_plan_flag'] == 0) {
                 // Check if the employee is part of team
-                $isTeamMember = $this->isTeamMember($v['employee_sid'], $employer_id);
+                $isTeamMember = in_array($v['employee_sid'], $teamMembers); 
+                // $this->isTeamMember($v['employee_sid'], $employer_id);
                 $isColleague = 0;
                 //
                 if (!empty($timeoffSettings) && $timeoffSettings['team_visibility_check'] == '1') {
