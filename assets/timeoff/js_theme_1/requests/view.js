@@ -215,12 +215,13 @@ $(function () {
 			rows += "            </figure>";
 			rows += '            <div class="text">';
 			rows += `                <h4>${userRow.first_name} ${userRow.last_name} </h4>`;
-			rows += `                <p>${remakeEmployeeName(userRow, false)}</p>`;
+			rows += `                <p>${remakeEmployeeName(userRow, false)} </p>`;
 			rows += `                <p><a href="${baseURL}employee_profile/${userRow.user_id
 				}" target="_blank">Id: ${getEmployeeId(
 					userRow.user_id,
 					userRow.employee_number
-				)}</a></p>`;
+				)}</a></p>
+				${userRow.anniversary_text}`;
 			rows += "            </div>";
 			rows += "        </div>";
 			rows += "    </td>";

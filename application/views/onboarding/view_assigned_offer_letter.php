@@ -24,9 +24,11 @@
                                         <h2><?php echo $user_info["first_name"]; ?> <?= $user_info["last_name"] ?></h2>
                                         <h3 style="margin-top: -10px;margin-bottom: 5px">
                                             <span>
-                                                <?php
-                                                $userAnniversaryDate = get_user_anniversary_date($userInfoNew[0]['joined_at'], $userInfoNew[0]['registration_date'], '');
-                                                echo $userAnniversaryDate['text'];
+                                                <?= get_user_anniversary_date(
+                                                    $userInfoNew[0]['joined_at'],
+                                                    $userInfoNew[0]['registration_date'],
+                                                    $userInfoNew[0]['rehire_date']
+                                                );
                                                 ?>
                                             </span>
                                         </h3>

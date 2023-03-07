@@ -371,7 +371,7 @@ $(function () {
                             <p>${emp.first_name} ${emp.last_name}</p>
                             <p class="csTextSmall"> ${remakeEmployeeName(emp, false)}</p>
                             <p class="csTextSmall">${emp.email}</p>
-                            <p class="csTextSmall">${employeeJoinedAt}</p>
+                            <p class="csTextSmall">${emp.anniversary_text}</p>
                         </div>
                     </figure>
                     <div class="clearfix"></div>

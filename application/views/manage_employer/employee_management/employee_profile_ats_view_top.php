@@ -21,9 +21,11 @@
                     </h2>
                     <h3 style="margin-top: -10px;margin-bottom: 5px">
                         <span>
-                            <?php
-                            $userAnniversaryDate = get_user_anniversary_date($employer['joined_at'], $employer['registration_date'], '');
-                            echo $userAnniversaryDate['text'];
+                            <?= get_user_anniversary_date(
+                                $employer['joined_at'],
+                                $employer['registration_date'],
+                                $employer['rehire_date']
+                            );
                             ?>
                         </span>
                     </h3>

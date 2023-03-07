@@ -31,7 +31,7 @@
     let balanceFormat = null;
     // startBalanceProcess(58); 
     // Step 1
-    async function startBalanceProcess(employeeId, employeeName) {
+    async function startBalanceProcess(employeeId, employeeName,anniversarytext) {
         // Set the employee id
         balanceEmployeeId = employeeId;
         // Load Modal
@@ -42,6 +42,7 @@
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: #81b431; color: #ffffff;">
                         <h4 class="modal-title">Time off Balance for ${employeeName}</h4>
+                        ${anniversarytext}
                     </div>
                     <div class="modal-body">
                         <div class="csModalLoader jsBPModalLoader"><i class="fa fa-circle-o-notch fa-spin"></i></div>

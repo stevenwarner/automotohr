@@ -30,7 +30,7 @@
     let policyFormat = null;
     // startBalanceProcess(58); 
     // Step 1
-    async function startPolicyProcess(employeeId, employeeName) {
+    async function startPolicyProcess(employeeId, employeeName,anniversarytext) {
         // Load Modal
         let rows = `
         <!-- Modal -->
@@ -39,6 +39,7 @@
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: #81b431; color: #ffffff;">
                         <h4 class="modal-title">Balance Breakdown for ${employeeName} (As Of Today)</h4>
+                        ${anniversarytext}
                     </div>
                     <div class="modal-body">
                         <div>

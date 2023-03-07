@@ -7,7 +7,7 @@
             <div class="csIPLoader jsIPLoader" data-page="requests"><i class="fa fa-circle-o-notch fa-spin"></i></div>
 
             <!-- View  -->
-            <?php $this->load->view('timeoff/partials/requests/'.( $this->agent->is_mobile() ? 'm_' : '').'new_view'); ?>
+            <?php //$this->load->view('timeoff/partials/requests/'.( $this->agent->is_mobile() ? 'm_' : '').'new_view'); ?>
         </div>
     </div>
 </div>

@@ -16321,25 +16321,41 @@ if (!function_exists('getCompanyEEOCFormStatus')) {
     }
 }
 
-
-//
 if (!function_exists('get_user_anniversary_date')) {
-    function get_user_anniversary_date($joinedAt, $registrationDate, $compareDate = '')
-    {
+    /**
+     * Get employee annivversary date
+     * 
+     * @param string $joinedAt 
+     * @param string $registrationDate 
+     * @param string $rehiredDate
+     * @param string $compareDate Optional
+     * @param bool   $onlyText Optional
+     * @return string|array
+     */
+    function get_user_anniversary_date(
+        $joinedAt,
+        $registrationDate,
+        $rehiredDate,
+        string $compareDate = '',
+        bool $onlyText = true
+    ) {
         //
         $r = [];
-        $r['joiningDate'] = $r['timeSpentInCompany'] =
+        $r['joiningDate'] =
+            $r['timeSpentInCompany'] =
             $r['timeSpentInCompanyAgo'] =
             $r['text'] = '';
         //
         $joiningDate = null;
         //
-        if ($joinedAt && $joinedAt != '0000-00-00') {
+        if ($rehiredDate && $rehiredDate != '0000-00-00') {
+            $joiningDate = $rehiredDate;
+        } elseif ($joinedAt && $joinedAt != '0000-00-00') {
             $joiningDate = $joinedAt;
         } elseif ($registrationDate && $registrationDate != '0000-00-00 00:00:00') {
             $joiningDate = trim(explode(' ', $registrationDate)[0]);
         } else {
-            return $r;
+            return $onlyText ? '' : $r;
         }
 
         //
@@ -16377,18 +16393,23 @@ if (!function_exists('get_user_anniversary_date')) {
         $r['joiningDate'] = $return_date;
         $r['timeSpentInCompany'] = $timeSpentString;
         $r['timeSpentInCompanyAgo'] = $timeSpentString2;
-        $r['text'] = $return_date . " (" . $timeSpentString2 . ")";
+        $r['text'] = $return_date . " (Joined " . $timeSpentString2 . ")";
+        //
+        if ($onlyText) {
+            return "<strong>Employee Anniversary Date: " . $r['text'] . "<strong>";
+        }
+        //
         return $r;
     }
 }
 
-    //
-    if (!function_exists('get_user_datescolumns')) {
-        function get_user_datescolumns($emp_id)
-        {
-            $CI = &get_instance();
-            $CI->db->select('joined_at,registration_date');
-            $CI->db->where('sid', $emp_id);
-            return $CI->db->get('users')->result_array();
-        }
+//
+if (!function_exists('get_user_datescolumns')) {
+    function get_user_datescolumns($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('joined_at,registration_date');
+        $CI->db->where('sid', $emp_id);
+        return $CI->db->get('users')->result_array();
     }
+}

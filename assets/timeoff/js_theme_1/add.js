@@ -959,14 +959,14 @@ $(function () {
             rows += `
                 <div class="csApproverBox" title="Approver" data-content="${msg}">
                     <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL + 'test_file_01.png' : awsURL + approver.profile_picture}" />
-                </div>
+                     </div>
             `;
             mRows += `
                 <div class="csApproverBox">
                     <div class="employee-info">            
                         <figure>                
                             <img src="${approver.profile_picture == null || approver.profile_picture == '' ? awsURL + 'test_file_01.png' : awsURL + approver.profile_picture}" />          
-                        </figure>            
+                        </figure>  oo          
                         <div class="text">                
                             <h4>${msg}</h4>                
                             <p><a href="http://automotohr.local/employee_profile/${approver.userId}" target="_blank">Id: ${getEmployeeId(approver.userId, approver.employee_number)}</a></p>            

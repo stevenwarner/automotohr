@@ -359,6 +359,7 @@ $(function () {
                                         v.userId,
                                         v.employee_number
                                     )}</a></p>`;
+                                rows += `                <p>${v.anniversary_text}</p>`;    
                                 rows += "            </div>";
                                 rows += "        </div></td>";
                                 rows += `                <td>`;
@@ -835,7 +836,7 @@ $(function () {
         rows += `                    <img src="${getImageURL(userRow.image)}" class="csRoundImg"  />`;
         rows += `                </div>`;
         rows += `                <div class="col-sm-10 col-xs-10 pr0" style="padding-left: 26px;">`;
-        rows += `                    <p><strong style="font-size: 20px;">${userRow.first_name} ${userRow.last_name}</strong> ${remakeEmployeeName(userRow, false)}</p>`;
+        rows += `                    <p><strong style="font-size: 20px;">${userRow.first_name} ${userRow.last_name}</strong> ${remakeEmployeeName(userRow, false)} <br>  ${userRow.anniversary_text}</p>`;
         rows += `                </div>`;
         rows += `                <div class="clearfix"></div>`;
         rows += `            </div>`;

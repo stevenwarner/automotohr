@@ -171,11 +171,13 @@
                                     <span><?php echo $employee['access_level']; ?></span>
                                 </h3>
                                 <span>
-                                        <?php
-                                        $userAnniversaryDate = get_user_anniversary_date($employee['joined_at'], $employee['registration_date'], '');
-                                        echo $userAnniversaryDate['text'];
-                                        ?>
-                                    </span>
+                                    <?= get_user_anniversary_date(
+                                        $employee['joined_at'],
+                                        $employee['registration_date'],
+                                        $employee['rehire_date']
+                                    );
+                                    ?>
+                                </span>
                                 <!--<p>Administrator at ABC</p>-->
                                 <ul class="contact-info">
                                     <?php if (!empty($employee['PhoneNumber'])) { ?>
