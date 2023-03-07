@@ -192,7 +192,7 @@ if (!function_exists('getAwardedRate')) {
             }
         }
         //
-        return $rateInMqqinutes;
+        return $rateInMinutes;
     }
 }
 
