@@ -3,7 +3,7 @@
         <a href="<?= base_url('lms_courses/my_courses'); ?>">
             <div class="widget-box">
                 <div class="link-box bg-redish full-width">
-                    <h2 class="text-blue">Courses Library</h2>
+                    <h2 class="text-blue">Courses</h2>
                     <div><span>&nbsp;</span></div>
                     <div class="current-date">
                         <span><?php echo $my_pending_course_count; ?><sub>Pending</sub></span>

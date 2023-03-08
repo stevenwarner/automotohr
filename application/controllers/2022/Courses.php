@@ -328,6 +328,14 @@ class Courses extends Public_Controller
                     //
                     $scormInfo = $this->slib->LoadFile($scormPath."/imsmanifest.xml")->GetIndex();
                     $scormInfo['path'] = base_url().$scormPath."/shared/launchpage.html?content=";
+                    $scormInfo['dir'] = base_url().$scormPath;
+                    //
+                    if (isset($scormInfo['mapInfo'])) {
+                        $scormInfo['items'] = array();
+                        foreach ($scormInfo['sequencing'] as $item) {
+                            array_push($scormInfo['items'], $item);
+                        }
+                    }
                     //
                     $data_to_insert = array();
                     $data_to_insert['employee_sid'] = $employee_sid;

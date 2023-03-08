@@ -20,10 +20,6 @@
 	    private $resources;
 	    private $organization;
 	    private $primary_objectives;
-	    private $single_item;
-	    private $multiple_items;
-	    private $nested_items;
-
 	    /**
 	     * 
 	     */
@@ -41,28 +37,12 @@
 	        $this->primary_objectives = [];
 	        //
 	        $this->scorm_versions = [
+	        	"2004 3rd Edition",
 	        	"20043rd",
+	        	"2004 4th Edition",
 	        	"20044th",
+	        	"1.2",
 	        	"12"
-	        ];
-	        //
-	        $this->single_item = [
-	        	"advancedruntime",
-	        	"basicruntime"
-	        ];
-	        //
-	        $this->multiple_items = [
-	        	"randomtest", 
-	        	"multioscosinglefile", 
-	        	"minimumcalls",
-	        	"posttestrollup4thEd",
-	        	"forcedsequential",
-	        	"posttestrollup"
-	        ];
-	        //
-	        $this->nested_items = [
-	        	"preorposttestrollup",
-	        	"simpleremediation"
 	        ];
 	    }
 
@@ -99,43 +79,16 @@
 	        //
 	        $this->processScormBasicInfo($SA['manifest']);
 	        //
+	        
 	        if (
 	        	in_array($this->scorm_array['version'], $this->scorm_versions)
 	        ) {
-	        	//
-	        	// Check Scorm has single item
-	        	if (
-	        		in_array($this->scorm_array['type'], $this->single_item)
-	        	) {
-	        		//
-	        		$this->getSingleScormItem($this->organization);
-	        	}
-	        	//
-	        	// Check Scorm has multiple items
-	        	if (
-	        		in_array($this->scorm_array['type'], $this->multiple_items)
-	        	) {
-	        		$this->getMultipleScormItems($this->organization);
-	        	}
-	        	//
-	        	// Check Scorm has nested items
-	        	if (
-	        		in_array($this->scorm_array['type'], $this->nested_items)
-	        	) {
-	        		$this->getNestedScormItems($this->organization);
-	        	}
+	        	$this->getScormItems($this->organization);
 	        	//
 	        	if(!empty($this->scorm_items)) {
     				$this->scorm_array['items'] = $this->manageScromSequencing($this->scorm_items, $this->resources);
-    				//
-    				if ($this->scorm_array['type'] == "simpleremediation"  && $this->scorm_array['version'] == "20043rd" ) {
-			    		$this->getPairItems($this->scorm_items);
-			    	} else {
-			    		$this->scorm_array['sequencing'] = $this->scorm_array['items'];
-			    	}
-			    	//
+    				$this->getPairItems($this->scorm_items);
 	        	}
-	        	//
 	        }
 	        //
 	        return $this;
@@ -197,24 +150,82 @@
 	        	$this->scorm_array['title'] = $this->organization['title'];
 	        }
 	        //
+	        $metaData = array();
+	        //
+	        if (isset($manifest['metadata']) && !empty($manifest['metadata'])) {
+	        	$metaData = $manifest['metadata'];
+	        } else if (isset($manifest['organizations']['organization']['metadata'])) {
+	        	$metaData = $manifest['organizations']['organization']['metadata'];
+	        }
+	        //
 	        // Get the version, name and type
-	        $this->scorm_array['name'] = $manifest['metadata']['schema'];
-	        // $this->scorm_array['version'] = $manifest['metadata']['schemaversion'];
-	        $this->scorm_array['type'] = $scromBasicInfo[4];
-	        $this->scorm_array['version'] = $scromBasicInfo[5];
+	        $this->scorm_array['name'] = $metaData['schema'];
+	        //
+	        if ($metaData['schemaversion'] == "1.2") {
+	        	$this->scorm_array['version'] = "12";
+	        } else if ($metaData['schemaversion'] == "2004 3rd Edition") {
+	        	$this->scorm_array['version'] = "20043rd";
+	        } else if ($metaData['schemaversion'] == "2004 4th Edition") {
+	        	$this->scorm_array['version'] = "20044th";
+	        } else {
+	        	$this->scorm_array['version'] = $manifest['metadata']['schemaversion'];
+	        }
 	        //
 	        // Assign sequencing and objectives
-	        $this->scorm_array['lastChapter'] = 0;
-	        $this->scorm_array['lastLocation'] = 0;
-	        $this->scorm_array['path'] = '';
+	        $this->scorm_array['startPoint'] = 0;
 	        $this->scorm_array['storage'] = 0;
+	        $this->scorm_array['lastLocation'] = 0;
+	        $this->scorm_array['lastChapter'] = 0;
+	        $this->scorm_array['launchFile'] = '';
+	        $this->scorm_array['paramKey'] = '';
 	        $this->scorm_array['items'] = [];
 	        $this->scorm_array['sequencing'] = [];
 	        $this->scorm_array['objectives'] = [];
-	        //
-	        if ($this->scorm_array['type'] == "simpleremediation"  && $this->scorm_array['version'] == "20043rd" ) {
-	    		$this->scorm_array['mapInfo'] = [];
-	    	}
+	        $this->scorm_array['mapInfo'] = [];
+	    }
+
+	    private function getScormItems ($organization) {
+	    	//
+			if (isset($organization['item']['item']) && !empty($organization['item']['item'])) {
+        		foreach ($organization['item']['item'] as $items) {
+        			if(isset($items['item']) && !empty($items['item'])) {
+	        			foreach ($items['item'] as $item) {
+	        				array_push($this->scorm_items, $item);
+	        			}
+        			} else {
+        				array_push($this->scorm_items, $items);
+        			}
+        			//
+	        		if (isset($items['imsss:sequencing']) && !empty($items['imsss:sequencing'])) {
+		        		$this->manageScromObjective($items['imsss:sequencing']["imsss:objectives"]);
+		        	}
+        		}
+    		} else if (isset($organization['item']) && !empty($organization['item'])) {
+    			if (isset($organization['item']['title'])) {
+    				$this->scorm_items[0] = $organization['item'];
+    				//
+    				if (isset($organization['item']['imsss:sequencing']['imsss:objectives']['imsss:objective'])) {
+						$this->manageScromObjective($organization['item']['imsss:sequencing']['imsss:objectives'] , "objective");
+					}
+    			} else {
+    				foreach ($organization['item'] as $items) {
+	        			
+	        			if(isset($items['item']) && !empty($items['item'])) {
+		        			foreach ($items['item'] as $item) {
+		        				array_push($this->scorm_items, $item);
+		        			}
+	        			} else {
+	        				array_push($this->scorm_items, $items);
+	        			}
+	        			//
+	        			if (isset($items['imsss:sequencing']) && !empty($items['imsss:sequencing'])) {
+			        		$this->manageScromObjective($items['imsss:sequencing']["imsss:objectives"]);
+			        	}
+	        		}
+    			}
+    		}
+			//
+			return true;
 	    }
 
 	    /**
@@ -352,9 +363,10 @@
 	    private function processScormItem ($item, $resources) 
 	    {
 	        $result = array(
-	        	'title' => '',
-	        	'parameter' => '',
-	        	'slides' => 1
+	        	"title" => '',
+	        	"paramValue" => '',
+	        	"slides" => 1,
+	        	"location" => ''
 	        );
 	        //
 			$result['title'] = isset($item['title']) && !empty($item['title']) ? $item['title'] : '';
@@ -366,13 +378,19 @@
 				$item['@attributes']['identifierref'] == "assessment_resource" && 
 				isset($item['@attributes']['parameters'])
 			) {
-				$result['parameter'] =  explode("=", $item['@attributes']['parameters'])[1];
+				$result['paramValue'] =  explode("=", $item['@attributes']['parameters'])[1];
+				$response = $this->processScormResources ($item['@attributes']['identifierref'], $resources); 
+				$result['location'] = $response['href'];
 			} else {
 				//
-				$response = $this->processScormResources ($item['@attributes']['identifierref'], $resources); 	
-				//
-				$result['slides'] = $response['pageCount'];
-				$result['parameter'] = $response['reference'];
+				if (isset($item['@attributes']['identifierref'])) {
+					$response = $this->processScormResources ($item['@attributes']['identifierref'], $resources); 	
+					//
+					$result['slides'] = $response['pageCount'];
+					$result['paramValue'] = $response['paramValue'];
+					$result['location'] = $response['firstLocation'];
+					$result['href'] = $response['href'];
+				}
 			}
 			//
 			return $result;
@@ -383,7 +401,7 @@
 	     */
 	    private function checkStorageActive ($item) 
 	    {
-	    	if ($item["adlcp:data"]["adlcp:map"]["@attributes"]["targetID"]) {
+	    	if (isset($item["adlcp:data"]["adlcp:map"]["@attributes"]["targetID"])) {
 				//
 				$targetID = explode(".", $item["adlcp:data"]["adlcp:map"]["@attributes"]["targetID"])[5];
 				//
@@ -423,29 +441,75 @@
 	    {
 	        $result = array(
 	        	"pageCount" => 0,
-	        	"reference" => ''
+	        	"paramValue" => '',
+	        	"firstLocation" => '',
+	        	"href" => ''
 	        );
-	        //
+	        //s
 	        if ($resource['@attributes']['identifier'] == $identifier) {
 	        	//
-				$href = $resource['@attributes']['href'];
-				$result['reference'] = explode("=", $href)[1];
-				//
-				if (isset($resource['file']) && !empty($resource['file'])) {
+	        	if (isset($resource['@attributes']['href'])) {
+	        		$href = explode("?", $resource['@attributes']['href']);
+	        		//
+					$launchFile = $href[0];
+	        		//
+	        		if (empty($this->scorm_array['launchFile'])) {
+	        			$this->scorm_array['launchFile'] = $launchFile;
+	        		}
+	        		//
+	        		if (empty($this->scorm_array['paramKey'])) {
+	        			$this->scorm_array['paramKey'] = explode("=", $href[1])[0];
+	        		}
+	        		//
+					$result['paramValue'] = explode("=", $href[1])[1];
+					$result['href'] = $launchFile;
 					//
-					$pageCount = 0;
-					//
-					foreach ($resource['file'] as $file) {
-						if (str_replace('.html', '', $file["@attributes"]["href"]) != $file["@attributes"]["href"]) {
-							// 
-							if(!preg_match('/launchpage.html/', $file["@attributes"]["href"])) {	
-								$pageCount++;	
+					if (isset($resource['file']) && !empty($resource['file'])) {
+						//
+						$pageCount = 0;
+						$firstLocation = '';
+						//
+						if (isset($resource['file']['@attributes'])) {
+							if (str_replace('.html', '', $resource['file']['@attributes']["href"]) != $resource['file']['@attributes']["href"]) {
+								if (empty($firstLocation)) {
+									if (str_replace('/', '', $resource['file']['@attributes']["href"]) != $resource['file']['@attributes']["href"]) {
+										$location = explode(".", $resource['file']['@attributes']["href"])[0];
+										$tokens = explode('/', $location);
+										$firstLocation = trim(end($tokens));
+									} else 	{
+										$firstLocation = explode(".", $resource['file']['@attributes']["href"])[0];
+									}
+								}
+								// 
+								if(!preg_match('/$launchFile/', $resource['file']['@attributes']["href"])) {	
+									$pageCount++;	
+								}
+	            			}
+						} else {
+							foreach ($resource['file'] as $file) {								//
+								if (str_replace('.html', '', $file["@attributes"]["href"]) != $file["@attributes"]["href"]) {
+									if (empty($firstLocation)) {
+										if (str_replace('/', '', $file["@attributes"]["href"]) != $file["@attributes"]["href"]) {
+											$location = explode(".", $file["@attributes"]["href"])[0];
+											$tokens = explode('/', $location);
+											$firstLocation = trim(end($tokens));
+										} else 	{
+											$firstLocation = explode(".", $file["@attributes"]["href"])[0];
+										}
+									}
+									// 
+									if(!preg_match('/$launchFile/', $file["@attributes"]["href"])) {	
+										$pageCount++;	
+									}
+		            			}
 							}
-            			}
-					}
-					//
-					$result['pageCount'] = $pageCount == 0 && $identifier == "assessment_resource" ? 1 : $pageCount;
-				} 
+						}
+						//
+						$result['firstLocation'] = $firstLocation;
+						//
+						$result['pageCount'] = $pageCount == 0 && $identifier == "assessment_resource" ? 1 : $pageCount;
+					} 
+	        	}
 			}
 			//
 			return $result;
@@ -475,7 +539,8 @@
 	     */
 	    private function getPairItems ($items) 
 	    {
-	  
+	    	$mapItemsCount = 0;
+	    	//
 			if (!empty($items)) {
 				foreach ($items as $key => $item) {
 		    		$title = $item["title"];
@@ -488,16 +553,23 @@
 		    		if (!empty($targetObjective)) {
 		    			$mapInfo = explode('.', $targetObjective);
 		    			$this->scorm_array["mapInfo"][$mapInfo[6]][$title] = $key;
+		    			$mapItemsCount++;
 		    		}
 		    	}
 			}
 			//
 			if (!empty($this->scorm_array["mapInfo"]) && !empty($this->scorm_array["items"])) {
-				foreach ($this->scorm_array["mapInfo"]  as  $mapInfo) {
-					foreach ($mapInfo as $index) {
-						array_push($this->scorm_array["sequencing"], $this->scorm_array["items"][$index]);
+				if ($mapItemsCount == count($items)) {
+					foreach ($this->scorm_array["mapInfo"]  as  $mapInfo) {
+						foreach ($mapInfo as $index) {
+							array_push($this->scorm_array["sequencing"], $this->scorm_array["items"][$index]);
+						}
 					}
+				} else {
+					$this->scorm_array['sequencing'] = $this->scorm_array['items'];
 				}
+			} else {
+				$this->scorm_array['sequencing'] = $this->scorm_array['items'];
 			}
 			//
 			return true;

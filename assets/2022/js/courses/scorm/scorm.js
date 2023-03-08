@@ -3,10 +3,10 @@ $(document).ready(function () {
 	//
 	var links = '';
 	var index = 0;
-	var id = SCORM_CHAPTER.trim().toLowerCase().replace(/ /g, "_");
+	var id = SCORM_CHAPTER.trim().toLowerCase().replace(/[^A-Z0-9]/ig, "_");
 	//
 	SCORM_XML.sequencing.map(function (sequence) {
-		var linkID = sequence.title.trim().toLowerCase().replace(/ /g, "_");
+		var linkID = sequence.title.trim().toLowerCase().replace(/[^A-Z0-9]/ig, "_");
         //
         if (SCORM_LEVEL > index) {
             links += '<li>';
@@ -35,7 +35,10 @@ $(document).ready(function () {
 });	
 
 function setNewChapter () {
-	var SCORM_URL = SCORM_PATH + SCORM_CONTENT;
+	var SCORM_URL = SCORM_DIR+'/'+SCORM_LAUNCH_FILE;
+    if (SCORM_CONTENT) {
+        SCORM_URL = SCORM_URL + "?"+SCORM_PARAM_KEY+"=" +SCORM_CONTENT
+    }
 	$("#jsScormCourse").attr('src',SCORM_URL); 
     console.log(SCORM_URL)
 	//
@@ -43,7 +46,7 @@ function setNewChapter () {
 }
 
 function modifyNavBar () {
-	var id = SCORM_CHAPTER.trim().toLowerCase().replace(/ /g, "_");
+	var id = SCORM_CHAPTER.trim().toLowerCase().replace(/[^A-Z0-9]/ig, "_");
 	//
 	unlockNavLink(id);
 	changeNavColor();

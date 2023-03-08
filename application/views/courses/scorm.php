@@ -183,8 +183,11 @@
 <!-- Define Scorm Variables -->
 <script type="text/javascript">
     var SCORM_XML = <?php echo json_encode($scorm); ?>;
+    var SCORM_LAUNCH_FILE = SCORM_XML.launchFile;
     var SCORM_PATH = SCORM_XML.path;
-    var SCORM_CONTENT = SCORM_XML.sequencing[SCORM_XML.lastChapter]["parameter"];
+    var SCORM_DIR = SCORM_XML.dir;
+    var SCORM_PARAM_KEY = SCORM_XML.paramKey;
+    var SCORM_CONTENT = SCORM_XML.sequencing[SCORM_XML.lastChapter]["paramValue"];
     var SCORM_CHAPTER = SCORM_XML.sequencing[SCORM_XML.lastChapter]["title"];
     var SCORM_LEVEL = parseInt(SCORM_XML.lastChapter);
     var LAST_CHAPTER = SCORM_XML.lastChapter;
