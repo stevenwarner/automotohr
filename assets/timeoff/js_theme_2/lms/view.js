@@ -359,7 +359,7 @@ $(function () {
                                         v.userId,
                                         v.employee_number
                                     )}</a></p>`;
-                                rows += `                <p>${v.anniversary_text}</p>`;    
+                                rows += `                <p>${v.anniversary_text}</p>`;
                                 rows += "            </div>";
                                 rows += "        </div></td>";
                                 rows += `                <td>`;
