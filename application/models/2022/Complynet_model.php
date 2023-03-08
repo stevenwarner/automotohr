@@ -767,7 +767,7 @@ class Complynet_model extends CI_Model
         // Check employee by email
         $employeeObj = $this->clib->getEmployeeByEmail($email);
         // found
-        if (isset($employeeObj[0]['Id'])) {
+        if (isset($employeeObj[0]['Id']) && findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId)) {
             $employeeObj[0] = findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId);
             //
             if (!$employeeObj[0]) {
@@ -808,7 +808,7 @@ class Complynet_model extends CI_Model
         // Check employee by username
         $employeeObj = $this->clib->getEmployeeByEmail($employee['username']);
         // found by username as well
-        if (isset($employeeObj[0]['Id'])) {
+        if (isset($employeeObj[0]['Id']) && findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId)) {
             $employeeObj[0] = findTheRightEmployee($employeeObj, $complyCompanyId, $complyLocationId);
             //
             if (!$employeeObj[0]) {

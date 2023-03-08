@@ -211,11 +211,11 @@
                                     $errorArray[] = '<strong class="text-danger">Phone number is missing</strong>';
                                 }
                                 //
-                                if ($emp['department_sid'] == 0) {
+                                if ($emp['department_sid'] == '0') {
                                     $errorArray[] = '<strong class="text-danger">Department is missing</strong>';
                                 }
                                 //
-                                if ($emp['team_sid'] == 0) {
+                                if ($emp['team_sid'] == '0') {
                                     $errorArray[] = '<strong class="text-danger">Team is missing</strong>';
                                 }
                             ?>
