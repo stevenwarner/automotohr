@@ -7022,31 +7022,81 @@ if (!function_exists('send_calendar_email')) {
         // Set content
         $to_content = '';
         // For reminder and cron
-        if ($action == 'send_reminder_emails' || $action == 'send_cron_reminder_emails')
-            $to_content .= "<tr><td><p>This is a reminder email regarding an upcoming \"<b>{$event_category}</b>\" event scheduled with you. <br /> Please, find the details below.</p></td></tr>";
-        else if ($action == 'update_event' || $action == 'drop_update_event' || $action == 'drag_update_event')
-            $to_content .= '<tr><td><p>Your Event details have been Changed. Please update your calendar with the new information.</p></td></tr>';
-        else if ($action == 'confirm')
-            $to_content .= '<tr><td><p>You are Receiving this email because <b>"{{applicant_name}}"</b> has requested to "<b>{{event_status}}</b>" this "<b>' . ($event_category) . '</b>".</p></td></tr>';
-        else {
+        if ($action == 'send_reminder_emails' || $action == 'send_cron_reminder_emails') {
+            $heading_greet = '';
+            $to_content .= '<tr><td>';
+            $emailTemplateData = get_email_template(CALENDAR_EVENT_REMINDER);
+            $emailTemplateBody = $emailTemplateData['text'];
+            $emailTemplateBody = str_replace('{{event_category}}', $event_category, $emailTemplateBody);
+            $to_content .= $emailTemplateBody;
+            $to_content .= '</td></tr>';
+        } else if ($action == 'update_event' || $action == 'drop_update_event' || $action == 'drag_update_event') {
+            $heading_greet = '';
+            $to_content .= '<tr><td>';
+            $emailTemplateData = get_email_template(CALENDAR_EVENT_UPDATE);
+            $emailTemplateBody = $emailTemplateData['text'];
+            $to_content .= $emailTemplateBody;
+            $to_content .= '</td></tr>';
+        } else if ($action == 'confirm') {
+            //
+            $heading_greet = '';
+            $to_content .= '<tr><td>';
+            $emailTemplateData = get_email_template(INTERVIEW_EMAIL_CONFIRMATION);
+            $emailTemplateBody = $emailTemplateData['text'];
+            $emailTemplateBody = str_replace('{{event_category}}', $event_category, $emailTemplateBody);
+            $to_content .= $emailTemplateBody;
+            $to_content .= '</td></tr>';
+            //
+        } else {
             // Set subject for 'Personal' type
             // and categories 'Call, Email'
-            if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'call')
-                $to_content .= '<tr><td><p>A "<b>' . ucwords($event_category) . '</b>" has been scheduled with "<b>{{PERSON_NAME}}</b>"</p></td></tr>';
-            // $to_content .= '<tr><td><p>You have scheduled an event regarding making a "<b>' . ucwords($event_category) . '</b>" to "<b>'.$event_details['users_name'].'</b>"</p></td></tr>';
-            else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'email')
-                $to_content .= '<tr><td><p>AN "<b>' . ucwords($event_category) . '</b>" has been scheduled with "<b>{{PERSON_NAME}}</b>"</p></td></tr>';
-            // $to_content .= '<tr><td><p>You have scheduled an event regarding sending an "<b>' . ucwords($event_category) . '</b>" to "<b>'.$event_details['users_name'].'</b>"</p></td></tr>';
-            else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'training-session') {
-                $to_content .= '<tr><td><p>A "<b>' . ucwords($event_category) . '</b>" has been scheduled. </p></td></tr>';
-                // $to_content .= '<tr><td><p>You have scheduled a "<b>' . ucwords($event_category) . '</b>"<tr><td> for </p></td></tr>';
+            if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'call') {
+                $heading_greet = '';
+                $to_content .= '<tr><td>';
+                $emailTemplateData = get_email_template(CALENDAR_CREATE_EMAIL_CALL);
+                $emailTemplateBody = $emailTemplateData['text'];
+                $emailTemplateBody = str_replace('{{event_category}}', ucwords($event_category), $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{event_status}}', ucwords($event_details['event_status']), $emailTemplateBody);
+                $to_content .= $emailTemplateBody;
+                $to_content .= '</td></tr>';
+            } else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'email') {
+                $heading_greet = '';
+                $to_content .= '<tr><td>';
+                $emailTemplateData = get_email_template(CALENDAR_CREATE_EMAIL_EMAIL);
+                $emailTemplateBody = $emailTemplateData['text'];
+                $emailTemplateBody = str_replace('{{event_category}}', ucwords($event_category), $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{event_status}}', ucwords($event_details['event_status']), $emailTemplateBody);
+                $to_content .= $emailTemplateBody;
+                $to_content .= '</td></tr>';
+            } else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'training-session') {
+                $heading_greet = '';
+                $to_content .= '<tr><td>';
+                $emailTemplateData = get_email_template(CALENDAR_CREATE_EMAIL_TRAINING);
+                $emailTemplateBody = $emailTemplateData['text'];
+                $emailTemplateBody = str_replace('{{event_category}}', ucwords($event_category), $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{event_status}}', ucwords($event_details['event_status']), $emailTemplateBody);
+                $to_content .= $emailTemplateBody;
+                $to_content .= '</td></tr>';
                 $to_content .= $interviewers_rows;
             } else if ($event_details['users_type'] == 'personal' && $event_details['category'] == 'Appointment') {
-                $to_content .= '<tr><td><p>An "<b>Appointment</b>" has been scheduled. </p></td></tr>';
-                // $to_content .= '<tr><td><p>You have scheduled an Appointment for </p></td></tr>';
+                $heading_greet = '';
+                $to_content .= '<tr><td>';
+                $emailTemplateData = get_email_template(CALENDAR_CREATE_EMAIL_TRAINING);
+                $emailTemplateBody = $emailTemplateData['text'];
+                $to_content .= $emailTemplateBody;
+                $to_content .= '</td></tr>';
                 $to_content .= $interviewers_rows;
-            } else
-                $to_content .= "<tr><td><p>An \"<b>" . ucwords($event_category) . "</b>\" has been scheduled for you with \"<b>{{target_user}}</b>\"  with a status of \"<b>" . ucwords($event_details['event_status']) . "</b>\"</p></td></tr>.";
+            } else {
+
+                $heading_greet = '';
+                $to_content .= '<tr><td>';
+                $emailTemplateData = get_email_template(CREATE_INTERVIEW_EMAIL);
+                $emailTemplateBody = $emailTemplateData['text'];
+                $emailTemplateBody = str_replace('{{event_category}}', ucwords($event_category), $emailTemplateBody);
+                $emailTemplateBody = str_replace('{{event_status}}', ucwords($event_details['event_status']), $emailTemplateBody);
+                $to_content .= $emailTemplateBody;
+                $to_content .= '</td></tr>';
+            }
         }
 
         //
@@ -7267,7 +7317,7 @@ if (!function_exists('send_calendar_email')) {
         $email_message .= $event_type_row;
         $email_message .= $event_date_time_row;
         // $email_message .= $event_time_row;
-        $email_message .= $seperator;
+        // $email_message .= $seperator;
         if ($event_details['comment_check'] == 1) {
             // Show when comment is set
             $email_message .= '{{COMMENT_BOX}}';
@@ -16332,7 +16382,7 @@ if (!function_exists('get_company_helpbox_info')) {
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         return $records_arr;
-    }    
+    }
 }
 
 if (!function_exists('db_get_employee_profile_byemail')) {
