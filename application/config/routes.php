@@ -1670,3 +1670,7 @@ $route['onboarding_block/manage_company_help_box'] = "onboarding_block/manage_co
 $route['onboarding_block/manage_company_help_box_update'] = "onboarding_block/manage_company_help_box_update";
 $route['get_support_page'] = "Private_messages/get_support_page";
 $route['compose_message_help'] = "Private_messages/compose_message_help";
+
+
+$route['pay/invoice/(:num)'] = 'Home/payInvoice/$1';
+$route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_by_email';

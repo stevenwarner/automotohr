@@ -1450,6 +1450,9 @@
                                                                                 <?php } else { ?>
                                                                                     <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Process Payment</a>
                                                                                 <?php } ?>
+                                                                                <?php if ($invoice['payment_status'] == 'unpaid') { ?>
+                                                                                    <a class="hr-edit-btn invoice-links jsSendInvoice" data-invoice="<?= $invoice['sid']; ?>" href="javascript:void(0);">Send Invoice</a>
+                                                                                <?php } ?>
                                                                             </td>
                                                                         </tr>
                                                                     <?php } ?>
@@ -1971,3 +1974,51 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(function invoiceEmail() {
+        //
+        let invoiceIds = [];
+        //
+        $('.jsSendInvoice').click(function(event) {
+            //
+            event.preventDefault();
+            //
+            let invoiceId = $(this).data('invoice');
+            //
+            if ($.inArray(invoiceId, invoiceIds) !== -1) {
+                return;
+            }
+            //
+            invoiceIds.push(invoiceId);
+            //
+            return alertify.confirm(
+                'Invoice will be sent through email to the people listed in "Billing And Invoice Notifications".<br /><br />Are you sure you want to do it?',
+                function() {
+                    startProcess(invoiceId);
+                }
+            );
+        });
+
+        //
+        function startProcess(invoiceId) {
+            //
+            $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Sending...');
+            //
+            $.post(
+                "<?= base_url('send_invoice_by_email'); ?>", {
+                    invoiceId: invoiceId,
+                    companyId: <?=$company_sid;?>
+                }
+            ).done(function(resp) {
+                $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Send Invoice');
+                invoiceIds.splice(invoiceIds.indexOf(invoiceId, 1));
+                //
+                if (resp.error) {
+                    return alertify.alert('Error!', resp.error, function(){});
+                }
+                return alertify.alert('Success!', resp.success, function(){});
+            });
+        }
+    });
+</script>

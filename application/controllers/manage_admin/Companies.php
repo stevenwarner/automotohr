@@ -3328,4 +3328,38 @@ class Companies extends Admin_Controller
             redirect('manage_admin/companies', 'refresh');
         }
     }
+
+    public function send_invoice_by_email()
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $emails = get_notification_email_contacts($post['companyId'], 'billing_invoice');
+        //
+        if (!$emails) {
+            return SendResponse(200, ['error' => 'No emails found in billing. Please add them first']);
+        }
+        //
+        //
+        $subject = 'A new Invoice Generated!';
+        foreach ($emails as $email) {
+            $message_body = '';
+            $message_body .= '<p>' . 'Dear ' . ucwords($email['contact_name']) . '</p>';
+            $message_body .= '<p>' . 'A new invoice has been automatically generated' . '</p>';
+            $message_body .= '<p>' . 'Invoice Details are as Follows: ' . '</p>';
+            $message_body .= generate_invoice_html($post['invoiceId']);
+            $message_body .= '<p>Please, click on the following link to pay the invoice.</p>';
+            $message_body .= getButtonForEmail([
+                '{{url}}' => base_url('pay/invoice/' . $post['invoiceId']),
+                '{{color}}' => '#003087',
+                '{{text}}' => 'View & Pay Invoice',
+            ]);
+            //
+            $message_body .= '<p>' . '**This is an automated email please do not reply.**' . '</p>';
+            //
+            log_and_sendEmail(FROM_EMAIL_ACCOUNTS, $email['email'], $subject, $message_body, STORE_NAME);
+        }
+        //
+        return SendResponse(200, ['success' => 'Email sent!']);
+    }
 }

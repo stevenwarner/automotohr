@@ -2074,7 +2074,7 @@ class Home extends CI_Controller
         $action = 'completed';
         $employee_sid = $document['application_sid'];
         //
-        if($employeeId && $employeeId != $document['application_sid']) {
+        if ($employeeId && $employeeId != $document['application_sid']) {
             $employee_sid = $employeeId;
             $action = 'updated';
         } else {
@@ -2100,5 +2100,23 @@ class Home extends CI_Controller
         //
         echo 'success';
         exit(0);
+    }
+
+    /**
+     * 
+     */
+    public function payInvoice($invoiceId)
+    {
+        //
+        $this->load->model('settings_model');
+        // verify invoice
+        $invoiceDetails = $this->settings_model->Get_admin_invoice($invoiceId);
+        //
+        $hf = message_header_footer_domain($invoiceDetails['company_sid'], $invoiceDetails['company_name']);
+        //
+        $this->load->view('public_invoice', [
+            'invoiceDetails' => $invoiceDetails,
+            'hf' => $hf
+        ]);
     }
 }
