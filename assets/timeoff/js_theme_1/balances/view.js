@@ -177,7 +177,7 @@ $(function () {
                 //
                 if (Object.keys(userRow).length == 0) return;
                 //
-                rows += `<tr data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}">`;
+                rows += `<tr data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}" data-anniversary="${userRow.anniversary_text}">`;
                 rows += '    <td scope="row">';
                 rows += '        <div class="employee-info">';
                 rows += "            <figure>";
@@ -193,6 +193,8 @@ $(function () {
                         userRow.userId,
                         userRow.employee_number
                     )}</a></p>`;
+                rows += `                <p>${userRow.anniversary_text}</p>`;
+
                 rows += "            </div>";
                 rows += "        </div>";
                 rows += "    </td>";
@@ -287,7 +289,8 @@ $(function () {
         //
         startPolicyProcess(
             $(this).closest("tr").data("id"),
-            $(this).closest("tr").data("name")
+            $(this).closest("tr").data("name"),
+            $(this).closest("tr").data("anniversary")
         );
     });
 
@@ -298,7 +301,8 @@ $(function () {
         //
         startBalanceProcess(
             $(this).closest("tr").data("id"),
-            $(this).closest("tr").data("name")
+            $(this).closest("tr").data("name"),
+            $(this).closest("tr").data("anniversary")
         );
     });
 

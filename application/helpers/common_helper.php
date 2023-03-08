@@ -16345,3 +16345,96 @@ if (!function_exists('db_get_employee_profile_byemail')) {
         return $CI->db->get('users')->result_array();
     }
 }
+
+if (!function_exists('get_user_anniversary_date')) {
+    /**
+     * Get employee annivversary date
+     * 
+     * @param string $joinedAt 
+     * @param string $registrationDate 
+     * @param string $rehiredDate
+     * @param string $compareDate Optional
+     * @param bool   $onlyText Optional
+     * @return string|array
+     */
+    function get_user_anniversary_date(
+        $joinedAt,
+        $registrationDate,
+        $rehiredDate,
+        string $compareDate = '',
+        bool $onlyText = true
+    ) {
+        //
+        $r = [];
+        $r['joiningDate'] =
+            $r['timeSpentInCompany'] =
+            $r['timeSpentInCompanyAgo'] =
+            $r['text'] = '';
+        //
+        $joiningDate = null;
+        //
+        if ($rehiredDate && $rehiredDate != '0000-00-00') {
+            $joiningDate = $rehiredDate;
+        } elseif ($joinedAt && $joinedAt != '0000-00-00') {
+            $joiningDate = $joinedAt;
+        } elseif ($registrationDate && $registrationDate != '0000-00-00 00:00:00') {
+            $joiningDate = trim(explode(' ', $registrationDate)[0]);
+        } else {
+            return $onlyText ? '' : $r;
+        }
+
+        //
+        $timeSpentString = '';
+        $timeSpentString2 = '';
+        $datetime1 = date_create($joiningDate);
+        $datetime2 = date_create($compareDate ?? getSystemDate(DB_DATE));
+
+        $interval = $datetime1->diff($datetime2);
+        //
+        $years = $interval->format('%y');
+        $months = $interval->format('%m');
+        $days = $interval->format('%d');
+
+        if ($years > 0) {
+            $timeSpentString2 = $years . ' ' . ($years > 1 ? 'years' : 'year') . ' ago';
+            $timeSpentString .= $years . ' ' . ($years > 1 ? 'years' : 'year');
+        }
+        if ($months > 0) {
+            if ($timeSpentString2 == '') {
+                //
+                $timeSpentString2 = $months . ' ' . ($months > 1 ? 'months' : 'month') . ' ago';
+            }
+            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') .  $months . ' ' . ($months > 1 ? 'months' : 'month');
+        }
+        if ($days > 0) {
+            if ($timeSpentString2 == '') {
+                //
+                $timeSpentString2 = $days . ' ' . ($days > 1 ? 'days' : 'day') . ' ago';
+            }
+            $timeSpentString .= ($timeSpentString == '' ? '' : ', ') . $days . ' ' . ($days > 1 ? 'days' : 'day');
+        }
+        //
+        $return_date = formatDateToDB($joiningDate, DB_DATE, DATE);
+        $r['joiningDate'] = $return_date;
+        $r['timeSpentInCompany'] = $timeSpentString;
+        $r['timeSpentInCompanyAgo'] = $timeSpentString2;
+        $r['text'] = $return_date . " (Joined " . $timeSpentString2 . ")";
+        //
+        if ($onlyText) {
+            return "<strong>Employee Anniversary Date: " . $r['text'] . "<strong>";
+        }
+        //
+        return $r;
+    }
+}
+
+//
+if (!function_exists('get_user_datescolumns')) {
+    function get_user_datescolumns($emp_id)
+    {
+        $CI = &get_instance();
+        $CI->db->select('joined_at,registration_date');
+        $CI->db->where('sid', $emp_id);
+        return $CI->db->get('users')->result_array();
+    }
+}

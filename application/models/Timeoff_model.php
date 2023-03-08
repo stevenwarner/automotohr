@@ -126,6 +126,17 @@ class Timeoff_model extends CI_Model
         //
         $employees = $result->result_array();
         $result = $result->free_result();
+        //
+        if (!empty($employees)) {
+            foreach ($employees as $index => $employee) {
+                $employees[$index]['anniversary_text'] = get_user_anniversary_date(
+                    $employee['joined_at'],
+                    $employee['registration_date'],
+                    $employee['rehire_date']
+                );
+                
+            }
+        }
         return $employees;
     }
 
@@ -1355,18 +1366,38 @@ class Timeoff_model extends CI_Model
         $tbl
     ) {
         //
-        return $this->db
+        $historyResults = $this->db
             ->select("
             $tbl.action, 
             $tbl.note, 
             $tbl.created_at,
-            " . (getUserFields()) . "
+            " . (getUserFields()) . ",
+            users.joined_at,
+            users.registration_date,
+            users.rehire_date,
         ")
             ->join('users', "users.sid = $tbl.employee_sid", 'inner')
             ->where("$tbl.$cId", $id)
             ->order_by("$tbl.sid", 'DESC')
             ->get($tbl)
             ->result_array();
+
+            if($tbl=='timeoff_request_timeline'){
+
+                if (!empty($historyResults)) {
+                    foreach ($historyResults as $index => $historyResult) {
+                        $historyResults[$index]['anniversary_text'] = get_user_anniversary_date(
+                            $historyResult['joined_at'],
+                            $historyResult['registration_date'],
+                            $historyResult['rehire_date']
+                        );
+                        
+                    }
+                }
+
+            }
+
+            return $historyResults;
     }
 
     function fetchRequestHistoryInfo($request_sid)
@@ -1898,6 +1929,12 @@ class Timeoff_model extends CI_Model
         $balances = $this->getBalances($post['companyId']);
         // Loop through employees
         foreach ($employees as $k => $v) {
+            //
+            $v['anniversary_text'] = get_user_anniversary_date(
+                $v['joined_at'],
+                $v['registration_date'],
+                $v['rehire_date']
+            );
             //
             $r['Employees'][$v['userId']] = $v;
             //
@@ -2937,6 +2974,9 @@ class Timeoff_model extends CI_Model
             timeoff_requests.*,
             users.user_shift_hours,
             users.user_shift_minutes,
+            users.joined_at,
+            users.registration_date,
+            users.rehire_date,
             timeoff_policies.title,
             timeoff_policies.policy_category_type as categoryType,
             ' . (getUserFields()) . '
@@ -3053,6 +3093,15 @@ class Timeoff_model extends CI_Model
                             $requests[$k]['allow_update'] = 'no';
                         }
                     }
+
+                    $requests[$k]['anniversary_text'] = get_user_anniversary_date(
+                        $request['joined_at'],
+                        $requests['registration_date'],
+                        $requests['rehire_date']
+                    );
+                    
+
+
                 }
 
                 $requests[$k]['breakdown'] = get_array_from_minutes(

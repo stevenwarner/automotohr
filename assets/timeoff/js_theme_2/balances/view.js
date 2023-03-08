@@ -58,7 +58,8 @@ $(function () {
         //
         startPolicyProcess(
             $(this).closest(".jsBox").data("id"),
-            $(this).closest(".jsBox").data("name")
+            $(this).closest(".jsBox").data("name"),
+            $(this).closest(".jsBox").data("anniversary"),
         );
     });
 
@@ -69,7 +70,8 @@ $(function () {
         //
         startBalanceProcess(
             $(this).closest(".jsBox").data("id"),
-            $(this).closest(".jsBox").data("name")
+            $(this).closest(".jsBox").data("name"),
+            $(this).closest(".jsBox").data("anniversary")
         );
     });
 
@@ -347,10 +349,11 @@ $(function () {
 
     //
     function getBalanceBox(v, userRow, popo) {
+        console.log({userRow})
         return `
         <!--  -->
         <div class="col-sm-3">
-            <div class="csBox jsBox csShadow csRadius5"  data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}">
+            <div class="csBox jsBox csShadow csRadius5"  data-id="${v.total.UserId}" data-name="${userRow.first_name} ${userRow.last_name}" data-anniversary="${userRow.anniversary_text}">
                 <!-- Box Header -->
                 <div class="csBoxHeader csRadius5 csRadiusBL0 csRadiusBR0">
                     <span class="pull-right">
@@ -370,7 +373,8 @@ $(function () {
                         </div>
                         <div class="col-sm-9 pr0">
                             <p><strong>${userRow.first_name} ${userRow.last_name}</strong> <br /> ${remakeEmployeeName(userRow, false)}</p>
-                        </div>
+                            ${userRow.anniversary_text}
+                            </div>
                         </a>
                         <div class="clearfix"></div>
                     </div>
