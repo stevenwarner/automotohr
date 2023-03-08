@@ -2081,7 +2081,28 @@ class Home extends CI_Controller
             $upd['last_completed_on'] = date('Y-m-d H:i:s', strtotime('now'));
             $upd['is_expired'] = 1;
         }
-        //
+        // get EEOC by id
+        $eeoc = $this->hr_documents_management_model->getEEOCById($post['id']);
+        // only run for employee
+        if ($eeoc['users_type'] == 'employee' && checkEmployeeAdpStatus($eeoc['application_sid'])) {
+            // load the model
+            $this->load->model('2022/Adp_model', 'adp_model');
+            //
+            $this->adp_model->handleMultipleColumns(
+                [],
+                [
+                    'gender' => $eeoc['gender'],
+                    'race' => $eeoc['group_status']
+                ],
+                [
+                    'gender' => $post['gender'],
+                    'race' => $post['group']
+                ],
+                $eeoc['application_sid'],
+                getUserColumnById($eeoc['application_sid'], 'parent_sid'),
+                $eeoc['application_sid']
+            );
+        }
         //
         $this->hr_documents_management_model->updateEEOC(
             $upd,
@@ -2092,9 +2113,12 @@ class Home extends CI_Controller
         //
         $document = $this->hr_documents_management_model->getEEOC($post['id']);
         //
-        $dataToUpdate = array();
-        $dataToUpdate['gender'] = strtolower($post['gender']);
-        update_user_gender($document['application_sid'], 'employee', $dataToUpdate);
+        if (isset($post['gender'])) {
+            //
+            $dataToUpdate = array();
+            $dataToUpdate['gender'] = strtolower($post['gender']);
+            update_user_gender($document['application_sid'], 'employee', $dataToUpdate);
+        }
         //
         keepTrackVerificationDocument($employee_sid, 'employee', $action, $post['id'], 'eeoc', $post['location']);
         //

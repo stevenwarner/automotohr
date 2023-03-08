@@ -7512,6 +7512,18 @@ class Hr_documents_management_model extends CI_Model
         return $b;
     }
 
+    /**
+     * Get EEOC by id
+     * 
+     * @param int $id
+     * @return array
+     */
+    public function getEEOCById (int $id){
+        return $this->db
+        ->where('sid', $id)
+        ->get('portal_eeo_form')
+        ->row_array();
+    }
 
     //
     function updateEEOC($data, $cond)
