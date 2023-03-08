@@ -271,6 +271,10 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                             $bulkloginEmployeeName = array();
                                             ?>
                                             <?php foreach ($employee_array as $employee) {
+                                                //
+                                                if ($employee['is_executive_admin'] && $employee['active'] == 0) {
+                                                    continue;
+                                                }
 
                                                 $doNotHireWarning = doNotHireWarning($employee['sid'], $doNotHireRecords, 14);
 
