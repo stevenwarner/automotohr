@@ -185,7 +185,7 @@ function unlockNextChapter () {
         //
         if (SCORM_VERSION == "20044th" || SCORM_VERSION == "20043rd" || SCORM_TYPE == "simpleremediation") {
             var next_chapter = SCORM_XML.sequencing[next_level]["title"];
-            var id = next_chapter.trim().toLowerCase().replace(/ /g, "_");
+            var id = next_chapter.trim().toLowerCase().replace(/[^A-Z0-9]/ig, "_");
             //
             unlockNavLink(id);
             changeNavColor();
@@ -200,7 +200,7 @@ function unlockNextChapter () {
 function resetActiveNav (type) {
     //
     // Get ID to add or remove active class
-    var target_id = SCORM_CHAPTER.trim().toLowerCase().replace(/ /g, "_");
+    var target_id = SCORM_CHAPTER.trim().toLowerCase().replace(/[^A-Z0-9]/ig, "_");
     //
     if (type == "add"){
         $("#"+target_id).addClass("active");
