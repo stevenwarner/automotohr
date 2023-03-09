@@ -7647,6 +7647,10 @@ class Hr_documents_management extends Public_Controller
                 $data_to_insert['group_sid'] = $group_assign_sid;
                 $data_to_insert['assigned_by_sid'] = $employer_sid;
                 $data_to_insert['applicant_sid'] = 0;
+              if(in_array('-1',$employees)){
+                $Allemployees = $this->hr_documents_management_model->fetch_all_company_employees($company_sid);
+                $employees = array_column($Allemployees,'sid');
+                 }
 
                 if (!empty($employees)) {
                     foreach ($employees as $key => $employee) {
