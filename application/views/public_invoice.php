@@ -30,7 +30,7 @@
         <?= generate_invoice_html($invoiceDetails['sid']); ?>
 
         <hr />
-        <form action="<?php echo base_url('misc/process_payment_admin_invoice/' . $invoiceDetails['sid']) ?>" method="post" id="form_credit_card_details">
+        <form action="<?php echo base_url('misc/process_payment_admin_public_invoice/' . $invoiceDetails['sid']) ?>" method="post" id="form_credit_card_details">
             <input type="hidden" id="company_sid" name="company_sid" value="<?php echo $invoiceDetails['company_sid']; ?>" />
             <input type="hidden" id="invoice_sid" name="invoice_sid" value="<?php echo $invoiceDetails['sid']; ?>" />
             <input type="hidden" id="perform_action" name="perform_action" value="process_credit_card_payment" />
