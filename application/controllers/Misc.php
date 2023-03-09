@@ -1,5 +1,8 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 use \PayPal\Api\ExecutePayment;
 use \PayPal\Api\PaymentExecution; // required
 use \PayPal\Api\Capture;
@@ -2697,6 +2700,10 @@ class Misc extends CI_Controller
                     $this->session->set_flashdata('message', 'Payment Successfully Processed!');
                 } else {
                     $this->session->set_flashdata('message', 'Could not process Payment!');
+                }
+                //
+                if ($this->input->post('redirect_url')) {
+                    return redirect($this->input->post('redirect_url'), 'refresh');    
                 }
                 redirect('settings/list_packages_addons_invoices', 'refresh');
             }
