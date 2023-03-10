@@ -337,7 +337,7 @@ foreach ($companies as $company)
             var employee_keyword = $("#keyword").val();
             //
             if (employee_keyword) {
-                employee_keyword = employee_keyword.replace(/\s/g, ';');
+                employee_keyword = employee_keyword.replace(/\s/g, '--');
             }
 
             if (from_company_sid == 0 || to_company_sid == 0) {

@@ -78,7 +78,7 @@ class Copy_employees extends Admin_Controller
             exit(0);
         }
         //
-        $employee_keyword = str_replace(';', ' ', $employee_keyword);
+        $employee_keyword = str_replace('--', ' ', $employee_keyword);
 
         $resp = array();
         $resp['status'] = FALSE;
@@ -86,7 +86,7 @@ class Copy_employees extends Admin_Controller
 
         if (!isset($company_sid) || !isset($employee_type) || !isset($page)) {
             $resp['response'] = 'Indexes are missing from request';
-            return SendResponse(200, $resp);
+            echo json_encode($resp);
         }
 
         $company_employees = $this->copy_employees_model->get_company_employee($company_sid, $employee_type, $page, 50, $employee_sortby, $employee_sort_orderby, $employee_keyword);
@@ -95,7 +95,7 @@ class Copy_employees extends Admin_Controller
         if (empty($company_employees)) {
             $company_name = $this->copy_employees_model->get_company_name_by_id($company_sid);
             $resp['response'] = 'No desire employees found in this <b>' . $company_name . '</b>.';
-            return SendResponse(200, $resp);
+            echo json_encode($resp);
         } else {
             $resp['status'] = TRUE;
             $resp['response'] = 'Proceed';
@@ -108,7 +108,7 @@ class Copy_employees extends Admin_Controller
                 $resp['records'] = $company_employees;
             }
 
-            return SendResponse(200, $resp);
+            echo json_encode($resp);
         }
     }
 
