@@ -120,7 +120,7 @@
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Employment Type</label>
             <p class="dummy-invoice-fields">
-                <?=GetVal(isset($employment_types[$employer["employee_type"]]) ? $employment_types[$employer["employee_type"]] : $employment_types['fulltime']); ?>
+                <?=GetVal(isset($employment_types[$employer["employee_type"]]) ? $employment_types[$employer["employee_type"]] : ''); ?>
             </p>
         </div>
         <div class="col-md-6 col-xs-12 dn">
