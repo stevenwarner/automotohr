@@ -73,15 +73,17 @@ class Copy_employees_model extends CI_Model {
         $this->db->where('parent_sid', $sid);
         $this->db->where('is_executive_admin', 0);
         // $this->db->order_by('first_name', 'ASC');
-
-        if ($type == 2) {
+     
+        if ($type == 'active') {
             $this->db->where('active', 1);
             $this->db->where('terminated_status', 0);
-        } else if ($type == 3) {
-            $this->db->where('active', 0);
-            $this->db->where('terminated_status', 0);  
-        } else if ($type == 4) {
-            $this->db->where('terminated_status', 1);  
+        }
+
+        if ($type == 'terminated') {
+            $this->db->where('terminated_status', 1);
+        }
+        if ($type != 'all' && $type != 'active' && $type != 'terminated' && $type != null ) {
+            $this->db->where('LCASE(general_status) ', $type);
         }
 
 
@@ -131,21 +133,44 @@ class Copy_employees_model extends CI_Model {
         $this->db->where('parent_sid', $sid);
         $this->db->where('is_executive_admin', 0);
 
-        if ($type == 2) {
-            $this->db->where('active', 1);
-            $this->db->where('terminated_status', 0);
-        } else if ($type == 3) {
-            $this->db->where('active', 0);
-            $this->db->where('terminated_status', 0);  
-        } else if ($type == 4) {
-            $this->db->where('terminated_status', 1);  
-        }
+           if ($type == 'active') {
+                $this->db->where('active', 1);
+                $this->db->where('terminated_status', 0);
+            }
+           
+            if ($type == 'terminated') {
+                $this->db->where('terminated_status', 1);
+            }
+
+            if ($type != 'all' && $type != 'active' && $type != 'terminated'  && $type != null ) {
+                $this->db->where('LCASE(general_status) ', $type);
+            }
 
 
-        if ($employee_keyword != null && $employee_keyword !='') {
-            $tK = preg_replace('/\s+/', '|', strtolower($employee_keyword));
-            $this->db->where("(lower(first_name) regexp '" . ($tK) . "' or lower(last_name) regexp '" . ($tK) . "' or lower(extra_info) regexp '" . ($employee_keyword) . "' or nick_name LIKE '%" . $employee_keyword . "%' or username LIKE '%" . $employee_keyword . "%' or email LIKE '" . $employee_keyword . "')  ", false, false);
-        }
+            if (trim($employee_keyword)) {
+                //
+                $keywords = explode(',', trim($employee_keyword));
+                $this->db->group_start();
+                //
+                foreach ($keywords as $keyword) {
+                    $this->db->or_group_start();
+                    //
+                    $keyword = trim(urldecode($keyword));
+                    //
+                    if (strpos($keyword, '@') !== false) {
+                        $this->db->or_where('email', $keyword);
+                    } else {
+                        $this->db->where("first_name regexp '$keyword'", null, null);
+                        $this->db->or_where("last_name regexp '$keyword'", null, null);
+                        $this->db->or_where("nick_name regexp '$keyword'", null, null);
+                        $this->db->or_where("extra_info regexp '$keyword'", null, null);
+                        $this->db->or_where('lower(concat(first_name, last_name)) =', strtolower(preg_replace('/[^a-z0-9]/i', '', $keyword)));
+                    }
+                    $this->db->group_end();
+                }
+                $this->db->group_end();
+            }
+
 
         $records_obj = $this->db->get('users');
         $records_arr = $records_obj->result_array();

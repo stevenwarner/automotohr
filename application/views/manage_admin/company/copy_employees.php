@@ -66,10 +66,18 @@ foreach ($companies as $company)
                                                     <label>Employees Type</label>
                                                     <div class="hr-fields-wrap">
                                                         <select id="js-employee-type" style="width: 100%;">
-                                                            <option value="1">All Employees</option>
-                                                            <option value="2">All Active Employees</option>
-                                                            <option value="3">All Onboarding & De-activated Employees</option>
-                                                            <option value="4">All Terminated Employees</option>
+                                                            
+                                                            <option value="all" selected="selected">All</option>
+                                                            <option value="active">Active</option>
+                                                            <option value="leave">Leave</option>
+                                                            <option value="suspended">Suspended</option>
+                                                            <option value="retired">Retired</option>
+                                                            <option value="rehired">Rehired</option>
+                                                            <option value="deceased">Deceased</option>
+                                                            <option value="terminated">Terminated</option>
+                                                            <option value="inactive">Inactive</option>
+
+
                                                         </select>
                                                     </div>
                                                 </li>
