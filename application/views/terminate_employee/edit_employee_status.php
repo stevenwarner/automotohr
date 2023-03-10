@@ -51,6 +51,8 @@
                                                         <option value="2" <?= $status_data['termination_reason'] == 2 ? 'selected="selected"': '';?>>Fired</option>
                                                         <option value="3" <?= $status_data['termination_reason'] == 3 ? 'selected="selected"': '';?>>Tenure Completed</option>
                                                         <option value="18" <?= $status_data['termination_reason'] == 18 ? 'selected="selected"': '';?>>Store Closure</option>
+                                                        <option value="19" <?= $status_data['termination_reason'] == 19 ? 'selected="selected"': '';?>>Did Not Hire</option>
+                                                        <option value="20" <?= $status_data['termination_reason'] == 20 ? 'selected="selected"': '';?>>Separation</option>
                                                     </optgroup>
                                                     
                                                     <optgroup label="Voluntary">
