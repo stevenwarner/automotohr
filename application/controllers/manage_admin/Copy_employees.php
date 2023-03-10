@@ -77,6 +77,8 @@ class Copy_employees extends Admin_Controller
         if (!$this->input->is_ajax_request() || $this->input->method(true) !== 'GET') {
             exit(0);
         }
+        //
+        $employee_keyword = str_replace(';', ' ', $employee_keyword);
 
         $resp = array();
         $resp['status'] = FALSE;
