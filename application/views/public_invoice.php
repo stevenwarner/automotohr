@@ -22,7 +22,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="alert alert-info text-center">
-                    <strong>Invoice already paid</strong>
+                    <strong>You have Successfully processed this payment! Thank you for your business.</strong>
                 </div>
             </div>
         </div>
