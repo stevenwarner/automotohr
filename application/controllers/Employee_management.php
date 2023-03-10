@@ -1773,9 +1773,14 @@ class Employee_management extends Public_Controller
                         $this->load->model('2022/Adp_model', 'adp_model');
                         //
                         $this->adp_model->handleMultipleColumns(
-                            $this->input->post(null, true),
-                            $employee_detail,
-                            $data_to_insert,
+                            [
+                                'dob' => $employee_detail['dob'],
+                                'gender' => $employee_detail['gender'],
+                            ],
+                            [
+                                'dob' => $this->input->post('dob', true),
+                                'gender' => $this->input->post('gender', true),
+                            ],
                             $sid,
                             $company_id,
                             $employer_id

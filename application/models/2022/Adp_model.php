@@ -47,7 +47,6 @@ class Adp_model extends CI_Model
      *
      * @method getEmployeeAssociateOIDAdp,
      * getCompanyAdpMode
-     * @param array $post
      * @param array $oldData
      * @param array $newData
      * @param int   $employeeId
@@ -56,7 +55,6 @@ class Adp_model extends CI_Model
      * @return bool
      */
     public function handleMultipleColumns(
-        array $post,
         array $oldData,
         array $newData,
         int $employeeId,

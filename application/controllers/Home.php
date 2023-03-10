@@ -2089,7 +2089,6 @@ class Home extends CI_Controller
             $this->load->model('2022/Adp_model', 'adp_model');
             //
             $this->adp_model->handleMultipleColumns(
-                [],
                 [
                     'gender' => $eeoc['gender'],
                     'race' => $eeoc['group_status']
