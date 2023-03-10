@@ -72,7 +72,7 @@ class Adp_model extends CI_Model
             $newValue = GetVal($newData[$column]);
             // check if the value is not same and not equal to "Not Specified"
             if ($newValue != 'Not Specified' && $oldValue != $newValue) {
-                $newDataCustom[$column] = GetVal($newData[$column]);
+                $newDataCustom[$column] = trim(GetVal($newData[$column]));
             }
         }
         // check if something needs to changed
@@ -89,6 +89,10 @@ class Adp_model extends CI_Model
             //
             $fieldIndex = $this->employeeColumns[$field];
             $fieldValueURL = $this->employeeColumns[$field]['url'];
+            //
+            if ($field == 'race') {
+                $value = getRaceCode($value, false);
+            }
             // set insert array
             $ins = [
                 'employee_sid' => $employeeId,

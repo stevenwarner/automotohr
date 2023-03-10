@@ -82,25 +82,30 @@ if (!function_exists('getRaceCode')) {
      * Get race codes
      * Either race codes array is returned or options as text
      *
-     * @param int $selectedRaceCode Optional
+     * @param mixed $selectedRaceCode Optional
      * @param bool $options Optional
      * @return array|string
      */
-    function getRaceCode(int $selectedRaceCode = 0, bool $options = true)
+    function getRaceCode($selectedRaceCode = null, bool $options = true)
     {
         //
         $raceCodes = [
-            "1" => "White",
-            "2" => "Black or African American",
-            "3" => "Hispanic or Latino",
-            "4" => "Asian",
-            "5" => "American Indian and Alaska Native",
-            "6" => "Native Hawaiian and Other Pacific Islander",
-            "9" => "Two or more races"
+            1 => "white",
+            2 => "black or african american",
+            3 => "hispanic or latino",
+            4 => "asian",
+            5 => "american indian or alaska native",
+            6 => "native hawaiian or other pacific islander",
+            9 => "two or more races"
         ];
         //
         if (!$options) {
-            return $raceCodes;
+            //
+            if (gettype($selectedRaceCode) == 'string') {
+                $raceCodes = array_flip($raceCodes);
+            }
+            //
+            return $selectedRaceCode != null ? $raceCodes[strtolower($selectedRaceCode)] : $raceCodes;
         }
         //
         $html = '';
