@@ -203,7 +203,13 @@
                                     <?php if ((isset($employerData) && $employerData['access_level'] != 'Employee') || (isset($employee) && $employee['access_level'] != 'Employee')) { ?>
                                         <a href="<?php echo base_url('dashboard'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"> Management Dashboard </a>
                                     <?php } ?>
-                                    <a href="<?php echo base_url('my_profile'); ?>" class="btn btn-info btn-orange"><i class="fa fa-pencil" aria-hidden="true"></i> my profile</a>
+
+                                    <?php if($this->uri->segment(1)=='employee_management_system'){?>
+                                        <a href="<?php echo base_url('my_profile'); ?>" class="btn btn-info btn-orange" ><i class="fa fa-pencil"></i> my profile</a>
+                                         <?php }else{ ?>
+                                            <a href="<?php echo base_url('employee_management_system'); ?>" class="btn btn-info btn-orange" ><i class="fa fa-pencil"></i> EMS Dashboard</a>
+                                    <?php }?>
+                                
                                 </div>
                             <?php } ?>
                         </div>
