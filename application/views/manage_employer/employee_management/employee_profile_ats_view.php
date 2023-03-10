@@ -372,12 +372,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                         <option <?= $employer["marital_status"] == 'not_specified' ? 'selected' : ''; ?> value="not_specified">
                                                             Please select marital status
                                                         </option>
-                                                        <option <?= $employer["marital_status"] == 'Single' ? 'selected' : ''; ?> value="Single">
-                                                            Single
-                                                        </option>
-                                                        <option <?= $employer["marital_status"] == 'Married' ? 'selected' : ''; ?> value="Married">
-                                                            Married
-                                                        </option>
+                                                        <?=getMaritalCode($employer["marital_status"]);?>
                                                         <option <?= $employer["marital_status"] == 'Other' ? 'selected' : ''; ?> value="Other">
                                                             Other
                                                         </option>

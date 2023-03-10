@@ -117,3 +117,48 @@ if (!function_exists('getRaceCode')) {
         return $html;
     }
 }
+
+if (!function_exists('getMaritalCode')) {
+    /**
+     * Get marital codes
+     * Either marital codes array is returned or options as text
+     *
+     * @param mixed $selectedMaritalCode Optional
+     * @param bool $options Optional
+     * @return array|string
+     */
+    function getMaritalCode($selectedMaritalCode = null, bool $options = true)
+    {
+        //
+        $selectedMaritalCode = trim($selectedMaritalCode);
+        //
+        $maritalCodes = [
+            // 'A' => "Annulled",
+            'D' => "Divorced",
+            // 'I' => "Interlocutory",
+            'L' => "Legally Separated",
+            'M' => "Married",
+            'P' => "Polygamous",
+            'S' => "Single",
+            // 'T' => "Domestic Partner",
+            'W' => "Widowed"
+        ];
+        //
+        if (!$options) {
+            //
+            if (strlen($selectedMaritalCode) != 1) {
+                $maritalCodes = array_flip($maritalCodes);
+            }
+            //
+            return $selectedMaritalCode != null ? $maritalCodes[ucwords($selectedMaritalCode)] : $maritalCodes;
+        }
+        //
+        $html = '';
+        //
+        foreach ($maritalCodes as $raceCode) {
+            $html .= '<option value="' . ($raceCode) . '" ' . ($selectedMaritalCode == $raceCode ? 'selected' : '') . '>' . ($raceCode) . '</option>';
+        }
+        //
+        return $html;
+    }
+}

@@ -1776,10 +1776,12 @@ class Employee_management extends Public_Controller
                             [
                                 'dob' => $employee_detail['dob'],
                                 'gender' => $employee_detail['gender'],
+                                'marital_status' => $employee_detail['marital_status']
                             ],
                             [
                                 'dob' => $this->input->post('dob', true),
                                 'gender' => $this->input->post('gender', true),
+                                'marital_status' => $this->input->post('marital_status', true)
                             ],
                             $sid,
                             $company_id,

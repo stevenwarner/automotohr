@@ -39,6 +39,26 @@ class Adp_model extends CI_Model
                     ]
                 ]
             ],
+            'marital_status' => [
+                'tag' => 'Workers - Demographic Data Management',
+                'name' => 'maritalStatusCode',
+                'url' => 'events/hr/v1/worker.marital-status.change',
+                'body' => [
+                    "maritalStatusCode" => [
+                        'codeValue' => 'S'
+                    ]
+                ]
+            ],
+            'first_name' => [
+                'tag' => 'Workers - Demographic Data Management',
+                'name' => 'legalName',
+                'url' => 'events/hr/v1/worker.marital-status.change',
+                'body' => [
+                    "maritalStatusCode" => [
+                        'codeValue' => 'S'
+                    ]
+                ]
+            ],
         ];
     }
 
@@ -90,6 +110,13 @@ class Adp_model extends CI_Model
             //
             if ($field == 'race') {
                 $value = getRaceCode($value, false);
+            } elseif ($field == 'marital_status') {
+                $value = getMaritalCode($value, false);
+            }
+            // If no value is present
+            // don't push it ADP
+            if (!$value) {
+                continue;
             }
             // set insert array
             $ins = [
