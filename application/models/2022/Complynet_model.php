@@ -444,12 +444,24 @@ class Complynet_model extends CI_Model
 
     public function getTableData($tableName, $where)
     {
-        return
-            $this->db
+        if ($tableName == 'complynet_employees') {
+            $records_arr = $this->db
+            ->select('complynet_employees.*,users.active')    
             ->where($where)
-            ->order_by('sid', 'desc')
-            ->get($tableName)
-            ->result_array();
+                ->join('users', 'users.sid = complynet_employees.employee_sid', 'left')
+                ->order_by('sid', 'desc')
+                ->get($tableName)
+                ->result_array();
+            $this->GetEmployeeStatus($records_arr);
+            return $records_arr;
+        } else {
+            return
+                $this->db
+                ->where($where)
+                ->order_by('sid', 'desc')
+                ->get($tableName)
+                ->result_array();
+        }
     }
 
     public function syncDepartments(
@@ -598,7 +610,8 @@ class Complynet_model extends CI_Model
             complynet_job_title,
             access_level,
             access_level_plus,
-            pay_plan_flag
+            pay_plan_flag,
+            active
         ')
             ->where('parent_sid', $companySid)
             ->where('is_executive_admin', 0)
@@ -614,9 +627,12 @@ class Complynet_model extends CI_Model
             foreach ($employees as $index => $employee) {
                 //
                 $employees[$index]['department_sid'] = $this->getEmployeeDepartmentId($employee['sid']);
+                $employees[$index]['employee_sid'] = $this->getEmployeeDepartmentId($employee['sid']);
             }
         }
         //
+        $this->GetEmployeeStatus($employees);
+       
         return $employees;
     }
 
@@ -1185,5 +1201,75 @@ class Complynet_model extends CI_Model
         }
         //
         return $record['job_title'];
+    }
+
+    //
+    private function GetEmployeeStatus(&$employees, $status = 1)
+    {
+        //
+        if (empty($employees)) {
+            return false;
+        }
+        $transferRecords = $this->db
+            ->select('new_employee_sid')
+            ->get('employees_transfer_log')
+            ->result_array();
+        //
+        $transferIds = array_column($transferRecords, 'new_employee_sid');
+        //
+        $employeeIds = array_column($employees, 'employee_sid');
+        //
+        $statuses = $this->db
+            ->select('employee_sid, termination_date, status_change_date, details, do_not_hire')
+            ->where_in('employee_sid', $employeeIds)
+            ->where('employee_status', $status)
+            ->get('terminated_employees')
+            ->result_array();
+        //
+        $last_statuses = $this->db
+            ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status')
+            ->where_in('employee_sid', $employeeIds)
+            ->order_by('terminated_employees.sid', 'DESC')
+            ->get('terminated_employees')
+            ->result_array();
+        //
+        if (!empty($statuses)) {
+            //
+            $tmp = [];
+            //
+            foreach ($statuses as $stat) {
+                //
+                $tmp[$stat['employee_sid']] = $stat;
+            }
+            //
+            $statuses = $tmp;
+            //
+            $tmp = [];
+            //
+            foreach ($last_statuses as $stat) {
+                //
+                if (!isset($tmp[$stat['employee_sid']])) {
+                    $tmp[$stat['employee_sid']] = $stat;
+                }
+            }
+            //
+            $last_statuses = $tmp;
+            //
+            unset($tmp);
+        }
+        //
+        foreach ($employees as $index => $employee) {
+            //
+            if (in_array($employee['employee_sid'], $transferIds)) {
+                $transferDate = get_employee_transfer_date($employee['employee_sid']);
+                $employees[$index]['trensfer_date'] = $transferDate;
+            }
+            //
+            $employees[$index]['last_status'] = isset($statuses[$employee['employee_sid']]) ? $statuses[$employee['employee_sid']] : [];
+            $employees[$index]['last_status_2'] = isset($last_statuses[$employee['employee_sid']]) ? $last_statuses[$employee['employee_sid']] : [];
+            $employees[$index]['last_status_text'] = isset($last_statuses[$employee['employee_sid']]) ? GetEmployeeStatusText($last_statuses[$employee['employee_sid']]['employee_status']) : '';
+        }
+        //
+        return true;
     }
 }
