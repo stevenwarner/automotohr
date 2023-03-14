@@ -446,8 +446,8 @@ class Complynet_model extends CI_Model
     {
         if ($tableName == 'complynet_employees') {
             $records_arr = $this->db
-            ->select('complynet_employees.*,users.active')    
-            ->where($where)
+                ->select('complynet_employees.*,users.active')
+                ->where($where)
                 ->join('users', 'users.sid = complynet_employees.employee_sid', 'left')
                 ->order_by('sid', 'desc')
                 ->get($tableName)
@@ -627,12 +627,12 @@ class Complynet_model extends CI_Model
             foreach ($employees as $index => $employee) {
                 //
                 $employees[$index]['department_sid'] = $this->getEmployeeDepartmentId($employee['sid']);
-                $employees[$index]['employee_sid'] = $this->getEmployeeDepartmentId($employee['sid']);
+                $employees[$index]['employee_sid'] = $employee['sid'];
             }
         }
         //
         $this->GetEmployeeStatus($employees);
-       
+
         return $employees;
     }
 
