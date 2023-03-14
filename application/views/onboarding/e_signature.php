@@ -56,7 +56,7 @@ if (isset($applicant)) {
 </div>
 
 <div class="main jsmaincontent">
-    <div class="container-fluid">
+    <div class="container">
         
         <?php if($this->uri->segment(1) != 'e_signature'){ ?>
             <div class="row">

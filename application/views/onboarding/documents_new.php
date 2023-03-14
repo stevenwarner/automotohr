@@ -48,7 +48,7 @@ $tab_data['document_offer_letter_base'] = $document_offer_letter_base;
 ?>
 
 <div class="main jsmaincontent">
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
            <?php if($this->uri->segment(1) != 'hr_documents_management'){ ?>
             <div class="col-sm-12">
