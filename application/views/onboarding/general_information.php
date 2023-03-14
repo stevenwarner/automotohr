@@ -67,7 +67,7 @@ $title = '';
 
 ?>
 <div class="main jsmaincontent">
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>

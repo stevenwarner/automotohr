@@ -49,12 +49,12 @@ function getAnswer($answers_given, $question, $doReturn = FALSE, $compareValue =
 ?>
 
 <div class="main jsmaincontent">
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <div class="row">
                     <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
-                    <div class="col-lg-1 col-md-1 col-xs-12 col-sm-1">
+                    <div class="col-lg-2 col-md-2 col-xs-12 col-sm-3">
                         <a href="<?php echo base_url('employee_management_system'); ?>" class="btn btn-info csRadius5"><i class="fa fa-arrow-left"> </i> Dashboard</a>
                     </div>
                     <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
