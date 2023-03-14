@@ -39,7 +39,7 @@
     <div class="wrapper-outer">
 
         <header class="header <?= in_array('iframe', $this->uri->segment_array()) ? 'hidden' : ''; ?>">
-            <div class="container-fluid">
+            <div class="container">
                 <div class="row">
                     <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
                         <div class="logo">
@@ -190,8 +190,14 @@
                                 </ul>
                             </div>
                             <div class="btn-link-wrp">
-                                <a href="<?php echo base_url('my_profile'); ?>"><i class="fa fa-pencil"></i> my
-                                    profile</a>
+                                <?php if ((isset($employerData) && $employerData['access_level'] != 'Employee') || (isset($employee) && $employee['access_level'] != 'Employee')) { ?>
+                                    <a href="<?php echo base_url('dashboard'); ?>" class="btn btn-info btn-orange" style="-webkit-border-radius: 5px !important;"> Management Dashboard </a>
+                                <?php } ?>
+                                <?php if ($this->uri->segment(1) == 'employee_management_system') { ?>
+                                    <a href="<?php echo base_url('my_profile'); ?>" class="btn btn-info btn-orange"><i class="fa fa-pencil"></i> my profile</a>
+                                <?php } else { ?>
+                                    <a href="<?php echo base_url('employee_management_system'); ?>" class="btn btn-info btn-orange">EMS Dashboard</a>
+                                <?php } ?>
                             </div>
                         </div>
                     </div>

@@ -207,7 +207,7 @@
                                     <?php if($this->uri->segment(1)=='employee_management_system'){?>
                                         <a href="<?php echo base_url('my_profile'); ?>" class="btn btn-info btn-orange" ><i class="fa fa-pencil"></i> my profile</a>
                                          <?php }else{ ?>
-                                            <a href="<?php echo base_url('employee_management_system'); ?>" class="btn btn-info btn-orange" ><i class="fa fa-pencil"></i> EMS Dashboard</a>
+                                            <a href="<?php echo base_url('employee_management_system'); ?>" class="btn btn-info btn-orange" >EMS Dashboard</a>
                                     <?php }?>
                                 
                                 </div>
