@@ -291,6 +291,12 @@ class employers extends Admin_Controller
         $this->data['security_details'] = $security_details;
         check_access_permissions($security_details, $redirect_url, $function_name); // Param2: Redirect URL, Param3: Function Name
         $employer_detail = $this->company_model->get_details($sid, 'employer');
+        // print_r($employer_detail);
+        //  die();
+
+        $company_id = $employer_detail[0]['parent_sid'];
+        $employer_id = $sid;
+
         $company_detail = $this->company_model->get_details($employer_detail[0]['parent_sid'], 'company');
         $this->data['creator'] = $employer_detail[0]['created_by'] == null ? [] : $this->company_model->getEmployeeCreator($employer_detail[0]['created_by']);
         $this->data['show_timezone'] = isset($company_detail[0], $company_detail[0]['timezone']) ? $company_detail[0]['timezone'] : '';
@@ -441,6 +447,36 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone', true);
                 if ($timezone != '') $data['timezone'] = $timezone;
             }
+
+
+            // only run for employee
+            if (checkEmployeeAdpStatus($sid)) {
+                // load the model
+                $this->load->model('2022/Adp_model', 'adp_model');
+                //
+                $this->adp_model->handleMultipleColumns(
+                    [
+                        'gender' => $employer_detail[0]['gender'],
+                        'marital_status' => $employer_detail[0]['marital_status'],
+                        'rehire_date' => $employer_detail[0]['rehire_date'],
+                        'phone_number' => $employer_detail[0]['PhoneNumber'],
+                        'email' => $employer_detail[0]['email']
+                    ],
+                    [
+                        'gender' => $this->input->post('gender', true),
+                        'marital_status' => $this->input->post('marital_status', true),
+                        'rehire_date' => $this->input->post('rehire_date', true),
+                        'phone_number' => $this->input->post('cell_number', true),
+                        'email' => $this->input->post('email', true)
+                    ],
+                    $sid,
+                    $company_id,
+                    $employer_id
+                );
+            }
+
+
+
 
 
             $this->company_model->update_user($sid, $data, 'Employer');

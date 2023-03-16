@@ -2447,7 +2447,47 @@ class Employee_management extends Public_Controller
 
                 //
                 $oldCompareData = array_merge($employee_detail, unserialize($employee_detail['extra_info']));
-                //
+               
+                // only run for employee
+                if (checkEmployeeAdpStatus($sid)) {
+                    // load the model
+                    $this->load->model('2022/Adp_model', 'adp_model');
+                    //
+                    $this->adp_model->handleMultipleColumns(
+                        [
+                            'dob' => $employee_detail['dob'],
+                            'gender' => $employee_detail['gender'],
+                            'marital_status' => $employee_detail['marital_status'],
+                            'Location_Address' => $employee_detail['Location_Address'],
+                            'Location_City' => $employee_detail['Location_City'],
+                            'Location_State' => $employee_detail['Location_State'],
+                            'Location_ZipCode' => $employee_detail['Location_ZipCode'],
+                            'Location_Country' => $employee_detail['Location_Country'],
+                            'ssn' => $employee_detail['ssn'],
+                            'phone_number' => $employee_detail['PhoneNumber'],
+                            'email' => $employee_detail['email']
+                        ],
+                        [
+                            'dob' => $this->input->post('dob', true),
+                            'gender' => $this->input->post('gender', true),
+                            'marital_status' => $this->input->post('marital_status', true),
+                            'Location_Address' => $this->input->post('Location_Address', true),
+                            'Location_City' => $this->input->post('Location_City', true),
+                            'Location_State' => $this->input->post('Location_State', true),
+                            'Location_ZipCode' => $this->input->post('Location_ZipCode', true),
+                            'Location_Country' => $this->input->post('Location_Country', true),
+                            'ssn' => $this->input->post('ssn', true),
+                            'phone_number' => $this->input->post('PhoneNumber', true),
+                            'email' => $this->input->post('email', true)
+
+                        ],
+                        $sid,
+                        $company_id,
+                        $employer_id
+                    );
+                }
+
+
                 $this->dashboard_model->update_user($sid, $data);
                 //
                 $difference = $this->findDifference($oldCompareData, $newCompareData);

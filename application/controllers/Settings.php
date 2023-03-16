@@ -358,7 +358,7 @@ class Settings extends Public_Controller
             $this->form_validation->set_rules('email', 'Company E-Mail', 'trim|xss_clean');
             $this->form_validation->set_rules('CompanyDescription', 'Description', 'trim|xss_clean');
             //
-            if($payroll_status == 1){
+            if ($payroll_status == 1) {
                 $this->form_validation->set_rules('ssn', 'ssn', 'trim|xss_clean|required');
             }
             //
@@ -396,16 +396,16 @@ class Settings extends Public_Controller
                 }
 
                 // Full employment form required
-                if(isset($post['18_plus'])){
+                if (isset($post['18_plus'])) {
                     $company_extra_info['18_plus'] = $post['18_plus'];
                 }
-                if(isset($post['affiliate'])){
+                if (isset($post['affiliate'])) {
                     $company_extra_info['affiliate'] = $post['affiliate'];
                 }
-                if(isset($post['d_license'])){
+                if (isset($post['d_license'])) {
                     $company_extra_info['d_license'] = $post['d_license'];
                 }
-                if(isset($post['l_employment'])){
+                if (isset($post['l_employment'])) {
                     $company_extra_info['l_employment'] = $post['l_employment'];
                 }
                 $extra_info = serialize($company_extra_info);
@@ -496,10 +496,10 @@ class Settings extends Public_Controller
                 }
 
                 // EEOC Questionnaire
-                    $portal_data['dl_vet'] = $this->input->post('dl_vet', true) == 'on' ? 1 : 0;
-                    $portal_data['dl_vol'] = $this->input->post('dl_vol', true) == 'on' ? 1 : 0;
-                    $portal_data['dl_gen'] = $this->input->post('dl_gen', true) == 'on' ? 1 : 0;
-                 
+                $portal_data['dl_vet'] = $this->input->post('dl_vet', true) == 'on' ? 1 : 0;
+                $portal_data['dl_vol'] = $this->input->post('dl_vol', true) == 'on' ? 1 : 0;
+                $portal_data['dl_gen'] = $this->input->post('dl_gen', true) == 'on' ? 1 : 0;
+
 
                 //
                 $data['ssn'] = $this->input->post('ssn', true);
@@ -621,7 +621,7 @@ class Settings extends Public_Controller
                     }
                 }
                 // Check and update data on gusto
-                if($onPayroll == 1){
+                if ($onPayroll == 1) {
                     //
                     $this->load->model('Payroll_model', 'pm');
                     $this->load->helper('payroll');
@@ -644,7 +644,7 @@ class Settings extends Public_Controller
                 $portal_data['man_d4'] = $this->input->post('man_d4', true) == 'on' ? 1 : 0;
                 $portal_data['man_d5'] = $this->input->post('man_d5', true) == 'on' ? 1 : 0;
                 //
-                if(checkIfAppIsEnabled('documentlibrary')):
+                if (checkIfAppIsEnabled('documentlibrary')) :
                     $portal_data['dl_i9'] = $this->input->post('dl_i9', true) == 'on' ? 1 : 0;
                     $portal_data['dl_w9'] = $this->input->post('dl_w9', true) == 'on' ? 1 : 0;
                     $portal_data['dl_w4'] = $this->input->post('dl_w4', true) == 'on' ? 1 : 0;
@@ -1433,43 +1433,43 @@ class Settings extends Public_Controller
             $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
             $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
             //
-            if($data['ssn_required'] == 1){
+            if ($data['ssn_required'] == 1) {
                 //
                 $this->form_validation->set_rules('TextBoxSSN', 'TextBoxSSN', 'required|trim|xss_clean');
             }
             //
-            if($data['dob_required'] == 1){
+            if ($data['dob_required'] == 1) {
                 //
                 $this->form_validation->set_rules('TextBoxDOB', 'Date of Birth', 'required|trim|xss_clean');
             }
-            
-            if(isset($ei['affiliate'])){
+
+            if (isset($ei['affiliate'])) {
                 $data['affiliate'] = $ei['affiliate'];
             }
-            if(isset($ei['18_plus'])){
+            if (isset($ei['18_plus'])) {
                 $data['eight_plus'] = $ei['18_plus'];
             }
-            if(isset($ei['d_license'])){
+            if (isset($ei['d_license'])) {
                 $data['d_license'] = $ei['d_license'];
             }
-            if(isset($ei['l_employment'])){
+            if (isset($ei['l_employment'])) {
                 $data['l_employment'] = $ei['l_employment'];
             }
             //
-            if($data['d_license'] && $this->input->post('RadioButtonListDriversLicenseQuestion', true) != 'No'){
+            if ($data['d_license'] && $this->input->post('RadioButtonListDriversLicenseQuestion', true) != 'No') {
                 $this->form_validation->set_rules('TextBoxDriversLicenseNumber', 'License Number', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxDriversLicenseExpiration', 'License Expiration Date', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListDriversCountry', 'License Country', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('DropDownListDriversState', 'License State', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('RadioButtonListDriversLicenseTraffic', 'guilty', 'required|trim|xss_clean');
 
-                if($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No'){
+                if ($this->input->post('RadioButtonListDriversLicenseTraffic', true) != 'No') {
                     $this->form_validation->set_rules('license_guilty_details_violation', 'Violation', 'required|trim|xss_clean');
                 }
             }
-            
+
             //
-            if($data['l_employment']){
+            if ($data['l_employment']) {
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerName1', 'Employment Type', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerPosition1', 'Position', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerAddress1', 'Address', 'required|trim|xss_clean');
@@ -1485,14 +1485,14 @@ class Settings extends Public_Controller
                 $this->form_validation->set_rules('RadioButtonListEmploymentEmployerContact1_0', 'Contact', 'required|trim|xss_clean');
                 $this->form_validation->set_rules('TextBoxEmploymentEmployerReasonLeave1', 'Reason', 'required|trim|xss_clean');
             }
-           
+
             //
-            if($data['eight_plus']){
+            if ($data['eight_plus']) {
                 $this->form_validation->set_rules('RadioButtonListWorkOver18', '18 years', 'required|trim|xss_clean');
             }
-            
+
             //
-            if($data['affiliate']){
+            if ($data['affiliate']) {
                 $this->form_validation->set_rules('is_already_employed', 'Already Employed', 'required|trim|xss_clean');
             }
             $this->load->model('manage_admin/documents_model');
@@ -1500,7 +1500,7 @@ class Settings extends Public_Controller
             //
             $data['_ssv'] = $_ssv = getSSV($data['session']['employer_detail']);
 
-           
+
 
             if ($this->form_validation->run() === FALSE) {
                 //
@@ -1552,7 +1552,7 @@ class Settings extends Public_Controller
                 // if($updateArray){
                 //     $this->db->where('sid', $data['employer']['sid'])->update('users', ['full_employment_application' => serialize($updateArray)]);
                 // }
-
+               
                 $this->load->view('main/header', $data);
                 $this->load->view('manage_employer/full_employment_application');
                 $this->load->view('main/footer');
@@ -1624,11 +1624,11 @@ class Settings extends Public_Controller
                 );
 
                 $record =
-                $this->db
-                ->select('full_employment_application')
-                ->where('sid', $id)
-                ->get('users')
-                ->row_array();
+                    $this->db
+                    ->select('full_employment_application')
+                    ->where('sid', $id)
+                    ->get('users')
+                    ->row_array();
                 //
                 $fef = [];
 
@@ -1660,6 +1660,44 @@ class Settings extends Public_Controller
                 if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN']) && !isSecret($formpost['TextBoxSSN'])) {
                     $data['ssn'] = $formpost['TextBoxSSN'];
                 }
+
+
+
+                // only run for employee
+                if (checkEmployeeAdpStatus($sid)) {
+                    // load the model
+                    $this->load->model('2022/Adp_model', 'adp_model');
+                    //
+                    $this->adp_model->handleMultipleColumns(
+                        [
+                            'dob' => $data["employer"]['dob'],
+                            'Location_Address' => $data["employer"]['Location_Address'],
+                            'Location_City' => $data["employer"]['Location_City'],
+                            'Location_State' => $data["employer"]['Location_State'],
+                            'Location_ZipCode' => $data["employer"]['Location_ZipCode'],
+                            'Location_Country' => $data["employer"]['Location_Country'],
+                            'ssn' => $data["employer"]['ssn'],
+                            'phone_number' => $data["employer"]['PhoneNumber'],
+                            'email' => $data["employer"]['email']
+                        ],
+                        [
+                            'dob' => $this->input->post('TextBoxDOB', true),
+                            'Location_Address' => $this->input->post('Location_Address', true),
+                            'Location_City' => $this->input->post('Location_City', true),
+                            'Location_State' => $this->input->post('Location_State', true),
+                            'Location_ZipCode' => $this->input->post('Location_ZipCode', true),
+                            'Location_Country' => $this->input->post('Location_Country', true),
+                            'ssn' => $this->input->post('TextBoxSSN', true),
+                            'phone_number' => $this->input->post('PhoneNumber', true),
+                            'email' => $this->input->post('email', true)
+                        ],
+                        $sid,
+                        $company_id,
+                        $employer_id
+                    );
+                }
+
+
                 //
                 $this->dashboard_model->update_user($id, $data);
                 $this->session->set_flashdata('message', '<b>Success:</b> Full employment form updated successfully');
@@ -2000,11 +2038,11 @@ class Settings extends Public_Controller
                 //
                 $doSend = false;
                 //
-                if(array_key_exists('document_sent_on', $userData)){
+                if (array_key_exists('document_sent_on', $userData)) {
                     //
                     $doSend = false;
                     //
-                    if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                    if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                         $doSend = true;
                         //
                         $this->hr_documents_management_model->update_employee($sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -2012,7 +2050,7 @@ class Settings extends Public_Controller
                 }
 
                 // Only send if dosend is true
-                if($doSend == true){
+                if ($doSend == true) {
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -2505,11 +2543,11 @@ class Settings extends Public_Controller
                 //
                 $doSend = false;
                 //
-                if(array_key_exists('document_sent_on', $userData)){
+                if (array_key_exists('document_sent_on', $userData)) {
                     //
                     $doSend = false;
                     //
-                    if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                    if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                         $doSend = true;
                         //
                         $this->hr_documents_management_model->update_employee($sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -2517,7 +2555,7 @@ class Settings extends Public_Controller
                 }
 
                 // Only send if dosend is true
-                if($doSend == true){
+                if ($doSend == true) {
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_TEMPLATE,
@@ -2776,11 +2814,11 @@ class Settings extends Public_Controller
                 //
                 $doSend = false;
                 //
-                if(array_key_exists('document_sent_on', $userData)){
+                if (array_key_exists('document_sent_on', $userData)) {
                     //
                     $doSend = false;
                     //
-                    if(empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
+                    if (empty($userData['document_sent_on']) || $userData['document_sent_on'] > date('Y-m-d 23:59:59', strtotime('now'))) {
                         $doSend = true;
                         //
                         $this->hr_documents_management_model->update_employee($user_sid, array('document_sent_on' => date('Y-m-d H:i:s', strtotime('now'))));
@@ -2788,7 +2826,7 @@ class Settings extends Public_Controller
                 }
 
                 // Only send if dosend is true
-                if($doSend == true){
+                if ($doSend == true) {
                     // Send document completion alert
                     broadcastAlert(
                         DOCUMENT_NOTIFICATION_TEMPLATE,
