@@ -1678,5 +1678,8 @@ $route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_b
 /**
  * Payroll routes for Gusto
  */
+// Admins
 $route['get_payroll_admins/(:num)']['get'] = 'gusto/Gusto_payroll/getAdmins/$1';
 $route['payroll/admin/(:num)']['post'] = 'gusto/Gusto_payroll/addAdmin/$1';
+// Signatories
+$route['payroll/signatories/(:num)']['get'] = 'gusto/Gusto_payroll/getSignatories/$1';

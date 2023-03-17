@@ -20,7 +20,6 @@ $(function companyOnboard() {
             Title: 'Manage Admins for Payroll'
         }, fetchAdmins);
     });
-
     /**
      * 
      */
@@ -31,7 +30,6 @@ $(function companyOnboard() {
         $('.jsSection').removeClass('dn');
         $('.jsSection[data-key="view"]').addClass('dn');
     });
-
     /**
      * 
      */
@@ -42,7 +40,6 @@ $(function companyOnboard() {
         $('.jsSection').removeClass('dn');
         $('.jsSection[data-key="add"]').addClass('dn');
     });
-
     /**
      * 
      */
@@ -101,6 +98,26 @@ $(function companyOnboard() {
             });;
     });
 
+    /**
+     * Captures admin event
+     */
+    $('.jsManageGustoSignatories').click(function (event) {
+        //
+        event.preventDefault();
+        //
+        companyId = $(this).data('cid');
+        //
+        Modal({
+            Id: 'jsManageGustoSignatoriesModal',
+            Loader: 'jsManageGustoSignatoriesModalLoader',
+            Body: '<div id="jsManageGustoSignatoriesModalBody"></div>',
+            Title: 'Manage Signatories for Payroll'
+        }, fetchSignatories);
+    });
+
+    /**
+     * Fetch admins
+     */
     function fetchAdmins() {
         //
         if (xhr !== null) {
@@ -122,6 +139,33 @@ $(function companyOnboard() {
                 xhr = null;
                 $('#jsManageGustoAdminsModalBody').html('<strong class="alert alert-danger text-center">Something went wrong. Please try again in few seconds.</strong>')
                 ml(false, 'jsManageGustoAdminsModalLoader');
+            });
+    }
+
+    /**
+     * Fetch signatories
+     */
+    function fetchSignatories() {
+        //
+        if (xhr !== null) {
+            xhr.abort();
+        }
+        //
+        xhr = $.get(
+            baseURI + 'payroll/signatories/' + companyId
+        )
+            .success(function (response) {
+                //
+                xhr = null;
+                //
+                $('#jsManageGustoSignatoriesModalBody').html(response.view)
+                //
+                ml(false, 'jsManageGustoSignatoriesModalLoader');
+            })
+            .fail(function () {
+                xhr = null;
+                $('#jsManageGustoSignatoriesModalBody').html('<strong class="alert alert-danger text-center">Something went wrong. Please try again in few seconds.</strong>')
+                ml(false, 'jsManageGustoSignatoriesModalLoader');
             });
     }
 });

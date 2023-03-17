@@ -2164,3 +2164,59 @@ if (!function_exists('getAdminsFromGusto')) {
         }
     }
 }
+
+// Signatories calls
+if (!function_exists('getSignatoriesFromGusto')) {
+    /**
+     * Get signatories on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getSignatoriesFromGusto($company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getSignatoriesFromGusto', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getSignatoriesFromGusto($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}

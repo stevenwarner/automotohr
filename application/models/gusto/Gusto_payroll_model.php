@@ -125,6 +125,68 @@ class Gusto_payroll_model extends CI_Model
     }
 
     /**
+     * Get all signatories from Gusto
+     *
+     * @param int   $companyId
+     * @return array
+     */
+    public function fetchAllSignatories($companyId)
+    {
+        // get company UUID
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        if (!$companyDetails) {
+            return [];
+        }
+        //
+        $response = getSignatoriesFromGusto($companyDetails, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        if (!isset($response['errors']) && $response) {
+            //
+            $tmp = [];
+            //
+            foreach ($response as $admin) {
+                $tmp[$admin['email']] = $admin;
+                //
+                if (!$this->db->where([
+                    'company_sid' => $companyId,
+                    'email_address' => $admin['email']
+                ])->count_all_results('payroll_company_admin')) {
+                    //
+                    $this->db->insert(
+                        'payroll_company_admin',
+                        [
+                            'ssn' => $admin['ssn'],
+                            'first_name' => $admin['first_name'],
+                            'middle_initial' => $admin['middle_initial'],
+                            'last_name' => $admin['last_name'],
+                            'email_address' => $admin['email'],
+                            'title' => $admin['title'],
+                            'phone' => $admin['phone'],
+                            'birthday' => $admin['birthday'],
+                            'street_1' => $admin['street_1'],
+                            'street_2' => $admin['street_2'],
+                            'city' => $admin['city'],
+                            'state' => $admin['state'],
+                            'zip' => $admin['zip'],
+                            'gusto_uuid' => $admin['uuid'],
+                            'created_at' => getSystemDate(),
+                            'updated_at' => getSystemDate(),
+                            'company_sid' => $companyId
+                        ]
+                    );
+                }
+            }
+            //
+            return $tmp;
+        }
+        //
+        return [];
+    }
+
+    /**
      * Get gusto company details for gusto
      *
      * @param int $companyId

@@ -114,4 +114,29 @@ class Gusto_payroll extends CI_Controller
             ]
         );
     }
+    
+    /**
+     * Get signatories
+     *
+     * @param int $companyId
+     * @return json
+     */
+    public function getSignatories(int $companyId)
+    {
+        // fetch all signatories
+        $this->gusto_payroll_model->fetchAllSignatories($companyId);
+        // get all signatories
+        $signatories = $this->db
+            ->where('company_sid', $companyId)
+            ->order_by('sid', 'desc')
+            ->get('payroll_signatories')
+            ->result_array();
+        //
+        return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('gusto/signatories/view', ['signatories' => $signatories], true)
+            ]
+        );
+    }
 }
