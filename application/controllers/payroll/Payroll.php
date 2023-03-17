@@ -20,9 +20,9 @@ class Payroll extends CI_Controller
         $this->load->helper("payroll_helper");
         //
         $this->userDetails = [
-            'first_name'=> 'Steven',
-            'last_name'=> 'Warner',
-            'email'=> FROM_EMAIL_STEVEN,
+            'first_name' => 'Steven',
+            'last_name' => 'Warner',
+            'email' => FROM_EMAIL_STEVEN,
             'phone' => ''
         ];
         //
@@ -38,9 +38,9 @@ class Payroll extends CI_Controller
         $this->pages['header'] = 'main/header';
         $this->pages['footer'] = 'main/footer';
         //
-        $this->version = 'v='.(MINIFIED ? '1.0' : time());
+        $this->version = 'v=' . (MINIFIED ? '1.0' : time());
         //
-        if(!$this->session->userdata('logged_in')['company_detail']['on_payroll']){
+        if (!$this->session->userdata('logged_in')['company_detail']['on_payroll']) {
             return redirect('/dashboard');
         }
     }
@@ -48,7 +48,8 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function Dashboard(){
+    function Dashboard()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -56,15 +57,16 @@ class Payroll extends CI_Controller
         $this->data['load_view'] = 0;
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/dashboard')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/dashboard')
+            ->view('main/footer');
     }
 
     /**
      * 
      */
-    function CompanyOnboard(){
+    function CompanyOnboard()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -80,8 +82,8 @@ class Payroll extends CI_Controller
         $this->data['company_sid'] = $company_sid;
 
         $this->load->model('Payroll_model', 'pm');
-        $this->data['company_info']=$this->pm->GetGustoCompanyData($company_sid);
-        $this->data['companyPayrollStatus']=$this->pm->GetCompanyPayrollStatus($company_sid);
+        $this->data['company_info'] = $this->pm->GetGustoCompanyData($company_sid);
+        $this->data['companyPayrollStatus'] = $this->pm->GetCompanyPayrollStatus($company_sid);
         //
         $company_status = array();
         $onboarding_link = "";
@@ -94,22 +96,23 @@ class Payroll extends CI_Controller
             //
             $flow_info = CreateCompanyFlowLink($this->data['company_info']);
             //
-            $onboarding_link = isset($flow_info['url']) ? $flow_info['url']: '';
+            $onboarding_link = isset($flow_info['url']) ? $flow_info['url'] : '';
         }
         //
         $this->data['company_status'] = $company_status;
         $this->data['onboarding_link'] = $onboarding_link;
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/company')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/company')
+            ->view('main/footer');
     }
-    
+
     /**
      * 
      */
-    function EmployeeList($type = 'normal'){
+    function EmployeeList($type = 'normal')
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -126,15 +129,16 @@ class Payroll extends CI_Controller
         $this->data['company_sid'] = $company_sid;
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/employees_list')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/employees_list')
+            ->view('main/footer');
     }
 
-     /**
+    /**
      * 
      */
-    function MyPayStubs(){
+    function MyPayStubs()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -156,22 +160,24 @@ class Payroll extends CI_Controller
         //
         // Get employee saved paystubs
         $this->data['payStubs'] = $this->pm->GetPayrollColumns(
-            'payroll_employees_pay_stubs', [
+            'payroll_employees_pay_stubs',
+            [
                 'employee_sid' => $myId
             ],
             'sid, payroll_uuid, s3_file_name, check_date'
         );
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/pay_stubs')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/pay_stubs')
+            ->view('main/footer');
     }
-    
+
     /**
      * 
      */
-    function Accounts(){
+    function Accounts()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -181,7 +187,8 @@ class Payroll extends CI_Controller
         LoadModel('scm', $this);
         // Get Company Bank Accounts
         $this->data['BankAccounts'] = $this->scm->GetBankAccounts(
-            $this->data['companyId'], [
+            $this->data['companyId'],
+            [
                 'company_bank_accounts.sid',
                 'company_bank_accounts.account_title',
                 'company_bank_accounts.account_number',
@@ -202,15 +209,16 @@ class Payroll extends CI_Controller
         );
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/accounts')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/accounts')
+            ->view('main/footer');
     }
-    
+
     /**
      * 
      */
-    function Settings(){
+    function Settings()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -218,15 +226,16 @@ class Payroll extends CI_Controller
         $this->data['load_view'] = 0;
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/settings')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/settings')
+            ->view('main/footer');
     }
-    
+
     /**
      * 
      */
-    function PayrollHistory(){
+    function PayrollHistory()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -237,24 +246,27 @@ class Payroll extends CI_Controller
         $this->CheckAndGetProcessedPayrolls($this->data['companyId']);
         //
         $this->data['payrollHistory'] = $this->pm->GetPayrollColumns(
-            'payrolls', [
+            'payrolls',
+            [
                 'company_sid' => $this->data['companyId']
             ],
-            'sid, "Regular" as type, payroll_json', [
+            'sid, "Regular" as type, payroll_json',
+            [
                 'start_date', 'DESC'
             ]
         );
         // Get Gusto Company Details
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/payroll_history')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/payroll_history')
+            ->view('main/footer');
     }
-    
+
     /**
      * 
      */
-    function PayrollSingleHistory($id){
+    function PayrollSingleHistory($id)
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -263,7 +275,8 @@ class Payroll extends CI_Controller
         $this->data['hide_employer_section'] = 1;
         //
         $this->data['payrollHistory'] = $this->pm->GetPayrollColumn(
-            'payrolls', [
+            'payrolls',
+            [
                 'company_sid' => $this->data['companyId'],
                 'sid' => $id
             ],
@@ -273,14 +286,15 @@ class Payroll extends CI_Controller
         $this->data['Payroll'] = json_decode($this->data['payrollHistory']['payroll_json'], true);
         // Get Gusto Company Details
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/payroll_single_history')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/payroll_single_history')
+            ->view('main/footer');
     }
     /**
      * 
      */
-    function Run(){
+    function Run()
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -289,38 +303,39 @@ class Payroll extends CI_Controller
         $this->data['hide_employer_section'] = 1;
         // Get processed payrolls
         // Get the company pay periods
-        $response = $this->PayPeriods($this->data['companyId']);    
+        $response = $this->PayPeriods($this->data['companyId']);
         // let's reverse the pay periods
         $this->data['period'] = array_reverse($response['Response'])[0];
         //
-        if(!$this->data['period']['payroll']['processed']){
+        if (!$this->data['period']['payroll']['processed']) {
             // Get the single payroll
             $this->data['payroll'] = $this->GetUnProcessedPayrolls(
-                $this->data['companyId'], 
-                $this->data['period']['start_date'], 
+                $this->data['companyId'],
+                $this->data['period']['start_date'],
                 $this->data['period']['end_date']
             )['Response'][0];
             //
             $version = $this->data['payroll']['version'];
             //
             $this->UpdatePayrollForDemo(
-                $this->data['payroll']['employee_compensations'], 
+                $this->data['payroll']['employee_compensations'],
                 $version,
-                $this->data['payroll']['pay_period']['start_date'], 
+                $this->data['payroll']['pay_period']['start_date'],
                 $this->data['payroll']['pay_period']['end_date']
             );
         }
         // Get Gusto Company Details
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/create')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/create')
+            ->view('main/footer');
     }
 
     /**
      * Run the current payroll
      */
-    function RunSingle($payrolId, $version = false){
+    function RunSingle($payrolId, $version = false)
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -331,23 +346,23 @@ class Payroll extends CI_Controller
         $this->data['step'] = $this->input->get('step', true) ? $this->input->get('step', true) : '1';
 
         //
-        if($this->data['step'] == 4){
+        if ($this->data['step'] == 4) {
             $this->data['Payroll'] = $this->pm->GetSinglePayroll($payrolId);
-        } else{
+        } else {
             //
             $this->data['Payroll'] = $this->GetSinglePayroll($payrolId, $this->data['companyId'], $this->data['step'])['Response'];
         }
         //
-        if($this->data['step'] == 3 && empty($this->data['Payroll']['calculated_at'])){
+        if ($this->data['step'] == 3 && empty($this->data['Payroll']['calculated_at'])) {
             // Calculate Payroll
             $this->CalculatePayroll($this->data['companyId'], $payrolId);
             //
             sleep(2);
             //
-            return redirect(current_url().'?step=3');
+            return redirect(current_url() . '?step=3');
         }
         //
-        if($this->data['processed'] && $this->data['step'] <= 3){
+        if ($this->data['processed'] && $this->data['step'] <= 3) {
             return redirect(base_url('payroll/run'));
         }
         //
@@ -360,10 +375,10 @@ class Payroll extends CI_Controller
         //
         $this->data['PayrollEmployees'] = $this->GetCompanyEmployees($this->data['companyId'])['Response'];
         //
-        if(!empty($this->data['Payroll'])){
-            foreach($this->data['Payroll']['employee_compensations'] as $index => $payroll){
+        if (!empty($this->data['Payroll'])) {
+            foreach ($this->data['Payroll']['employee_compensations'] as $index => $payroll) {
 
-                if($payroll['excluded'] == 1 && $this->data['step'] >= 3){
+                if ($payroll['excluded'] == 1 && $this->data['step'] >= 3) {
                     unset($this->data['Payroll']['employee_compensations'][$index]);
                     continue;
                 }
@@ -374,29 +389,29 @@ class Payroll extends CI_Controller
                 $hourly_compensations = [];
                 $paid_time_off = [];
                 //
-                if(!isset($payroll['payment_method'])){
+                if (!isset($payroll['payment_method'])) {
                     $this->data['Payroll']['employee_compensations'][$index]['payment_method'] = 'Direct Deposit';
                 }
                 //
-                if(!empty($payroll['fixed_compensations'])){
-                    foreach($payroll['fixed_compensations'] as $v){
+                if (!empty($payroll['fixed_compensations'])) {
+                    foreach ($payroll['fixed_compensations'] as $v) {
                         //
-                        if(stringToSlug($v['name']) == 'reimbursement'){
+                        if (stringToSlug($v['name']) == 'reimbursement') {
                             $fixed_compensations[stringToSlug($v['name'])][] = $v;
-                        } else{
+                        } else {
                             $fixed_compensations[stringToSlug($v['name'])] = $v;
                         }
                     }
                 }
                 //
-                if(!empty($payroll['hourly_compensations'])){
-                    foreach($payroll['hourly_compensations'] as $v){
+                if (!empty($payroll['hourly_compensations'])) {
+                    foreach ($payroll['hourly_compensations'] as $v) {
                         $hourly_compensations[stringToSlug($v['name'])] = $v;
                     }
                 }
                 //
-                if(!empty($payroll['paid_time_off'])){
-                    foreach($payroll['paid_time_off'] as $v){
+                if (!empty($payroll['paid_time_off'])) {
+                    foreach ($payroll['paid_time_off'] as $v) {
                         $paid_time_off[stringToSlug($v['name'])] = $v;
                     }
                 }
@@ -412,15 +427,16 @@ class Payroll extends CI_Controller
         $this->data['payrollVersion'] = $this->data['Payroll']['version'];
         // Get Gusto Company Details
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/create_payroll')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/create_payroll')
+            ->view('main/footer');
     }
-    
+
     /**
      * 
      */
-    function AddEmployee($employeeId){
+    function AddEmployee($employeeId)
+    {
         //
         $this->checkLogin($this->data);
         //
@@ -430,7 +446,8 @@ class Payroll extends CI_Controller
         $this->load->model($this->models['sem'], 'sem');
         // Get employee details
         $employee = $this->sem->GetEmployeeDetails(
-            $employeeId, [
+            $employeeId,
+            [
                 'sid',
                 'parent_sid',
                 'email',
@@ -444,17 +461,17 @@ class Payroll extends CI_Controller
             ]
         );
         //
-        if(!empty($employee['full_employment_application'])){
+        if (!empty($employee['full_employment_application'])) {
             //
             $ef = unserialize($employee['full_employment_application']);
             //
             $employee['middle_name'] = isset($ef['TextBoxNameMiddle']) ? $ef['TextBoxNameMiddle'] : '';
             //
-            if(empty($employee['ssn']) && isset($ef['TextBoxSSN'])){
+            if (empty($employee['ssn']) && isset($ef['TextBoxSSN'])) {
                 $employee['ssn'] = $ef['TextBoxSSN'];
             }
             //
-            if(empty($employee['dob']) && isset($ef['TextBoxDOB'])){
+            if (empty($employee['dob']) && isset($ef['TextBoxDOB'])) {
                 $employee['dob'] = DateTime::createfromformat('m-d-Y', $ef['TextBoxDOB'])->format('Y-m-d');
             }
             //
@@ -468,20 +485,21 @@ class Payroll extends CI_Controller
             'updated_at'
         ]);
         //
-        if(!empty($this->data['Payroll'])){
+        if (!empty($this->data['Payroll'])) {
             $this->data['Employee']['on_payroll'] = 1;
         }
         //
         $this->load
-        ->view('main/header', $this->data)
-        ->view('payroll/add_employee')
-        ->view('main/footer');
+            ->view('main/header', $this->data)
+            ->view('payroll/add_employee')
+            ->view('main/footer');
     }
 
     /**
      * 
      */
-    function GetAddBankAccount($companyId){
+    function GetAddBankAccount($companyId)
+    {
         //
         $d = [];
         //
@@ -499,7 +517,7 @@ class Payroll extends CI_Controller
     function GetEditBankAccount(
         $accountId,
         $companyId
-    ){
+    ) {
         //
         $d = [];
         //
@@ -507,9 +525,10 @@ class Payroll extends CI_Controller
         //
         LoadModel('scm', $this);
         //
-        $bankAccount= $this->scm->GetSingleBankAccounts(
+        $bankAccount = $this->scm->GetSingleBankAccounts(
             $companyId,
-            $accountId, [
+            $accountId,
+            [
                 'bank_name',
                 'account_title',
                 'use_for_payroll',
@@ -531,13 +550,14 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function RemoveCompanyBankAccounts(){
+    function RemoveCompanyBankAccounts()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'post' ||
-            empty($this->input->post()) 
-        ){
+            empty($this->input->post())
+        ) {
             res($this->resp);
         }
         //
@@ -554,25 +574,26 @@ class Payroll extends CI_Controller
             'Statua' => true,
             'Message' => 'You have successfully deleted the bank accounts.'
         ]);
-        
     }
 
     /**
      * 
      */
-    function GetEmployeeBankAccounts($employeeId){
+    function GetEmployeeBankAccounts($employeeId)
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'get'
-        ){
+        ) {
             res($this->resp);
         }
         // Load Employee Model
         LoadModel('sem', $this);
         //
         $records = $this->sem->GetBankAccounts(
-            $employeeId, [
+            $employeeId,
+            [
                 'sid as account_id',
                 'account_title',
                 'routing_transaction_number as routing_number',
@@ -588,9 +609,9 @@ class Payroll extends CI_Controller
         ]);
         //
         echo $this->load->view('payroll/partials/bank_account_details', [
-            'employeeId' => $employeeId, 
-            'bank_accounts' => $records, 
-            'selected' => $bankAccount 
+            'employeeId' => $employeeId,
+            'bank_accounts' => $records,
+            'selected' => $bankAccount
         ], true);
     }
 
@@ -598,13 +619,14 @@ class Payroll extends CI_Controller
      * Create a partner company 
      * on Gusto with the API Key
      */
-    function CreatePartnerCompany(){
+    function CreatePartnerCompany()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'post' ||
-            empty($this->input->post()) 
-        ){
+            empty($this->input->post())
+        ) {
             res($this->resp);
         }
         //
@@ -613,7 +635,8 @@ class Payroll extends CI_Controller
         $this->load->model('single/Company_model');
         // Get company
         $companyDetails = $this->Company_model->GetCompanyDetails(
-            $companyId, [
+            $companyId,
+            [
                 'ssn as EIN',
                 'CompanyName'
             ]
@@ -628,11 +651,11 @@ class Payroll extends CI_Controller
         //
         $response = CreatePartnerCompany($request);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -640,7 +663,7 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             // All okay to go
             $date = date('Y-m-d H:i:s', strtotime('now'));
             //
@@ -667,13 +690,14 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function AddEmployeeToPayroll(){
+    function AddEmployeeToPayroll()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'post' ||
-            empty($this->input->post()) 
-        ){
+            empty($this->input->post())
+        ) {
             res($this->resp);
         }
         //
@@ -706,11 +730,11 @@ class Payroll extends CI_Controller
         //
         $response = AddEmployeeToCompany($request, $company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -718,7 +742,7 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             // All okay to go
             $date = date('Y-m-d H:i:s', strtotime('now'));
             //
@@ -745,13 +769,14 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function AddBankAccountToPayroll(){
+    function AddBankAccountToPayroll()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'post' ||
-            empty($this->input->post()) 
-        ){
+            empty($this->input->post())
+        ) {
             res($this->resp);
         }
         //
@@ -765,7 +790,7 @@ class Payroll extends CI_Controller
             'bank_id'
         ]);
         //
-        if(empty($bankAccount)){
+        if (empty($bankAccount)) {
             res([
                 'Status' => false,
                 'Errors' => 'Please add the employee on payroll first.'
@@ -778,7 +803,7 @@ class Payroll extends CI_Controller
             'gusto_company_uid'
         ]);
         //
-        if(!empty($bankAccount['bank_uid'])){
+        if (!empty($bankAccount['bank_uid'])) {
             // Remove the old ones
             DeleteBankAccountToPayroll([
                 'bank_account_id' => $bankAccount['bank_uid'],
@@ -803,11 +828,11 @@ class Payroll extends CI_Controller
         //
         $response = AddBankAccountToPayroll($request, $company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -815,7 +840,7 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             // All okay to go
             $updateArray = [];
             $updateArray['bank_id'] = $post['id'];
@@ -834,13 +859,14 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function AddCompanyBankAccountToPayroll(){
+    function AddCompanyBankAccountToPayroll()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'post' ||
-            empty($this->input->post()) 
-        ){
+            empty($this->input->post())
+        ) {
             res($this->resp);
         }
         //
@@ -862,7 +888,7 @@ class Payroll extends CI_Controller
             'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
         ]);
         //
-        if($post['use_for_payroll'] == 'false'){
+        if ($post['use_for_payroll'] == 'false') {
             res([
                 'Status' => true,
                 'Response' => 'You have successfully added a new bank account',
@@ -874,7 +900,7 @@ class Payroll extends CI_Controller
             'refresh_token',
             'gusto_company_uid'
         ]);
-        
+
         //
         $request =  [];
         $request['routing_number'] = $post['routing_number'];
@@ -883,11 +909,11 @@ class Payroll extends CI_Controller
         //
         $response = AddCompanyBankAccountToPayroll($request, $company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -895,7 +921,7 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             // All okay to go
             $updateArray = [];
             $updateArray['account_uid'] = $response['uuid'];
@@ -914,13 +940,14 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function EditCompanyBankAccountToPayroll(){
+    function EditCompanyBankAccountToPayroll()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'post' ||
-            empty($this->input->post()) 
-        ){
+            empty($this->input->post())
+        ) {
             res($this->resp);
         }
         //
@@ -941,7 +968,7 @@ class Payroll extends CI_Controller
             'updated_at' => date('Y-m-d H:i:s', strtotime('now'))
         ], ['sid' => $bankAccountId]);
         //
-        if($post['use_for_payroll'] == 'false'){
+        if ($post['use_for_payroll'] == 'false') {
             res([
                 'Status' => true,
                 'Response' => 'You have successfully updated a new bank account',
@@ -953,7 +980,7 @@ class Payroll extends CI_Controller
             'refresh_token',
             'gusto_company_uid'
         ]);
-        
+
         //
         $request =  [];
         $request['routing_number'] = $post['routing_number'];
@@ -962,11 +989,11 @@ class Payroll extends CI_Controller
         //
         $response = AddCompanyBankAccountToPayroll($request, $company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -974,7 +1001,7 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             // All okay to go
             $updateArray = [];
             $updateArray['account_uid'] = $response['uuid'];
@@ -990,17 +1017,18 @@ class Payroll extends CI_Controller
             ]);
         }
     }
-    
+
     /**
      * 
      */
-    function UpdateCompanyBankAccount(){
+    function UpdateCompanyBankAccount()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'post' ||
-            empty($this->input->post()) 
-        ){
+            empty($this->input->post())
+        ) {
             res($this->resp);
         }
         //
@@ -1010,9 +1038,10 @@ class Payroll extends CI_Controller
         //
         $bankAccountId = $post['accountId'];
         //
-        $bankAccount= $this->scm->GetSingleBankAccounts(
+        $bankAccount = $this->scm->GetSingleBankAccounts(
             $post['companyId'],
-            $post['accountId'], [
+            $post['accountId'],
+            [
                 'account_number',
                 'routing_number',
                 'account_type'
@@ -1024,7 +1053,7 @@ class Payroll extends CI_Controller
             'refresh_token',
             'gusto_company_uid'
         ]);
-        
+
         //
         $request =  [];
         $request['routing_number'] = $bankAccount['routing_number'];
@@ -1033,11 +1062,11 @@ class Payroll extends CI_Controller
         //
         $response = AddCompanyBankAccountToPayroll($request, $company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -1045,7 +1074,7 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             // All okay to go
             $updateArray = [];
             $updateArray['account_uid'] = $response['uuid'];
@@ -1065,13 +1094,14 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function UpdatePayroll(){
+    function UpdatePayroll()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() &&
             $this->input->method() != 'post' &&
             empty($this->input->post())
-        ){
+        ) {
             res($this->resp);
         }
         //
@@ -1083,7 +1113,7 @@ class Payroll extends CI_Controller
         // Make request array
         $employeeArray = [];
         //
-        foreach($post['payroll'] as $payroll){
+        foreach ($post['payroll'] as $payroll) {
             //
             unset($payroll['fixedCompensations']['reimbursement']);
             unset($payroll['paid_time_off_amount']);
@@ -1091,23 +1121,23 @@ class Payroll extends CI_Controller
             $ta = [];
             $ta['employee_id'] = $payroll['employeeId'];
             $ta['excluded'] = $payroll['excluded'];
-            if(isset($payroll['paymentMethod'])){
+            if (isset($payroll['paymentMethod'])) {
                 $ta['payment_method'] = $payroll['paymentMethod'];
             }
             $ta['fixed_compensations'] = array_values($payroll['fixedCompensations']);
             $ta['hourly_compensations'] = array_values($payroll['hourlyCompensations']);
             $ta['paid_time_off'] = isset($payroll['paidTimeOff']) ? array_values($payroll['paidTimeOff']) : [];
             //
-            if(isset($payroll['reimbursements'])){                
+            if (isset($payroll['reimbursements'])) {
                 //
                 $reimbursements = $payroll['reimbursements'];
                 //
-                foreach($reimbursements as $reimbursement){
+                foreach ($reimbursements as $reimbursement) {
                     $reimbursement['job_id'] = isset($ta['fixed_compensations'][0]['job_id']) ? $ta['fixed_compensations'][0]['job_id'] : $payroll['jobId'];
                     $reimbursement['name'] = 'Reimbursement';
                     $ta['fixed_compensations'][] = $reimbursement;
                 }
-            } else{
+            } else {
                 $ta['fixed_compensations'][] = [
                     'job_id' => $payroll['jobId'],
                     'name' => 'Reimbursement',
@@ -1132,11 +1162,11 @@ class Payroll extends CI_Controller
         //
         $response = UpdatePayrollById($request, $company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -1144,14 +1174,14 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else if(isset($response['message'])){
-           
+        } else if (isset($response['message'])) {
+
             // Error took place
             res([
                 'Status' => false,
                 'Message' => $response['message']
             ]);
-        } else{
+        } else {
             //
             res([
                 'Status' => true,
@@ -1163,13 +1193,14 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    function CancelPayroll(){
+    function CancelPayroll()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() &&
             $this->input->method() != 'post' &&
             empty($this->input->post())
-        ){
+        ) {
             res($this->resp);
         }
         //
@@ -1190,11 +1221,11 @@ class Payroll extends CI_Controller
         //
         $response = CancelPayrollById($company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -1202,7 +1233,7 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             //
             $this->pm->DeletePayroll('payrolls', ['payroll_id' => $company['payroll_id']]);
             //
@@ -1212,11 +1243,12 @@ class Payroll extends CI_Controller
             ]);
         }
     }
-    
+
     /**
      * 
      */
-    function UpdatePayrollForDemo($employees, $version, $startDate, $endDate){
+    function UpdatePayrollForDemo($employees, $version, $startDate, $endDate)
+    {
         //
         $data = [];
         //
@@ -1230,17 +1262,18 @@ class Payroll extends CI_Controller
         //
         UpdatePayrollForDemo($company, $employees, $version, $startDate, $endDate);
     }
-    
+
     /**
      * 
      */
-    function SubmitPayroll(){
+    function SubmitPayroll()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() &&
             $this->input->method() != 'post' &&
             empty($this->input->post())
-        ){
+        ) {
             res($this->resp);
         }
         //
@@ -1261,11 +1294,11 @@ class Payroll extends CI_Controller
         //
         $response = SubmitPayrollById($company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -1273,7 +1306,7 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             //
             res([
                 'Status' => true,
@@ -1285,25 +1318,26 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    private function GetUnProcessedPayrolls($companyId, $startDate, $endDate){
+    private function GetUnProcessedPayrolls($companyId, $startDate, $endDate)
+    {
         //
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
             'refresh_token',
             'gusto_company_uid'
         ]);
-        
+
         //
-        $query = '?processed=false&start_date='.($startDate).'&end_date='.($endDate).'';
+        $query = '?processed=false&start_date=' . ($startDate) . '&end_date=' . ($endDate) . '';
         $query = '?processed=false';
         //
         $response = GetUnProcessedPayrolls($query, $company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -1311,9 +1345,9 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             //
-            return[
+            return [
                 'Status' => true,
                 'Response' => $response,
             ];
@@ -1323,7 +1357,8 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    private function GetProcessedPayrolls($companyId, $startDate = ''){
+    private function GetProcessedPayrolls($companyId, $startDate = '')
+    {
         //
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
@@ -1333,17 +1368,17 @@ class Payroll extends CI_Controller
         //
         $query = '?processed=true&include=taxes,benefits,deductions&show_calculation=true';
         //
-        if(!empty($startDate)){
-            $query .= '&start_date='.$startDate;
+        if (!empty($startDate)) {
+            $query .= '&start_date=' . $startDate;
         }
         //
         $response = GetUnProcessedPayrolls($query, $company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -1351,9 +1386,9 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             //
-            return[
+            return [
                 'Status' => true,
                 'Response' => $response,
             ];
@@ -1363,7 +1398,8 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    private function GetSinglePayroll($payrollId, $companyId, $step){
+    private function GetSinglePayroll($payrollId, $companyId, $step)
+    {
         //
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
@@ -1377,11 +1413,11 @@ class Payroll extends CI_Controller
         //
         $response = GetSinglePayroll($query, $company, $step);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -1389,64 +1425,9 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             //
-            return[
-                'Status' => true,
-                'Response' => $response,
-            ];
-        }
-    }
-    
-    /**
-     * 
-     */
-    private function GetCompanyEmployees($companyId){
-        //
-        $company = $this->pm->GetCompany($companyId, [
-            'access_token',
-            'refresh_token',
-            'gusto_company_uid'
-        ]);
-        //
-        $response = GetCompanyEmployees($company);
-        //
-        if(isset($response['errors'])){
-            //
-            $errors = [];
-            //
-            foreach($response['errors'] as $error){
-                $errors[] = $error[0];
-            }
-            // Error took place
-            res([
-                'Status' => false,
-                'Errors' => $errors
-            ]);
-        } else{
-            //
-            if(!empty($response)){
-                //
-                $emps = [];
-                //
-                foreach($response as $emp){
-                    //
-                    $id = SnToString($emp['id']);
-                    //
-                    $emps[$id] = $emp;
-                    //
-                    if(!empty($emps[$id]['jobs'])){
-                        foreach($emps[$id]['jobs'] as $index => $value){
-                            //
-                            $emps[$id]['jobs'][SnToString($value['id'])] = $value;
-                        }
-                    }
-                }
-                //
-                $response = $emps;
-            }
-            //
-            return[
+            return [
                 'Status' => true,
                 'Response' => $response,
             ];
@@ -1456,7 +1437,64 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-    private function CalculatePayroll($companyId, $payrollId){
+    private function GetCompanyEmployees($companyId)
+    {
+        //
+        $company = $this->pm->GetCompany($companyId, [
+            'access_token',
+            'refresh_token',
+            'gusto_company_uid'
+        ]);
+        //
+        $response = GetCompanyEmployees($company);
+        //
+        if (isset($response['errors'])) {
+            //
+            $errors = [];
+            //
+            foreach ($response['errors'] as $error) {
+                $errors[] = $error[0];
+            }
+            // Error took place
+            res([
+                'Status' => false,
+                'Errors' => $errors
+            ]);
+        } else {
+            //
+            if (!empty($response)) {
+                //
+                $emps = [];
+                //
+                foreach ($response as $emp) {
+                    //
+                    $id = SnToString($emp['id']);
+                    //
+                    $emps[$id] = $emp;
+                    //
+                    if (!empty($emps[$id]['jobs'])) {
+                        foreach ($emps[$id]['jobs'] as $index => $value) {
+                            //
+                            $emps[$id]['jobs'][SnToString($value['id'])] = $value;
+                        }
+                    }
+                }
+                //
+                $response = $emps;
+            }
+            //
+            return [
+                'Status' => true,
+                'Response' => $response,
+            ];
+        }
+    }
+
+    /**
+     * 
+     */
+    private function CalculatePayroll($companyId, $payrollId)
+    {
         //
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
@@ -1468,11 +1506,11 @@ class Payroll extends CI_Controller
         //
         $response = CalculatePayroll($company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -1480,34 +1518,36 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             //
-            return[
+            return [
                 'Status' => true,
                 'Response' => $response
             ];
         }
     }
-    
-   
+
+
 
     /**
      * 
      */
-    function RefreshToken(){
+    function RefreshToken()
+    {
         //
-        if(
+        if (
             !$this->input->is_ajax_request() ||
             $this->input->method() !== 'post' ||
-            empty($this->input->post()) 
-        ){
+            empty($this->input->post())
+        ) {
             res($this->resp);
         }
         //        
         $companyId = $this->input->post('sid', TRUE);
         //
         $company = $this->pm->GetCompany(
-            $companyId, [
+            $companyId,
+            [
                 'gusto_company_uid',
                 'access_token',
                 'refresh_token'
@@ -1518,8 +1558,10 @@ class Payroll extends CI_Controller
             'access_token' => $company['access_token'],
             'refresh_token' => $company['refresh_token']
         ]);
+
+        _e($response, true);
         //
-        if(isset($response['access_token'])){
+        if (isset($response['access_token'])) {
             $this->pm->UpdatePC([
                 'old_access_token' => $company['access_token'],
                 'old_refresh_token' => $company['refresh_token'],
@@ -1537,7 +1579,8 @@ class Payroll extends CI_Controller
 
     // As of 12/09/2021
     //
-    private function PayPeriods($companyId){
+    private function PayPeriods($companyId)
+    {
         //
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
@@ -1546,11 +1589,11 @@ class Payroll extends CI_Controller
         ]);
         $response = PayPeriods($company, date('Y-m-t', strtotime('-2 month')));
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             //
             $errors = [];
             //
-            foreach($response['errors'] as $error){
+            foreach ($response['errors'] as $error) {
                 $errors[] = $error[0];
             }
             // Error took place
@@ -1558,9 +1601,9 @@ class Payroll extends CI_Controller
                 'Status' => false,
                 'Errors' => $errors
             ]);
-        } else{
+        } else {
             //
-            return[
+            return [
                 'Status' => true,
                 'Response' => $response
             ];
@@ -1580,7 +1623,8 @@ class Payroll extends CI_Controller
      * 
      * @return VOID
      */
-    private function checkLogin(&$data, $return = FALSE){
+    private function checkLogin(&$data, $return = FALSE)
+    {
         //
         if (!$this->session->userdata('logged_in')) {
             if ($return) {
@@ -1596,21 +1640,21 @@ class Payroll extends CI_Controller
         $data['employerId'] = $data['session']['employer_detail']['sid'];
         $data['employerName'] = ucwords($data['session']['employer_detail']['first_name'] . ' ' . $data['session']['employer_detail']['last_name']);
         $data['isSuperAdmin'] = $data['session']['employer_detail']['access_level_plus'];
-        $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
+        $data['employerRole'] = $data['session']['employer_detail']['access_level'];
         $data['load_view'] = $data['session']['company_detail']['ems_status'];
         $data['employee'] = $data['session']['employer_detail'];
         //
         if ($return) {
             return true;
-        }
-        else {
+        } else {
             //
             $data['security_details'] = db_get_access_level_details($data['employerId'], NULL, $data['session']);
         }
     }
 
     //
-    private function CheckAndFetchPayStubs($companyId, $employeeId){
+    private function CheckAndFetchPayStubs($companyId, $employeeId)
+    {
         // Get company
         $company = $this->pm->GetCompany($companyId, [
             'access_token',
@@ -1619,20 +1663,22 @@ class Payroll extends CI_Controller
         ]);
         // Get employee UUID
         $employeeUid = $this->pm->GetPayrollColumn(
-            'payroll_employees', [
+            'payroll_employees',
+            [
                 'employee_sid' => $employeeId
             ],
             'payroll_employee_uuid'
         );
         // Get employee saved paystubs
         $paystubs = $this->pm->GetPayrollColumns(
-            'payroll_employees_pay_stubs', [
+            'payroll_employees_pay_stubs',
+            [
                 'employee_sid' => $employeeId
             ],
             'payroll_uuid'
         );
         //
-        if(!empty($paystubs)){
+        if (!empty($paystubs)) {
             $paystubs = array_column($paystubs, 'payroll_uuid');
         }
         // Get all processed payrolls
@@ -1640,37 +1686,39 @@ class Payroll extends CI_Controller
         //
         $response = GetUnProcessedPayrolls($query, $company);
         //
-        if(isset($response['errors'])){
+        if (isset($response['errors'])) {
             return [];
         }
         //
-        foreach($response as $payroll){
+        foreach ($response as $payroll) {
             //
-            if(in_array($payroll['payroll_uuid'], $paystubs)){ continue; }
+            if (in_array($payroll['payroll_uuid'], $paystubs)) {
+                continue;
+            }
             // 
-            foreach($payroll['employee_compensations'] as $ec){
+            foreach ($payroll['employee_compensations'] as $ec) {
                 //
                 //
-                if($employeeUid == $ec['employee_uuid']){
+                if ($employeeUid == $ec['employee_uuid']) {
                     $stubResponse = GetEmployeePayStubs($payroll['payroll_uuid'], $employeeUid, $company);
                     //
-                    if(isset($stubResponse['s3_file_url'])){
+                    if (isset($stubResponse['s3_file_url'])) {
                         //
                         $this->db
-                        ->insert('payroll_employees_pay_stubs', [
-                            'employee_sid' => $employeeId,
-                            'payroll_uuid' => $payroll['payroll_uuid'],
-                            'processed_date' => $payroll['processed_date'],
-                            'payroll_deadline' => $payroll['payroll_deadline'],
-                            'check_date' => $payroll['check_date'],
-                            'start_date' => $payroll['pay_period']['start_date'],
-                            'end_date' => $payroll['pay_period']['end_date'],
-                            'pay_schedule_uuid' => $payroll['pay_period']['pay_schedule_uuid'],
-                            's3_file_name' => $stubResponse['s3_file_name'],
-                            'created_at' => date('Y-m-d H:i:s', strtotime('now')),
-                            'updated_at' => date('Y-m-d H:i:s', strtotime('now')),
-                            'status' => 1
-                        ]);
+                            ->insert('payroll_employees_pay_stubs', [
+                                'employee_sid' => $employeeId,
+                                'payroll_uuid' => $payroll['payroll_uuid'],
+                                'processed_date' => $payroll['processed_date'],
+                                'payroll_deadline' => $payroll['payroll_deadline'],
+                                'check_date' => $payroll['check_date'],
+                                'start_date' => $payroll['pay_period']['start_date'],
+                                'end_date' => $payroll['pay_period']['end_date'],
+                                'pay_schedule_uuid' => $payroll['pay_period']['pay_schedule_uuid'],
+                                's3_file_name' => $stubResponse['s3_file_name'],
+                                'created_at' => date('Y-m-d H:i:s', strtotime('now')),
+                                'updated_at' => date('Y-m-d H:i:s', strtotime('now')),
+                                'status' => 1
+                            ]);
                     }
                 }
             }
@@ -1678,10 +1726,12 @@ class Payroll extends CI_Controller
     }
 
     //
-    public function PrivateFile($action, $id){
+    public function PrivateFile($action, $id)
+    {
         // Validate details
         $data = $this->pm->GetPayrollColumn(
-            'payroll_employees_pay_stubs', [
+            'payroll_employees_pay_stubs',
+            [
                 'sid' => $id,
                 'employee_sid' => $this->session->userdata('logged_in')['employer_detail']['sid']
             ],
@@ -1689,21 +1739,21 @@ class Payroll extends CI_Controller
             false
         );
         //
-        if(empty($data)){
+        if (empty($data)) {
             return redirect('dashboard');
         }
         $s3_file_name = $data['s3_file_name'];
         $check_date = str_replace('-', '_', $data['check_date']);
         //
-        if($action === 'download'){
+        if ($action === 'download') {
             //
             $this->load->library('aws_lib');
             //
             $fileData = $this->aws_lib->get_object(AWS_S3_BUCKET_NAME, $s3_file_name);
             //
             header('Content-Description: File Transfer');
-            header( 'Content-Disposition: attachment; filename='.($check_date).'_paystub_.pdf');
-            header('Content-Type: '.$fileData['ContentType']);
+            header('Content-Disposition: attachment; filename=' . ($check_date) . '_paystub_.pdf');
+            header('Content-Type: ' . $fileData['ContentType']);
             echo $fileData['Body'];
             return;
         }
@@ -1711,33 +1761,36 @@ class Payroll extends CI_Controller
         return redirect('dashboard');
     }
 
-    private function CheckAndGetProcessedPayrolls($companyId){
+    private function CheckAndGetProcessedPayrolls($companyId)
+    {
         // Check for payroll history
         $history = $this->pm->GetPayrollColumns(
-            'payrolls', [
+            'payrolls',
+            [
                 'company_sid' => $companyId
             ],
-            'payroll_uid, start_date', [
+            'payroll_uid, start_date',
+            [
                 'start_date', 'DESC'
             ]
         );
         //
         $date = '';
         //
-        if(!empty($history)){
+        if (!empty($history)) {
             $date = $history[0]['start_date'];
             $history = array_column($history, 'payroll_uid');
         }
         //
         $payrolls = $this->GetProcessedPayrolls($companyId, $date);
         //
-        if(isset($payrolls['errors'])){
+        if (isset($payrolls['errors'])) {
             return [];
         }
         //
-        foreach($payrolls['Response'] as $payroll){
+        foreach ($payrolls['Response'] as $payroll) {
             //
-            if(in_array($payroll['payroll_uuid'], $history)){
+            if (in_array($payroll['payroll_uuid'], $history)) {
                 continue;
             }
             //

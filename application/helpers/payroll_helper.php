@@ -19,16 +19,22 @@ if (!function_exists('RefreshToken')) {
     function RefreshToken($request)
     {
         //
-        $key = 'client_id=' . (GUSTO_CLIENT_ID) . '&';
-        $key .= 'client_secret=' . (GUSTO_CLIENT_SECRET) . '&';
-        $key .= 'redirect_uri=' . (GUSTO_CLIENT_REDIRECT_URL) . '&';
-        $key .= 'refresh_token=' . ($request['refresh_token']) . '&';
-        $key .= 'grant_type=refresh_token';
+        $body = [];
+        $body['client_id'] = GUSTO_CLIENT_ID;
+        $body['client_secret'] = GUSTO_CLIENT_SECRET;
+        $body['redirect_uri'] = GUSTO_CLIENT_REDIRECT_URL;
+        $body['refresh_token'] = $request['refresh_token'];
+        $body['grant_type'] = 'refresh_token';
         //
         return MakeCall(
-            PayrollURL('RefreshToken', $key),
+            PayrollURL('RefreshToken', ''),
             [
-                CURLOPT_CUSTOMREQUEST => 'POST'
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($body),
+                CURLOPT_HTTPHEADER => array(
+                    'Authorization: Token ' . ($request['access_token']) . '',
+                    'Content-Type: application/json'
+                )
             ]
         );
     }
@@ -1749,6 +1755,12 @@ if (!function_exists('PayrollURL')) {
 
 
         $urls['UpdatePayrollForDemo'] = 'v1/companies/' . ($key) . '/payrolls/' . $key1 . '/' . $step;
+
+        // As of 2023
+
+        // Admin calls
+        $urls['addAdminToGusto'] = 'v1/companies/' . ($key) . '/admins';
+        $urls['getAdminsFromGusto'] = 'v1/companies/' . ($key) . '/admins';
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -1782,6 +1794,18 @@ if (!function_exists('MakeCall')) {
         $info = curl_getinfo($curl);
         //
         curl_close($curl);
+        // Save the request and response to database
+        saveCall([
+            'request_method' => $options[CURLOPT_CUSTOMREQUEST],
+            'request_url' => $url,
+            'request_body' => json_encode([
+                'headers' => $options[CURLOPT_HTTPHEADER],
+                'body' => $options[CURLOPT_POSTFIELDS]
+            ]),
+            'response_body' => $response,
+            'response_code' => $info['http_code'],
+            'response_headers' => json_encode($info)
+        ]);
         // Check for aut error
         if ($info['http_code'] == 401) {
             return [
@@ -1821,6 +1845,23 @@ if (!function_exists('MakeCall')) {
         $response = json_decode($response, true, 512, JSON_BIGINT_AS_STRING);
         //
         return $response;
+    }
+}
+
+if (!function_exists('saveCall')) {
+    /**
+     * saves request and response
+     *
+     * @param array $ins
+     */
+    function saveCall($ins)
+    {
+        //
+        $CI = &get_instance();
+        //
+        $ins['created_at'] = getSystemDate();
+        //
+        $CI->db->insert('payroll_calls', $ins);
     }
 }
 
@@ -2005,5 +2046,121 @@ if (!function_exists('getEmployeeOnboardCheckForPayroll')) {
         }
         //
         return $returnBool ? count($returnArray) : $returnArray;
+    }
+}
+
+
+
+// As of 2023
+
+// Admin calls
+if (!function_exists('addAdminToGusto')) {
+    /**
+     * Add admin on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $request
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function addAdminToGusto($request, $company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('addAdminToGusto', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return addAdminToGusto($request, $company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+if (!function_exists('getAdminsFromGusto')) {
+    /**
+     * Get admin on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function getAdminsFromGusto($company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('getAdminsFromGusto', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return getAdminsFromGusto($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
     }
 }

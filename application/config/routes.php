@@ -1674,3 +1674,9 @@ $route['compose_message_help'] = "Private_messages/compose_message_help";
 
 $route['pay/invoice/(:num)'] = 'Home/payInvoice/$1';
 $route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_by_email';
+
+/**
+ * Payroll routes for Gusto
+ */
+$route['get_payroll_admins/(:num)']['get'] = 'gusto/Gusto_payroll/getAdmins/$1';
+$route['payroll/admin/(:num)']['post'] = 'gusto/Gusto_payroll/addAdmin/$1';
