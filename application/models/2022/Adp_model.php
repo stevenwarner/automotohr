@@ -428,4 +428,58 @@ class Adp_model extends CI_Model
         //
         return $record['mode'];
     }
+
+
+    //
+    function get_adp_company_data($company_sid)
+    {
+        $this->db->select('*');
+        $this->db->from('adp_companies');
+        $this->db->where('company_sid', $company_sid);
+        $query_result = $this->db->get();
+        return $row = $query_result->row_array();
+    }
+
+    //
+
+    function update_adp_company_settings($company_sid, $dataToUpdate)
+    {
+        $this->db->where('company_sid', $company_sid);
+        $this->db->update('adp_companies', $dataToUpdate);
+    }
+
+
+    //
+    function add_update_adp_employees($employeeId, $associateId, $workerId)
+    {
+        $record = $this->db
+            ->select('*')
+            ->where('employee_sid', $employeeId)
+            ->get('adp_employees')
+            ->row_array();
+
+        if (!empty($record)) {
+            //
+            $ins['employee_sid'] = $record['employee_sid'];
+            $ins['associate_oid'] = $record['associate_oid'];
+            $ins['worker_id'] = $record['worker_id'];
+            $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+            //
+            $this->db->insert('adp_employees_history', $ins);
+            //
+            $dataToUpdate['associate_oid'] = $associateId;
+            $dataToUpdate['worker_id'] = $workerId;
+            $dataToUpdate['updated_at'] = getSystemDate();
+
+            $this->db->where('employee_sid', $employeeId);
+            $this->db->update('adp_employees', $dataToUpdate);
+        } else {
+            $insemp['employee_sid'] = $employeeId;
+            $insemp['associate_oid'] = $associateId;
+            $insemp['worker_id'] = $workerId;
+            $insemp['created_at'] = $insemp['updated_at'] = getSystemDate();
+            //
+            $this->db->insert('adp_employees', $insemp);
+        }
+    }
 }

@@ -19,6 +19,7 @@ class Companies extends Admin_Controller
         $this->load->model('manage_admin/maintenance_mode_model');
         $this->load->model('manage_admin/marketing_agencies_model');
         $this->load->model('manage_admin/Incident_report_model');
+        $this->load->model('2022/Adp_model', 'adp_model');
         $this->load->library('form_validation');
         $this->load->library("pagination");
         require_once(APPPATH . 'libraries/xmlapi.php');
@@ -1432,6 +1433,9 @@ class Companies extends Admin_Controller
                 $this->data['company_billing_contacts'] = $company_billing_contacts;
                 $this->data['company_portal_email_templates'] = $company_portal_email_templates;
                 $this->data['automotive_groups'] = $this->company_model->get_groups_by_company($company_sid);
+                
+                $this->data['adp_company_status'] = $this->adp_model->get_adp_company_data($company_sid);
+                
                 //            $this->data['company_card'] = $company_card;
 
                 //

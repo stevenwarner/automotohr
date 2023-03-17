@@ -1674,3 +1674,7 @@ $route['compose_message_help'] = "Private_messages/compose_message_help";
 
 $route['pay/invoice/(:num)'] = 'Home/payInvoice/$1';
 $route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_by_email';
+
+$route['manage_admin/adp_settings/(:num)'] = 'manage_admin/2022/Adp/adp_settings/$1';
+$route['manage_admin/saveadpemployees'] = 'manage_admin/2022/Adp/saveAdpEmployees';
+$route['manage_admin/statusupdate'] = 'manage_admin/2022/Adp/adp_enable_disable';

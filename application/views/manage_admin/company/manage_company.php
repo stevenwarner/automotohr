@@ -1345,6 +1345,35 @@
                                             } ?>
                                         </div>
 
+                                        <div class="row">
+                                            <?php if (!empty($adp_company_status)) { ?>
+                                                <article class="col-sm-6 information-box">
+                                                    <header class="hr-box-header">ADP Settings
+                                                        <a href="<?php echo base_url('manage_admin/adp_settings/' . $company_sid); ?>" class="site-btn pull-right">Manage</a>
+
+                                                    </header>
+                                                    <div class="table-outer">
+                                                        <div class="info-row">
+                                                            <ul>
+                                                                <li class="<?= $adp_company_status['status'] == 1 ? 'inclueded-state' : 'exclueded-state'; ?>">
+                                                                    <label>Status</label>
+                                                                    <div class="text" style="<?= $adp_company_status['status'] == 1 ? 'color:green;' : 'color:red;'; ?>">
+                                                                        <?= $adp_company_status['status'] == 0 ? 'Disabled' : 'Enabled'; ?>
+                                                                    </div>
+                                                                </li>
+                                                                <li>
+                                                                    <div class="text">
+                                                                        <a data-id="<?= $adp_company_status['sid']; ?>" data-status="<?= $adp_company_status['status']; ?>" class="site-btn <?= $adp_company_status['status'] == 1 ? 'btn-danger' : ''; ?> pull-right js-dynamic-module-adp-btn"><?= $adp_company_status['status'] == 1 ? 'Disable' : 'Enable'; ?></a>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <header class="hr-box-header hr-box-footer"></header>
+                                                </article>
+                                            <?php } ?>
+                                        </div>
+
 
                                         <div class="heading-title page-title">
                                             <h1 class="page-title">Company Admin Invoices</h1>
@@ -1932,6 +1961,46 @@
             return re.test(String(email).toLowerCase());
         }
     });
+
+
+
+    $(function() {
+        $('.js-dynamic-module-adp-btn').click(function(e) {
+            e.preventDefault();
+            let megaOBJ = {};
+            var _this = $(this);
+            megaOBJ.Status = $(this).data('status');
+            megaOBJ.Id = $(this).data('id');
+            megaOBJ.CompanyId = <?= $company_sid; ?>;
+            //
+            alertify.confirm('Do you really want to ' + (megaOBJ.Status === 1 ? 'disable' : 'enable') + ' ADP Settings ?', function() {
+                //
+                $.post("<?= base_url('manage_admin/statusupdate'); ?>", megaOBJ, function(resp) {
+                    if (resp.Status === false) {
+                        alertify.alert('ERROR!', resp.Response);
+                        return;
+                    }
+                    alertify.alert('SUCCESS!', 'ADP Settings has been ' + (megaOBJ.Status === 1 ? 'Disabled' : 'Enabled') + '.');
+                    _this.text(megaOBJ.Status === 0 ? 'Disable' : 'Enable');
+                    //
+                    if (megaOBJ.Status === 0) {
+                        _this.data('status', 1);
+                        _this.addClass('btn-danger');
+                        _this.parent().parent().parent().find('.exclueded-state').removeClass('exclueded-state').addClass('inclueded-state');
+                        _this.parent().parent().parent().find('.inclueded-state div').attr('style', 'color:green;').text('Enabled');
+                    } else {
+                        _this.data('status', 0);
+                        _this.removeClass('btn-danger');
+                        _this.parent().parent().parent().find('.inclueded-state').removeClass('inclueded-state').addClass('exclueded-state');
+                        _this.parent().parent().parent().find('.exclueded-state div').attr('style', 'color:red;').text('Disabled');
+                    }
+                });
+            }).set('labels', {
+                ok: 'Yes',
+                cancel: 'No'
+            });
+        });
+    })
 </script>
 
 
@@ -2008,16 +2077,16 @@
             $.post(
                 "<?= base_url('send_invoice_by_email'); ?>", {
                     invoiceId: invoiceId,
-                    companyId: <?=$company_sid;?>
+                    companyId: <?= $company_sid; ?>
                 }
             ).done(function(resp) {
                 $('.jsSendInvoice[data-invoice="' + (invoiceId) + '"]').text('Send Invoice');
                 invoiceIds.splice(invoiceIds.indexOf(invoiceId, 1));
                 //
                 if (resp.error) {
-                    return alertify.alert('Error!', resp.error, function(){});
+                    return alertify.alert('Error!', resp.error, function() {});
                 }
-                return alertify.alert('Success!', resp.success, function(){});
+                return alertify.alert('Success!', resp.success, function() {});
             });
         }
     });
