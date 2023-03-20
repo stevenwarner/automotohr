@@ -311,7 +311,8 @@
                                                     $employee_status = isset($employerData) ? $employerData["complynet_status"] : $employee["complynet_status"];
                                                     $access_level  = isset($employee) ? $employee['access_level'] : $employerData['access_level'];
                                                     if (check_access_permissions_for_view($security_details, 'complynet') && $comply_status && $access_level != 'Employee' && $employee_status) { ?>
-                                                        <li><a href="<?php echo base_url('complynet'); ?>"><i class="fa fa-fw fa-fire-extinguisher"></i>&nbsp;&nbsp;ComplyNet</a></li>
+                                                        <?php $complyNetLink = getComplyNetLink($this->session->userdata('logged_in')['company_detail']['sid'], $this->session->userdata('logged_in')['employer_detail']['sid']); ?>
+                                                        <li><a href="<?php echo $complyNetLink ?? base_url('complynet'); ?>"><i class="fa fa-fw fa-fire-extinguisher"></i>&nbsp;&nbsp;ComplyNet</a></li>
                                                     <?php } ?>
                                                 </ul>
                                             </li>
