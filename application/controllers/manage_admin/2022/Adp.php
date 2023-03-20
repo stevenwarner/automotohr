@@ -103,4 +103,33 @@ class Adp extends Admin_Controller
         }
         $this->adp_model->update_adp_company_settings($company_sid, $dataToUpdate);
     }
+
+
+
+
+        //
+        public function adp_employee_report (){
+
+              $this->data['companies'] = $this->adp_model->getCompanies('active');
+              $this->data['companysid'] = 0;
+             $formpost = $this->input->post(NULL, TRUE);
+               
+      if($formpost['companySid'] > 0){
+          $companyId = $formpost['companySid'] ;
+          $this->data['employees'] = $this->adp_model->getOnADPEmployees($companyId);
+        //
+         $this->data['offADPEmployees'] = $this->adp_model->getOffADPEmployees(
+            array_column($this->data['employees'], 'sid'),
+            $companyId
+         );
+
+         $this->data['companysid'] = $companyId;
+        }    
+         $this->data['page_title'] = 'ADP Report';
+         $this->render('manage_admin/adp_report');
+
+
+        }
+
+
 }

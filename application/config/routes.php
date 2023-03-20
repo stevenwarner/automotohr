@@ -1678,3 +1678,5 @@ $route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_b
 $route['manage_admin/adp_settings/(:num)'] = 'manage_admin/2022/Adp/adp_settings/$1';
 $route['manage_admin/saveadpemployees'] = 'manage_admin/2022/Adp/saveAdpEmployees';
 $route['manage_admin/statusupdate'] = 'manage_admin/2022/Adp/adp_enable_disable';
+
+$route['adp/employeereport'] = 'manage_admin/2022/Adp/adp_employee_report';
