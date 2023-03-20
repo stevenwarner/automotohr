@@ -254,14 +254,14 @@
                                                 </li>
 
                                                 <li>
-                                                    <?php echo form_label('Cell Number', 'cell_number'); ?>
+                                                    <?php echo form_label('Mobile Number', 'cell_number'); ?>
                                                     <div class="hr-fields-wrap">
                                                         <div class="input-group">
                                                             <div class="input-group-addon">
                                                                 <span class="input-group-text">+1</span>
                                                             </div>
                                                             <?php
-                                                            echo form_input('cell_number', set_value('cell_number', phonenumber_format($data['cell_number'], true)), 'class="hr-form-fileds js-phone" id="PhoneNumber"'); ?>
+                                                            echo form_input('cell_number', set_value('cell_number', phonenumber_format($data['PhoneNumber'], true)), 'class="hr-form-fileds js-phone" id="PhoneNumber"'); ?>
                                                         </div>
                                                         <?php echo form_error('cell_number'); ?>
                                                     </div>
