@@ -669,11 +669,275 @@ class Copy_employees_model extends CI_Model {
     //
     public function add_terminate_user_table($data)
     {
-        $this->db->insert('terminated_employees', $data);
+        $this->db->insert('terminated_employees', $data); 
+    }
+
+    public function getEmployeeRequests ($employeeSid, $companySid) {
+        $this->db->select('*');
+        $this->db->where('company_sid', $companySid);
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->from('timeoff_requests');
+        $records_obj = $this->db->get();
+        //
+        if (!empty($records_obj)) {
+            $result = $records_obj->result_array();
+            $records_obj->free_result();
+            //
+            if (!empty($result)) {
+                return $result;
+            } else {
+                return array();
+            }
+        } else {
+            return array();
+        }
+    }
+
+    public function getCompanyPolicy ($policySid) {
+        $this->db->select('*');
+        $this->db->where('sid', $policySid);
+        $this->db->from('timeoff_policies');
+        $record_obj = $this->db->get();
+        //
+        if (!empty($record_obj)) {
+            $result = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($result)) {
+                return $result;
+            } else {
+                return array();
+            }
+        } else {
+            return array();
+        }
         
     }
 
+    public function getPolicyType ($typeSid, $companySid) {
+        $this->db->select('timeoff_category_list_sid');
+        $this->db->where('sid', $typeSid);
+        $this->db->where('company_sid', $companySid);
+        $record_obj = $this->db->get('timeoff_categories');
+        //
+        if (!empty($record_obj)) {
+            $result = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($result)) {
+                return $result['timeoff_category_list_sid'];
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
 
+    public function isPolicyCategoryExist ($categorySid, $companySid) {
+        //
+        $this->db->reset_query();
+        //
+        $this->db->where('timeoff_category_list_sid', $categorySid);
+        $this->db->where('company_sid', $companySid);
+        $this->db->from('timeoff_categories');
+        $ids = $this->db->count_all_results();
+        //
+        return $ids != 0 ? true : false;
+    }
 
+    public function getCategoryTypeSid ($categorySid, $companySid) {
+        $this->db->select('sid');
+        $this->db->where('timeoff_category_list_sid', $categorySid);
+        $this->db->where('company_sid', $companySid);
+        $record_obj = $this->db->get('timeoff_categories');
+        //
+        if (!empty($record_obj)) {
+            $result = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($result)) {
+                return $result['sid'];
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
 
+    public function insertCategory($insertArray) {
+        //
+        $this->db->insert('timeoff_categories', $insertArray);
+        //
+        return $this->db->insert_id();
+    }
+
+    public function isRequestPolicyExist ($title, $categoryTypeSid, $companySid) {
+        //
+        $this->db->reset_query();
+        //
+        $this->db->where('title', $title);
+        $this->db->where('type_sid', $categoryTypeSid);
+        $this->db->where('company_sid', $companySid);
+        $this->db->from('timeoff_policies');
+        $ids = $this->db->count_all_results();
+        //
+        return $ids != 0 ? true : false;
+    }
+
+    public function getRequestPolicySid ($title, $categoryTypeSid, $companySid) {
+        $this->db->select('sid');
+        $this->db->where('title', $title);
+        $this->db->where('type_sid', $categoryTypeSid);
+        $this->db->where('company_sid', $companySid);
+        $record_obj = $this->db->get('timeoff_policies');
+        //
+        if (!empty($record_obj)) {
+            $result = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($result)) {
+                return $result['sid'];
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    public function getAssignedEmployees ($title, $categoryTypeSid, $companySid) {
+        $this->db->select('assigned_employees');
+        $this->db->where('title', $title);
+        $this->db->where('type_sid', $categoryTypeSid);
+        $this->db->where('company_sid', $companySid);
+        $record_obj = $this->db->get('timeoff_policies');
+        //
+        if (!empty($record_obj)) {
+            $result = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($result)) {
+                return $result['assigned_employees'];
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    public function updateCompanyPolicy ($sid, $dataToUpdate) {
+        $this->db->where('sid', $sid);
+        $this->db->update('timeoff_policies', $dataToUpdate);
+    }
+
+    public function insertPolicy($insertArray) {
+        //
+        $this->db->insert('timeoff_policies', $insertArray);
+        //
+        return $this->db->insert_id();
+    }
+
+    public function checkTimeOffForSpecificEmployee(
+        $companySid,
+        $employeeSid,
+        $policySid,
+        $startDate,
+        $endDate
+    ) {
+        //
+        $this->db->reset_query();
+        //
+        $this->db->where('timeoff_policy_sid', $policySid);
+        $this->db->where('company_sid', $companySid);
+        $this->db->where('employee_sid', $employeeSid);
+        $this->db->where('request_from_date', $startDate);
+        $this->db->where('request_to_date', $endDate);
+        $this->db->from('timeoff_requests');
+        $ids = $this->db->count_all_results();
+        //
+        return $ids != 0 ? true : false;    
+    }
+
+    public function insertTimeOffRequest($insertArray)
+    {
+        $this->db->insert('timeoff_requests', $insertArray);
+        return $this->db->insert_id();
+    }
+
+    public function getTimeLineComment ($requestSid, $approverSid) {
+        $this->db->select('comment');
+        $this->db->where('request_sid ', $requestSid);
+        $this->db->where('employee_sid', $approverSid);
+        $record_obj = $this->db->get('timeoff_request_timeline');
+        //
+        if (!empty($record_obj)) {
+            $result = $record_obj->row_array();
+            $record_obj->free_result();
+            //
+            if (!empty($result)) {
+                return $result['comment'];
+            } else {
+                return '';
+            }
+        } else {
+            return '';
+        }
+    }
+
+    public function insertRequestTimeLine($insertArray)
+    {
+        $this->db->insert('timeoff_request_timeline', $insertArray);
+    }
+
+    public function getEmployeeBalances ($employeeSid) {
+        $this->db->select('*');
+        $this->db->where('user_sid ', $employeeSid);
+        $this->db->from('timeoff_balances');
+        $records_obj = $this->db->get();
+        //
+        if (!empty($records_obj)) {
+            $result = $records_obj->result_array();
+            $records_obj->free_result();
+            //
+            if (!empty($result)) {
+                return $result;
+            } else {
+                return array();
+            }
+        } else {
+            return array();
+        }
+    }
+
+    public function checkbalanceForSpecificEmployee (
+        $employeeSid,
+        $policySid,
+        $balanceType,
+        $balanceTime,
+        $date
+    ) {
+        //
+        $this->db->reset_query();
+        //
+        $this->db->where('user_sid', $employeeSid);
+        $this->db->where('policy_sid ', $policySid);
+        $this->db->where('is_added', $balanceType);
+        $this->db->where('added_time', $balanceTime);
+        $this->db->where('effective_at', $date);
+        $this->db->from('timeoff_balances');
+        $ids = $this->db->count_all_results();
+        //
+        return $ids != 0 ? true : false; 
+    }
+
+    public function insertTimeOffBalance ($insertArray) {
+        $this->db->insert('timeoff_balances', $insertArray);
+    }
+
+    public function insertTrasnferLog ($insertArray) {
+        $this->db->insert('timeoff_transfer_log', $insertArray);
+    }
 }
