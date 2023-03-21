@@ -349,6 +349,9 @@ $canEMSPermission = hasEMSPermission($session['employer_detail']);
                                                                     echo $employee['is_executive_admin'] == 0 ? '<br> <b> ComplyNet Status:</b> ' . ($onComplyNet) : '';
                                                                 }
                                                                 ?>
+                                                                <!-- Languages -->
+                                                                <br />
+                                                                <strong>I Speak:</strong> <?=showLanguages($employee['languages_speak']);?>
                                                             </div>
                                                         </div>
                                                     </td>

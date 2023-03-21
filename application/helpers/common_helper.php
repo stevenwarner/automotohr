@@ -14445,15 +14445,20 @@ if (!function_exists('isPayrollOrPlus')) {
      * Only payroll and plus is allowed to 
      * manage payroll module. The function was
      * created on 12/09/2021
-     * 
+     *
+     * @param bool $strict Optional- Only checks access level if true
      * @return
      */
-    function isPayrollOrPlus()
+    function isPayrollOrPlus($strict = false)
     {
         // Get instance
         $CI = &get_instance();
         // Get the session
         $ses = $CI->session->userdata('logged_in');
+        //
+        if ($strict) {
+            return $ses['employer_detail']['access_level_plus'] == 1 ? true : false;
+        }
         // Check if the logged in user
         // is a plus or payroll
         if (
@@ -16332,7 +16337,7 @@ if (!function_exists('get_company_helpbox_info')) {
         $records_arr = $records_obj->result_array();
         $records_obj->free_result();
         return $records_arr;
-    }    
+    }
 }
 
 if (!function_exists('db_get_employee_profile_byemail')) {
@@ -16436,5 +16441,14 @@ if (!function_exists('get_user_datescolumns')) {
         $CI->db->select('joined_at,registration_date');
         $CI->db->where('sid', $emp_id);
         return $CI->db->get('users')->result_array();
+    }
+}
+
+
+//
+if (!function_exists('showLanguages')) {
+    function showLanguages($languages)
+    {
+        return rtrim(ucwords(implode(', ', (explode(',', $languages))), '\, '), ', ');
     }
 }
