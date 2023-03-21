@@ -895,6 +895,8 @@ class Complynet extends Admin_Controller
         //
         foreach ($roles as $role) {
             //
+            $found = false;
+            //
             if (!isset($rolesByDepartment[$role['complynet_department_sid']])) {
                 //
                 $rolesByDepartment[$role['complynet_department_sid']] = $this->clib->getJobRolesByDepartmentId($role['complynet_department_sid']);
@@ -903,7 +905,20 @@ class Complynet extends Admin_Controller
             foreach ($rolesByDepartment[$role['complynet_department_sid']] as $departmentRole) {
                 //
                 if ($departmentRole['Name'] == $role['job_title']) {
+                    $found = true;
                     $this->db->where('sid', $role['sid'])->update('complynet_jobRole', ['complynet_job_role_sid' => $departmentRole['Id']]);
+                }
+            }
+            //
+            if (!$found) {
+                // Add role to ComplyNet
+                $response = $this->clib->addJobRole([
+                    'ParentId' => $role['complynet_department_sid'],
+                    'Name' => $role['job_title']
+                ]);
+                //
+                if ($response != 'A') {
+                    $this->db->where('sid', $role['sid'])->update('complynet_jobRole', ['complynet_job_role_sid' => $response]);
                 }
             }
         }
