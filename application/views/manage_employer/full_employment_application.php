@@ -152,9 +152,9 @@
                                                         <label>Social Security Number <?=$ssn_required == 1 ? '<span class="staric">*</span>' : '';?> </label>
                                                         <input class="invoice-fields" type="text" name="TextBoxSSN"  <?=$ssn_required == 1 ? 'required="true"' : ''?> value="<?php
                                                         if (isset($formpost['TextBoxSSN'])) {
-                                                            echo $formpost['TextBoxSSN'];
+                                                            echo _secret($formpost['TextBoxSSN'], false, true);
                                                         } else if($employer['ssn'] != ''){
-                                                            echo $employer['ssn'];
+                                                            echo _secret($employer['ssn'], false, true);
                                                         }
                                                         ?>">
                                                                <?php echo form_error('TextBoxSSN'); ?>
@@ -165,7 +165,7 @@
                                                         <label>Date of Birth <?=$dob_required == 1 ? '<span class="staric">*</span>' : '';?></label>
                                                         <input class="invoice-fields" id="dob"  readonly="" type="text" name="TextBoxDOB"  <?=$dob_required == 1 ? 'required="true"' : ''?> value="<?php
                                                         if (isset($formpost['TextBoxDOB'])) {
-                                                            echo $formpost['TextBoxDOB'];
+                                                            echo _secret($formpost['TextBoxDOB'], true, true);
                                                         }
                                                         else if($dob){
                                                             

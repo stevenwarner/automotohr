@@ -150,7 +150,7 @@
                     <div class="row">
                         <div class="col-md-6 col-xs-12">
                             <label class="csF16">Social Security Number</label>
-                            <p class="dummy-invoice-fields"><?=GetVal($me["ssn"]); ?></p>
+                            <p class="dummy-invoice-fields"><?=_secret(GetVal($me["ssn"]), false, true); ?></p>
                         </div>
                         <div class="col-md-6 col-xs-12">
                             <label class="csF16">Employee Number</label>
@@ -203,7 +203,7 @@
                             <label class="csF16">Date of Birth</label>
                             <p class="dummy-invoice-fields"><?php
                                 if(!isset($me["dob"]) || $me["dob"] == '' || $me["dob"] == '0000-00-00') echo 'Not Specified';
-                                else echo $dob;?>
+                                else echo _secret($dob, true, true);?>
                             </p>
                         </div>
                     </div>

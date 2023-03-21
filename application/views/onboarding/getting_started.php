@@ -75,7 +75,7 @@
 $show_empty_box = true;
 $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 ?>
-<div class="main">
+<div class="main jsmaincontent">
     <div class="container">
         <div class="row">
             <div class="col-lg-3 col-md-3 col-xs-12 col-sm-3">
@@ -85,15 +85,10 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
                     <div class="widget-box">
                         <h3 class="text-blue">Your Activities</h3>
                         <ul class="activities-links">
-                            <?php if (isset($ems_notification) && !empty($ems_notification)) { ?>
-                                <li class="section_links" id="welcome_video_link">
-                                    <a href="javascript:func_show_section_ems('welcome_video');">Welcome Video</a>
-                                </li>
-                            <?php } ?>
                             <?php $ems_flag = 0;
 
                             if (isset($ems_notification) && !empty($ems_notification)) {
-                                foreach ($ems_notification as $notification) { ?>
+                                foreach ($ems_notification as $key =>  $notification) { ?>
                                     <li class="section_links" id="ems_<?php echo $ems_flag; ?>"><a href="javascript:func_show_section_ems('<?php echo $ems_flag++; ?>');"><?php echo $notification['title']; ?></a>
                                     </li>
                                 <?php                   }
@@ -284,27 +279,36 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 
                 <?php       } ?>
 
+
+                <?php $getCompanyHelpboxInfo = get_company_helpbox_info($company_sid);
+                if ($getCompanyHelpboxInfo[0]['box_status'] == 1) { ?>
+                    <!-- Company help box -->
+                    <div class="widget-box">
+                        <div style='border: 1px solid #d2d2d2; padding-left :15px;padding-right :15px;padding-top :5px;padding-bottom :5px;'>
+                            <div class="admin-info">
+                                <h4 class="text-blue" style="border-bottom: 1px solid #c4c4c4; margin: 0 0 15px 0; padding: 0 0 10px 0;"><?php echo $getCompanyHelpboxInfo[0]['box_title']; ?></h4>
+                                <div class="profile-pic-area">
+                                    <div class="form-col-100">
+                                        <span class="admin-contact-info">
+                                            <label>Support</label><br>
+                                            <?php if ($getCompanyHelpboxInfo[0]['box_support_phone_number']) { ?>
+                                                <span><i class="fa fa-phone"></i> <?php echo $getCompanyHelpboxInfo[0]['box_support_phone_number']; ?></span><br>
+                                            <?php } ?>
+                                            <span>
+                                                <button class="btn btn-orange jsCompanyHelpBoxBtn">
+                                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>&nbsp;<?=$getCompanyHelpboxInfo[0]['button_text'];?>
+                                                </button>
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php $this->load->view('company_help_box_script'); ?>
+                <?php } ?>
             </div>
             <div class="col-lg-9 col-md-9 col-xs-12 col-sm-9">
-                <?php if (!empty($welcome_video) && isset($welcome_video)) { ?>
-                    <div id="welcome_video" class="section welcone-video-box full-width">
-                        <?php if ($welcome_video['video_source'] == 'youtube') { ?>
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <iframe class="embed-responsive-item" src="//www.youtube.com/embed/<?php echo $welcome_video['video_url']; ?>"></iframe>
-                            </div>
-                        <?php } else if ($welcome_video['video_source'] == 'vimeo') { ?>
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <iframe src="https://player.vimeo.com/video/<?php echo $welcome_video['video_url']; ?>" width="640" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            </div>
-                        <?php } else { ?>
-                            <div class="embed-responsive embed-responsive-16by9">
-                                <video controls>
-                                    <source src="<?php echo base_url('assets/uploaded_videos/' . $welcome_video['video_url']); ?>" type='video/mp4'>
-                                </video>
-                            </div>
-                        <?php } ?>
-                    </div>
-                <?php } ?>
                 <?php if (!empty($ems_notification) && isset($ems_notification)) {
                     $ems_flag = 0; ?>
                     <?php foreach ($ems_notification as $section) { ?>
@@ -937,19 +941,9 @@ $document_d_base = base_url('hr_documents_management/sign_hr_document/d');
 <script>
     $(document).ready(function() {
         <?php if (isset($ems_notification) && sizeof($ems_notification) > 0) { ?>
-            <?php if (isset($welcome_video) && sizeof($welcome_video) > 0) { ?>
-                func_show_section_ems('welcome_video');
-            <?php } else { ?>
-                func_show_section_ems(0);
-            <?php } ?>
-
+            func_show_section_ems(0);
         <?php } else { ?>
-            <?php if (isset($welcome_video) && sizeof($welcome_video) > 0) { ?>
-                func_show_section_ems('welcome_video');
-            <?php } else { ?>
-                func_show_section(0);
-            <?php } ?>
-
+            func_show_section(0);
         <?php } ?>
     });
 

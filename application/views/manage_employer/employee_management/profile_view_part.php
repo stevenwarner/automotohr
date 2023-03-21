@@ -1,5 +1,5 @@
 <div class="form-title-section">
-    <h2>Personal Information <?=getComplyNetEmployeeCheck($employer, $this->session->userdata('logged_in')['employer_detail']['pay_plan_flag'], $this->session->userdata('logged_in')['employer_detail']['access_level_plus']);?></h2>
+    <h2>Personal Information </h2>
     <?php if(!$this->session->userdata('logged_in')['employer_detail']['pay_plan_flag']){  ?>
     <div class="form-btns">
         <?php if (!empty($MergeData)) { ?>
@@ -103,7 +103,7 @@
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Social Security Number</label>
-            <p class="dummy-invoice-fields"><?=GetVal($employer["ssn"]); ?></p>
+            <p class="dummy-invoice-fields"><?=_secret(GetVal($employer["ssn"])); ?></p>
         </div>
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Employee Number</label>
@@ -120,7 +120,7 @@
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Employment Type</label>
             <p class="dummy-invoice-fields">
-                <?=GetVal(isset($employment_types[$employer["employee_type"]]) ? $employment_types[$employer["employee_type"]] : $employment_types['fulltime']); ?>
+                <?=GetVal(isset($employment_types[$employer["employee_type"]]) ? $employment_types[$employer["employee_type"]] : ''); ?>
             </p>
         </div>
         <div class="col-md-6 col-xs-12 dn">
@@ -157,13 +157,13 @@
             <p class="dummy-invoice-fields">
                 <?php
                     if(strpos($dob, XSYM) !== false){
-                        echo $dob;
+                        echo _secret($dob, true);
                     } else{
                         if(!isset($employer["dob"]) || $employer["dob"] == '' || $employer["dob"] == '0000-00-00') {
                             echo 'Not Specified';
                         }
                         else {
-                            echo $dob;
+                            echo _secret($dob, true);
                         }
                     }
                 

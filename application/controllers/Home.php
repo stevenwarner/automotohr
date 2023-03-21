@@ -2027,7 +2027,8 @@ class Home extends CI_Controller
         $company_sid = $this->hr_documents_management_model->getCompanysid($user_sid, $user_type);
         //
         $data['session']['company_detail'] = $this->hr_documents_management_model->getCompanyInfo($company_sid);
-        $data['eeo_form_status'] = $this->hr_documents_management_model->get_portal_detail($company_sid);
+        $f1 = $this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_applicant_document_center');
+        $data['eeo_form_status'] = $f1;
         //
         $data['company_sid'] = $data['session']['company_detail']['sid'];
         $data['company_name'] = $data['session']['company_detail']['CompanyName'];
@@ -2073,7 +2074,7 @@ class Home extends CI_Controller
         $action = 'completed';
         $employee_sid = $document['application_sid'];
         //
-        if($employeeId && $employeeId != $document['application_sid']) {
+        if ($employeeId && $employeeId != $document['application_sid']) {
             $employee_sid = $employeeId;
             $action = 'updated';
         } else {
@@ -2099,5 +2100,23 @@ class Home extends CI_Controller
         //
         echo 'success';
         exit(0);
+    }
+
+    /**
+     * 
+     */
+    public function payInvoice($invoiceId)
+    {
+        //
+        $this->load->model('settings_model');
+        // verify invoice
+        $invoiceDetails = $this->settings_model->Get_admin_invoice($invoiceId);
+        //
+        $hf = message_header_footer_domain($invoiceDetails['company_sid'], $invoiceDetails['company_name']);
+        //
+        $this->load->view('public_invoice', [
+            'invoiceDetails' => $invoiceDetails,
+            'hf' => $hf
+        ]);
     }
 }

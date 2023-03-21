@@ -2931,3 +2931,34 @@ if (!function_exists('findTheRightEmployee')) {
         return $found;
     }
 }
+
+
+if (!function_exists('getUserColumnById')) {
+    /**
+     * Get the column from user
+     * The function will only return a single column and
+     * it will return empty in case no data is found.
+     * 
+     * @param int $id
+     * @param string $column Optional
+     * @return string
+     */
+    function getUserColumnById (
+        int $id,
+        string $column = 'sid'
+    ) {
+        //
+        $CI = &get_instance();
+        //
+        $record =
+        $CI->db->select($column)
+        ->where('sid', $id)
+        ->get('users')
+        ->row_array();
+        //
+        if (empty($record)) {
+            return '';
+        }
+        return $record[$column];
+    }
+}

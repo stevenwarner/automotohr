@@ -238,9 +238,9 @@
                                     </div> -->
                                     <div class="tick-list-box">
                                         <h2><?php echo STORE_NAME; ?> is Secure</h2>
-                                        <ul>
+                                        <ul> 
                                             <li>Transmissions encrypted by Amazon Web Services® SSL</li>
-                                            <li>Information treated confidential by AutomotHR</li>
+                                            <li>Information treated confidential by AutomotoHR</li>
                                             <!-- <li>Receive emails with your signed paperwork</li> -->
                                         </ul>
                                     </div>

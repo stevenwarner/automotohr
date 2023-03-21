@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
-<div class="main">
+<div class="main jsmaincontent">
     <div class="container-fluid">
         <div class="row">		
             <div class="inner-content">

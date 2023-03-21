@@ -2573,7 +2573,8 @@ class Hr_documents_management extends Public_Controller
 
                             break;
                         case 'assign_EEOC': //EEOC Form Active
-                            $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
+                            // $this->hr_documents_management_model->activate_EEOC_forms($user_type, $user_sid);
+                            $this->hr_documents_management_model->getEEOCId($user_sid, $user_type, $jobs_listing, 'Document Center');
                             //
                             $eeoc_sid = getVerificationDocumentSid($user_sid, $user_type, 'eeoc');
                             keepTrackVerificationDocument($security_sid, "employee", 'assign', $eeoc_sid, 'eeoc', 'Document Center');
@@ -3457,26 +3458,27 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
-                        $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
+                    if ($this->session->userdata('logged_in')['portal_detail'][$user_type == 'applicant' ? 'eeo_on_applicant_document_center' : 'eeo_on_employee_document_center']) { 
+                        if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
+                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, $user_type);
 
-                        if (empty($is_eeoc_assign)) {
-                            $eeoc_data_to_insert = array();
-                            $eeoc_data_to_insert['application_sid'] = $user_sid;
-                            $eeoc_data_to_insert['users_type'] = $user_type;
-                            $eeoc_data_to_insert['status'] = 1;
-                            $eeoc_data_to_insert['is_expired'] = 0;
-                            $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
-                            $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['last_assigned_by'] = 0;
-                            //
-                            $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
-                            //
-                            $sendGroupEmail = 1;
-                            https: //www.youtube.com/
+                            if (empty($is_eeoc_assign)) {
+                                $eeoc_data_to_insert = array();
+                                $eeoc_data_to_insert['application_sid'] = $user_sid;
+                                $eeoc_data_to_insert['users_type'] = $user_type;
+                                $eeoc_data_to_insert['status'] = 1;
+                                $eeoc_data_to_insert['is_expired'] = 0;
+                                $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
+                                $eeoc_data_to_insert['last_sent_at'] = getSystemDate();
+                                $eeoc_data_to_insert['assigned_at'] = getSystemDate();
+                                $eeoc_data_to_insert['last_assigned_by'] = 0;
+                                //
+                                $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
+                                //
+                                $sendGroupEmail = 1;
+                            }
                         }
-                    }
+                    }    
                 }
             }
 
@@ -3513,10 +3515,10 @@ class Hr_documents_management extends Public_Controller
             $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($user_sid, $user_type);
             $data['eeo_form_info'] = $eeo_form_info;
             //
-            if (empty($data['eeo_form_info'])) {
-                $data['eeo_form_info']['status'] = 0;
-            }
-            //
+            // if (empty($data['eeo_form_info'])) {
+            //     $data['eeo_form_info']['status'] = 0;
+            // }
+
             $data['assigned_groups'] = $assigned_groups;
 
             $active_documents = $this->hr_documents_management_model->get_all_documents($company_sid, 0);
@@ -5248,25 +5250,27 @@ class Hr_documents_management extends Public_Controller
                         }
                     }
 
-                    if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
-                        $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, 'employee');
+                    if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) { 
+                        if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
+                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($user_sid, 'employee');
 
-                        if (empty($is_eeoc_assign)) {
-                            $eeoc_data_to_insert = array();
-                            $eeoc_data_to_insert['application_sid'] = $employer_sid;
-                            $eeoc_data_to_insert['users_type'] = 'employee';
-                            $eeoc_data_to_insert['status'] = 1;
-                            $eeoc_data_to_insert['is_expired'] = 0;
-                            $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
-                            $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                            $eeoc_data_to_insert['last_assigned_by'] = 0;
-                            //
-                            $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
-                            //
-                            $sendGroupEmail = 1;
+                            if (empty($is_eeoc_assign)) {
+                                $eeoc_data_to_insert = array();
+                                $eeoc_data_to_insert['application_sid'] = $employer_sid;
+                                $eeoc_data_to_insert['users_type'] = 'employee';
+                                $eeoc_data_to_insert['status'] = 1;
+                                $eeoc_data_to_insert['is_expired'] = 0;
+                                $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
+                                $eeoc_data_to_insert['last_sent_at'] = getSystemDate();
+                                $eeoc_data_to_insert['assigned_at'] = getSystemDate();
+                                $eeoc_data_to_insert['last_assigned_by'] = 0;
+                                //
+                                $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
+                                //
+                                $sendGroupEmail = 1;
+                            }
                         }
-                    }
+                    }    
                 }
             }
 
@@ -5638,7 +5642,7 @@ class Hr_documents_management extends Public_Controller
                 }
             }
             //
-            if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) {
+            if ($this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_employee_document_center')) {
                 $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employer_sid, 'employee');
                 //
                 if (!empty($eeo_form_info) && $eeo_form_info['status'] == 1) {
@@ -6764,8 +6768,11 @@ class Hr_documents_management extends Public_Controller
                 $w4_form = $this->hr_documents_management_model->is_w4_form_assign('employee', $employee_id);
                 $w9_form = $this->hr_documents_management_model->is_w9_form_assign('employee', $employee_id);
                 $i9_form = $this->hr_documents_management_model->is_i9_form_assign('employee', $employee_id);
-                $eeoc_form = $this->hr_documents_management_model->is_eeoc_document_assign('employee', $employee_id);
-
+                if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_employee_document_center']) {
+                    $eeoc_form = $this->hr_documents_management_model->is_eeoc_document_assign('employee', $employee_id);
+                } else {
+                    $eeoc_form = array();
+                }
                 $data['w4_form'] = $w4_form;
                 $data['w9_form'] = $w9_form;
                 $data['i9_form'] = $i9_form;
@@ -12451,7 +12458,7 @@ class Hr_documents_management extends Public_Controller
         //
         $id = urldecode($id);
         //
-        ini_set('memory_limit', '1024M');
+        ini_set('memory_limit', '-1');
         //
         if (preg_match('/.zip/', $token)) {
             //

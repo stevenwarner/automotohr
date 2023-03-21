@@ -603,6 +603,13 @@ class Settings extends Public_Controller
                     $portal_data['dob_required'] = 1;
                 }
 
+                $post = $this->input->post(null, true);
+
+                //
+                $portal_data['eeo_on_applicant_document_center'] = empty($post['eeo_on_applicant_document_center']) ? 0 : 1;
+                $portal_data['eeo_on_employee_document_center'] = empty($post['eeo_on_employee_document_center']) ? 0 : 1;
+                $portal_data['eeo_on_document_center'] = empty($post['eeo_on_document_center']) ? 0 : 1;
+
 
                 if (IS_TIMEZONE_ACTIVE) {
                     // Added on: 25-06-2019
@@ -1615,8 +1622,33 @@ class Settings extends Public_Controller
                     'extra_info' => serialize($data["employer"]['extra_info']),
                     'full_employment_application' => serialize($full_employment_application)
                 );
+
+                $record =
+                $this->db
+                ->select('full_employment_application')
+                ->where('sid', $id)
+                ->get('users')
+                ->row_array();
                 //
-                if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB'])) {
+                $fef = [];
+
+                //
+                if ($record) {
+                    $fef = unserialize($record['full_employment_application']);
+                }
+
+                //
+                if (isSecret($full_employment_application['TextBoxSSN'])) {
+                    $full_employment_application['TextBoxSSN'] = $fef['TextBoxSSN'];
+                }
+                //
+                if (isSecret($full_employment_application['TextBoxDOB'])) {
+                    $full_employment_application['TextBoxDOB'] = $fef['TextBoxDOB'];
+                }
+                //
+                $data['full_employment_application'] = serialize($full_employment_application);
+                //
+                if (isset($formpost['TextBoxDOB']) && !empty($formpost['TextBoxDOB']) && !isSecret($formpost['TextBoxDOB'])) {
                     $DOB = date('Y-m-d', strtotime(str_replace('-', '/', $formpost['TextBoxDOB'])));
                     $data['dob'] = $DOB;
                 }
@@ -1625,7 +1657,7 @@ class Settings extends Public_Controller
                     $data['middle_name'] = $formpost['TextBoxNameMiddle'];
                 }
                 //
-                if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN'])) {
+                if (isset($formpost['TextBoxSSN']) && !empty($formpost['TextBoxSSN']) && !isSecret($formpost['TextBoxSSN'])) {
                     $data['ssn'] = $formpost['TextBoxSSN'];
                 }
                 //

@@ -42,6 +42,7 @@
                                                     <option value="1" <?= $termination_record['termination_reason'] == 1 ? 'selected="selected"' : '';?>>Resignation</option>
                                                     <option value="2" <?= $termination_record['termination_reason'] == 2 ? 'selected="selected"' : '';?>>Fired</option>
                                                     <option value="3" <?= $termination_record['termination_reason'] == 3 ? 'selected="selected"' : '';?>>Tenure Completed</option>
+                                                    <option value="18" <?= $termination_record['termination_reason'] == 18 ? 'selected="selected"' : '';?>>Store Closure</option>
                                                 </select>
                                                 <?php echo form_error('terminated_status'); ?>
                                             </li>

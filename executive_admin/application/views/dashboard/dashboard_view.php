@@ -271,7 +271,7 @@
                 $('#js-company-block').show();
                 return;
             }
-            pOBJ['fetchSearchedApplicantEmployees']['query'] = encodeURI(query.toLowerCase());
+            pOBJ['fetchSearchedApplicantEmployees']['query'] = encodeURI(query.replace(/\s/g, '--').toLowerCase());
             pOBJ['fetchSearchedApplicantEmployees']['page'] = 1;
             pOBJ['fetchSearchedApplicantEmployees']['totalPages'] = 0;
             pOBJ['fetchSearchedApplicantEmployees']['totalRecords'] = 0;

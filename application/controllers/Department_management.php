@@ -410,7 +410,8 @@ class Department_management extends Public_Controller
             $data['employer_sid'] = $employer_sid;
 
             $this->form_validation->set_rules('perform_action', 'perform_action', 'required|trim|xss_clean');
-            $employees = $this->department_management_model->fetch_all_company_employees($company_sid);
+            // $employees = $this->department_management_model->fetch_all_company_employees($company_sid);
+            $employees = $this->department_management_model->fetch_all_company_employees_only($company_sid);
             $pre_assign_employees = $this->department_management_model->get_all_employees_to_team($department_sid, $team_sid);
             $team_name = $this->department_management_model->get_team_name($team_sid);
             $assigned_employees = array();

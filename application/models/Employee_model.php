@@ -121,6 +121,7 @@
         $last_statuses = $this->db
             ->select('employee_sid, termination_date, status_change_date, details, do_not_hire, employee_status,termination_reason')
             ->where_in('employee_sid', $employeeIds)
+            ->where('employee_status <> ', 9)
             ->order_by('terminated_employees.sid', 'DESC')
             ->get('terminated_employees')
             ->result_array();
@@ -1938,4 +1939,129 @@
         $this->db->insert('departments_employee_2_team', $data);
         return $this->db->insert_id();
     }
+
+    function checkExecutiveAdmin ($email) {
+        if (
+            $this->db
+            ->where('email', $email)
+            ->where('active', 1)
+            ->count_all_results('executive_users')
+        ) {
+            return 'yes';
+        } else {
+            return 'no';
+        }
+    }
+
+    function get_employees_details_new($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = [] , $status, $logincred)
+    {
+        $keyword = trim(str_replace("'", '', $keyword));
+        $this->db->select('*');
+        $this->db->where('parent_sid', $parent_sid);
+
+        /*
+        $this->db->where('active', '1');
+        $this->db->where('terminated_status', 0);
+        $this->db->where('archived', $archive);
+        */
+
+        if ($status == 'active') {
+            $this->db->where('active', 1);
+            $this->db->where('terminated_status', 0);
+        }
+
+        if ($status == 'terminated') {
+            $this->db->where('terminated_status', 1);
+        }
+
+        if ($status != 'all' && $status != 'active' && $status != 'terminated' && $status != null ) {
+            $this->db->where('LCASE(general_status) ', $status);
+        }
+        
+        if($logincred=='yes'){
+            $this->db->group_start();
+            $this->db->where('password!=', '');
+            $this->db->where('password is not  null', null);
+            $this->db->group_end();
+        }
+
+        if($logincred=='no'){
+            $this->db->group_start();
+            $this->db->where('password', '');
+            $this->db->or_where('password is null', null);
+            $this->db->group_end();
+            
+            $this->db->group_start();
+            $this->db->where('is_executive_admin!=',1);
+            $this->db->group_end();
+        }
+
+        // $this->db->where('is_executive_admin', 0);
+        if ($keyword != null) {
+            $tK = preg_replace('/\s+/', '|', strtolower($keyword));
+            $this->db->where("(lower(first_name) regexp '" . ($tK) . "' or lower(last_name) regexp '" . ($tK) . "' or lower(extra_info) regexp '" . ($keyword) . "' or nick_name LIKE '%" . $keyword . "%' or username LIKE '%" . $keyword . "%' or email LIKE '" . $keyword . "')  ", false, false);
+        }
+
+        $this->db->where('sid != ' . $sid);
+        //
+
+
+        if ($ids) {
+            $this->db->where_in('sid', $ids);
+        }
+        $this->db->order_by($order_by, $order);
+        $all_employees = $this->db->get('users')->result_array();
+
+        $all_employees = $this->verify_executive_admin_status($all_employees);
+        $this->GetEmployeeStatus($all_employees);
+
+        return $all_employees;
+    }
+
+
+
+    public function getCompanyDepartmentsWithTeam(
+        int $companyId
+    )
+    {
+        $records =
+        $this->db
+        ->select('
+            departments_team_management.sid as teamId,
+            departments_team_management.name as teamName,
+            departments_management.sid,
+            departments_management.name
+        ')
+        ->where([
+            'departments_team_management.is_deleted' => 0,
+            'departments_management.is_deleted' => 0,
+            'departments_team_management.company_sid' => $companyId,
+            'departments_management.company_sid' => $companyId
+        ])
+        ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+        ->get('departments_team_management')
+        ->result_array();
+        //
+        if (empty($records)) {
+            return [];
+        }
+        //
+        $tmp = [];
+        //
+        foreach ($records as $record) {
+            //
+            if (!isset($tmp[$record['sid']])) {
+                $tmp[$record['sid']] = [
+                    'id' => $record['sid'],
+                    'name' => $record['name'],
+                    'teams' => []
+                ];
+            }
+            //
+            $tmp[$record['sid']]['teams'][] = ['id' => $record['teamId'], 'name' => $record['teamName']];
+        }
+
+        return $tmp;
+    }
+
 }

@@ -13,7 +13,7 @@
                                 <a href="<?php echo base_url('manage_ems'); ?>" class="dashboard-link-btn">
                                     <i class="fa fa-chevron-left"></i>Employee Management System
                                 </a>
-                                Onboarding Configuration
+                                Employee EMS Configuration
                             </span>
                         </div>
                         <div class="accordion-colored-header header-bg-gray">

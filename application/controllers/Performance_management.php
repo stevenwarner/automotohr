@@ -53,7 +53,9 @@ class Performance_management extends Public_Controller{
             'Response' => 'Invalid request'
         ];
         //
-        $this->header = 'main/header';
+
+       // $this->header = 'main/header';
+        $this->header = 'main/header_2022';
         $this->footer = 'main/footer';
     }
 
@@ -88,6 +90,7 @@ class Performance_management extends Public_Controller{
         //
         $this->pargs['MyGoals'] = $this->filterGoals($this->pargs['Goals'], $this->pargs['employerId']);
         //
+               
         $this->load->view($this->header, $this->pargs);
         $this->load->view("{$this->pp}header");
         $this->load->view("{$this->pp}dashboard");
@@ -1898,7 +1901,7 @@ class Performance_management extends Public_Controller{
         $data['employerRole'] = $data['session']['employer_detail']['access_level'] ;
         $data['load_view'] = $data['session']['company_detail']['ems_status'];
         // $data['load_view'] = 1;
-        $data['hide_employer_section'] = 1;
+        // $data['hide_employer_section'] = 1;
         //
         if ($return) {
             return true;

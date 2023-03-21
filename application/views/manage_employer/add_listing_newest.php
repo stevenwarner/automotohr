@@ -280,8 +280,8 @@
                                                 <?php if (!empty($templates)) { ?>
                                                     <li class="form-col-100 autoheight">
                                                         <label class="autoheight" for="select_template">Select Job Description and Job Requirement Templates ( Please read through the templates and edit or review any text that is in "QUOTATIONS" so that it reflects your company branding and message.)</label>
-                                                        <div class="hr-select-dropdown">
-                                                            <select class="invoice-fields" id="select_template">
+                                                        <div class="csSelect2WithBg">
+                                                            <select class="" id="select_template">
                                                                 <option value="">Select Template</option>
                                                                 <?php foreach ($templates as $template) { ?>
                                                                     <option id="template_<?php echo $template['sid'] ?>" data-description="<?php echo $template['description'] ?>" data-requirements="<?php echo $template['requirements'] ?>" value="<?php echo $template['sid'] ?>"><?php echo $template['title'] ?></option>
@@ -1493,6 +1493,15 @@ document.getElementById("name").addEventListener("input", function() {
         }
     </script>
 <?php } ?>
+<script>
+    $('#select_template').select2();
+</script>
 
+<style>
+    .csSelect2WithBg  .select2-selection__rendered{
+        background-color: #fd7a2a;
+        color: #fff !important;
+    }
+</style>
 
 <?php $this->load->view('2022/modals/salary'); ?>

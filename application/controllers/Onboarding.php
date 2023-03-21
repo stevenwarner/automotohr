@@ -130,25 +130,27 @@ class Onboarding extends CI_Controller
                             }
                         }
 
-                        if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
-                            $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($applicant_sid, 'applicant');
+                        if ($this->session->userdata('logged_in')['portal_detail']['eeo_on_applicant_document_center']) { 
+                            if (!empty($system_document['eeoc']) && $system_document['eeoc'] == 1) {
+                                $is_eeoc_assign = $this->hr_documents_management_model->check_eeoc_exist($applicant_sid, 'applicant');
 
-                            if (empty($is_eeoc_assign)) {
-                                $eeoc_data_to_insert = array();
-                                $eeoc_data_to_insert['application_sid'] = $applicant_sid;
-                                $eeoc_data_to_insert['users_type'] = 'applicant';
-                                $eeoc_data_to_insert['status'] = 1;
-                                $eeoc_data_to_insert['is_expired'] = 0;
-                                $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
-                                $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                                $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
-                                $eeoc_data_to_insert['last_assigned_by'] = 0;
-                                //
-                                $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
-                                //
-                                $sendGroupEmail = 1;
+                                if (empty($is_eeoc_assign)) {
+                                    $eeoc_data_to_insert = array();
+                                    $eeoc_data_to_insert['application_sid'] = $applicant_sid;
+                                    $eeoc_data_to_insert['users_type'] = 'applicant';
+                                    $eeoc_data_to_insert['status'] = 1;
+                                    $eeoc_data_to_insert['is_expired'] = 0;
+                                    $eeoc_data_to_insert['portal_applicant_jobs_list_sid'] = $jobs_listing;
+                                    $eeoc_data_to_insert['last_sent_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                                    $eeoc_data_to_insert['assigned_at'] = date('Y-m-d H:i:s', strtotime('now'));
+                                    $eeoc_data_to_insert['last_assigned_by'] = 0;
+                                    //
+                                    $this->hr_documents_management_model->insert_eeoc_form_record($eeoc_data_to_insert);
+                                    //
+                                    $sendGroupEmail = 1;
+                                }
                             }
-                        }
+                        }    
                     }
                 }
 
@@ -4919,6 +4921,10 @@ class Onboarding extends CI_Controller
                 //
                 $data['departments'] = $this->hr_documents_management_model->getDepartments($data['company_sid']);
                 $data['teams'] = $this->hr_documents_management_model->getTeams($data['company_sid'], $data['departments']);
+                //
+                $companyExtraInfo = unserialize($this->session->userdata('logged_in')['company_detail']['extra_info']);
+                //
+                $data['onboarding_eeo_form_status'] = isset($companyExtraInfo['EEO']) ? $companyExtraInfo['EEO'] : 0;
                 //
                 $this->load->view('main/header', $data);
                 $this->load->view('onboarding/setup');
@@ -10432,10 +10438,14 @@ class Onboarding extends CI_Controller
             $company_sid = $company_detail['sid'];
             $company_name = $employee_detail['CompanyName'];
             $user_type = 'employee';
+            
+            if (!$this->hr_documents_management_model->hasEEOCPermission($company_sid, 'eeo_on_employee_document_center')) {
+                return redirect('hr_documents_management/my_documents');
+            }
             //
             $print_url = base_url('hr_documents_management/print_eeoc_form/print' . '/' . $employee_sid . '/' . $user_type);
             $download_url = base_url('hr_documents_management/print_eeoc_form/download' . '/' . $employee_sid . '/' . $user_type);
-            $eeo_form_status = $this->hr_documents_management_model->get_portal_detail($company_sid);
+            $eeo_form_status = 1;
             $eeo_form_info = $this->hr_documents_management_model->get_eeo_form_info($employee_sid, $user_type);
             //
             if ($eeo_form_info['status'] == 0) {

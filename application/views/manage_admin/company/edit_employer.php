@@ -562,6 +562,19 @@
                                                         $('.jsSelect2').select2();
                                                     </script>
                                                 </li>
+                                                <?php
+                                                $isOnComplyNet = getComplyNetEmployeeCheck($data, 1, 1, true);
+                                                //
+                                                if (!empty($isOnComplyNet)) { ?>
+                                                    <li>
+                                                        <label>ComplyNet Status:</label>
+                                                        <div class="hr-field-wrap">
+                                                            <?= $isOnComplyNet; ?>
+                                                        </div>
+                                                    </li>
+                                                <?php
+                                                }
+                                                ?>
                                                 <li>
                                                     <?php echo form_label('', ''); ?>
                                                     <div class="hr-fields-wrap">
@@ -923,4 +936,69 @@
             )
         });
     });
+</script>
+
+<!--  -->
+<link rel="stylesheet" href="<?= base_url("assets/css/SystemModel.css"); ?>">
+<script src="<?= base_url("assets/js/SystemModal.js"); ?>"></script>
+
+<script>
+    // ComplyNet
+    $(document).on("click", ".jsAddEmployeeToComplyNet", function(event) {
+        //
+        event.preventDefault();
+        //
+        let employeeId = $(this).data("id");
+        let companyId = $(this).data("cid");
+
+        //
+        return alertify.confirm(
+            "Are you sure you want to sync this employee with ComplyNet.<br />In case the employee is not found on ComplyNet, the system will add the employee to ComplyNet.",
+            function() {
+                addEmployeeToComplyNet(companyId, employeeId)
+            }
+        );
+    });
+
+    function addEmployeeToComplyNet(companyId, employeeId) {
+        //
+
+        Modal({
+                Id: "jsModelEmployeeToComplyNet",
+                Title: "Add Employee To ComplyNet",
+                Body: '<div class="container"><div id="jsModelEmployeeToComplyNetBody"><p class="alert alert-info text-center">Please wait while we are syncing employee with ComplyNet. It may take a few moments.</p></div></div>',
+                Loader: "jsModelEmployeeToComplyNetLoader",
+            },
+            function() {
+                //
+                $.post(window.location.origin + "/cn/" + companyId + "/employee/sync", {
+                        employeeId: employeeId,
+                        companyId: companyId,
+                    })
+                    .success(function(resp) {
+                        //
+                        if (resp.hasOwnProperty("errors")) {
+                            //
+                            let errors = '';
+                            errors += '<strong class="text-danger">';
+                            errors += '<p><em>In order to sync employee with ComplyNet the following details are required.';
+                            errors += ' Please fill these details from employee\'s profile.</em></p><br />';
+                            errors += resp.errors.join("<br />");
+                            errors += '</strong>';
+                            //
+                            $('#jsModelEmployeeToComplyNetBody').html(errors);
+                        } else {
+                            $('#jsModelEmployeeToComplyNet .jsModalCancel').trigger('click');
+                            alertify.alert(
+                                'Success',
+                                'You have successfully synced the employee with ComplyNet',
+                                window.location.reload
+                            );
+                        }
+                    })
+                    .fail(window.location.reload);
+                ml(false, "jsModelEmployeeToComplyNetLoader");
+            }
+        );
+    }
 </script>

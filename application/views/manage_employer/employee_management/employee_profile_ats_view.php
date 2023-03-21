@@ -20,8 +20,9 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
     if ($primary_phone_number_cc === '+1') $primary_phone_number_cc = 'N/A';
 }
 
-if (isset($employer["dob"]) && $employer["dob"] != '' && $employer["dob"] != '0000-00-00') $dob = DateTime::createFromFormat('Y-m-d', $employer['dob'])->format('m-d-Y');
-else $dob = '';
+if (isset($employer["dob"]) && $employer["dob"] != '' && $employer["dob"] != '0000-00-00') {
+    $dob = DateTime::createFromFormat('Y-m-d', $employer['dob'])->format('m-d-Y');
+} else $dob = '';
 //
 if ($_ssv) {
     //
@@ -200,7 +201,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Social Security Number: <?= $ssn_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
-                                                    <input class="invoice-fields" type="text" name="SSN" <?= $ssn_required == 1 ? 'required' : ''; ?> value="<?php echo isset($employer["ssn"]) ? $employer["ssn"] : ''; ?>">
+                                                    <input class="invoice-fields" type="text" name="SSN" <?= $ssn_required == 1 ? 'required' : ''; ?> value="<?php echo isset($employer["ssn"]) ? _secret($employer["ssn"], false, true) : ''; ?>">
                                                     <?php echo form_error('SSN'); ?>
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
@@ -221,6 +222,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     <label>Employment Type:</label>
                                                     <div class="hr-select-dropdown">
                                                         <select class="invoice-fields" name="employee-type" id="employee-type">
+                                                            <option value="0">Select Employment Type</option>
                                                             <?php if (!empty($employment_types)) { ?>
                                                                 <?php foreach ($employment_types as $key => $employment_type) { ?>
                                                                     <option value="<?= $key ?>" <?php if (strtolower($employer['employee_type']) == $key) {
@@ -284,7 +286,14 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Date of Birth:<?= $dob_required == 1 ? ' <samp class="red"> * </samp>' : ''; ?></label>
-                                                    <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?= $dob_required == 1 ? 'required' : ''; ?> name="DOB" value="<?php echo $dob != '' ?  $dob : ''; ?>">
+                                                    <input class="invoice-fields" id="date_of_birth" readonly="" type="text" <?= $dob_required == 1 ? 'required' : ''; ?> name="DOB" value="<?php echo $dob != '' ?
+
+                                                                                                                                                                                                _secret(formatDateToDB(
+                                                                                                                                                                                                    $employer['dob'],
+                                                                                                                                                                                                    checkDateFormate($emploTyer['dob']) ? 'm-d-Y' : DB_DATE,
+                                                                                                                                                                                                    'm-d-Y'
+
+                                                                                                                                                                                                ), true, true) : ''; ?>">
                                                     <?php echo form_error('DOB'); ?>
                                                 </div>
                                                 <!--  -->
@@ -336,39 +345,26 @@ if (checkIfAppIsEnabled('timeoff')) {
                                             </div>
                                             <div class="row">
                                                 <!--  -->
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Department:</label>
-                                                    <div class="hr-select-dropdown">
-                                                        <select class="invoice-fields" name="department" id="department" onchange="get_teams(this.value)">
-                                                            <option value="0">Select Department</option>
-                                                            <?php if (!empty($departments)) { ?>
-                                                                <?php foreach ($departments as $department) { ?>
-                                                                    <option value="<?php echo $department["sid"]; ?>" <?php if ($employer['department_sid'] == $department["sid"]) {
-                                                                                                                            echo 'selected';
-                                                                                                                        } ?>>
-                                                                        <?php echo $department["name"]; ?>
-                                                                    </option>
-                                                                <?php } ?>
-                                                            <?php } else { ?>
-                                                                <option value="0">No Department Found</option>
-                                                            <?php } ?>
-                                                        </select>
-                                                    </div>
+                                                <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
+                                                    <label>Department/Team:</label>
+                                                    <select class="invoice-fields" name="department" id="department">
+                                                        <option value="0">Select Department/Team</option>
+                                                        <?php if (!empty($departmentWithTeams)) {
+                                                            foreach ($departmentWithTeams as $dt) {
+                                                        ?>
+                                                                <optgroup label="<?= $dt['name']; ?>"></optgroup>
+                                                                <?php
+                                                                if (!empty($dt['teams'])) {
+                                                                    foreach ($dt['teams'] as $dtt) {
+                                                                ?>
+                                                                        <option value="<?= $dtt['id']; ?>" <?=in_array($dtt['id'], explode(',',  $employer['team_sid'])) ? 'selected': '';?>><?= $dtt['name']; ?></option>
+                                                        <?php
+                                                                    }
+                                                                }
+                                                            }
+                                                        } ?>
+                                                    </select>
                                                 </div>
-                                                <!--  -->
-                                                <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
-                                                    <label>Team:</label>
-                                                    <div class="hr-select-dropdown">
-                                                        <p style="display: none;" id="team_sid">
-                                                            <?php echo $employer['team_sid']; ?>
-                                                        </p>
-                                                        <select class="invoice-fields" name="teams[]" id="teams" multiple="true">
-                                                            <option value="">Select Team</option>
-                                                            <option value="">Please Select your Department</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <!--  -->
                                             </div>
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
@@ -1974,7 +1970,7 @@ if (checkIfAppIsEnabled('timeoff')) {
                                 var id = allteams[i].sid;
                                 var name = allteams[i].name;
                                 // if (team_id == id) {
-                                    
+
                                 if (jQuery.inArray(id, team_sids) !== -1) {
                                     html += '<option value="' + id + '" selected="selected">' +
                                         name + '</option>';
@@ -2065,8 +2061,8 @@ if (checkIfAppIsEnabled('timeoff')) {
     $('#eventdate').datepicker({
         dateFormat: 'mm-dd-yy',
         changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+        changeYear: true,
+        yearRange: "<?php echo DOB_LIMIT; ?>"
     }).val();
     $("#eventdate").datepicker("setDate", new Date());
     $('#add_event').click(function() {

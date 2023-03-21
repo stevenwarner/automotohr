@@ -469,6 +469,8 @@ class Dashboard extends CI_Controller {
             $this->resp['Response'] = 'You don\'t have any comapnies to manage.';
             $this->response();
         }
+        //
+        $query = str_replace('--', ' ', $query);
         // 
         $inset = 0;
         $offset = $this->limit;

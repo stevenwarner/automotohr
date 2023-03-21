@@ -547,7 +547,6 @@
                                 <!--                                <a href="--><?php //echo base_url('incident_reporting_system/assigned_incidents/'); ?><!--">View<i aria-hidden="true" class="fa fa-chevron-circle-right"></i></a>-->
                                 <!--                            </li>-->
                                     <?php }?>
-                                    
                                     <?php if ($this->session->userdata('logged_in')['portal_detail']['eeo_form_profile_status']) { ?>
                                         <li>
                                             <span class="left-addon"><i aria-hidden="true" class="fa fa-file-text"></i></span>

@@ -113,4 +113,30 @@ class Terminate_employee_model extends CI_Model {
         return false;
     }
 
+
+   //
+    public function employees_transfer_log_update ($sid,$data_transfer_log_update) {
+     
+        $this->db->select('new_employee_sid');
+        $this->db->where('new_employee_sid', $sid);
+        $result=$this->db->get('employees_transfer_log')->row_array();
+
+        if(!empty($result)){
+            $data_update['employee_copy_date'] = $data_transfer_log_update['employee_copy_date'];
+            $this->db->where('new_employee_sid',$sid);
+            $this->db->update('employees_transfer_log',$data_update);
+
+        }else{
+            $data_transfer_log_update['from_company_sid'] = 0;
+            $data_transfer_log_update['previous_employee_sid'] = 0;
+            $data_transfer_log_update['employee_copy_date']=$data_transfer_log_update['employee_copy_date'];
+            $data_transfer_log_update['last_update']=date('Y-m-d H:i:s');
+            $data_transfer_log_update['new_employee_sid']=$sid;
+
+            $this->db->insert('employees_transfer_log', $data_transfer_log_update);
+        }
+
+    }
+
+
 }

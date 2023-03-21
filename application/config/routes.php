@@ -559,8 +559,17 @@ $route['manage_admin/employers/EditEmployeeStatus/(:num)/(:num)'] = 'manage_admi
 $route['manage_admin/employers/(:num)'] = 'manage_admin/employers/index/$1';
 $route['manage_admin/employers/(:any)/(:num)'] = 'manage_admin/employers/index/$1/$2';
 $route['manage_admin/employers/(:any)/(:num)/(:any)'] = 'manage_admin/employers/index/$1/$2/$3';
+
 $route['manage_admin/employers/(:any)/(:num)/(:any)/(:any)'] = 'manage_admin/employers/index/$1/$2/$3/$4';
+
+$route['manage_admin/employers/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/employers/index/$1/$2/$3/$4';
+
+
 $route['manage_admin/employers/(:any)/(:num)/(:any)/(:any)/(:num)'] = 'manage_admin/employers/index/$1/$2/$3/$4/$5';
+
+$route['manage_admin/employers/(:any)/(:any)/(:any)/(:any)/(:num)'] = 'manage_admin/employers/index/$1/$2/$3/$4/$5';
+
+
 $route['manage_admin/companies/ajax_change_status'] = 'manage_admin/companies/ajax_change_status';
 $route['manage_admin/companies/(:num)'] = 'manage_admin/companies/index/$1';
 $route['manage_admin/companies/search_company/(:any)/(:any)/(:any)/(:any)/(:any)/(:any)'] = 'manage_admin/companies/index/$1/$2/$3/$4/$5/$6';
@@ -1238,7 +1247,7 @@ $route['general_info/(:any)'] = 'general_info/index/$1';
  * @employee: Mubashir Ahmed
  * @date: 10/20/2020 
  * @desc: Modify document categories
- * */ 
+ * */
 $route['category_manager/(:any)'] = 'Hr_documents_management/categoryManager/$1';
 $route['category_manager/(:any)/(:any)'] = 'Hr_documents_management/categoryManager/$1/$2';
 $route['category_manager/(:any)/(:any)/(:any)'] = 'Hr_documents_management/categoryManager/$1/$2/$3';
@@ -1246,7 +1255,7 @@ $route['category_manager/(:any)/(:any)/(:any)'] = 'Hr_documents_management/categ
  * @employee: Mubashir Ahmed
  * @date: 10/29/2020 
  * @desc: Scheduled documents
- * */ 
+ * */
 $route['scheduled_documents'] = 'Hr_documents_management/scheduled_documents';
 $route['scheduled_documents/(:any)'] = 'Hr_documents_management/get_scheduled_documents/$1';
 
@@ -1607,9 +1616,9 @@ $route['employee/surveys/create/(:num)/([a-z]+)']['get'] = '2022/Employee_survey
 $route['employee/surveys/surveys/(:num)']['get'] = '2022/Employee_surveys/companysurveys/$1';
 $route['employee/surveys/surveys/(:num)/(:num)/(:num)']['get'] = '2022/Employee_surveys/surveyfeedback/$1/$2/$3';
 
-$route['employee/surveys/settings']= '2022/Employee_surveys/settings';
-$route['employee/surveys/reports']= '2022/Employee_surveys/reports';
-$route['employee/surveys/faqs']= '2022/Employee_surveys/faqs';
+$route['employee/surveys/settings'] = '2022/Employee_surveys/settings';
+$route['employee/surveys/reports'] = '2022/Employee_surveys/reports';
+$route['employee/surveys/faqs'] = '2022/Employee_surveys/faqs';
 
 
 
@@ -1653,3 +1662,15 @@ $route['cn/job_role_view_details/(:num)']['get'] = "2022/Complynet/getRoleDetail
 //
 $route['cn/manage/job_role/(:num)/link']['post'] = "2022/Complynet/linkJobRoles/$1";
 $route['cn/manage/job_role/(:num)']['delete'] = "2022/Complynet/deleteJobRole/$1";
+
+//
+$route['employee_export_csv'] = 'employee_management/employee_export_csv';
+
+$route['onboarding_block/manage_company_help_box'] = "onboarding_block/manage_company_help_box";
+$route['onboarding_block/manage_company_help_box_update'] = "onboarding_block/manage_company_help_box_update";
+$route['get_support_page'] = "Private_messages/get_support_page";
+$route['compose_message_help'] = "Private_messages/compose_message_help";
+
+
+$route['pay/invoice/(:num)'] = 'Home/payInvoice/$1';
+$route['send_invoice_by_email']['post'] = 'manage_admin/Companies/send_invoice_by_email';

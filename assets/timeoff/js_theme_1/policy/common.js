@@ -1,32 +1,32 @@
 let cmnOBJ = {
-        Categories: {
-            Main: {
-                action: 'get_company_types_list',
-                companyId: companyId,
-                employerId: employerId,
-                employeeId: employeeId,
-                public: 0,
-            }
-        },
-        Employees: {
-            Main: {
-                action: 'get_company_employees',
-                companyId: companyId,
-                employerId: employerId,
-                employeeId: employeeId,
-                public: 0,
-            }
-        },
-        Policies: {
-            Main: {
-                action: 'get_policy_list_by_company',
-                companyId: companyId,
-                employerId: employerId,
-                employeeId: employeeId,
-                public: 0,
-            }
+    Categories: {
+        Main: {
+            action: 'get_company_types_list',
+            companyId: companyId,
+            employerId: employerId,
+            employeeId: employeeId,
+            public: 0,
         }
     },
+    Employees: {
+        Main: {
+            action: 'get_company_employees',
+            companyId: companyId,
+            employerId: employerId,
+            employeeId: employeeId,
+            public: 0,
+        }
+    },
+    Policies: {
+        Main: {
+            action: 'get_policy_list_by_company',
+            companyId: companyId,
+            employerId: employerId,
+            employeeId: employeeId,
+            public: 0,
+        }
+    }
+},
     redirectPage = true;
 
 //
@@ -41,21 +41,21 @@ if (page == 'add') loadAddPage();
 $('.js-step').fadeOut(300);
 $(`.js-step[data-step="1"]`).fadeIn(300);
 //
-$('.jsViewPoliciesBtn').click(function(e) {
+$('.jsViewPoliciesBtn').click(function (e) {
     e.preventDefault();
     //
     alertify.confirm(
         'WARNING!',
         'Any unsaved changes will be lost.',
         loadViewPage,
-        () => {}
+        () => { }
     ).set('labels', {
         ok: "Leave",
         cancel: "No, I will stay"
     });
 });
 
-$(document).on('click', '.js-to-step', function(e) {
+$(document).on('click', '.js-to-step', function (e) {
     //
     e.preventDefault();
     //
@@ -70,7 +70,7 @@ $(document).on('click', '.js-to-step', function(e) {
         let templateId = $('.js-template-add:checked').val();
         //
         if (templateId === undefined) {
-            alertify.alert('WARNING!', 'Please, select a template.', () => {});
+            alertify.alert('WARNING!', 'Please, select a template.', () => { });
             ml(false, 'policy');
             return;
         }
@@ -96,10 +96,10 @@ $(document).on('click', '.js-to-step', function(e) {
     }
     //
     $(`.js-step-tab[data-type="${type}"]`).parent('li').removeClass('active');
-    $(`.js-step-tab[data-type="${type}"][data-step="${ step }"]`).parent('li').addClass('active');
+    $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
     //
     $(`.js-step[data-type="${type}"]`).fadeOut(0);
-    $(`.js-step[data-type="${type}"][data-step="${ step }"]`).fadeIn(300);
+    $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
     //
     $('body, html').animate({ scrollTop: 0 }, 0);
     //
@@ -107,7 +107,7 @@ $(document).on('click', '.js-to-step', function(e) {
 });
 
 
-$(document).on('click', '.js-to-step-back', function(e) {
+$(document).on('click', '.js-to-step-back', function (e) {
     //
     e.preventDefault();
     //
@@ -126,7 +126,7 @@ $(document).on('click', '.js-to-step-back', function(e) {
 });
 
 
-$(document).on('click', '.js-step-tab', function(e) {
+$(document).on('click', '.js-step-tab', function (e) {
     //
     e.preventDefault();
     //
@@ -142,7 +142,7 @@ $(document).on('click', '.js-step-tab', function(e) {
     $(`.js-step-tab[data-type="${type}"][data-step="${step}"]`).parent('li').addClass('active');
     //
     $(`.js-step[data-type="${type}"]`).fadeOut(0);
-    $(`.js-step[data-type="${type}"][data-step="${ step }"]`).fadeIn(300);
+    $(`.js-step[data-type="${type}"][data-step="${step}"]`).fadeIn(300);
     //
     ml(false, 'policy');
 });
@@ -153,6 +153,9 @@ $('#js-add-policy-btn').click((e) => {
     e.preventDefault();
     //
     loadAddPage();
+    //
+    $('#NonEntitledEmployeesadd').prop('checked', true);
+
 });
 
 //
@@ -162,7 +165,7 @@ function getTypeNames(ids) {
     //
     let row = '';
     //
-    window.timeoff.categories.map(function(v) {
+    window.timeoff.categories.map(function (v) {
         if (v.type_id == ids) row = v.type_name + ', ';
     });
     //
@@ -171,7 +174,7 @@ function getTypeNames(ids) {
 
 // Fetch the categories
 function fetchCategories() {
-    $.post(handlerURL, cmnOBJ.Categories.Main, function(resp) {
+    $.post(handlerURL, cmnOBJ.Categories.Main, function (resp) {
         //
         if (resp.Redirect === true) {
             alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
@@ -185,7 +188,7 @@ function fetchCategories() {
             return alertify.alert(
                 "Warning!",
                 "No policy types found. Please, add a type before creating policies.",
-                function(){
+                function () {
                     $('.jsIPLoader[data-page="policy"]').hide(0);
                 }
             );
@@ -197,7 +200,7 @@ function fetchCategories() {
         //
         rows += '<option value="0" selected="true">[Please select a policy type]</option>';
         //
-        window.timeoff.categories.map(function(v) {
+        window.timeoff.categories.map(function (v) {
             rows += `<option value="${v.type_id}">${v.type_name}</option>`;
         });
         //
@@ -207,7 +210,7 @@ function fetchCategories() {
 
 // Employees
 function fetchEmployees() {
-    $.post(handlerURL, cmnOBJ.Employees.Main, function(resp) {
+    $.post(handlerURL, cmnOBJ.Employees.Main, function (resp) {
         //
         if (resp.Redirect === true) {
             alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
@@ -227,16 +230,34 @@ function fetchEmployees() {
         //
         rows += '<option value="all">All</option>';
         //
-        window.timeoff.employees.map(function(v) {
+        window.timeoff.employees.map(function (v) {
             rows += '<option value="' + (v.user_id) + '">' + (remakeEmployeeName(v)) + '</option>';
         });
         //
         $('#js-employee-add').html(rows);
         $('#js-employee-add').select2();
         $('#js-employee-add').select2MultiCheckboxes({
-            templateSelection: function(selected, total) {
+            templateSelection: function (selected, total) {
                 total--;
                 return "Selected " + ($.inArray('all', $('#js-employee-add').val()) !== -1 ? total : selected.length) + " of " + total;
+            }
+        });
+        // Set employees
+        $('#js-approvers-list-add').html(rows);
+        $('#js-approvers-list-add').select2();
+        $('#js-approvers-list-add').select2MultiCheckboxes({
+            templateSelection: function (selected, total) {
+                total = total - 1;
+                return "Selected " + ($.inArray('all', $('#js-approvers-list-add').val()) !== -1 ? total : selected.length) + " of " + total;
+            }
+        });
+        // Set employees
+        $('#js-approvers-list-edit').html(rows);
+        $('#js-approvers-list-edit').select2();
+        $('#js-approvers-list-edit').select2MultiCheckboxes({
+            templateSelection: function (selected, total) {
+                total = total - 1;
+                return "Selected " + ($.inArray('all', $('#js-approvers-list-edit').val()) !== -1 ? total : selected.length) + " of " + total;
             }
         });
         //
@@ -249,7 +270,7 @@ function fetchEmployees() {
 
 // Polciies
 function fetchPolicies() {
-    $.post(handlerURL, cmnOBJ.Policies.Main, function(resp) {
+    $.post(handlerURL, cmnOBJ.Policies.Main, function (resp) {
         //
         if (resp.Redirect === true) {
             alertify.alert('WARNING!', 'Your session expired. Please, re-login to continue.', () => {
@@ -267,8 +288,8 @@ function fetchPolicies() {
         //
         rows += '<option value="all">All</option>';
         //
-        resp.Data.map(function(v) {
-            rows += `<option value="${v.policy_id}">${v.policy_title}</option>`;
+        resp.Data.map(function (v) {
+            rows += `<option value="${v.policy_id}">${v.policy_title} (${(v.category_type == 1) ? "Paid" : "Unpaid"}) </option>`;
         });
         //
         $('#js-filter-policies').html(rows);
@@ -358,7 +379,7 @@ function getAccrualText(accrualOBJ, isNewHire) {
     // Case 1
     if (method == 'hours_per_month' && frequency == 'none') {
         //
-        accrue = ` ${rate} hour${ rate > 1 ? 's' : '' } per year`;
+        accrue = ` ${rate} hour${rate > 1 ? 's' : ''} per year`;
         duration = ` ${time}.`
         return text
             .replace(/{{accrue}}/g, accrue)
@@ -371,9 +392,9 @@ function getAccrualText(accrualOBJ, isNewHire) {
         let newRate = (rateType == 'total_hours' ? rate / 12 : rate * 12).toFixed(2);
         //
         if (rateType == 'total_hours') {
-            accrue = ` ${rate} hour${ rate > 1 ? 's' : '' } per year with an accrue rate of ${newRate} hour${newRate > 1 ? 's' : ''} per month`;
+            accrue = ` ${rate} hour${rate > 1 ? 's' : ''} per year with an accrue rate of ${newRate} hour${newRate > 1 ? 's' : ''} per month`;
         } else {
-            accrue = ` ${newRate} hour${ newRate > 1 ? 's' : '' } per year with an accrue rate of ${rate} hour${rate > 1 ? 's' : ''} per month`;
+            accrue = ` ${newRate} hour${newRate > 1 ? 's' : ''} per year with an accrue rate of ${rate} hour${rate > 1 ? 's' : ''} per month`;
         }
         time = `${time} of each month`
         return text
@@ -386,7 +407,7 @@ function getAccrualText(accrualOBJ, isNewHire) {
         //
         let newRate = rate;
         //
-        accrue = ` ${newRate} hour${ newRate > 1 ? 's' : '' } each month`;
+        accrue = ` ${newRate} hour${newRate > 1 ? 's' : ''} each month`;
         duration = ` ${time}.`
         return text
             .replace(/{{accrue}}/g, accrue)
@@ -400,7 +421,7 @@ function getAccrualText(accrualOBJ, isNewHire) {
         let frequencyValC = (rate / slots);
         frequencyValC = frequencyValC.toFixed(2);
         //
-        accrue = ` ${frequencyValC} hour${ frequencyValC > 1 ? 's' : '' } every ${frequencyVal} month${ frequencyVal > 1 ? 's' : '' }`;
+        accrue = ` ${frequencyValC} hour${frequencyValC > 1 ? 's' : ''} every ${frequencyVal} month${frequencyVal > 1 ? 's' : ''}`;
         duration = ` ${time}.`
         return text
             .replace(/{{accrue}}/g, accrue)
@@ -480,7 +501,7 @@ function setAccrualText() {
         //
         // $(`.js-policy-reset-date-${page}`).prop('disabled', true);
         //
-        accrue = ` ${rate} hour${ rate > 1 ? 's' : '' } per year `;
+        accrue = ` ${rate} hour${rate > 1 ? 's' : ''} per year `;
         text = text
             .replace(/{{accrue}}/g, accrue)
             .replace(/{{time}}/g, time);
@@ -493,9 +514,9 @@ function setAccrualText() {
         newRate = newRate;
         //
         if (rateType == 'total_hours') {
-            accrue = ` ${rate} hour${ rate > 1 ? 's' : '' } per year with an accrue rate of ${newRate} hour${newRate > 1 ? 's' : ''} per month`;
+            accrue = ` ${rate} hour${rate > 1 ? 's' : ''} per year with an accrue rate of ${newRate} hour${newRate > 1 ? 's' : ''} per month`;
         } else {
-            accrue = ` ${newRate} hour${ newRate > 1 ? 's' : '' } per year with an accrue rate of ${rate} hour${rate > 1 ? 's' : ''} per month`;
+            accrue = ` ${newRate} hour${newRate > 1 ? 's' : ''} per year with an accrue rate of ${rate} hour${rate > 1 ? 's' : ''} per month`;
         }
         duration = ` ${time}.`
         text = text
@@ -512,7 +533,7 @@ function setAccrualText() {
         //
         let newRate = rate;
         //
-        accrue = ` ${newRate} hour${ newRate > 1 ? 's' : '' } each month`;
+        accrue = ` ${newRate} hour${newRate > 1 ? 's' : ''} each month`;
         text = text
             .replace(/{{accrue}}/g, accrue)
             .replace(/{{time}}/g, time);
@@ -527,7 +548,7 @@ function setAccrualText() {
         let frequencyValC = (rate / slots);
         frequencyValC = frequencyValC.toFixed(2);
         //
-        accrue = ` ${frequencyValC} hour${ frequencyValC > 1 ? 's' : '' } every ${frequencyVal} month${ frequencyVal > 1 ? 's' : '' }`;
+        accrue = ` ${frequencyValC} hour${frequencyValC > 1 ? 's' : ''} every ${frequencyVal} month${frequencyVal > 1 ? 's' : ''}`;
         text = text
             .replace(/{{accrue}}/g, accrue)
             .replace(/{{time}}/g, '')
@@ -563,7 +584,7 @@ function setNewHireAccrual(
     pageType
 ) {
     //
-    if (typeof(pageType) === 'object') pageType = undefined;
+    if (typeof (pageType) === 'object') pageType = undefined;
     //
     pageType = pageType === undefined ? page : pageType;
     //
@@ -591,7 +612,7 @@ function setNewHireAccrual(
         msg = `The employees that have worked for ${duration} hour${duration == 1 ? '' : 's'} will be considered as permanent.`;
     }
     //
-    msg += `The employees that are on probation can use ${rate == 0 ? "0" : rate} ${$(`.jsTimeType-${pageType}`).text().match(/hour/gi) !== null ? "hour" :"day"}${rate == 1 ? '' : 's'}.`;
+    msg += `The employees that are on probation can use ${rate == 0 ? "0" : rate} ${$(`.jsTimeType-${pageType}`).text().match(/hour/gi) !== null ? "hour" : "day"}${rate == 1 ? '' : 's'}.`;
     //
     target.html(msg);
 }
@@ -600,14 +621,14 @@ function setNewHireAccrual(
 function loadAccrualPlans(
     type,
     plans
-){
+) {
     //
     type = type === undefined ? 'add' : type;
     //
-    var 
-    rows = '',
-    dt = 'hours(s)',
-    yt = 'year(s)';
+    var
+        rows = '',
+        dt = 'hours(s)',
+        yt = 'year(s)';
     //
     // if( $('#js-accrual-method-'+( type )+'').val() == 'hours_per_month'){
     //     dt = 'hour(s)';
@@ -615,87 +636,87 @@ function loadAccrualPlans(
     // }
 
     // For edit view
-    if( plans !== undefined && plans.length !== 0 ){
-        if(plans[0] !== undefined){
-            plans.map(function(plan){
-                rows += '<div class="js-plan-row-'+( type )+'" style="padding: 20px 0 10px;">';
+    if (plans !== undefined && plans.length !== 0) {
+        if (plans[0] !== undefined) {
+            plans.map(function (plan) {
+                rows += '<div class="js-plan-row-' + (type) + '" style="padding: 20px 0 10px;">';
                 rows += '    <span>Allow</span>';
                 rows += '    <div class="form-group form-group-custom form-group-custom-settings">';
-                rows += '        <input class="form-control form-control-custom js-pt js-plan-type-'+( type )+'" value="'+( plan.accrualRate )+'" />';
-                rows += '    </div><span> extra <span class="js-plan-type">'+( dt )+'</span> after </span>';
+                rows += '        <input class="form-control form-control-custom js-pt js-plan-type-' + (type) + '" value="' + (plan.accrualRate) + '" />';
+                rows += '    </div><span> extra <span class="js-plan-type">' + (dt) + '</span> after </span>';
                 rows += '    <div class="form-group form-group-custom form-group-custom-settings">';
-                rows += '        <input class="form-control form-control-custom js-py js-plan-year-'+( type )+'" value="'+( plan.accrualType )+'" />';
+                rows += '        <input class="form-control form-control-custom js-py js-plan-year-' + (type) + '" value="' + (plan.accrualType) + '" />';
                 rows += '    </div>';
                 rows += '    <div class="form-group form-group-custom form-group-custom-settings">';
-                rows += '        <select class="form-control form-control-custom js-pyt js-plan-duration-'+( type )+'"><option value="months" '+( plan.accrualTypeM == 'months' ? 'selected="true"' : '' )+'>Month(s)</option><option value="years" '+( plan.accrualTypeM == 'years' ? 'selected="true"' : '' )+'>Year(s)</option></select>';
+                rows += '        <select class="form-control form-control-custom js-pyt js-plan-duration-' + (type) + '"><option value="months" ' + (plan.accrualTypeM == 'months' ? 'selected="true"' : '') + '>Month(s)</option><option value="years" ' + (plan.accrualTypeM == 'years' ? 'selected="true"' : '') + '>Year(s)</option></select>';
                 rows += '    </div>';
                 rows += '    <span class="label label-danger js-plan-remove-btn" title="Remove the accrual plan" placement="top"><i class="fa fa-close"></i></span>';
                 rows += '</div>';
             });
         }
         //
-        $('#js-plan-area-'+( type )+'').html(rows);
+        $('#js-plan-area-' + (type) + '').html(rows);
         //
         return;
     }
     //
-    if(plans === undefined){
+    if (plans === undefined) {
         // For add view
-        rows += '<div class="js-plan-row-'+( type )+'" style="padding: 20px 0 10px;">';
+        rows += '<div class="js-plan-row-' + (type) + '" style="padding: 20px 0 10px;">';
         rows += '    <span>Allow</span>';
         rows += '    <div class="form-group form-group-custom form-group-custom-settings">';
-        rows += '        <input class="form-control form-control-custom js-pt js-plan-type-'+( type )+'" />';
-        rows += '    </div><span> extra <span class="js-plan-type">'+( dt )+'</span> after </span>';
+        rows += '        <input class="form-control form-control-custom js-pt js-plan-type-' + (type) + '" />';
+        rows += '    </div><span> extra <span class="js-plan-type">' + (dt) + '</span> after </span>';
         rows += '    <div class="form-group form-group-custom form-group-custom-settings">';
-        rows += '        <input class="form-control form-control-custom js-py js-plan-year-'+( type )+'" />';
+        rows += '        <input class="form-control form-control-custom js-py js-plan-year-' + (type) + '" />';
         rows += '    </div>';
         rows += '    <div class="form-group form-group-custom form-group-custom-settings">';
-        rows += '        <select class="form-control form-control-custom  js-pyt js-plan-duration-'+( type )+'"><option value="months">Month(s)</option><option value="years" selected="true">Year(s)</option></select>';
+        rows += '        <select class="form-control form-control-custom  js-pyt js-plan-duration-' + (type) + '"><option value="months">Month(s)</option><option value="years" selected="true">Year(s)</option></select>';
         rows += '    </div>';
         rows += '    <span class="label label-danger js-plan-remove-btn" title="Remove the accrual plan" placement="top"><i class="fa fa-close"></i></span>';
         rows += '</div>';
         //
-        $('#js-plan-area-'+( type )+'').append(rows);
+        $('#js-plan-area-' + (type) + '').append(rows);
     }
     //
 }
 
 //
-function makePlanRow( planId, type ){  
+function makePlanRow(planId, type) {
     var plan = getPlanFromArray(planId);
-    if(plan.length == 0) {
-        alertify.alert('ERROR!', 'Plan with Id '+(planId)+' not found.');
+    if (plan.length == 0) {
+        alertify.alert('ERROR!', 'Plan with Id ' + (planId) + ' not found.');
         return;
     }
     var rows = '';
 
     var slot = formatMinutes(plan.format, plan.default_timeslot, plan.allowed_timeoff, false, true),
-    format = plan.format.split(':');
+        format = plan.format.split(':');
     //
-    rows += '<li data-id="'+( plan.plan_id )+'" data-timeslot="'+( plan.default_timeslot )+'" data-format="'+( plan.format )+'" class="js-plan-row-'+(type)+'">';
+    rows += '<li data-id="' + (plan.plan_id) + '" data-timeslot="' + (plan.default_timeslot) + '" data-format="' + (plan.format) + '" class="js-plan-row-' + (type) + '">';
     rows += '    <div class="timeline-content margin-right">';
-    rows += '        <h4 class="timeline-field-title">'+( getPlanTitle(plan) )+' <span title="Remove Plan" class="pull-right text-danger js-remove-plan-'+(type)+'"><i class="fa fa-close"></i></span></h4>';
+    rows += '        <h4 class="timeline-field-title">' + (getPlanTitle(plan)) + ' <span title="Remove Plan" class="pull-right text-danger js-remove-plan-' + (type) + '"><i class="fa fa-close"></i></span></h4>';
     rows += '        <div class="row">';
-    if(format.indexOf('D') != -1){
+    if (format.indexOf('D') != -1) {
         rows += '            <div class="col-lg-6 col-sm-6 col-xs-12">';
         rows += '                <div class="input-group pto-time-off-margin-custom">';
-        rows += '                    <input type="text" class="form-control js-days-'+( type )+'" value="'+( slot.D )+'" />';
+        rows += '                    <input type="text" class="form-control js-days-' + (type) + '" value="' + (slot.D) + '" />';
         rows += '                    <span class="input-group-addon">Days</span>';
         rows += '                </div>';
         rows += '            </div>';
     }
-    if(format.indexOf('H') != -1){
+    if (format.indexOf('H') != -1) {
         rows += '            <div class="col-lg-6 col-sm-6 col-xs-12">';
         rows += '                <div class="input-group pto-time-off-margin-custom">';
-        rows += '                    <input type="text" class="form-control js-hours-'+( type )+'" value="'+( slot.H )+'" />';
+        rows += '                    <input type="text" class="form-control js-hours-' + (type) + '" value="' + (slot.H) + '" />';
         rows += '                    <span class="input-group-addon">Hours</span>';
         rows += '                </div>';
         rows += '            </div>';
     }
-    if(format.indexOf('M') != -1){
+    if (format.indexOf('M') != -1) {
         rows += '            <div class="col-lg-6 col-sm-6 col-xs-12">';
         rows += '                <div class="input-group pto-time-off-margin-custom">';
-        rows += '                    <input type="text" class="form-control js-minutes-'+( type )+'" value="'+( slot.M )+'" />';
+        rows += '                    <input type="text" class="form-control js-minutes-' + (type) + '" value="' + (slot.M) + '" />';
         rows += '                    <span class="input-group-addon">Minutes</span>';
         rows += '                </div>';
         rows += '            </div>';
@@ -703,24 +724,24 @@ function makePlanRow( planId, type ){
     rows += '        </div>';
     rows += '    </div>';
     rows += '</li>';
-    $('#js-plan-area-'+( type )+'').append(rows);
+    $('#js-plan-area-' + (type) + '').append(rows);
 }
 
 //
-function removePlan( planId, type){
-    $('li[data-id="'+( planId )+'"]').remove();
+function removePlan(planId, type) {
+    $('li[data-id="' + (planId) + '"]').remove();
 }
 
 //
-function isStepCompleted(step, type){
+function isStepCompleted(step, type) {
     //
-   if(page == 'add' || type == 'add') return window.timeoff.stepCompletedAdd(step);
-   else if(page == 'edit' || type == 'edit') return window.timeoff.stepCompletedEdit(step);
-   else if(page == 'reset' || type == 'reset') return window.timeoff.stepCompletedReset(step);
+    if (page == 'add' || type == 'add') return window.timeoff.stepCompletedAdd(step);
+    else if (page == 'edit' || type == 'edit') return window.timeoff.stepCompletedEdit(step);
+    else if (page == 'reset' || type == 'reset') return window.timeoff.stepCompletedReset(step);
 }
 
 //
-function loadTemplate(templateId){
+function loadTemplate(templateId) {
     //
     let o = {
         method: 'hours_per_month',
@@ -736,21 +757,21 @@ function loadTemplate(templateId){
 
     // Hours Per Month - Yearly
     //
-    if(templateId == 10){
+    if (templateId == 10) {
         o.method = 'hours_per_month';
         o.time = 'none';
         o.frequency = 'yearly';
         o.rate = 24;
     }
     //
-    if(templateId == 11){
+    if (templateId == 11) {
         o.method = 'hours_per_month';
         o.time = 'start_of_period';
         o.frequency = 'yearly';
         o.rate = 24;
     }
     //
-    if(templateId == 12){
+    if (templateId == 12) {
         o.method = 'hours_per_month';
         o.time = 'end_of_period';
         o.frequency = 'yearly';
@@ -758,7 +779,7 @@ function loadTemplate(templateId){
     }
     // Hours Per Month - Monthly
     //
-    if(templateId == 13){
+    if (templateId == 13) {
         o.method = 'hours_per_month';
         o.time = 'none';
         o.frequency = 'yearly';
@@ -766,7 +787,7 @@ function loadTemplate(templateId){
         o.rateType = 'hours_per_month';
     }
     //
-    if(templateId == 14){
+    if (templateId == 14) {
         o.method = 'hours_per_month';
         o.time = 'start_of_period';
         o.frequency = 'yearly';
@@ -774,7 +795,7 @@ function loadTemplate(templateId){
         o.rateType = 'hours_per_month';
     }
     //
-    if(templateId == 15){
+    if (templateId == 15) {
         o.method = 'hours_per_month';
         o.time = 'end_of_period';
         o.frequency = 'yearly';
@@ -784,7 +805,7 @@ function loadTemplate(templateId){
 
     // Hours Per Month - Custom
     //
-    if(templateId == 16){
+    if (templateId == 16) {
         o.method = 'hours_per_month';
         o.time = 'none';
         o.frequency = 'custom';
@@ -792,7 +813,7 @@ function loadTemplate(templateId){
         o.frequencyMonths = 4;
     }
     //
-    if(templateId == 17){
+    if (templateId == 17) {
         o.method = 'hours_per_month';
         o.time = 'start_of_period';
         o.frequency = 'custom';
@@ -800,7 +821,7 @@ function loadTemplate(templateId){
         o.frequencyMonths = 4;
     }
     //
-    if(templateId == 18){
+    if (templateId == 18) {
         o.method = 'hours_per_month';
         o.time = 'end_of_period';
         o.frequency = 'custom';
@@ -808,7 +829,7 @@ function loadTemplate(templateId){
         o.frequencyMonths = 4;
     }
 
-    if(templateId == 19){
+    if (templateId == 19) {
         o.method = 'hours_per_month';
         o.time = 'none';
         o.frequency = 'none';
@@ -823,38 +844,38 @@ function loadTemplate(templateId){
     $(`#js-accrual-time-${page}`).trigger('change');
     $(`#js-accrual-frequency-${page}`).select2('val', o.frequency);
     $(`#js-accrual-frequency-${page}`).trigger('change');
-    if(o.frequencyMonths != 0) $(`#js-accrual-frequency-val-${page}`).val(o.frequencyMonths);
-    if(o.rateType != 0) $(`#js-accrual-rate-type-${page}`).val(o.rateType);
+    if (o.frequencyMonths != 0) $(`#js-accrual-frequency-val-${page}`).val(o.frequencyMonths);
+    if (o.rateType != 0) $(`#js-accrual-rate-type-${page}`).val(o.rateType);
     $(`#js-accrual-rate-${page}`).val(o.rate).trigger('keyup');
 }
 
 //
-function finalStep(type){
+function finalStep(type) {
     //
-    if(page == 'add' || type == 'add') return window.timeoff.finalStepCompletedAdd(getStep());
-    else if(page == 'edit' || type == 'edit') return window.timeoff.finalStepCompletedEdit(getStep());
-    else if(page == 'reset' || type == 'reset') return window.timeoff.finalStepCompletedReset(getStep());
+    if (page == 'add' || type == 'add') return window.timeoff.finalStepCompletedAdd(getStep());
+    else if (page == 'edit' || type == 'edit') return window.timeoff.finalStepCompletedEdit(getStep());
+    else if (page == 'reset' || type == 'reset') return window.timeoff.finalStepCompletedReset(getStep());
 }
 
 //
-function saveStep(d){
+function saveStep(d) {
     return localStorage.setItem(`${page}Policy`, JSON.stringify(d));
 }
 
 //
-function getStep(d){
+function getStep(d) {
     return JSON.parse(localStorage.getItem(`${page}Policy`));
 }
 
 //
-function removeStep(d){
+function removeStep(d) {
     return localStorage.removeItem(`${page}Policy`);
 }
 
 
 // Pages
 // Add policy page
-function loadAddPage(){
+function loadAddPage() {
     // localStorage.clear();
     //
     page = 'add';
@@ -865,10 +886,10 @@ function loadAddPage(){
     // Show page
     $('#js-page-add').fadeIn(500);
     // Check if categories and employees are loaded
-    if(
+    if (
         window.timeoff.categories === undefined ||
         window.timeoff.employees === undefined
-    ){
+    ) {
         setTimeout(loadAddPage, 2000);
         return;
     }
@@ -877,6 +898,11 @@ function loadAddPage(){
     //
     $('.js-template-add').prop('checked', false);
     $('.js-template-add[value="0"]').prop('checked', true);
+    //
+    $('#js-policy-type-add').select2({
+        minimumResultsForSearch: -1
+    });
+    $('#js-policy-type-add').select2('val', 1);
     // Set policy types
     $('#js-category-add').select2();
     $('#js-category-add').select2('val', 0);
@@ -888,9 +914,19 @@ function loadAddPage(){
     $('#js-employee-add').select2();
     $('#js-employee-add').select2('val', 0);
     $('#js-employee-add').select2MultiCheckboxes({
-        templateSelection: function(selected, total) {
+        templateSelection: function (selected, total) {
             total = total - 1;
-            return "Selected " +( $.inArray('all', $('#js-employee-add').val()) !== -1 ? total : selected.length )+ " of " + total;
+            return "Selected " + ($.inArray('all', $('#js-employee-add').val()) !== -1 ? total : selected.length) + " of " + total;
+        }
+    });
+    //
+    // Set employees
+    $('#js-approvers-list-add').select2();
+    $('#js-approvers-list-add').select2('val', 0);
+    $('#js-approvers-list-add').select2MultiCheckboxes({
+        templateSelection: function (selected, total) {
+            total = total - 1;
+            return "Selected " + ($.inArray('all', $('#js-approvers-list-add').val()) !== -1 ? total : selected.length) + " of " + total;
         }
     });
     //
@@ -912,14 +948,14 @@ function loadAddPage(){
     // $('#js-accrual-method-add').select2('val', 'hours_per_month');
     // $('#js-accrual-method-add').trigger('change');
     //Add by Alee on 4 Apr 2021
-    $('#js-off-days-add').select2({closeOnSelect: false});
+    $('#js-off-days-add').select2({ closeOnSelect: false });
     $('#js-off-days-add').select2('val', null);
     // Set accrual time
-    $('#js-accrual-time-add').select2({minimumResultsForSearch: -1});
+    $('#js-accrual-time-add').select2({ minimumResultsForSearch: -1 });
     $('#js-accrual-time-add').select2('val', 'none');
     $('#js-accrual-time-add').trigger('change');
     // // Set accrual frquency
-    $('#js-accrual-frequency-add').select2({minimumResultsForSearch: -1});
+    $('#js-accrual-frequency-add').select2({ minimumResultsForSearch: -1 });
     $('#js-accrual-frequency-add').select2('val', 'none');
     $('#js-accrual-frequency-add').trigger('change');
     $('#js-accrual-frequency-val-add').val(1);
@@ -930,12 +966,12 @@ function loadAddPage(){
     $('#js-minimum-applicable-hours-add').val(0);
     $('.js-minimum-applicable-time-add[value="hours"]').prop('checked', true).trigger('click');
     // Set carryover
-    $('#js-carryover-cap-check-add').select2({minimumResultsForSearch: -1});
+    $('#js-carryover-cap-check-add').select2({ minimumResultsForSearch: -1 });
     $('#js-carryover-cap-check-add').select2('val', 'no');
     $('#js-carryover-cap-check-add').trigger('change');
     $('#js-carryover-cap-add').val(0);
     // Set negative balance
-    $('#js-accrual-balance-add').select2({minimumResultsForSearch: -1});
+    $('#js-accrual-balance-add').select2({ minimumResultsForSearch: -1 });
     $('#js-accrual-balance-add').select2('val', 'no');
     $('#js-accrual-balance-add').trigger('change');
     $('#js-maximum-balance-add').val(0);
@@ -954,17 +990,17 @@ function loadAddPage(){
     // Show hionts
     $('.js-hint').hide(0);
     // Policy applicable date
-    $('#js-custom-date-add').datepicker({ 
-        dateFormat: 'mm-dd-yy', 
+    $('#js-custom-date-add').datepicker({
+        dateFormat: 'mm-dd-yy',
         changeYear: true,
         changeMonth: true,
         onSelect: (d) => {
-            if(d <= moment().format('MM-DD-YYYY')) $('#js-applicable-date-text-add').show();
+            if (d <= moment().format('MM-DD-YYYY')) $('#js-applicable-date-text-add').show();
             else $('#js-applicable-date-text-add').hide();
         }
     });
     // Policy reset date
-    $('#js-custom-reset-date-add').datepicker({ 
+    $('#js-custom-reset-date-add').datepicker({
         dateFormat: 'mm-dd-yy',
         changeYear: true,
         changeMonth: true,
@@ -972,13 +1008,13 @@ function loadAddPage(){
     // Hide all tabs
     $('.js-step').hide();
     $('.js-step[data-step="0"]').show();
-    
+
     //
     ml(false, 'policy');
 }
 
 //
-function loadViewPage(){
+function loadViewPage() {
     // localStorage.clear();
     //
     page = 'view';
@@ -993,8 +1029,8 @@ function loadViewPage(){
 }
 
 // Edit policy page
-function loadEditPage(){
-   localStorage.clear();
+function loadEditPage() {
+    localStorage.clear();
     //
     page = 'edit';
     // Show loader
@@ -1004,13 +1040,19 @@ function loadEditPage(){
     // Show page
     $('#js-page-edit').fadeIn(500);
     // Check if categories and employees are loaded
-    if(
+    if (
         window.timeoff.categories === undefined ||
         window.timeoff.employees === undefined
-    ){
+    ) {
         setTimeout(loadEditPage, 2000);
         return;
     }
+
+    //
+    $('#js-policy-type-edit').select2({
+        minimumResultsForSearch: -1
+    });
+    $('#js-policy-type-edit').select2('val', 1);
 
     // Reset view
     // Set policy types
@@ -1024,9 +1066,17 @@ function loadEditPage(){
     $('#js-employee-edit').select2();
     $('#js-employee-edit').select2('val', 0);
     $('#js-employee-edit').select2MultiCheckboxes({
-        templateSelection: function(selected, total) {
+        templateSelection: function (selected, total) {
             total = total - 1;
-            return "Selected " +( $.inArray('all', $('#js-employee-edit').val()) !== -1 ? total : selected.length )+ " of " + total;
+            return "Selected " + ($.inArray('all', $('#js-employee-edit').val()) !== -1 ? total : selected.length) + " of " + total;
+        }
+    });
+    $('#js-approvers-list-edit').select2();
+    $('#js-approvers-list-edit').select2('val', 0);
+    $('#js-approvers-list-edit').select2MultiCheckboxes({
+        templateSelection: function (selected, total) {
+            total = total - 1;
+            return "Selected " + ($.inArray('all', $('#js-approvers-list-edit').val()) !== -1 ? total : selected.length) + " of " + total;
         }
     });
     //
@@ -1047,11 +1097,11 @@ function loadEditPage(){
     // $('#js-accrual-method-edit').select2('val', 'days_per_year');
     // $('#js-accrual-method-edit').trigger('change');
     // Set accrual time
-    $('#js-accrual-time-edit').select2({minimumResultsForSearch: -1});
+    $('#js-accrual-time-edit').select2({ minimumResultsForSearch: -1 });
     $('#js-accrual-time-edit').select2('val', 'none');
     $('#js-accrual-time-edit').trigger('change');
-    // Set accrual frquency
-    $('#js-accrual-frequency-edit').select2({minimumResultsForSearch: -1});
+    // Set accrual frquencyjs-policy-type-add 
+    $('#js-accrual-frequency-edit').select2({ minimumResultsForSearch: -1 });
     $('#js-accrual-frequency-edit').select2('val', 'none');
     $('#js-accrual-frequency-edit').trigger('change');
     $('#js-accrual-frequency-val-edit').val(1);
@@ -1062,16 +1112,16 @@ function loadEditPage(){
     $('#js-minimum-applicable-hours-edit').val(0);
     $('.js-minimum-applicable-time-edit[value="hours"]').prop('checked', true).trigger('click');
     // Set carryover
-    $('#js-carryover-cap-check-edit').select2({minimumResultsForSearch: -1});
+    $('#js-carryover-cap-check-edit').select2({ minimumResultsForSearch: -1 });
     $('#js-carryover-cap-check-edit').select2('val', 'no');
     $('#js-carryover-cap-check-edit').trigger('change');
     $('#js-carryover-cap-edit').val(0);
     // Set negative balance
-    $('#js-accrual-balance-edit').select2({minimumResultsForSearch: -1});
+    $('#js-accrual-balance-edit').select2({ minimumResultsForSearch: -1 });
     $('#js-accrual-balance-edit').select2('val', 'no');
     $('#js-accrual-balance-edit').trigger('change');
     $('#js-maximum-balance-edit').val(0);
-    setTimeout(() =>{
+    setTimeout(() => {
         // Set policy applicable date
         $('.js-hire-date-edit[value="hireDate"]').prop('checked', true);
         $('.jsImplementDateBox-edit').hide();
@@ -1089,17 +1139,17 @@ function loadEditPage(){
     // Show hionts
     $('.js-hint').hide(0);
     // Policy applicable date
-    $('#js-custom-date-edit').datepicker({ 
-        dateFormat: 'mm-dd-yy', 
+    $('#js-custom-date-edit').datepicker({
+        dateFormat: 'mm-dd-yy',
         changeYear: true,
         changeMonth: true,
         onSelect: (d) => {
-            if(d <= moment().format('MM-DD-YYYY')) $('#js-applicable-date-text-edit').show();
+            if (d <= moment().format('MM-DD-YYYY')) $('#js-applicable-date-text-edit').show();
             else $('#js-applicable-date-text-edit').hide();
         }
     });
     // Policy reset date
-    $('#js-custom-reset-date-edit').datepicker({ 
+    $('#js-custom-reset-date-edit').datepicker({
         dateFormat: 'mm-dd-yy',
         changeYear: true,
         changeMonth: true,
@@ -1119,7 +1169,7 @@ function loadEditPage(){
 }
 
 //
-function loadResetPage(){
+function loadResetPage() {
     // Reset view
     // Set policy types
     $('#js-category-reset').select2().prop('disabled', true);
@@ -1132,9 +1182,9 @@ function loadResetPage(){
     $('#js-employee-reset').select2().prop('disabled', true);
     $('#js-employee-reset').select2('val', 0);
     $('#js-employee-reset').select2MultiCheckboxes({
-        templateSelection: function(selected, total) {
+        templateSelection: function (selected, total) {
             total = total - 1;
-            return "Selected " +( $.inArray('all', $('#js-employee-reset').val()) !== -1 ? total : selected.length )+ " of " + total;
+            return "Selected " + ($.inArray('all', $('#js-employee-reset').val()) !== -1 ? total : selected.length) + " of " + total;
         }
     });
     //
@@ -1151,11 +1201,11 @@ function loadResetPage(){
     // $('#js-accrual-method-reset').select2('val', 'days_per_year');
     // $('#js-accrual-method-reset').trigger('change');
     // Set accrual time
-    $('#js-accrual-time-reset').select2({minimumResultsForSearch: -1});
+    $('#js-accrual-time-reset').select2({ minimumResultsForSearch: -1 });
     $('#js-accrual-time-reset').select2('val', 'none');
     $('#js-accrual-time-reset').trigger('change');
     // Set accrual frquency
-    $('#js-accrual-frequency-reset').select2({minimumResultsForSearch: -1});
+    $('#js-accrual-frequency-reset').select2({ minimumResultsForSearch: -1 });
     $('#js-accrual-frequency-reset').select2('val', 'none');
     $('#js-accrual-frequency-reset').trigger('change');
     $('#js-accrual-frequency-val-reset').val(1);
@@ -1166,16 +1216,16 @@ function loadResetPage(){
     $('#js-minimum-applicable-hours-reset').val(0);
     $('.js-minimum-applicable-time-reset[value="hours"]').prop('checked', true).trigger('click');
     // Set carryover
-    $('#js-carryover-cap-check-reset').select2({minimumResultsForSearch: -1});
+    $('#js-carryover-cap-check-reset').select2({ minimumResultsForSearch: -1 });
     $('#js-carryover-cap-check-reset').select2('val', 'no');
     $('#js-carryover-cap-check-reset').trigger('change');
     $('#js-carryover-cap-reset').val(0);
     // Set negative balance
-    $('#js-accrual-balance-reset').select2({minimumResultsForSearch: -1});
+    $('#js-accrual-balance-reset').select2({ minimumResultsForSearch: -1 });
     $('#js-accrual-balance-reset').select2('val', 'no');
     $('#js-accrual-balance-reset').trigger('change');
     $('#js-maximum-balance-reset').val(0);
-    setTimeout(() =>{
+    setTimeout(() => {
         // Set policy applicable date
         $('.js-hire-date-reset[value="hireDate"]').prop('checked', true);
         $('.jsImplementDateBox-reset').hide();
@@ -1186,22 +1236,22 @@ function loadResetPage(){
     $('#js-accrue-new-hire-reset').val(0);
     $('#js-newhire-prorate-reset').val(0);
     // Policy applicable date
-    $('#js-custom-date-reset').datepicker({ 
-        dateFormat: 'mm-dd-yy', 
+    $('#js-custom-date-reset').datepicker({
+        dateFormat: 'mm-dd-yy',
         changeYear: true,
         changeMonth: true,
         onSelect: (d) => {
-            if(d <= moment().format('MM-DD-YYYY')) $('#js-applicable-date-text-reset').show();
+            if (d <= moment().format('MM-DD-YYYY')) $('#js-applicable-date-text-reset').show();
             else $('#js-applicable-date-text-reset').hide();
         }
     });
     // Policy reset date
-    $('#js-custom-reset-date-reset').datepicker({ 
+    $('#js-custom-reset-date-reset').datepicker({
         dateFormat: 'mm-dd-yy',
         changeYear: true,
         changeMonth: true,
     });
- 
+
     //
     window.timeoff.startPolicyEditProcess();
 }

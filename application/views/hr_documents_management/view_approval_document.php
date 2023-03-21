@@ -1,7 +1,12 @@
 <div class="main csPageWrap">
-    <div class="container">
+    <div class="container-fluid">
          <!-- row -->
          <div class="row">
+         <div class="col-sm-1">
+                <a href="<?=base_url('employee_management_system');?>" class="btn btn-info csRadius5">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
+                </a>
+            </div>
             <div class="col-sm-6 col-xs-12">
                 <a href="<?=base_url('hr_documents_management/approval_documents');?>" class="btn btn-info csRadius5">
                     <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Back To Approval Documents

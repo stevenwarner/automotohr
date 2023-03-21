@@ -192,7 +192,7 @@ if (!function_exists('getAwardedRate')) {
             }
         }
         //
-        return $rateInMqqinutes;
+        return $rateInMinutes;
     }
 }
 
@@ -221,7 +221,8 @@ if (!function_exists('getEmployeeAccrual')) {
         $accruals,
         $balanceInMinutes,
         $asOfToday = '',
-        $slug = ''
+        $slug = '',
+        $categoryType = '1'
     ) {
         // Get instance of CI
         $_this = &get_instance();
@@ -503,6 +504,13 @@ if (!function_exists('getEmployeeAccrual')) {
         }
         //
         $r['IsUnlimited'] = $accrualRateInMinutes == 0 ? 1 : 0;
+
+        // for unpaid
+        if ($categoryType == '0') {
+            $tmp = $r['UnpaidConsumedTime'];
+            $r['UnpaidConsumedTime'] = $r['ConsumedTime'];
+            $r['ConsumedTime'] = $tmp;
+        }
         //
         return $r;
     }

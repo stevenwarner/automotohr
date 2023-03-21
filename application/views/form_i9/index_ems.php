@@ -3,11 +3,17 @@
     $db_preparer_serialized_data = sizeof($pre_form) > 0 && $pre_form['section1_preparer_or_translator'] != null ? unserialize($pre_form['section1_preparer_or_translator']) : array();
     $prepared_section = isset($db_preparer_serialized_data['section1_preparer_or_translator']) && !empty($db_preparer_serialized_data['section1_preparer_or_translator']) ? $db_preparer_serialized_data['section1_preparer_or_translator'] : '';
 ?>
-<div class="main">
-    <div class="container">
+<div class="main jsmaincontent">
+    <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
                 <?php $this->load->view('templates/_parts/admin_flash_message');?>
+                <div class="form-group col-xs-12 col-sm-1 col-md-1 col-lg-1">
+                <a href="<?=base_url('employee_management_system');?>" class="btn btn-info csRadius5">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
+                </a> 
+                </div>
+
                 <div class="form-group col-xs-12 col-sm-4 col-md-4 col-lg-4">
                     <a href="<?php echo base_url('hr_documents_management/my_documents'); ?>"
                         class="btn btn-block blue-button"><i class="fa fa-angle-left"></i> Documents</a>

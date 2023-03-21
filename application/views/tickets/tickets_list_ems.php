@@ -1,9 +1,17 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-<div class="main">
-    <div class="container">
+<div class="main jsmaincontent">
+    <div class="container-fluid">
+    
         <div class="row">
-            <div class="col-lg-12">
+
+        <div class="col-lg-1">
+                <a href="<?=base_url('employee_management_system');?>" class="btn btn-info csRadius5">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>&nbsp;Dashboard
+                </a>
+            </div>
+
+            <div class="col-lg-2">
                 <?php $this->load->view('templates/_parts/admin_flash_message'); ?>
                 <div class="btn-panel">
                     <a style="margin:0 0 10px;" href="<?php echo base_url('support_tickets/add'); ?>" class="btn btn-info">+ Create New Support Ticket</a>
