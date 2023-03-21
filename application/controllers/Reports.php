@@ -2849,7 +2849,6 @@ class Reports extends Public_Controller
                 break;
 
             case 'get_employee_document':
-
                 $employeedocuments = $this->reports_model->getEmployeeDocument($formpost);
                 //
                 if (!sizeof($employeedocuments)) {
@@ -2863,6 +2862,41 @@ class Reports extends Public_Controller
                 //
                 if ($formpost['page'] == 1) {
                     $this->res['TotalRecords'] = $employeedocuments['Count'];
+                    $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
+                }
+                $this->resp();
+                break;
+                //
+            case 'get_adp_employee_filter':
+                // Fetch employees
+                $employees = $this->reports_model->getCompanyEmployee($companyId);
+                //
+                if (!sizeof($employees)) {
+                    $this->res['Response'] = 'No Employees found.';
+                    $this->resp();
+                }
+                $this->res['Status'] = true;
+                $this->res['Response'] = 'Proceed';
+                $this->res['Data'] = $employees;
+                $this->resp();
+                break;
+
+                //
+            case 'get_adp_employees':
+                // Fetch employees
+                $licenses = $this->reports_model->getADPEmployees($formpost);
+                //
+                if (!sizeof($licenses)) {
+                    $this->res['Response'] = 'No Employees found.';
+                    $this->resp();
+                }
+                $this->res['Status'] = true;
+                $this->res['Limit'] = $formpost['limit'];
+                $this->res['Response'] = 'Proceed';
+                $this->res['Data'] = $licenses['Data'];
+                //
+                if ($formpost['page'] == 1) {
+                    $this->res['TotalRecords'] = $licenses['Count'];
                     $this->res['TotalPages'] = ceil($this->res['TotalRecords'] / $this->res['Limit']);
                 }
                 $this->resp();
@@ -2972,28 +3006,28 @@ class Reports extends Public_Controller
     function error_report()
     {
         // $alertpages = ["assign_bulk_documents", "add_history_documents"];
-		// $page = str_replace(base_url(), "", $_POST["OnPage"]);
-		// $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
-		// $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
-		// if (str_replace($alertpages, '', $page) != $page) {
-		// 	sendMail(
-		// 		FROM_EMAIL_NOTIFICATIONS,
-		// 		OFFSITE_DEV_EMAIL,
-		// 		'Bulk Upload Documents Error',
-		// 		@json_encode($_POST)
-		// 	);
-		// } else {
-		// 	sendMail(
-		// 		FROM_EMAIL_NOTIFICATIONS,
-		// 		OFFSITE_DEV_EMAIL,
-		// 		'Error On ' . $page,
-		// 		@json_encode($_POST)
-		// 	);
-		// }
+        // $page = str_replace(base_url(), "", $_POST["OnPage"]);
+        // $_POST['ErrorLogTime'] = date('Y-m-d H:i:s');
+        // $_POST['OccurrenceTime'] = DateTime::createFromFormat('d/m/Y, H:i:s A', $_POST['OccurrenceTime'])->format('Y-m-d H:i:s');
+        // if (str_replace($alertpages, '', $page) != $page) {
+        // 	sendMail(
+        // 		FROM_EMAIL_NOTIFICATIONS,
+        // 		OFFSITE_DEV_EMAIL,
+        // 		'Bulk Upload Documents Error',
+        // 		@json_encode($_POST)
+        // 	);
+        // } else {
+        // 	sendMail(
+        // 		FROM_EMAIL_NOTIFICATIONS,
+        // 		OFFSITE_DEV_EMAIL,
+        // 		'Error On ' . $page,
+        // 		@json_encode($_POST)
+        // 	);
+        // }
         // //
         // jsErrorHandler($_POST);
-		//  
-		echo "error repoted and send email";
+        //  
+        echo "error repoted and send email";
     }
 
 
@@ -3159,6 +3193,57 @@ class Reports extends Public_Controller
         //
         $this->load->view('main/header', $data);
         $this->load->view('reports/employee_document');
+        $this->load->view('main/footer');
+    }
+
+
+    // 
+    function adp_employees()
+    {
+        if (!$this->session->userdata('logged_in')) redirect('login', "refresh");
+        //
+        $data['session'] = $this->session->userdata('logged_in');
+        $data['security_details'] = db_get_access_level_details($data['session']['employer_detail']['sid']);
+        check_access_permissions($data['security_details'], 'my_settings', 'reports');
+        //
+        $company_sid   = $data['session']['company_detail']['sid'];
+        //
+        $data['title'] = 'ADP Employees Report';
+
+        if (sizeof($this->input->post(NULL, TRUE))) {
+            $post = $this->input->post(NULL, TRUE);
+            $post['companySid'] = $company_sid;
+
+            if ($post['adpStatus'] == '') $post['adpStatus'] = 'all';
+            if ($post['employeeSid'] == '') $post['employeeSid'] = 'all';
+            if ($post['fromDate'] == '') $post['fromDate'] = 'all';
+            if ($post['toDate'] == '') $post['toDate'] = 'all';
+            // Fetch licenses
+
+            $adpemployees = $this->reports_model->getADPEmployees($post, 'yes');
+            if (sizeof($adpemployees)) {
+
+                header('Content-Type: text/csv; charset=utf-8');
+                header("Content-Disposition: attachment; filename=Employees_ADP_report_" . (date('YmdHis')) . ".csv");
+                $output = fopen('php://output', 'w');
+                fputcsv($output, array('Employee', 'Associate ID', 'ADP Status', 'ADP Date Time'));
+
+                foreach ($adpemployees as $adpRow) {
+                    $a = array();
+                    $a[] = remakeEmployeeName($adpRow);
+                    $a[] = $adpRow['associate_oid'] != null ? $adpRow['associate_oid'] : '';
+                    $a[] = $adpRow['associate_oid'] != null ? 'On ADP'  : 'Off ADP';
+                    $a[] = $adpRow['created_at'] != null ? $adpRow['created_at'] : '';
+                    fputcsv($output, $a);
+                }
+
+                fclose($output);
+                exit;
+            }
+        }
+        //
+        $this->load->view('main/header', $data);
+        $this->load->view('reports/adp_employees');
         $this->load->view('main/footer');
     }
 }

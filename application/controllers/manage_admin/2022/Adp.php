@@ -28,39 +28,20 @@ class Adp extends Admin_Controller
         $this->data['company_sid'] = $company_sid;
         $company_name = $this->company_model->get_company_name($company_sid);
         $this->data['company_name'] = $company_name;
-
         $this->data['adp_company_data'] = $this->adp_model->get_adp_company_data($company_sid);
-        $employer_id = '';
-        $company_id = $company_sid;
-        $this->data['employer_id'] = $company_sid;
-        $keyword = '';
-        $order_by = '';
-        $order = '';
-        $employee_type = 'all';
 
-        $keyword = "";
-        $employee_type = "all";
-        $order_by = '';
-        $order = "";
-        $logincred = "all";
-
-        $data['archived'] = 0;
-        $data['keyword'] = $keyword;
-        $data['employee_type'] = $employee_type;
-        $data['order_by'] = $order_by;
-        $data['order'] = $order;
         //
-        $order_by = 'sid';
-        $order = 'desc';
-        $searchList = [];
-
-        $employees = $this->employee_model->get_employees_details_new($company_id, $employer_id, $keyword, 0, $order_by, $order, $searchList, $employee_type, $logincred);
-        $this->data['employees'] = $employees;
+        $this->data['employees'] = $this->adp_model->getOnADPEmployees($company_sid);
+        //
+        $this->data['offADPEmployees'] = $this->adp_model->getOffADPEmployees(
+            array_column($this->data['employees'], 'sid'),
+            $company_sid
+        );
 
         //GET ADP Employees
         $adpEmployees = $this->adp_get_employees();
-        $this->data['adpEmployees'] = json_decode($adpEmployees);
 
+        $this->data['adpEmployees'] = json_decode($adpEmployees);
         $this->data['page_title'] = 'ADP Settings';
         $this->render('manage_admin/adp_settings');
     }
@@ -77,10 +58,11 @@ class Adp extends Admin_Controller
     }
 
     //
-    function adp_get_employees()
+    function adp_get_employees($associateId = '')
     {
+        $associateLink = $associateId  ? '/' . $associateId : '';
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, getCreds('AHR')->API_SERVER_URL . 'adp/workers');
+        curl_setopt($curl, CURLOPT_URL, getCreds('AHR')->API_SERVER_URL . 'adp/workers' . $associateLink);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         $result = curl_exec($curl);
@@ -106,30 +88,52 @@ class Adp extends Admin_Controller
 
 
 
-
-        //
-        public function adp_employee_report (){
-
-              $this->data['companies'] = $this->adp_model->getCompanies('active');
-              $this->data['companysid'] = 0;
-             $formpost = $this->input->post(NULL, TRUE);
-               
-      if($formpost['companySid'] > 0){
-          $companyId = $formpost['companySid'] ;
-          $this->data['employees'] = $this->adp_model->getOnADPEmployees($companyId);
-        //
-         $this->data['offADPEmployees'] = $this->adp_model->getOffADPEmployees(
-            array_column($this->data['employees'], 'sid'),
-            $companyId
-         );
-
-         $this->data['companysid'] = $companyId;
-        }    
-         $this->data['page_title'] = 'ADP Report';
-         $this->render('manage_admin/adp_report');
-
-
+    //
+    function deleteAdpEmployee()
+    {
+        $formpost = $this->input->post(NULL, TRUE);
+        if (!empty($formpost["Id"])) {
+            $this->adp_model->delete_ADP_employyee($formpost['Id']);
         }
+    }
 
 
+    //
+    function adpEmployeeDetail($associateId)
+    {
+        $employeedata  = $this->adp_get_employees($associateId);
+        $this->data['adpemployeedata'] = json_decode($employeedata );
+         //
+         return SendResponse(
+            200,
+            [
+                'view' => $this->load->view('manage_admin/adp_employee_details', $this->data, true)
+            ]
+        );
+    }
+
+
+
+    //
+    public function adp_employee_report()
+    {
+
+        $this->data['companies'] = $this->adp_model->getCompanies('active');
+        $this->data['companysid'] = 0;
+        $formpost = $this->input->post(NULL, TRUE);
+
+        if ($formpost['companySid'] > 0) {
+            $companyId = $formpost['companySid'];
+            $this->data['employees'] = $this->adp_model->getOnADPEmployees($companyId);
+            //
+            $this->data['offADPEmployees'] = $this->adp_model->getOffADPEmployees(
+                array_column($this->data['employees'], 'sid'),
+                $companyId
+            );
+
+            $this->data['companysid'] = $companyId;
+        }
+        $this->data['page_title'] = 'ADP Report';
+        $this->render('manage_admin/adp_report');
+    }
 }

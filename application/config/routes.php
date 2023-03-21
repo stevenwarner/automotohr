@@ -1679,4 +1679,16 @@ $route['manage_admin/adp_settings/(:num)'] = 'manage_admin/2022/Adp/adp_settings
 $route['manage_admin/saveadpemployees'] = 'manage_admin/2022/Adp/saveAdpEmployees';
 $route['manage_admin/statusupdate'] = 'manage_admin/2022/Adp/adp_enable_disable';
 
+$route['manage_admin/deleteadpemployee'] = 'manage_admin/2022/Adp/deleteAdpEmployee';
+$route['manage_admin/adpemployeedetail/(:any)'] = 'manage_admin/2022/Adp/adpEmployeeDetail/$1';
+
+$route['reports/adp_employees'] = 'reports/adp_employees';
+$route['reports/adp_employees/(.*)'] = 'reports/adp_employees';
+
+
+
+
+
+
 $route['adp/employeereport'] = 'manage_admin/2022/Adp/adp_employee_report';
+

@@ -488,8 +488,8 @@ class Adp_model extends CI_Model
     public function getOnADPEmployees($company_sid)
     {
         //
-       $this->db->select(
-           'users.sid,
+        $this->db->select(
+            'users.sid,
            users.first_name,
            users.last_name,
            users.email,
@@ -504,21 +504,21 @@ class Adp_model extends CI_Model
            adp_employees.associate_oid,
            adp_employees.worker_id,
            adp_employees.created_at
-           ');
-       $this->db->from('adp_employees');
-       $this->db->join('users', 'users.sid = adp_employees.employee_sid');
-       $this->db->where('users.parent_sid', $company_sid);
-       $query_result = $this->db->get();
-       return $result = $query_result->result_array();
-            
+           '
+        );
+        $this->db->from('adp_employees');
+        $this->db->join('users', 'users.sid = adp_employees.employee_sid');
+        $this->db->where('users.parent_sid', $company_sid);
+        $query_result = $this->db->get();
+        return $result = $query_result->result_array();
     }
 
-   
-      //
-      public function getOffADPEmployees($employeesArray, $companySid)
-      {
-    
-          $this->db->select('
+
+    //
+    public function getOffADPEmployees($employeesArray, $companySid)
+    {
+
+        $this->db->select('
               sid,
               first_name,
               last_name,
@@ -532,43 +532,66 @@ class Adp_model extends CI_Model
               access_level_plus,
               pay_plan_flag
           ')
-              ->where('parent_sid', $companySid)
-              ->where('is_executive_admin', 0)
-              ->order_by('first_name', 'ASC');
-          //
-          if (!empty($employeesArray)) {
-              $this->db->where_not_in('sid', $employeesArray);
-          }
-          //
-          $employees = $this->db->get('users')->result_array();
-          return $employees;
-      }
+            ->where('parent_sid', $companySid)
+            ->where('is_executive_admin', 0)
+            ->order_by('first_name', 'ASC');
+        //
+        if (!empty($employeesArray)) {
+            $this->db->where_not_in('sid', $employeesArray);
+        }
+        //
+        $employees = $this->db->get('users')->result_array();
+        return $employees;
+    }
 
 
-  
-        /**
+
+    /**
      * Get companies
      * @param string $status
      * @return array
      */
-      //
-      public function getCompanies(string $status = 'all')
-      {
-          $this->db
-              ->select('CompanyName, sid')
-              ->where([
-                  'parent_sid' => 0
-              ])
-              ->order_by('CompanyName', 'ASC');
-          //
-          if ($status != 'all') {
-              $this->db->where('active', $status == 'active' ? 1 : 0);
-          }
-          //
-          return
-              $this->db->get('users')
-              ->result_array();
-      }
+    //
+    public function getCompanies(string $status = 'all')
+    {
+        $this->db
+            ->select('CompanyName, sid')
+            ->where([
+                'parent_sid' => 0
+            ])
+            ->order_by('CompanyName', 'ASC');
+        //
+        if ($status != 'all') {
+            $this->db->where('active', $status == 'active' ? 1 : 0);
+        }
+        //
+        return
+            $this->db->get('users')
+            ->result_array();
+    }
 
- 
+
+    //
+    function delete_ADP_employyee($employee_sid)
+    {
+
+        $record = $this->db
+            ->select('*')
+            ->where('employee_sid', $employee_sid)
+            ->get('adp_employees')
+            ->row_array();
+
+        if (!empty($record)) {
+            //
+            $ins['employee_sid'] = $record['employee_sid'];
+            $ins['associate_oid'] = $record['associate_oid'];
+            $ins['worker_id'] = $record['worker_id'];
+            $ins['created_at'] = $ins['updated_at'] = getSystemDate();
+            //
+            $this->db->insert('adp_employees_history', $ins);
+        }
+
+        $this->db->where('employee_sid', $employee_sid);
+        $this->db->delete('adp_employees');
+    }
 }
