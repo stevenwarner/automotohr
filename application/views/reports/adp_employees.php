@@ -37,7 +37,7 @@
                                                                 </div>
                                                                 <div class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
                                                                     <div class="field-row">
-                                                                        <label>ADP Status</label>
+                                                                        <label>Status</label>
                                                                         <select id="js-adp-status" name="adpStatus">
                                                                             <option value="all">All</option>
                                                                             <option value="1">On ADP</option>
@@ -48,13 +48,13 @@
 
                                                                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
                                                                     <div class="field-row">
-                                                                        <label class="">On ADP From Date</label>
+                                                                        <label class="">From Date</label>
                                                                         <input class="invoice-fields" placeholder="<?= date('m-d-Y'); ?>" type="text" name="fromDate" id="js-from-date" />
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2">
                                                                     <div class="field-row">
-                                                                        <label class="">On ADP To Date</label>
+                                                                        <label class="">To Date</label>
                                                                         <input class="invoice-fields" placeholder="<?= date('m-d-Y'); ?>" type="text" name="toDate" id="js-to-date" />
                                                                     </div>
                                                                 </div>
@@ -91,8 +91,9 @@
                                                                     <tr>
                                                                         <th>Employee</th>
                                                                         <th>Associate ID</th>
-                                                                        <th>ADP Status</th>
-                                                                        <th>ADP Date Time</th>
+                                                                        <th>Worker ID</th>
+                                                                        <th>Status</th>
+                                                                        <th>Date Time</th>
 
                                                                     </tr>
                                                                 </thead>
@@ -331,19 +332,26 @@
         }
         //
         function setTable() {
+           // alert(format(new Date('Sun May 11,2014'), 'yyyy-MM-dd'));
+           var now = new Date();
+           // var dateString = moment(now).format('YYYY-MM-DD');
+           
             if (pOBJ.fetchReport.records.length == 0) return;
             //
             var rows = '';
             //
             pOBJ.fetchReport.records.map(function(record) {
+
+                var textclass = record.associate_oid == null ? 'text-danger' : 'text-success';
                 rows += '<tr>';
-                rows += '   <td>' + (remakeEmployeeName(record)) + '</td>';
+                rows += '   <td><strong>' + (remakeEmployeeName(record)) + '</strong></td>';
                 rows += '   <td>' + (record.associate_oid == null ? '' : record.associate_oid) + '</td>';
-                rows += '   <td>' + (record.associate_oid == null ? 'Off ADP' : 'On ADP') + '</td>';
-                rows += '   <td>' + (record.created_at == null ? '' : record.created_at) + '</td>';
+                rows += '   <td>' + (record.worker_id == null ? '' : record.worker_id) + '</td>';
+                rows += '   <td class='+textclass+'><strong>' + (record.associate_oid == null ? 'Off ADP' : 'On ADP') + '</strong></td>';
+                rows += '   <td>' + (record.created_at == null ? '' : moment(record.created_at).format('LLL')) + '</td>';
                 rows += '</tr>';
             });
-            //
+
             dataTarget.html(rows);
             loader(false);
         }

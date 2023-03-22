@@ -3226,12 +3226,13 @@ class Reports extends Public_Controller
                 header('Content-Type: text/csv; charset=utf-8');
                 header("Content-Disposition: attachment; filename=Employees_ADP_report_" . (date('YmdHis')) . ".csv");
                 $output = fopen('php://output', 'w');
-                fputcsv($output, array('Employee', 'Associate ID', 'ADP Status', 'ADP Date Time'));
+                fputcsv($output, array('Employee ','Associate ID','Worker ID','Status ','Date Time'));
 
                 foreach ($adpemployees as $adpRow) {
                     $a = array();
                     $a[] = remakeEmployeeName($adpRow);
                     $a[] = $adpRow['associate_oid'] != null ? $adpRow['associate_oid'] : '';
+                    $a[] = $adpRow['worker_id'] != null ? $adpRow['worker_id'] : '';
                     $a[] = $adpRow['associate_oid'] != null ? 'On ADP'  : 'Off ADP';
                     $a[] = $adpRow['created_at'] != null ? $adpRow['created_at'] : '';
                     fputcsv($output, $a);
