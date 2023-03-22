@@ -952,6 +952,27 @@ class Application_tracking_system extends Public_Controller {
                     $this->application_tracking_system_model->update_applicant_job_title($job_list_sid, $formpost['desired_job_title']);
                 }
                 //
+                unset($user_data['workers_compensation_code']);
+                unset($user_data['eeoc_code']);
+                unset($user_data['salary_benefits']);
+                //
+                if (isPayrollOrPlus(true)) {
+                    $user_data['workers_compensation_code'] = $formpost['workers_compensation_code'];
+                    $user_data['eeoc_code'] = $formpost['eeoc_code'];
+                    $user_data['salary_benefits'] = $formpost['salary_benefits'];
+                }
+
+                //
+                $user_data['languages_speak'] = null;
+                //
+                $languages_speak = $formpost['secondaryLanguages'];
+                unset($user_data['secondaryLanguages']);
+                unset($user_data['secondaryOption']);
+                //
+                if ($languages_speak) {
+                    $user_data['languages_speak'] = implode(',', $languages_speak);
+                }
+                //
                 $result = $this->application_tracking_system_model->update_applicant($app_id, $user_data);
 
                 $this->session->set_flashdata('message', '<b>Success:</b> Applicant updated successfully');
