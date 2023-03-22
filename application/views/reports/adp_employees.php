@@ -81,11 +81,7 @@
                                                 </div>
 
                                                 <hr />
-                                                <!-- Pagination -->
-                                                <div class="js-ip-pagination"></div>
-
-                                                <hr />
-
+                                              
                                                 <!-- Content Table -->
                                                 <div class="row">
                                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -105,13 +101,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <hr />
-                                                <!-- Pagination -->
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <div class="js-ip-pagination"></div>
-                                                    </div>
-                                                </div>
+                                           
                                             </div>
                                         </div>
                                     </div>
@@ -358,6 +348,9 @@
             loader(false);
         }
 
+
+
+        
         // Pagination
         // Get previous page
         $(document).on('click', '.js-pagination-prev', pagination_event);
@@ -422,7 +415,9 @@
                 target.html(rows);
             }
             // append showing of records
-            targetShowing.html('<p>Showing ' + (page_array.start_index + 1) + ' - ' + (page_array.end_index != -1 ? (page_array.end_index + 1) : 1) + ' of ' + (obj['totalRecords']) + '</p>');
+
+         //   targetShowing.html('<p>Showing ' + (page_array.start_index + 1) + ' - ' + (page_array.end_index != -1 ? (page_array.end_index + 1) : 1) + ' of ' + (obj['totalRecords']) + '</p>');
+            
         }
         // Paginate logic
         function paginate(total_items, current_page, page_size, max_pages) {

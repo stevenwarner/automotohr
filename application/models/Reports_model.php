@@ -2468,13 +2468,6 @@ class Reports_model extends CI_Model
     function getADPEmployees($post, $export = 'no')
     {
 
-        $offSet = $post['limit'];
-        $inSet =  $post['page'] == 1 ? 0 : (($post['page'] - 1) * $post['limit']);
-        $r = array(
-            'Count' => 0,
-            'Data' => array()
-        );
-
         if ($post['adpStatus'] == 'all' || $post['adpStatus'] == '0') {
             $jointype = "right";
         } else {
@@ -2525,9 +2518,6 @@ class Reports_model extends CI_Model
         $this->db->where('users.parent_sid', $post['companySid']);
         $this->db->where('users.is_executive_admin', 0);
         $this->db->order_by('users.first_name', 'ASC');
-        if ($export == 'no') {
-            $this->db->limit($offSet, $inSet);
-        }
 
         $query_result = $this->db->get();
         $result = $query_result->result_array();
