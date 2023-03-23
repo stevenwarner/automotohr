@@ -302,7 +302,8 @@ class Companies extends Admin_Controller
                 'payment_type' => $this->input->post('payment_type'),
                 'past_due' => $this->input->post('past_due'),
                 'user_shift_minutes' => $this->input->post('shift_mins'),
-                'user_shift_hours' => $this->input->post('shift_hours')
+                'user_shift_hours' => $this->input->post('shift_hours'),
+                'job_titles_template_group' => $this->input->post('job_titles_template_group')
             );
             //
             if (IS_TIMEZONE_ACTIVE) $data['timezone'] = $this->input->post('company_timezone', true);
