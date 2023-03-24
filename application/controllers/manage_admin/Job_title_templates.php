@@ -188,7 +188,7 @@ class Job_title_templates extends Admin_Controller {
             $this->data['page_title'] = 'Edit Job Listing Template Group';
             $group = $this->Job_title_templates_model->GetGroup($sid);
             $this->data['group'] = $group[0];
-            $templatesArray = array();
+            $titlesArray = array();
           //  print_r($group[0]);
           //  die();
             

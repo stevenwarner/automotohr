@@ -112,15 +112,38 @@
                                                     </div>
                                                 </li>
 
+
                                                 <li>
                                                     <?php echo form_label('Job Title', 'job_title'); ?>
+
                                                     <div class="hr-fields-wrap">
-                                                        <?php
-                                                        echo form_input('job_title', set_value('job_title', $data['job_title']), 'class="hr-form-fileds"');
-                                                        echo form_error('job_title');
-                                                        ?>
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12">
+                                                                <div class="col-md-12 col-lg-12 col-xl-12 col-xs-12" style="padding-left:0px;padding-right:0px;">
+                                                                    <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $data['job_title_type'] == '0' ? 'checked' : '' ?>> <strong>Add Manual &nbsp;</strong>
+                                                                    <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $data['job_title_type'] != '0' ? 'checked' : '' ?>> <strong> From Drop Down </strong>
+                                                                     
+                                                                    <br>
+                                                                    <?php
+
+                                                                    $templateTitles = get_templet_jobtitles($data['parent_sid']);
+                                                                    echo form_input('job_title', set_value('job_title', $data['job_title']), 'class="hr-form-fileds" id="job_title"');
+                                                                    echo form_error('job_title');
+                                                                    ?>
+
+                                                                    <select name="temppate_job_title" id="temppate_job_title" class="invoice-fields" style="display: none;">
+                                                                        <option value="0">Please select job title</option>
+                                                                        <?php foreach ($templateTitles as $titleRow) { ?>
+                                                                            <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                                        <?php } ?>
+                                                                    </select>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </li>
+
 
                                                 <?php if (isCompanyOnComplyNet($data['parent_sid']) != 0) { ?>
                                                     <li>
@@ -496,26 +519,26 @@
 
                                                 <li>
                                                     <label>Workers Compensation Code</label>
-                                                        <div class="hr-fields-wrap">
+                                                    <div class="hr-fields-wrap">
                                                         <input type="text" class="hr-form-fileds" name="workers_compensation_code" value="<?php echo $data['workers_compensation_code']; ?>">
 
-                                                        </div>
-                                                    </li>
+                                                    </div>
+                                                </li>
 
-                                                    <li>
+                                                <li>
                                                     <label>EEOC Code</label>
-                                                        <div class="hr-fields-wrap">
+                                                    <div class="hr-fields-wrap">
                                                         <input type="text" class="hr-form-fileds" name="eeoc_code" value="<?php echo $data['eeoc_code']; ?>">
 
-                                                        </div>
-                                                    </li>
+                                                    </div>
+                                                </li>
 
-                                                    <li>
+                                                <li>
                                                     <label>Salary Benefits</label>
-                                                        <div class="hr-fields-wrap">
+                                                    <div class="hr-fields-wrap">
                                                         <textarea autocomplete="nope" class="hr-form-fileds" name="salary_benefits" id="salary_benefits"><?php echo $data['salary_benefits']; ?></textarea>
-                                                        </div>
-                                                    </li>
+                                                    </div>
+                                                </li>
 
                                                 <?php if (IS_NOTIFICATION_ENABLED == 1) { ?>
                                                     <li>
@@ -1001,4 +1024,26 @@
             }
         );
     }
+
+
+
+    <?php if ($data['job_title_type'] != '0') { ?>
+        $('#temppate_job_title').show();
+        $('#temppate_job_title').val('<?php echo $data['job_title_type'] . '#' . $data['job_title']; ?>');
+        $('#job_title').hide();
+    <?php } ?>
+
+    $('.titleoption').click(function() {
+        var titleOption = $(this).val();
+        if (titleOption == 'dropdown') {
+            $('#temppate_job_title').show();
+            $('#temppate_job_title').val('<?php echo $data['job_title_type'] == '0' ? '0' : $data['job_title_type'] . '#' . $data['job_title']; ?>');
+            $('#job_title').hide();
+        } else if (titleOption == 'manual') {
+            $('#temppate_job_title').hide();
+            $('#temppate_job_title').val('0');
+            $('#job_title').show();
+        }
+
+    });
 </script>

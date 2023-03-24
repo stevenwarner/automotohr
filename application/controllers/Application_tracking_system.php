@@ -1,9 +1,11 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
-ini_set("memory_limit","1024M");
+<?php defined('BASEPATH') or exit('No direct script access allowed');
+ini_set("memory_limit", "1024M");
 
 
-class Application_tracking_system extends Public_Controller {
-    public function __construct() {
+class Application_tracking_system extends Public_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         require_once(APPPATH . 'libraries/aws/aws.php');
         $this->load->library('pagination');
@@ -14,7 +16,8 @@ class Application_tracking_system extends Public_Controller {
         $this->load->model('portal_email_templates_model');
     }
 
-    public function index($archive = 'active', $searchKeyword = NULL, $job_sid = NULL, $status = NULL, $job_fit_category_sid = 0, $app_type = 'all', $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all') {
+    public function index($archive = 'active', $searchKeyword = NULL, $job_sid = NULL, $status = NULL, $job_fit_category_sid = 0, $app_type = 'all', $fair_type = 'all', $ques_status = 'all', $emp_app_status = 'all')
+    {
         // _e($this->db->get('portal_company_sms_module')->result_array(), true, true);
         if ($this->session->userdata('logged_in')) {
             $job_sid_urldecode                                                  = urldecode($job_sid);
@@ -30,7 +33,7 @@ class Application_tracking_system extends Public_Controller {
             $applicant_total_pagination                                         = 0;
 
             if (($searchKeyword != NULL && $searchKeyword != 'all') || ($job_sid != NULL && $job_sid != 'all' && $job_sid != 'null') || ($status != NULL && $status != 'all') || $job_fit_category_sid > 0) {
-                    $search_activated                                           = 1;
+                $search_activated                                           = 1;
             }
 
             $data['session']                                                    = $this->session->userdata('logged_in');
@@ -50,7 +53,7 @@ class Application_tracking_system extends Public_Controller {
             $access_level                                                       = $employers_details['access_level'];
             $ats_active_job_flag                                                = null; // get both active and inactive jobs
 
-            if(isset($data['session']['portal_detail']['ats_active_job_flag'])) {
+            if (isset($data['session']['portal_detail']['ats_active_job_flag'])) {
                 $ats_active_job_flag                                            = $data['session']['portal_detail']['ats_active_job_flag'];
             }
 
@@ -60,18 +63,18 @@ class Application_tracking_system extends Public_Controller {
                 $is_admin                                                       = true;
             }
 
-            if($ats_active_job_flag == 0) {
+            if ($ats_active_job_flag == 0) {
                 $ats_active_job_flag                                            = null; // get both active and inactive jobs
             }
 
             $security_sid                                                       = $employer_sid;
 
-//            if (!$this->session->userdata('security_details_' . $security_sid)) {
-//                $security_details                                               = db_get_access_level_details($security_sid);
-//                $this->session->set_userdata('security_details_' . $security_sid, $security_details);
-//            }
+            //            if (!$this->session->userdata('security_details_' . $security_sid)) {
+            //                $security_details                                               = db_get_access_level_details($security_sid);
+            //                $this->session->set_userdata('security_details_' . $security_sid, $security_details);
+            //            }
 
-//            $security_details                                                   = $this->session->userdata('security_details_' . $security_sid);
+            //            $security_details                                                   = $this->session->userdata('security_details_' . $security_sid);
             $security_details                                                   = db_get_access_level_details($security_sid);
             $data['security_details']                                           = $security_details;
             check_access_permissions($security_details, 'dashboard', 'application_tracking');
@@ -162,7 +165,7 @@ class Application_tracking_system extends Public_Controller {
             }
 
             $records_per_page                                                   = 30;
-            $baseUrl                                                            = base_url('application_tracking_system') . '/' . $archive . '/' . urlencode($searchKeyword) . '/' . $job_sid . '/' . $status . '/' . $job_fit_category_sid . '/' . $app_type . '/' .$fair_type . '/' . $ques_status . '/' .$emp_app_status;
+            $baseUrl                                                            = base_url('application_tracking_system') . '/' . $archive . '/' . urlencode($searchKeyword) . '/' . $job_sid . '/' . $status . '/' . $job_fit_category_sid . '/' . $app_type . '/' . $fair_type . '/' . $ques_status . '/' . $emp_app_status;
             $uri_segment                                                        = 11;
             $keywords                                                           = '';
             $my_offset                                                          = 0;
@@ -265,7 +268,7 @@ class Application_tracking_system extends Public_Controller {
                     $applicants = $this->application_tracking_system_model->get_admin_jobs_and_applicants($company_sid, $archived, $records_per_page, $my_offset, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
                     $applicant_total_array = $this->application_tracking_system_model->get_admin_jobs_and_applicants_count($company_sid, $archived, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
 
-//print_r($applicant_total_array);
+                    //print_r($applicant_total_array);
                     if (!empty($applicant_total_array)) {
                         $applicant_total = $applicant_total_array['all_job_applicants'];
                         $all_manual_applicants = $applicant_total_array['all_manual_applicants'];
@@ -287,8 +290,8 @@ class Application_tracking_system extends Public_Controller {
                         }
                     }
                 } else { // logged in user is an employee
-                
-                    
+
+
                     $applicants = $this->application_tracking_system_model->get_employee_jobs_and_applicants($company_sid, $employer_sid, $archived, $records_per_page, $my_offset, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
                     $applicant_total_array = $this->application_tracking_system_model->get_employee_jobs_and_applicants_count($company_sid, $employer_sid, $archived, $applicant_filters, $job_fit_category_sid, $assigned_applicants_sids, $archive, $app_type, $is_admin, $fair_type, $ques_status, $emp_app_status);
                     if (!empty($applicant_total_array)) {
@@ -374,13 +377,13 @@ class Application_tracking_system extends Public_Controller {
             $data['job_fair_configuration']                                     = $job_fair_configuration;
             $job_fair_forms                                                     = array();
 
-            if($job_fair_configuration != 0) { // get all job fairs and their keys
+            if ($job_fair_configuration != 0) { // get all job fairs and their keys
                 $job_fair_forms = $this->application_tracking_system_model->job_fair_forms($company_sid);
             }
 
             $data['job_fair_forms']                                             = $job_fair_forms;
             //**** code for graph ****//
-            if ($archived == 0) { 
+            if ($archived == 0) {
                 $ApplciantPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Applicant', $company_sid);
                 $ManualPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Manual Candidate', $company_sid);
                 $TalentPerMonth = $this->application_tracking_system_model->getApplicantCountByMonth('Talent Network', $company_sid);
@@ -419,7 +422,7 @@ class Application_tracking_system extends Public_Controller {
                         }
                     }
 
-                    if($job_fair_configuration == 0){
+                    if ($job_fair_configuration == 0) {
                         $newNewArray[$i] = array(
                             "countApp" => $countApp,
                             "countManual" => $countManual,
@@ -435,16 +438,16 @@ class Application_tracking_system extends Public_Controller {
                     }
                 }
 
-                if($job_fair_configuration == 1) {
+                if ($job_fair_configuration == 1) {
                     $newGraph[0] = array('Month', 'Job Applicants', 'Manual Candidates', 'Talent Network', 'Job Fair');
-                }  else {
+                } else {
                     $newGraph[0] = array('Month', 'Job Applicants', 'Manual Candidates', 'Talent Network');
                 }
 
                 $i = 1;
 
                 foreach ($newNewArray as $key => $month) {
-                    if($job_fair_configuration == 1) {
+                    if ($job_fair_configuration == 1) {
                         $newGraph[$i] = array(
                             substr(date("F", mktime(0, 0, 0, $key, 10)), 0, 3),
                             intval($month['countApp']),
@@ -471,7 +474,7 @@ class Application_tracking_system extends Public_Controller {
                 $newChart[2] = array("Talent Network", intval($all_talent_applicants));
                 $newChart[3] = array("Manual Candidates", intval($all_manual_applicants));
 
-                if($job_fair_configuration == 1) {
+                if ($job_fair_configuration == 1) {
                     $newChart[4] = array("Job Fair", intval($all_job_fair_applicants));
                 }
 
@@ -516,7 +519,8 @@ class Application_tracking_system extends Public_Controller {
         }
     } // end of index
 
-    public function downloadFile($fileName) {
+    public function downloadFile($fileName)
+    {
         $path = AWS_S3_BUCKET_URL . $fileName;
         header('Content-Description: File Transfer');
         header("Content-Type: application/octet-stream");
@@ -529,7 +533,8 @@ class Application_tracking_system extends Public_Controller {
         echo $file_content;
     }
 
-    public function update_status() {
+    public function update_status()
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
 
@@ -548,7 +553,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    function active_single_applicant() {
+    function active_single_applicant()
+    {
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'active_single_applicant') {
             $sid = $_REQUEST['active_id'];
             $this->application_tracking_system_model->active_single_applicant($sid);
@@ -557,7 +563,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function applicant_profile($app_id = NULL, $job_list_sid = NULL, $tab_type = false) {
+    public function applicant_profile($app_id = NULL, $job_list_sid = NULL, $tab_type = false)
+    {
         if ($app_id == NULL) {
             redirect('application_tracking_system/active/all/all/all/all/all/all');
         } else {
@@ -578,7 +585,7 @@ class Application_tracking_system extends Public_Controller {
             }
             $data['company_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
 
-            if(!empty($data['session']['employer_detail']['timezone']))
+            if (!empty($data['session']['employer_detail']['timezone']))
                 $data['employer_timezone'] =   $data['session']['employer_detail']['timezone'];
             else
                 $data['employer_timezone'] = !empty($data['session']['company_detail']['timezone']) ? $data['session']['company_detail']['timezone'] : STORE_DEFAULT_TIMEZONE_ABBR;
@@ -596,22 +603,22 @@ class Application_tracking_system extends Public_Controller {
             check_access_permissions($security_details, 'application_tracking_system/active/all/all/all/all', 'applicant_profile');
 
             $config = array(
-                            array(
-                                    'field' => 'first_name',
-                                    'label' => 'First Name',
-                                    'rules' => 'trim|required|xss_clean'
-                            ),
-                            array(
-                                    'field' => 'last_name',
-                                    'label' => 'Last Name',
-                                    'rules' => 'trim|xss_clean'
-                            ),
-                            array(
-                                    'field' => 'email',
-                                    'label' => 'Email',
-                                    'rules' => 'valid_email|required'
-                            )
-                        );
+                array(
+                    'field' => 'first_name',
+                    'label' => 'First Name',
+                    'rules' => 'trim|required|xss_clean'
+                ),
+                array(
+                    'field' => 'last_name',
+                    'label' => 'Last Name',
+                    'rules' => 'trim|xss_clean'
+                ),
+                array(
+                    'field' => 'email',
+                    'label' => 'Email',
+                    'rules' => 'valid_email|required'
+                )
+            );
 
             $this->form_validation->set_message('required', 'Please provide your %s.');
             $this->form_validation->set_error_delimiters('<label class="error">', '</label>');
@@ -622,7 +629,7 @@ class Application_tracking_system extends Public_Controller {
                 $this->session->set_flashdata('message', '<b>Error:</b> No Applicant Found!');
                 redirect('application_tracking_system/active/all/all/all/all');
             }
- 
+
             $interview_questionnaires                                           = $this->application_tracking_system_model->get_interview_questionnaires($company_sid);
             $data['interview_questionnaires']                                   = $interview_questionnaires;
             $data['applicant_sid']                                              = $app_id;
@@ -647,12 +654,12 @@ class Application_tracking_system extends Public_Controller {
             // $data['ssn_required'] = $data['session']['portal_detail']['ssn_required'];
             // $data['dob_required'] = $data['session']['portal_detail']['dob_required'];
             //
-            if($data['ssn_required'] == 1){
+            if ($data['ssn_required'] == 1) {
                 //
                 $this->form_validation->set_rules('SSN', 'SSN', 'required|trim|xss_clean');
             }
             //
-            if($data['dob_required'] == 1){
+            if ($data['dob_required'] == 1) {
                 //
                 $this->form_validation->set_rules('DOB', 'DOB', 'required|trim|xss_clean');
             }
@@ -715,17 +722,17 @@ class Application_tracking_system extends Public_Controller {
 
                             if ($message['from_id'] == "notifications@automotohr.com") {
                                 $message['sender_name'] = "AutoMoto HR";
-                                $message['sender_logo'] = base_url("assets/manage_admin/images/new_logo.JPG"); 
+                                $message['sender_logo'] = base_url("assets/manage_admin/images/new_logo.JPG");
                             } else {
                                 $message['sender_name'] = getUserNameBySID($message['from_id']);
-                                $message['sender_profile_picture'] = get_employee_profile_info($message['from_id'])['profile_picture']; 
+                                $message['sender_profile_picture'] = get_employee_profile_info($message['from_id'])['profile_picture'];
                             }
                         } else {
                             $message['profile_picture']                         = $data['applicant_info']['pictures'];
                             $message['first_name']                              = $data['applicant_info']['first_name'];
                             $message['last_name']                               = $data['applicant_info']['last_name'];
                             $message['username']                                = "";
-                            $message['sender_name']                             = $data['applicant_info']['first_name']." ".$data['applicant_info']['last_name'];
+                            $message['sender_name']                             = $data['applicant_info']['first_name'] . " " . $data['applicant_info']['last_name'];
                             $message['sender_profile_picture']                  = $data['applicant_info']['pictures'];
                         }
                         //
@@ -790,9 +797,9 @@ class Application_tracking_system extends Public_Controller {
                 $unique_sid                                                     = 0;
                 $onboarding_url                                                 = 'javascript:;';
 
-                if($data['applicant_info']['is_onboarding']== 1) { //get unique ID
+                if ($data['applicant_info']['is_onboarding'] == 1) { //get unique ID
                     $unique_sid                                                 = $this->application_tracking_system_model->get_applicant_unique_sid($company_sid, $app_id);
-                    $onboarding_url                                             = base_url('onboarding/getting_started/' . $unique_sid.'?employer='.$data['session']['employer_detail']['sid']);
+                    $onboarding_url                                             = base_url('onboarding/getting_started/' . $unique_sid . '?employer=' . $data['session']['employer_detail']['sid']);
                 }
 
                 $data['unique_sid']                                             = $unique_sid;
@@ -807,7 +814,7 @@ class Application_tracking_system extends Public_Controller {
             } else {
                 $formpost = $this->input->post(NULL, TRUE);
 
-                if (isset($formpost['email']) ) {
+                if (isset($formpost['email'])) {
                     $email_exist = $this->application_tracking_system_model->check_applicant_email_exist($app_id, $company_sid, $formpost['email']);
 
                     if ($email_exist == 'record_found') {
@@ -834,7 +841,7 @@ class Application_tracking_system extends Public_Controller {
                 $user_data['job_fit_category_sid'] = 0;
 
                 foreach ($formpost as $key => $value) { //Arranging company detial
-                    if ($key != 'video_source' && $key != 'yt_vm_video_url' && $key != 'pre_upload_video_url' && $key != 'secondary_email' && $key != 'secondary_PhoneNumber' && $key != 'other_email' && $key != 'other_PhoneNumber' && $key != 'txt_phonenumber' && $key != 'txt_secondary_phonenumber' && $key != 'txt_other_phonenumber') { // exclude these values from array
+                    if ($key != 'video_source' && $key != 'yt_vm_video_url' && $key != 'pre_upload_video_url' && $key != 'secondary_email' && $key != 'secondary_PhoneNumber' && $key != 'other_email' && $key != 'other_PhoneNumber' && $key != 'txt_phonenumber' && $key != 'txt_secondary_phonenumber' && $key != 'txt_other_phonenumber' && $key != 'title_option' && $key != 'template_job_title') { // exclude these values from array
                         if (is_array($value)) {
                             $value = implode(',', $value);
                         }
@@ -842,8 +849,10 @@ class Application_tracking_system extends Public_Controller {
                     }
                 }
 
+
                 // Added on: 03-05-2019
                 unset($user_data['DOB']);
+
 
                 // Reset phone number
                 $user_data['phone_number'] = isset($formpost['txt_phonenumber']) ? $formpost['txt_phonenumber'] : $formpost['phone_number'];
@@ -857,18 +866,18 @@ class Application_tracking_system extends Public_Controller {
                     $user_data['dob'] = $DOB;
                 }
                 //
-                $notified_by=$this->input->post('notified_by');
+                $notified_by = $this->input->post('notified_by');
                 //
-                if(!empty($notified_by)){
-                    $user_data['notified_by'] =$notified_by;
-                }else{
-                    $user_data['notified_by']='email';
+                if (!empty($notified_by)) {
+                    $user_data['notified_by'] = $notified_by;
+                } else {
+                    $user_data['notified_by'] = 'email';
                 }
                 //
-                if($this->input->post('SSN') && !preg_match(XSYM_PREG, $this->input->post('SSN')))
-                $user_data['ssn'] = $this->input->post('SSN');
+                if ($this->input->post('SSN') && !preg_match(XSYM_PREG, $this->input->post('SSN')))
+                    $user_data['ssn'] = $this->input->post('SSN');
                 //
-                if(preg_match(XSYM_PREG, $this->input->post('SSN'))) unset($user_data['SSN']);
+                if (preg_match(XSYM_PREG, $this->input->post('SSN'))) unset($user_data['SSN']);
                 //
                 $user_data['employee_number'] = $this->input->post('employee_number');
                 $user_data['employer_sid'] = $employer_id;
@@ -937,8 +946,8 @@ class Application_tracking_system extends Public_Controller {
                 }
 
                 //
-                if(IS_NOTIFICATION_ENABLED == 1 && $data['phone_sid'] != ''){
-                    if(!sizeof($this->input->post('notified_by', true))) $user_data['notified_by'] = 'email';
+                if (IS_NOTIFICATION_ENABLED == 1 && $data['phone_sid'] != '') {
+                    if (!sizeof($this->input->post('notified_by', true))) $user_data['notified_by'] = 'email';
                     else $user_data['notified_by'] = implode(',', $this->input->post('notified_by', true));
                 }
                 //
@@ -947,11 +956,23 @@ class Application_tracking_system extends Public_Controller {
                 $full_emp_app['TextBoxTelephoneOther'] = $this->input->post('other_PhoneNumber');
                 $full_emp_app['TextBoxAddressStreetFormer3'] = $this->input->post('other_email');
                 $user_data['full_employment_application'] = serialize($full_emp_app);
+                
                 //
-                if(isset($formpost['desired_job_title']) && !empty($formpost['desired_job_title'])){
-                    $this->application_tracking_system_model->update_applicant_job_title($job_list_sid, $formpost['desired_job_title']);
+                if ($formpost['template_job_title'] != '0') {
+                    $templetJobTitleData = $formpost['template_job_title'];
+                    $templetJobTitleDataArray = explode('#', $templetJobTitleData);
+                    $user_data['desired_job_title'] = $templetJobTitleDataArray[1];
+                    $user_data['job_title_type'] = $templetJobTitleDataArray[0];
+                } else {
+                    $user_data['job_title_type'] = 0;
+                }
+
+
+                if (!empty($user_data['desired_job_title'])) {
+                    $this->application_tracking_system_model->update_applicant_job_title($job_list_sid, $user_data['desired_job_title']);
                 }
                 //
+
                 $result = $this->application_tracking_system_model->update_applicant($app_id, $user_data);
 
                 $this->session->set_flashdata('message', '<b>Success:</b> Applicant updated successfully');
@@ -965,7 +986,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function upload_extra_attachment() {
+    public function upload_extra_attachment()
+    {
         if (isset($_FILES['newlife']) && $_FILES['newlife']['name'] != '') { //uploading Files to AWS if any
             $data['session'] = $this->session->userdata('logged_in');
             $employer_id = $data['session']['employer_detail']['sid'];
@@ -973,7 +995,7 @@ class Application_tracking_system extends Public_Controller {
             $file_name = str_replace(" ", "-", $file[0]);
             $fileName = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
 
-            if($_FILES['newlife']['size'] == 0){
+            if ($_FILES['newlife']['size'] == 0) {
                 $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
 
                 if ($this->input->post('users_type') == 'employee') {
@@ -1003,7 +1025,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function upload_attachment($app_id) {
+    public function upload_attachment($app_id)
+    {
         if ($app_id == NULL) {
             redirect('application_tracking_system/active/all/all/all/all/all/all');
         } else {
@@ -1011,8 +1034,8 @@ class Application_tracking_system extends Public_Controller {
             $company_sid            = $session["company_detail"]["sid"];
             $employer_sid           = $session['employer_detail']['sid'];
 
-            $job_sid                = $this->input->post('job_sid',true);
-            $job_type               = $this->input->post('job_type',true);
+            $job_sid                = $this->input->post('job_sid', true);
+            $job_type               = $this->input->post('job_type', true);
 
             $resume_extension = '';
             $resume_original_name = '';
@@ -1024,7 +1047,7 @@ class Application_tracking_system extends Public_Controller {
 
                 if (isset($_FILES['resume']) && $_FILES['resume']['name'] != '') {
 
-                    if($_FILES['resume']['size'] == 0){
+                    if ($_FILES['resume']['size'] == 0) {
                         $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                         redirect("applicant_profile/" . $app_id, "location");
                     }
@@ -1043,10 +1066,10 @@ class Application_tracking_system extends Public_Controller {
                         $resume_s3_name = upload_file_to_aws('resume', $company_sid, str_replace(' ', '_', $resume_name), $app_id, AWS_S3_BUCKET_NAME);
                     }
 
-                    $old_s3_resume = $this->application_tracking_system_model->get_single_job_detail($app_id,$company_sid,$job_sid,$job_type);
+                    $old_s3_resume = $this->application_tracking_system_model->get_single_job_detail($app_id, $company_sid, $job_sid, $job_type);
 
 
-                    if(!empty($old_s3_resume)){
+                    if (!empty($old_s3_resume)) {
 
                         $applicant_info         = $this->application_tracking_system_model->getApplicantData($app_id);
                         $applicant_email        = $applicant_info['email'];
@@ -1076,7 +1099,7 @@ class Application_tracking_system extends Public_Controller {
                         $this->application_tracking_system_model->insert_resume_log($resume_log_data);
                     }
 
-                    $this->application_tracking_system_model->update_resume_applicant_job_list($app_id,$company_sid,$job_sid,$resume_s3_name,$job_type);
+                    $this->application_tracking_system_model->update_resume_applicant_job_list($app_id, $company_sid, $job_sid, $resume_s3_name, $job_type);
                 } else {
                     $user_data['resume'] = $this->input->post("old_resume");
                 }
@@ -1087,7 +1110,7 @@ class Application_tracking_system extends Public_Controller {
                     $file_name = str_replace(" ", "-", $file[0]);
                     $letter = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
 
-                    if($_FILES['cover_letter']['size'] == 0){
+                    if ($_FILES['cover_letter']['size'] == 0) {
                         $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                         redirect("applicant_profile/" . $app_id, "location");
                     }
@@ -1111,7 +1134,7 @@ class Application_tracking_system extends Public_Controller {
                     $file_name = str_replace(" ", "-", $file[0]);
                     $resume = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
                     $resume_s3_name = $resume;
-                    if($_FILES['resume']['size'] == 0){
+                    if ($_FILES['resume']['size'] == 0) {
                         $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                         redirect("applicant_profile/" . $app_id, "location");
                     }
@@ -1121,8 +1144,8 @@ class Application_tracking_system extends Public_Controller {
                     // );
 
                     // if(!in_array(getUserIP(), $whitelist)){
-                        $aws = new AwsSdk();
-                        $aws->putToBucket($resume, $_FILES["resume"]["tmp_name"], AWS_S3_BUCKET_NAME);
+                    $aws = new AwsSdk();
+                    $aws->putToBucket($resume, $_FILES["resume"]["tmp_name"], AWS_S3_BUCKET_NAME);
                     // }else{
                     //     $resume = "0057-resume_hassan_213_bokhary-71860-6pW.docx";
                     // }
@@ -1132,13 +1155,13 @@ class Application_tracking_system extends Public_Controller {
                     $data['session']        = $this->session->userdata('logged_in');
                     $company_sid            = $data["session"]["company_detail"]["sid"];
 
-                    $jobdetails             = $this->application_tracking_system_model->get_single_job_detail_old($app_id,$company_sid,$job_sid,$job_type);
+                    $jobdetails             = $this->application_tracking_system_model->get_single_job_detail_old($app_id, $company_sid, $job_sid, $job_type);
                     $resume_log_data                            = array();
 
-                    if(isset($jobdetails['sid'])){
+                    if (isset($jobdetails['sid'])) {
                         $job_sid = $jobdetails['sid'];
                         $resume_log_data['job_type'] = "portal_applicant_jobs_list_sid";
-                    }else{
+                    } else {
                         $resume_log_data['job_type'] = 'job';
                     }
 
@@ -1167,7 +1190,7 @@ class Application_tracking_system extends Public_Controller {
                     $resume_log_data['response_date']           = date('Y-m-d H:i:s');
                     $resume_log_data['requested_date']           = date('Y-m-d H:i:s');
                     $resume_log_data['job_sid']                 = $job_sid;
-                    if(!empty($jobdetails['resume'])){
+                    if (!empty($jobdetails['resume'])) {
                         $this->application_tracking_system_model->insert_resume_log($resume_log_data);
                     }
                 } else {
@@ -1180,7 +1203,7 @@ class Application_tracking_system extends Public_Controller {
                     $file_name = str_replace(" ", "-", $file[0]);
                     $letter = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
 
-                    if($_FILES['cover_letter']['size'] == 0){
+                    if ($_FILES['cover_letter']['size'] == 0) {
                         $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                         redirect("applicant_profile/" . $app_id, "location");
                     }
@@ -1192,7 +1215,7 @@ class Application_tracking_system extends Public_Controller {
                     $user_data['cover_letter'] = $this->input->post("old_letter");
                 }
 
-                $this->application_tracking_system_model->update_resume_applicant_job_list_old($app_id,$company_sid,$job_sid,$user_data['resume'],$job_type);
+                $this->application_tracking_system_model->update_resume_applicant_job_list_old($app_id, $company_sid, $job_sid, $user_data['resume'], $job_type);
                 $result = $this->application_tracking_system_model->update_applicant($app_id, $user_data);
                 $this->session->set_flashdata('message', '<b>Success:</b> Attachment(s) uploaded successfully');
                 redirect("applicant_profile/" . $app_id, "location");
@@ -1200,7 +1223,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function insert_notes() { //check if insert notes
+    public function insert_notes()
+    { //check if insert notes
         if ($this->input->post()) {
             $formpost = $this->input->post(NULL, TRUE);
             $_SESSION['show_notes'] = 'true';
@@ -1215,10 +1239,10 @@ class Application_tracking_system extends Public_Controller {
             if ($action == 'add_note') {
                 $notes = $formpost['notes'];
                 $attachment = upload_file_to_aws('notes_attachment', $company_sid, 'notes_attachment', $applicant_job_sid);
-//                $attachment = '0003-notes_attachment-213-1x8.docx';
+                //                $attachment = '0003-notes_attachment-213-1x8.docx';
                 $attachment_extension = NULL;
 
-                if($attachment != 'error'){
+                if ($attachment != 'error') {
                     $extension = pathinfo($attachment, PATHINFO_EXTENSION);
                     $attachment_extension = $extension;
                 } else {
@@ -1227,7 +1251,7 @@ class Application_tracking_system extends Public_Controller {
 
                 $this->application_tracking_system_model->insertNote($company_sid, $applicant_job_sid, $applicant_email, $notes, $attachment, $attachment_extension, $employee_sid);
                 $this->session->set_flashdata('message', '<b>Success:</b> Note added successfully');
-                redirect('applicant_profile/' . $applicant_job_sid.'/'.$job_list_sid);
+                redirect('applicant_profile/' . $applicant_job_sid . '/' . $job_list_sid);
             } else {
                 $note_sid = $formpost['sid'];
                 $attachment = upload_file_to_aws('notes_attachment', $company_sid, 'notes_attachment', $applicant_job_sid);
@@ -1236,7 +1260,7 @@ class Application_tracking_system extends Public_Controller {
                 $update_array['modified_date'] = date('Y-m-d H:i:s');
                 $update_array['modified_sid'] = $employee_sid;
 
-                if($attachment != 'error'){
+                if ($attachment != 'error') {
                     $extension = pathinfo($attachment, PATHINFO_EXTENSION);
                     $attachment_extension = $extension;
                     $update_array['attachment'] = $attachment;
@@ -1245,14 +1269,15 @@ class Application_tracking_system extends Public_Controller {
 
                 $this->application_tracking_system_model->updateRightNotes($note_sid, $update_array);
                 $this->session->set_flashdata('message', '<b>Success:</b> Note updated successfully');
-                redirect('applicant_profile/' . $applicant_job_sid.'/'.$job_list_sid);
+                redirect('applicant_profile/' . $applicant_job_sid . '/' . $job_list_sid);
             }
         } else {
             redirect('application_tracking_system/active/all/all/all/all', 'refresh');
         }
     }
 
-    public function update_notes_from_popup(){
+    public function update_notes_from_popup()
+    {
         if ($this->input->post()) {
             $formpost = $this->input->post(NULL, TRUE);
             $redirect_url = $formpost['redirect_url'];
@@ -1262,21 +1287,21 @@ class Application_tracking_system extends Public_Controller {
             $employee_sid = $data['session']['employer_detail']['sid'];
             $company_sid = $data['session']['company_detail']['sid'];
             $attachment = upload_file_to_aws('notes_attachment', $company_sid, 'notes_attachment', $applicant_sid);
-//            $attachment = '0003-notes_attachment-213-1x8.docx';
+            //            $attachment = '0003-notes_attachment-213-1x8.docx';
             $attachment_extension = '';
             $now = date('Y-m-d H:i:s');
             $update_array = array();
 
-            if($attachment != 'error'){
+            if ($attachment != 'error') {
                 $extension = pathinfo($attachment, PATHINFO_EXTENSION);
                 $attachment_extension = $extension;
                 $update_array['attachment'] = $attachment;
                 $update_array['attachment_extension'] = $attachment_extension;
-            } else{
+            } else {
                 $attachment = '';
             }
 
-            if($perform_action == 'update'){
+            if ($perform_action == 'update') {
                 $note_sid = $formpost['sid'];
                 $notes = $formpost['my_edit_notes'];
                 $update_array['notes'] = $notes;
@@ -1290,13 +1315,14 @@ class Application_tracking_system extends Public_Controller {
                 $this->application_tracking_system_model->insertNote($company_sid, $applicant_sid, $applicant_email, $notes, $attachment, $attachment_extension, $employee_sid);
                 $this->session->set_flashdata('message', '<b>Success:</b> Note added successfully');
             }
-            redirect($redirect_url,'refresh');
+            redirect($redirect_url, 'refresh');
         } else {
             redirect('application_tracking_system/active/all/all/all/all', 'refresh');
         }
     }
 
-    public function insert_review_from_popup(){
+    public function insert_review_from_popup()
+    {
         if ($this->input->post()) {
             $data['session'] = $this->session->userdata('logged_in');
 
@@ -1306,9 +1332,9 @@ class Application_tracking_system extends Public_Controller {
             $applicant_email = $this->input->post('applicant_email');
             $redirect_url = $this->input->post('redirect_url');
             $rating = $this->input->post('rating');
-            if($this->input->post('perform_action') == 'add'){
+            if ($this->input->post('perform_action') == 'add') {
                 $comment = $this->input->post('comment');
-            } else{
+            } else {
                 $comment = $this->input->post('edit_comment');
             }
             $users_type = $this->input->post('users_type');
@@ -1327,7 +1353,7 @@ class Application_tracking_system extends Public_Controller {
             $data_to_save['source_type'] = $this->input->post('video_source', true);
             $data_to_save['source_value'] = $this->input->post('yt_vm_video_url');
 
-            if($attachment != 'error'){
+            if ($attachment != 'error') {
                 $extension = pathinfo($attachment, PATHINFO_EXTENSION);
 
                 $data_to_save['attachment'] = $attachment;
@@ -1338,29 +1364,30 @@ class Application_tracking_system extends Public_Controller {
             $data_to_save['source_value'] = str_replace('/vimeo.com', '/player.vimeo.com/video', $data_to_save['source_value']);
 
 
-            if($data_to_save['source_type'] == 'uploaded'){
+            if ($data_to_save['source_type'] == 'uploaded') {
                 //
                 $source_value = upload_file_to_aws('upload_video', $company_sid, 'upload_video', $employer_sid);
-                if($source_value != 'error'){
+                if ($source_value != 'error') {
                     $data_to_save['source_value'] = $source_value;
-                }else unset($data_to_save['source_value']);
+                } else unset($data_to_save['source_value']);
                 //
                 $source_value = upload_file_to_aws('add_upload_video', $company_sid, 'add_upload_video', $employer_sid);
-                if($source_value != 'error'){
+                if ($source_value != 'error') {
                     $data_to_save['source_value'] = $source_value;
-                }else unset($data_to_save['source_value']);
+                } else unset($data_to_save['source_value']);
             }
 
             $this->application_tracking_system_model->save_rating($data_to_save);
 
             $this->session->set_flashdata('message', '<b>Success:</b> Rating saved successfully');
-            redirect($redirect_url,'refresh');
+            redirect($redirect_url, 'refresh');
         } else {
             redirect('application_tracking_system/active/all/all/all/all', 'refresh');
         }
     }
 
-    function applicant_message() {
+    function applicant_message()
+    {
         if ($this->input->post()) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_name = $data['session']['company_detail']['CompanyName'];
@@ -1443,7 +1470,7 @@ class Application_tracking_system extends Public_Controller {
                 $file_name = str_replace(" ", "-", $file[0]);
                 $messageFile = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
 
-                if($_FILES['message_attachment']['size'] == 0){
+                if ($_FILES['message_attachment']['size'] == 0) {
                     $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
                     redirect($_SERVER['HTTP_REFERER']);
                 }
@@ -1451,7 +1478,7 @@ class Application_tracking_system extends Public_Controller {
                 $aws = new AwsSdk();
                 $aws->putToBucket($messageFile, $_FILES['message_attachment']['tmp_name'], AWS_S3_BUCKET_NAME);
                 $message_data['attachment'] = $messageFile;
-                $subject = $formpost['subject'];//'Private Message Notification';
+                $subject = $formpost['subject']; //'Private Message Notification';
                 $body = $message_hf['header']
                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $formpost['applicant_name'] . ',</h2>'
                     . '<br>'
@@ -1470,7 +1497,7 @@ class Application_tracking_system extends Public_Controller {
 
                 sendMailWithAttachment($from, $to, $subject, $body, $company_name, $_FILES['message_attachment'], REPLY_TO);
             } else {
-                $subject = $formpost['subject'];//'Private Message Notification';
+                $subject = $formpost['subject']; //'Private Message Notification';
                 $body = $message_hf['header']
                     . '<h2 style="width:100%; margin:0 0 20px 0;">Dear ' . $formpost['applicant_name'] . ',</h2>'
                     . '<br>'
@@ -1494,12 +1521,12 @@ class Application_tracking_system extends Public_Controller {
             $this->application_tracking_system_model->save_message($message_data);
             $this->session->set_flashdata('message', 'Success! Message sent successfully!');
 
-//            if ($formpost['users_type'] == 'employee') {
-//                redirect('employee_profile/' . $formpost['employee_id']);
-//            } else {
-//                redirect('applicant_profile/' . $formpost['job_id']);
-//            }
-//          header('Location: ' . $_SERVER['HTTP_REFERER']);
+            //            if ($formpost['users_type'] == 'employee') {
+            //                redirect('employee_profile/' . $formpost['employee_id']);
+            //            } else {
+            //                redirect('applicant_profile/' . $formpost['job_id']);
+            //            }
+            //          header('Location: ' . $_SERVER['HTTP_REFERER']);
             redirect($_SERVER['HTTP_REFERER']);
         } else {
             if ($formpost['users_type'] == 'employee') {
@@ -1510,7 +1537,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function event_schedule() {
+    public function event_schedule()
+    {
         if ($this->input->post()) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data['session']['company_detail']['sid'];
@@ -1545,10 +1573,9 @@ class Application_tracking_system extends Public_Controller {
                 $file = explode(".", $_FILES["messageFile"]["name"]);
                 $file_name = str_replace(" ", "-", $file[0]);
                 $attachment = $file_name . '-' . generateRandomString(5) . '.' . $file[1];
-                if($_FILES['messageFile']['size'] == 0){
+                if ($_FILES['messageFile']['size'] == 0) {
                     $this->session->set_flashdata('message', '<b>Warning:</b> File is empty! Please try again.');
-                }
-                else{
+                } else {
                     $aws = new AwsSdk();
                     $aws->putToBucket($attachment, $_FILES["messageFile"]["tmp_name"], AWS_S3_BUCKET_NAME);
                     $listing_data['messageFile'] = $attachment;
@@ -1609,7 +1636,7 @@ class Application_tracking_system extends Public_Controller {
             $portalData = $this->application_tracking_system_model->get_portal_detail($data["session"]["company_detail"]["sid"]);
 
             if ($formpost['address'] != "") {
-                $address = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($formpost['address']) . "&zoom=13&size=400x400&key=".GOOGLE_API_KEY."&markers=color:blue|label:|" . urlencode($formpost['address']);
+                $address = "https://maps.googleapis.com/maps/api/staticmap?center=" . urlencode($formpost['address']) . "&zoom=13&size=400x400&key=" . GOOGLE_API_KEY . "&markers=color:blue|label:|" . urlencode($formpost['address']);
                 $address = '<br><br>'
                     . '<b>Meeting Location:<b><br> ' . $formpost['address'] . '<br> <a href = "https://maps.google.com/maps?z=12&t=m&q=' . urlencode($formpost['address']) . '"> <img src = "' . $address . '" alt = "No Map Found!" > </a>';
             } else {
@@ -1824,7 +1851,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function deleteEvent() {
+    public function deleteEvent()
+    {
         if (isset($_GET['action']) && $_GET['action'] == 'remove_event') {
             $sid = $_GET['sid'];
             $this->application_tracking_system_model->deleteEvent($sid);
@@ -1833,7 +1861,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function send_reference_request_email() {
+    public function send_reference_request_email()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -1925,7 +1954,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function deleteMessage() {
+    public function deleteMessage()
+    {
         if (isset($_GET['action']) && $_GET['action'] == 'delete_message') {
             $sid = $_GET['sid'];
             $this->application_tracking_system_model->deleteMessage($sid);
@@ -1935,7 +1965,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function resend_message() {
+    public function resend_message()
+    {
         if ($this->input->post()) {
             $data['session'] = $this->session->userdata('logged_in');
             $id = $this->input->post('id');
@@ -1958,14 +1989,16 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    function delete_note() {
+    function delete_note()
+    {
         $id = $this->input->post('sid');
         $this->application_tracking_system_model->delete_note($id);
         $_SESSION['show_notes'] = 'true';
         $this->session->set_flashdata('message', '<b>Success:</b> Note deleted successfully');
     }
 
-    public function ajax_responder() {
+    public function ajax_responder()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -2057,14 +2090,14 @@ class Application_tracking_system extends Public_Controller {
                         $job_sid = $this->input->post('job_sid');
                         $applicant_notes = $this->application_tracking_system_model->getApplicantNotes($applicant_sid);
                         // Added on: 26-06-2019
-                        if(sizeof($applicant_notes)) foreach ($applicant_notes as $k0 => $v0) $applicant_notes[$k0]['insert_date'] = reset_datetime(array( 'datetime' => $v0['insert_date'], '_this' => $this, 'from_format' => 'b d Y H:i a', 'format' => 'default'));
+                        if (sizeof($applicant_notes)) foreach ($applicant_notes as $k0 => $v0) $applicant_notes[$k0]['insert_date'] = reset_datetime(array('datetime' => $v0['insert_date'], '_this' => $this, 'from_format' => 'b d Y H:i a', 'format' => 'default'));
                         print_r(json_encode($applicant_notes));
                         break;
                     case 'fetch_applicant_reviews':
                         $applicant_sid = $this->input->post('applicant_sid');
                         $applicant_reviews = $this->application_tracking_system_model->getApplicantAllRating($applicant_sid, 'applicant');
 
-                        if(!empty($applicant_reviews)) {
+                        if (!empty($applicant_reviews)) {
                             $applicant_reviews = $applicant_reviews->result_array();
                         } else {
                             $applicant_reviews = array();
@@ -2077,225 +2110,223 @@ class Application_tracking_system extends Public_Controller {
                         $applicant_jobs = $this->application_tracking_system_model->get_single_applicant_all_jobs($applicant_sid, $company_sid);
 
                         $questionnaire_final = '';
-                            $que_head = '<div id="screening_questionnaire_tabpage" class="tab-pane fade in active hr-innerpadding"><div class="row"><div class="col-xs-12">';
-                            $questionnaire_final = $questionnaire_final . $que_head;
-                                if (sizeof($applicant_jobs) > 0) {
-                                $item = 0;
-                                $counter = 0;
-                                $ques_body = '<div class="tab-header-sec"><h2 class="tab-title">Screening Questionnaire</h2></div>';
-                                $questionnaire_final = $questionnaire_final . $ques_body;
-                                $question_data = '';
+                        $que_head = '<div id="screening_questionnaire_tabpage" class="tab-pane fade in active hr-innerpadding"><div class="row"><div class="col-xs-12">';
+                        $questionnaire_final = $questionnaire_final . $que_head;
+                        if (sizeof($applicant_jobs) > 0) {
+                            $item = 0;
+                            $counter = 0;
+                            $ques_body = '<div class="tab-header-sec"><h2 class="tab-title">Screening Questionnaire</h2></div>';
+                            $questionnaire_final = $questionnaire_final . $ques_body;
+                            $question_data = '';
 
-                                 foreach ($applicant_jobs as $job) {
-                                     if($job['job_title'] != NULL && $job['job_title'] != '') {
-                                     $ques_title = '<p class="questionnaire-heading margin-top">Job: '. $job['job_title'].'</p>';
-                                     $question_data = $question_data . $ques_title;
-                                     }
-                                    if ($job['questionnaire'] != NULL && $job['questionnaire'] != '') {
-                                        $my_questionnaire = unserialize($job['questionnaire']);
+                            foreach ($applicant_jobs as $job) {
+                                if ($job['job_title'] != NULL && $job['job_title'] != '') {
+                                    $ques_title = '<p class="questionnaire-heading margin-top">Job: ' . $job['job_title'] . '</p>';
+                                    $question_data = $question_data . $ques_title;
+                                }
+                                if ($job['questionnaire'] != NULL && $job['questionnaire'] != '') {
+                                    $my_questionnaire = unserialize($job['questionnaire']);
 
-                                        if(isset($my_questionnaire['applicant_sid'])) {
-                                            $questionnaire_type = 'new';
-                                            $questionnaire_name = $my_questionnaire['questionnaire_name'];
-                                            $questionnaire = $my_questionnaire['questionnaire'];
-                                            $q_b = '';
-                                            foreach ($questionnaire as $key => $questionnaire_answers) {
-                                                $answer = $questionnaire_answers['answer'];
-                                                $passing_score = $questionnaire_answers['passing_score'];
-                                                $score = $questionnaire_answers['score'];
-                                                $status = $questionnaire_answers['status'];
-                                                $item ++;
+                                    if (isset($my_questionnaire['applicant_sid'])) {
+                                        $questionnaire_type = 'new';
+                                        $questionnaire_name = $my_questionnaire['questionnaire_name'];
+                                        $questionnaire = $my_questionnaire['questionnaire'];
+                                        $q_b = '';
+                                        foreach ($questionnaire as $key => $questionnaire_answers) {
+                                            $answer = $questionnaire_answers['answer'];
+                                            $passing_score = $questionnaire_answers['passing_score'];
+                                            $score = $questionnaire_answers['score'];
+                                            $status = $questionnaire_answers['status'];
+                                            $item++;
 
-                                                $attendDate = formatDateToDB($my_questionnaire['attend_timestamp'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                                            $attendDate = formatDateToDB($my_questionnaire['attend_timestamp'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
 
-                                                $ques_start = '<div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><span style="float: right; text-align: right; font-size: 12px; margin-top: -5px">Completed At<br/> '.$attendDate.'</span><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$item.'"><span class="glyphicon glyphicon-minus"></span>  '.$key.'</a></h4></div><div id="collapse_'.$item.'" class="panel-collapse collapse in">';
-                                                if (is_array($answer)) {
-                                                    foreach ($answer as $multiple_answer) {
-                                                        $ques_ans = '<div class="panel-body">'. $multiple_answer .'</div>';
-                                                    }
-                                                } else {
-                                                    $ques_ans = '<div class="panel-body">'.$answer.'</div>';
+                                            $ques_start = '<div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><span style="float: right; text-align: right; font-size: 12px; margin-top: -5px">Completed At<br/> ' . $attendDate . '</span><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_' . $item . '"><span class="glyphicon glyphicon-minus"></span>  ' . $key . '</a></h4></div><div id="collapse_' . $item . '" class="panel-collapse collapse in">';
+                                            if (is_array($answer)) {
+                                                foreach ($answer as $multiple_answer) {
+                                                    $ques_ans = '<div class="panel-body">' . $multiple_answer . '</div>';
                                                 }
-                                                $ques_score = '<div class="panel-body"><b>Score: '.$score.' points out of possible '. $passing_score.'</b><span class="'.strtolower($status).' pull-right" style="font-size: 22px;">('. $status .')</span> </div> </div> </div>';
-                                                $q_b = $q_b . $ques_start . $ques_ans .$ques_score ;
+                                            } else {
+                                                $ques_ans = '<div class="panel-body">' . $answer . '</div>';
                                             }
-                                            $anchor = $job['questionnaire_result'] == 'Fail' ? '<a style="background-color:#FF0000;" href="javascript:;">' : '<a href="javascript:;">';
-
-                                            $ques_name = '<p class="questionnaire-heading margin-top" style="background-color: #466b1d;">'.$questionnaire_name.'</p> <div class="tab-btn-panel"><span>Score: '.$job['score'].'</span> '. $anchor . $job['questionnaire_result'].'</a></div><div class="questionnaire-body">'.$q_b.'</div>';
-                                            $question_data = $question_data . $ques_name;
-
-                                        } else {
-                                            $questionnaire_type = 'old';
-                                            $btn_panel = '<div class="tab-btn-panel"><span>Score :'.$job['score'].'</span>'. $job['passing_score'] <= $job['score'] ? '<a href="javascript:;">Pass</a>' : '<a href="javascript:;">Fail</a>'.'</div>';
-
-                                            $questionnaire = unserialize($job['questionnaire']);
-                                            $items = '';
-                                            foreach ($questionnaire as $key => $value) {
-                                                $item ++;
-                                                if (is_array($value)) {
-                                                    foreach ($value as $answer) {
-                                                        $ans = '<div class="panel-body">'. $answer .'</div>';
-                                                    }
-                                                } else {
-                                                    $ans = '<div class="panel-body">'. $value .'</div>';
-                                                }
-                                                $items = $items . '<div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'.$item.'"><span class="glyphicon glyphicon-minus"></span>  '. $key .'</a></h4></div><div id="collapse_'.$item.'" class="panel-collapse collapse in">'.$ans.'</div></div>';
-                                                $counter++;
-                                            }
-                                            $ques_ans = '<p class="questionnaire-heading margin-top" style="background-color: #466b1d;">Questions / Answers</p><div class="panel-group-wrp"><div class="panel-group" id="accordion">'.$items.'</div></div>';
-                                            $final_else = $btn_panel . $ques_ans;
-                                            $question_data = $question_data . $final_else;
+                                            $ques_score = '<div class="panel-body"><b>Score: ' . $score . ' points out of possible ' . $passing_score . '</b><span class="' . strtolower($status) . ' pull-right" style="font-size: 22px;">(' . $status . ')</span> </div> </div> </div>';
+                                            $q_b = $q_b . $ques_start . $ques_ans . $ques_score;
                                         }
+                                        $anchor = $job['questionnaire_result'] == 'Fail' ? '<a style="background-color:#FF0000;" href="javascript:;">' : '<a href="javascript:;">';
+
+                                        $ques_name = '<p class="questionnaire-heading margin-top" style="background-color: #466b1d;">' . $questionnaire_name . '</p> <div class="tab-btn-panel"><span>Score: ' . $job['score'] . '</span> ' . $anchor . $job['questionnaire_result'] . '</a></div><div class="questionnaire-body">' . $q_b . '</div>';
+                                        $question_data = $question_data . $ques_name;
                                     } else {
-                                        $no_quest = '<div class="applicant-notes-empty"><div class="notes-not-found">No questionnaire found!</div></div>';
-                                        $question_data = $question_data . $no_quest;
+                                        $questionnaire_type = 'old';
+                                        $btn_panel = '<div class="tab-btn-panel"><span>Score :' . $job['score'] . '</span>' . $job['passing_score'] <= $job['score'] ? '<a href="javascript:;">Pass</a>' : '<a href="javascript:;">Fail</a>' . '</div>';
+
+                                        $questionnaire = unserialize($job['questionnaire']);
+                                        $items = '';
+                                        foreach ($questionnaire as $key => $value) {
+                                            $item++;
+                                            if (is_array($value)) {
+                                                foreach ($value as $answer) {
+                                                    $ans = '<div class="panel-body">' . $answer . '</div>';
+                                                }
+                                            } else {
+                                                $ans = '<div class="panel-body">' . $value . '</div>';
+                                            }
+                                            $items = $items . '<div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title"><a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_' . $item . '"><span class="glyphicon glyphicon-minus"></span>  ' . $key . '</a></h4></div><div id="collapse_' . $item . '" class="panel-collapse collapse in">' . $ans . '</div></div>';
+                                            $counter++;
+                                        }
+                                        $ques_ans = '<p class="questionnaire-heading margin-top" style="background-color: #466b1d;">Questions / Answers</p><div class="panel-group-wrp"><div class="panel-group" id="accordion">' . $items . '</div></div>';
+                                        $final_else = $btn_panel . $ques_ans;
+                                        $question_data = $question_data . $final_else;
                                     }
-                                    $job_manual_questionnaire_history = $job['manual_questionnaire_history'];
+                                } else {
+                                    $no_quest = '<div class="applicant-notes-empty"><div class="notes-not-found">No questionnaire found!</div></div>';
+                                    $question_data = $question_data . $no_quest;
+                                }
+                                $job_manual_questionnaire_history = $job['manual_questionnaire_history'];
 
-                                    if(!empty($job_manual_questionnaire_history)) {
-                                        $job_manual_questionnaire_history_count = count($job_manual_questionnaire_history);
-                                        $manual_question_data = '';
-                                        foreach($job_manual_questionnaire_history as $job_man_key => $job_man_value) {
-                                            $job_manual_questionnaire       = $job_man_value['questionnaire'];
-                                            $job_questionnaire_sent_date    = $job_man_value['questionnaire_sent_date'];
-                                            $job_man_questionnaire_result   = $job_man_value['questionnaire_result'];
-                                            $job_man_score                  = $job_man_value['score'];
-                                            $job_man_passing_score          = $job_man_value['passing_score'];
+                                if (!empty($job_manual_questionnaire_history)) {
+                                    $job_manual_questionnaire_history_count = count($job_manual_questionnaire_history);
+                                    $manual_question_data = '';
+                                    foreach ($job_manual_questionnaire_history as $job_man_key => $job_man_value) {
+                                        $job_manual_questionnaire       = $job_man_value['questionnaire'];
+                                        $job_questionnaire_sent_date    = $job_man_value['questionnaire_sent_date'];
+                                        $job_man_questionnaire_result   = $job_man_value['questionnaire_result'];
+                                        $job_man_score                  = $job_man_value['score'];
+                                        $job_man_passing_score          = $job_man_value['passing_score'];
 
-                                            $resent = '<br>Resent on: '.date_with_time($job_questionnaire_sent_date).'<hr style="margin-top: 5px; margin-bottom: 5px;">';
-                                            $manual_question_data = $manual_question_data . $resent;
-                                            if($job_manual_questionnaire != '' || $job_manual_questionnaire != NULL) {
-                                                $job_manual_questionnaire_array = unserialize($job_manual_questionnaire);
+                                        $resent = '<br>Resent on: ' . date_with_time($job_questionnaire_sent_date) . '<hr style="margin-top: 5px; margin-bottom: 5px;">';
+                                        $manual_question_data = $manual_question_data . $resent;
+                                        if ($job_manual_questionnaire != '' || $job_manual_questionnaire != NULL) {
+                                            $job_manual_questionnaire_array = unserialize($job_manual_questionnaire);
 
-                                                if(empty($job_manual_questionnaire_array)) {
-                                                    $no_ques = '<div class="applicant-notes-empty"><div class="notes-not-found">No questionnaire found!</div></div>';
-                                                    $manual_question_data = $manual_question_data . $no_ques;
-                                                } else {
-                                                    /************************************************************/
-                                                    $man_ques = '';
-                                                    if(isset($job_manual_questionnaire_array['applicant_sid'])) {
-                                                        $questionnaire_name = $job_manual_questionnaire_array['questionnaire_name'];
+                                            if (empty($job_manual_questionnaire_array)) {
+                                                $no_ques = '<div class="applicant-notes-empty"><div class="notes-not-found">No questionnaire found!</div></div>';
+                                                $manual_question_data = $manual_question_data . $no_ques;
+                                            } else {
+                                                /************************************************************/
+                                                $man_ques = '';
+                                                if (isset($job_manual_questionnaire_array['applicant_sid'])) {
+                                                    $questionnaire_name = $job_manual_questionnaire_array['questionnaire_name'];
 
-                                                        $questionnaire = $job_manual_questionnaire_array['questionnaire'];
-                                                        foreach ($questionnaire as $key => $questionnaire_answers) {
-                                                            $answer = $questionnaire_answers['answer'];
-                                                            $passing_score = $questionnaire_answers['passing_score'];
-                                                            $score = $questionnaire_answers['score'];
-                                                            $status = $questionnaire_answers['status'];
-                                                            $item ++;
+                                                    $questionnaire = $job_manual_questionnaire_array['questionnaire'];
+                                                    foreach ($questionnaire as $key => $questionnaire_answers) {
+                                                        $answer = $questionnaire_answers['answer'];
+                                                        $passing_score = $questionnaire_answers['passing_score'];
+                                                        $score = $questionnaire_answers['score'];
+                                                        $status = $questionnaire_answers['status'];
+                                                        $item++;
 
-                                                            if (is_array($answer)) {
-                                                                foreach ($answer as $multiple_answer) {
-                                                                    $man_ans = '<div class="panel-body">'.$multiple_answer.'</div>';
-                                                                }
-                                                            } else {
-                                                                $man_ans = '<div class="panel-body">'.$answer.'</div>';
+                                                        if (is_array($answer)) {
+                                                            foreach ($answer as $multiple_answer) {
+                                                                $man_ans = '<div class="panel-body">' . $multiple_answer . '</div>';
                                                             }
-                                                            $attendDate = formatDateToDB($job_manual_questionnaire_array['attend_timestamp'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
-                                                            $man_ques = $man_ques . '<div class="panel panel-default">
+                                                        } else {
+                                                            $man_ans = '<div class="panel-body">' . $answer . '</div>';
+                                                        }
+                                                        $attendDate = formatDateToDB($job_manual_questionnaire_array['attend_timestamp'], DB_DATE_WITH_TIME, DATE_WITH_TIME);
+                                                        $man_ques = $man_ques . '<div class="panel panel-default">
                                                                             <div class="panel-heading">
                                                                                 <h4 class="panel-title">
-                                                                                <span style="float: right; text-align: right; font-size: 12px; margin-top: -5px">Completed At<br/> '.$attendDate.'</span>
-                                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_'. $item.'"><span class="glyphicon glyphicon-plus"></span>  '. $key.'</a>
+                                                                                <span style="float: right; text-align: right; font-size: 12px; margin-top: -5px">Completed At<br/> ' . $attendDate . '</span>
+                                                                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse_' . $item . '"><span class="glyphicon glyphicon-plus"></span>  ' . $key . '</a>
                                                                                 </h4>
                                                                             </div>
-                                                                            <div id="collapse_'. $item.'" class="panel-collapse collapse">'.$man_ans.'<div class="panel-body">
-                                                                                    <b>Score: '. $score.' points out of possible'. $passing_score.'</b>
-                                                                                    <span class="'. strtolower($status).' pull-right" style="font-size: 22px;">('. $status.')</span>
+                                                                            <div id="collapse_' . $item . '" class="panel-collapse collapse">' . $man_ans . '<div class="panel-body">
+                                                                                    <b>Score: ' . $score . ' points out of possible' . $passing_score . '</b>
+                                                                                    <span class="' . strtolower($status) . ' pull-right" style="font-size: 22px;">(' . $status . ')</span>
                                                                                 </div>
                                                                             </div>
                                                                         </div>';
-                                                        }
-                                                        $anchor = $job_man_questionnaire_result == 'Fail' ? '<a style="background-color:#FF0000;" href="javascript:;">' : '<a href="javascript:;">';
-                                                        $manual_ques = '<p class="questionnaire-heading margin-top" style="background-color: #466b1d;">'.$questionnaire_name.'</p><div class="tab-btn-panel"><span>Score: '. $job_man_score.'</span>'.$anchor. $job_man_questionnaire_result.'</a></div><div class="questionnaire-body"> '.$man_ques.' </div>';
-                                                        $manual_question_data = $manual_question_data . $manual_ques;
-
-                                                        } else {
-                                                        $questionnaire = $job_manual_questionnaire_array;
-                                                        $man_panel = '';
-                                                        foreach ($questionnaire as $key => $value) {
-                                                            $item ++;
-                                                            if (is_array($value)) {
-                                                                foreach ($value as $answer) {
-                                                                    $ans = '<div class="panel-body">'. $answer .'</div>';
-                                                                }
-                                                            } else {
-                                                                $ans = '<div class="panel-body">'. $value .'</div>';
+                                                    }
+                                                    $anchor = $job_man_questionnaire_result == 'Fail' ? '<a style="background-color:#FF0000;" href="javascript:;">' : '<a href="javascript:;">';
+                                                    $manual_ques = '<p class="questionnaire-heading margin-top" style="background-color: #466b1d;">' . $questionnaire_name . '</p><div class="tab-btn-panel"><span>Score: ' . $job_man_score . '</span>' . $anchor . $job_man_questionnaire_result . '</a></div><div class="questionnaire-body"> ' . $man_ques . ' </div>';
+                                                    $manual_question_data = $manual_question_data . $manual_ques;
+                                                } else {
+                                                    $questionnaire = $job_manual_questionnaire_array;
+                                                    $man_panel = '';
+                                                    foreach ($questionnaire as $key => $value) {
+                                                        $item++;
+                                                        if (is_array($value)) {
+                                                            foreach ($value as $answer) {
+                                                                $ans = '<div class="panel-body">' . $answer . '</div>';
                                                             }
-                                                            $man_panel = $man_panel . '<div class="panel panel-default">
+                                                        } else {
+                                                            $ans = '<div class="panel-body">' . $value . '</div>';
+                                                        }
+                                                        $man_panel = $man_panel . '<div class="panel panel-default">
                                                                         <div class="panel-heading">
                                                                             <h4 class="panel-title">
                                                                                 <a class="accordion-toggle" data-toggle="collapse"
                                                                                    data-parent="#accordion"
-                                                                                   href="#collapse_'. $item.'">
-                                                                                    <span class="glyphicon glyphicon-plus"></span>  '.$key.'
+                                                                                   href="#collapse_' . $item . '">
+                                                                                    <span class="glyphicon glyphicon-plus"></span>  ' . $key . '
                                                                                 </a>
                                                                             </h4>
                                                                         </div>
                                                                         <div id="collapse_ $item"
-                                                                             class="panel-collapse collapse">'.$ans.'
+                                                                             class="panel-collapse collapse">' . $ans . '
                                                                         </div>
                                                                     </div>';
 
-                                                            $counter++;
-                                                                }
-                                                            $man_score = '<div class="tab-btn-panel">
-                                                                <span>Score : '. $job_man_score.'</span>'.$job_man_passing_score <= $job_man_score ? '<a href="javascript:;">Pass</a>' : '<a href="javascript:;">Fail</a>' .'</div>
+                                                        $counter++;
+                                                    }
+                                                    $man_score = '<div class="tab-btn-panel">
+                                                                <span>Score : ' . $job_man_score . '</span>' . $job_man_passing_score <= $job_man_score ? '<a href="javascript:;">Pass</a>' : '<a href="javascript:;">Fail</a>' . '</div>
                                                         <p class="questionnaire-heading margin-top" style="background-color: #466b1d;">Questions / Answers</p>
                                                         <div class="panel-group-wrp">
-                                                            <div class="panel-group" id="accordion">' .$man_panel. '</div></div>';
+                                                            <div class="panel-group" id="accordion">' . $man_panel . '</div></div>';
 
-                                                        $manual_question_data = $manual_question_data . $man_score;
-                                                        }
+                                                    $manual_question_data = $manual_question_data . $man_score;
                                                 }
-                                            } else {
-                                                $no_ques_found = '<div class="applicant-notes-empty">
+                                            }
+                                        } else {
+                                            $no_ques_found = '<div class="applicant-notes-empty">
                                                                                         <div class="notes-not-found">No questionnaire found!</div>
                                                                                     </div>';
-                                                $manual_question_data = $manual_question_data . $no_ques_found;
-                                            }
+                                            $manual_question_data = $manual_question_data . $no_ques_found;
                                         }
-                                        $question_data = $question_data . $manual_question_data;
                                     }
-                                 }
-                                 $questionnaire_final = $questionnaire_final . $question_data;
-                            } else {
-                               $no_ques_found = '<div class="tab-header-sec">
+                                    $question_data = $question_data . $manual_question_data;
+                                }
+                            }
+                            $questionnaire_final = $questionnaire_final . $question_data;
+                        } else {
+                            $no_ques_found = '<div class="tab-header-sec">
                                     <h2 class="tab-title">Screening Questionnaire</h2>
                                     <div class="applicant-notes-empty">
                                         <div class="notes-not-found">No questionnaire found!</div>
                                     </div>
                                </div>';
-                                   $questionnaire_final = $questionnaire_final . $no_ques_found;
-                            }
-                            $end_div = '</div></div></div>';
+                            $questionnaire_final = $questionnaire_final . $no_ques_found;
+                        }
+                        $end_div = '</div></div></div>';
                         $questionnaire_final = $questionnaire_final . $end_div;
 
                         echo $questionnaire_final;
 
-//                        print_r(json_encode($applicant_job));
+                        //                        print_r(json_encode($applicant_job));
                         break;
                     case 'arch_bulk_applicants':
-                        if($this->input->is_ajax_request()){
+                        if ($this->input->is_ajax_request()) {
                             $applicant_sids = $this->input->post('arch_id');
-                            foreach($applicant_sids as $app_sid){
+                            foreach ($applicant_sids as $app_sid) {
                                 $this->application_tracking_system_model->arch_single_applicant($app_sid);
                             }
                             $this->session->set_flashdata('message', '<b>Success:</b> Candidate(s) archived successfully');
                             echo 'success';
-                        }else{
+                        } else {
                             echo 'error';
                         }
                         break;
                     case 'active_bulk_applicants':
-                        if($this->input->is_ajax_request()){
+                        if ($this->input->is_ajax_request()) {
                             $applicant_sids = $this->input->post('active_id');
-                            foreach($applicant_sids as $app_sid){
+                            foreach ($applicant_sids as $app_sid) {
                                 $this->application_tracking_system_model->active_single_applicant($app_sid);
                             }
                             $this->session->set_flashdata('message', '<b>Success:</b> Candidate(s) activated successfully');
                             echo 'success';
-                        }else{
+                        } else {
                             echo 'error';
                         }
                         break;
@@ -2304,7 +2335,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    public function send_kpa_onboarding() {
+    public function send_kpa_onboarding()
+    {
         if ($this->session->userdata('logged_in')) {
             $data['session'] = $this->session->userdata('logged_in');
             $security_sid = $data['session']['employer_detail']['sid'];
@@ -2324,7 +2356,7 @@ class Application_tracking_system extends Public_Controller {
                         $message_hf = (message_header_footer($company_id, $company_name));
                         $replacement_array = array();
                         $replacement_array['applicant_name'] = ucwords($applicant_info['first_name'] . ' ' . $applicant_info['last_name']);
-                        $on_boarding_link = '<a target="_blank" style="'.VIDEO_INTERVIEW_EMAIL_BTN_STYLE.'" href="' . $kpaDetials['kpa_url'] . ' ">HR Compliance And Onboarding</a>';
+                        $on_boarding_link = '<a target="_blank" style="' . VIDEO_INTERVIEW_EMAIL_BTN_STYLE . '" href="' . $kpaDetials['kpa_url'] . ' ">HR Compliance And Onboarding</a>';
                         $replacement_array['on_boarding_link'] = $on_boarding_link;
                         $replacement_array['company_name'] = ucwords($company_name);
                         //log_and_send_templated_email(ON_BOARDING_REQUEST, $applicant_info['email'], $replacement_array, $message_hf);
@@ -2351,7 +2383,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    function delete_file() {
+    function delete_file()
+    {
         $id = $this->input->post('id');
         $type = $this->input->post('type');
 
@@ -2366,7 +2399,8 @@ class Application_tracking_system extends Public_Controller {
         $this->session->set_flashdata('message', '<b>Success:</b> ' . $type . ' removed successfully');
     }
 
-    public function updateEmployerStatus() {
+    public function updateEmployerStatus()
+    {
         $data['session'] = $this->session->userdata('logged_in');
         $company_sid = $data["session"]["company_detail"]["sid"];
         $user_id = $this->input->post('sid');
@@ -2378,7 +2412,8 @@ class Application_tracking_system extends Public_Controller {
         echo 'success';
     }
 
-    public function save_rating() {
+    public function save_rating()
+    {
         if ($this->input->post()) {
             $data['session'] = $this->session->userdata('logged_in');
             $company_sid = $data['session']['company_detail']['sid'];
@@ -2398,25 +2433,24 @@ class Application_tracking_system extends Public_Controller {
             $data_to_save['comment'] = $comment;
             $data_to_save['users_type'] = $users_type;
 
-            if($users_type != 'employee'){
+            if ($users_type != 'employee') {
                 $data_to_save['source_type'] = $this->input->post('video_source', true);
                 $data_to_save['source_value'] = $this->input->post('yt_vm_video_url');
                 $data_to_save['source_value'] = str_replace('watch?v=', 'embed/', $data_to_save['source_value']);
                 $data_to_save['source_value'] = str_replace('/vimeo.com', '/player.vimeo.com/video', $data_to_save['source_value']);
-                if($data_to_save['source_type'] == 'uploaded'){
+                if ($data_to_save['source_type'] == 'uploaded') {
                     $source_value = upload_file_to_aws('upload_video', $company_sid, 'upload_video', $employer_sid);
-                    if($source_value != 'error'){
+                    if ($source_value != 'error') {
                         $data_to_save['source_value'] = $source_value;
-                    }else unset($data_to_save['source_value']);
+                    } else unset($data_to_save['source_value']);
                 }
-
             }
 
 
 
             $attachment = upload_file_to_aws('review_attachment', $company_sid, 'review_attachment', $employer_sid);
 
-            if($attachment != 'error'){
+            if ($attachment != 'error') {
                 $extension = pathinfo($attachment, PATHINFO_EXTENSION);
 
                 $data_to_save['attachment'] = $attachment;
@@ -2435,7 +2469,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    function archive_single_applicant() {
+    function archive_single_applicant()
+    {
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'arch_single_applicant') {
             $sid = $_REQUEST['arch_id'];
             $this->application_tracking_system_model->arch_single_applicant($sid);
@@ -2444,7 +2479,8 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    function delete_single_applicant() {
+    function delete_single_applicant()
+    {
         if (isset($_REQUEST['action']) && $_REQUEST['action'] == 'del_single_applicant') {
             $sid = $_REQUEST['del_id'];
             $this->application_tracking_system_model->delete_single_applicant($sid);
@@ -2453,12 +2489,14 @@ class Application_tracking_system extends Public_Controller {
         }
     }
 
-    function deleteTalentUser($id) {
+    function deleteTalentUser($id)
+    {
         $this->application_tracking_system_model->deleteTalentUser($id);
         echo 'Success';
     }
 
-    public function vimeo_get_id($str) {
+    public function vimeo_get_id($str)
+    {
         if ($str != "") {
             if ($_SERVER['HTTP_HOST'] == 'localhost') {
                 $api_url = 'https://vimeo.com/api/oembed.json?url=' . urlencode($str);
@@ -2502,15 +2540,18 @@ class Application_tracking_system extends Public_Controller {
      *
      * @return Bool
      */
-    private function call_old_event(){
+    private function call_old_event()
+    {
         $this->load->config('calendar_config');
         $calendar_opt = $this->config->item('calendar_opt');
-        if($calendar_opt['show_new_calendar_to_all'])
+        if ($calendar_opt['show_new_calendar_to_all'])
             return true;
-        if(
+        if (
             ($calendar_opt['old_event_check'] && !$calendar_opt['ids_check'] && in_array($this->input->ip_address(), $calendar_opt['remote_ips'])) ||
             ($calendar_opt['old_event_check'] && $calendar_opt['ids_check'] && in_array($this->session->userdata('logged_in')['company_detail']['sid'], $calendar_opt['allowed_ids']))
-        ){ return true; }
+        ) {
+            return true;
+        }
 
         return false;
     }
@@ -2524,7 +2565,8 @@ class Application_tracking_system extends Public_Controller {
      *
      * @return JSON
      */
-    function handler(){
+    function handler()
+    {
         //
         $data['session'] = $this->session->userdata('logged_in');
         $company_name    = $data['session']['company_detail']['CompanyName'];
@@ -2533,7 +2575,7 @@ class Application_tracking_system extends Public_Controller {
         $resp['Status'] = false;
         $resp['Response'] = 'Invalid request.';
         //
-        if(!sizeof($this->input->post()) || $this->input->method(TRUE) != 'POST') $this->resp($resp);
+        if (!sizeof($this->input->post()) || $this->input->method(TRUE) != 'POST') $this->resp($resp);
         //
         $form_data = $this->input->post(NULL, TRUE);
         // Load the twilio library
@@ -2552,7 +2594,7 @@ class Application_tracking_system extends Public_Controller {
             case 'send_sms':
                 // Double check - If SMS module is not active
                 // then through an error
-                if($session['company_detail']['sms_module_status'] == 0){
+                if ($session['company_detail']['sms_module_status'] == 0) {
                     $resp['Response'] = 'SMS module is not active for this company.';
                     $this->resp($resp);
                 }
@@ -2561,20 +2603,20 @@ class Application_tracking_system extends Public_Controller {
                 $message_body = $form_data['message'];
                 // Set & Send Request
                 $this
-                ->twilio
-                ->setMode('production')
-                ->setMessage($message_body);
+                    ->twilio
+                    ->setMode('production')
+                    ->setMessage($message_body);
                 $companyDetails = get_company_sms_phonenumber($company_sid, $this);
-                    $this->twilio->setReceiverPhone($form_data['phone_e16']);
-                    $this->twilio->setSenderPhone($companyDetails['phone_number']);
-                    $this->twilio->setMessageServiceSID($companyDetails['message_service_sid']);
+                $this->twilio->setReceiverPhone($form_data['phone_e16']);
+                $this->twilio->setSenderPhone($companyDetails['phone_number']);
+                $this->twilio->setMessageServiceSID($companyDetails['message_service_sid']);
                 $resp2 = $this->twilio->sendMessage();
                 // Check & Handling Errors
-                if(!is_array($resp2)){
+                if (!is_array($resp2)) {
                     $resp['Response'] = 'Failed to send SMS.';
                     $this->resp($resp);
                 }
-                if(isset($resp2['Error'])){
+                if (isset($resp2['Error'])) {
                     $resp['Response'] = 'Failed to send SMS.';
                     $this->resp($resp);
                 }
@@ -2591,28 +2633,29 @@ class Application_tracking_system extends Public_Controller {
                 $insert_array['receiver_phone_number'] = $form_data['phone_e16'];
                 // Add data in database
                 $insert_id = $this
-                ->application_tracking_system_model
-                ->save_sent_message($insert_array);
+                    ->application_tracking_system_model
+                    ->save_sent_message($insert_array);
 
                 $resp['Status'] = TRUE;
                 $resp['Response'] = 'SMS sent.';
 
                 $this->resp($resp);
-            break;
+                break;
 
             case 'fetch_sms_ats':
                 $records = $this
-                ->application_tracking_system_model
-                ->fetch_sms(
-                    $form_data['type'],
-                    isset($form_data['applicant_id']) ? $form_data['applicant_id'] : $form_data['id'],
-                    $company_sid,
-                    $form_data['last_fetched_id'],
-                    isset($form_data['module']) ? $form_data['module'] : ''
-                );
+                    ->application_tracking_system_model
+                    ->fetch_sms(
+                        $form_data['type'],
+                        isset($form_data['applicant_id']) ? $form_data['applicant_id'] : $form_data['id'],
+                        $company_sid,
+                        $form_data['last_fetched_id'],
+                        isset($form_data['module']) ? $form_data['module'] : ''
+                    );
 
-                if(!$records){
-                    $resp['Response'] = 'No record found.'; $this->resp($resp);
+                if (!$records) {
+                    $resp['Response'] = 'No record found.';
+                    $this->resp($resp);
                 }
                 //
                 $resp['Status'] = TRUE;
@@ -2620,21 +2663,21 @@ class Application_tracking_system extends Public_Controller {
                 $resp['Data'] = $records['Records'];
                 $resp['LastId'] = $records['LastId'];
                 $this->resp($resp);
-            break;
+                break;
 
             case 'update_phone_number':
                 // Update applicant phonenumber
                 $this
-                ->application_tracking_system_model
-                ->applicant_phone_number(
-                    $form_data['phone_e16'],
-                    $form_data['applicant_id']
-                );
+                    ->application_tracking_system_model
+                    ->applicant_phone_number(
+                        $form_data['phone_e16'],
+                        $form_data['applicant_id']
+                    );
                 //
                 $resp['Status'] = TRUE;
                 $resp['Response'] = 'Phone number updated.';
                 $resp['Phone'] = phonenumber_format($form_data['phone_e16']);
-            break;
+                break;
 
             case 'send_email_to_update_number':
                 //
@@ -2647,16 +2690,15 @@ class Application_tracking_system extends Public_Controller {
                 $dataArray['emailAddress'] = $form_data['email_address'];
                 //
                 $result = sendEmailToUpdatePhoneNumber($dataArray, $this);
-                if(!$result) $this->resp($resp);
+                if (!$result) $this->resp($resp);
                 //
                 $resp['Status'] = true;
                 $resp['Response'] = 'Email is sent to the applicant.';
                 $this->resp($resp);
-            break;
+                break;
         }
 
         $this->resp($resp);
-
     }
 
     /**
@@ -2667,11 +2709,10 @@ class Application_tracking_system extends Public_Controller {
      *
      * @return JSON
      */
-    private function resp($resp){
+    private function resp($resp)
+    {
         header('Content-Type: application/json');
         echo @json_encode($resp);
         exit(0);
     }
-
-
 }

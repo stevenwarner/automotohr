@@ -1,13 +1,16 @@
 <?php
 
-class job_title_templates_model extends CI_Model {
+class job_title_templates_model extends CI_Model
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
 
-    public function InsertTemplate($sid, $title, $complynetJobTitle, $sortOrder) {
+    public function InsertTemplate($sid, $title, $complynetJobTitle, $sortOrder)
+    {
         $data = array(
             'title' => $title,
             'complynet_job_title' => $complynetJobTitle,
@@ -19,7 +22,8 @@ class job_title_templates_model extends CI_Model {
         $this->db->insert('portal_job_title_templates', $data);
     }
 
-    public function UpdateTemplate($sid, $title, $complynetJobTitle, $sortOrder) {
+    public function UpdateTemplate($sid, $title, $complynetJobTitle, $sortOrder)
+    {
         $data = array(
             'title' => $title,
             'complynet_job_title' => $complynetJobTitle,
@@ -28,9 +32,24 @@ class job_title_templates_model extends CI_Model {
 
         $this->db->where('sid', $sid);
         $this->db->update('portal_job_title_templates', $data);
+
+        //
+        $data = array(
+            'job_title' => $title
+        );
+        $this->db->where('job_title_type', $sid);
+        $this->db->update('users', $data);
+
+        //
+        $data = array(
+            'desired_job_title' => $title
+        );
+        $this->db->where('job_title_type', $sid);
+        $this->db->update('portal_job_applications', $data);
     }
 
-    public function SaveTemplate($sid, $title, $complynetJobTitle, $sortOrder) {
+    public function SaveTemplate($sid, $title, $complynetJobTitle, $sortOrder)
+    {
         if ($sid == null) {
             $this->InsertTemplate($sid, $title, $complynetJobTitle, $sortOrder);
         } else {
@@ -38,7 +57,8 @@ class job_title_templates_model extends CI_Model {
         }
     }
 
-    public function SetStatusTemplate($sid, $status = 0) {
+    public function SetStatusTemplate($sid, $status = 0)
+    {
         $data = array(
             'status' => $status
         );
@@ -47,7 +67,8 @@ class job_title_templates_model extends CI_Model {
         $this->db->update('portal_job_title_templates', $data);
     }
 
-    public function SetArchiveStatusTemplate($sid, $status = 'active') {
+    public function SetArchiveStatusTemplate($sid, $status = 'active')
+    {
         $data = array(
             'archive_status' => $status
         );
@@ -56,14 +77,16 @@ class job_title_templates_model extends CI_Model {
         $this->db->update('portal_job_title_templates', $data);
     }
 
-    public function GetAllActiveTemplates() {
+    public function GetAllActiveTemplates()
+    {
         //$this->db->where('status', 1);
         $this->db->where('archive_status', 'active');
         $this->db->order_by('sort_order', 'ASC');
         return $this->db->get('portal_job_title_templates')->result_array();
     }
 
-    public function GetTemplate($sid) {
+    public function GetTemplate($sid)
+    {
         $this->db->where('sid', $sid);
         $this->db->where('status', 1);
         $this->db->where('archive_status', 'active');
@@ -85,7 +108,8 @@ class job_title_templates_model extends CI_Model {
     }
 
     //Groups Related
-    public function InsertGroup($sid, $name, $description, $status, $templates = array()) {
+    public function InsertGroup($sid, $name, $description, $status, $templates = array())
+    {
         $data = array(
             'name' => $name,
             'status' => $status,
@@ -96,7 +120,8 @@ class job_title_templates_model extends CI_Model {
         $this->db->insert('portal_job_listing_template_groups', $data);
     }
 
-    public function UpdateGroup($sid, $name, $description, $status, $templates = array()) {
+    public function UpdateGroup($sid, $name, $description, $status, $templates = array())
+    {
         $data = array(
             'name' => $name,
             'description' => $description,
@@ -108,7 +133,8 @@ class job_title_templates_model extends CI_Model {
         $this->db->update('portal_job_listing_template_groups', $data);
     }
 
-    public function SaveGroup($sid, $name, $description, $status, $templates = array()) {
+    public function SaveGroup($sid, $name, $description, $status, $templates = array())
+    {
         if ($sid == null) {
             $this->InsertGroup($sid, $name, $description, $status, $templates);
         } else {
@@ -116,7 +142,8 @@ class job_title_templates_model extends CI_Model {
         }
     }
 
-    public function SetStatusGroup($sid, $status = 0) {
+    public function SetStatusGroup($sid, $status = 0)
+    {
         $data = array(
             'status' => $status
         );
@@ -125,7 +152,8 @@ class job_title_templates_model extends CI_Model {
         $this->db->update('portal_job_listing_template_groups', $data);
     }
 
-    public function SetArchiveStatusGroup($sid, $status = 'active') {
+    public function SetArchiveStatusGroup($sid, $status = 'active')
+    {
         $data = array(
             'archive_status' => $status
         );
@@ -134,15 +162,17 @@ class job_title_templates_model extends CI_Model {
         $this->db->update('portal_job_listing_template_groups', $data);
     }
 
-    public function GetAllActiveGroups() {
+    public function GetAllActiveGroups()
+    {
         $this->db->where('archive_status', 'active');
 
         return $this->db->get('portal_job_listing_template_groups')->result_array();
     }
 
-    public function GetGroup($sid) {
+    public function GetGroup($sid)
+    {
         $this->db->where('sid', $sid);
-//        $this->db->where('status', 1);
+        //        $this->db->where('status', 1);
         $this->db->where('archive_status', 'active');
         $return = $this->db->get('portal_job_listing_template_groups')->result_array();
 
@@ -164,12 +194,12 @@ class job_title_templates_model extends CI_Model {
     }
 
     //Comapnies Related
-    public function GetAllCompanies() {
+    public function GetAllCompanies()
+    {
         $this->db->where('parent_sid', 0);
         $this->db->where('active', 1);
         $this->db->where('career_page_type', 'standard_career_site');
         $return = $this->db->get('users')->result_array();
         return $return;
     }
-
 }

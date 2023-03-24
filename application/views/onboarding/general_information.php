@@ -406,8 +406,8 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
                                                                                     ?>
                         <!--                                                    <option --><?php //echo set_select('timezone', $key, $default_selected); 
                                                                                             ?><!-- value="--><?php //echo $zone['value']
-                                                                                                                                                                            ?><!--">--><?php //echo $zone['name']; 
-                                                                                                                                                                                                                ?><!--</option>-->
+                                                                                                                ?><!--">--><?php //echo $zone['name']; 
+                                                                                                                            ?><!--</option>-->
                         <!--                                                --><?php //} 
                                                                                 ?>
                         <!--                                            --><?php //} 
@@ -427,9 +427,19 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
                                 <div class="form-group">
                                     <?php $field_id = 'job_title'; ?>
                                     <?php $temp = ((isset($user_information[$field_id]) && !empty($user_information[$field_id])) ? $user_information[$field_id] : ''); ?>
-                                    <?php echo form_label('Job Title:', $field_id); ?>
-                                    <input type="text" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" value="<?php echo set_value($field_id, $temp); ?>" class="form-control <?php echo $is_readony; ?>" />
+                                    <?php echo form_label('Job Title:', $field_id); ?> &nbsp;&nbsp; <input type="radio" name="title_option" value="manual" class="titleoption <?php echo $is_readony; ?>" <?php echo $user_information['job_title_type'] == '0' ? 'checked' : '' ?> > Add Manual &nbsp;
+                                    <input type="radio" name="title_option" value="dropdown" class="titleoption <?php echo $is_readony; ?>" <?php echo $user_information['job_title_type'] != '0' ? 'checked' : '' ?> > From Drop Down
+                                    <input type="text" id="<?php echo $field_id; ?>" name="<?php echo $field_id; ?>" value="<?php echo set_value($field_id, $temp); ?>" class="form-control <?php echo $is_readony; ?>" id="job_title" />
                                     <?php echo form_error($field_id); ?>
+                                    <?php $templateTitles = get_templet_jobtitles($user_information['parent_sid']); ?>
+
+                                    <select name="template_job_title" id="template_job_title" class="form-control" style="display: none;">
+                                        <option value="0">Please select job title</option>
+                                        <?php foreach ($templateTitles as $titleRow) { ?>
+                                            <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                        <?php } ?>
+                                    </select>
+
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6">
@@ -1246,6 +1256,27 @@ if (isset($phone_pattern_enable) && $phone_pattern_enable == 1) {
         allowHtml: true,
         allowClear: true,
         tags: true
+    });
+
+    //
+    <?php if ($user_information['job_title_type'] != '0') { ?>
+        $('#template_job_title').show();
+        $('#template_job_title').val('<?php echo $user_information['job_title_type'] . '#' . $user_information['job_title']; ?>');
+        $('#job_title').hide();
+    <?php } ?>
+
+    $('.titleoption').click(function() {
+        var titleOption = $(this).val();
+        if (titleOption == 'dropdown') {
+            $('#template_job_title').show();
+            $('#template_job_title').val('<?php echo $user_information['job_title_type'] == '0' ? '0' : $user_information['job_title_type'] . '#' . $user_information['job_title']; ?>');
+            $('#job_title').hide();
+        } else if (titleOption == 'manual') {
+            $('#template_job_title').hide();
+            $('#template_job_title').val('0');
+            $('#job_title').show();
+        }
+
     });
 </script>
 <style>

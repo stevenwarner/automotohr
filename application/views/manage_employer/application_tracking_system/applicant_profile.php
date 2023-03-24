@@ -577,9 +577,19 @@ if ($_ssv) {
                                                 </div>
                                             </li>
                                             <li class="form-col-50-right">
-                                                <label>Job Title:</label>
-                                                <input class="invoice-fields" type="text" name="desired_job_title" value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>">
+                                                <label>Job Title: &nbsp;&nbsp;&nbsp;&nbsp; <input type="radio" name="title_option" value="manual" class="titleoption" <?php echo $applicant_info['job_title_type'] == '0' ? 'checked' : '' ?>> Add Manual &nbsp;
+                                                    <input type="radio" name="title_option" value="dropdown" class="titleoption" <?php echo $applicant_info['job_title_type'] != '0' ? 'checked' : '' ?>> From Drop Down
+                                                </label>
+                                                <input class="invoice-fields" type="text" name="desired_job_title" value="<?php echo isset($applicant_info["desired_job_title"]) ? $applicant_info["desired_job_title"] : ''; ?>" id="job_title">
                                                 <?php echo form_error('desired_job_title'); ?>
+                                                <?php $templateTitles = get_templet_jobtitles($applicant_info['employer_sid']); ?>
+                                                <select name="template_job_title" id="template_job_title" class="invoice-fields" style="display: none;">
+                                                    <option value="0">Please select job title</option>
+                                                    <?php foreach ($templateTitles as $titleRow) { ?>
+                                                        <option value="<?php echo $titleRow['sid'] . '#' . $titleRow['title']; ?>"> <?php echo $titleRow['title']; ?> </option>
+                                                    <?php } ?>
+                                                </select>
+
                                             </li>
                                             <div class="row">
                                                 <!--  -->
@@ -1878,14 +1888,14 @@ if ($_ssv) {
         $('.eventdate').datepicker({
             dateFormat: 'mm-dd-yy',
             changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $('#eventdate').datepicker({
             dateFormat: 'mm-dd-yy',
             changeMonth: true,
-                changeYear: true,
-                yearRange: "<?php echo DOB_LIMIT; ?>"
+            changeYear: true,
+            yearRange: "<?php echo DOB_LIMIT; ?>"
         }).val();
         $("#eventdate").datepicker("setDate", new Date());
         $('.selected').click(function() {
@@ -2767,6 +2777,28 @@ if ($_ssv) {
         $('.review_video_source:checked').trigger('click');
         $('.review_video_source[value="no_video"]').trigger('click');
     })
+
+
+
+    <?php if ($applicant_info['job_title_type'] != '0') { ?>
+        $('#template_job_title').show();
+        $('#template_job_title').val('<?php echo $applicant_info['job_title_type'] . '#' . $applicant_info['desired_job_title']; ?>');
+        $('#job_title').hide();
+    <?php } ?>
+
+    $('.titleoption').click(function() {
+        var titleOption = $(this).val();
+        if (titleOption == 'dropdown') {
+            $('#template_job_title').show();
+            $('#template_job_title').val('<?php echo $applicant_info['job_title_type'] == '0' ? '0' : $applicant_info['job_title_type'] . '#' . $applicant_info['desired_job_title']; ?>');
+            $('#job_title').hide();
+        } else if (titleOption == 'manual') {
+            $('#template_job_title').hide();
+            $('#template_job_title').val('0');
+            $('#job_title').show();
+        }
+
+    });
 </script>
 
 <style>
