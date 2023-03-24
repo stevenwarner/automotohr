@@ -2742,9 +2742,10 @@ if (!function_exists('getComplyNetLink')) {
         // Get email
         $record =
             $CI->db->select('email')->where([
-                'employee_sid' => $employeeId
+                'parent_sid' => $companyId,
+                'sid' => $employeeId
             ])
-            ->get('complynet_employees')
+            ->get('users')
             ->row_array();
         //
         if (empty($record)) {
@@ -2753,7 +2754,12 @@ if (!function_exists('getComplyNetLink')) {
         // Load ComplyNet library
         $CI->load->library('Complynet/Complynet_lib', '', 'complynet_lib');
         // Get the hash
-        return $CI->complynet_lib->getUserHash($record['email']);
+        $response = $CI->complynet_lib->getUserHash($record['email']);
+        //
+        if ($response == 'Array') {
+            return '';
+        }
+        return $response;
     }
 }
 
