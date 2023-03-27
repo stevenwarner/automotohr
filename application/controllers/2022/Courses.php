@@ -962,7 +962,15 @@ class Courses extends Public_Controller
                 //
                 if (!empty($previousInfo['scorm_data'])) {
                     $scorm_old_data = unserialize($previousInfo['scorm_data']);
-                    $scorm_data = $this->manageScromChapterData($scorm_new_data, $scorm_old_data);
+                    
+                    if ($scorm_old_data['version'] == '12') {
+                        // _e($scorm_new_data,true);
+                        // _e($scorm_old_data,true);
+                        $scorm_data = $this->manage12ScromChapterData($scorm_new_data, $scorm_old_data);
+                    } else {
+                        $scorm_data = $this->manage2004ScromChapterData($scorm_new_data, $scorm_old_data);
+                    }
+                    
                     // _e($scorm_data,true,true);
                 }
                 //
@@ -997,7 +1005,36 @@ class Courses extends Public_Controller
     /**
      * 
      */
-    private function manageScromChapterData($newData, $oldData)
+    private function manage12ScromChapterData($newData, $oldData)
+    {
+        $totalSeconds = 0;
+        //
+        if ($newData['action'] == 'location') {
+            //
+            $oldData['items'][$newData['level']]['location'] = $newData['location'];
+            //
+            if ($oldData['items'][$newData['level']]['slides'] == ($newData['location'] + 1)) {
+                $oldData['lastLocation'] = 0;
+                //
+                $nextChapter = $newData['level'] + 1;
+                $chapterCount = count($oldData['items']);
+                //
+                if ($chapterCount > $nextChapter) {
+                    $oldData['lastChapter'] = $nextChapter;
+                }
+                //
+            } else {
+                $oldData['lastLocation'] = $newData['location'];
+            }
+        }
+        //
+        return $oldData;
+    }
+
+    /**
+     * 
+     */
+    private function manage2004ScromChapterData($newData, $oldData)
     {
         $totalSeconds = 0;
         //
