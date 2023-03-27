@@ -989,6 +989,9 @@ class Courses extends Public_Controller
                         $this->res['Chapter'] = 'completed';
                     }
                     
+                } else if ($scorm_new_data['version'] == '12' && ($scorm_new_data['lesson_status'] == 'passed' || $scorm_new_data['lesson_status'] == 'completed')) {
+                    $data_to_update['completed_chapters'] = $post['chapter'];
+                    $data_to_update['chapter_completed_at'] = date('Y-m-d');
                 }
                 //
                 $this->cm->updateEmployeeScormData($data_to_update, $_POST['employeeId'], $_POST['courseId']);
@@ -1028,6 +1031,16 @@ class Courses extends Public_Controller
             }
         }
         //
+        if ($newData['action'] == 'result') {
+            //
+            $oldData['items'][$newData['level']]['lesson_status'] = $newData['lesson_status'];
+            $oldData['items'][$newData['level']]['completion_status'] = 'completed';
+            $oldData['items'][$newData['level']]['attempted_date'] = date('Y-m-d');
+            $oldData['items'][$newData['level']]['score_max'] = $newData['score_max'];
+            $oldData['items'][$newData['level']]['score_min'] = $newData['score_min'];
+            $oldData['items'][$newData['level']]['score_raw'] = $newData['score_raw'];
+        }
+        //
         return $oldData;
     }
 
@@ -1056,7 +1069,7 @@ class Courses extends Public_Controller
             //
             if ($newData['progress_measure'] == 1 && $newData['success_status']== 'unknown') {
                 $oldData['items'][$newData['level']]['success_status'] = 'passed';
-            }else if ($newData['progress_measure'] == 0 && $newData['success_status']== 'unknown') {
+            } else if ($newData['progress_measure'] == 0 && $newData['success_status']== 'unknown') {
                 $oldData['items'][$newData['level']]['success_status'] = 'failed';
             }
             //

@@ -749,6 +749,7 @@ class Course_model extends CI_Model {
         if (!empty($records_obj)) {
             $data = $records_obj->row_array();
             $records_obj->free_result();
+            // _e($data,true);
             //
             if (!empty($data) && $data['total_chapters'] == $data['completed_chapters']) {
                 $response['status'] = "course_completed";

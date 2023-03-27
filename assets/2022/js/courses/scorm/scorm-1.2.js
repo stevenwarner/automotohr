@@ -36,10 +36,24 @@ window.API = {
         return indexes[element];
     },
     LMSSetValue: function(element, value){
-        console.log("Set this = "+element+ " and value is "+ value)
+        console.log("Set this = " +element+ " and value is "+ value)
         indexes[element] = value;
         if (element == 'cmi.core.lesson_location') {
             saveStepProgress('location');
+        } else if (element == 'cmi.core.lesson_status') {
+            saveStepProgress('result');
+            //
+            if (value == 'completed') {
+                if (SCORM_CONTENT > SCORM_XML.sequencing.length) {
+                    SCORM_CONTENT = parseInt(SCORM_CONTENT) + 1;
+                }
+                
+                // console.clear();
+                // console.log(parseInt(SCORM_CONTENT)+1)
+                // console.log(LAST_CHAPTER)
+                // console.log(SCORM_CONTENT)
+                // console.log(SCORM_XML.sequencing.length)
+            }
         }
         //
         // if (element == 'cmi.core.lesson_status' && value == "completed") {
@@ -50,6 +64,9 @@ window.API = {
     },
     LMSFinish: function(){
         console.log("the process is finish")
+        if (indexes['cmi.core.lesson_status'] == 'passed' || indexes['cmi.core.lesson_status'] == 'completed') {
+            window.location.reload();
+        }
         unlockNextChapter();
         return true;
     },
@@ -126,19 +143,12 @@ function saveStepProgress (type) {
     //
     var current_time =  moment().utc();
     //
-    scormObject = {};
-    //
-    if (SCORM_CONTENT) {
-        if (SCORM_CONTENT.indexOf('assessment') != -1) { 
-            scormObject.type = 'quiz';
-        } else if (SCORM_CONTENT.indexOf('assessment') == -1) {
-            scormObject.type = 'content';
-        }
-    }    
+    scormObject = {};  
     //
     scormObject.action = type;
     scormObject.name = SCORM_CHAPTER;
     scormObject.level = SCORM_LEVEL;
+    scormObject.version = 12;
     scormObject.location = indexes['cmi.core.lesson_location'];
     scormObject.lesson_status = indexes['cmi.core.lesson_status'];
     scormObject.suspend_data = indexes['cmi.suspend_data'];
@@ -147,7 +157,7 @@ function saveStepProgress (type) {
     scormObject.date = moment().utc().format('MMM DD YYYY, ddd');
     scormObject.spent_seconds = current_time.diff(CHAPTER_START_TIME, 'seconds');
     //
-    if (scormObject.type == "quiz") {
+    if (type == "result") {
         scormObject.score_max = indexes['cmi.core.score.max'];
         scormObject.score_min = indexes['cmi.core.score.min'];
         scormObject.score_raw = indexes['cmi.core.score.raw'];
