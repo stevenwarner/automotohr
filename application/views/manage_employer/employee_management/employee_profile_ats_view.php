@@ -343,11 +343,14 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                 </div>
                                                 <!--  -->
                                             </div>
+
+                                            <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
+
                                             <div class="row">
                                                 <!--  -->
                                                 <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 form-group">
                                                     <label>Department/Team:</label>
-                                                    <select class="invoice-fields" name="department" id="department">
+                                                    <select class="invoice-fields" name="department[]" id="department" multiple>
                                                         <option value="0">Select Department/Team</option>
                                                         <?php if (!empty($departmentWithTeams)) {
                                                             foreach ($departmentWithTeams as $dt) {
@@ -366,6 +369,9 @@ if (checkIfAppIsEnabled('timeoff')) {
                                                     </select>
                                                 </div>
                                             </div>
+                                         <?php }?>
+
+
                                             <div class="row">
                                                 <div class="col-lg-6 col-md-6 col-xs-12 col-sm-6 form-group">
                                                     <label>Marital Status:</label>
@@ -1345,6 +1351,8 @@ if (checkIfAppIsEnabled('timeoff')) {
     //
     var timeOff = '<?= $timeOff ?>';
     $("#teams").select2();
+
+    $("#department").select2();
 
 
     $('#js-policies').select2({

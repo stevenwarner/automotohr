@@ -3024,4 +3024,53 @@ class Company_model extends CI_Model
             $this->db->insert('helpbox_info_for_company', $dataToInsert);
         }
     }
+
+
+
+
+    //
+    function getAllAssignedTeamsNew($employeeId)
+    {
+        $this->db->select('team_sid,department_sid');
+        $this->db->where('employee_sid', $employeeId);
+        $records_obj = $this->db->get('departments_employee_2_team');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        $assignedTeamDepartment = [];
+
+        if (!empty($records_arr)) {
+            foreach ($records_arr as $row) {
+                $assignedTeamDepartment[$row['team_sid']] = $row['department_sid'];
+            }
+        }
+
+        return $assignedTeamDepartment;
+    }
+
+    //
+    function addEmployeeToTeam($departmentId, $teamId, $employeeId)
+    {
+        $this->db->insert('departments_employee_2_team', array(
+            'department_sid' => $departmentId,
+            'team_sid' => $teamId,
+            'employee_sid' => $employeeId
+        ));
+    }
+    //
+    function removeEmployeeFromTeam($teamId, $employeeId)
+    {
+        $this->db
+            ->where('team_sid', $teamId)
+            ->where('employee_sid', $employeeId)
+            ->delete('departments_employee_2_team');
+    }
+
+    //
+
+    function manageEmployeeTeamHistory($data_to_insert)
+    {
+        $this->db->insert('employee_team_history', $data_to_insert);
+    }
 }

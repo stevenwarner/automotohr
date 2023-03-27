@@ -118,7 +118,7 @@
 
                                                 </li>
 
-
+                                              <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
                                                 <li class="form-col-100 autoheight">
                                                     <label>Team:</label>
                                                     <?= get_company_departments_teams(
@@ -127,6 +127,7 @@
                                                     ); ?>
 
                                                 </li>
+                                                <?php }?>
 
 
                                                 <li class="form-col-100 autoheight">

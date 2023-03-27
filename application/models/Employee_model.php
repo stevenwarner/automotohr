@@ -34,7 +34,8 @@
         return $all_employees;
     }
 
-    public function getAllTransferEmployeeSids($company_sid) {
+    public function getAllTransferEmployeeSids($company_sid)
+    {
         $this->db->select('new_employee_sid');
         $this->db->where('to_company_sid', $company_sid);
         $record_obj = $this->db->get('employees_transfer_log');
@@ -48,7 +49,8 @@
         }
     }
 
-    function get_inactive_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = []) {
+    function get_inactive_employees_detail($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = [])
+    {
 
         $keyword = trim(str_replace("'", '', $keyword));
         $this->db->select('*');
@@ -1940,7 +1942,8 @@
         return $this->db->insert_id();
     }
 
-    function checkExecutiveAdmin ($email) {
+    function checkExecutiveAdmin($email)
+    {
         if (
             $this->db
             ->where('email', $email)
@@ -1953,7 +1956,7 @@
         }
     }
 
-    function get_employees_details_new($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = [] , $status, $logincred)
+    function get_employees_details_new($parent_sid, $sid, $keyword = null, $archive = 0, $order_by = 'sid', $order = 'DESC', $ids = [], $status, $logincred)
     {
         $keyword = trim(str_replace("'", '', $keyword));
         $this->db->select('*');
@@ -1974,25 +1977,25 @@
             $this->db->where('terminated_status', 1);
         }
 
-        if ($status != 'all' && $status != 'active' && $status != 'terminated' && $status != null ) {
+        if ($status != 'all' && $status != 'active' && $status != 'terminated' && $status != null) {
             $this->db->where('LCASE(general_status) ', $status);
         }
-        
-        if($logincred=='yes'){
+
+        if ($logincred == 'yes') {
             $this->db->group_start();
             $this->db->where('password!=', '');
             $this->db->where('password is not  null', null);
             $this->db->group_end();
         }
 
-        if($logincred=='no'){
+        if ($logincred == 'no') {
             $this->db->group_start();
             $this->db->where('password', '');
             $this->db->or_where('password is null', null);
             $this->db->group_end();
-            
+
             $this->db->group_start();
-            $this->db->where('is_executive_admin!=',1);
+            $this->db->where('is_executive_admin!=', 1);
             $this->db->group_end();
         }
 
@@ -2022,25 +2025,24 @@
 
     public function getCompanyDepartmentsWithTeam(
         int $companyId
-    )
-    {
+    ) {
         $records =
-        $this->db
-        ->select('
+            $this->db
+            ->select('
             departments_team_management.sid as teamId,
             departments_team_management.name as teamName,
             departments_management.sid,
             departments_management.name
         ')
-        ->where([
-            'departments_team_management.is_deleted' => 0,
-            'departments_management.is_deleted' => 0,
-            'departments_team_management.company_sid' => $companyId,
-            'departments_management.company_sid' => $companyId
-        ])
-        ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
-        ->get('departments_team_management')
-        ->result_array();
+            ->where([
+                'departments_team_management.is_deleted' => 0,
+                'departments_management.is_deleted' => 0,
+                'departments_team_management.company_sid' => $companyId,
+                'departments_management.company_sid' => $companyId
+            ])
+            ->join('departments_management', 'departments_management.sid = departments_team_management.department_sid', 'inner')
+            ->get('departments_team_management')
+            ->result_array();
         //
         if (empty($records)) {
             return [];
@@ -2064,4 +2066,26 @@
         return $tmp;
     }
 
+    //
+    function getAllAssignedTeamsNew($employeeId)
+    {
+        $this->db->select('team_sid,department_sid');
+        $this->db->where('employee_sid', $employeeId);
+        $records_obj = $this->db->get('departments_employee_2_team');
+        $records_arr = $records_obj->result_array();
+        $records_obj->free_result();
+        $return_data = array();
+
+        $assignedTeamDepartment = [];
+
+        if (!empty($records_arr)) {
+            foreach ($records_arr as $row) {
+                $assignedTeamDepartment[$row['team_sid']] = $row['department_sid'];
+            }
+        }
+
+        return $assignedTeamDepartment;
+    }
+
+ 
 }

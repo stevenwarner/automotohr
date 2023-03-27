@@ -212,18 +212,22 @@
     </div>
     <!--  -->
     <br>
-    <div class="row">
-        <div class="col-md-6 col-xs-12">
-            <label class="csF16">Department</label>
-            <p class="dummy-invoice-fields"><?= isset($department_name) && !empty($department_name) ? GetVal($department_name) : ''; ?></p>
+    <?php if ($this->session->userdata('logged_in')['company_detail']['ems_status']) { ?>
+
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Department</label>
+                <p class="dummy-invoice-fields"><?= isset($department_name) && !empty($department_name) ? GetVal($department_name) : ''; ?></p>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <label class="csF16">Teams</label>
+                <?php $team_name = isset($team_name) && !empty($team_name) ? $team_name : ''; ?>
+                <p class="dummy-invoice-fields"><?= GetVal(!empty($team_names) ? $team_names : $team_name); ?></p>
+            </div>
         </div>
-        <div class="col-md-6 col-xs-12">
-            <label class="csF16">Teams</label>
-            <?php $team_name = isset($team_name) && !empty($team_name) ? $team_name : ''; ?>
-            <p class="dummy-invoice-fields"><?= GetVal(!empty($team_names) ? $team_names : $team_name); ?></p>
-        </div>
-    </div>
-    <br>
+        <br>
+    <?php } ?>
+
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <label class="csF16">Marital Status</label>
@@ -312,12 +316,12 @@
         </div>
     <?php } ?>
     <br>
-    
+
     <!--  -->
     <div class="row">
         <div class="col-sm-12">
             <label class="csF16">I Speak</label>
-        <p class="dummy-invoice-fields"><?=$employer['languages_speak'] ? showLanguages($employer['languages_speak']) : 'Not Specified';?></p>
+            <p class="dummy-invoice-fields"><?= $employer['languages_speak'] ? showLanguages($employer['languages_speak']) : 'Not Specified'; ?></p>
         </div>
     </div>
     <br />

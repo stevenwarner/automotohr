@@ -360,7 +360,6 @@ class employers extends Admin_Controller
             $data['salary_benefits'] = $this->input->post('salary_benefits');
 
 
-
             //
             if ($this->input->post('complynet_job_title') != 'null' && $this->input->post('complynet_job_title', true)) {
                 $data['complynet_job_title'] = $this->input->post('complynet_job_title');
@@ -450,11 +449,93 @@ class employers extends Admin_Controller
             }
 
 
-            $this->company_model->update_user($sid, $data, 'Employer');
+
+            // $this->company_model->update_user($sid, $data, 'Employer');
 
             //
-            $teamId = $this->input->post('teamId');
-            handleEmployeeDepartmentAndTeam($sid, $teamId);
+            $teamIdArray = $this->input->post('teamId');
+
+
+            $teamId = implode(',', $teamIdArray);
+            $departmenIdArray = array();
+            $teamDepartmenArray = array();
+            $departmentId = '';
+
+            if (!empty($teamIdArray)) {
+                foreach ($teamIdArray as  $teamIdIndex) {
+                    $department = getDepartmentColumnByTeamId($teamIdIndex, 'department_sid');
+
+                    array_push($departmenIdArray, $department);
+                    $teamDepartmenArray[$teamIdIndex] = $department;
+                }
+                $departmentId = implode(',', array_unique($departmenIdArray));
+            }
+
+
+            // handleEmployeeDepartmentAndTeam($sid, $teamId);
+
+            $data['team_sid'] = $teamId;
+            $data['department_sid'] = $departmentId;
+
+            $this->company_model->update_user($sid, $data, 'Employer');
+
+            $old_ssign_teams = $this->company_model->getAllAssignedTeamsNew($sid);
+            $add_team_sids = array();
+            $delete_team_sids = array();
+
+            //
+            $add_team_sids = $teamDepartmenArray;
+            $delete_team_sids = $old_ssign_teams;
+
+            foreach ($teamDepartmenArray as $key => $team) {
+                if (array_key_exists($key, $old_ssign_teams)) {
+                    unset($add_team_sids[$key]);
+                }
+            }
+
+            foreach ($old_ssign_teams as $key => $team) {
+                if (array_key_exists($key, $teamDepartmenArray)) {
+                    unset($delete_team_sids[$key]);
+                }
+            }
+
+            //
+            $event_array = array();
+            $addTeamSids = array();
+            $deleteTeamSids = array();
+
+
+            if (!empty($add_team_sids)) {
+                foreach ($add_team_sids as $key => $department) {
+                    $this->company_model->addEmployeeToTeam(
+                        $department,
+                        $key,
+                        $sid
+                    );
+
+                    array_push($addTeamSids, $key);
+                }
+
+                $event_array['add_team_sids'] = $addTeamSids;
+            }
+
+            if (!empty($delete_team_sids)) {
+                foreach ($delete_team_sids as $key => $val) {
+                    $this->company_model->removeEmployeeFromTeam(
+                        $key,
+                        $sid
+                    );
+                    array_push($deleteTeamSids, $key);
+                }
+                $event_array['remove_team_sids'] = $deleteTeamSids;
+            }
+
+
+            $maintain_employee_team_history = array();
+            $maintain_employee_team_history['employee_sid'] = $sid;
+            $maintain_employee_team_history['event_data'] = serialize($event_array);
+            $this->company_model->manageEmployeeTeamHistory($maintain_employee_team_history);
+            ///
 
             if ($action == 'Save') {
                 redirect('manage_admin/employers/', 'refresh');
@@ -511,7 +592,7 @@ class employers extends Admin_Controller
                 $timezone = $this->input->post('timezone');
                 $salt = generateRandomString(48);
 
-                
+
 
                 if ($registration_date != NULL) {
                     $joined_at = DateTime::createFromFormat('m-d-Y', $registration_date)->format('Y-m-d');

@@ -440,11 +440,29 @@ class Employee_management extends Public_Controller
                 $timezone = $this->input->post('timezone');
 
                 //
-                $teamId = $this->input->post('teamId');
+                //$teamId
+                $teamIdArray = $this->input->post('teamId');
                 $departmenId = '';
+                $teamId = '';
                 //
+
+                $teamId = implode(',', $teamIdArray);
+                $departmenIdArray = array();
+                $teamDepartmenArray = array();
+
+                /*
                 if ($teamId && $teamId != 0) {
                     $departmenId = getDepartmentColumnByTeamId($teamId, 'department_sid');
+                }
+              */
+
+                if (!empty($teamIdArray)) {
+                    foreach ($teamIdArray as  $teamIdIndex) {
+                        $department = getDepartmentColumnByTeamId($teamIdIndex, 'department_sid');
+                        array_push($departmenIdArray, $department);
+                        $teamDepartmenArray[$teamIdIndex] = $department;
+                    }
+                    $departmenId = implode(',', array_unique($departmenIdArray));
                 }
 
                 //
@@ -502,15 +520,15 @@ class Employee_management extends Public_Controller
                     $employee_sid = $this->employee_model->add_employee($user_information);
 
                     //
-                    if ($departmenId != '' && $teamId != '') {
-                        $team_information['department_sid'] = $departmenId;
-                        $team_information['team_sid'] = $teamId;
-                        $team_information['employee_sid'] = $employee_sid;
-                        $team_information['created_at'] = date('Y-m-d H:i:s');
-                        $this->employee_model->add_employee_to_team($team_information);
+                    if (!empty($teamDepartmenArray)) {
+                        foreach ($teamDepartmenArray as $key => $val) {
+                            $team_information['department_sid'] = $val;
+                            $team_information['team_sid'] = $key;
+                            $team_information['employee_sid'] = $employee_sid;
+                            $team_information['created_at'] = date('Y-m-d H:i:s');
+                            $this->employee_model->add_employee_to_team($team_information);
+                        }
                     }
-
-
 
                     $replacement_array['firstname'] = $first_name;
                     $replacement_array['lastname'] = $last_name;
@@ -521,16 +539,19 @@ class Employee_management extends Public_Controller
                     $replacement_array['company_name'] = $company_name;
                     $replacement_array['create_password_link'] = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url() . "employee_management/generate_password/" . $salt . '">Create Your Password</a>';
                 } else {
+
                     $link = '<a style="background-color: #d62828; font-size:16px; font-weight: bold; font-family:sans-serif; text-decoration: none; line-height:40px; padding: 0 15px; color: #fff; border-radius: 5px; text-align: center; display:inline-block" target="_blank" href="' . base_url('employee_registration') . '/' . $verification_key . '">' . 'Update Login Credentials' . '</a>';
                     $employee_sid = $this->employee_model->add_employee($user_information);
 
                     //
-                    if ($departmenId != '' && $teamId != '') {
-                        $team_information['department_sid'] = $departmenId;
-                        $team_information['team_sid'] = $teamId;
-                        $team_information['employee_sid'] = $employee_sid;
-                        $team_information['created_at'] = date('Y-m-d H:i:s');
-                        $this->employee_model->add_employee_to_team($team_information);
+                    if (!empty($teamDepartmenArray)) {
+                        foreach ($teamDepartmenArray as $key => $val) {
+                            $team_information['department_sid'] = $departmenId;
+                            $team_information['team_sid'] = $teamId;
+                            $team_information['employee_sid'] = $employee_sid;
+                            $team_information['created_at'] = date('Y-m-d H:i:s');
+                            $this->employee_model->add_employee_to_team($team_information);
+                        }
                     }
 
                     $replacement_array['firstname'] = $first_name;
@@ -1192,9 +1213,14 @@ class Employee_management extends Public_Controller
                     $this
                 );
 
+                $departmentNameArray = array();
                 if ($data['employer']['department_sid'] > 0) {
-                    $department_name = $this->employee_model->get_department_name($data['employer']['department_sid']);
-                    $data['department_name'] = $department_name;
+                    $departmentsIdsArray = explode(',', $data['employer']['department_sid']);
+                    foreach ($departmentsIdsArray as $depId) {
+                        $department_name = $this->employee_model->get_department_name($depId);
+                        array_push($departmentNameArray, $department_name);
+                    }
+                    $data['department_name'] = implode(',', $departmentNameArray);
                 }
                 if ($data['employer']['team_sid'] > 0) {
                     $team_name = $this->employee_model->get_team_name($data['employer']['team_sid']);
@@ -1579,12 +1605,29 @@ class Employee_management extends Public_Controller
                     $gender = $this->input->post('gender');
 
                     //
-                    $teamId = $this->input->post('department', true);
+                    //  $teamId = $this->input->post('department', true);
+                    //$teamId
+                    $teamIdArray = $this->input->post('department', true);
+                    $departmentId = '';
+                    $teamId = '';
                     //
-                    if (!$teamId) {
-                        $teamId = 0;
+
+                    $teamId = implode(',', $teamIdArray);
+                    $departmenIdArray = array();
+                    $teamDepartmenArray = array();
+
+                    if (!empty($teamIdArray)) {
+                        foreach ($teamIdArray as  $teamIdIndex) {
+                            $department = getDepartmentColumnByTeamId($teamIdIndex, 'department_sid');
+
+                            array_push($departmenIdArray, $department);
+                            $teamDepartmenArray[$teamIdIndex] = $department;
+                        }
+                        $departmentId = implode(',', array_unique($departmenIdArray));
                     }
-                    $departmentId = $teamId != 0 ? getDepartmentColumnByTeamId($teamId, 'department_sid') : 0;
+
+
+                    //
 
                     $data_to_insert = array(
                         'first_name' => $this->input->post('first_name'),
@@ -1687,60 +1730,74 @@ class Employee_management extends Public_Controller
                     //
                     if (preg_match(XSYM_PREG, $data_to_insert['ssn'])) unset($data_to_insert);
 
+
                     // Update dept/team table
+
                     $department = $this->input->post('department');
-                    $teams = $this->input->post('teams');
+                    //  $teams = $this->input->post('teams');
+                    // if (isset($teams) && !empty($teams) && $department != 0) {
+                    $old_ssign_teams = $this->employee_model->getAllAssignedTeamsNew($employer_id);
+                    $add_team_sids = array();
+                    $delete_team_sids = array();
 
-                    if (isset($teams) && !empty($teams) && $department != 0) {
-                        $old_ssign_teams = $this->employee_model->getAllAssignedTeams($employer_id);
-                        $add_team_sids = array();
-                        $delete_team_sids = array();
-
-                        foreach ($teams as $team) {
-                            if (!in_array($team, $old_ssign_teams)) {
-                                array_push($add_team_sids, $team);
-                            }
-                        }
-
-                        if ($old_ssign_teams) {
-                            foreach ($old_ssign_teams as $old_team) {
-                                if (!in_array($old_team, $teams)) {
-                                    array_push($delete_team_sids, $old_team);
-                                }
-                            }
-                        }
-
-                        $event_array = array();
-
-                        if (!empty($add_team_sids)) {
-                            foreach ($add_team_sids as $add_team_sid) {
-                                $this->employee_model->addEmployeeToTeam(
-                                    $department,
-                                    $add_team_sid,
-                                    $employer_id
-                                );
-                            }
-
-                            $event_array['add_team_sids'] = $add_team_sids;
-                        }
-
-                        if (!empty($delete_team_sids)) {
-                            foreach ($delete_team_sids as $delete_team_sid) {
-                                $this->employee_model->removeEmployeeFromTeam(
-                                    $delete_team_sid,
-                                    $employer_id
-                                );
-                            }
-                            $event_array['remove_team_sids'] = $delete_team_sids;
-                        }
-
-
-                        $maintain_employee_team_history = array();
-                        $maintain_employee_team_history['employee_sid'] = $security_sid;
-                        $maintain_employee_team_history['event_data'] = serialize($event_array);
-                        $this->employee_model->manageEmployeeTeamHistory($maintain_employee_team_history);
-                    }
                     //
+                    $add_team_sids = $teamDepartmenArray;
+                    $delete_team_sids = $old_ssign_teams;
+
+                    foreach ($teamDepartmenArray as $key => $team) {
+                        if (array_key_exists($key, $old_ssign_teams)) {
+                            unset($add_team_sids[$key]);
+                        }
+                    }
+
+
+                    foreach ($old_ssign_teams as $key => $team) {
+                        if (array_key_exists($key, $teamDepartmenArray)) {
+                            unset($delete_team_sids[$key]);
+                        }
+                    }
+
+
+                    //
+                    $event_array = array();
+                    $addTeamSids = array();
+                    $deleteTeamSids = array();
+
+
+                    if (!empty($add_team_sids)) {
+                        foreach ($add_team_sids as $key => $department) {
+                            $this->employee_model->addEmployeeToTeam(
+                                $department,
+                                $key,
+                                $employer_id
+                            );
+
+                            array_push($addTeamSids, $key);
+                        }
+
+                        $event_array['add_team_sids'] = $addTeamSids;
+                    }
+
+
+                    if (!empty($delete_team_sids)) {
+                        foreach ($delete_team_sids as $key => $val) {
+                            $this->employee_model->removeEmployeeFromTeam(
+                                $key,
+                                $employer_id
+                            );
+                            array_push($deleteTeamSids, $key);
+                        }
+                        $event_array['remove_team_sids'] = $deleteTeamSids;
+                    }
+
+
+                    $maintain_employee_team_history = array();
+                    $maintain_employee_team_history['employee_sid'] = $security_sid;
+                    $maintain_employee_team_history['event_data'] = serialize($event_array);
+                    $this->employee_model->manageEmployeeTeamHistory($maintain_employee_team_history);
+                    // }
+
+
 
                     if (IS_NOTIFICATION_ENABLED == 1 && $this->input->post('notified_by', true) && $data['phone_sid'] != '') $data_to_insert['notified_by'] = $notified_by;
 

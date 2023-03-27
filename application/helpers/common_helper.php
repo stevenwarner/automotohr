@@ -16129,13 +16129,13 @@ if (!function_exists('get_company_departments_teams')) {
      *
      * @param int $companyId
      * @param string $id Optional
-     * @param int $teamId Optional
+     * @param string $teamId Optional
      * @return array|string
      */
-    function get_company_departments_teams(int $companyId, string $id = '', int $teamId = 0)
+    function get_company_departments_teams(int $companyId, string $id = '', string $teamId = '0')
     {
         //
-        $select = '<select name="' . ($id) . '" id="' . ($id) . '" class="jsSelect2" style="width: 100%;">';
+        $select = '<select name="' . ($id) . '[]" id="' . ($id) . '" class="jsSelect2" style="width: 100%;" multiple>';
         $select .= '<option value="0">Please select a team</option>';
         $select .= '{{options}}';
         $select .= '</select>';
@@ -16183,13 +16183,16 @@ if (!function_exists('get_company_departments_teams')) {
         //
         if (!empty($id)) {
             //
+            $teamIds = strpos($teamId, ',') !== false ? explode(',', $teamId) : [$teamId];
+
+            //
             $options = '';
             //
             foreach ($departments as $department) {
                 $options .= '<optgroup label="' . ($department['name']) . '">';
                 if ($department['teams']) {
                     foreach ($department['teams'] as $team) {
-                        $options .= '<option value="' . ($team['sid']) . '" ' . ($teamId == $team['sid'] ? "selected" : "") . '>' . ($team['name']) . '</option>';
+                        $options .= '<option value="' . ($team['sid']) . '" ' . (in_array($team['sid'], $teamIds) ? "selected" : "") . '>' . ($team['name']) . '</option>';
                     }
                 }
                 $options .= '</optgroup>';
