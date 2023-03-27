@@ -10,14 +10,14 @@ $(document).ready(function () {
         //
         if (SCORM_LEVEL > index) {
             links += '<li>';
-            links += '  <a class="jsChangeChapter btn_scorm _csB4" href="javascript:;" id="'+linkID+'" data-index="'+index+'" data-status="unlock" data-parameter="'+sequence.parameter+'">';
+            links += '  <a class="jsChangeChapter btn_scorm _csB4" href="javascript:;" id="'+linkID+'" data-index="'+index+'" data-status="unlock" data-parameter="'+sequence.paramValue+'">';
             links += '      <strong>' + (sequence.title) + '</strong>';
             links += '      <i id="'+linkID+'_icon" class="fa fa-unlock"></i>';
             links += '  </a>';
             links += '</li>';
         } else {
             links += '<li>';
-            links += '  <a class="jsChangeChapter jsLockBtn btn_scorm _csB4" href="javascript:;" id="'+linkID+'" data-index="'+index+'" data-status="lock" data-parameter="'+sequence.parameter+'">';
+            links += '  <a class="jsChangeChapter jsLockBtn btn_scorm _csB4" href="javascript:;" id="'+linkID+'" data-index="'+index+'" data-status="lock" data-parameter="'+sequence.paramValue+'">';
             links += '      <strong>' + (sequence.title) + '</strong>';
             links += '      <i id="'+linkID+'_icon" class="fa fa-lock"></i>';
             links += '  </a>';
