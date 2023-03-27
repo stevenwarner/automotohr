@@ -217,6 +217,10 @@
                                                                             <?php } ?>
                                                                         <?php } ?>
 
+                                                                        <?php if ($invoice['payment_status'] == 'unpaid') { ?>
+                                                                                <a class="hr-edit-btn invoice-links jsSendInvoice" data-invoice="<?= $invoice['sid']; ?>" data-companysid="<?= $invoice['company_sid']; ?>" href="javascript:void(0);">Send Invoice</a>
+                                                                        <?php } ?>
+
                                                                         <?php if(check_access_permissions_for_view($security_details, 'process_payment_admin_invoice')) { ?>
                                                                             <?php if($invoice['payment_status'] == 'unpaid' && $invoice['discount_amount'] < $invoice['value']) { ?>
                                                                                 <a class="hr-edit-btn invoice-links" href="<?php echo base_url('manage_admin/misc/process_payment_admin_invoice') . '/' . $invoice['sid']; ?>">Process Payment</a>
@@ -226,10 +230,7 @@
                                                                                 <a class="hr-edit-btn invoice-links disabled-btn" href="javascript:void(0);">Process Payment</a>
                                                                             <?php } ?>
                                                                         <?php } ?>
-
-                                                                        <?php if ($invoice['payment_status'] == 'unpaid') { ?>
-                                                                                <a class="hr-edit-btn invoice-links jsSendInvoice" data-invoice="<?= $invoice['sid']; ?>" data-companysid="<?= $invoice['company_sid']; ?>" href="javascript:void(0);">Send Invoice</a>
-                                                                        <?php } ?>
+                                                                      
 
                                                                         <?php if(check_access_permissions_for_view($security_details, 'delete_admin_invoice')) { ?>
                                                                             <?php if($invoice['payment_status'] == 'unpaid') { ?>
