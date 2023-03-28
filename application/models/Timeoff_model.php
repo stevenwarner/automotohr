@@ -3704,7 +3704,7 @@ class Timeoff_model extends CI_Model
         $b = $this->db->where('is_archived', 0)
             ->count_all_results('timeoff_approvers');
         //
-        return $b;
+        return $b > 1 ? 1 : $b;
     }
 
     //
