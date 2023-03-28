@@ -1750,7 +1750,7 @@ if (!function_exists('PayrollURL')) {
         $urls['DeleteEmployeeBankAccount'] = 'v1/employees/' . ($key) . '/bank_accounts/' . ($key1);
         $urls['UpdateEmployeePaymentMethod'] = 'v1/employees/' . ($key) . '/payment_method';
         $urls['MarkEmployeeAsOnboarded'] = 'v1/employees/' . ($key) . '/finish_onboarding';
-        // 
+        //
         $urls['GetEmployeePayStubs'] = 'v1/payrolls/' . ($key) . '/employees/' . ($key1) . '/pay_stub';
 
 
@@ -1761,6 +1761,10 @@ if (!function_exists('PayrollURL')) {
         // Admin calls
         $urls['addAdminToGusto'] = 'v1/companies/' . ($key) . '/admins';
         $urls['getAdminsFromGusto'] = 'v1/companies/' . ($key) . '/admins';
+        // Signatory calls
+        $urls['getSignatoriesFromGusto'] = 'v1/companies/' . ($key) . '/signatories';
+        $urls['addSignatoryToGusto'] = 'v1/companies/' . ($key) . '/signatories';
+        $urls['deleteSignatoryToGusto'] = 'v1/companies/' . ($key1) . '/signatories/' . $key;
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -2211,6 +2215,118 @@ if (!function_exists('getSignatoriesFromGusto')) {
                 $company['refresh_token'] = $tokenResponse['refresh_token'];
                 //
                 return getSignatoriesFromGusto($company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+if (!function_exists('addSignatoryToGusto')) {
+    /**
+     * Add signatory on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $request
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function addSignatoryToGusto($request, $company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('addSignatoryToGusto', $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return addSignatoryToGusto($request, $company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
+
+if (!function_exists('deleteSignatoryToGusto')) {
+    /**
+     * Delete signatory on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param string $request
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function deleteSignatoryToGusto($signatoryUUID, $company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('deleteSignatoryToGusto', $signatoryUUID, $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => "DELETE",
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return deleteSignatoryToGusto($signatoryUUID, $company, $headers);
             } else {
                 return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
             }

@@ -5,6 +5,16 @@ $(function companyOnboard() {
     let xhr = null;
 
     /**
+     * 
+     */
+    $(document).on('click', '.jsExpandRow', function (event) {
+        //
+        event.preventDefault();
+        //
+        $('.jsExpandRowArea[data-id="' + ($(this).data('id')) + '"]').toggleClass('dn');
+    });
+
+    /**
      * Captures admin event
      */
     $('.jsManageGustoAdmins').click(function (event) {
@@ -114,6 +124,139 @@ $(function companyOnboard() {
             Title: 'Manage Signatories for Payroll'
         }, fetchSignatories);
     });
+    /**
+     * 
+     */
+    $(document).on('click', '.jsAddSignatory', function (event) {
+        //
+        event.preventDefault();
+        //
+        $('.jsSection').removeClass('dn');
+        $('.jsSection[data-key="edit"]').addClass('dn');
+        $('.jsSection[data-key="view"]').addClass('dn');
+    });
+    /**
+     * 
+     */
+    $(document).on('click', '.jsSignatoriesView', function (event) {
+        //
+        event.preventDefault();
+        //
+        $('.jsSection').removeClass('dn');
+        $('.jsSection[data-key="add"]').addClass('dn');
+        $('.jsSection[data-key="edit"]').addClass('dn');
+    });
+    /**
+     * 
+     */
+    $(document).on('click', '.jsDeleteSignatory', function (event) {
+        //
+        event.preventDefault();
+        //
+        const signatoryId = $(this).data('id');
+        //
+        return alertify.confirm(
+            'Are you sure you want to delete this signatory?',
+            function () {
+                deleteSignatory(signatoryId);
+            }
+        );
+    });
+    /**
+    * 
+    */
+    $(document).on('click', '.jsAddSignatorySaveBtn', function (event) {
+        //
+        event.preventDefault();
+        //
+        var obj = {
+            ssn: $('#jsSignatoryAddSsn').val().trim(),
+            firstName: $('#jsSignatoryAddFirstName').val().trim(),
+            middleInitial: $('#jsSignatoryAddMiddleInitial').val().trim(),
+            lastName: $('#jsSignatoryAddLastName').val().trim(),
+            email: $('#jsSignatoryAddEmail').val().trim(),
+            title: $('#jsSignatoryAddTitle').val().trim(),
+            birthday: $('#jsSignatoryAddBirthDay').val().trim(),
+            phone: $('#jsSignatoryAddPhone').val().trim(),
+            street1: $('#jsSignatoryAddStreet1').val().trim(),
+            street2: $('#jsSignatoryAddStreet2').val().trim(),
+            state: $('#jsSignatoryAddState').val().trim(),
+            city: $('#jsSignatoryAddCity').val().trim(),
+            zip: $('#jsSignatoryAddZip').val().trim(),
+            companyId: companyId
+        };
+        //
+        if (!obj.ssn) {
+            return alertify.alert('Warning!', 'Social Security Number (SSN) is required.', function () { });
+        }
+        //
+        if (!obj.firstName) {
+            return alertify.alert('Warning!', 'First name is required.', function () { });
+        }
+        //
+        if (!obj.lastName) {
+            return alertify.alert('Warning!', 'Last name is required.', function () { });
+        }
+        //
+        if (!obj.email) {
+            return alertify.alert('Warning!', 'Email address is required.', function () { });
+        }
+        //
+        if (!obj.email.verifyEmail()) {
+            return alertify.alert('Warning!', 'Email address is malformed.', function () { });
+        }
+        //
+        if (!obj.title) {
+            return alertify.alert('Warning!', 'Title is required.', function () { });
+        }
+        //
+        if (!obj.birthday) {
+            return alertify.alert('Warning!', 'Birthday is required.', function () { });
+        }
+        //
+        if (!obj.street1) {
+            return alertify.alert('Warning!', 'Street 1 is required.', function () { });
+        }
+        //
+        if (!obj.state) {
+            return alertify.alert('Warning!', 'State is required.', function () { });
+        }
+        //
+        if (!obj.city) {
+            return alertify.alert('Warning!', 'City is required.', function () { });
+        }
+        //
+        if (!obj.zip) {
+            return alertify.alert('Warning!', 'Zip is required.', function () { });
+        }
+        //
+        ml(true, 'jsManageGustoSignatoriesModalLoader');
+        //
+        xhr = $.post(
+            baseURI + 'payroll/signatory/' + companyId,
+            obj
+        ).success(function (response) {
+            //
+            xhr = null;
+            //
+            ml(false, 'jsManageGustoSignatoriesModalLoader');
+            //
+            if (response.error) {
+                return alertify.alert('Error!', response.error, function () { });
+            }
+            return alertify.alert('Success!', response.success, function () {
+                //
+                $('#jsManageGustoSignatoriesModal .jsModalCancel').trigger('click');
+                $('.jsManageGustoSignatories').trigger('click')
+            });
+        })
+            .fail(function () {
+                //
+                xhr = null;
+                //
+                ml(false, 'jsManageGustoSignatoriesModalLoader');
+            });;
+    });
 
     /**
      * Fetch admins
@@ -158,13 +301,43 @@ $(function companyOnboard() {
                 //
                 xhr = null;
                 //
-                $('#jsManageGustoSignatoriesModalBody').html(response.view)
+                $('#jsManageGustoSignatoriesModalBody').html(response.view);
+                //
+                $('#jsSignatoryAddBirthDay').datepicker({
+                    changeYear: true,
+                    changeMonth: true
+                });
                 //
                 ml(false, 'jsManageGustoSignatoriesModalLoader');
             })
             .fail(function () {
                 xhr = null;
                 $('#jsManageGustoSignatoriesModalBody').html('<strong class="alert alert-danger text-center">Something went wrong. Please try again in few seconds.</strong>')
+                ml(false, 'jsManageGustoSignatoriesModalLoader');
+            });
+    }
+
+    /**
+     * Delete signatory
+     */
+    function deleteSignatory(signatoryId) {
+        //
+        if (xhr !== null) {
+            xhr.abort();
+        }
+        //
+        xhr = $.ajax({
+            method: 'DELETE',
+            url: baseURI + 'payroll/signatories/' + companyId + '/' + signatoryId
+        })
+            .success(function (response) {
+                //
+                xhr = null;
+                $('#jsManageGustoSignatoriesModal .jsModalCancel').trigger('click');
+                $('.jsManageGustoSignatories').trigger('click')
+            })
+            .fail(function () {
+                xhr = null;
                 ml(false, 'jsManageGustoSignatoriesModalLoader');
             });
     }

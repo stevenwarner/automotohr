@@ -114,7 +114,7 @@ class Gusto_payroll extends CI_Controller
             ]
         );
     }
-    
+
     /**
      * Get signatories
      *
@@ -128,6 +128,7 @@ class Gusto_payroll extends CI_Controller
         // get all signatories
         $signatories = $this->db
             ->where('company_sid', $companyId)
+            ->where('is_deleted', 0)
             ->order_by('sid', 'desc')
             ->get('payroll_signatories')
             ->result_array();
@@ -136,6 +137,87 @@ class Gusto_payroll extends CI_Controller
             200,
             [
                 'view' => $this->load->view('gusto/signatories/view', ['signatories' => $signatories], true)
+            ]
+        );
+    }
+
+    /**
+     * Add signatory
+     *
+     * @param int $companyId
+     */
+    public function addSignatory(int $companyId)
+    {
+        //
+        $post = $this->input->post(null, true);
+        //
+        $signatory = $this->db
+            ->select('sid, gusto_uuid')
+            ->where('company_sid', $companyId)
+            ->where('email', $post['email'])
+            ->get('payroll_signatories')
+            ->row_array();
+        // already exists
+        if ($signatory) {
+            //
+            if ($signatory['gusto_uuid']) {
+                return SendResponse(200, ['error' => 'Signatory already exists.']);
+            }
+            // fetch all admins
+            $gustoAdmins = $this->gusto_payroll_model->fetchAllSignatories($companyId);
+            //
+            $this->db
+                ->where('sid', $signatory['sid'])
+                ->update('payroll_signatories', [
+                    'gusto_uuid' => $gustoAdmins[$signatory['email_address']]
+                ]);
+            //
+            return SendResponse(200, ['error' => 'Signatory already exists.']);
+        }
+        // add a new one
+        $response = $this->gusto_payroll_model->moveSignatoryToGusto([
+            "ssn" => $post['ssn'],
+            "first_name" => $post['firstName'],
+            "last_name" => $post['lastName'],
+            "email" => $post['email'],
+            "title" => $post['title'],
+            "birthday" => formatDateToDB($post['birthday'], SITE_DATE, DB_DATE),
+            "home_address" => [
+                "street_1" => $post['street1'],
+                "city" => $post['city'],
+                "state" => $post['state'],
+                "zip" => $post['zip'],
+                "street_2" => $post['street2']
+            ],
+            "middle_initial" => $post['middleInitial'],
+            "phone" => $post['phone']
+        ], $companyId);
+
+        _e($response, true);
+        //
+        return SendResponse(
+            200,
+            [
+                'success' => 'You have successfully added a signatory.'
+            ]
+        );
+    }
+    
+    /**
+     * delete signatory
+     *
+     * @param int $companyId
+     * @param int $signatoryId
+     */
+    public function deleteSignatory(int $companyId, int $signatoryId)
+    {
+        // add a new one
+        $this->gusto_payroll_model->deleteSignatoryFromGusto($companyId, $signatoryId);
+        //
+        return SendResponse(
+            200,
+            [
+                'success' => 'You have successfully added a signatory.'
             ]
         );
     }

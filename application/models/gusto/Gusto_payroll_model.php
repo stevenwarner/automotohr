@@ -147,34 +147,35 @@ class Gusto_payroll_model extends CI_Model
             //
             $tmp = [];
             //
-            foreach ($response as $admin) {
-                $tmp[$admin['email']] = $admin;
+            foreach ($response as $signatory) {
+                $tmp[$signatory['email']] = $signatory;
                 //
                 if (!$this->db->where([
                     'company_sid' => $companyId,
-                    'email_address' => $admin['email']
-                ])->count_all_results('payroll_company_admin')) {
+                    'email' => $signatory['email']
+                ])->count_all_results('payroll_signatories')) {
                     //
                     $this->db->insert(
-                        'payroll_company_admin',
+                        'payroll_signatories',
                         [
-                            'ssn' => $admin['ssn'],
-                            'first_name' => $admin['first_name'],
-                            'middle_initial' => $admin['middle_initial'],
-                            'last_name' => $admin['last_name'],
-                            'email_address' => $admin['email'],
-                            'title' => $admin['title'],
-                            'phone' => $admin['phone'],
-                            'birthday' => $admin['birthday'],
-                            'street_1' => $admin['street_1'],
-                            'street_2' => $admin['street_2'],
-                            'city' => $admin['city'],
-                            'state' => $admin['state'],
-                            'zip' => $admin['zip'],
-                            'gusto_uuid' => $admin['uuid'],
+                            'company_sid' => $companyId,
+                            'gusto_uuid' => $signatory['uuid'],
+                            'version' => $signatory['version'],
+                            'ssn' => $signatory['ssn'] ?? '',
+                            'first_name' => $signatory['first_name'],
+                            'last_name' => $signatory['last_name'],
+                            'title' => $signatory['title'],
+                            'birthday' => $signatory['birthday'],
+                            'phone' => $signatory['phone'],
+                            'email' => $signatory['email'],
+                            'middle_initial' => $signatory['middle_initial'] ?? '',
+                            'street_1' => $signatory['home_address']['street_1'],
+                            'street_2' => $signatory['home_address']['street_2'],
+                            'city' => $signatory['home_address']['city'],
+                            'state' => $signatory['home_address']['state'],
+                            'zip' => $signatory['home_address']['zip'],
                             'created_at' => getSystemDate(),
-                            'updated_at' => getSystemDate(),
-                            'company_sid' => $companyId
+                            'updated_at' => getSystemDate()
                         ]
                     );
                 }
@@ -184,6 +185,109 @@ class Gusto_payroll_model extends CI_Model
         }
         //
         return [];
+    }
+
+    /**
+     * Move signatory to Gusto
+     *
+     * @param array $signatoryArray
+     * @param int   $companyId
+     * @return array
+     */
+    public function moveSignatoryToGusto($signatoryArray, $companyId)
+    {
+        // get company UUID
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        if (!$companyDetails) {
+            return '';
+        }
+        //
+        $response = addSignatoryToGusto($signatoryArray, $companyDetails, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        _e($response, true);
+        //
+        if (isset($response['errors'])) {
+            //
+            return MakeErrorArray($response['errors']);
+        }
+        //
+        if (
+            $this->db
+            ->where('company_sid', $companyId)
+            ->where('email', $signatoryArray['email'])
+            ->count_all_results('payroll_signatories')
+        ) {
+            //
+            $this->db
+                ->where('company_sid', $companyId)
+                ->where('email', $signatoryArray['email'])
+                ->update('payroll_signatories', [
+                    'gusto_uuid' => $response['uuid'],
+                    'version' => $response['version']
+                ]);
+        } else {
+            // insert
+            $this->db->insert(
+                'payroll_signatories',
+                [
+                    'company_sid' => $companyId,
+                    'gusto_uuid' => $response['uuid'],
+                    'version' => $signatoryArray['version'],
+                    'identity_verification_status' => $signatoryArray['identity_verification_status'],
+                    'ssn' => $signatoryArray['ssn'],
+                    'first_name' => $signatoryArray['first_name'],
+                    'last_name' => $signatoryArray['last_name'],
+                    'title' => $signatoryArray['title'],
+                    'birthday' => $signatoryArray['birthday'],
+                    'middle_initial' => $signatoryArray['middle_initial'],
+                    'phone' => $signatoryArray['phone'],
+                    'email' => $signatoryArray['email'],
+                    'street_1' => $signatoryArray['street_1'],
+                    'street_2' => $signatoryArray['street_2'],
+                    'city' => $signatoryArray['city'],
+                    'state' => $signatoryArray['state'],
+                    'zip' => $signatoryArray['zip'],
+                    'created_at' => getSystemDate(),
+                    'updated_at' => getSystemDate()
+                ]
+            );
+        }
+        //
+        return $response;
+    }
+
+    /**
+     * Delete signatory from Gusto
+     *
+     * @param int $companyId
+     * @param int $signatoryId
+     * @return array
+     */
+    public function deleteSignatoryFromGusto($companyId, $signatoryId)
+    {
+        // get company UUID
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        if (!$companyDetails) {
+            return '';
+        }
+        // get signatory UUID
+        $signatoryUUID = $this->db
+            ->select('gusto_uuid')
+            ->where('sid', $signatoryId)
+            ->get('payroll_signatories')
+            ->row_array()['gusto_uuid'];
+
+        //
+        $response = deleteSignatoryToGusto($signatoryUUID, $companyDetails, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        $this->db->where('sid', $signatoryId)->update('payroll_signatories', ['is_deleted' => 1]);
+        //
+        return $response;
     }
 
     /**
