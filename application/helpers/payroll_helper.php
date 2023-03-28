@@ -1765,6 +1765,7 @@ if (!function_exists('PayrollURL')) {
         $urls['getSignatoriesFromGusto'] = 'v1/companies/' . ($key) . '/signatories';
         $urls['addSignatoryToGusto'] = 'v1/companies/' . ($key) . '/signatories';
         $urls['deleteSignatoryToGusto'] = 'v1/companies/' . ($key1) . '/signatories/' . $key;
+        $urls['updateSignatoryToGusto'] = 'v1/companies/' . ($key1) . '/signatories/' . $key;
         //
         return (GUSTO_MODE === 'test' ? GUSTO_URL_TEST : GUSTO_URL) . $urls[$index];
     }
@@ -2280,6 +2281,63 @@ if (!function_exists('addSignatoryToGusto')) {
         }
     }
 }
+if (!function_exists('updateSignatoryToGusto')) {
+    /**
+     * Update signatory on Gusto
+     *
+     * @method MakeCall
+     * @method PayrollURL
+     * @method RefreshToken
+     * @method UpdateToken
+     *
+     * @param array $request
+     * @param array $signatoryId
+     * @param array $company
+     * @param array $headers Optional
+     * @return array
+     */
+    function updateSignatoryToGusto($request, $signatoryId, $company, $headers = [])
+    {
+        //
+        $callHeaders = [
+            'Authorization: Bearer ' . ($company['access_token']) . '',
+            'Content-Type: application/json'
+        ];
+        $callHeaders = array_merge($callHeaders, $headers);
+        //
+        $response =  MakeCall(
+            PayrollURL('updateSignatoryToGusto', $signatoryId, $company['gusto_company_uid']),
+            [
+                CURLOPT_CUSTOMREQUEST => 'PUT',
+                CURLOPT_POSTFIELDS => json_encode($request),
+                CURLOPT_HTTPHEADER => $callHeaders
+            ]
+        );
+        //
+        if (isset($response['errors']['auth'])) {
+            // Lets Refresh the token
+            $tokenResponse = RefreshToken([
+                'access_token' => $company['access_token'],
+                'refresh_token' => $company['refresh_token']
+            ]);
+            //
+            if (isset($tokenResponse['access_token'])) {
+                //
+                UpdateToken($tokenResponse, ['gusto_company_uid' => $company['gusto_company_uid']], $company);
+                //
+                $company['access_token'] = $tokenResponse['access_token'];
+                $company['refresh_token'] = $tokenResponse['refresh_token'];
+                //
+                return updateSignatoryToGusto($request, $signatoryId, $company, $headers);
+            } else {
+                return ['errors' => ['invalid_grant' => [$tokenResponse['error_description']]]];
+            }
+        } else {
+            //
+            return $response;
+        }
+    }
+}
 
 if (!function_exists('deleteSignatoryToGusto')) {
     /**
@@ -2335,4 +2393,28 @@ if (!function_exists('deleteSignatoryToGusto')) {
             return $response;
         }
     }
+}
+
+
+/**
+ * Generates a one-dimensional array of errors
+ *
+ * @param array $errors
+ * @return array
+ */
+function makeGustoErrorArray($errors)
+{
+    //
+    $errorArray = [];
+    //
+    foreach ($errors as $error) {
+        //
+        if (isset($error['errors']) && is_array($error['errors'])) {
+            $errorArray = array_merge($errorArray, makeGustoErrorArray($error['errors']));
+        } else {
+            $errorArray[] = $error['message'];
+        }
+    }
+    //
+    return $errorArray;
 }

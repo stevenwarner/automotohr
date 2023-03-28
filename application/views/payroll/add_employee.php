@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container">
     <div class="csPageWrap">
         <!-- Header -->
         <?php $this->load->view('payroll/navbar'); $Employee['middle_name'] = 'T'; ?>

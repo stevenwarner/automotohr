@@ -206,26 +206,28 @@ class Gusto_payroll_model extends CI_Model
         $response = addSignatoryToGusto($signatoryArray, $companyDetails, [
             'X-Gusto-API-Version: 2023-03-01'
         ]);
-        _e($response, true);
         //
         if (isset($response['errors'])) {
             //
-            return MakeErrorArray($response['errors']);
+            return makeGustoErrorArray($response['errors']);
         }
         //
         if (
             $this->db
             ->where('company_sid', $companyId)
             ->where('email', $signatoryArray['email'])
+            ->where('is_deleted', 0)
             ->count_all_results('payroll_signatories')
         ) {
             //
             $this->db
                 ->where('company_sid', $companyId)
                 ->where('email', $signatoryArray['email'])
+                ->where('is_deleted', 0)
                 ->update('payroll_signatories', [
                     'gusto_uuid' => $response['uuid'],
-                    'version' => $response['version']
+                    'version' => $response['version'],
+                    'updated_at' => getSystemDate()
                 ]);
         } else {
             // insert
@@ -234,28 +236,82 @@ class Gusto_payroll_model extends CI_Model
                 [
                     'company_sid' => $companyId,
                     'gusto_uuid' => $response['uuid'],
-                    'version' => $signatoryArray['version'],
-                    'identity_verification_status' => $signatoryArray['identity_verification_status'],
+                    'version' => $response['version'],
+                    'identity_verification_status' => $response['identity_verification_status'],
                     'ssn' => $signatoryArray['ssn'],
-                    'first_name' => $signatoryArray['first_name'],
-                    'last_name' => $signatoryArray['last_name'],
-                    'title' => $signatoryArray['title'],
-                    'birthday' => $signatoryArray['birthday'],
+                    'first_name' => $response['first_name'],
+                    'last_name' => $response['last_name'],
+                    'title' => $response['title'],
+                    'birthday' => $response['birthday'],
                     'middle_initial' => $signatoryArray['middle_initial'],
-                    'phone' => $signatoryArray['phone'],
-                    'email' => $signatoryArray['email'],
-                    'street_1' => $signatoryArray['street_1'],
-                    'street_2' => $signatoryArray['street_2'],
-                    'city' => $signatoryArray['city'],
-                    'state' => $signatoryArray['state'],
-                    'zip' => $signatoryArray['zip'],
+                    'phone' => $response['phone'],
+                    'email' => $response['email'],
+                    'street_1' => $response['home_address']['street_1'],
+                    'street_2' => $response['home_address']['street_2'],
+                    'city' => $response['home_address']['city'],
+                    'state' => $response['home_address']['state'],
+                    'zip' => $response['home_address']['zip'],
                     'created_at' => getSystemDate(),
                     'updated_at' => getSystemDate()
                 ]
             );
         }
         //
-        return $response;
+        return $response['uuid'];
+    }
+    
+    /**
+     * Update signatory to Gusto
+     *
+     * @param array  $signatoryArray
+     * @param int    $companyId
+     * @param int    $signatoryId
+     * @param string $signatoryUUID
+     * @return array
+     */
+    public function updateSignatoryToGusto($signatoryArray, $companyId, int $signatoryId, string $signatoryUUID)
+    {
+        // get company UUID
+        $companyDetails = $this->getCompanyDetailsForGusto($companyId);
+        //
+        if (!$companyDetails) {
+            return '';
+        }
+        //
+        $response = updateSignatoryToGusto($signatoryArray, $signatoryUUID, $companyDetails, [
+            'X-Gusto-API-Version: 2023-03-01'
+        ]);
+        //
+        if (isset($response['errors'])) {
+            //
+            return makeGustoErrorArray($response['errors']);
+        }
+        // update
+        $this->db
+        ->where('sid', $signatoryId)
+        ->update(
+            'payroll_signatories',
+            [
+                'version' => $response['version'],
+                'identity_verification_status' => $response['identity_verification_status'],
+                'ssn' => $signatoryArray['ssn'],
+                'first_name' => $response['first_name'],
+                'last_name' => $response['last_name'],
+                'title' => $response['title'],
+                'birthday' => $response['birthday'],
+                'middle_initial' => $signatoryArray['middle_initial'],
+                'phone' => $response['phone'],
+                'email' => $response['email'],
+                'street_1' => $response['home_address']['street_1'],
+                'street_2' => $response['home_address']['street_2'],
+                'city' => $response['home_address']['city'],
+                'state' => $response['home_address']['state'],
+                'zip' => $response['home_address']['zip'],
+                'updated_at' => getSystemDate()
+            ]
+        );
+        //
+        return $response['uuid'];
     }
 
     /**

@@ -149,6 +149,17 @@ $(function companyOnboard() {
     /**
      * 
      */
+    $(document).on('click', '.jsEditSignatory', function (event) {
+        //
+        event.preventDefault();
+        //
+        $('.jsSection').removeClass('dn');
+        $('.jsSection[data-key="add"]').addClass('dn');
+        $('.jsSection[data-key="view"]').addClass('dn');
+    });
+    /**
+     * 
+     */
     $(document).on('click', '.jsDeleteSignatory', function (event) {
         //
         event.preventDefault();
@@ -241,8 +252,96 @@ $(function companyOnboard() {
             //
             ml(false, 'jsManageGustoSignatoriesModalLoader');
             //
-            if (response.error) {
-                return alertify.alert('Error!', response.error, function () { });
+            if (response.errors) {
+                return alertify.alert('Error!', response.errors.join('<br />'), function () { });
+            }
+            return alertify.alert('Success!', response.success, function () {
+                //
+                $('#jsManageGustoSignatoriesModal .jsModalCancel').trigger('click');
+                $('.jsManageGustoSignatories').trigger('click')
+            });
+        })
+            .fail(function () {
+                //
+                xhr = null;
+                //
+                ml(false, 'jsManageGustoSignatoriesModalLoader');
+            });;
+    });
+    /**
+    * 
+    */
+    $(document).on('click', '.jsEditSignatorySaveBtn', function (event) {
+        //
+        event.preventDefault();
+        //
+        var obj = {
+            ssn: $('#jsSignatoryEditSsn').val().trim(),
+            firstName: $('#jsSignatoryEditFirstName').val().trim(),
+            middleInitial: $('#jsSignatoryEditMiddleInitial').val().trim(),
+            lastName: $('#jsSignatoryEditLastName').val().trim(),
+            title: $('#jsSignatoryEditTitle').val().trim(),
+            birthday: $('#jsSignatoryEditBirthDay').val().trim(),
+            phone: $('#jsSignatoryEditPhone').val().trim(),
+            street1: $('#jsSignatoryEditStreet1').val().trim(),
+            street2: $('#jsSignatoryEditStreet2').val().trim(),
+            state: $('#jsSignatoryEditState').val().trim(),
+            city: $('#jsSignatoryEditCity').val().trim(),
+            zip: $('#jsSignatoryEditZip').val().trim(),
+            id: $('#jsSignatoryEditId').val().trim(),
+            companyId: companyId
+        };
+        //
+        if (!obj.ssn) {
+            return alertify.alert('Warning!', 'Social Security Number (SSN) is required.', function () { });
+        }
+        //
+        if (!obj.firstName) {
+            return alertify.alert('Warning!', 'First name is required.', function () { });
+        }
+        //
+        if (!obj.lastName) {
+            return alertify.alert('Warning!', 'Last name is required.', function () { });
+        }
+        //
+        if (!obj.title) {
+            return alertify.alert('Warning!', 'Title is required.', function () { });
+        }
+        //
+        if (!obj.birthday) {
+            return alertify.alert('Warning!', 'Birthday is required.', function () { });
+        }
+        //
+        if (!obj.street1) {
+            return alertify.alert('Warning!', 'Street 1 is required.', function () { });
+        }
+        //
+        if (!obj.state) {
+            return alertify.alert('Warning!', 'State is required.', function () { });
+        }
+        //
+        if (!obj.city) {
+            return alertify.alert('Warning!', 'City is required.', function () { });
+        }
+        //
+        if (!obj.zip) {
+            return alertify.alert('Warning!', 'Zip is required.', function () { });
+        }
+        //
+        ml(true, 'jsManageGustoSignatoriesModalLoader');
+        //
+        xhr = $.ajax({
+            method: 'PUT',
+            url: baseURI + 'payroll/signatory/' + companyId,
+            data: obj
+        }).success(function (response) {
+            //
+            xhr = null;
+            //
+            ml(false, 'jsManageGustoSignatoriesModalLoader');
+            //
+            if (response.errors) {
+                return alertify.alert('Error!', response.errors.join('<br />'), function () { });
             }
             return alertify.alert('Success!', response.success, function () {
                 //
@@ -304,6 +403,11 @@ $(function companyOnboard() {
                 $('#jsManageGustoSignatoriesModalBody').html(response.view);
                 //
                 $('#jsSignatoryAddBirthDay').datepicker({
+                    changeYear: true,
+                    changeMonth: true
+                });
+                //
+                $('#jsSignatoryEditBirthDay').datepicker({
                     changeYear: true,
                     changeMonth: true
                 });

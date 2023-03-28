@@ -155,13 +155,14 @@ class Gusto_payroll extends CI_Controller
             ->select('sid, gusto_uuid')
             ->where('company_sid', $companyId)
             ->where('email', $post['email'])
+            ->where('is_deleted', 0)
             ->get('payroll_signatories')
             ->row_array();
         // already exists
         if ($signatory) {
             //
             if ($signatory['gusto_uuid']) {
-                return SendResponse(200, ['error' => 'Signatory already exists.']);
+                return SendResponse(200, ['errors' => ['Signatory already exists.']]);
             }
             // fetch all admins
             $gustoAdmins = $this->gusto_payroll_model->fetchAllSignatories($companyId);
@@ -172,7 +173,7 @@ class Gusto_payroll extends CI_Controller
                     'gusto_uuid' => $gustoAdmins[$signatory['email_address']]
                 ]);
             //
-            return SendResponse(200, ['error' => 'Signatory already exists.']);
+            return SendResponse(200, ['errors' => ['Signatory already exists.']]);
         }
         // add a new one
         $response = $this->gusto_payroll_model->moveSignatoryToGusto([
@@ -193,7 +194,10 @@ class Gusto_payroll extends CI_Controller
             "phone" => $post['phone']
         ], $companyId);
 
-        _e($response, true);
+        //
+        if (is_array($response)) {
+            return SendResponse(200, ['errors' => $response]);
+        }
         //
         return SendResponse(
             200,
@@ -202,7 +206,54 @@ class Gusto_payroll extends CI_Controller
             ]
         );
     }
-    
+
+    /**
+     * Update signatory
+     *
+     * @param int $companyId
+     */
+    public function updateSignatory(int $companyId)
+    {
+        //
+        $post = $this->input->put(null, true);
+        // fetch signatory
+        $signatory = $this->db
+            ->select('version, ssn, birthday, gusto_uuid')
+            ->where('sid', $post['id'])
+            ->get('payroll_signatories')
+            ->row_array();
+        // update
+        $response = $this->gusto_payroll_model->updateSignatoryToGusto([
+            "version" => $signatory['version'],
+            "ssn" => strpos($post['ssn'], '#') !== false ? $signatory['ssn'] : $post['ssn'],
+            "first_name" => $post['firstName'],
+            "last_name" => $post['lastName'],
+            "title" => $post['title'],
+            "birthday" => strpos($post['birthday'], '#') !== false ? $signatory['birthday'] : formatDateToDB($post['birthday'], SITE_DATE, DB_DATE),
+            "home_address" => [
+                "street_1" => $post['street1'],
+                "city" => $post['city'],
+                "state" => $post['state'],
+                "zip" => $post['zip'],
+                "street_2" => $post['street2']
+            ],
+            "middle_initial" => $post['middleInitial'],
+            "phone" => $post['phone']
+        ], $companyId, $post['id'], $signatory['gusto_uuid']);
+
+        //
+        if (is_array($response)) {
+            return SendResponse(200, ['errors' => $response]);
+        }
+        //
+        return SendResponse(
+            200,
+            [
+                'success' => 'You have successfully updated signatory.'
+            ]
+        );
+    }
+
     /**
      * delete signatory
      *

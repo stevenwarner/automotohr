@@ -1448,6 +1448,7 @@ class Payroll_onboard extends CI_Controller
         $company_details = $this->pm->GetPayrollCompany($companyId);
         //
         $response = GetEmployeeStateTax($payrollId,  $company_details);
+
         //
         if (isset($response['errors'])) {
             return MakeErrorArray($response['errors']);
