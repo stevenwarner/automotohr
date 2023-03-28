@@ -5350,6 +5350,9 @@ class Onboarding extends CI_Controller
                 $credentials_joining_date = $this->input->post('credentials_joining_date');
                 $disclosure = $this->input->post('onboarding_disclosure');
 
+                //_e($this->input->post(null), true);
+               // die;
+
                 $job_list_info = $this->onboarding_model->get_job_list_data($job_list_sid);
 
                 if (empty($unique_sid)) {
