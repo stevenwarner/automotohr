@@ -345,29 +345,7 @@ class Payroll extends CI_Controller
     /**
      * 
      */
-<<<<<<< HEAD
-    function Settings()
-    {
-        //
-        $this->checkLogin($this->data);
-        //
-        $this->data['title'] = 'Payroll | Settings';
-        $this->data['load_view'] = 0;
-        //
-        $this->load
-            ->view('main/header', $this->data)
-            ->view('payroll/settings')
-            ->view('main/footer');
-    }
-
-    /**
-     * 
-     */
-    function PayrollHistory()
-    {
-=======
     function PayrollHistory(){
->>>>>>> gusto
         //
         $this->checkLogin($this->data);
         //
@@ -1944,10 +1922,6 @@ class Payroll extends CI_Controller
             $this->db->insert('payrolls', $insertArray);
         }
     }
-<<<<<<< HEAD
-}
-=======
-
     
     /**
      * 
@@ -1980,4 +1954,3 @@ class Payroll extends CI_Controller
         );
     }
 }
->>>>>>> gusto
